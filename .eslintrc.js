@@ -36,5 +36,6 @@ module.exports = {
         "import"
     ],
     "rules": {
+        "import/no-named-as-default-member": "off",
     }
 }
