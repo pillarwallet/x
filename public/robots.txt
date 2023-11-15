@@ -1,3 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /
+
+# AdsBot crawlers must be named explicitly
+User-agent: AdsBot-Google
+Disallow: /
