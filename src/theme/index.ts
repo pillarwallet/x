@@ -14,7 +14,7 @@ export interface Theme {
 
 export const defaultTheme: Theme = {
   font: {
-    primary: '"Arial", sans',
+    primary: '"Roboto", sans',
   },
   color: {
     background: {
