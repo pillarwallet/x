@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { logEvent } from './services/analytics';
+
 const HelloWorldText = styled.div`
   text-align: center;
   margin-top: 50px;
@@ -48,6 +50,7 @@ const App = () => {
   useEffect(() => {
     const callback = () => {
       setIsPwaInstalled(true);
+      logEvent('pwa_install_successful');
     };
 
     window.addEventListener('appinstalled', callback);
@@ -64,6 +67,7 @@ const App = () => {
     }
 
     try {
+      logEvent('pwa_install_started');
       await pwaInstall.prompt();
     } catch (e) {
       console.warn('Failed to install PWA:', e);

@@ -9,6 +9,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "firebase": "^10.6.0",
     "i18next": "^23.7.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
