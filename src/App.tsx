@@ -1,13 +1,33 @@
 import React from 'react';
-import Providers from './providers';
-import Home from './pages/Home';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { RouterProvider } from 'react-router-dom';
+
+import { defaultTheme } from './theme';
+import LanguageProvider from './providers/LanguageProvider';
+import navigation from './navigation';
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    font-family: ${({ theme }) => theme.font.primary};
+    background: ${({ theme }) => theme.color.background.body};
+    color: ${({ theme }) => theme.color.text.body};
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+`;
 
 const App = () => {
   return (
-    <Providers>
-      {/* TODO: add router /> */}
-      <Home />
-    </Providers>
+    <ThemeProvider theme={defaultTheme}>
+      <GlobalStyle />
+      <LanguageProvider>
+        <RouterProvider router={navigation} />
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
 
