@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { usePrivy } from '@privy-io/react-auth';
 
 // pages
 import Account from '../pages/Account';
@@ -7,7 +8,6 @@ import Transfer from '../pages/Transfer';
 import History from '../pages/History';
 import NotFound from '../pages/NotFound';
 import Apps from '../pages/Apps';
-import { usePrivy } from '@privy-io/react-auth';
 import Login from '../pages/Login';
 import Loading from '../pages/Loading';
 
@@ -20,8 +20,6 @@ export const navigationRoute = {
 
 const Navigation = () => {
   const { ready, authenticated } = usePrivy();
-
-  console.log('ready', ready)
 
   if (!ready) {
     return <Loading />

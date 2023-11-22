@@ -1,4 +1,6 @@
 import { logEvent as logFirebaseAnalyticsEvent, AnalyticsCallOptions } from '@firebase/analytics';
+
+// services
 import { firebaseAnalytics } from './firebase';
 
 export const logEvent = (

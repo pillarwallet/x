@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { MdAccountBalance, MdApps } from 'react-icons/md';
 import { PiPaperPlaneTiltFill } from 'react-icons/pi';
-import { FaHistory } from "react-icons/fa";
+import { FaHistory } from 'react-icons/fa';
 import { usePrivy } from '@privy-io/react-auth';
 
+// navigation
 import { navigationRoute } from '../navigation';
 
 const BottomMenu = () => {

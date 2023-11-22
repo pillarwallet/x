@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
+// components
 import Button from '../components/Button';
 import Paragraph from '../components/Text/Paragraph';
-
 
 const Login = () => {
   const { login } = usePrivy();

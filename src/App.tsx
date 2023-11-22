@@ -3,10 +3,17 @@ import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { PrivyProvider } from '@privy-io/react-auth';
 
-import { defaultTheme } from './theme';
-import LanguageProvider from './providers/LanguageProvider';
-import Navigation from './navigation';
+// components
 import BottomMenu from './components/BottomMenu';
+
+// theme
+import { defaultTheme } from './theme';
+
+// providers
+import LanguageProvider from './providers/LanguageProvider';
+
+// navigation
+import Navigation from './navigation';
 
 const GlobalStyle = createGlobalStyle`
   body {

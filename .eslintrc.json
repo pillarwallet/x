@@ -1,4 +1,4 @@
-module.exports = {
+{
     "env": {
         "browser": true,
         "es2021": true
@@ -9,7 +9,7 @@ module.exports = {
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:import/recommended",
-        "plugin:import/typescript",
+        "plugin:import/typescript"
     ],
     "overrides": [
         {
@@ -38,5 +38,7 @@ module.exports = {
     "rules": {
         "import/no-named-as-default-member": "off",
         "import/no-named-as-default": "off",
+        "no-console": ["error", { "allow": ["warn", "error"] }],
+        "quotes": ["error", "single"]
     }
 }

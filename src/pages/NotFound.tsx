@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+// components
 import Paragraph from '../components/Text/Paragraph';
 
 const NotFound = () => {
