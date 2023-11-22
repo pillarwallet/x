@@ -5,8 +5,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
-    "test:update": "jest --updateSnapshot"
+    "test": "eslint . && jest",
+    "test:update": "eslint . jest --updateSnapshot"
   },
   "dependencies": {
     "@privy-io/react-auth": "^1.48.0",
