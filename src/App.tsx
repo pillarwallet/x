@@ -1,10 +1,19 @@
 import React from 'react';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { RouterProvider } from 'react-router-dom';
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { BrowserRouter } from 'react-router-dom';
+import { PrivyProvider } from '@privy-io/react-auth';
 
+// components
+import BottomMenu from './components/BottomMenu';
+
+// theme
 import { defaultTheme } from './theme';
+
+// providers
 import LanguageProvider from './providers/LanguageProvider';
-import navigation from './navigation';
+
+// navigation
+import Navigation from './navigation';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -25,10 +34,30 @@ const App = () => {
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
       <LanguageProvider>
-        <RouterProvider router={navigation} />
+        <PrivyProvider
+          appId={process.env.REACT_APP_PRIVY_APP_ID as string}
+          config={{ appearance: { theme: 'light' } }}
+        >
+          <BrowserRouter>
+            <ContentWrapper>
+              <Navigation />
+            </ContentWrapper>
+            <BottomMenu />
+          </BrowserRouter>
+        </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
 }
+
+const ContentWrapper = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 20px 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 
 export default App;

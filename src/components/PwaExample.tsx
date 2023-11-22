@@ -1,36 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+// services
 import { logEvent } from '../services/analytics';
-
-const HelloWorldText = styled.div`
-  text-align: center;
-  margin-top: 50px;
-  font-size: 30px;
-`;
-
-const InstallButton = styled.span`
-  display: inline-block;
-  text-align: center;
-  margin-top: 50px;
-  font-size: 18px;
-  background: #fff;
-  color: #000;
-  padding: 5px 15px;
-  cursor: pointer;
-  
-  &:hover {
-    opacity: 0.5;
-  }
-`;
 
 interface PWABeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-const Home = () => {
-  const [t] = useTranslation();
+const PwaExample = () => {
   const [isPwaInstalled, setIsPwaInstalled] = useState<boolean>(false);
   const [pwaInstall, setPwaInstall] = useState<PWABeforeInstallPromptEvent | null>(null);
 
@@ -74,16 +52,32 @@ const Home = () => {
     }
   };
 
+  if (isPwaInstalled || !pwaInstall) {
+    return null;
+  }
+
   return (
-    <HelloWorldText>
-      <p>{t`common.helloWorld`}</p>
-      {!!pwaInstall && !isPwaInstalled && (
-        <InstallButton onClick={handleInstall}>
-          Install
-        </InstallButton>
-      )}
-    </HelloWorldText>
+    <InstallButton onClick={handleInstall}>
+      Install
+    </InstallButton>
   );
 }
 
-export default Home;
+
+
+const InstallButton = styled.span`
+  display: inline-block;
+  text-align: center;
+  margin-top: 50px;
+  font-size: 18px;
+  background: #fff;
+  color: #000;
+  padding: 5px 15px;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.5;
+  }
+`;
+
+export default PwaExample;

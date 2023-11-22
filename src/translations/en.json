@@ -1,5 +1,10 @@
 {
-  "common": {
-    "helloWorld": "Hello World!"
+  "title": {
+    "account": "Account",
+    "transfer": "Transfer",
+    "history": "History"
+  },
+  "error": {
+    "pageNotFound": "Page not found"
   }
 }
