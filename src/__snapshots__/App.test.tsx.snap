@@ -2,10 +2,14 @@
 
 exports[`<App /> renders correctly 1`] = `
 <div
-  className="sc-bdfCDU uJPTA"
+  className="sc-pGaPU faEpGU"
 >
-  <p>
-    Hello World!
-  </p>
+  <div
+    className="sc-jSguLX kfhHwn"
+  >
+    <div
+      className="sc-gKsecS ekEnpz"
+    />
+  </div>
 </div>
 `;

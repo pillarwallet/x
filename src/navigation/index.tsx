@@ -1,11 +1,50 @@
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
-import Home from '../pages/Home';
+// pages
+import Account from '../pages/Account';
+import Transfer from '../pages/Transfer';
+import History from '../pages/History';
+import NotFound from '../pages/NotFound';
+import Apps from '../pages/Apps';
+import { usePrivy } from '@privy-io/react-auth';
+import Login from '../pages/Login';
+import Loading from '../pages/Loading';
 
-export default createBrowserRouter([
-  {
-    path: '/',
-    element: <Home />,
+export const navigationRoute = {
+  home: '/',
+  transfer: '/transfer',
+  history: '/history',
+  apps: '/apps',
+}
+
+const Navigation = () => {
+  const { ready, authenticated } = usePrivy();
+
+  console.log('ready', ready)
+
+  if (!ready) {
+    return <Loading />
   }
-]);
+
+  if (!authenticated) {
+    return (
+      <Routes>
+        <Route path={navigationRoute.home} element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    )
+  }
+
+  return (
+    <Routes>
+      <Route path={navigationRoute.home} element={<Account />} />
+      <Route path={navigationRoute.transfer} element={<Transfer />} />
+      <Route path={navigationRoute.history} element={<History />} />
+      <Route path={navigationRoute.apps} element={<Apps />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+export default Navigation;
