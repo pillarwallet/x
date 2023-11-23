@@ -30,7 +30,7 @@ const loadingCompleteAnimation = keyframes`
 const Wrapper = styled.div`
   margin-top: calc(50% - 150px);
   display: flex;
-  align-items: center;
+  justify-content: center;
 `;
 
 const AnimatedLoadingLogo = styled.div<{ complete?: boolean }>`
@@ -43,7 +43,7 @@ const AnimatedLoadingLogo = styled.div<{ complete?: boolean }>`
   background: ${({ theme }) => theme.color.background.loadingLogo};
   color: ${({ theme }) => theme.color.text.loadingLogo};
   text-align: center;
-  animation: ${({ complete }) => complete ? loadingCompleteAnimation : loadingAnimation} 20s ease-in-out infinite;
+  animation: ${({ complete }) => complete ? loadingCompleteAnimation : loadingAnimation} 5s ease-in-out infinite;
 
   &:before {
     content: 'Px';
