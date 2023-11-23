@@ -9,6 +9,7 @@
     "test:update": "eslint . jest --updateSnapshot"
   },
   "dependencies": {
+    "@etherspot/transaction-kit": "^0.6.9",
     "@privy-io/react-auth": "^1.48.0",
     "buffer": "^6.0.3",
     "firebase": "^10.6.0",

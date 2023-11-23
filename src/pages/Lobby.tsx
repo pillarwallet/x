@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 // components
 import { PrimaryTitle } from '../components/Text/Title';
 
-const Account = () => {
+const Lobby = () => {
   const [t] = useTranslation();
 
   return (
-    <PrimaryTitle>{t`title.account`}</PrimaryTitle>
+    <PrimaryTitle>{t`title.lobby`}</PrimaryTitle>
   );
 }
 
-export default Account;
+export default Lobby;

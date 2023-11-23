@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
-import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { WalletProviderLike } from '@etherspot/prime-sdk';
+import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 
 // components
 import BottomMenu from './components/BottomMenu';
@@ -13,7 +15,10 @@ import { defaultTheme } from './theme';
 import LanguageProvider from './providers/LanguageProvider';
 
 // navigation
-import Navigation from './navigation';
+import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
+
+// pages
+import Loading from './pages/Loading';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,6 +34,58 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const AppAuthController = () => {
+  const { ready, authenticated } = usePrivy();
+  const { wallets } = useWallets();
+  const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
+  const [chainId, setChainId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    let expired = false;
+
+    const updateProvider = async () => {
+      if (!wallets.length) return; // not yet ready
+
+      const privyEthereumProvider = await wallets[0].getEthereumProvider();
+      if (expired) return;
+
+      // @ts-expect-error: provider type mismatch
+      // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
+      setProvider(privyEthereumProvider.walletProvider);
+      setChainId(+wallets[0].chainId.split(':')[1]); // extract from CAIP-2
+    }
+
+    updateProvider();
+
+    return () => {
+      expired = true;
+    }
+  }, [wallets]);
+
+  if (authenticated && provider && chainId) {
+    return (
+      <EtherspotTransactionKit provider={provider} chainId={chainId}>
+        <BrowserRouter>
+          <ContentWrapper>
+            <AuthorizedNavigation />
+          </ContentWrapper>
+          <BottomMenu />
+        </BrowserRouter>
+      </EtherspotTransactionKit>
+    )
+  }
+
+  if (ready && !authenticated) {
+    return (
+      <BrowserRouter>
+        <UnauthorizedNavigation />
+      </BrowserRouter>
+    );
+  }
+
+  return <Loading />;
+}
+
 const App = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -38,12 +95,7 @@ const App = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{ appearance: { theme: 'light' } }}
         >
-          <BrowserRouter>
-            <ContentWrapper>
-              <Navigation />
-            </ContentWrapper>
-            <BottomMenu />
-          </BrowserRouter>
+          <AppAuthController />
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
