@@ -1,5 +1,5 @@
-// https://jestjs.io/docs/code-transformation
 /* eslint-disable */
+// https://jestjs.io/docs/code-transformation
 // noinspection NodeCoreCodingAssistance
 
 const path = require('path');
