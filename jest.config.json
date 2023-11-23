@@ -1,8 +1,10 @@
 {
   "preset": "ts-jest",
-  "setupFilesAfterEnv": ["./src/utils/setupJest.ts"],
+  "setupFilesAfterEnv": ["./src/test-utils/setupJest.ts"],
   "transform": {
-    "^.+\\.(ts|tsx)$": "ts-jest"
+    "^.+\\.(ts|tsx)$": "ts-jest",
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+    "./src/test-utils/fileTransformer.js"
   },
   "testEnvironment": "jsdom"
 }

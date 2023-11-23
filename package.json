@@ -6,7 +6,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "eslint . && jest",
-    "test:update": "eslint . jest --updateSnapshot"
+    "test:update": "eslint . && jest --updateSnapshot"
   },
   "dependencies": {
     "@etherspot/transaction-kit": "^0.6.9",
@@ -44,6 +44,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-styled-components": "^7.2.0",
     "react-test-renderer": "^18.2.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"

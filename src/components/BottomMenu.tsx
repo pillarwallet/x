@@ -17,18 +17,26 @@ const BottomMenu = () => {
 
   return (
     <Wrapper>
-      <MenuItem onClick={() => navigate(navigationRoute.home)}>
-        <MdAccountBalance size={30} />
-      </MenuItem>
-      <MenuItem>
-        <PiPaperPlaneTiltFill size={26} />
-      </MenuItem>
-      <MenuItem>
-        <FaHistory size={26} />
-      </MenuItem>
-      <MenuItem>
-        <MdApps size={30} />
-      </MenuItem>
+      <MenuItemFullHeight>
+        <MenuItem onClick={() => navigate(navigationRoute.home)}>
+          <MdAccountBalance size={25} />
+        </MenuItem>
+      </MenuItemFullHeight>
+      <MenuItemFullHeight>
+        <MenuItem>
+          <PiPaperPlaneTiltFill size={21} />
+        </MenuItem>
+      </MenuItemFullHeight>
+      <MenuItemFullHeight>
+        <MenuItem>
+          <FaHistory size={21} />
+        </MenuItem>
+      </MenuItemFullHeight>
+      <MenuItemFullHeight>
+        <MenuItem>
+          <MdApps size={25} />
+        </MenuItem>
+      </MenuItemFullHeight>
     </Wrapper>
   );
 }
@@ -39,33 +47,58 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  gap: 45px;
   position: fixed;
   bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
+  backdrop-filter: blur(13px);
+  box-shadow: 7px 9px 59px 4px rgba(0,0,0,0.45);
+  background: ${({ theme }) => theme.color.background.bottomMenu};
+  border-radius: 36px;
+  padding: 0 55px;
+`;
+
+const MenuItemFullHeight = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 0;
+
+  &:hover {
+    span {
+      transform: scale(2);
+      background: none;
+    }
+
+    &:before {
+      width: 72px;
+      height: 6px;
+      background: ${({ theme }) => theme.color.border.bottomMenuItemBottomActive};
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -10px;
+      display: block;
+      border-radius: 6px;
+    }
+  }
 `;
 
 const MenuItem = styled.span`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.color.background.bottomMenuItem};
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
-  border-radius: 16px;
-  height: 60px;
-  width: 60px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
   overflow: hidden;
-  box-shadow: 7px 9px 59px 4px rgba(0,0,0,0.45);
   cursor: pointer;
-  
-  &:hover {
-    opacity: 0.5;
-  }
-  
-  &:active {
-    opacity: 0.2;
-  }
+  transition: all .1s ease-in-out;
 `;
 
 export default BottomMenu;

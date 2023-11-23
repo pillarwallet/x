@@ -1,15 +1,19 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-// components
-import { PrimaryTitle } from '../components/Text/Title';
+import lobbyItemsAsBgImage from '../assets/images/dummy/lobby-items-as-bg.png';
 
 const Lobby = () => {
-  const [t] = useTranslation();
-
   return (
-    <PrimaryTitle>{t`title.lobby`}</PrimaryTitle>
+    <DummyContent />
   );
 }
+
+const DummyContent = styled.div`
+  height: 100vh;
+  width: 560px;
+  background: url(${lobbyItemsAsBgImage}) no-repeat center center;
+  background-size: contain;
+`;
 
 export default Lobby;
