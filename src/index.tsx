@@ -9,6 +9,7 @@ Sentry.init({
     new Sentry.BrowserTracing(),
     new Sentry.Replay(),
   ],
+  enabled: process.env.NODE_ENV === 'production',
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
