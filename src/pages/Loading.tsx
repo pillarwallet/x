@@ -28,12 +28,13 @@ const loadingCompleteAnimation = keyframes`
 `;
 
 const Wrapper = styled.div`
-  margin-top: calc(50% - 150px);
   display: flex;
   justify-content: center;
+  min-height: 100vh;
 `;
 
 const AnimatedLoadingLogo = styled.div<{ complete?: boolean }>`
+  margin-top: calc(50% - 150px);
   font-size: 50px;
   font-weight: 700;
   width: 150px;
