@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Paragraph /> renders correctly 1`] = `
+[
+  <p
+    className=""
+  >
+    Some regular text.
+  </p>,
+  .c0 {
+  text-align: center;
+}
+
+<p
+    center={true}
+    className="c0"
+  >
+    centered
+  </p>,
+]
+`;
