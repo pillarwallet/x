@@ -5,6 +5,7 @@ export interface Theme {
   color: {
     background: {
       body: string;
+      bottomMenu: string;
       bottomMenuItem: string;
       loadingLogo: string;
       buttonPrimary: string;
@@ -12,8 +13,12 @@ export interface Theme {
     text: {
       body: string;
       bottomMenuItem: string;
+      bottomMenuItemActive: string;
       loadingLogo: string;
       buttonPrimary: string;
+    },
+    border: {
+      bottomMenuItemBottomActive: string;
     }
   }
 }
@@ -24,16 +29,21 @@ export const defaultTheme: Theme = {
   },
   color: {
     background: {
-      body: '#6448b3',
-      bottomMenuItem: '#fff',
+      body: '#24142f',
+      bottomMenu: 'rgba(50,50,66,0.7)',
+      bottomMenuItem: '#444d55',
       loadingLogo: '#fff',
       buttonPrimary: '#c63bea',
     },
     text: {
       body: '#fff',
-      bottomMenuItem: '#000',
+      bottomMenuItem: '#fff',
+      bottomMenuItemActive: '#444d55',
       loadingLogo: '#997cfa',
       buttonPrimary: '#fff',
+    },
+    border: {
+      bottomMenuItemBottomActive: '#fff',
     }
   },
 };
