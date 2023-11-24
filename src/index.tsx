@@ -4,7 +4,7 @@ import { Buffer as ImportedBuffer } from 'buffer';
 import * as Sentry from '@sentry/react';
 
 Sentry.init({
-  dsn: 'https://55052afb3f6f792430997f49a52c7720@o4505997388742656.ingest.sentry.io/4506280106655744',
+  dsn: process.env.REACT_APP_SENTRY_DSN,
   integrations: [
     new Sentry.BrowserTracing(),
     new Sentry.Replay(),
