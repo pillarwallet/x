@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run sentry:sourcemaps",
     "test": "eslint . && jest",
-    "test:update": "eslint . && jest --updateSnapshot"
+    "test:update": "eslint . && jest --updateSnapshot",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build"
   },
   "dependencies": {
     "@etherspot/transaction-kit": "^0.6.9",
     "@privy-io/react-auth": "^1.48.0",
+    "@sentry/cli": "^2.21.5",
+    "@sentry/react": "^7.81.1",
     "buffer": "^6.0.3",
     "firebase": "^10.6.0",
     "i18next": "^23.7.6",
