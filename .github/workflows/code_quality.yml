@@ -1,0 +1,12 @@
+name: Code Quality
+run-name: ${{ github.actor }} has committed new code! 🚀 Checking...
+
+on: [push, pull_request]
+
+jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm i cognitive-complexity-ts
+      - run: npx ccts-json ./src
