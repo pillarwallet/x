@@ -7,7 +7,7 @@ import { FaHistory } from 'react-icons/fa';
 import { usePrivy } from '@privy-io/react-auth';
 
 // navigation
-import { navigationRoute } from '../navigation';
+import { navigationRoute } from '../../navigation';
 
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
