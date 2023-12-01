@@ -1,0 +1,12 @@
+{
+  "title": "App name",
+  "description": "App description.",
+  "translations": {
+    "en": {
+      "title": "App name English",
+      "description": "App description English.",
+      "someInputLabel": "Some input label English"
+      "actionInfo": "Some action info English"
+    }
+  }
+}

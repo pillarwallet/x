@@ -32,7 +32,7 @@ const BottomMenu = () => {
           <FaHistory size={21} />
         </MenuItem>
       </MenuItemFullHeight>
-      <MenuItemFullHeight>
+      <MenuItemFullHeight onClick={() => navigate(navigationRoute.apps)}>
         <MenuItem>
           <MdApps size={25} />
         </MenuItem>
@@ -57,6 +57,12 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.color.background.bottomMenu};
   border-radius: 36px;
   padding: 0 55px;
+  
+  @media (max-width: 800px) {
+    width: calc(100% - 40px);
+    bottom: 20px;
+    gap: 35px;
+  }
 `;
 
 const MenuItemFullHeight = styled.div`

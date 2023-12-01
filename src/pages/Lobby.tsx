@@ -10,9 +10,10 @@ const Lobby = () => {
 }
 
 const DummyContent = styled.div`
-  height: 100vh;
+  height: 140vh; // higher height for display purpose
   width: 560px;
-  background: url(${lobbyItemsAsBgImage}) no-repeat center center;
+  max-width: 100%;
+  background: url(${lobbyItemsAsBgImage}) repeat-y top center;
   background-size: contain;
 `;
 

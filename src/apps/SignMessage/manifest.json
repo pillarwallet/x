@@ -1,0 +1,12 @@
+{
+  "title": "Sign Message",
+  "description": "Personal sign message app.",
+  "translations": {
+    "en": {
+      "title": "Sign Message",
+      "messagePlaceholder": "Enter message to sign",
+      "signing": "Signing...",
+      "signMessage": "Sign Message"
+    }
+  }
+}
