@@ -6,6 +6,7 @@
     "history": "History"
   },
   "error": {
-    "pageNotFound": "Page not found"
+    "pageNotFound": "Page not found",
+    "appNotFound": "App not found"
   }
 }

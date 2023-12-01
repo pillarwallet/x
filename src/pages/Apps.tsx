@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 // components
 import { PrimaryTitle } from '../components/Text/Title';
+import Alert from '../components/Text/Alert';
 
 // apps
 import { loadAppsList } from '../apps';
@@ -24,10 +25,15 @@ const AppSplash = ({ namespace }: { namespace: string }) => (
 );
 
 const App = ({ namespace }: { namespace: string }) => {
-  // TODO: add default NotFound app in case namespace missing?
+  const [t] = useTranslation();
+
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // artificial 1s delay
-    return import(`../apps/${namespace}`);
+    try {
+      return import(`../apps/${namespace}`);
+    } catch (e) {
+      return { default: () => <Alert level="error">{t`error.appNotFound`}</Alert> };
+    }
   });
 
   return (

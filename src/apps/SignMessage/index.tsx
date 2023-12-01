@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 // components
 import { PrimaryTitle } from '../../components/Text/Title';
+import Alert from '../../components/Text/Alert';
 
 export const App = () => {
   const [t] = useTranslation();
@@ -47,10 +48,10 @@ export const App = () => {
         placeholder={t`messagePlaceholder`}
       />
       {errorMessage && (
-        <ErrorMessageText>{errorMessage}</ErrorMessageText>
+        <Alert level="error">{errorMessage}</Alert>
       )}
       {signedMessage && (
-        <SignedMessageText>{signedMessage}</SignedMessageText>
+        <Alert level="info">{signedMessage}</Alert>
       )}
       <StyledButton onClick={signMessage} disabled={isSigning}>
         {isSigning ? t`signing` : t`signMessage`}
@@ -98,26 +99,6 @@ const StyledButton = styled.button`
   &:focus {
     outline: none;
   }
-`;
-
-const SignedMessageText = styled.p`
-  padding: 15px;
-  background: ${({ theme }) => theme.color.background.info};
-  color: ${({ theme }) => theme.color.text.info};
-  word-break: break-all;
-  margin-bottom: 15px;
-  font-size: 14px;
-  border-radius: 5px;
-`;
-
-const ErrorMessageText = styled.p`
-  padding: 15px;
-  background: ${({ theme }) => theme.color.background.error};
-  color: ${({ theme }) => theme.color.text.error};
-  word-break: break-all;
-  margin-bottom: 15px;
-  font-size: 14px;
-  border-radius: 5px;
 `;
 
 export default App;

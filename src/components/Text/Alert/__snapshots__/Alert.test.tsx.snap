@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Alert /> renders correctly 1`] = `
+[
+  .c0 {
+  padding: 15px;
+  background: #BEF;
+  color: #059;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    background="#BEF"
+    className="c0"
+    color="#059"
+  >
+    default
+  </p>,
+  .c0 {
+  padding: 15px;
+  background: #BEF;
+  color: #059;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    background="#BEF"
+    className="c0"
+    color="#059"
+  >
+    info
+  </p>,
+  .c0 {
+  padding: 15px;
+  background: #FEEFB3;
+  color: #9F6000;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    background="#FEEFB3"
+    className="c0"
+    color="#9F6000"
+  >
+    warning
+  </p>,
+  .c0 {
+  padding: 15px;
+  background: #DFF2BF;
+  color: #270;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    background="#DFF2BF"
+    className="c0"
+    color="#270"
+  >
+    success
+  </p>,
+  .c0 {
+  padding: 15px;
+  background: #D8000C;
+  color: #FFBABA;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    background="#D8000C"
+    className="c0"
+    color="#FFBABA"
+  >
+    error
+  </p>,
+  .c0 {
+  padding: 15px;
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+<p
+    className="c0"
+  >
+    non-existing
+  </p>,
+]
+`;
