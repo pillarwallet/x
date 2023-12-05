@@ -1,6 +1,6 @@
 {
   "name": "pillarx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@etherspot/transaction-kit": "^0.6.9",
-    "@privy-io/react-auth": "^1.48.0",
+    "@privy-io/react-auth": "^1.50.0",
     "@sentry/cli": "^2.21.5",
     "@sentry/react": "^7.81.1",
     "buffer": "^6.0.3",
