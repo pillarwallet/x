@@ -27,6 +27,10 @@ const GlobalStyle = createGlobalStyle`
     color: ${({ theme }) => theme.color.text.body};
   }
 
+  input, textarea, button, select {
+    font-family: ${({ theme }) => theme.font.primary};
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;
@@ -103,13 +107,11 @@ const App = () => {
 }
 
 const ContentWrapper = styled.div`
-  max-width: 800px;
+  max-width: 500px;
+  height: 1px; // set height so children can inherit min height
+  min-height: calc(100vh - 240px);
   margin: 0 auto;
-  padding: 60px 20px 180px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 60px 20px 0;
 `;
 
 export default App;

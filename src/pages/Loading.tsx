@@ -1,40 +1,23 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-const Loading = ({ complete }: { complete?: boolean }) => {
-  return (
-    <Wrapper>
-      <AnimatedLoadingLogo complete={complete} />
-    </Wrapper>
-  );
-}
+// theme
+import { animation } from '../theme';
 
-const loadingAnimation = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
-
-const loadingCompleteAnimation = keyframes`
-  100% {
-    transform: scale(99999);
-  }
-`;
+const Loading = () => (
+  <Wrapper>
+    <AnimatedLoadingLogo />
+  </Wrapper>
+);
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
+  height: 100vh;
 `;
 
-const AnimatedLoadingLogo = styled.div<{ complete?: boolean }>`
-  margin-top: calc(50% - 150px);
+const AnimatedLoadingLogo = styled.div`
   font-size: 50px;
   font-weight: 700;
   width: 150px;
@@ -44,7 +27,7 @@ const AnimatedLoadingLogo = styled.div<{ complete?: boolean }>`
   background: ${({ theme }) => theme.color.background.loadingLogo};
   color: ${({ theme }) => theme.color.text.loadingLogo};
   text-align: center;
-  animation: ${({ complete }) => complete ? loadingCompleteAnimation : loadingAnimation} 5s ease-in-out infinite;
+  animation: ${animation.pulse} 5s ease-in-out infinite;
 
   &:before {
     content: 'Px';

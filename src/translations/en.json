@@ -1,10 +1,12 @@
 {
   "title": {
+    "apps": "Apps",
     "lobby": "Lobby",
     "transfer": "Transfer",
     "history": "History"
   },
   "error": {
-    "pageNotFound": "Page not found"
+    "pageNotFound": "Page not found",
+    "appNotFound": "App not found"
   }
 }

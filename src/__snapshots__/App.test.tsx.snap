@@ -4,11 +4,11 @@ exports[`<App /> renders correctly 1`] = `
 .c0 {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
+  height: 100vh;
 }
 
 .c1 {
-  margin-top: calc(50% - 150px);
   font-size: 50px;
   font-weight: 700;
   width: 150px;

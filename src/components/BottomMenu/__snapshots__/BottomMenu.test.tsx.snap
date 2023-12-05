@@ -59,6 +59,14 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   transition: all .1s ease-in-out;
 }
 
+@media (max-width: 800px) {
+  .c0 {
+    width: calc(100% - 40px);
+    bottom: 20px;
+    gap: 35px;
+  }
+}
+
 <div
   className="c0"
 >
@@ -147,6 +155,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   </div>
   <div
     className="c1"
+    onClick={[Function]}
   >
     <span
       className="c2"
