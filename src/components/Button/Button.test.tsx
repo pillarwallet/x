@@ -14,7 +14,7 @@ describe('<Button />', () => {
       .create(
         <ThemeProvider theme={defaultTheme}>
           <Button>Some regular text.</Button>
-          <Button fullWidth>full width button</Button>
+          <Button $fullWidth>full width button</Button>
         </ThemeProvider>
       )
       .toJSON();

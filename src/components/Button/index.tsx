@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Button = styled.button<{ fullWidth?: boolean }>`
+const Button = styled.button<{ $fullWidth?: boolean }>`
   font-size: 18px;
   font-weight: 700;
   padding: 15px 45px;
@@ -12,7 +12,7 @@ const Button = styled.button<{ fullWidth?: boolean }>`
   transition: all 0.2s ease-in-out;
   margin-bottom: 15px;
   
-  ${({ fullWidth }) => fullWidth && `
+  ${({ $fullWidth }) => $fullWidth && `
     width: 100%;
   `}
 

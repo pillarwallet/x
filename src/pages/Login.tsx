@@ -21,7 +21,7 @@ const Login = () => {
     <Wrapper>
       <HeroTitle>{t`content.welcomeToPillarX`}</HeroTitle>
       <AnimatedShape />
-      <Button onClick={login} fullWidth>{t`action.getStarted`}</Button>
+      <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
   )
 }
