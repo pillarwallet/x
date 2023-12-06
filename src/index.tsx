@@ -10,6 +10,7 @@ Sentry.init({
     new Sentry.Replay(),
   ],
   enabled: process.env.NODE_ENV === 'production',
+  environment: process.env.REACT_APP_SENTRY_ENVIRONMENT ?? process.env.NODE_ENV,
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
