@@ -71,7 +71,7 @@ const AppIcon = ({ namespace }: { namespace: string }) => {
   return (
     <>
       {!iconLoaded && <AppIconSkeleton />}
-      <AppIconImage ref={imageRef} src={iconSrc} display={iconLoaded} />
+      <AppIconImage ref={imageRef} src={iconSrc} $display={iconLoaded} />
     </>
   );
 };
@@ -150,8 +150,8 @@ const AppListItem = styled.div`
   }
 `;
 
-const AppIconImage = styled.img<{ display: boolean }>`
-  display: ${({ display }) => display ? 'block' : 'none'};
+const AppIconImage = styled.img<{ $display: boolean }>`
+  display: ${({ $display }) => $display ? 'block' : 'none'};
   max-width: 100%;
   border-radius: 20px;
 `;

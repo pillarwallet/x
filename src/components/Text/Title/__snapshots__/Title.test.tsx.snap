@@ -4,6 +4,7 @@ exports[`<PrimaryTitle /> renders correctly 1`] = `
 .c0 {
   font-size: 30px;
   margin-bottom: 15px;
+  font-weight: 500;
 }
 
 <h1

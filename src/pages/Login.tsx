@@ -1,43 +1,54 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+
+// images
+import randomShapeImage from '../assets/images/random-shape.png';
 
 // components
 import Button from '../components/Button';
-import Paragraph from '../components/Text/Paragraph';
+import { PrimaryTitle } from '../components/Text/Title';
+
+// theme
+import { animation } from '../theme';
 
 const Login = () => {
   const { login } = usePrivy();
-
-  useEffect(() => {
-    login();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [t] = useTranslation();
 
   return (
     <Wrapper>
-      <LogoText>Px</LogoText>
-      <Button onClick={login}>Get Started</Button>
-      <Paragraph>
-        Lorem ipsum dolor sit amet consectetur,<br/>
-         adipiscing elit. Donec euismod
-      </Paragraph>
+      <HeroTitle>{t`content.welcomeToPillarX`}</HeroTitle>
+      <AnimatedShape src={randomShapeImage} alt="random shape" />
+      <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
   )
 }
 
-const LogoText = styled.h1`
-  font-size: 80px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  color: ${({ theme }) => theme.color.text.body};
+const HeroTitle = styled(PrimaryTitle)`
+  font-size: 45px;
+  line-height: 45px;
+  width: 210px;
   text-align: center;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+  margin-top: 16vh;
 `;
 
 const Wrapper = styled.div`
-  margin-top: calc(50% - 150px);
-  text-align: center;
+  height: 100vh;
+  padding: 50px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+`;
+
+const AnimatedShape = styled.img`
+  animation: ${animation.rotateAndPulse} 20s linear infinite;
+  max-width: 100%;
+  user-select: none;
 `;
 
 export default Login;

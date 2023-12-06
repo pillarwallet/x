@@ -12,7 +12,6 @@ exports[`<Paragraph /> renders correctly 1`] = `
 }
 
 <p
-    center={true}
     className="c0"
   >
     centered

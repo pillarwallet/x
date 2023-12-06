@@ -10,18 +10,18 @@ const Alert = ({
   const theme = useTheme();
   return (
     <AlertText
-      background={theme.color.background[level]}
-      color={theme.color.text[level]}
+      $background={theme.color.background[level]}
+      $color={theme.color.text[level]}
     >
       {children}
     </AlertText>
   );
 }
 
-const AlertText = styled.p<{ color: string; background: string; }>`
+const AlertText = styled.p<{ $color: string; $background: string; }>`
   padding: 15px;
-  background: ${({ background }) => background};
-  color: ${({ color }) => color};
+  background: ${({ $background }) => $background};
+  color: ${({ $color }) => $color};
   word-break: break-all;
   margin-bottom: 15px;
   font-size: 14px;

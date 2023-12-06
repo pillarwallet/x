@@ -1,12 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// images
+import randomShapeImage from '../assets/images/random-shape.png';
+
 // theme
 import { animation } from '../theme';
 
 const Loading = () => (
   <Wrapper>
-    <AnimatedLoadingLogo />
+    <AnimatedShape src={randomShapeImage} alt="random shape" />
   </Wrapper>
 );
 
@@ -17,21 +20,10 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
-const AnimatedLoadingLogo = styled.div`
-  font-size: 50px;
-  font-weight: 700;
-  width: 150px;
-  height: 150px;
-  line-height: 140px;
-  border-radius: 50%;
-  background: ${({ theme }) => theme.color.background.loadingLogo};
-  color: ${({ theme }) => theme.color.text.loadingLogo};
-  text-align: center;
-  animation: ${animation.pulse} 5s ease-in-out infinite;
-
-  &:before {
-    content: 'Px';
-  }
+const AnimatedShape = styled.img`
+  animation: ${animation.rotateAndPulse} 20s linear infinite;
+  max-width: 100%;
+  user-select: none;
 `;
 
 export default Loading;

@@ -13,9 +13,7 @@ exports[`<Alert /> renders correctly 1`] = `
 }
 
 <p
-    background="#BEF"
     className="c0"
-    color="#059"
   >
     default
   </p>,
@@ -30,9 +28,7 @@ exports[`<Alert /> renders correctly 1`] = `
 }
 
 <p
-    background="#BEF"
     className="c0"
-    color="#059"
   >
     info
   </p>,
@@ -47,9 +43,7 @@ exports[`<Alert /> renders correctly 1`] = `
 }
 
 <p
-    background="#FEEFB3"
     className="c0"
-    color="#9F6000"
   >
     warning
   </p>,
@@ -64,9 +58,7 @@ exports[`<Alert /> renders correctly 1`] = `
 }
 
 <p
-    background="#DFF2BF"
     className="c0"
-    color="#270"
   >
     success
   </p>,
@@ -81,9 +73,7 @@ exports[`<Alert /> renders correctly 1`] = `
 }
 
 <p
-    background="#D8000C"
     className="c0"
-    color="#FFBABA"
   >
     error
   </p>,

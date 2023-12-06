@@ -8,7 +8,7 @@ const NotFound = () => {
   const [t] = useTranslation();
 
   return (
-    <Paragraph center>{t`error.pageNotFound`}</Paragraph>
+    <Paragraph $center>{t`error.pageNotFound`}</Paragraph>
   );
 }
 

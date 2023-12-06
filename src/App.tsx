@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { WalletProviderLike } from '@etherspot/prime-sdk';
@@ -9,7 +9,7 @@ import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import BottomMenu from './components/BottomMenu';
 
 // theme
-import { defaultTheme } from './theme';
+import { defaultTheme, GlobalStyle } from './theme';
 
 // providers
 import LanguageProvider from './providers/LanguageProvider';
@@ -19,24 +19,6 @@ import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
 
 // pages
 import Loading from './pages/Loading';
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    font-family: ${({ theme }) => theme.font.primary};
-    background: ${({ theme }) => theme.color.background.body};
-    color: ${({ theme }) => theme.color.text.body};
-  }
-
-  input, textarea, button, select {
-    font-family: ${({ theme }) => theme.font.primary};
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-`;
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
@@ -70,9 +52,9 @@ const AppAuthController = () => {
     return (
       <EtherspotTransactionKit provider={provider} chainId={chainId}>
         <BrowserRouter>
-          <ContentWrapper>
+          <AuthContentWrapper>
             <AuthorizedNavigation />
-          </ContentWrapper>
+          </AuthContentWrapper>
           <BottomMenu />
         </BrowserRouter>
       </EtherspotTransactionKit>
@@ -97,7 +79,7 @@ const App = () => {
       <LanguageProvider>
         <PrivyProvider
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
-          config={{ appearance: { theme: 'light' } }}
+          config={{ appearance: { theme: 'dark' } }}
         >
           <AppAuthController />
         </PrivyProvider>
@@ -106,7 +88,7 @@ const App = () => {
   );
 }
 
-const ContentWrapper = styled.div`
+const AuthContentWrapper = styled.div`
   max-width: 500px;
   height: 1px; // set height so children can inherit min height
   min-height: calc(100vh - 240px);

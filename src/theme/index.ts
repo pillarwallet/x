@@ -1,4 +1,9 @@
-import { keyframes } from 'styled-components';
+import { createGlobalStyle, keyframes } from 'styled-components';
+
+// fonts
+import formularRegularFont from '../assets/fonts/Formular-Regular.otf';
+import formularMediumFont from '../assets/fonts/Formular-Medium.otf';
+import formularBoldFont from '../assets/fonts/Formular-Bold.otf';
 
 export interface Theme {
   font: {
@@ -38,15 +43,15 @@ export interface Theme {
 
 export const defaultTheme: Theme = {
   font: {
-    primary: '"Roboto", sans',
+    primary: 'Formular, serif',
   },
   color: {
     background: {
-      body: '#24142f',
+      body: '#101010',
       bottomMenu: 'rgba(50,50,66,0.7)',
       bottomMenuItem: '#444d55',
       loadingLogo: '#fff',
-      buttonPrimary: '#c63bea',
+      buttonPrimary: '#D9D9D9',
       input: '#fff',
       info: '#BEF',
       error: '#D8000C',
@@ -58,7 +63,7 @@ export const defaultTheme: Theme = {
       bottomMenuItem: '#fff',
       bottomMenuItemActive: '#444d55',
       loadingLogo: '#997cfa',
-      buttonPrimary: '#fff',
+      buttonPrimary: '#1D1D1D',
       input: '#000',
       info: '#059',
       error: '#FFBABA',
@@ -94,7 +99,57 @@ const pulse = keyframes`
   }
 `;
 
+const rotateAndPulse = keyframes`
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+`;
+
 export const animation = {
   skeleton,
   pulse,
+  rotateAndPulse,
 }
+
+export const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: Formular;
+    font-weight: 400;
+    src: url(${formularRegularFont}) format("opentype");
+  }
+
+  @font-face {
+    font-family: Formular;
+    font-weight: 500;
+    src: url(${formularMediumFont}) format("opentype");
+  }
+
+  @font-face {
+    font-family: Formular;
+    font-weight: 700;
+    src: url(${formularBoldFont}) format("opentype");
+  }
+
+  body {
+    font-family: ${({ theme }) => theme.font.primary};
+    background: ${({ theme }) => theme.color.background.body};
+    color: ${({ theme }) => theme.color.text.body};
+  }
+  
+  input, textarea, button, select {
+    font-family: ${({ theme }) => theme.font.primary};
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+`;
+
