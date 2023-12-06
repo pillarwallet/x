@@ -1,9 +1,9 @@
 import { createGlobalStyle, keyframes } from 'styled-components';
 
 // fonts
-import formularRegularFont from '../assets/fonts/formular-regular.otf';
-import formularMediumFont from '../assets/fonts/formular-medium.otf';
-import formularBoldFont from '../assets/fonts/formular-bold.otf';
+import formularRegularFont from '../assets/fonts/Formular-Regular.otf';
+import formularMediumFont from '../assets/fonts/Formular-Medium.otf';
+import formularBoldFont from '../assets/fonts/Formular-Bold.otf';
 
 export interface Theme {
   font: {
@@ -99,9 +99,22 @@ const pulse = keyframes`
   }
 `;
 
+const rotateAndPulse = keyframes`
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+`;
+
 export const animation = {
   skeleton,
   pulse,
+  rotateAndPulse,
 }
 
 export const GlobalStyle = createGlobalStyle`

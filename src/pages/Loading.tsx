@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { ReactComponent as RandomShape } from '../assets/images/random-shape.svg';
+
 // theme
 import { animation } from '../theme';
 
 const Loading = () => (
   <Wrapper>
-    <AnimatedLoadingLogo />
+    <AnimatedShape />
   </Wrapper>
 );
 
@@ -17,21 +19,8 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
-const AnimatedLoadingLogo = styled.div`
-  font-size: 50px;
-  font-weight: 700;
-  width: 150px;
-  height: 150px;
-  line-height: 140px;
-  border-radius: 50%;
-  background: ${({ theme }) => theme.color.background.loadingLogo};
-  color: ${({ theme }) => theme.color.text.loadingLogo};
-  text-align: center;
-  animation: ${animation.pulse} 5s ease-in-out infinite;
-
-  &:before {
-    content: 'Px';
-  }
+const AnimatedShape = styled(RandomShape)`
+  animation: ${animation.rotateAndPulse} 20s linear infinite;
 `;
 
 export default Loading;
