@@ -9,27 +9,18 @@ exports[`<App /> renders correctly 1`] = `
 }
 
 .c1 {
-  font-size: 50px;
-  font-weight: 700;
-  width: 150px;
-  height: 150px;
-  line-height: 140px;
-  border-radius: 50%;
-  background: #fff;
-  color: #997cfa;
-  text-align: center;
-  animation: fEdePq 5s ease-in-out infinite;
-}
-
-.c1:before {
-  content: 'Px';
+  animation: cfuXhc 20s linear infinite;
+  max-width: 100%;
+  user-select: none;
 }
 
 <div
   className="c0"
 >
-  <div
+  <img
+    alt="random shape"
     className="c1"
+    src="random-shape.png"
   />
 </div>
 `;

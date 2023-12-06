@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ReactComponent as RandomShape } from '../assets/images/random-shape.svg';
+// images
+import randomShapeImage from '../assets/images/random-shape.png';
 
 // theme
 import { animation } from '../theme';
 
 const Loading = () => (
   <Wrapper>
-    <AnimatedShape />
+    <AnimatedShape src={randomShapeImage} alt="random shape" />
   </Wrapper>
 );
 
@@ -19,8 +20,10 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
-const AnimatedShape = styled(RandomShape)`
+const AnimatedShape = styled.img`
   animation: ${animation.rotateAndPulse} 20s linear infinite;
+  max-width: 100%;
+  user-select: none;
 `;
 
 export default Loading;

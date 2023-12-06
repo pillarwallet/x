@@ -21,7 +21,7 @@ const Alert = ({
 const AlertText = styled.p<{ $color: string; $background: string; }>`
   padding: 15px;
   background: ${({ $background }) => $background};
-  color: ${({ color }) => color};
+  color: ${({ $color }) => $color};
   word-break: break-all;
   margin-bottom: 15px;
   font-size: 14px;

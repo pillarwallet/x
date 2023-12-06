@@ -60,7 +60,6 @@ exports[`<Button /> renders correctly 1`] = `
 
 <button
     className="c0"
-    fullWidth={true}
   >
     full width button
   </button>,

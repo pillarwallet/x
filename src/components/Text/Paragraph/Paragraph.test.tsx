@@ -10,7 +10,7 @@ describe('<Paragraph />', () => {
       .create(
         <>
           <Paragraph>Some regular text.</Paragraph>
-          <Paragraph center>centered</Paragraph>
+          <Paragraph $center>centered</Paragraph>
         </>
       )
       .toJSON();

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 // images
-import { ReactComponent as RandomShape } from '../assets/images/random-shape.svg';
+import randomShapeImage from '../assets/images/random-shape.png';
 
 // components
 import Button from '../components/Button';
@@ -20,7 +20,7 @@ const Login = () => {
   return (
     <Wrapper>
       <HeroTitle>{t`content.welcomeToPillarX`}</HeroTitle>
-      <AnimatedShape />
+      <AnimatedShape src={randomShapeImage} alt="random shape" />
       <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
   )
@@ -45,8 +45,10 @@ const Wrapper = styled.div`
   margin: 0 auto;
 `;
 
-const AnimatedShape = styled(RandomShape)`
+const AnimatedShape = styled.img`
   animation: ${animation.rotateAndPulse} 20s linear infinite;
+  max-width: 100%;
+  user-select: none;
 `;
 
 export default Login;
