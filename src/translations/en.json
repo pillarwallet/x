@@ -5,6 +5,12 @@
     "transfer": "Transfer",
     "history": "History"
   },
+  "content": {
+    "welcomeToPillarX": "Welcome to PillarX"
+  },
+  "action": {
+    "getStarted": "Get Started"
+  },
   "error": {
     "pageNotFound": "Page not found",
     "appNotFound": "App not found"

@@ -14,16 +14,20 @@ describe('<Button />', () => {
       .create(
         <ThemeProvider theme={defaultTheme}>
           <Button>Some regular text.</Button>
+          <Button fullWidth>full width button</Button>
         </ThemeProvider>
       )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
 
-    const treeElement = tree as ReactTestRendererJSON;
-    expect(treeElement.children?.length).toBe(1);
-    expect(treeElement.children?.[0]).toBe('Some regular text.');
-    expect(treeElement.type).toBe('button');
-    expect(treeElement).toHaveStyleRule('color', defaultTheme.color.text.buttonPrimary);
+    const treeElements = tree as ReactTestRendererJSON[];
+    expect(treeElements?.length).toBe(2);
+    expect(treeElements?.[0]?.children?.length).toBe(1);
+    expect(treeElements?.[0]?.children?.[0]).toBe('Some regular text.');
+    expect(treeElements?.[0].type).toBe('button');
+    expect(treeElements?.[0]).toHaveStyleRule('color', defaultTheme.color.text.buttonPrimary);
+    expect(treeElements?.[0]).not.toHaveStyleRule('width', '100%');
+    expect(treeElements?.[1]).toHaveStyleRule('width', '100%');
   });
 });

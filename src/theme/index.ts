@@ -1,4 +1,9 @@
-import { keyframes } from 'styled-components';
+import { createGlobalStyle, keyframes } from 'styled-components';
+
+// fonts
+import formularRegularFont from '../assets/fonts/formular-regular.otf';
+import formularMediumFont from '../assets/fonts/formular-medium.otf';
+import formularBoldFont from '../assets/fonts/formular-bold.otf';
 
 export interface Theme {
   font: {
@@ -38,15 +43,15 @@ export interface Theme {
 
 export const defaultTheme: Theme = {
   font: {
-    primary: '"Roboto", sans',
+    primary: 'Formular, serif',
   },
   color: {
     background: {
-      body: '#24142f',
+      body: '#101010',
       bottomMenu: 'rgba(50,50,66,0.7)',
       bottomMenuItem: '#444d55',
       loadingLogo: '#fff',
-      buttonPrimary: '#c63bea',
+      buttonPrimary: '#D9D9D9',
       input: '#fff',
       info: '#BEF',
       error: '#D8000C',
@@ -58,7 +63,7 @@ export const defaultTheme: Theme = {
       bottomMenuItem: '#fff',
       bottomMenuItemActive: '#444d55',
       loadingLogo: '#997cfa',
-      buttonPrimary: '#fff',
+      buttonPrimary: '#1D1D1D',
       input: '#000',
       info: '#059',
       error: '#FFBABA',
@@ -98,3 +103,40 @@ export const animation = {
   skeleton,
   pulse,
 }
+
+export const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: Formular;
+    font-weight: 400;
+    src: url(${formularRegularFont}) format("opentype");
+  }
+
+  @font-face {
+    font-family: Formular;
+    font-weight: 500;
+    src: url(${formularMediumFont}) format("opentype");
+  }
+
+  @font-face {
+    font-family: Formular;
+    font-weight: 700;
+    src: url(${formularBoldFont}) format("opentype");
+  }
+
+  body {
+    font-family: ${({ theme }) => theme.font.primary};
+    background: ${({ theme }) => theme.color.background.body};
+    color: ${({ theme }) => theme.color.text.body};
+  }
+  
+  input, textarea, button, select {
+    font-family: ${({ theme }) => theme.font.primary};
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+`;
+
