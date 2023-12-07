@@ -21,7 +21,7 @@ import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
 import Loading from './pages/Loading';
 
 const AppAuthController = () => {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, createWallet } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
@@ -37,7 +37,7 @@ const AppAuthController = () => {
 
       // @ts-expect-error: provider type mismatch
       // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
-      setProvider(privyEthereumProvider.walletProvider);
+      setProvider(privyEthereumProvider);
       setChainId(+wallets[0].chainId.split(':')[1]); // extract from CAIP-2
     }
 
@@ -47,6 +47,16 @@ const AppAuthController = () => {
       expired = true;
     }
   }, [wallets]);
+
+  useEffect(() => {
+    const createWalletIfNotExists = async () => {
+      if (wallets?.length || !authenticated) return;
+      // create&link a privy wallet for logged user if none exist
+      await createWallet();
+    }
+
+    createWalletIfNotExists();
+  }, [wallets, createWallet, authenticated]);
 
   if (authenticated && provider && chainId) {
     return (
