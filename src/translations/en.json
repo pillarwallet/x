@@ -8,6 +8,12 @@
   "content": {
     "welcomeToPillarX": "Welcome to PillarX"
   },
+  "menuAction": {
+    "send": "Send",
+    "history": "History",
+    "apps": "Apps",
+    "account": "Account"
+  },
   "action": {
     "getStarted": "Get Started"
   },

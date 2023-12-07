@@ -6,183 +6,134 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 45px;
+  justify-content: space-between;
+  gap: 10px;
   position: fixed;
-  bottom: 60px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  backdrop-filter: blur(13px);
-  box-shadow: 7px 9px 59px 4px rgba(0,0,0,0.45);
-  background: rgba(50,50,66,0.7);
-  border-radius: 36px;
-  padding: 0 55px;
 }
 
 .c1 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
+  background: rgba(16,16,16,0.7);
+  border-radius: 130px;
+  padding: 6px 7px;
+  width: 280px;
+  height: 60px;
+}
+
+.c4 {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 35px 0;
-}
-
-.c1:hover span {
-  transform: scale(2);
-  background: none;
-}
-
-.c1:hover:before {
-  width: 72px;
-  height: 6px;
-  background: #fff;
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: -10px;
-  display: block;
-  border-radius: 6px;
-}
-
-.c2 {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #444d55;
+  gap: 12px;
   color: #fff;
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
+  height: 48px;
   overflow: hidden;
   cursor: pointer;
   transition: all .1s ease-in-out;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  font-size: 14px;
 }
 
-@media (max-width: 800px) {
-  .c0 {
-    width: calc(100% - 40px);
-    bottom: 20px;
-    gap: 35px;
-  }
+.c4:first-child {
+  margin-left: 17px;
+}
+
+.c4:last-child {
+  margin-right: 17px;
+}
+
+.c4 span {
+  display: none;
+}
+
+.c4:hover {
+  padding: 0 13px;
+  margin: 0;
+  border-radius: 100px;
+  background: rgba(216, 232, 255, 0.10);
+}
+
+.c4:hover span {
+  display: block;
+}
+
+.c2 {
+  flex: none;
+  width: 60px;
+  height: 60px;
+}
+
+.c2 .c3 {
+  width: 48px;
+}
+
+.c2 .c3:first-child,
+.c2 .c3:last-child {
+  margin: 0;
+}
+
+.c2 .c3:hover {
+  padding: 0;
 }
 
 <div
   className="c0"
 >
   <div
-    className="c1"
+    className="c1 c2"
   >
-    <span
-      className="c2"
+    <div
+      className="c3 c4"
       onClick={[Function]}
     >
-      <svg
-        fill="currentColor"
-        height={25}
-        stroke="currentColor"
-        strokeWidth="0"
-        style={
-          {
-            "color": undefined,
-          }
-        }
-        viewBox="0 0 24 24"
-        width={25}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 0h24v24H0z"
-          fill="none"
-        />
-        <path
-          d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6z"
-        />
-      </svg>
-    </span>
+      <svg />
+    </div>
   </div>
   <div
     className="c1"
   >
-    <span
-      className="c2"
+    <div
+      className="c3 c4"
     >
-      <svg
-        fill="currentColor"
-        height={21}
-        stroke="currentColor"
-        strokeWidth="0"
-        style={
-          {
-            "color": undefined,
-          }
-        }
-        viewBox="0 0 256 256"
-        width={21}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M231.4,44.34s0,.1,0,.15l-58.2,191.94a15.88,15.88,0,0,1-14,11.51q-.69.06-1.38.06a15.86,15.86,0,0,1-14.42-9.15l-35.71-75.39a4,4,0,0,1,.79-4.54l57.26-57.27a8,8,0,0,0-11.31-11.31L97.08,147.6a4,4,0,0,1-4.54.79l-75-35.53A16.37,16.37,0,0,1,8,97.36,15.89,15.89,0,0,1,19.57,82.84l191.94-58.2.15,0A16,16,0,0,1,231.4,44.34Z"
-        />
-      </svg>
-    </span>
-  </div>
-  <div
-    className="c1"
-  >
-    <span
-      className="c2"
+      <svg />
+      <span>
+        menuAction.send
+      </span>
+    </div>
+    <div
+      className="c3 c4"
     >
-      <svg
-        fill="currentColor"
-        height={21}
-        stroke="currentColor"
-        strokeWidth="0"
-        style={
-          {
-            "color": undefined,
-          }
-        }
-        viewBox="0 0 512 512"
-        width={21}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z"
-        />
-      </svg>
-    </span>
-  </div>
-  <div
-    className="c1"
-    onClick={[Function]}
-  >
-    <span
-      className="c2"
+      <svg />
+      <span>
+        menuAction.history
+      </span>
+    </div>
+    <div
+      className="c3 c4"
     >
-      <svg
-        fill="currentColor"
-        height={25}
-        stroke="currentColor"
-        strokeWidth="0"
-        style={
-          {
-            "color": undefined,
-          }
-        }
-        viewBox="0 0 24 24"
-        width={25}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 0h24v24H0z"
-          fill="none"
-        />
-        <path
-          d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"
-        />
-      </svg>
-    </span>
+      <svg />
+      <span>
+        menuAction.account
+      </span>
+    </div>
+    <div
+      className="c3 c4"
+      onClick={[Function]}
+    >
+      <svg />
+      <span>
+        menuAction.apps
+      </span>
+    </div>
   </div>
 </div>
 `;
