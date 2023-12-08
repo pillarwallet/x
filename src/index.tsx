@@ -14,6 +14,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
+  release: 'pillarx@' + process.env.npm_package_version,
 });
 
 if (typeof window !== 'undefined') window.Buffer = window.Buffer ?? ImportedBuffer;
