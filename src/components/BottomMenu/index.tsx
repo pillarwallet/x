@@ -1,10 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { MdAccountBalance, MdApps } from 'react-icons/md';
-import { PiPaperPlaneTiltFill } from 'react-icons/pi';
-import { FaHistory } from 'react-icons/fa';
 import { usePrivy } from '@privy-io/react-auth';
+import { useTranslation } from 'react-i18next';
+
+// images
+import { ReactComponent as IconSend } from '../../assets/images/icon/icon-send.svg';
+import { ReactComponent as IconHistory } from '../../assets/images/icon/icon-history.svg';
+import { ReactComponent as IconApps } from '../../assets/images/icon/icon-apps.svg';
+import { ReactComponent as IconWallet } from '../../assets/images/icon/icon-wallet.svg';
+import { ReactComponent as IconHome } from '../../assets/images/icon/icon-home.svg';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -12,31 +17,35 @@ import { navigationRoute } from '../../navigation';
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const navigate = useNavigate();
+  const [t] = useTranslation();
 
   if (!authenticated) return null;
 
   return (
     <Wrapper>
-      <MenuItemFullHeight>
+      <HomeMenuItem>
         <MenuItem onClick={() => navigate(navigationRoute.home)}>
-          <MdAccountBalance size={25} />
+          <IconHome />
         </MenuItem>
-      </MenuItemFullHeight>
-      <MenuItemFullHeight>
+      </HomeMenuItem>
+      <MainMenuItems>
         <MenuItem>
-          <PiPaperPlaneTiltFill size={21} />
+          <IconSend />
+          <span>{t`menuAction.send`}</span>
         </MenuItem>
-      </MenuItemFullHeight>
-      <MenuItemFullHeight>
         <MenuItem>
-          <FaHistory size={21} />
+          <IconHistory />
+          <span>{t`menuAction.history`}</span>
         </MenuItem>
-      </MenuItemFullHeight>
-      <MenuItemFullHeight onClick={() => navigate(navigationRoute.apps)}>
         <MenuItem>
-          <MdApps size={25} />
+          <IconWallet />
+          <span>{t`menuAction.account`}</span>
         </MenuItem>
-      </MenuItemFullHeight>
+        <MenuItem onClick={() => navigate(navigationRoute.apps)}>
+          <IconApps />
+          <span>{t`menuAction.apps`}</span>
+        </MenuItem>
+      </MainMenuItems>
     </Wrapper>
   );
 }
@@ -46,65 +55,82 @@ const Wrapper = styled.div`
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 45px;
+  justify-content: space-between;
+  gap: 10px;
   position: fixed;
-  bottom: 60px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  backdrop-filter: blur(13px);
-  box-shadow: 7px 9px 59px 4px rgba(0,0,0,0.45);
+`;
+
+const MainMenuItems = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
   background: ${({ theme }) => theme.color.background.bottomMenu};
-  border-radius: 36px;
-  padding: 0 55px;
-  
-  @media (max-width: 800px) {
-    width: calc(100% - 40px);
-    bottom: 20px;
-    gap: 35px;
-  }
+  border-radius: 130px;
+  padding: 6px 7px;
+  width: 280px;
+  height: 60px;
 `;
 
-const MenuItemFullHeight = styled.div`
+const MenuItem = styled.div`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 35px 0;
-
-  &:hover {
-    span {
-      transform: scale(2);
-      background: none;
-    }
-
-    &:before {
-      width: 72px;
-      height: 6px;
-      background: ${({ theme }) => theme.color.border.bottomMenuItemBottomActive};
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: -10px;
-      display: block;
-      border-radius: 6px;
-    }
-  }
-`;
-
-const MenuItem = styled.span`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ theme }) => theme.color.background.bottomMenuItem};
+  gap: 12px;
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
+  height: 48px;
   overflow: hidden;
   cursor: pointer;
   transition: all .1s ease-in-out;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  font-size: 14px;
+
+  &:first-child {
+    margin-left: 17px;
+  }
+
+  &:last-child {
+    margin-right: 17px;
+  }
+
+  span {
+    display: none;
+  }
+
+  &:hover {
+    padding: 0 13px;
+    margin: 0;
+    border-radius: 100px;
+    background: ${({ theme }) => theme.color.background.bottomMenuItemHover};
+    
+    span {
+      display: block;
+    }
+  }
+`;
+
+const HomeMenuItem = styled(MainMenuItems)`
+  flex: none;
+  width: 60px;
+  height: 60px;
+
+  ${MenuItem} {
+    width: 48px;
+
+    &:first-child, &:last-child {
+      margin: 0
+    }
+
+    &:hover {
+      padding: 0;
+    }
+  }
 `;
 
 export default BottomMenu;

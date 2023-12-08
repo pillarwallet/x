@@ -13,7 +13,7 @@ export interface Theme {
     background: {
       body: string;
       bottomMenu: string;
-      bottomMenuItem: string;
+      bottomMenuItemHover: string;
       loadingLogo: string;
       buttonPrimary: string;
       input: string;
@@ -25,7 +25,6 @@ export interface Theme {
     text: {
       body: string;
       bottomMenuItem: string;
-      bottomMenuItemActive: string;
       loadingLogo: string;
       buttonPrimary: string;
       input: string;
@@ -48,8 +47,8 @@ export const defaultTheme: Theme = {
   color: {
     background: {
       body: '#101010',
-      bottomMenu: 'rgba(50,50,66,0.7)',
-      bottomMenuItem: '#444d55',
+      bottomMenu: 'rgba(16,16,16,0.7)',
+      bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
       loadingLogo: '#fff',
       buttonPrimary: '#D9D9D9',
       input: '#fff',
@@ -61,7 +60,6 @@ export const defaultTheme: Theme = {
     text: {
       body: '#fff',
       bottomMenuItem: '#fff',
-      bottomMenuItemActive: '#444d55',
       loadingLogo: '#997cfa',
       buttonPrimary: '#1D1D1D',
       input: '#000',
