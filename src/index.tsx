@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { Buffer as ImportedBuffer } from 'buffer';
 import * as Sentry from '@sentry/react';
 
+const sentryReleaseTag = 'pillarx@'
+  +  process.env.npm_package_version
+  // CF_PAGES_COMMIT_SHA is provided by Cloudfare, in case of provider replacement change it too
+  + (process.env.CF_PAGES_COMMIT_SHA ? '-' + process.env.CF_PAGES_COMMIT_SHA : '');
+
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   integrations: [
@@ -14,7 +19,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
-  release: 'pillarx@' + process.env.npm_package_version + '-' + process.env.CF_PAGES_COMMIT_SHA,
+  release: sentryReleaseTag,
 });
 
 if (typeof window !== 'undefined') window.Buffer = window.Buffer ?? ImportedBuffer;
