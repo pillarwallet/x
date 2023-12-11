@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run sentry:sourcemaps",
+    "build": "REACT_APP_COMMIT_SHA=$CF_PAGES_COMMIT_SHA REACT_APP_VERSION=$npm_package_version react-scripts build && npm run sentry:sourcemaps",
     "test": "eslint . && jest",
     "test:update": "eslint . && jest --updateSnapshot",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build"

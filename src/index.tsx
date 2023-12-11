@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { Buffer as ImportedBuffer } from 'buffer';
 import * as Sentry from '@sentry/react';
 
-const sentryReleaseTag = 'pillarx@'
-  +  process.env.npm_package_version
-  // CF_PAGES_COMMIT_SHA is provided by Cloudfare, in case of provider replacement change it too
-  + (process.env.CF_PAGES_COMMIT_SHA ? '-' + process.env.CF_PAGES_COMMIT_SHA : '');
+let sentryReleaseTag;
+
+// add a release tag only if REACT_APP_VERSION provided
+if (process.env.REACT_APP_VERSION) {
+  sentryReleaseTag = 'pillarx@' + process.env.REACT_APP_VERSION
+    + (process.env.REACT_APP_COMMIT_SHA ? '-' + process.env.REACT_APP_COMMIT_SHA : '');
+}
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
