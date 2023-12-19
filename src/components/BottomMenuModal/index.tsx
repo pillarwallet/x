@@ -49,7 +49,11 @@ const BottomMenuModal = ({
   return (
     <Transition nodeRef={overlayRef} in={activeMenuItemIndex !== null} timeout={100}>
       {(overlayState) => (
-        <Overlay ref={overlayRef} $blur={overlayState === 'entered' ? 5 : 0}>
+        <Overlay
+          ref={overlayRef}
+          $blur={overlayState === 'entered' ? 5 : 0}
+          $display={overlayState !== 'exited'}
+        >
           <ModalContentVerticalAnimation $in={overlayState === 'entered'}>
             <ModalContentHorizontalAnimation
               $in={overlayState === 'entered'}
@@ -70,7 +74,10 @@ const BottomMenuModal = ({
   );
 }
 
-const Overlay = styled.div<{ $blur: number }>`
+const Overlay = styled.div<{
+  $blur: number;
+  $display: boolean;
+}>`
   position: fixed;
   z-index: 98;
   top: 0;
@@ -79,7 +86,7 @@ const Overlay = styled.div<{ $blur: number }>`
   height: 100%;
   transition: 100ms linear;
   backdrop-filter: blur(${({ $blur }) => $blur}px);
-  display: flex;
+  display: ${({ $display }) => $display ? 'flex' : 'none'};
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 114px;
