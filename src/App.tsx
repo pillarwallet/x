@@ -13,13 +13,13 @@ import { defaultTheme, GlobalStyle } from './theme';
 
 // providers
 import LanguageProvider from './providers/LanguageProvider';
+import BottomMenuModalProvider from './providers/BottomMenuModalProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
 
 // pages
 import Loading from './pages/Loading';
-import BottomMenuModalProvider from './providers/BottomMenuModalProvider';
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
