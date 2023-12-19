@@ -67,6 +67,4 @@ describe('<BottomMenu />', () => {
   });
 });
 
-jest.clearAllMocks();
-
 

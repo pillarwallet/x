@@ -5,23 +5,23 @@ import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 
 // components
-import { PrimaryTitle } from '../components/Text/Title';
-import Alert from '../components/Text/Alert';
+import { PrimaryTitle } from '../../components/Text/Title';
+import Alert from '../../components/Text/Alert';
 
 // apps
-import { loadAppsList } from '../apps';
+import { loadAppsList } from '../../apps';
 
 // types
-import { AppManifest, RecordPerKey } from '../types';
+import { AppManifest, RecordPerKey } from '../../types';
 
 // theme
-import { animation } from '../theme';
+import { animation } from '../../theme';
 
 // navigation
-import { navigationRoute } from '../navigation';
+import { navigationRoute } from '../../navigation';
 
 // pages
-import NotFound from './NotFound';
+import NotFound from '../NotFound';
 
 const AppSplash = ({ appId }: { appId: string }) => (
   <AppSplashWrapper>
@@ -37,7 +37,7 @@ const App = ({ id }: { id: string }) => {
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // artificial 1s delay
     try {
-      return import(`../apps/${id}`);
+      return import(`../../apps/${id}`);
     } catch (e) {
       return { default: () => <Alert level="error">{t`error.appNotFound`}</Alert> };
     }
@@ -57,7 +57,7 @@ const AppIcon = ({ appId }: { appId: string }) => {
 
   useEffect(() => {
     const loadIconSrc = async () => {
-      const icon = await import(`../apps/${appId}/icon.png`);
+      const icon = await import(`../../apps/${appId}/icon.png`);
       setIconSrc(icon.default);
     }
 
@@ -83,7 +83,7 @@ const AppIcon = ({ appId }: { appId: string }) => {
   );
 };
 
-const Apps = () => {
+const Index = () => {
   const [t] = useTranslation();
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
   const { appId } = useParams();
@@ -177,4 +177,4 @@ const AppIconSkeleton = styled.div`
   border-radius: 20px;
 `;
 
-export default Apps;
+export default Index;

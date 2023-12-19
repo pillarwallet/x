@@ -152,7 +152,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   height: 100%;
   transition: 100ms linear;
   backdrop-filter: blur(0px);
-  display: flex;
+  display: none;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 114px;
