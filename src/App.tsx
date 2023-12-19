@@ -19,6 +19,7 @@ import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
 
 // pages
 import Loading from './pages/Loading';
+import BottomMenuModalProvider from './providers/BottomMenuModalProvider';
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
@@ -52,10 +53,12 @@ const AppAuthController = () => {
     return (
       <EtherspotTransactionKit provider={provider} chainId={chainId}>
         <BrowserRouter>
-          <AuthContentWrapper>
-            <AuthorizedNavigation />
-          </AuthContentWrapper>
-          <BottomMenu />
+          <BottomMenuModalProvider>
+            <AuthContentWrapper>
+              <AuthorizedNavigation />
+            </AuthContentWrapper>
+            <BottomMenu />
+          </BottomMenuModalProvider>
         </BrowserRouter>
       </EtherspotTransactionKit>
     )

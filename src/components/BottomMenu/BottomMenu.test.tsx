@@ -10,6 +10,10 @@ import BottomMenu from './';
 // theme
 import { defaultTheme } from '../../theme';
 
+// providers
+import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
+import LanguageProvider from '../../providers/LanguageProvider';
+
 describe('<BottomMenu />', () => {
   it('renders correctly', () => {
     (usePrivy as jest.Mock).mockImplementation(() => ({ authenticated: true }));
@@ -17,7 +21,11 @@ describe('<BottomMenu />', () => {
       .create(
         <BrowserRouter>
           <ThemeProvider theme={defaultTheme}>
-            <BottomMenu />
+            <LanguageProvider>
+              <BottomMenuModalProvider>
+                <BottomMenu />
+              </BottomMenuModalProvider>
+            </LanguageProvider>
           </ThemeProvider>
         </BrowserRouter>
       )
@@ -25,12 +33,13 @@ describe('<BottomMenu />', () => {
 
     expect(tree).toMatchSnapshot();
 
-    const treeElement = tree as ReactTestRendererJSON;
-    expect((treeElement.children?.[0] as ReactTestRendererJSON)?.children?.length).toBe(1); // menu home button
-    expect((treeElement.children?.[1] as ReactTestRendererJSON)?.children?.length).toBe(4); // other menu items
-    expect(treeElement.type).toBe('div');
-    expect(treeElement?.children?.[0]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
-    expect(treeElement?.children?.[1]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
+    const treeElements = tree as ReactTestRendererJSON[];
+    const [bottomMenuElement] = treeElements;
+    expect((bottomMenuElement.children?.[0] as ReactTestRendererJSON)?.children?.length).toBe(1); // menu home button
+    expect((bottomMenuElement.children?.[1] as ReactTestRendererJSON)?.children?.length).toBe(4); // other menu items
+    expect(bottomMenuElement.type).toBe('div');
+    expect(bottomMenuElement?.children?.[0]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
+    expect(bottomMenuElement?.children?.[1]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
     jest.clearAllMocks();
   });
 
@@ -40,7 +49,11 @@ describe('<BottomMenu />', () => {
       .create(
         <BrowserRouter>
           <ThemeProvider theme={defaultTheme}>
-            <BottomMenu />
+            <LanguageProvider>
+              <BottomMenuModalProvider>
+                <BottomMenu />
+              </BottomMenuModalProvider>
+            </LanguageProvider>
           </ThemeProvider>
         </BrowserRouter>
       )
