@@ -83,7 +83,7 @@ const AppIcon = ({ appId }: { appId: string }) => {
   );
 };
 
-const Index = () => {
+const Apps = () => {
   const [t] = useTranslation();
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
   const { appId } = useParams();
@@ -177,4 +177,4 @@ const AppIconSkeleton = styled.div`
   border-radius: 20px;
 `;
 
-export default Index;
+export default Apps;
