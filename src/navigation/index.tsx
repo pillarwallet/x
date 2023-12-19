@@ -22,7 +22,7 @@ export const AuthorizedNavigation = () => {
       <Route path={navigationRoute.home} element={<Lobby />} />
       <Route path={navigationRoute.transfer} element={<Transfer />} />
       <Route path={navigationRoute.history} element={<History />} />
-      <Route path={navigationRoute.apps} element={<Apps />} />
+      <Route path={navigationRoute.apps + '/:appId?'} element={<Apps />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

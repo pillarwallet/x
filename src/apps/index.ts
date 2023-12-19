@@ -3,23 +3,23 @@ import i18next from 'i18next';
 // types
 import { AppManifest, RecordPerKey } from '../types';
 
-const appsNamespaces = [
-  'SignMessage',
+const allowedApps = [
+  'sign-message',
 ];
 
 export const loadAppsList = () => {
- return appsNamespaces.reduce((apps: RecordPerKey<AppManifest>, appNamespace: string) => {
+ return allowedApps.reduce((apps: RecordPerKey<AppManifest>, appId: string) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const appManifest = require(`./${appNamespace}/manifest.json`) as AppManifest;
+    const appManifest = require(`./${appId}/manifest.json`) as AppManifest;
 
     if (appManifest.translations) {
       Object.keys(appManifest.translations).forEach((languageKey) => {
         const translation = appManifest.translations[languageKey];
-        i18next.addResourceBundle(languageKey, `app:${appNamespace}`, translation);
+        i18next.addResourceBundle(languageKey, `app:${appId}`, translation);
       });
     }
 
-    apps[appNamespace] = appManifest;
+    apps[appId] = appManifest;
 
     return apps;
   }, {});
