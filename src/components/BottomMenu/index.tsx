@@ -24,9 +24,6 @@ const BottomMenu = () => {
   const [t] = useTranslation();
   const { setActiveMenuItemIndex, activeMenuItemIndex } = useBottomMenuModal();
 
-  // eslint-disable-next-line no-console
-  console.log({ authenticated })
-
   if (!authenticated) return null;
 
   const mainMenuItems = [
