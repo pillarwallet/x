@@ -113,23 +113,23 @@ const rotateAndPulse = keyframes`
 
 const slideUp = keyframes`
   0% {
-    transform:scale(.8) translateY(1000px);
-    opacity:0;
+    transform: scale(.8) translateY(1000px);
+    opacity: 0;
   }
   100% {
-    transform:scale(1) translateY(0px);
-    opacity:1;
+    transform: scale(1) translateY(0px);
+    opacity: 1;
   }
 `;
 
 const slideDown = keyframes`
   0% {
-    transform:scale(1) translateY(0px);
-    opacity:1;
+    transform: scale(1) translateY(0px);
+    opacity: 1;
   }
   100% {
-    transform:scale(.8) translateY(1000px);
-    opacity:0;
+    transform: scale(.8) translateY(1000px);
+    opacity: 0;
   }
 `;
 
