@@ -3,15 +3,10 @@ import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-// images
-import randomShapeImage from '../assets/images/random-shape.png';
-
 // components
 import Button from '../components/Button';
 import { PrimaryTitle } from '../components/Text/Title';
-
-// theme
-import { animation } from '../theme';
+import AnimatedShape from '../components/AnimatedShape';
 
 const Login = () => {
   const { login } = usePrivy();
@@ -20,7 +15,7 @@ const Login = () => {
   return (
     <Wrapper>
       <HeroTitle>{t`content.welcomeToPillarX`}</HeroTitle>
-      <AnimatedShape src={randomShapeImage} alt="random shape" />
+      <AnimatedShape />
       <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
   )
@@ -43,12 +38,6 @@ const Wrapper = styled.div`
   align-items: center;
   max-width: 500px;
   margin: 0 auto;
-`;
-
-const AnimatedShape = styled.img`
-  animation: ${animation.rotateAndPulse} 20s linear infinite;
-  max-width: 100%;
-  user-select: none;
 `;
 
 export default Login;
