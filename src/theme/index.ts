@@ -14,6 +14,7 @@ export interface Theme {
       body: string;
       bottomMenu: string;
       bottomMenuItemHover: string;
+      bottomMenuModal: string;
       loadingLogo: string;
       buttonPrimary: string;
       input: string;
@@ -49,6 +50,7 @@ export const defaultTheme: Theme = {
       body: '#101010',
       bottomMenu: 'rgba(16,16,16,0.7)',
       bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
+      bottomMenuModal: 'rgba(29, 29, 29, 0.90)',
       loadingLogo: '#fff',
       buttonPrimary: '#D9D9D9',
       input: '#fff',
@@ -109,10 +111,34 @@ const rotateAndPulse = keyframes`
   }
 `;
 
+const slideUp = keyframes`
+  0% {
+    transform: scale(.8) translateY(1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0px);
+    opacity: 1;
+  }
+`;
+
+const slideDown = keyframes`
+  0% {
+    transform: scale(1) translateY(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(.8) translateY(1000px);
+    opacity: 0;
+  }
+`;
+
 export const animation = {
   skeleton,
   pulse,
   rotateAndPulse,
+  slideUp,
+  slideDown,
 }
 
 export const GlobalStyle = createGlobalStyle`

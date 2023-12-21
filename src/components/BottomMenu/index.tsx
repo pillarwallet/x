@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { usePrivy } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
 
@@ -14,67 +14,79 @@ import { ReactComponent as IconHome } from '../../assets/images/icon/icon-home.s
 // navigation
 import { navigationRoute } from '../../navigation';
 
+// hooks
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
+
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
+  const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
+  const { setActiveMenuItemIndex, activeMenuItemIndex } = useBottomMenuModal();
 
   if (!authenticated) return null;
+
+  const mainMenuItems = [
+    {
+      icon: <IconSend />,
+      label: t`menuAction.send`,
+    },
+    {
+      icon: <IconHistory />,
+      label: t`menuAction.history`,
+    },
+    {
+      icon: <IconWallet />,
+      label: t`menuAction.account`,
+    },
+    {
+      icon: <IconApps />,
+      label: t`menuAction.apps`,
+    },
+  ];
+
+  const isHomeActive = activeMenuItemIndex === null
+    && navLocation.pathname === '/';
 
   return (
     <Wrapper>
       <HomeMenuItem>
-        <MenuItem onClick={() => navigate(navigationRoute.home)}>
+        <MenuItem
+          onClick={() => navigate(navigationRoute.home)}
+          className={isHomeActive ? 'active' : ''}
+        >
           <IconHome />
         </MenuItem>
       </HomeMenuItem>
       <MainMenuItems>
-        <MenuItem>
-          <IconSend />
-          <span>{t`menuAction.send`}</span>
-        </MenuItem>
-        <MenuItem>
-          <IconHistory />
-          <span>{t`menuAction.history`}</span>
-        </MenuItem>
-        <MenuItem>
-          <IconWallet />
-          <span>{t`menuAction.account`}</span>
-        </MenuItem>
-        <MenuItem onClick={() => navigate(navigationRoute.apps)}>
-          <IconApps />
-          <span>{t`menuAction.apps`}</span>
-        </MenuItem>
+        {mainMenuItems.map((item, index) => (
+          <MenuItem
+            key={item.label + index}
+            onClick={() => {
+              // TODO: replace this when apps modal design is ready
+              if (index === 3) {
+                navigate(navigationRoute.apps);
+                return;
+              }
+
+              if (activeMenuItemIndex === index) {
+                // toggle out if already active
+                setActiveMenuItemIndex(null);
+                return;
+              }
+
+              setActiveMenuItemIndex(index);
+            }}
+            className={activeMenuItemIndex === index ? 'active' : ''}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </MenuItem>
+        ))}
       </MainMenuItems>
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-const MainMenuItems = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  backdrop-filter: blur(5px);
-  background: ${({ theme }) => theme.color.background.bottomMenu};
-  border-radius: 130px;
-  padding: 6px 7px;
-  width: 280px;
-  height: 60px;
-`;
 
 const MenuItem = styled.div`
   position: relative;
@@ -102,17 +114,44 @@ const MenuItem = styled.div`
   span {
     display: none;
   }
+`;
 
-  &:hover {
+const Wrapper = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  z-index: 100;
+  transform: translateX(-50%);
+
+  &:not(&:hover) ${MenuItem}.active, ${MenuItem}:hover {
     padding: 0 13px;
     margin: 0;
     border-radius: 100px;
     background: ${({ theme }) => theme.color.background.bottomMenuItemHover};
-    
+
     span {
       display: block;
     }
   }
+`;
+
+const MainMenuItems = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
+  background: ${({ theme }) => theme.color.background.bottomMenu};
+  border-radius: 130px;
+  padding: 6px 7px;
+  width: 280px;
+  height: 60px;
 `;
 
 const HomeMenuItem = styled(MainMenuItems)`

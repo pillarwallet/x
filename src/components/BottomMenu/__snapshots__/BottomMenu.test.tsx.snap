@@ -1,33 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<BottomMenu /> renders correctly 1`] = `
-.c0 {
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  backdrop-filter: blur(5px);
-  background: rgba(16,16,16,0.7);
-  border-radius: 130px;
-  padding: 6px 7px;
-  width: 280px;
-  height: 60px;
-}
-
-.c4 {
+[
+  .c4 {
   position: relative;
   display: flex;
   align-items: center;
@@ -55,15 +30,44 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   display: none;
 }
 
-.c4:hover {
+.c0 {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  z-index: 100;
+  transform: translateX(-50%);
+}
+
+.c0:not(.c0:hover) .c3.active,
+.c0 .c3:hover {
   padding: 0 13px;
   margin: 0;
   border-radius: 100px;
   background: rgba(216, 232, 255, 0.10);
 }
 
-.c4:hover span {
+.c0:not(.c0:hover) .c3.active span,
+.c0 .c3:hover span {
   display: block;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
+  background: rgba(16,16,16,0.7);
+  border-radius: 130px;
+  padding: 6px 7px;
+  width: 280px;
+  height: 60px;
 }
 
 .c2 {
@@ -86,56 +90,159 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 }
 
 <div
-  className="c0"
->
-  <div
-    className="c1 c2"
+    className="c0"
   >
     <div
-      className="c3 c4"
-      onClick={[Function]}
+      className="c1 c2"
     >
-      <svg />
+      <div
+        className="c3 c4 active"
+        onClick={[Function]}
+      >
+        <svg />
+      </div>
     </div>
-  </div>
-  <div
-    className="c1"
+    <div
+      className="c1"
+    >
+      <div
+        className="c3 c4"
+        onClick={[Function]}
+      >
+        <svg />
+        <span>
+          Send
+        </span>
+      </div>
+      <div
+        className="c3 c4"
+        onClick={[Function]}
+      >
+        <svg />
+        <span>
+          History
+        </span>
+      </div>
+      <div
+        className="c3 c4"
+        onClick={[Function]}
+      >
+        <svg />
+        <span>
+          Account
+        </span>
+      </div>
+      <div
+        className="c3 c4"
+        onClick={[Function]}
+      >
+        <svg />
+        <span>
+          Apps
+        </span>
+      </div>
+    </div>
+  </div>,
+  .c0 {
+  position: fixed;
+  z-index: 98;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: 100ms linear;
+  backdrop-filter: blur(0px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 114px;
+  overflow: hidden;
+}
+
+.c1 {
+  transition: 100ms linear;
+  transform: translateY(1000px);
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+  width: 100%;
+}
+
+.c2 {
+  align-self: flex-start;
+  transform: translateX(calc(0 * -100vw));
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+}
+
+.c3 {
+  width: 100vw;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.c4 {
+  width: 350px;
+  min-height: 350px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 27px;
+  padding: 23px;
+  background: rgba(29, 29, 29, 0.90);
+  backdrop-filter: blur(2px);
+}
+
+<div
+    className="c0"
   >
     <div
-      className="c3 c4"
+      className="c1"
     >
-      <svg />
-      <span>
-        menuAction.send
-      </span>
+      <div
+        className="c2"
+      >
+        <div
+          className="c3"
+        >
+          <div
+            className="c4"
+          >
+            <div>
+              Send
+            </div>
+          </div>
+        </div>
+        <div
+          className="c3"
+        >
+          <div
+            className="c4"
+          >
+            <div>
+              History
+            </div>
+          </div>
+        </div>
+        <div
+          className="c3"
+        >
+          <div
+            className="c4"
+          >
+            <div>
+              Account
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div
-      className="c3 c4"
-    >
-      <svg />
-      <span>
-        menuAction.history
-      </span>
-    </div>
-    <div
-      className="c3 c4"
-    >
-      <svg />
-      <span>
-        menuAction.account
-      </span>
-    </div>
-    <div
-      className="c3 c4"
-      onClick={[Function]}
-    >
-      <svg />
-      <span>
-        menuAction.apps
-      </span>
-    </div>
-  </div>
-</div>
+  </div>,
+]
 `;
 
 exports[`<BottomMenu /> renders correctly if not authenticated 1`] = `null`;

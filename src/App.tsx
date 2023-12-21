@@ -13,6 +13,7 @@ import { defaultTheme, GlobalStyle } from './theme';
 
 // providers
 import LanguageProvider from './providers/LanguageProvider';
+import BottomMenuModalProvider from './providers/BottomMenuModalProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
@@ -52,10 +53,12 @@ const AppAuthController = () => {
     return (
       <EtherspotTransactionKit provider={provider} chainId={chainId}>
         <BrowserRouter>
-          <AuthContentWrapper>
-            <AuthorizedNavigation />
-          </AuthContentWrapper>
-          <BottomMenu />
+          <BottomMenuModalProvider>
+            <AuthContentWrapper>
+              <AuthorizedNavigation />
+            </AuthContentWrapper>
+            <BottomMenu />
+          </BottomMenuModalProvider>
         </BrowserRouter>
       </EtherspotTransactionKit>
     )
