@@ -2,60 +2,67 @@ import React, { Suspense, useEffect } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import styled from 'styled-components';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // components
-import { PrimaryTitle } from '../components/Text/Title';
-import Alert from '../components/Text/Alert';
+import { PrimaryTitle } from '../../components/Text/Title';
+import Alert from '../../components/Text/Alert';
 
 // apps
-import { loadAppsList } from '../apps';
+import { loadAppsList } from '../../apps';
 
 // types
-import { AppManifest, RecordPerKey } from '../types';
+import { AppManifest, RecordPerKey } from '../../types';
 
 // theme
-import { animation } from '../theme';
+import { animation } from '../../theme';
 
-const AppSplash = ({ namespace }: { namespace: string }) => (
+// navigation
+import { navigationRoute } from '../../navigation';
+
+// pages
+import NotFound from '../NotFound';
+
+const AppSplash = ({ appId }: { appId: string }) => (
   <AppSplashWrapper>
     <AppSplashInner>
-      <AppIcon namespace={namespace} />
+      <AppIcon appId={appId} />
     </AppSplashInner>
   </AppSplashWrapper>
 );
 
-const App = ({ namespace }: { namespace: string }) => {
+const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
 
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // artificial 1s delay
     try {
-      return import(`../apps/${namespace}`);
+      return import(`../../apps/${id}`);
     } catch (e) {
       return { default: () => <Alert level="error">{t`error.appNotFound`}</Alert> };
     }
   });
 
   return (
-    <Suspense fallback={<AppSplash namespace={namespace} />}>
+    <Suspense fallback={<AppSplash appId={id} />}>
       <ComponentToRender />
     </Suspense>
   );
 };
 
-const AppIcon = ({ namespace }: { namespace: string }) => {
+const AppIcon = ({ appId }: { appId: string }) => {
   const [iconSrc, setIconSrc] = React.useState<string | undefined>(undefined);
   const [iconLoaded, setIconLoaded] = React.useState<boolean>(false);
   const imageRef = React.useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const loadIconSrc = async () => {
-      const icon = await import(`../apps/${namespace}/icon.png`);
+      const icon = await import(`../../apps/${appId}/icon.png`);
       setIconSrc(icon.default);
     }
 
     loadIconSrc();
-  }, [namespace]);
+  }, [appId]);
 
   useEffect(() => {
     if (!imageRef.current || !iconSrc) return;
@@ -79,35 +86,43 @@ const AppIcon = ({ namespace }: { namespace: string }) => {
 const Apps = () => {
   const [t] = useTranslation();
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
-  const [loadedAppNamespace, setLoadedAppNamespace] = React.useState<string | undefined>(undefined);
+  const { appId } = useParams();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const loadedApps = loadAppsList();
     setApps(loadedApps);
   }, []);
 
-  if (loadedAppNamespace) {
+
+  if (!appId) {
     return (
-      <I18nextProvider i18n={i18n} defaultNS={`app:${loadedAppNamespace}`}>
-        <App namespace={loadedAppNamespace} />
-      </I18nextProvider>
+      <Wrapper>
+        <PrimaryTitle>{t`title.apps`}</PrimaryTitle>
+        <AppsList>
+          {Object.keys(apps).map((appId) => (
+            <AppListItem
+              key={appId}
+              onClick={() => navigate(navigationRoute.apps + '/' + appId)}
+            >
+              <AppIcon appId={appId} />
+            </AppListItem>
+          ))}
+        </AppsList>
+      </Wrapper>
+    );
+  }
+
+  if (!apps[appId]) {
+    return (
+      <NotFound message={t`error.appNotFound`} />
     );
   }
 
   return (
-    <Wrapper>
-      <PrimaryTitle>{t`title.apps`}</PrimaryTitle>
-      <AppsList>
-        {Object.keys(apps).map((appNamespace) => (
-          <AppListItem
-            key={appNamespace}
-            onClick={() => setLoadedAppNamespace(appNamespace)}
-          >
-            <AppIcon namespace={appNamespace} />
-          </AppListItem>
-        ))}
-      </AppsList>
-    </Wrapper>
+    <I18nextProvider i18n={i18n} defaultNS={`app:${appId}`}>
+      <App id={appId} />
+    </I18nextProvider>
   );
 }
 

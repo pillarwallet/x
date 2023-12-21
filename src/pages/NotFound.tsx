@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 // components
 import Paragraph from '../components/Text/Paragraph';
 
-const NotFound = () => {
+const NotFound = ({ message }: { message?: string }) => {
   const [t] = useTranslation();
 
   return (
-    <Paragraph $center>{t`error.pageNotFound`}</Paragraph>
+    <Paragraph $center>{message ?? t`error.pageNotFound`}</Paragraph>
   );
 }
 
