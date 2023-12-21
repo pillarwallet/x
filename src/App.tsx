@@ -98,10 +98,9 @@ const App = () => {
 
 const AuthContentWrapper = styled.div`
   max-width: 500px;
-  height: 1px; // set height so children can inherit min height
-  min-height: calc(100vh - 240px);
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 60px 20px 0;
+  padding: 60px 20px 120px;
 `;
 
 export default App;
