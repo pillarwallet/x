@@ -2,12 +2,12 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 
 // components
-import App from './App';
+import Main from './Main';
 
-describe('<App />', () => {
+describe('<Main />', () => {
   it('renders correctly', () => {
     const tree = renderer
-      .create(<App />)
+      .create(<Main />)
       .toJSON();
     expect(tree).toMatchSnapshot();
   });

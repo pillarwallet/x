@@ -63,12 +63,6 @@ const BottomMenu = () => {
           <MenuItem
             key={item.label + index}
             onClick={() => {
-              // TODO: replace this when apps modal design is ready
-              if (index === 3) {
-                navigate(navigationRoute.apps);
-                return;
-              }
-
               if (activeMenuItemIndex === index) {
                 // toggle out if already active
                 setActiveMenuItemIndex(null);

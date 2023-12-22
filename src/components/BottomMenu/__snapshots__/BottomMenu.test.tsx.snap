@@ -143,7 +143,18 @@ exports[`<BottomMenu /> renders correctly 1`] = `
       </div>
     </div>
   </div>,
-  .c0 {
+  .c5 {
+  display: flex;
+  gap: 15px;
+  flex-direction: row;
+  align-content: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 100%;
+}
+
+.c0 {
   position: fixed;
   z-index: 98;
   top: 0;
@@ -237,6 +248,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             <div>
               Account
             </div>
+          </div>
+        </div>
+        <div
+          className="c3"
+        >
+          <div
+            className="c4"
+          >
+            <div
+              className="c5"
+            />
           </div>
         </div>
       </div>
