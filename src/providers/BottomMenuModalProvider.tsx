@@ -8,6 +8,7 @@ export interface BottomMenuModalContext {
   data: {
     activeMenuItemIndex: number | null;
     setActiveMenuItemIndex: (index: number | null) => void;
+    hideBottomMenuModal: () => void;
   }
 }
 
@@ -20,6 +21,7 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
   const contextData = useMemo(() => ({
     activeMenuItemIndex,
     setActiveMenuItemIndex,
+    hideBottomMenuModal: () => setActiveMenuItemIndex(null),
   }), [activeMenuItemIndex]);
 
   return (

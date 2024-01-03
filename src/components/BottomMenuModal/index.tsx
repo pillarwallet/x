@@ -6,11 +6,13 @@ import { Transition } from 'react-transition-group';
 import SendModal from './SendModal';
 import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
+import AppsModal from './AppsModal';
 
 const modalsByIndex = [
   <SendModal key="send" />,
   <HistoryModal key="history" />,
   <AccountModal key="account" />,
+  <AppsModal key="apps" />,
 ];
 
 const BottomMenuModal = ({

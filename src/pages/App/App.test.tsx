@@ -10,43 +10,16 @@ import { defaultTheme } from '../../theme';
 import LanguageProvider from '../../providers/LanguageProvider';
 
 // navigation
-import { AuthorizedNavigation, navigationRoute } from '../../navigation';
+import { AuthorizedNavigation } from '../../navigation';
 
-describe('<Apps />', () => {
-  it('loads app list if no app identifier', async () => {
-    let rendered: ReactTestRenderer | undefined;
-
-    await act(async () => {
-      rendered = renderer
-        .create(
-          <MemoryRouter initialEntries={[navigationRoute.apps]}>
-            <ThemeProvider theme={defaultTheme}>
-              <LanguageProvider>
-                <AuthorizedNavigation/>
-              </LanguageProvider>
-            </ThemeProvider>
-          </MemoryRouter>
-        );
-    });
-
-    expect(rendered).toBeDefined();
-
-    const tree = (rendered as ReactTestRenderer).toJSON();
-
-    const treeElement = tree as ReactTestRendererJSON;
-    expect((treeElement.children?.[0] as ReactTestRendererJSON)?.children?.length).toBe(1);
-    expect((treeElement.children?.[0] as ReactTestRendererJSON)?.type).toBe('h1');
-    expect((treeElement.children?.[0] as ReactTestRendererJSON)?.children?.[0]).toBe('Apps');
-    expect((treeElement.children?.[1] as ReactTestRendererJSON)?.children?.length).toBe(1); // app count
-  });
-
+describe('<App />', () => {
   it('shows not found if app identifier is not within allowed apps', async () => {
     let rendered: ReactTestRenderer | undefined;
 
     await act(async () => {
       rendered = renderer
         .create(
-          <MemoryRouter initialEntries={[navigationRoute.apps + '/' + 'what-the-fook-unknown-app-69420']}>
+          <MemoryRouter initialEntries={['/what-the-fook-unknown-app-69420']}>
             <ThemeProvider theme={defaultTheme}>
               <LanguageProvider>
                 <AuthorizedNavigation/>
@@ -65,7 +38,7 @@ describe('<Apps />', () => {
     const treeElement = tree as ReactTestRendererJSON;
     expect(treeElement.children?.length).toBe(1);
     expect(treeElement?.type).toBe('p');
-    expect(treeElement.children?.[0]).toBe('App not found');
+    expect(treeElement.children?.[0]).toBe('Page not found');
   });
 
   it('successfully loads app by identifier', async () => {
@@ -74,7 +47,7 @@ describe('<Apps />', () => {
     await act(async () => {
       rendered = renderer
         .create(
-          <MemoryRouter initialEntries={[navigationRoute.apps + '/' + 'sign-message']}>
+          <MemoryRouter initialEntries={['/sign-message']}>
             <ThemeProvider theme={defaultTheme}>
               <LanguageProvider>
                 <AuthorizedNavigation/>

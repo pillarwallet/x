@@ -27,8 +27,8 @@ Sentry.init({
 
 if (typeof window !== 'undefined') window.Buffer = window.Buffer ?? ImportedBuffer;
 
-// components
-import App from './App';
+// containers
+import Main from './containers/Main';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -36,6 +36,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App />
+    <Main />
   </React.StrictMode>
 );

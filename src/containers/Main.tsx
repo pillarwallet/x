@@ -6,20 +6,20 @@ import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 
 // components
-import BottomMenu from './components/BottomMenu';
+import BottomMenu from '../components/BottomMenu';
 
 // theme
-import { defaultTheme, GlobalStyle } from './theme';
+import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
-import LanguageProvider from './providers/LanguageProvider';
-import BottomMenuModalProvider from './providers/BottomMenuModalProvider';
+import LanguageProvider from '../providers/LanguageProvider';
+import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 
 // navigation
-import { AuthorizedNavigation, UnauthorizedNavigation } from './navigation';
+import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
 
 // pages
-import Loading from './pages/Loading';
+import Loading from '../pages/Loading';
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
@@ -75,7 +75,7 @@ const AppAuthController = () => {
   return <Loading />;
 }
 
-const App = () => {
+const Main = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
@@ -98,9 +98,8 @@ const App = () => {
 
 const AuthContentWrapper = styled.div`
   max-width: 500px;
-  min-height: 100vh;
   margin: 0 auto;
   padding: 60px 20px 120px;
 `;
 
-export default App;
+export default Main;
