@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
-import { BrowserRouter } from 'react-router-dom';
-import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
+import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { useEffect, useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import styled, { ThemeProvider } from 'styled-components';
 
 // components
 import BottomMenu from '../components/BottomMenu';
@@ -12,8 +12,8 @@ import BottomMenu from '../components/BottomMenu';
 import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
-import LanguageProvider from '../providers/LanguageProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
+import LanguageProvider from '../providers/LanguageProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -97,9 +97,9 @@ const Main = () => {
 }
 
 const AuthContentWrapper = styled.div`
-  max-width: 500px;
+  // max-width: 500px;
   margin: 0 auto;
-  padding: 60px 20px 120px;
+  // padding: 60px 20px 120px;
 `;
 
 export default Main;

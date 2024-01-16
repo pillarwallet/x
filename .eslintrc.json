@@ -39,6 +39,7 @@
         "import/no-named-as-default-member": "off",
         "import/no-named-as-default": "off",
         "no-console": ["error", { "allow": ["warn", "error"] }],
-        "quotes": ["error", "single"]
+        "quotes": ["error", "single"],
+        "react/react-in-jsx-scope": "off"
     }
 }

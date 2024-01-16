@@ -1,15 +1,14 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { usePrivy } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 // images
-import { ReactComponent as IconSend } from '../../assets/images/icon/icon-send.svg';
-import { ReactComponent as IconHistory } from '../../assets/images/icon/icon-history.svg';
 import { ReactComponent as IconApps } from '../../assets/images/icon/icon-apps.svg';
-import { ReactComponent as IconWallet } from '../../assets/images/icon/icon-wallet.svg';
+import { ReactComponent as IconHistory } from '../../assets/images/icon/icon-history.svg';
 import { ReactComponent as IconHome } from '../../assets/images/icon/icon-home.svg';
+import { ReactComponent as IconSend } from '../../assets/images/icon/icon-send.svg';
+import { ReactComponent as IconWallet } from '../../assets/images/icon/icon-wallet.svg';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -111,7 +110,7 @@ const MenuItem = styled.div`
 `;
 
 const Wrapper = styled.div`
-  max-width: 800px;
+  // max-width: 800px;
   margin: 0 auto;
   display: flex;
   align-items: center;
