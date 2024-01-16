@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 
 // UI
 import { Box, Grid, Typography } from '@mui/joy';
+import { animated, useSpring } from '@react-spring/web';
 import { Chart } from 'react-google-charts';
 import WebFont from 'webfontloader';
 
@@ -47,11 +48,31 @@ export const App = () => {
   const [t] = useTranslation();
 
   /**
+   * Animation hooks. We're using react-spring
+   * here but we also have react-transition-group
+   * if that takes your fancy.
+   */
+  const springs = useSpring({
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+    config: {
+      duration: 1000,
+    }
+  });
+
+  /**
    * Local states
    */
   const [latestData, setLatestData] = React.useState<ILatestData | boolean>();
   const [fagIndex, setFagIndex] = React.useState<number>(0);
 
+  /**
+   * Fire this once, on load
+   */
   useEffect(() => {
     /**
      * Fetch the data from our API
@@ -70,7 +91,7 @@ export const App = () => {
    * Render ✨
    */
   return (
-    <div style={{ backgroundImage: `url(${BackgroundImage})`, height: '100%' }}>
+    <animated.div style={{ backgroundImage: `url(${BackgroundImage})`, height: '100%', ...springs }}>
       <Grid container>
         <Grid xs={12}>
             <Typography mt={5} mb={5} style={{fontFamily: 'Bebas Neue'}} textAlign={'center'} sx={{color: 'white', fontSize: 50}}>{t`title`}</Typography>
@@ -98,11 +119,11 @@ export const App = () => {
           <Typography fontFamily={'Sora'} textAlign={'center'} marginX={10} mb={20} fontSize={32} sx={{color: 'white'}} >{t`greedDescription`}</Typography>
         </Grid>
       </Grid>
-    </div>
+    </animated.div>
   );
 };
 
-export const guageOptions = {
+const guageOptions = {
   animation: {
     duration: 2000,
   },
