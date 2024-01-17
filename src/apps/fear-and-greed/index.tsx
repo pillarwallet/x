@@ -1,3 +1,14 @@
+/**
+ * @name Fear and Greed Index
+ * @description Gm. This PillarX app serves as an example
+ * of how you can build a simple app within PillarX. It
+ * shows the use of fetching data from external sources with
+ * Axios, UI libraries like JoyUI and Google Charts, custom 
+ * fonts and animations, translations using React Spring and
+ * custom assets. Please feel free to use this as a template
+ * and visit https://docs.pillarx.app for more.
+ */
+
 // Core
 import React, { useEffect } from 'react';
 
@@ -141,4 +152,7 @@ const guageOptions = {
   minorTicks: 5,
 };
 
+/**
+ * Finally, export your app.
+ */
 export default App;
