@@ -110,7 +110,7 @@ const MenuItem = styled.div`
 `;
 
 const Wrapper = styled.div`
-  // max-width: 800px;
+  // max-width: 800px; TODO: inspect and remove/adjust
   margin: 0 auto;
   display: flex;
   align-items: center;

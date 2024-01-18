@@ -33,13 +33,13 @@
         "@typescript-eslint",
         "react",
         "react-hooks",
-        "import"
+        "import",
+        "jsx-runtime"
     ],
     "rules": {
         "import/no-named-as-default-member": "off",
         "import/no-named-as-default": "off",
         "no-console": ["error", { "allow": ["warn", "error"] }],
-        "quotes": ["error", "single"],
-        "react/react-in-jsx-scope": "off"
+        "quotes": ["error", "single"]
     }
 }

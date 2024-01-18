@@ -36,7 +36,7 @@ interface ILatestData {
   time_until_update: string;
 }
 
-export const App = () => {
+const App = () => {
   /**
    * Load custom fonts from Google Fonts
    * @url https://fonts.google.com
