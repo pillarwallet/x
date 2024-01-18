@@ -1,10 +1,9 @@
-import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 // pages
 import Lobby from '../pages/Lobby';
-import NotFound from '../pages/NotFound';
 import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
 
 // apps
 import { allowedApps } from '../apps';

@@ -9,7 +9,8 @@
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:import/recommended",
-        "plugin:import/typescript"
+        "plugin:import/typescript",
+        "plugin:react/jsx-runtime"
     ],
     "overrides": [
         {
@@ -33,8 +34,7 @@
         "@typescript-eslint",
         "react",
         "react-hooks",
-        "import",
-        "jsx-runtime"
+        "import"
     ],
     "rules": {
         "import/no-named-as-default-member": "off",
