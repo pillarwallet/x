@@ -17,26 +17,35 @@ export interface Theme {
       bottomMenuModal: string;
       loadingLogo: string;
       buttonPrimary: string;
+      buttonPrimaryDisabled: string;
       input: string;
       info: string;
       error: string;
       success: string;
       warning: string;
+      horizontalDivider: string;
+      selectItem: string;
+      selectItemHover: string;
     },
     text: {
       body: string;
       bottomMenuItem: string;
       loadingLogo: string;
       buttonPrimary: string;
+      buttonPrimaryDisabled: string;
       input: string;
       info: string;
       error: string;
       success: string;
       warning: string;
+      inputPlaceholder: string;
+      inputHelper: string;
     },
     border: {
-      input: string;
       bottomMenuItemBottomActive: string;
+    },
+    icon: {
+      inputHelper: string;
     }
   }
 }
@@ -50,39 +59,48 @@ export const defaultTheme: Theme = {
       body: '#101010',
       bottomMenu: 'rgba(16,16,16,0.7)',
       bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
-      bottomMenuModal: 'rgba(29, 29, 29, 0.90)',
+      bottomMenuModal: 'rgba(16, 16, 16, 0.70)',
       loadingLogo: '#fff',
       buttonPrimary: '#D9D9D9',
-      input: '#fff',
+      buttonPrimaryDisabled: '#63626B',
+      input: 'rgba(217, 217, 217, 0.05)',
       info: '#BEF',
       error: '#D8000C',
       success: '#DFF2BF',
       warning: '#FEEFB3',
+      horizontalDivider: 'linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%)',
+      selectItem: 'rgba(217, 217, 217, 0.05)',
+      selectItemHover: 'rgba(217, 217, 217, 0.2)',
     },
     text: {
       body: '#fff',
       bottomMenuItem: '#fff',
       loadingLogo: '#997cfa',
       buttonPrimary: '#1D1D1D',
-      input: '#000',
+      buttonPrimaryDisabled: '#1D1D1D',
+      input: '#fff',
       info: '#059',
       error: '#FFBABA',
       success: '#270',
       warning: '#9F6000',
+      inputPlaceholder: '#838383',
+      inputHelper: 'rgba(255, 255, 255, 0.3)',
     },
     border: {
-      input: '#000',
       bottomMenuItemBottomActive: '#fff',
+    },
+    icon: {
+      inputHelper: '#fff',
     }
   },
 };
 
 const skeleton = keyframes`
   0% {
-    background-color: hsl(200, 20%, 80%);
+    background-color: hsl(0, 0%, 27%);
   }
   100% {
-      background-color: hsl(200, 20%, 95%);
+    background-color: hsl(0, 0%, 53%);
   }
 `;
 

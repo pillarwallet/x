@@ -1,11 +1,25 @@
 import React from 'react';
+import { useWalletAddress } from '@etherspot/transaction-kit';
+import styled from 'styled-components';
+
+// components
+import Paragraph from '../Text/Paragraph';
 
 const AccountModal = () => {
+  const walletAddress = useWalletAddress();
   return (
-    <div>
-      Account
-    </div>
+    <Wrapper>
+      <Paragraph>
+        {walletAddress}
+      </Paragraph>
+    </Wrapper>
   )
 }
+
+const Wrapper = styled.div`
+  width: 100%;
+  word-break: break-all;
+  text-align: center;
+`;
 
 export default AccountModal;

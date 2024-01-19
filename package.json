@@ -15,6 +15,7 @@
     "@sentry/cli": "^2.21.5",
     "@sentry/react": "^7.81.1",
     "buffer": "^6.0.3",
+    "ethers": "^5.7.2",
     "firebase": "^10.6.0",
     "i18next": "^23.7.6",
     "react": "^18.2.0",

@@ -15,10 +15,24 @@
     "account": "Account"
   },
   "action": {
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "next": "Next",
+    "send": "Send"
   },
   "error": {
     "pageNotFound": "Page not found",
-    "appNotFound": "App not found"
+    "appNotFound": "App not found",
+    "transactionFailedReasonUnknown": "Transaction failed: reason unknown"
+  },
+  "label": {
+    "chooseRecipient": "Choose recipient",
+    "chooseToken": "Choose token",
+    "enterAmount": "Enter amount"
+  },
+  "placeholder": {
+    "toNameAddress": "To: name, address"
+  },
+  "helper": {
+    "amountLeft": "{{amount}} left"
   }
 }

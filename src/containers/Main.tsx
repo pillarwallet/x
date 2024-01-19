@@ -38,7 +38,7 @@ const AppAuthController = () => {
 
       // @ts-expect-error: provider type mismatch
       // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
-      setProvider(privyEthereumProvider);
+      setProvider(privyEthereumProvider.walletProvider);
       setChainId(+wallets[0].chainId.split(':')[1]); // extract from CAIP-2
     }
 

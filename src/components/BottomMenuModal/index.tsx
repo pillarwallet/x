@@ -128,10 +128,11 @@ const ModalContent = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 27px;
-  padding: 23px;
+  border-radius: 32px;
+  padding: 34px 23px;
   background: ${({ theme }) => theme.color.background.bottomMenuModal};
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
 `;
 
 export default BottomMenuModal;
