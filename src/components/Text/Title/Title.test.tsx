@@ -1,4 +1,3 @@
-import React from 'react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
 // components

@@ -10,9 +10,9 @@ exports[`<Button /> renders correctly 1`] = `
   border-radius: 100px;
   background: #D9D9D9;
   color: #1D1D1D;
-  cursor: pointer;
   transition: all 0.2s ease-in-out;
   margin-bottom: 15px;
+  cursor: pointer;
 }
 
 .c0:hover {
@@ -40,10 +40,10 @@ exports[`<Button /> renders correctly 1`] = `
   border-radius: 100px;
   background: #D9D9D9;
   color: #1D1D1D;
-  cursor: pointer;
   transition: all 0.2s ease-in-out;
   margin-bottom: 15px;
   width: 100%;
+  cursor: pointer;
 }
 
 .c0:hover {
