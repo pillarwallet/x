@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TokenListToken } from '@etherspot/prime-sdk';
 import { ethers } from 'ethers';
 import {

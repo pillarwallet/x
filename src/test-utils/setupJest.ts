@@ -34,4 +34,13 @@ jest.spyOn(TransactionKit, 'useEtherspotTransactions').mockReturnValue(({
   send: async () => [{ sentBatches: [{ userOpHash: '0x123' }], estimatedBatches: [], batches: [] }],
 }));
 
+jest.spyOn(TransactionKit, 'useEtherspotBalances').mockReturnValue(({
+  getAccountBalances: async () => [],
+}));
+
+jest.spyOn(TransactionKit, 'useEtherspotPrices').mockReturnValue(({
+  getPrice: async () => undefined,
+  getPrices: async () => [],
+}));
+
 process.env.REACT_APP_PRIVY_APP_ID = 'test';

@@ -31,7 +31,6 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 }
 
 .c0 {
-  max-width: 800px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -143,12 +142,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
       </div>
     </div>
   </div>,
-  .c17 {
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.c20 {
+  .c20 {
   font-size: 15px;
   font-weight: 700;
   padding: 15px 45px;
@@ -163,6 +157,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 
 .c20:focus {
   outline: none;
+}
+
+.c17 {
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .c25 {
@@ -226,13 +225,6 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 100%;
 }
 
-.c16 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-}
-
 .c13 {
   width: 42px;
   height: 42px;
@@ -253,6 +245,12 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 .c15 {
   font-size: 15px;
   font-weight: 700;
+  word-break: break-word;
+}
+
+.c16 {
+  font-size: 14px;
+  font-weight: 400;
   word-break: break-word;
 }
 
@@ -472,9 +470,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
                       >
                         Ether
                       </p>
-                      <div
+                      <p
                         className="c16"
-                      />
+                      >
+                        0 ETH
+                      </p>
                     </div>
                   </div>
                   <div
@@ -489,9 +489,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
                       >
                         tk1
                       </p>
-                      <div
+                      <p
                         className="c16"
-                      />
+                      >
+                        0 TK1
+                      </p>
                     </div>
                   </div>
                   <div
@@ -506,9 +508,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
                       >
                         tk2
                       </p>
-                      <div
+                      <p
                         className="c16"
-                      />
+                      >
+                        0 TK2
+                      </p>
                     </div>
                   </div>
                   <div
@@ -523,9 +527,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
                       >
                         tk3
                       </p>
-                      <div
+                      <p
                         className="c16"
-                      />
+                      >
+                        0 TK3
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -614,6 +620,18 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             <div
               className="c22"
             >
+              <div
+                className="c23"
+                onClick={[Function]}
+              >
+                <div
+                  className="c24"
+                />
+                <img
+                  className="c25"
+                  src="icon.png"
+                />
+              </div>
               <div
                 className="c23"
                 onClick={[Function]}
