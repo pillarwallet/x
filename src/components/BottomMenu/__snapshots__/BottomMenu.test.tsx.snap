@@ -143,7 +143,180 @@ exports[`<BottomMenu /> renders correctly 1`] = `
       </div>
     </div>
   </div>,
-  .c5 {
+  .c17 {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.c20 {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 15px 45px;
+  border: none;
+  border-radius: 100px;
+  background: #63626B;
+  color: #1D1D1D;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.c20:focus {
+  outline: none;
+}
+
+.c25 {
+  display: none;
+  max-width: 100%;
+  border-radius: 20px;
+}
+
+.c24 {
+  animation: hLhBjP 1s linear infinite alternate;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.c8 {
+  padding: 17px;
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  color: #fff;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.c9 {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 400;
+  flex: 1;
+}
+
+.c9:focus {
+  outline: none;
+}
+
+.c9::placeholder {
+  color: #838383;
+}
+
+.c7 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.c6 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.c10 {
+  opacity: 0.2;
+  background: linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%);
+  height: 1px;
+  width: 100%;
+}
+
+.c16 {
+  height: 15px;
+  width: 30%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+}
+
+.c13 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c12 {
+  width: 42px;
+}
+
+.c14 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c15 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c11 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c11:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+.c5 {
+  width: 100%;
+  max-height: calc(100vh - 240px);
+  overflow: hidden;
+  min-height: 100%;
+  padding-bottom: 150px;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c5::-webkit-scrollbar {
+  display: none;
+}
+
+.c19 {
+  position: absolute;
+  bottom: 0;
+  padding: 34px 17px 22px;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(16, 16, 16, 0.00) 0%, rgba(16, 16, 16, 0.90) 52.08%);
+}
+
+.c18 {
+  padding: 0 17px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  width: 100%;
+}
+
+.c21 {
+  width: 100%;
+  word-break: break-all;
+  text-align: center;
+}
+
+.c22 {
   display: flex;
   gap: 15px;
   flex-direction: row;
@@ -152,6 +325,20 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   flex-wrap: wrap;
   width: 100%;
   min-height: 100%;
+}
+
+.c23 {
+  width: 90px;
+  height: 90px;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all .1s ease-in-out;
+  cursor: pointer;
+}
+
+.c23:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
 }
 
 .c0 {
@@ -202,10 +389,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 27px;
-  padding: 23px;
-  background: rgba(29, 29, 29, 0.90);
-  backdrop-filter: blur(2px);
+  border-radius: 32px;
+  padding: 34px 23px;
+  background: rgba(16, 16, 16, 0.70);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
 }
 
 <div
@@ -223,8 +411,169 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           <div
             className="c4"
           >
-            <div>
-              Send
+            <div
+              className="c5"
+            >
+              <div
+                className="c6"
+              >
+                <label
+                  className="c7"
+                >
+                  Choose recipient
+                </label>
+                <div
+                  className="c8"
+                >
+                  <input
+                    className="c9"
+                    onChange={[Function]}
+                    placeholder="To: name, address"
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                className="c6"
+              >
+                <div
+                  className="c10"
+                />
+              </div>
+              <div
+                className="c6"
+              >
+                <label
+                  className="c7"
+                >
+                  Choose token
+                </label>
+                <div>
+                  <div
+                    className="c11"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="c12"
+                    >
+                      <img
+                        alt="Ether"
+                        className="c13"
+                        src="https://public.etherspot.io/buidler/chain_logos/ethereum.png"
+                        title="Ether"
+                      />
+                    </div>
+                    <div
+                      className="c14"
+                    >
+                      <p
+                        className="c15"
+                      >
+                        Ether
+                      </p>
+                      <div
+                        className="c16"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="c11"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="c14"
+                    >
+                      <p
+                        className="c15"
+                      >
+                        tk1
+                      </p>
+                      <div
+                        className="c16"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="c11"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="c14"
+                    >
+                      <p
+                        className="c15"
+                      >
+                        tk2
+                      </p>
+                      <div
+                        className="c16"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="c11"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="c14"
+                    >
+                      <p
+                        className="c15"
+                      >
+                        tk3
+                      </p>
+                      <div
+                        className="c16"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="c6"
+              >
+                <label
+                  className="c7"
+                >
+                  Enter amount
+                </label>
+                <div
+                  className="c8"
+                >
+                  <input
+                    className="c9"
+                    disabled={true}
+                    onChange={[Function]}
+                    placeholder="0.00"
+                    type="text"
+                    value=""
+                  />
+                  <p
+                    className="c17"
+                  />
+                </div>
+                <div
+                  className="c18"
+                >
+                  <p
+                    className="c17"
+                  >
+                    0.00 left
+                  </p>
+                </div>
+              </div>
+              <div
+                className="c19"
+              >
+                <button
+                  className="c20"
+                  disabled={true}
+                  onClick={[Function]}
+                >
+                  Send
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -245,8 +594,14 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           <div
             className="c4"
           >
-            <div>
-              Account
+            <div
+              className="c21"
+            >
+              <p
+                className=""
+              >
+                0x7F30B1960D5556929B03a0339814fE903c55a347
+              </p>
             </div>
           </div>
         </div>
@@ -257,8 +612,21 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             className="c4"
           >
             <div
-              className="c5"
-            />
+              className="c22"
+            >
+              <div
+                className="c23"
+                onClick={[Function]}
+              >
+                <div
+                  className="c24"
+                />
+                <img
+                  className="c25"
+                  src="icon.png"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

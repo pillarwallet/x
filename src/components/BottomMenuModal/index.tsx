@@ -8,13 +8,6 @@ import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
 
-const modalsByIndex = [
-  <SendModal key="send" />,
-  <HistoryModal key="history" />,
-  <AccountModal key="account" />,
-  <AppsModal key="apps" />,
-];
-
 const BottomMenuModal = ({
   activeMenuItemIndex,
   onClose,
@@ -61,10 +54,10 @@ const BottomMenuModal = ({
               $in={overlayState === 'entered'}
               $activeIndex={activeMenuItemIndex ?? lastValidActiveMenuItemIndex.current}
             >
-              {modalsByIndex.map((modal, index) => (
+              {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
                 <ModalContentWrapper key={index}>
                   <ModalContent>
-                    {modal}
+                    <Modal key={`${index}`} />
                   </ModalContent>
                 </ModalContentWrapper>
               ))}
