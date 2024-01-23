@@ -1,4 +1,3 @@
-import React from 'react';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import styled from 'styled-components';
 

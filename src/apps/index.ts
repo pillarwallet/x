@@ -5,6 +5,7 @@ import { AppManifest, RecordPerKey } from '../types';
 
 export const allowedApps = [
   'sign-message',
+  'fear-and-greed',
 ];
 
 export const loadApp = (appId: string) => {
