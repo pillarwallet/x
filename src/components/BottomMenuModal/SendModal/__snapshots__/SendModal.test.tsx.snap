@@ -51,13 +51,6 @@ exports[`<BottomMenu /> allows to send on valid values 1`] = `
   width: 100%;
 }
 
-.c9 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-}
-
 .c10 {
   display: flex;
   align-items: center;
@@ -75,6 +68,12 @@ exports[`<BottomMenu /> allows to send on valid values 1`] = `
 .c8 {
   font-size: 15px;
   font-weight: 700;
+  word-break: break-word;
+}
+
+.c9 {
+  font-size: 14px;
+  font-weight: 400;
   word-break: break-word;
 }
 
@@ -212,9 +211,11 @@ exports[`<BottomMenu /> allows to send on valid values 1`] = `
             >
               tk2
             </p>
-            <div
+            <p
               class="c9"
-            />
+            >
+              0 TK2
+            </p>
           </div>
           <div
             class="c10"
@@ -333,13 +334,6 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 100%;
 }
 
-.c11 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-}
-
 .c8 {
   width: 42px;
   height: 42px;
@@ -360,6 +354,12 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 .c10 {
   font-size: 15px;
   font-weight: 700;
+  word-break: break-word;
+}
+
+.c11 {
+  font-size: 14px;
+  font-weight: 400;
   word-break: break-word;
 }
 
@@ -498,9 +498,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             >
               Ether
             </p>
-            <div
+            <p
               class="c11"
-            />
+            >
+              0 ETH
+            </p>
           </div>
         </div>
         <div
@@ -514,9 +516,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             >
               tk1
             </p>
-            <div
+            <p
               class="c11"
-            />
+            >
+              0 TK1
+            </p>
           </div>
         </div>
         <div
@@ -530,9 +534,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             >
               tk2
             </p>
-            <div
+            <p
               class="c11"
-            />
+            >
+              0 TK2
+            </p>
           </div>
         </div>
         <div
@@ -546,9 +552,11 @@ exports[`<BottomMenu /> renders correctly 1`] = `
             >
               tk3
             </p>
-            <div
+            <p
               class="c11"
-            />
+            >
+              0 TK3
+            </p>
           </div>
         </div>
       </div>
@@ -650,13 +658,6 @@ exports[`<BottomMenu /> renders error on failed send 1`] = `
   width: 100%;
 }
 
-.c9 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-}
-
 .c10 {
   display: flex;
   align-items: center;
@@ -674,6 +675,12 @@ exports[`<BottomMenu /> renders error on failed send 1`] = `
 .c8 {
   font-size: 15px;
   font-weight: 700;
+  word-break: break-word;
+}
+
+.c9 {
+  font-size: 14px;
+  font-weight: 400;
   word-break: break-word;
 }
 
@@ -816,9 +823,11 @@ exports[`<BottomMenu /> renders error on failed send 1`] = `
             >
               tk2
             </p>
-            <div
+            <p
               class="c9"
-            />
+            >
+              0 TK2
+            </p>
           </div>
           <div
             class="c10"

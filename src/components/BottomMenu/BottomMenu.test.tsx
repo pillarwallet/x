@@ -1,5 +1,4 @@
-import React from 'react';
-import renderer, { ReactTestRendererJSON, act, ReactTestRenderer } from 'react-test-renderer';
+import renderer, { ReactTestRendererJSON, ReactTestRenderer, act } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { usePrivy } from '@privy-io/react-auth';
