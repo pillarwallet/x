@@ -71,7 +71,7 @@ const Wrapper = styled.div`
 const StyledTextarea = styled.textarea`
   background: ${({ theme }) => theme.color.background.input};
   color: ${({ theme }) => theme.color.text.input};
-  border: 1px solid ${({ theme }) => theme.color.border.input};
+  border: none;
   padding: 10px 15px;
   font-size: 16px;
   width: 100%;

@@ -1,4 +1,3 @@
-import React from 'react';
 import renderer, { ReactTestRendererJSON, act, ReactTestRenderer } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
 import { MemoryRouter } from 'react-router-dom';

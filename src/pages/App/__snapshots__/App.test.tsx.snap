@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> shows not found if app identifier is not within allowed apps 1`] = `
+.c0 {
+  text-align: center;
+}
+
+<p
+  className="c0"
+>
+  Page not found
+</p>
+`;
+
+exports[`<App /> successfully loads app by identifier 1`] = `
+.c1 {
+  font-size: 30px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.c0 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.c2 {
+  background: rgba(217, 217, 217, 0.05);
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  width: 100%;
+  height: 100px;
+  resize: none;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.c2:focus {
+  outline: none;
+}
+
+.c3 {
+  background: rgba(217, 217, 217, 0.05);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  padding: 15px;
+  font-size: 20px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.c3:focus {
+  outline: none;
+}
+
+<div
+  className="c0"
+>
+  <h1
+    className="c1"
+  >
+    Sign Message
+  </h1>
+  <textarea
+    className="c2"
+    onChange={[Function]}
+    placeholder="Enter message to sign"
+  />
+  <button
+    className="c3"
+    disabled={false}
+    onClick={[Function]}
+  >
+    Sign Message
+  </button>
+</div>
+`;
