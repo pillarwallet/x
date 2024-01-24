@@ -1,0 +1,716 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Select /> renders correctly with default option 1`] = `
+<DocumentFragment>
+  .c4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c2 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 2
+        </p>
+        <p
+          class="c3"
+        >
+          test2
+        </p>
+      </div>
+      <div
+        class="c4"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 256 256"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> renders correctly with no options 1`] = `
+<DocumentFragment>
+  <div />
+</DocumentFragment>
+`;
+
+exports[`<Select /> renders correctly with option image 1`] = `
+<DocumentFragment>
+  .c5 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c4 {
+  width: 42px;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c2 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 1
+        </p>
+        <p
+          class="c3"
+        >
+          test1
+        </p>
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 2
+        </p>
+        <p
+          class="c3"
+        >
+          test2
+        </p>
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c4"
+      >
+        <img
+          alt="test 3"
+          class="c5"
+          src="https://via.placeholder.com/150"
+          title="test 3"
+        />
+      </div>
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 3
+        </p>
+        <p
+          class="c3"
+        >
+          test3
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> renders correctly with selected option image 1`] = `
+<DocumentFragment>
+  .c2 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c6 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c3 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c4 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c5 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <img
+          alt="test 3"
+          class="c2"
+          src="https://via.placeholder.com/150"
+          title="test 3"
+        />
+      </div>
+      <div
+        class="c3"
+      >
+        <p
+          class="c4"
+        >
+          test 3
+        </p>
+        <p
+          class="c5"
+        >
+          test3
+        </p>
+      </div>
+      <div
+        class="c6"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 256 256"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> renders correctly with some options 1`] = `
+<DocumentFragment>
+  .c5 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c4 {
+  width: 42px;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c2 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 1
+        </p>
+        <p
+          class="c3"
+        >
+          test1
+        </p>
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 2
+        </p>
+        <p
+          class="c3"
+        >
+          test2
+        </p>
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c4"
+      >
+        <img
+          alt="test 3"
+          class="c5"
+          src="https://via.placeholder.com/150"
+          title="test 3"
+        />
+      </div>
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 3
+        </p>
+        <p
+          class="c3"
+        >
+          test3
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> responds once clicked 1`] = `
+<DocumentFragment>
+  .c4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c2 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 2
+        </p>
+        <p
+          class="c3"
+        >
+          test2
+        </p>
+      </div>
+      <div
+        class="c4"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          stroke="currentColor"
+          stroke-width="0"
+          viewBox="0 0 256 256"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> shows loading skeleton on option item where option value is loading 1`] = `
+<DocumentFragment>
+  .c4 {
+  height: 15px;
+  width: 30%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+}
+
+.c6 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c5 {
+  width: 42px;
+}
+
+.c1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c2 {
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 1
+        </p>
+        <p
+          class="c3"
+        >
+          test1
+        </p>
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 2
+        </p>
+        <div
+          class="c4"
+        />
+      </div>
+    </div>
+    <div
+      class="c0"
+    >
+      <div
+        class="c5"
+      >
+        <img
+          alt="test 3"
+          class="c6"
+          src="https://via.placeholder.com/150"
+          title="test 3"
+        />
+      </div>
+      <div
+        class="c1"
+      >
+        <p
+          class="c2"
+        >
+          test 3
+        </p>
+        <p
+          class="c3"
+        >
+          test3
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`<Select /> shows loading skeleton when options loading 1`] = `
+<DocumentFragment>
+  .c2 {
+  height: 42px;
+  width: 42px;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 50%;
+}
+
+.c4 {
+  height: 15px;
+  width: 80%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+}
+
+.c5 {
+  height: 15px;
+  width: 30%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c3 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+<div
+    class="c0"
+  >
+    <div
+      class="c1"
+    >
+      <div
+        class="c2"
+      />
+    </div>
+    <div
+      class="c3"
+    >
+      <div
+        class="c4"
+      />
+      <div
+        class="c5"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
