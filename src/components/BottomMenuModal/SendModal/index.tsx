@@ -11,20 +11,20 @@ import {
 } from '@etherspot/transaction-kit';
 
 // components
-import TextInput from '../Form/TextInput';
-import Label from '../Form/Label';
-import FormGroup from '../Form/FormGroup';
-import HorizontalDivider from '../HorizontalDivider';
-import AssetSelect, { AssetSelectOption } from '../Form/AssetSelect';
-import Paragraph from '../Text/Paragraph';
-import Button from '../Button';
+import TextInput from '../../Form/TextInput';
+import Label from '../../Form/Label';
+import FormGroup from '../../Form/FormGroup';
+import HorizontalDivider from '../../HorizontalDivider';
+import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
+import Paragraph from '../../Text/Paragraph';
+import Button from '../../Button';
 
 // hooks
-import useBottomMenuModal from '../../hooks/useBottomMenuModal';
+import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 
 // utils
-import { isValidEthereumAddress } from '../../utils/blockchain';
-import { formatAmountDisplay, isValidAmount } from '../../utils/number';
+import { isValidEthereumAddress } from '../../../utils/blockchain';
+import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 const SendModal = () => {
   const [t] = useTranslation();
