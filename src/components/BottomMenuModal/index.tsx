@@ -7,15 +7,23 @@ import SendModal from './SendModal';
 import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
+import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
 
 const BottomMenuModal = ({
-  activeMenuItemIndex,
+  activeMenuItem,
   onClose,
 }: {
-  activeMenuItemIndex: number | null,
+  activeMenuItem: BottomMenuItem | null,
   onClose: () => void,
 }) => {
   const overlayRef = React.useRef<HTMLDivElement>(null);
+
+  const activeMenuItemIndex = React.useMemo(() => {
+    return activeMenuItem?.type
+      ? ['send', 'history', 'account', 'apps'].indexOf(activeMenuItem.type)
+      : null;
+  }, [activeMenuItem?.type]);
+
   const lastValidActiveMenuItemIndex = React.useRef<number>(activeMenuItemIndex ?? 0);
 
   useEffect(() => {
@@ -57,7 +65,10 @@ const BottomMenuModal = ({
               {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
                 <ModalContentWrapper key={index}>
                   <ModalContent>
-                    <Modal key={`${index}`} />
+                    <Modal
+                      key={`${index}`}
+                      {...(activeMenuItem?.type === 'send' ? activeMenuItem.data : {})}
+                    />
                   </ModalContent>
                 </ModalContentWrapper>
               ))}

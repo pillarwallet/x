@@ -17,7 +17,7 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 const AppsModal = () => {
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
   const navigate = useNavigate();
-  const { hideBottomMenuModal } = useBottomMenuModal();
+  const { hide } = useBottomMenuModal();
 
   React.useEffect(() => {
     const loadedApps = loadApps();
@@ -30,7 +30,7 @@ const AppsModal = () => {
         <AppListItem
           key={appId}
           onClick={() => {
-            hideBottomMenuModal();
+            hide();
             navigate('/' + appId);
           }}
         >

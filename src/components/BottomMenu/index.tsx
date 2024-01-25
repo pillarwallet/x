@@ -16,35 +16,42 @@ import { navigationRoute } from '../../navigation';
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
+// providers
+import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
+
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
-  const { setActiveMenuItemIndex, activeMenuItemIndex } = useBottomMenuModal();
+  const { active, show, hide } = useBottomMenuModal();
 
   if (!authenticated) return null;
 
-  const mainMenuItems = [
+  const menuItems = [
     {
       icon: <IconSend />,
+      type: 'send',
       label: t`menuAction.send`,
     },
     {
       icon: <IconHistory />,
+      type: 'history',
       label: t`menuAction.history`,
     },
     {
       icon: <IconWallet />,
+      type: 'account',
       label: t`menuAction.account`,
     },
     {
       icon: <IconApps />,
+      type: 'apps',
       label: t`menuAction.apps`,
     },
   ];
 
-  const isHomeActive = activeMenuItemIndex === null
+  const isHomeActive = active === null
     && navLocation.pathname === '/';
 
   return (
@@ -58,19 +65,17 @@ const BottomMenu = () => {
         </MenuItem>
       </HomeMenuItem>
       <MainMenuItems>
-        {mainMenuItems.map((item, index) => (
+        {menuItems.map((item, index) => (
           <MenuItem
             key={item.label + index}
             onClick={() => {
-              if (activeMenuItemIndex === index) {
-                // toggle out if already active
-                setActiveMenuItemIndex(null);
+              if (active?.type === item.type) {
+                hide();
                 return;
               }
-
-              setActiveMenuItemIndex(index);
+              show({ type: item.type as BottomMenuItem['type'] });
             }}
-            className={activeMenuItemIndex === index ? 'active' : ''}
+            className={active?.type === item.type ? 'active' : ''}
           >
             {item.icon}
             <span>{item.label}</span>
