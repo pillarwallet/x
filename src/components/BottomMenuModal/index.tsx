@@ -7,6 +7,8 @@ import SendModal from './SendModal';
 import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
+
+// providers
 import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
 
 const BottomMenuModal = ({
