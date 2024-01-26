@@ -26,6 +26,15 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import { isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
+export interface SendModalProps extends React.PropsWithChildren {
+  amount?: string;
+  receiverAddress?: string;
+  assetAddress?: string;
+  assetId?: string;
+  title?: string;
+  description?: string;
+}
+
 const SendModal = () => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
@@ -41,7 +50,7 @@ const SendModal = () => {
   const [userOpHash, setUserOpHash] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const formRef = useRef(null);
-  const { hideBottomMenuModal } = useBottomMenuModal();
+  const { hide } = useBottomMenuModal();
 
   const resetForm = () => {
     setRecipient('');
@@ -125,7 +134,7 @@ const SendModal = () => {
         <Paragraph $center>Sent!</Paragraph>
         <Button
           onClick={() => {
-            hideBottomMenuModal();
+            hide();
             resetForm();
           }}
           $fontSize={15}

@@ -16,68 +16,82 @@ import { navigationRoute } from '../../navigation';
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
+// providers
+import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
+
+// components
+import BottomMenuModal from '../BottomMenuModal';
+
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
-  const { setActiveMenuItemIndex, activeMenuItemIndex } = useBottomMenuModal();
+  const { active, show, hide } = useBottomMenuModal();
 
   if (!authenticated) return null;
 
-  const mainMenuItems = [
+  const menuItems = [
     {
       icon: <IconSend />,
+      type: 'send',
       label: t`menuAction.send`,
     },
     {
       icon: <IconHistory />,
+      type: 'history',
       label: t`menuAction.history`,
     },
     {
       icon: <IconWallet />,
+      type: 'account',
       label: t`menuAction.account`,
     },
     {
       icon: <IconApps />,
+      type: 'apps',
       label: t`menuAction.apps`,
     },
   ];
 
-  const isHomeActive = activeMenuItemIndex === null
+  const isHomeActive = active === null
     && navLocation.pathname === '/';
 
   return (
-    <Wrapper>
-      <HomeMenuItem>
-        <MenuItem
-          onClick={() => navigate(navigationRoute.home)}
-          className={isHomeActive ? 'active' : ''}
-        >
-          <IconHome />
-        </MenuItem>
-      </HomeMenuItem>
-      <MainMenuItems>
-        {mainMenuItems.map((item, index) => (
+    <>
+      <Wrapper>
+        <HomeMenuItem>
           <MenuItem
-            key={item.label + index}
-            onClick={() => {
-              if (activeMenuItemIndex === index) {
-                // toggle out if already active
-                setActiveMenuItemIndex(null);
-                return;
-              }
-
-              setActiveMenuItemIndex(index);
-            }}
-            className={activeMenuItemIndex === index ? 'active' : ''}
+            onClick={() => navigate(navigationRoute.home)}
+            className={isHomeActive ? 'active' : ''}
           >
-            {item.icon}
-            <span>{item.label}</span>
+            <IconHome />
           </MenuItem>
-        ))}
-      </MainMenuItems>
-    </Wrapper>
+        </HomeMenuItem>
+        <MainMenuItems>
+          {menuItems.map((item, index) => (
+            <MenuItem
+              key={item.label + index}
+              onClick={() => {
+                if (active?.type === item.type) {
+                  hide();
+                  return;
+                }
+                show({ type: item.type as BottomMenuItem['type'] });
+              }}
+              className={active?.type === item.type ? 'active' : ''}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </MenuItem>
+          ))}
+        </MainMenuItems>
+      </Wrapper>
+      <BottomMenuModal
+        activeMenuItem={active}
+        onClose={hide}
+      />
+    </>
   );
 }
 
