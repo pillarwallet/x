@@ -19,6 +19,9 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 // providers
 import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
 
+// components
+import BottomMenuModal from '../BottomMenuModal';
+
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const navLocation = useLocation();
@@ -55,34 +58,40 @@ const BottomMenu = () => {
     && navLocation.pathname === '/';
 
   return (
-    <Wrapper>
-      <HomeMenuItem>
-        <MenuItem
-          onClick={() => navigate(navigationRoute.home)}
-          className={isHomeActive ? 'active' : ''}
-        >
-          <IconHome />
-        </MenuItem>
-      </HomeMenuItem>
-      <MainMenuItems>
-        {menuItems.map((item, index) => (
+    <>
+      <Wrapper>
+        <HomeMenuItem>
           <MenuItem
-            key={item.label + index}
-            onClick={() => {
-              if (active?.type === item.type) {
-                hide();
-                return;
-              }
-              show({ type: item.type as BottomMenuItem['type'] });
-            }}
-            className={active?.type === item.type ? 'active' : ''}
+            onClick={() => navigate(navigationRoute.home)}
+            className={isHomeActive ? 'active' : ''}
           >
-            {item.icon}
-            <span>{item.label}</span>
+            <IconHome />
           </MenuItem>
-        ))}
-      </MainMenuItems>
-    </Wrapper>
+        </HomeMenuItem>
+        <MainMenuItems>
+          {menuItems.map((item, index) => (
+            <MenuItem
+              key={item.label + index}
+              onClick={() => {
+                if (active?.type === item.type) {
+                  hide();
+                  return;
+                }
+                show({ type: item.type as BottomMenuItem['type'] });
+              }}
+              className={active?.type === item.type ? 'active' : ''}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </MenuItem>
+          ))}
+        </MainMenuItems>
+      </Wrapper>
+      <BottomMenuModal
+        activeMenuItem={active}
+        onClose={hide}
+      />
+    </>
   );
 }
 
