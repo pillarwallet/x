@@ -14,7 +14,7 @@ import Select, { SelectOption } from '../Select';
 
 // utils
 import { formatAmountDisplay } from '../../../utils/number';
-import { nativeAssetPerChainId } from '../../../utils/blockchain';
+import { getNativeAssetForChainId } from '../../../utils/blockchain';
 
 export interface AssetSelectOption extends SelectOption {
   asset: TokenListToken;
@@ -43,7 +43,7 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
       if (expired) return;
 
       // add native asset
-      const nativeAsset = nativeAssetPerChainId[chainId];
+      const nativeAsset = getNativeAssetForChainId(chainId);
       if (nativeAsset) {
         assets = [
           nativeAsset,

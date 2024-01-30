@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextEncoder, TextDecoder } from 'util';
 
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:
@@ -8,13 +9,17 @@ import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import * as TransactionKit from '@etherspot/transaction-kit';
 
+// polyfill for TextEncoder and TextDecoder for jsdom environment (viem dep related)
+Object.assign(global, { TextDecoder, TextEncoder });
+
 jest.mock('@firebase/app');
 jest.mock('@firebase/analytics');
 
 jest.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,
   usePrivy: jest.fn(() => ({ authenticated: false })),
-  useWallets: jest.fn(() => ({}))
+  useWallets: jest.fn(() => ({})),
+  useLogout: jest.fn(() => ({ logout: jest.fn() })),
 }));
 
 export const etherspotTestAssets = [
@@ -34,6 +39,10 @@ jest.spyOn(TransactionKit, 'useEtherspotTransactions').mockReturnValue(({
   batches: [],
   estimate: async () => [],
   send: async () => [{ sentBatches: [{ userOpHash: '0x123' }], estimatedBatches: [], batches: [] }],
+  isEstimating: false,
+  isSending: false,
+  containsEstimatingError: false,
+  containsSendingError: false,
 }));
 
 jest.spyOn(TransactionKit, 'useEtherspotBalances').mockReturnValue(({

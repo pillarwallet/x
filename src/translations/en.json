@@ -17,7 +17,8 @@
   "action": {
     "getStarted": "Get Started",
     "next": "Next",
-    "send": "Send"
+    "send": "Send",
+    "logout": "Logout"
   },
   "error": {
     "pageNotFound": "Page not found",

@@ -145,6 +145,10 @@ describe('<BottomMenu />', () => {
       batches: [],
       estimate: async () => [],
       send: async () => [{ sentBatches: [{ errorMessage: failedSendErrorMessage }], estimatedBatches: [], batches: [] }],
+      isEstimating: false,
+      isSending: false,
+      containsEstimatingError: false,
+      containsSendingError: false,
     }));
 
     const user = userEvent.setup();

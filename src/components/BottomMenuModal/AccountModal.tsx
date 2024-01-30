@@ -1,15 +1,22 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import styled from 'styled-components';
+import { useLogout } from '@privy-io/react-auth';
+import { useTranslation } from 'react-i18next';
 
 // components
 import Paragraph from '../Text/Paragraph';
+import Button from '../Button';
 
 const AccountModal = () => {
   const walletAddress = useWalletAddress();
+  const { logout } = useLogout();
+  const [t] = useTranslation();
+
   return (
     <Wrapper>
       <Paragraph>
-        {walletAddress}
+        {walletAddress}<br/><br/>
+        <Button onClick={logout}>{t`action.logout`}</Button>
       </Paragraph>
     </Wrapper>
   )
