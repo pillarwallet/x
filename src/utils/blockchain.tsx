@@ -62,7 +62,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   if (chainId === bsc.id) {
     nativeAsset.name = 'BNB';
     nativeAsset.symbol = 'BNB';
-    nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/native_tokens/bnb.png';
+    nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/binance.svg';
   }
 
   return nativeAsset;
