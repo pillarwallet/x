@@ -4,6 +4,7 @@ import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
+import { mainnet, sepolia } from 'viem/chains';
 
 // components
 import BottomMenu from '../components/BottomMenu';
@@ -39,7 +40,8 @@ const AppAuthController = () => {
       // @ts-expect-error: provider type mismatch
       // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
       setProvider(privyEthereumProvider.walletProvider);
-      setChainId(+wallets[0].chainId.split(':')[1]); // extract from CAIP-2
+      const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+      setChainId(walletChainId);
     }
 
     updateProvider();
@@ -51,7 +53,11 @@ const AppAuthController = () => {
 
   if (authenticated && provider && chainId) {
     return (
-      <EtherspotTransactionKit provider={provider} chainId={chainId}>
+      <EtherspotTransactionKit
+        provider={provider}
+        chainId={chainId}
+        projectKey={process.env.REACT_APP_ETHERSPOT_PROJECT_KEY || undefined}
+      >
         <BrowserRouter>
           <BottomMenuModalProvider>
             <AuthContentWrapper>
@@ -84,6 +90,7 @@ const Main = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{
             appearance: { theme: 'dark' },
+            defaultChain: process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : mainnet,
             embeddedWallets: {
               createOnLogin: 'users-without-wallets'
             }
