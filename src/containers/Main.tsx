@@ -1,4 +1,4 @@
-import { WalletProviderLike } from '@etherspot/prime-sdk';
+import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
@@ -34,12 +34,16 @@ const AppAuthController = () => {
     const updateProvider = async () => {
       if (!wallets.length) return; // not yet ready
 
-      const privyEthereumProvider = await wallets[0].getEthereumProvider();
-      if (expired) return;
+      const privyEthereumProvider = await wallets[0].getWeb3jsProvider();
 
       // @ts-expect-error: provider type mismatch
       // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
-      setProvider(privyEthereumProvider.walletProvider);
+      const newProvider = new Web3eip1193WalletProvider(privyEthereumProvider.walletProvider);
+      await newProvider.refresh();
+
+      if (expired) return;
+
+      setProvider(newProvider);
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
       setChainId(walletChainId);
     }
