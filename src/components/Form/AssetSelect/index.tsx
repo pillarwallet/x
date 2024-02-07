@@ -34,7 +34,7 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
   const [isLoadingOptions, setIsLoadingOptions] = useState(true);
   const { chainId } = useEtherspot();
   const walletAddress = useWalletAddress();
-  const { balances } = useAccountBalances();
+  const balances = useAccountBalances();
 
   useEffect(() => {
     if (!walletAddress) return;

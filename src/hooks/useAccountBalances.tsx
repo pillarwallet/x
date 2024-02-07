@@ -16,7 +16,7 @@ const useAccountBalances = (params?: {
     context.listenerRef.current.onBalanceUpdated = params.onUpdated;
   }
 
-  return context.data;
+  return context.data.balances;
 };
 
 export default useAccountBalances;
