@@ -33,7 +33,11 @@
     "react-transition-group": "^4.4.5",
     "styled-components": "^6.1.1",
     "viem": "^2.6.1",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "@uniswap/sdk": "^3.0.3",
+    "@uniswap/sdk-core": "^3.0.1",
+    "@uniswap/smart-order-router": "^2.5.26",
+    "@uniswap/v3-sdk": "^3.8.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
