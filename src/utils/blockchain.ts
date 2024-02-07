@@ -1,12 +1,15 @@
 import { ethers } from 'ethers';
-import { TokenListToken } from '@etherspot/prime-sdk';
+import { AccountBalance, TokenListToken } from '@etherspot/prime-sdk';
 import {
   polygon,
   gnosis,
   avalanche,
   bsc,
-  polygonMumbai,
+  polygonMumbai, mainnet, goerli, sepolia,
 } from 'viem/chains';
+
+// services
+import { callBlastApi } from '../services/blastApi';
 
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
@@ -66,4 +69,70 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   }
 
   return nativeAsset;
+}
+
+// TODO: remove this when Prime SDK supports Sepolia
+export const usdcOnSepolia: TokenListToken = {
+  chainId: sepolia.id,
+  address: '0x39eBE23d1934987064DDc5F85b21e5Cf13803B4A',
+  name: 'USDC',
+  symbol: 'USDC',
+  decimals: 18,
+  logoURI: 'https://public.etherspot.io/buidler/token_logos/usdc-logo.png',
+};
+
+export const supportedChains = [
+  mainnet,
+  polygon,
+  gnosis,
+  avalanche,
+  bsc,
+  goerli,
+  sepolia,
+  polygonMumbai,
+];
+
+export const getNativeAssetBalance = async (chainId: number, walletAddress: string): Promise<AccountBalance> => {
+  let balance = ethers.BigNumber.from('0');
+
+  const blastApiResult = await callBlastApi(chainId, 'eth_getBalance', [walletAddress, 'latest']);
+
+  try {
+    balance = ethers.BigNumber.from(blastApiResult as string);
+  } catch (e) {
+    console.warn('Failed to get native asset balance', { blastApiResult });
+  }
+
+  return {
+    token: getNativeAssetForChainId(chainId).address,
+    balance,
+    superBalance: balance,
+  }
+}
+
+export const getAssetBalance = async (
+  chainId: number,
+  assetAddress: string,
+  walletAddress: string
+): Promise<AccountBalance> => {
+  let balance = ethers.BigNumber.from('0');
+
+  const erc20Interface = new ethers.utils.Interface(['function balanceOf(address) view returns (uint256)']);
+  const data = erc20Interface.encodeFunctionData('balanceOf', [walletAddress]);
+  const blastApiResult = await callBlastApi(chainId, 'eth_call', [{
+    to: assetAddress,
+    data,
+  },'latest']);
+
+  try {
+    balance = ethers.BigNumber.from(blastApiResult as string);
+  } catch (e) {
+    console.warn('Failed to get native asset balance', { blastApiResult });
+  }
+
+  return {
+    token: assetAddress,
+    balance,
+    superBalance: balance,
+  }
 }

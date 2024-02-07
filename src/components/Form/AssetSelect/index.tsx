@@ -4,17 +4,20 @@ import { ethers } from 'ethers';
 import {
   useEtherspot,
   useEtherspotAssets,
-  useEtherspotBalances,
   useEtherspotUtils,
   useWalletAddress
 } from '@etherspot/transaction-kit';
+import { sepolia } from 'viem/chains';
 
 // components
 import Select, { SelectOption } from '../Select';
 
 // utils
 import { formatAmountDisplay } from '../../../utils/number';
-import { getNativeAssetForChainId } from '../../../utils/blockchain';
+import { getNativeAssetForChainId, usdcOnSepolia } from '../../../utils/blockchain';
+
+// hooks
+import useAccountBalances from '../../../hooks/useAccountBalances';
 
 export interface AssetSelectOption extends SelectOption {
   asset: TokenListToken;
@@ -27,11 +30,11 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
 }) => {
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const { getAssets } = useEtherspotAssets();
-  const { getAccountBalances } = useEtherspotBalances();
   const [assetsOptions, setAssetsOptions] = useState<AssetSelectOption[]>([]);
   const [isLoadingOptions, setIsLoadingOptions] = useState(true);
   const { chainId } = useEtherspot();
   const walletAddress = useWalletAddress();
+  const { balances } = useAccountBalances();
 
   useEffect(() => {
     if (!walletAddress) return;
@@ -45,10 +48,12 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
       // add native asset
       const nativeAsset = getNativeAssetForChainId(chainId);
       if (nativeAsset) {
-        assets = [
-          nativeAsset,
-          ...assets,
-        ];
+        assets = [nativeAsset, ...assets];
+      }
+
+      // TODO: remove once Sepolia is available on Prime SDK
+      if (chainId === sepolia.id) {
+        assets = [...assets, usdcOnSepolia];
       }
 
       setAssetsOptions(assets.map((asset) => ({
@@ -69,47 +74,31 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, chainId]);
 
-  useEffect(() => {
-    if (!walletAddress) return;
+  const assetsOptionsWithBalances = assetsOptions.map((assetOption) => {
+    const assetBalance = balances[chainId]?.find((balance) => {
+      if (!assetOption.asset?.address) return;
 
-    let expired;
+      const assetAddress = assetOption.asset.address;
+      const isNativeBalance = balance.token === null || isZeroAddress(balance.token);
 
-    (async () => {
-      const balances = await getAccountBalances();
-      if (expired) return;
+      return (isNativeBalance && isZeroAddress(assetAddress))
+        || addressesEqual(balance.token, assetAddress)
+    });
 
-      const assetsOptionsWithValuesLoading = assetsOptions.filter((assetOption) => assetOption.isLoadingValue);
+    const balance = ethers.utils.formatUnits(assetBalance?.balance ?? '0', assetOption.asset?.decimals ?? 18);
 
-      if (!assetsOptionsWithValuesLoading.length) return;
-
-      const assetsOptionsWithBalances = assetsOptions.map((assetOption) => {
-        const assetBalance = balances.find((balance) => {
-          return (balance.token === null && isZeroAddress(assetOption.asset?.address ?? ''))
-            || addressesEqual(balance.token, assetOption.asset?.address ?? '')
-        });
-        const balance = ethers.utils.formatUnits(assetBalance?.balance ?? '0', assetOption.asset?.decimals ?? 18);
-
-        return {
-          ...assetOption,
-          value: formatAmountDisplay(balance) + ` ${assetOption.asset?.symbol ?? ''}`,
-          balance: +balance,
-          isLoadingValue: false,
-        }
-      });
-
-      setAssetsOptions(assetsOptionsWithBalances);
-    })();
-
-    return () => {
-      expired = true;
+    return {
+      ...assetOption,
+      value: formatAmountDisplay(balance) + ` ${assetOption.asset?.symbol ?? ''}`,
+      balance: +balance,
+      isLoadingValue: !balances[chainId],
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetsOptions, walletAddress]);
+  });
 
   return (
     <Select
       isLoadingOptions={isLoadingOptions}
-      options={assetsOptions}
+      options={assetsOptionsWithBalances}
       defaultSelectedId={defaultSelectedId}
       onChange={(option) => onChange(option as AssetSelectOption)}
     />
