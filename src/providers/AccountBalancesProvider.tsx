@@ -41,7 +41,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
       const newBalances: IBalances = {};
 
       const chainIds = supportedChains
-        .filter((chain) => chain.testnet === (process.env.REACT_APP_USE_TESTNETS === 'true'))
+        .filter((chain) => process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet)
         .map((chain) => chain.id);
 
       // sequential to avoid throttling

@@ -14,6 +14,7 @@ import { defaultTheme } from '../../../theme';
 // providers
 import BottomMenuModalProvider from '../../../providers/BottomMenuModalProvider';
 import LanguageProvider from '../../../providers/LanguageProvider';
+import AccountBalancesProvider from '../../../providers/AccountBalancesProvider';
 
 const ethersProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545', 'goerli'); // replace with your node's RPC URL
 const provider = ethers.Wallet.createRandom().connect(ethersProvider);
@@ -22,7 +23,7 @@ const getFormGroupLabel = (formGroup: Element) => {
   return formGroup?.children?.item(0) as Element;
 }
 
-describe('<BottomMenu />', () => {
+describe('<SendModal />', () => {
   let rendered: RenderResult;
   let formGroup1: Element;
   let formGroup2: Element;
@@ -40,13 +41,15 @@ describe('<BottomMenu />', () => {
       rendered = render(
         <BrowserRouter>
           <TransactionKit.EtherspotTransactionKit provider={provider}>
-            <ThemeProvider theme={defaultTheme}>
-              <LanguageProvider>
-                <BottomMenuModalProvider>
-                  <SendModal />
-                </BottomMenuModalProvider>
-              </LanguageProvider>
-            </ThemeProvider>
+            <AccountBalancesProvider>
+              <ThemeProvider theme={defaultTheme}>
+                <LanguageProvider>
+                  <BottomMenuModalProvider>
+                    <SendModal />
+                  </BottomMenuModalProvider>
+                </LanguageProvider>
+              </ThemeProvider>
+            </AccountBalancesProvider>
           </TransactionKit.EtherspotTransactionKit>
         </BrowserRouter>
       );
