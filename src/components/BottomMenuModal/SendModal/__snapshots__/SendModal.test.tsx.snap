@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<BottomMenu /> allows to send on valid values 1`] = `
+exports[`<SendModal /> allows to send on valid values 1`] = `
 <DocumentFragment>
   .c3 {
   padding: 17px;
@@ -283,7 +283,7 @@ exports[`<BottomMenu /> allows to send on valid values 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<BottomMenu /> renders correctly 1`] = `
+exports[`<SendModal /> renders correctly 1`] = `
 <DocumentFragment>
   .c3 {
   padding: 17px;
@@ -607,7 +607,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<BottomMenu /> renders error on failed send 1`] = `
+exports[`<SendModal /> renders error on failed send 1`] = `
 <DocumentFragment>
   .c3 {
   padding: 17px;
@@ -900,7 +900,7 @@ exports[`<BottomMenu /> renders error on failed send 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<BottomMenu /> renders message on successful send 1`] = `
+exports[`<SendModal /> renders message on successful send 1`] = `
 <DocumentFragment>
   .c2 {
   text-align: center;
