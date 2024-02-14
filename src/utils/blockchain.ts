@@ -7,9 +7,11 @@ import {
   bsc,
   polygonMumbai, mainnet, goerli, sepolia,
 } from 'viem/chains';
+import { ITransaction } from '@etherspot/transaction-kit';
 
 // services
 import { callBlastApi } from '../services/blastApi';
+import { callMainApi } from '../services/mainApi';
 
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
@@ -135,4 +137,13 @@ export const getAssetBalance = async (
     balance,
     superBalance: balance,
   }
+}
+
+export const getAccountTransactionHistory = async (
+  chainId: number,
+  walletAddress: string,
+): Promise<ITransaction[]> => {
+  const callPath = `account-history/${walletAddress}/${chainId}`;
+  const result = await callMainApi<{ transactions?: ITransaction[] }>(callPath);
+  return result?.transactions ?? [];
 }

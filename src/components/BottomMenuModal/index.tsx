@@ -70,6 +70,7 @@ const BottomMenuModal = ({
                     {activeMenuItemIndex !== null && (
                       <Modal
                         key={`${index}`}
+                        isContentVisible={activeMenuItemIndex === index}
                         {...(activeMenuItem?.type === 'send' ? activeMenuItem.data : {})}
                       />
                     )}

@@ -1,7 +1,7 @@
 import React, { createContext, useMemo } from 'react';
 
 // components
-import { SendModalProps } from '../components/BottomMenuModal/SendModal';
+import { SendModalData } from '../components/BottomMenuModal/SendModal';
 
 export interface BottomMenuModalContext {
   data: {
@@ -15,7 +15,7 @@ export const ProviderContext = createContext<BottomMenuModalContext | null>(null
 
 interface BottomMenuSend {
   type: 'send';
-  data?: SendModalProps
+  data?: SendModalData
 }
 
 export type BottomMenuItem = {
