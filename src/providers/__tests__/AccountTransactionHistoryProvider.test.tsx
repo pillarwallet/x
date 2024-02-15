@@ -36,8 +36,11 @@ describe('AccountTransactionHistoryProvider', () => {
 
   let wrapper: React.FC;
   let mockGetAccountTransactionHistory: jest.Mock;
+  let returnLongerHistory: boolean = false;
 
   beforeEach(() => {
+    returnLongerHistory = false;
+
     wrapper = ({ children }: React.PropsWithChildren) => (
       <AccountTransactionHistoryProvider>
         {children}
@@ -46,7 +49,15 @@ describe('AccountTransactionHistoryProvider', () => {
 
     mockGetAccountTransactionHistory = jest.fn().mockImplementation((chainId, walletAddress) => {
       if (chainId === mainnet.id && walletAddress === '0x7F30B1960D5556929B03a0339814fE903c55a347') {
-        return accountTransactionsMock;
+        return returnLongerHistory
+          ? accountTransactionsMock.concat({
+              id: '3',
+              hash: '0x3',
+              to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+              value: '0',
+              status: 'confirmed',
+            })
+          : accountTransactionsMock;
       }
       return [];
     });
@@ -86,45 +97,41 @@ describe('AccountTransactionHistoryProvider', () => {
     expect(result.current?.data.history).toEqual({});
   });
 
-  // it('calls onHistoryUpdated when history change', async () => {
-  //   const onHistoryUpdated = jest.fn();
-  //
-  //   const { result, rerender } = renderHook(() => React.useContext(AccountTransactionHistoryContext), {
-  //     wrapper: ({ children }) => (
-  //       <AccountTransactionHistoryProvider>
-  //         <AccountTransactionHistoryContext.Consumer>
-  //           {(value) => {
-  //             if (!value) return children;
-  //             value.listenerRef.current.onHistoryUpdated = onHistoryUpdated;
-  //             return children
-  //           }}
-  //         </AccountTransactionHistoryContext.Consumer>
-  //       </AccountTransactionHistoryProvider>
-  //     ),
-  //   });
-  //
-  //   await waitFor(async () => {
-  //     expect(result.current?.data.history).not.toEqual({});
-  //   });
-  //
-  //   expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(2);
-  //
-  //   accountTransactionsMock.push({
-  //     id: '3',
-  //     hash: '0x3',
-  //     to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-  //     value: '0',
-  //     status: 'confirmed',
-  //   });
-  //
-  //   rerender();
-  //
-  //   await waitFor(async () => {
-  //     expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(3);
-  //   });
-  //
-  //   expect(onHistoryUpdated).toHaveBeenCalledTimes(1);
-  // });
+  it('calls onHistoryUpdated when history change', async () => {
+    jest.useFakeTimers();
+
+    const onHistoryUpdated = jest.fn();
+
+    const { result } = renderHook(() => React.useContext(AccountTransactionHistoryContext), {
+      wrapper: ({ children }) => (
+        <AccountTransactionHistoryProvider>
+          <AccountTransactionHistoryContext.Consumer>
+            {(value) => {
+              if (!value) return children;
+              value.listenerRef.current.onHistoryUpdated = onHistoryUpdated;
+              return children
+            }}
+          </AccountTransactionHistoryContext.Consumer>
+        </AccountTransactionHistoryProvider>
+      ),
+    });
+
+    await waitFor(async () => {
+      expect(result.current?.data.history).not.toEqual({});
+    });
+
+    expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(2);
+
+    returnLongerHistory = true;
+
+    jest.runAllTimers();
+
+    await waitFor(async () => {
+      expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(3);
+    });
+
+    expect(onHistoryUpdated).toHaveBeenCalledTimes(1);
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
