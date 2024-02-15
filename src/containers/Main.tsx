@@ -16,6 +16,7 @@ import { defaultTheme, GlobalStyle } from '../theme';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import LanguageProvider from '../providers/LanguageProvider';
 import AccountBalancesProvider from '../providers/AccountBalancesProvider';
+import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -63,16 +64,18 @@ const AppAuthController = () => {
         chainId={chainId}
         projectKey={process.env.REACT_APP_ETHERSPOT_PROJECT_KEY || undefined}
       >
-        <AccountBalancesProvider>
-          <BrowserRouter>
-            <BottomMenuModalProvider>
-              <AuthContentWrapper>
-                <AuthorizedNavigation />
-              </AuthContentWrapper>
-              <BottomMenu />
-            </BottomMenuModalProvider>
-          </BrowserRouter>
-        </AccountBalancesProvider>
+        <AccountTransactionHistoryProvider>
+          <AccountBalancesProvider>
+            <BrowserRouter>
+              <BottomMenuModalProvider>
+                <AuthContentWrapper>
+                  <AuthorizedNavigation />
+                </AuthContentWrapper>
+                <BottomMenu />
+              </BottomMenuModalProvider>
+            </BrowserRouter>
+          </AccountBalancesProvider>
+        </AccountTransactionHistoryProvider>
       </EtherspotTransactionKit>
     )
   }

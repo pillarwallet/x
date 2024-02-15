@@ -26,7 +26,7 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import { isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
-export interface SendModalProps extends React.PropsWithChildren {
+export interface SendModalData {
   amount?: string;
   receiverAddress?: string;
   assetAddress?: string;
@@ -35,7 +35,11 @@ export interface SendModalProps extends React.PropsWithChildren {
   description?: string;
 }
 
-const SendModal = () => {
+interface SendModalProps extends React.PropsWithChildren<SendModalData> {
+  isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
+}
+
+const SendModal = ({ isContentVisible }: SendModalProps) => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
   const [selectedAsset, setSelectedAsset] = React.useState<AssetSelectOption | undefined>(undefined);
@@ -126,6 +130,10 @@ const SendModal = () => {
 
     setUserOpHash(newUserOpHash);
     setIsSending(false);
+  }
+
+  if (!isContentVisible) {
+    return <Wrapper />
   }
 
   if (userOpHash) {

@@ -7,10 +7,18 @@ import { useTranslation } from 'react-i18next';
 import Paragraph from '../Text/Paragraph';
 import Button from '../Button';
 
-const AccountModal = () => {
+interface AccountModalProps {
+  isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
+}
+
+const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const walletAddress = useWalletAddress();
   const { logout } = useLogout();
   const [t] = useTranslation();
+
+  if (!isContentVisible) {
+    return <Wrapper />
+  }
 
   return (
     <Wrapper>

@@ -61,7 +61,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
       // deep compare
       setBalances((current) => isEqual(current, newBalances) ? current : newBalances);
 
-      timeout = setTimeout(refresh, 3000);
+      timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
     }
 
     refresh();
