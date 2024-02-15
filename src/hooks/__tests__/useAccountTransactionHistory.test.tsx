@@ -53,14 +53,14 @@ describe('useAccountTransactionHistory', () => {
     }).not.toThrow();
   });
 
-  it('returns balances when parent provider exists', () => {
+  it('returns history when parent provider exists', () => {
     jest.spyOn(React, 'useContext').mockImplementation(() => mockContextValue);
 
     const { result } = renderHook(() => useAccountTransactionHistory());
     expect(result.current).toEqual(mockContextValue.data.history);
   });
 
-  it('calls onUpdated when balances are updated', () => {
+  it('calls onUpdated when history are updated', () => {
     jest.spyOn(React, 'useContext').mockImplementation(() => mockContextValue);
 
     const onUpdated = jest.fn();
