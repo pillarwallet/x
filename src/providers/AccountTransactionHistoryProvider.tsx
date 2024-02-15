@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { ITransaction, useWalletAddress } from '@etherspot/transaction-kit';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
 
@@ -9,29 +9,32 @@ import {
   supportedChains,
 } from '../utils/blockchain';
 
-export interface ITransactionHistory {
+// types
+import { Transaction } from '../types/blockchain';
+
+export interface TransactionHistory {
   [chainId: number]: {
-    [walletAddress: string]: ITransaction[];
+    [walletAddress: string]: Transaction[];
   };
 }
 
 export interface AccountBalancesContext {
   listenerRef: React.MutableRefObject<AccountTransactionHistoryListenerRef>;
   data: {
-    history: ITransactionHistory;
+    history: TransactionHistory;
   }
 }
 
 export interface AccountTransactionHistoryListenerRef {
-  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: ITransaction) => void;
-  prevHistory?: ITransactionHistory;
+  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: Transaction) => void;
+  prevHistory?: TransactionHistory;
 }
 
 export const AccountTransactionHistoryContext = createContext<AccountBalancesContext | null>(null);
 
 const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren) => {
   const walletAddress = useWalletAddress();
-  const [history, setHistory] = React.useState<ITransactionHistory>({});
+  const [history, setHistory] = React.useState<TransactionHistory>({});
   const listenerRef = useRef<AccountTransactionHistoryListenerRef>({});
 
   useEffect(() => {
@@ -41,7 +44,7 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
     const refresh = async () => {
       if (!walletAddress) return;
 
-      const updatedHistory: ITransactionHistory = {};
+      const updatedHistory: TransactionHistory = {};
 
       const chainIds = supportedChains
         .filter((chain) => process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet)
