@@ -14,7 +14,11 @@ import AppIcon from '../AppIcon';
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
-const AppsModal = () => {
+interface AppsModalProps {
+  isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
+}
+
+const AppsModal = ({ isContentVisible }: AppsModalProps) => {
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
   const navigate = useNavigate();
   const { hide } = useBottomMenuModal();
@@ -23,6 +27,10 @@ const AppsModal = () => {
     const loadedApps = loadApps();
     setApps(loadedApps);
   }, []);
+
+  if (!isContentVisible) {
+    return <Wrapper />
+  }
 
   return (
     <Wrapper>
