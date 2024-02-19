@@ -33,11 +33,6 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     return <div />
   }
 
-  // eslint-disable-next-line no-console
-  console.log('accountAddress', accountAddress);
-  // eslint-disable-next-line no-console
-  console.log('history', history);
-
   const visibleChains = process.env.REACT_APP_USE_TESTNETS === 'true'
     ? supportedChains.filter((chain) => chain.testnet)
     : supportedChains;
