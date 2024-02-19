@@ -141,11 +141,61 @@ export const getAssetBalance = async (
   }
 }
 
+const receiptStatusToMessage: { [key: string]: string } = {
+  0: 'Failed',
+  1: 'Completed',
+}
+
+type ApiTransaction = {
+  to_address: string;
+  value: string;
+  block_timestamp: string;
+  receipt_status?: string;
+  hash?: string; // native asset type
+  transaction_hash?: string; // token transfer type
+  input?: string;
+  token_name?: string;
+  token_symbol?: string;
+  token_decimals?: string;
+  address?: string;
+}
+
 export const getAccountTransactionHistory = async (
   chainId: number,
   walletAddress: string,
 ): Promise<Transaction[]> => {
   const callPath = `account-history/${walletAddress}/${chainId}`;
-  const result = await callMainApi<{ transactions?: Transaction[] }>(callPath);
-  return result?.transactions ?? [];
+  const result = await callMainApi<{ transactions?: ApiTransaction[] }>(callPath);
+
+  // TODO: scrap all these native x erc20 mappings when Prime SDK supports Sepolia 💀
+  return (result?.transactions ?? []).map(({
+    receipt_status,
+    hash,
+    transaction_hash,
+    input,
+    value,
+    block_timestamp,
+    to_address,
+    token_name,
+    token_symbol,
+    token_decimals,
+    address: token_address,
+  }) => ({
+    id: hash ?? transaction_hash ?? '0x',
+    value: token_name ? '0' : value,
+    to: to_address,
+    data: input,
+    hash: hash ?? transaction_hash,
+    status: receiptStatusToMessage[receipt_status ?? 1] ?? 'Pending',
+    blockTimestamp: +(new Date(block_timestamp)),
+    asset: token_name
+      ? {
+        address: token_address as string,
+        decimals: +(token_decimals as string),
+        name: token_name as string,
+        symbol: token_symbol as string,
+        value,
+      }
+      : undefined,
+  }));
 }
