@@ -17,10 +17,12 @@ const ListItem = ({
   option,
   onClick,
   rightAddon,
+  hideValue,
 }: {
   option: SelectOption;
   onClick?: (option: SelectOption) => void;
   rightAddon?: React.ReactNode;
+  hideValue?: boolean;
 }) => {
   return (
     <ListItemWrapper onClick={() => onClick && onClick(option)}>
@@ -29,21 +31,26 @@ const ListItem = ({
           <ListItemImage src={option.imageSrc} alt={option.title} title={option.title} />
         </ListItemLeft>
       )}
-      <ListItemRight>
-        <ListItemTitle>{option.title}</ListItemTitle>
-        {!option.isLoadingValue && <ListItemValue>{option.value}</ListItemValue>}
-        {option.isLoadingValue && <SkeletonLoader $height="15px" $width="30%" />}
-      </ListItemRight>
+        <ListItemRight>
+          <ListItemTitle>{option.title}</ListItemTitle>
+          {!hideValue && (
+            <>
+              {!option.isLoadingValue && <ListItemValue>{option.value}</ListItemValue>}
+              {option.isLoadingValue && <SkeletonLoader $height="15px" $width="30%" />}
+            </>
+          )}
+        </ListItemRight>
       {rightAddon}
     </ListItemWrapper>
   )
 }
 
-export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions }: {
+export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions, hideValue }: {
   options: SelectOption[];
   defaultSelectedId?: string;
   onChange: (option: SelectOption) => void;
   isLoadingOptions?: boolean;
+  hideValue?: boolean;
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [selectedId, setSelectedId] = useState(defaultSelectedId);
@@ -56,7 +63,7 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions 
         </ListItemLeft>
         <ListItemRight>
           <SkeletonLoader $height="15px" $width="80%" />
-          <SkeletonLoader $height="15px" $width="30%" />
+          {!hideValue && <SkeletonLoader $height="15px" $width="30%" />}
         </ListItemRight>
       </ListItemWrapper>
     )
@@ -75,6 +82,7 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions 
             </SelectToggleButton>
           }
           onClick={() => setExpanded(!expanded)}
+          hideValue={hideValue}
         />
       )}
       {(expanded || !selected) && options.filter((option) => option.id !== selected?.id).map((option) => (
@@ -86,6 +94,7 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions 
             setSelectedId(option.id);
             onChange(option);
           }}
+          hideValue={hideValue}
         />
       ))}
     </div>
