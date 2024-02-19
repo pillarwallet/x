@@ -169,7 +169,7 @@ const ChainTitle = styled.div`
   font-size: 15px;
   font-weight: 700;
 
-  ${({ onClick, theme }) => onClick && `
+  ${({ theme }) => `
     &:hover {
       background: ${theme.color.background.selectItemHover};
     }
