@@ -169,11 +169,9 @@ const ChainTitle = styled.div`
   font-size: 15px;
   font-weight: 700;
 
-  ${({ theme }) => `
-    &:hover {
-      background: ${theme.color.background.selectItemHover};
-    }
-  `}
+  &:hover {
+    background: ${({ theme }) => theme.color.background.selectItemHover};
+  }
 `;
 
 export default AssetSelect;
