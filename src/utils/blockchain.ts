@@ -5,7 +5,9 @@ import {
   gnosis,
   avalanche,
   bsc,
-  polygonMumbai, mainnet, goerli, sepolia,
+  polygonMumbai,
+  mainnet,
+  sepolia,
 } from 'viem/chains';
 
 // services
@@ -91,7 +93,6 @@ export const supportedChains = [
   gnosis,
   avalanche,
   bsc,
-  goerli,
   sepolia,
   polygonMumbai,
 ];
@@ -158,6 +159,11 @@ type ApiTransaction = {
   token_symbol?: string;
   token_decimals?: string;
   address?: string;
+  internal_transactions?: {
+    from: string;
+    to: string;
+    type: string;
+  }[];
 }
 
 export const getAccountTransactionHistory = async (
@@ -180,22 +186,32 @@ export const getAccountTransactionHistory = async (
     token_symbol,
     token_decimals,
     address: token_address,
-  }) => ({
-    id: hash ?? transaction_hash ?? '0x',
-    value: token_name ? '0' : value,
-    to: to_address,
-    data: input,
-    hash: hash ?? transaction_hash,
-    status: receiptStatusToMessage[receipt_status ?? 1] ?? 'Pending',
-    blockTimestamp: +(new Date(block_timestamp)),
-    asset: token_name
-      ? {
-        address: token_address as string,
-        decimals: +(token_decimals as string),
-        name: token_name as string,
-        symbol: token_symbol as string,
-        value,
-      }
-      : undefined,
-  }));
+    internal_transactions,
+  }) => {
+    let to = to_address;
+
+    if (internal_transactions?.length
+      && internal_transactions[0]?.type === 'DELEGATECALL') {
+      to = internal_transactions[0].to;
+    }
+
+    return {
+      id: hash ?? transaction_hash ?? '0x',
+      value: token_name ? '0' : value,
+      to,
+      data: input,
+      hash: hash ?? transaction_hash,
+      status: receiptStatusToMessage[receipt_status ?? 1] ?? 'Pending',
+      blockTimestamp: +(new Date(block_timestamp)),
+      asset: token_name
+        ? {
+          address: token_address as string,
+          decimals: +(token_decimals as string),
+          name: token_name as string,
+          symbol: token_symbol as string,
+          value,
+        }
+        : undefined,
+    }
+  });
 }
