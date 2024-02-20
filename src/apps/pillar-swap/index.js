@@ -102,7 +102,7 @@ function App() {
   }
 
   const pillarSwap = async () => {
-    await send();
+    await send(['1']);
   }
 
   return (
