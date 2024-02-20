@@ -8,4 +8,12 @@ export interface Transaction {
   status: string;
   hash?: string;
   userOpHash?: string;
+  blockTimestamp: number;
+  asset?: {
+    address: string;
+    decimals: number;
+    name: string;
+    symbol: string;
+    value: BigNumberish;
+  }
 }

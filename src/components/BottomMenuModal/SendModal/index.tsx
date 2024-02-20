@@ -153,6 +153,8 @@ const SendModal = ({ isContentVisible }: SendModalProps) => {
     )
   }
 
+  const assetValueToSend = amountAsFiat ? amountForPrice : amount;
+
   return (
     <Wrapper ref={formRef}>
       <FormGroup>
@@ -196,18 +198,18 @@ const SendModal = ({ isContentVisible }: SendModalProps) => {
       </BottomActionBar>
       {isTransactionReady && (
         <EtherspotBatches>
-          <EtherspotBatch>
+          <EtherspotBatch chainId={selectedAsset.asset.chainId}>
             {isZeroAddress(selectedAsset.asset.address) && (
               <EtherspotTransaction
                 to={recipient}
-                value={amountAsFiat ? amountForPrice : amount}
+                value={assetValueToSend}
               />
             )}
             {!isZeroAddress(selectedAsset.asset.address) && (
               <EtherspotTokenTransferTransaction
                 receiverAddress={recipient}
                 tokenAddress={selectedAsset.asset.address}
-                value={amountAsFiat ? amountForPrice : amount}
+                value={assetValueToSend}
               />
             )}
           </EtherspotBatch>
