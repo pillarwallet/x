@@ -22,7 +22,7 @@ import { getPillarXContract, getPillarYContract, getPrice } from './AlphaRouterS
 
 
 function App() {
-  const { estimate, send } = useEtherspotTransactions();
+  const { send } = useEtherspotTransactions();
   const [signerAddress, setSignerAddress] = useState(undefined)
 
   const [slippageAmount, setSlippageAmount] = useState(2)
@@ -56,32 +56,31 @@ function App() {
   useEffect(() => {
     const onLoad = async () => {
       setSignerAddress(goerliAddress)
-      const pillarXContract = getPillarXContract()
-      setPillarXContract(pillarXContract)
+      const newPillarXContract = getPillarXContract()
+      setPillarXContract(newPillarXContract)
 
-      const pillarYContract = getPillarYContract()
-      setPillarYContract(pillarYContract)
+      const newPillarYContract = getPillarYContract()
+      setPillarYContract(newPillarYContract)
     }
     onLoad()
   }, [])
 
-  const getWalletAddress = () => {
+  useEffect(() => {
+    const getWalletAddress = () => {
+      if (!pillarXContract || !goerliAddress) return
 
-    pillarXContract.balanceOf(goerliAddress)
+      pillarXContract.balanceOf(goerliAddress)
       .then(res => {
         setPillarXAmount( Number(ethers.utils.formatEther(res)) )
       })
-    pillarYContract.balanceOf(goerliAddress)
+      pillarYContract.balanceOf(goerliAddress)
       .then(res => {
         setPillarYAmount( Number(ethers.utils.formatEther(res)) )
       })
+    }
 
-      
-  }
-
-  if (pillarXContract != undefined && goerliAddress != undefined) {
     getWalletAddress()
-  }
+  }, [pillarXContract, pillarYContract, goerliAddress]);
 
   const getSwapPrice = (inputAmount1) => {
     setLoading(true)
@@ -103,17 +102,12 @@ function App() {
   }
 
   const pillarSwap = async () => {
-    /* eslint-disable no-console */
-    console.log(inputAmount)
-    await estimate(['1']);
-    await send(['1']);
+    await send();
   }
 
   return (
     <div className="App">
-      
       <MintButton></MintButton>
-
       <div className="appBody">
         <div className="swapContainer">
           <div className="swapHeader">
@@ -127,7 +121,7 @@ function App() {
                 setDeadlineMinutes={setDeadlineMinutes}
                 deadlineMinutes={deadlineMinutes}
                 setSlippageAmount={setSlippageAmount}
-                slippageAmount={slippageAmount} />
+                slippageAmount={slippageAmount}/>
             )}
           </div>
 
@@ -136,14 +130,14 @@ function App() {
               field="input"
               tokenName="PillarX"
               getSwapPrice={getSwapPrice}
-              balance={pillarXAmount} />
+              balance={pillarXAmount}/>
             <CurrencyField
               field="output"
               tokenName="PillarY"
               value={outputAmount}
               balance={pillarYAmount}
               spinner={BeatLoader}
-              loading={loading} />
+              loading={loading}/>
           </div>
 
           <div className="ratioContainer">
@@ -155,11 +149,10 @@ function App() {
           </div>
           <EtherspotBatches id={'1'}>
             <EtherspotBatch chainId={5}>
-              {/** TODO fix value input */}
               <EtherspotApprovalTransaction
                 tokenAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
                 receiverAddress={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
-                value={'10'}
+                value={inputAmount}
               />
               <EtherspotTransaction
                 to={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
@@ -177,6 +170,7 @@ function App() {
               </EtherspotTransaction>
             </EtherspotBatch>
           </EtherspotBatches>
+
         </div>
       </div>
 
