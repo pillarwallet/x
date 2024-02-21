@@ -5,10 +5,17 @@ import { sepolia } from 'viem/chains';
 import isEqual from 'lodash/isEqual';
 
 // utils
-import { getAssetBalance, getNativeAssetBalance, supportedChains, usdcOnSepolia } from '../utils/blockchain';
+import {
+  getAssetBalance,
+  getNativeAssetBalance,
+  usdcOnSepolia,
+  visibleChains
+} from '../utils/blockchain';
 
 export interface IBalances {
-  [chainId: number]: AccountBalance[];
+  [chainId: number]: {
+    [walletAddress: string]: AccountBalance[];
+  };
 }
 
 export interface AccountBalancesContext {
@@ -38,16 +45,17 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
     const refresh = async () => {
       if (!walletAddress) return;
 
-      const newBalances: IBalances = {};
+      const updatedBalances: IBalances = {};
 
-      const chainIds = supportedChains
-        .filter((chain) => process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet)
-        .map((chain) => chain.id);
+      const chainIds = visibleChains.map((chain) => chain.id);
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {
         if (expired) return;
-        newBalances[chainId] = chainId === sepolia.id
+
+        if (!updatedBalances[chainId]) updatedBalances[chainId] = {};
+
+        updatedBalances[chainId][walletAddress] = chainId === sepolia.id
           // TODO: replace once Sepolia is available on Prime SDK
           ? [
             await getNativeAssetBalance(sepolia.id, walletAddress),
@@ -59,7 +67,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
       if (expired) return;
 
       // deep compare
-      setBalances((current) => isEqual(current, newBalances) ? current : newBalances);
+      setBalances((current) => isEqual(current, updatedBalances) ? current : updatedBalances);
 
       timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
     }

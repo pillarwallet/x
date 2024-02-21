@@ -17,7 +17,7 @@ import { FaExternalLinkAlt } from 'react-icons/fa';
 import useAccountTransactionHistory from '../../hooks/useAccountTransactionHistory';
 
 // utils
-import { getNativeAssetForChainId, supportedChains } from '../../utils/blockchain';
+import { getNativeAssetForChainId, visibleChains } from '../../utils/blockchain';
 import { formatAmountDisplay } from '../../utils/number';
 
 interface HistoryModalProps {
@@ -33,13 +33,9 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     return <div />
   }
 
-  const visibleChains = process.env.REACT_APP_USE_TESTNETS === 'true'
-    ? supportedChains.filter((chain) => chain.testnet)
-    : supportedChains;
-
   return (
-    <Wrapper>
-      <CssVarsProvider defaultMode="dark">
+    <CssVarsProvider defaultMode="dark">
+      <Wrapper>
         <AccordionGroup>
           {visibleChains.map((chain) => (
             <Accordion key={chain.id}>
@@ -55,38 +51,38 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
                 {!!accountAddress
                   && !!history[chain.id]?.[accountAddress]?.length
                   && history[chain.id]?.[accountAddress as string]?.map((transaction) => (
-                  <Card key={transaction.hash} sx={{ width: '100%', mb: 0.5 }}>
-                    <Typography level="title-sm">
-                      {addressesEqual(accountAddress, transaction.to) ? 'Received' : 'Sent'}
-                      {` ${formatAmountDisplay(
-                        transaction.asset
-                          ? ethers.utils.formatUnits(transaction.asset.value, transaction.asset.decimals)
-                          : ethers.utils.formatEther(transaction.value)
-                      )}`}
-                      {` ${transaction.asset
-                        ? transaction.asset.symbol
-                        : getNativeAssetForChainId(chain.id).symbol
-                      }`}
-                    </Typography>
-                    <Typography level="body-xs">
-                      {moment(transaction.blockTimestamp).fromNow()}
-                      <Link
-                        href={`${chain.blockExplorers.default.url}/tx/${transaction.hash}`}
-                        ml={1}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <FaExternalLinkAlt/>
-                      </Link>
-                    </Typography>
-                  </Card>
+                    <Card key={transaction.hash} sx={{ width: '100%', mb: 0.5 }}>
+                      <Typography level="title-sm">
+                        {addressesEqual(accountAddress, transaction.to) ? 'Received' : 'Sent'}
+                        {` ${formatAmountDisplay(
+                          transaction.asset
+                            ? ethers.utils.formatUnits(transaction.asset.value, transaction.asset.decimals)
+                            : ethers.utils.formatEther(transaction.value)
+                        )}`}
+                        {` ${transaction.asset
+                          ? transaction.asset.symbol
+                          : getNativeAssetForChainId(chain.id).symbol
+                        }`}
+                      </Typography>
+                      <Typography level="body-xs">
+                        {moment(transaction.blockTimestamp).fromNow()}
+                        <Link
+                          href={`${chain.blockExplorers.default.url}/tx/${transaction.hash}`}
+                          ml={1}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <FaExternalLinkAlt/>
+                        </Link>
+                      </Typography>
+                    </Card>
                   ))}
               </AccordionDetails>
             </Accordion>
           ))}
         </AccordionGroup>
-      </CssVarsProvider>
-    </Wrapper>
+      </Wrapper>
+    </CssVarsProvider>
   );
 }
 
@@ -94,6 +90,16 @@ const Wrapper = styled.div`
   display: block;
   min-height: 100%;
   width: 100%;
+  max-height: calc(100vh - 240px);
+  overflow: hidden;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 export default HistoryModal;
