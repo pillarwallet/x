@@ -20,6 +20,7 @@ describe('AccountTransactionHistoryProvider', () => {
       to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
       value: '0',
       status: 'confirmed',
+      blockTimestamp: 1630000000,
     },
     {
       id: '2',
@@ -27,6 +28,7 @@ describe('AccountTransactionHistoryProvider', () => {
       to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
       value: '0',
       status: 'pending',
+      blockTimestamp: 1640000000,
     }
   ];
 
@@ -56,6 +58,7 @@ describe('AccountTransactionHistoryProvider', () => {
               to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
               value: '0',
               status: 'confirmed',
+              blockTimestamp: 1650000000,
             })
           : accountTransactionsMock;
       }
