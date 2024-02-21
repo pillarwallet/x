@@ -162,7 +162,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
   if (payload) {
     return (
-      <Wrapper>
+      <Wrapper $noBottomPadding>
         <PayloadContentRow>
           <IdenticonImage text={payload.title} size={45} rounded />
           <PayloadContentText>
@@ -255,12 +255,12 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $noBottomPadding?: boolean }>`
   width: 100%;
   max-height: calc(100vh - 240px);
   overflow: hidden;
   min-height: 100%;
-  padding-bottom: 150px;
+  ${({ $noBottomPadding }) => !$noBottomPadding && 'padding-bottom: 150px;'}
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
