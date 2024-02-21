@@ -2,7 +2,8 @@
 const CurrencyField = props => {
 
     const getPrice = (value) => {
-        props.getSwapPrice(value)
+      if (!props.getSwapPrice) return;
+      props.getSwapPrice(value)
     }
 
     return (
@@ -22,7 +23,7 @@ const CurrencyField = props => {
             </div>
             <div className='col-md-6 tokenContainer'>
                 <span className='tokenName'>{props.tokenName}</span>
-                <div className='balanceContainer'> 
+                <div className='balanceContainer'>
                     <span className='balanceAmount'>Balance: {props.balance?.toFixed(3)}</span>
                 </div>
             </div>
