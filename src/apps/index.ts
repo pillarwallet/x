@@ -6,6 +6,7 @@ import { AppManifest, RecordPerKey } from '../types';
 export const allowedApps = [
   'sign-message',
   'fear-and-greed',
+  'pillar-swap',
   'basic-transaction',
 ];
 
