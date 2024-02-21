@@ -25,21 +25,26 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 // utils
 import { isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
+import { BigNumberish } from 'ethers';
+import IdenticonImage from '../../IdenticonImage';
 
 export interface SendModalData {
-  amount?: string;
-  receiverAddress?: string;
-  assetAddress?: string;
-  assetId?: string;
-  title?: string;
-  description?: string;
+  title: string;
+  subtitle?: string;
+  transactions: {
+    chainId?: number;
+    to: string;
+    value?: BigNumberish;
+    data?: string;
+  }[];
 }
 
-interface SendModalProps extends React.PropsWithChildren<SendModalData> {
+interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
+  payload?: SendModalData;
 }
 
-const SendModal = ({ isContentVisible }: SendModalProps) => {
+const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
   const [selectedAsset, setSelectedAsset] = React.useState<AssetSelectOption | undefined>(undefined);
@@ -104,7 +109,7 @@ const SendModal = ({ isContentVisible }: SendModalProps) => {
     && isValidAmount(amount)
     && +amountLeft >= 0;
 
-  const isSendDisabled = isSending || !isTransactionReady;
+  const isSendDisabled = isSending || (!payload && !isTransactionReady);
 
   const onSend = async () => {
     if (isSendDisabled) return;
@@ -154,6 +159,37 @@ const SendModal = ({ isContentVisible }: SendModalProps) => {
   }
 
   const assetValueToSend = amountAsFiat ? amountForPrice : amount;
+
+  if (payload) {
+    return (
+      <Wrapper>
+        <PayloadContentRow>
+          <IdenticonImage text={payload.title} size={45} rounded />
+          <PayloadContentText>
+            <PayloadActionTitle>{payload.title}</PayloadActionTitle>
+            {!!payload.subtitle && <PayloadActionSubtitle>{payload.subtitle}</PayloadActionSubtitle>}
+          </PayloadContentText>
+        </PayloadContentRow>
+        {payload.transactions.map((transaction, index) => (
+          <>
+            <EtherspotBatches key={index}>
+              <EtherspotBatch chainId={transaction.chainId}>
+                <EtherspotTransaction
+                  to={transaction.to}
+                  value={transaction.value || '0'}
+                  data={transaction.data || undefined}
+                />
+              </EtherspotBatch>
+            </EtherspotBatches>
+          </>
+        ))}
+        <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>
+          {isSending ? 'Sending...' : 'Send'}
+        </Button>
+        {errorMessage && <Paragraph $fontSize={12} $center>{errorMessage}</Paragraph>}
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper ref={formRef}>
@@ -272,6 +308,31 @@ const AmountHelperLeft = styled.div`
   align-content: center;
   gap: 6px;
   cursor: pointer;
+`;
+
+const PayloadContentRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  width: 100%;
+  word-break: break-all;
+`;
+
+const PayloadContentText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const PayloadActionTitle = styled.p`
+  font-size: 18px;
+  font-weight: 700;
+`;
+
+const PayloadActionSubtitle = styled.p`
+  font-size: 14px;
 `;
 
 export default SendModal;
