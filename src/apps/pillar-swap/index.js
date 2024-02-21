@@ -23,27 +23,13 @@ import { getPillarXContract, getPillarYContract, getPrice } from './AlphaRouterS
 
 function App() {
   const { send } = useEtherspotTransactions();
-  const [signerAddress, setSignerAddress] = useState(undefined)
-
   const [slippageAmount, setSlippageAmount] = useState(2)
   const [deadlineMinutes, setDeadlineMinutes] = useState(10)
   const [showModal, setShowModal] = useState(undefined)
 
   const [inputAmount, setInputAmount] = useState('1')
   const [outputAmount, setOutputAmount] = useState(undefined)
-  const [transaction, setTransaction] = useState({
-    'data': '0x5ae401dc0000000000000000000000000000000000000000000000000000000065c2308100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e404e45aaf0000000000000000000000009e6ce019cd6e02d905ee454718f3df149fe4e5f80000000000000000000000005ad9555c092e83c53f9b413f3a4d0a96e40215a900000000000000000000000000000000000000000000000000000000000001f400000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000087413e4d0098391b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-    'to': '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
-    'value': {
-        'type': 'BigNumber',
-        'hex': '0x00'
-    },
-    'gasPrice': {
-        'type': 'BigNumber',
-        'hex': '0x165a574d'
-    },
-    'gasLimit': '0x0f4240'
-})
+  const [transaction, setTransaction] = useState(null)
   const [loading, setLoading] = useState(undefined)
   const [ratio, setRatio] = useState(undefined)
   const [pillarXContract, setPillarXContract] = useState(undefined)
@@ -55,7 +41,6 @@ function App() {
 
   useEffect(() => {
     const onLoad = async () => {
-      setSignerAddress(goerliAddress)
       const newPillarXContract = getPillarXContract()
       setPillarXContract(newPillarXContract)
 
@@ -89,7 +74,7 @@ function App() {
       inputAmount1,
       slippageAmount,
       Math.floor(Date.now()/1000 + (deadlineMinutes * 60)),
-      signerAddress
+      goerliAddress
     ).then(data => {
       setInputAmount(inputAmount1.toString())
       setTransaction(data[0])
@@ -147,30 +132,31 @@ function App() {
               </>
             )}
           </div>
-          <EtherspotBatches id={'1'}>
-            <EtherspotBatch chainId={5}>
-              <EtherspotApprovalTransaction
-                tokenAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
-                receiverAddress={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
-                value={inputAmount}
-              />
-              <EtherspotTransaction
-                to={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
-                value={'0'}
-                data={transaction.data}
-              >
-                <div className="swapButtonContainer">
-                  <div
-                    onClick={() => pillarSwap()}
-                    className="swapButton"
-                  >
-                    Approve PX & Swap
+          {!!transaction && (
+            <EtherspotBatches id={'1'}>
+              <EtherspotBatch chainId={5}>
+                <EtherspotApprovalTransaction
+                  tokenAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
+                  receiverAddress={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
+                  value={inputAmount}
+                />
+                <EtherspotTransaction
+                  to={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
+                  value={'0'}
+                  data={transaction.data}
+                >
+                  <div className="swapButtonContainer">
+                    <div
+                      onClick={() => pillarSwap()}
+                      className="swapButton"
+                    >
+                      Approve PX & Swap
+                    </div>
                   </div>
-                </div>
-              </EtherspotTransaction>
-            </EtherspotBatch>
-          </EtherspotBatches>
-
+                </EtherspotTransaction>
+              </EtherspotBatch>
+            </EtherspotBatches>
+          )}
         </div>
       </div>
 

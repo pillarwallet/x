@@ -13,13 +13,13 @@ const MintButton = () => {
 
 
     const mintTokens = async () => {
-        await estimate(0);
-        await send(0);
+        await estimate(['2']);
+        await send(['2']);
       }
 
     return (
     <div className="my-2 buttonContainerTop">
-        <EtherspotBatches id={0}>
+        <EtherspotBatches id="2">
             <EtherspotBatch chainId={5}>
               <EtherspotContractTransaction
                 contractAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
