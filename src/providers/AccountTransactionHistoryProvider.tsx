@@ -6,7 +6,7 @@ import differenceWith from 'lodash/differenceWith';
 // utils
 import {
   getAccountTransactionHistory,
-  supportedChains,
+  visibleChains,
 } from '../utils/blockchain';
 
 // types
@@ -46,9 +46,7 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
 
       const updatedHistory: TransactionHistory = {};
 
-      const chainIds = supportedChains
-        .filter((chain) => process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet)
-        .map((chain) => chain.id);
+      const chainIds = visibleChains.map((chain) => chain.id);
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {

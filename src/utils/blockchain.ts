@@ -97,6 +97,9 @@ export const supportedChains = [
   polygonMumbai,
 ];
 
+export const visibleChains = supportedChains
+  .filter((chain) => process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet)
+
 export const getNativeAssetBalance = async (chainId: number, walletAddress: string): Promise<AccountBalance> => {
   let balance = ethers.BigNumber.from('0');
 
