@@ -4,11 +4,13 @@ import styled, { useTheme } from 'styled-components';
 import { HiOutlineSwitchVertical } from 'react-icons/hi';
 import {
   EtherspotBatch,
-  EtherspotBatches, EtherspotTokenTransferTransaction,
+  EtherspotBatches,
+  EtherspotTokenTransferTransaction,
   EtherspotTransaction,
   useEtherspotPrices,
   useEtherspotTransactions, useEtherspotUtils
 } from '@etherspot/transaction-kit';
+import { BigNumberish } from 'ethers';
 
 // components
 import TextInput from '../../Form/TextInput';
@@ -18,6 +20,7 @@ import HorizontalDivider from '../../HorizontalDivider';
 import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
 import Paragraph from '../../Text/Paragraph';
 import Button from '../../Button';
+import IdenticonImage from '../../IdenticonImage';
 
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
@@ -25,12 +28,11 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 // utils
 import { isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
-import { BigNumberish } from 'ethers';
-import IdenticonImage from '../../IdenticonImage';
 
 export interface SendModalData {
   title: string;
   subtitle?: string;
+  onSent?: (userOpHashes: string[]) => void;
   transactions: {
     chainId?: number;
     to: string;
@@ -131,6 +133,17 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
       setErrorMessage(t`error.transactionFailedReasonUnknown`);
       setIsSending(false);
       return;
+    }
+
+    if (payload?.onSent) {
+      const allUserOpHashes = result.reduce((hashes: string[], r) => {
+        r.sentBatches.forEach((b) => {
+          if (!b.userOpHash) return;
+          hashes.push(b.userOpHash);
+        });
+        return hashes;
+      }, []);
+      payload.onSent(allUserOpHashes);
     }
 
     setUserOpHash(newUserOpHash);

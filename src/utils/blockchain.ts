@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { AccountBalance, TokenListToken } from '@etherspot/prime-sdk';
+import { AccountBalance, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
 import {
   polygon,
   gnosis,
@@ -217,4 +217,13 @@ export const getAccountTransactionHistory = async (
         : undefined,
     }
   });
+}
+
+export const getAccountNfts = async (
+  chainId: number,
+  walletAddress: string,
+): Promise<NftCollection[]> => {
+  const callPath = `nfts/${walletAddress}/${chainId}`;
+  const result = await callMainApi<{ collections?: NftCollection[] }>(callPath);
+  return result?.collections ?? [];
 }
