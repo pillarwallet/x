@@ -30,7 +30,7 @@ import IdenticonImage from '../../IdenticonImage';
 
 export interface SendModalData {
   title: string;
-  subtitle?: string;
+  description?: string;
   transactions: {
     chainId?: number;
     to: string;
@@ -167,7 +167,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
           <IdenticonImage text={payload.title} size={45} rounded />
           <PayloadContentText>
             <PayloadActionTitle>{payload.title}</PayloadActionTitle>
-            {!!payload.subtitle && <PayloadActionSubtitle>{payload.subtitle}</PayloadActionSubtitle>}
+            {!!payload.description && <PayloadActionDescription>{payload.description}</PayloadActionDescription>}
           </PayloadContentText>
         </PayloadContentRow>
         {payload.transactions.map((transaction, index) => (
@@ -331,7 +331,7 @@ const PayloadActionTitle = styled.p`
   font-weight: 700;
 `;
 
-const PayloadActionSubtitle = styled.p`
+const PayloadActionDescription = styled.p`
   font-size: 14px;
 `;
 
