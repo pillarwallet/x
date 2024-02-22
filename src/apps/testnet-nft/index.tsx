@@ -78,7 +78,7 @@ const App = () => {
       type: 'send',
       payload: {
         title: 'Mint NFT',
-        subtitle: `This will mint ${accountAddress && addressesEqual(receiverAddress, accountAddress) ? 'you' : 'receiver'} single Monke NFT on on ${chainTitle}`,
+        description: `This will mint ${accountAddress && addressesEqual(receiverAddress, accountAddress) ? 'you' : 'receiver'} single Monke NFT on on ${chainTitle}`,
         onSent: () => {
           setIsMinting(true);
         },

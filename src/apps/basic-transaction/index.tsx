@@ -34,7 +34,7 @@ const App = () => {
       type: 'send',
       payload: {
         title: 'Basic Transaction',
-        subtitle: `This will execute basic transaction to ${destinationAddress} address with value ${value} and ${data ? 'attached' : 'no'} call data on ${chainId} chain`,
+        description: `This will execute basic transaction to ${destinationAddress} address with value ${value} and ${data ? 'attached' : 'no'} call data on ${chainId} chain`,
         transactions: [{
           chainId,
           to: destinationAddress,
