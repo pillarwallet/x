@@ -5,7 +5,10 @@ import { avalanche, bsc, gnosis, mainnet, polygon } from 'viem/chains';
 import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk';
 
 // providers
-import AccountNftsProvider, { AccountNftsContext } from '../../providers/AccountNftsProvider';
+import AccountNftsProvider from '../../providers/AccountNftsProvider';
+
+// hooks
+import useAccountNfts from '../../hooks/useAccountNfts';
 
 const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
 
@@ -64,15 +67,15 @@ describe('AccountNftsProvider', () => {
   });
 
   it('initializes with empty nfts', () => {
-    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
-    expect(result.current?.data.nfts).toEqual({});
+    const { result } = renderHook(() => useAccountNfts(), { wrapper });
+    expect(result.current).toEqual({});
   });
 
   it('updates nfts', async () => {
-    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
+    const { result } = renderHook(() => useAccountNfts(), { wrapper });
 
     await waitFor(async () => {
-      expect(result.current?.data.nfts).toEqual({
+      expect(result.current).toEqual({
         [mainnet.id]: accountNftsMock,
         [polygon.id]: { [accountAddress]: [] },
         [gnosis.id]: { [accountAddress]: [] },
@@ -87,10 +90,10 @@ describe('AccountNftsProvider', () => {
   it('does not update nfts when wallet address is not set', async () => {
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
 
-    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
+    const { result } = renderHook(() => useAccountNfts(), { wrapper });
 
     expect(getAccountNftsMock).not.toHaveBeenCalled();
-    expect(result.current?.data.nfts).toEqual({});
+    expect(result.current).toEqual({});
   });
 
   it('calls onNftReceived when account nft received', async () => {
@@ -99,33 +102,24 @@ describe('AccountNftsProvider', () => {
     const onNftReceived = jest.fn();
     const onNftSent = jest.fn();
 
-    const { result } = renderHook(() => React.useContext(AccountNftsContext), {
-      wrapper: ({ children }) => (
-        <AccountNftsProvider>
-          <AccountNftsContext.Consumer>
-            {(value) => {
-              if (!value) return children;
-              value.listenerRef.current.onNftReceived = onNftReceived;
-              value.listenerRef.current.onNftSent = onNftSent;
-              return children
-            }}
-          </AccountNftsContext.Consumer>
-        </AccountNftsProvider>
-      ),
-    });
+    const { result } = renderHook(() => useAccountNfts({
+      onReceived: onNftReceived,
+      onSent: onNftSent
+    }), { wrapper });
 
     await waitFor(async () => {
-      expect(result.current?.data.nfts).not.toEqual({});
+      expect(result.current).not.toEqual({});
     });
 
-    expect(result.current?.data.nfts[mainnet.id][accountAddress][0].items.length).toBe(2);
+    expect(result.current?.[mainnet.id][accountAddress][0].items.length).toBe(2);
 
     returnMoreNfts = true;
 
     jest.runAllTimers();
+    jest.useRealTimers();
 
     await waitFor(async () => {
-      expect(result.current?.data.nfts[mainnet.id][accountAddress][0]?.items?.length).toBe(3);
+      expect(result.current?.[mainnet.id][accountAddress][0]?.items?.length).toBe(3);
     });
 
     expect(onNftReceived).toHaveBeenCalledTimes(1);
@@ -133,40 +127,29 @@ describe('AccountNftsProvider', () => {
   });
 
   it('calls onNftSent when account nft sent', async () => {
-    returnMoreNfts = true;
-
     jest.useFakeTimers();
+    returnMoreNfts = true;
 
     const onNftReceived = jest.fn();
     const onNftSent = jest.fn();
 
-    const { result } = renderHook(() => React.useContext(AccountNftsContext), {
-      wrapper: ({ children }) => (
-        <AccountNftsProvider>
-          <AccountNftsContext.Consumer>
-            {(value) => {
-              if (!value) return children;
-              value.listenerRef.current.onNftReceived = onNftReceived;
-              value.listenerRef.current.onNftSent = onNftSent;
-              return children
-            }}
-          </AccountNftsContext.Consumer>
-        </AccountNftsProvider>
-      ),
-    });
+    const { result } = renderHook(() => useAccountNfts({
+      onReceived: onNftReceived,
+      onSent: onNftSent
+    }), { wrapper });
 
     await waitFor(async () => {
-      expect(result.current?.data.nfts).not.toEqual({});
+      expect(result.current).not.toEqual({});
     });
 
-    expect(result.current?.data.nfts[mainnet.id][accountAddress][0].items.length).toBe(3);
+    expect(result.current[mainnet.id][accountAddress][0].items.length).toBe(3);
 
     returnMoreNfts = false;
-
     jest.runAllTimers();
+    jest.useRealTimers();
 
     await waitFor(async () => {
-      expect(result.current?.data.nfts[mainnet.id][accountAddress][0]?.items?.length).toBe(2);
+      expect(result.current[mainnet.id][accountAddress][0]?.items?.length).toBe(2);
     });
 
     expect(onNftSent).toHaveBeenCalledTimes(1);
@@ -174,6 +157,7 @@ describe('AccountNftsProvider', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     jest.clearAllMocks();
   });
 });
