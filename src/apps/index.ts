@@ -8,6 +8,7 @@ export const allowedApps = [
   'fear-and-greed',
   'pillar-swap',
   'basic-transaction',
+  'testnet-nft',
 ];
 
 export const loadApp = (appId: string) => {
