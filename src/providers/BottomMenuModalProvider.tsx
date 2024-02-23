@@ -15,7 +15,7 @@ export const ProviderContext = createContext<BottomMenuModalContext | null>(null
 
 interface BottomMenuSend {
   type: 'send';
-  data?: SendModalData
+  payload?: SendModalData
 }
 
 export type BottomMenuItem = {

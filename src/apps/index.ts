@@ -7,6 +7,7 @@ export const allowedApps = [
   'sign-message',
   'fear-and-greed',
   'pillar-swap',
+  'basic-transaction',
 ];
 
 export const loadApp = (appId: string) => {
