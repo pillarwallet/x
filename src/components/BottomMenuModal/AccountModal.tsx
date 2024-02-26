@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 import styled from 'styled-components';
 import { useLogout } from '@privy-io/react-auth';
@@ -5,10 +6,11 @@ import { useTranslation } from 'react-i18next';
 import {
   Box,
   Card,
-  CssVarsProvider,
+  CssVarsProvider, Tab, tabClasses, TabList, Tabs,
   Typography
 } from '@mui/joy';
 import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
 // components
 import Paragraph from '../Text/Paragraph';
@@ -22,6 +24,7 @@ import { formatAmountDisplay } from '../../utils/number';
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useAssets from '../../hooks/useAssets';
+import useAccountNfts from '../../hooks/useAccountNfts';
 
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -29,14 +32,34 @@ interface AccountModalProps {
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const accountAddress = useWalletAddress();
+  const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
   const assets = useAssets();
   const balances = useAccountBalances();
+  const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
+  const [showNfts, setShowNfts] = React.useState(false);
+  const [hiddenImages, setHiddenImages] = React.useState<{ [key: string]: boolean }>({});
 
   if (!isContentVisible) {
     return <Wrapper />
+  }
+
+  const onLogoutClick = () => {
+    logout();
+    navigate('/');
+  }
+
+  if (!accountAddress) {
+    return (
+      <Wrapper>
+        <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column', width: '100%' }}>
+          <SkeletonLoader $height="40px" $width="100%" />
+          <SkeletonLoader $height="160px" $width="100%" />
+        </Box>
+      </Wrapper>
+    );
   }
 
   return (
@@ -48,7 +71,81 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       </AccountSection>
       <Box mb={2} sx={{ width: '100%' }}>
         <CssVarsProvider defaultMode="dark">
-          {visibleChains.map((chain) => !!accountAddress && (
+          <Tabs
+            sx={{ bgcolor: 'transparent', mb: 0.5 }}
+            value={showNfts ? 1 : 0}
+            onChange={(event, value) => setShowNfts(value === 1)}
+          >
+            <TabList
+              disableUnderline
+              sx={{
+                p: 0.5,
+                gap: 0.5,
+                borderRadius: 'sm',
+                bgcolor: 'background.level1',
+                [`& .${tabClasses.root}[aria-selected="true"]`]: {
+                  boxShadow: 'sm',
+                  bgcolor: 'background.surface',
+                },
+              }}
+              tabFlex={1}
+            >
+              <Tab disableIndicator>Assets</Tab>
+              <Tab disableIndicator>NFTs</Tab>
+            </TabList>
+          </Tabs>
+          {showNfts && visibleChains.map((chain) => (
+            <>
+              {!nfts[chain.id]?.[accountAddress]?.length && (
+                <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
+                  <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row' }}>
+                    <SkeletonLoader $height="40px" $width="40px" />
+                    <SkeletonLoader $height="40px" $width="220px" />
+                  </Box>
+                </Card>
+              )}
+              {!!nfts[chain.id]?.[accountAddress]?.length && (
+                <Card key={chain.id + '-item'} sx={{ mb: 0.5 }}>
+                  <Typography level="title-md">
+                    {chain.name}
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    {nfts[chain.id][accountAddress].map((nftCollection) => nftCollection?.items?.map((nft) => {
+                      const nftKey = nftCollection.contractAddress + ':' + nft.tokenId;
+                      return (
+                        <Box
+                          key={nftKey}
+                          sx={{
+                              width: '100%',
+                              display: 'flex',
+                              flexDirection: 'row',
+                              gap: 2,
+                              justifyContent: 'flex-start',
+                              alignItems: 'center'
+                          }}
+                        >
+                          {(!!nft.image || !!nft.ipfsGateway) && !hiddenImages[nftKey] && (
+                            <img
+                              src={nft.image || nft.ipfsGateway}
+                              onError={() => setHiddenImages((hidden) => ({
+                                ...hidden,
+                                [nftKey]: true
+                              }))}
+                              alt={nft.name} style={{ width: '40px' }}
+                            />
+                          )}
+                          <Typography level="body-sm">
+                            {nft.name ? nft.name : nftCollection.contractName + ' #' + nft.tokenId}
+                          </Typography>
+                        </Box>
+                      );
+                    }))}
+                  </Box>
+                </Card>
+              )}
+            </>
+          ))}
+          {!showNfts && visibleChains.map((chain) => (
             <>
               {!balances[chain.id]?.[accountAddress]?.length && (
                 <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
@@ -84,7 +181,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           ))}
         </CssVarsProvider>
       </Box>
-      <Button onClick={logout}>{t`action.logout`}</Button>
+      <Button onClick={onLogoutClick}>{t`action.logout`}</Button>
     </Wrapper>
   )
 }
