@@ -27,8 +27,10 @@
   },
   "label": {
     "chooseRecipient": "Choose recipient",
-    "chooseToken": "Choose token",
-    "enterAmount": "Enter amount"
+    "chooseAsset": "Choose asset",
+    "enterAmount": "Enter amount",
+    "tokens": "Tokens",
+    "nfts": "NFTs"
   },
   "placeholder": {
     "toNameAddress": "To: name, address"

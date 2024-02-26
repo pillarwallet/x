@@ -18,7 +18,7 @@ import Button from '../Button';
 import SkeletonLoader from '../SkeletonLoader';
 
 // utils
-import { visibleChains } from '../../utils/blockchain';
+import { parseNftTitle, visibleChains } from '../../utils/blockchain';
 import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
@@ -90,8 +90,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               }}
               tabFlex={1}
             >
-              <Tab disableIndicator>Assets</Tab>
-              <Tab disableIndicator>NFTs</Tab>
+              <Tab disableIndicator>{t`label.tokens`}</Tab>
+              <Tab disableIndicator>{t`label.nfts`}</Tab>
             </TabList>
           </Tabs>
           {showNfts && visibleChains.map((chain) => (
@@ -135,7 +135,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                             />
                           )}
                           <Typography level="body-sm">
-                            {nft.name ? nft.name : nftCollection.contractName + ' #' + nft.tokenId}
+                            {parseNftTitle(nftCollection, nft)}
                           </Typography>
                         </Box>
                       );
