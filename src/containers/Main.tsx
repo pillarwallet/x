@@ -19,6 +19,7 @@ import AccountBalancesProvider from '../providers/AccountBalancesProvider';
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import AssetsProvider from '../providers/AssetsProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
+import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -26,11 +27,17 @@ import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
 // pages
 import Loading from '../pages/Loading';
 
+// hooks
+import useAllowedApps from '../hooks/useAllowedApps';
+
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
+  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+
+  const isAppReady = ready && !isLoadingAllowedApps;
 
   useEffect(() => {
     let expired = false;
@@ -59,7 +66,7 @@ const AppAuthController = () => {
     }
   }, [wallets]);
 
-  if (authenticated && provider && chainId) {
+  if (isAppReady && authenticated && provider && chainId) {
     return (
       <EtherspotTransactionKit
         provider={provider}
@@ -86,7 +93,7 @@ const AppAuthController = () => {
     )
   }
 
-  if (ready && !authenticated) {
+  if (isAppReady && !authenticated) {
     return (
       <BrowserRouter>
         <UnauthorizedNavigation />
@@ -112,7 +119,9 @@ const Main = () => {
             }
           }}
         >
-          <AppAuthController />
+          <AllowedAppsProvider>
+            <AppAuthController />
+          </AllowedAppsProvider>
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
