@@ -24,11 +24,18 @@ const ListItem = ({
   rightAddon?: React.ReactNode;
   hideValue?: boolean;
 }) => {
+  const [hideImage, setHideImage] = useState(false);
+
   return (
     <ListItemWrapper onClick={() => onClick && onClick(option)}>
-      {option.imageSrc && (
+      {option.imageSrc && !hideImage && (
         <ListItemLeft>
-          <ListItemImage src={option.imageSrc} alt={option.title} title={option.title} />
+          <ListItemImage
+            src={option.imageSrc}
+            alt={option.title}
+            title={option.title}
+            onError={() => setHideImage(true)}
+          />
         </ListItemLeft>
       )}
         <ListItemRight>

@@ -5,10 +5,13 @@ import { HiOutlineSwitchVertical } from 'react-icons/hi';
 import {
   EtherspotBatch,
   EtherspotBatches,
+  EtherspotContractTransaction,
   EtherspotTokenTransferTransaction,
   EtherspotTransaction,
   useEtherspotPrices,
-  useEtherspotTransactions, useEtherspotUtils
+  useEtherspotTransactions,
+  useEtherspotUtils,
+  useWalletAddress
 } from '@etherspot/transaction-kit';
 import { BigNumberish } from 'ethers';
 
@@ -46,6 +49,12 @@ interface SendModalProps extends React.PropsWithChildren {
   payload?: SendModalData;
 }
 
+const getAmountLeft = (selectedAsset: AssetSelectOption | undefined, amount: string): string | number => {
+  if (!selectedAsset || selectedAsset?.type !== 'token') return '0.00';
+  if (!selectedAsset?.balance) return '0.00';
+  return +selectedAsset.balance - +(amount || 0);
+}
+
 const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
@@ -62,6 +71,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const formRef = useRef(null);
   const { hide } = useBottomMenuModal();
+  const accountAddress = useWalletAddress();
 
   const resetForm = () => {
     setRecipient('');
@@ -80,6 +90,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     let expired = false;
 
     (async () => {
+      if (selectedAsset.type !== 'token') return;
       const price = await getPrice(selectedAsset.asset.address);
       if (expired || !price?.usd) return;
       setSelectedAssetPrice(price.usd);
@@ -89,12 +100,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
       expired = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset?.asset?.address]);
-
-  const amountLeft = useMemo(() => {
-    if (!selectedAsset?.balance) return '0.00';
-    return +selectedAsset.balance - +(amount || 0);
-  }, [amount, selectedAsset?.balance]);
+  }, [selectedAsset]);
 
   const price = useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
@@ -106,10 +112,12 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     return +(amount || 0) / selectedAssetPrice;
   }, [amount, selectedAssetPrice]);
 
+  const amountLeft = +getAmountLeft(selectedAsset, amount);
+
   const isTransactionReady = isValidEthereumAddress(recipient)
-    && selectedAsset?.asset?.address
-    && isValidAmount(amount)
-    && +amountLeft >= 0;
+    && !!selectedAsset
+    && (selectedAsset?.type !== 'token' || isValidAmount(amount))
+    && (selectedAsset?.type !== 'token' || +getAmountLeft(selectedAsset, amount) >= 0);
 
   const isSendDisabled = isSending || (!payload && !isTransactionReady);
 
@@ -218,48 +226,62 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
         <HorizontalDivider />
       </FormGroup>
       <FormGroup>
-        <Label>{t`label.chooseToken`}</Label>
+        <Label>{t`label.chooseAsset`}</Label>
         <AssetSelect onChange={setSelectedAsset} />
       </FormGroup>
-      <FormGroup>
-        <Label>{t`label.enterAmount`}</Label>
-        <TextInput
-          value={amount}
-          onValueChange={setAmount}
-          disabled={!selectedAsset}
-          placeholder="0.00"
-          rightAddon={<Paragraph $fontSize={14} $fontWeight={400}>{amountAsFiat ? 'USD' : selectedAsset?.asset?.symbol}</Paragraph>}
-        />
-        <AmountHelper>
-          {price !== 0 && (
-            <AmountHelperLeft onClick={() => setAmountAsFiat(!amountAsFiat)}>
-              <HiOutlineSwitchVertical color={theme?.color?.icon?.inputHelper} />
-              {!amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>${formatAmountDisplay(price)}</Paragraph>}
-              {amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>{formatAmountDisplay(amountForPrice, 0, 6)} {selectedAsset?.asset.symbol}</Paragraph>}
-            </AmountHelperLeft>
-          )}
-          <Paragraph $fontSize={14} $fontWeight={400}>{t('helper.amountLeft', { amount: amountLeft })}</Paragraph>
-        </AmountHelper>
-      </FormGroup>
+      {selectedAsset?.type === 'token' && (
+        <FormGroup>
+          <Label>{t`label.enterAmount`}</Label>
+          <TextInput
+            value={amount}
+            onValueChange={setAmount}
+            disabled={!selectedAsset}
+            placeholder="0.00"
+            rightAddon={<Paragraph $fontSize={14} $fontWeight={400}>{amountAsFiat ? 'USD' : selectedAsset?.asset?.symbol}</Paragraph>}
+          />
+          <AmountHelper>
+            {price !== 0 && (
+              <AmountHelperLeft onClick={() => setAmountAsFiat(!amountAsFiat)}>
+                <HiOutlineSwitchVertical color={theme?.color?.icon?.inputHelper} />
+                {!amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>${formatAmountDisplay(price)}</Paragraph>}
+                {amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>{formatAmountDisplay(amountForPrice, 0, 6)} {selectedAsset?.asset.symbol}</Paragraph>}
+              </AmountHelperLeft>
+            )}
+            <Paragraph $fontSize={14} $fontWeight={400}>{t('helper.amountLeft', { amount: amountLeft })}</Paragraph>
+          </AmountHelper>
+        </FormGroup>
+      )}
       <BottomActionBar>
         <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>{isSending ? 'Sending...' : 'Send'}</Button>
         {errorMessage && <Paragraph $fontSize={12} $center>{errorMessage}</Paragraph>}
       </BottomActionBar>
       {isTransactionReady && (
         <EtherspotBatches>
-          <EtherspotBatch chainId={selectedAsset.asset.chainId}>
-            {isZeroAddress(selectedAsset.asset.address) && (
-              <EtherspotTransaction
-                to={recipient}
-                value={assetValueToSend}
+          <EtherspotBatch chainId={selectedAsset.chainId}>
+            {selectedAsset?.type === 'nft' && (
+              <EtherspotContractTransaction
+                contractAddress={selectedAsset.collection.contractAddress}
+                methodName={'transferFrom'}
+                abi={['function transferFrom(address from, address to, uint256 tokenId) external']}
+                params={[accountAddress as string, recipient, selectedAsset.nft.tokenId]}
               />
             )}
-            {!isZeroAddress(selectedAsset.asset.address) && (
-              <EtherspotTokenTransferTransaction
-                receiverAddress={recipient}
-                tokenAddress={selectedAsset.asset.address}
-                value={assetValueToSend}
-              />
+            {selectedAsset?.type === 'token' && (
+              <>
+                {isZeroAddress(selectedAsset.asset.address) && (
+                  <EtherspotTransaction
+                    to={recipient}
+                    value={assetValueToSend}
+                  />
+                )}
+                {!isZeroAddress(selectedAsset.asset.address) && (
+                  <EtherspotTokenTransferTransaction
+                    receiverAddress={recipient}
+                    tokenAddress={selectedAsset.asset.address}
+                    value={assetValueToSend}
+                  />
+                )}
+              </>
             )}
           </EtherspotBatch>
         </EtherspotBatches>

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { AccountBalance, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
+import { AccountBalance, Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
 import {
   polygon,
   gnosis,
@@ -226,4 +226,10 @@ export const getAccountNfts = async (
   const callPath = `nfts/${walletAddress}/${chainId}`;
   const result = await callMainApi<{ collections?: NftCollection[] }>(callPath);
   return result?.collections ?? [];
+}
+
+export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
+  return nft.name
+    ? nft.name
+    : collection.contractName + ' #' + nft.tokenId
 }
