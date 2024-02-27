@@ -14,11 +14,11 @@ export const navigationRoute = {
 }
 
 export const AuthorizedNavigation = () => {
-  const { allowed } = useAllowedApps();
+  const { allowed: allowedApps } = useAllowedApps();
   return (
     <Routes>
       <Route path={navigationRoute.home} element={<Lobby />} />
-      {allowed.map((appId) => (
+      {allowedApps.map((appId) => (
         <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
       ))}
       <Route path="*" element={<NotFound />} />
