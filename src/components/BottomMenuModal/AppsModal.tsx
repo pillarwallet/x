@@ -10,9 +10,11 @@ import { loadApps } from '../../apps';
 
 // components
 import AppIcon from '../AppIcon';
+import SkeletonLoader from '../SkeletonLoader';
 
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
+import useAllowedApps from '../../hooks/useAllowedApps';
 
 interface AppsModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -22,14 +24,27 @@ const AppsModal = ({ isContentVisible }: AppsModalProps) => {
   const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
   const navigate = useNavigate();
   const { hide } = useBottomMenuModal();
+  const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
 
   React.useEffect(() => {
-    const loadedApps = loadApps();
+    const loadedApps = loadApps(allowed);
     setApps(loadedApps);
-  }, []);
+  }, [allowed]);
 
   if (!isContentVisible) {
     return <Wrapper />
+  }
+
+  if (isLoadingAllowedApps) {
+    return (
+      <Wrapper>
+        <SkeletonLoader $height="90px" $width="90px" />
+        <SkeletonLoader $height="90px" $width="90px" />
+        <SkeletonLoader $height="90px" $width="90px" />
+        <SkeletonLoader $height="90px" $width="90px" />
+        <SkeletonLoader $height="90px" $width="90px" />
+      </Wrapper>
+    )
   }
 
   return (

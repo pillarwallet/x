@@ -4,18 +4,17 @@ import { Route, Routes } from 'react-router-dom';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
-
-// apps
-import { allowedApps } from '../apps';
-
-// types
 import App from '../pages/App';
+
+// hooks
+import useAllowedApps from '../hooks/useAllowedApps';
 
 export const navigationRoute = {
   home: '/',
 }
 
 export const AuthorizedNavigation = () => {
+  const { allowed: allowedApps } = useAllowedApps();
   return (
     <Routes>
       <Route path={navigationRoute.home} element={<Lobby />} />

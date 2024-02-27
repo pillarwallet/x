@@ -3,14 +3,6 @@ import i18next from 'i18next';
 // types
 import { AppManifest, RecordPerKey } from '../types';
 
-export const allowedApps = [
-  'sign-message',
-  'fear-and-greed',
-  'pillar-swap',
-  'basic-transaction',
-  'testnet-nft',
-];
-
 export const loadApp = (appId: string) => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const appManifest = require(`./${appId}/manifest.json`) as AppManifest;
@@ -25,7 +17,7 @@ export const loadApp = (appId: string) => {
   return appManifest;
 }
 
-export const loadApps = () => {
+export const loadApps = (allowedApps: string[]) => {
  return allowedApps.reduce((apps: RecordPerKey<AppManifest>, appId: string) => {
     apps[appId] = loadApp(appId);
     return apps;
