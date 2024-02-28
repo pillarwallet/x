@@ -18,12 +18,22 @@
     "getStarted": "Get Started",
     "next": "Next",
     "send": "Send",
-    "logout": "Logout"
+    "logout": "Logout",
+    "sendAnyway": "Send Anyway"
+  },
+  "progress": {
+    "sending": "Sending"
   },
   "error": {
     "pageNotFound": "Page not found",
     "appNotFound": "App not found",
     "transactionFailedReasonUnknown": "Transaction failed: reason unknown"
+  },
+  "warning": {
+    "transactionSafety": {
+      "costHigherThanAmount": "Please note that transaction cost is higher than the amount being sent",
+      "amountMoreThanHalfOfBalance": "Please note that the amount being sent is more than half of your balance"
+    }
   },
   "label": {
     "chooseRecipient": "Choose recipient",
