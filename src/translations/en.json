@@ -30,7 +30,9 @@
     "chooseAsset": "Choose asset",
     "enterAmount": "Enter amount",
     "tokens": "Tokens",
-    "nfts": "NFTs"
+    "nfts": "NFTs",
+    "cost": "Cost",
+    "error": "Error"
   },
   "placeholder": {
     "toNameAddress": "To: name, address"

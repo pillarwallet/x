@@ -13,7 +13,8 @@ import {
   useEtherspotUtils,
   useWalletAddress
 } from '@etherspot/transaction-kit';
-import { BigNumberish } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
+import Chip from '@mui/joy/Chip';
 
 // components
 import TextInput from '../../Form/TextInput';
@@ -29,7 +30,7 @@ import IdenticonImage from '../../IdenticonImage';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 
 // utils
-import { isValidEthereumAddress } from '../../../utils/blockchain';
+import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 export interface SendModalData {
@@ -64,11 +65,12 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const theme = useTheme();
   const { isZeroAddress } = useEtherspotUtils();
   const { getPrice } = useEtherspotPrices();
-  const { send } = useEtherspotTransactions();
+  const { send, estimate } = useEtherspotTransactions();
   const [amountAsFiat, setAmountAsFiat] = React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [userOpHash, setUserOpHash] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
+  const [estimatedCostFormatted, setEstimatedCostFormatted] = React.useState<string>('');
   const formRef = useRef(null);
   const { hide } = useBottomMenuModal();
   const accountAddress = useWalletAddress();
@@ -124,19 +126,35 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const onSend = async () => {
     if (isSendDisabled) return;
     setIsSending(true);
+    setEstimatedCostFormatted('');
+    setErrorMessage('');
 
-    const result = await send();
+    const estimated = await estimate();
 
-    const newErrorMessage = result?.[0]?.estimatedBatches?.[0]?.errorMessage
-      || result?.[0]?.sentBatches?.[0]?.errorMessage;
+    const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
+    if (estimatedCostBN) {
+      const nativeAsset = getNativeAssetForChainId(estimated[0].estimatedBatches[0].chainId as number);
+      const estimatedCost = ethers.utils.formatUnits(estimatedCostBN, nativeAsset.decimals);
+      setEstimatedCostFormatted(`${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`);
+    }
 
-    if (newErrorMessage) {
-      setErrorMessage(newErrorMessage);
+    const estimationErrorMessage = estimated?.[0]?.estimatedBatches?.[0]?.errorMessage
+    if (estimationErrorMessage) {
+      setErrorMessage(estimationErrorMessage);
       setIsSending(false);
       return;
     }
 
-    const newUserOpHash = result?.[0]?.sentBatches[0]?.userOpHash;
+    const sent = await send();
+
+    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage
+    if (sendingErrorMessage) {
+      setErrorMessage(sendingErrorMessage);
+      setIsSending(false);
+      return;
+    }
+
+    const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
     if (!newUserOpHash) {
       setErrorMessage(t`error.transactionFailedReasonUnknown`);
       setIsSending(false);
@@ -144,7 +162,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     }
 
     if (payload?.onSent) {
-      const allUserOpHashes = result.reduce((hashes: string[], r) => {
+      const allUserOpHashes = sent.reduce((hashes: string[], r) => {
         r.sentBatches.forEach((b) => {
           if (!b.userOpHash) return;
           hashes.push(b.userOpHash);
@@ -183,7 +201,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
   if (payload) {
     return (
-      <Wrapper $noBottomPadding>
+      <Wrapper>
         <PayloadContentRow>
           <IdenticonImage text={payload.title} size={45} rounded />
           <PayloadContentText>
@@ -207,7 +225,18 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
         <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>
           {isSending ? 'Sending...' : 'Send'}
         </Button>
-        {errorMessage && <Paragraph $fontSize={12} $center>{errorMessage}</Paragraph>}
+        {!!errorMessage && (
+          <>
+            {!!estimatedCostFormatted && (
+              <Chip size="sm" variant="solid" sx={{ mb: 1 }}>
+                {t`label.cost`}: {estimatedCostFormatted}<br/>
+              </Chip>
+            )}
+            <Paragraph $fontSize={12} $center>
+              {t`label.error`}: {errorMessage}
+            </Paragraph>
+          </>
+        )}
       </Wrapper>
     );
   }
@@ -253,7 +282,18 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
       )}
       <BottomActionBar>
         <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>{isSending ? 'Sending...' : 'Send'}</Button>
-        {errorMessage && <Paragraph $fontSize={12} $center>{errorMessage}</Paragraph>}
+        {!!errorMessage && (
+          <>
+            {!!estimatedCostFormatted && (
+              <Chip size="sm" variant="solid" sx={{ mb: 1 }}>
+                {t`label.cost`}: {estimatedCostFormatted}<br/>
+              </Chip>
+            )}
+            <Paragraph $fontSize={12} $center>
+              {t`label.error`}: {errorMessage}
+            </Paragraph>
+          </>
+        )}
       </BottomActionBar>
       {isTransactionReady && (
         <EtherspotBatches>
@@ -290,12 +330,11 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   );
 }
 
-const Wrapper = styled.div<{ $noBottomPadding?: boolean }>`
+const Wrapper = styled.div`
   width: 100%;
   max-height: calc(100vh - 240px);
   overflow: hidden;
   min-height: 100%;
-  ${({ $noBottomPadding }) => !$noBottomPadding && 'padding-bottom: 150px;'}
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
@@ -317,12 +356,12 @@ const SuccessWrapper = styled(Wrapper)`
 `;
 
 const BottomActionBar = styled.div`
-  position: absolute;
-  bottom: 0;
-  padding: 34px 17px 22px;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(180deg, rgba(16, 16, 16, 0.00) 0%, rgba(16, 16, 16, 0.90) 52.08%);
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 `;
 
 const AmountHelper = styled.div`
