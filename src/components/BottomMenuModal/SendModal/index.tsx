@@ -316,7 +316,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
         </FormGroup>
       )}
       <BottomActionBar>
-        {!!safetyWarningMessage && isTransactionReady && (
+        {!!safetyWarningMessage && (
           <CssVarsProvider defaultMode="dark">
             <Alert
               variant="outlined"
