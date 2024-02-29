@@ -1,6 +1,6 @@
 {
   "name": "pillarx",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
-    "@etherspot/transaction-kit": "^0.7.7",
+    "@etherspot/transaction-kit": "^0.8.0",
     "@mui/joy": "^5.0.0-beta.22",
     "@openzeppelin/contracts": "^5.0.1",
     "@privy-io/react-auth": "^1.55.0",
