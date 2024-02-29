@@ -16,9 +16,6 @@ import { navigationRoute } from '../../navigation';
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
-// providers
-import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
-
 // components
 import BottomMenuModal from '../BottomMenuModal';
 
@@ -27,7 +24,7 @@ const BottomMenu = () => {
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
-  const { active, show, hide } = useBottomMenuModal();
+  const { active, showSend, showApps, showHistory, showAccount, hide } = useBottomMenuModal();
 
   if (!authenticated) return null;
 
@@ -36,21 +33,25 @@ const BottomMenu = () => {
       icon: <IconSend />,
       type: 'send',
       label: t`menuAction.send`,
+      show: showSend,
     },
     {
       icon: <IconHistory />,
       type: 'history',
       label: t`menuAction.history`,
+      show: showHistory,
     },
     {
       icon: <IconWallet />,
       type: 'account',
       label: t`menuAction.account`,
+      show: showAccount,
     },
     {
       icon: <IconApps />,
       type: 'apps',
       label: t`menuAction.apps`,
+      show: showApps,
     },
   ];
 
@@ -77,7 +78,7 @@ const BottomMenu = () => {
                   hide();
                   return;
                 }
-                show({ type: item.type as BottomMenuItem['type'] });
+                item.show();
               }}
               className={active?.type === item.type ? 'active' : ''}
             >

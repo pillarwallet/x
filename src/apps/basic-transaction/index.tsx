@@ -26,21 +26,18 @@ const App = () => {
   }));
 
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
-  const { show } = useBottomMenuModal();
+  const { showSend } = useBottomMenuModal();
 
   const send = () => {
     if (!destinationAddress) return;
-    show({
-      type: 'send',
-      payload: {
-        title: 'Basic Transaction',
-        description: `This will execute basic transaction to ${destinationAddress} address with value ${value} and ${data ? 'attached' : 'no'} call data on ${chainId} chain`,
-        transactions: [{
-          chainId,
-          to: destinationAddress,
-          value: value || undefined,
-          data: data || undefined,
-        }]
+    showSend({
+      title: 'Basic Transaction',
+      description: `This will execute basic transaction to ${destinationAddress} address with value ${value} and ${data ? 'attached' : 'no'} call data on ${chainId} chain`,
+      transaction: {
+        to: destinationAddress,
+        value: value || undefined,
+        data: data || undefined,
+        chainId,
       },
     });
   }

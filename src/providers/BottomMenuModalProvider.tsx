@@ -5,7 +5,10 @@ import { SendModalData } from '../components/BottomMenuModal/SendModal';
 
 export interface BottomMenuModalContext {
   data: {
-    show: React.Dispatch<React.SetStateAction<BottomMenuItem | null>>;
+    showSend: (payload?: SendModalData) => void;
+    showHistory: () => void;
+    showAccount:() => void;
+    showApps: () => void;
     hide: () => void;
     active: BottomMenuItem | null;
   }
@@ -28,7 +31,10 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
   const hide = () => setActiveMenuItem(null);
 
   const contextData = useMemo(() => ({
-    show: setActiveMenuItem,
+    showSend: (payload?: SendModalData) => setActiveMenuItem({ type: 'send', payload }),
+    showHistory: () => setActiveMenuItem({ type: 'history' }),
+    showAccount: () => setActiveMenuItem({ type: 'account' }),
+    showApps: () => setActiveMenuItem({ type: 'apps' }),
     hide,
     active: activeMenuItem
   }), [activeMenuItem]);
