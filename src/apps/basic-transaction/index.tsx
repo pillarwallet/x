@@ -26,11 +26,11 @@ const App = () => {
   }));
 
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
-  const { showSend } = useBottomMenuModal();
+  const { showTransactionConfirmation } = useBottomMenuModal();
 
   const send = () => {
     if (!destinationAddress) return;
-    showSend({
+    showTransactionConfirmation({
       title: 'Basic Transaction',
       description: `This will execute basic transaction to ${destinationAddress} address with value ${value} and ${data ? 'attached' : 'no'} call data on ${chainId} chain`,
       transaction: {

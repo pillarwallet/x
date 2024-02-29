@@ -60,7 +60,7 @@ const App = () => {
   }));
 
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
-  const { showSend } = useBottomMenuModal();
+  const { showTransactionConfirmation } = useBottomMenuModal();
 
   const chainTitle = chainOptions.find((chain) => chain.value === chainId)?.title;
 
@@ -74,7 +74,7 @@ const App = () => {
     const contractInterface = new ethers.utils.Interface(['function mint()']);
     const data = contractInterface.encodeFunctionData('mint');
 
-    showSend({
+    showTransactionConfirmation({
       title: 'Mint NFT',
       description: `This will mint ${accountAddress && addressesEqual(receiverAddress, accountAddress) ? 'you' : 'receiver'} single Monke NFT on on ${chainTitle}`,
       onSent: () => {

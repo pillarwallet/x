@@ -32,13 +32,13 @@ const App = () => {
   }));
 
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
-  const { showSend } = useBottomMenuModal();
+  const { showTransactionConfirmation } = useBottomMenuModal();
 
   const isSendDisabled = Object.values(transactions).some((transaction) => !transaction.to);
 
   const send = () => {
     if (isSendDisabled) return;
-    showSend({
+    showTransactionConfirmation({
       title: 'Basic Transaction',
       description: `This will execute ${Object.values(transactions).length} of your transactions on ${chainId} chain`,
       batches: [{
