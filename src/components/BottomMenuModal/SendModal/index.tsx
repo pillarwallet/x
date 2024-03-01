@@ -35,17 +35,33 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
-export interface SendModalData {
+interface SendModalDataBase {
   title: string;
   description?: string;
   onSent?: (userOpHashes: string[]) => void;
-  transactions: {
-    chainId?: number;
+}
+
+interface SendModalSingleTransactionData extends SendModalDataBase {
+  transaction: {
     to: string;
     value?: BigNumberish;
     data?: string;
+    chainId: number;
+  }
+}
+
+interface SendModalSingleBatchedTransactionsData extends SendModalDataBase {
+  batches: {
+    chainId: number;
+    transactions: {
+      to: string;
+      value?: BigNumberish;
+      data?: string;
+    }[];
   }[];
 }
+
+export type SendModalData = SendModalSingleTransactionData | SendModalSingleBatchedTransactionsData;
 
 interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -234,6 +250,10 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
   const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
 
+  if (payload && 'transaction' in payload && 'batches' in payload) {
+    throw new Error('Invalid Send payload: both transaction and batches are present');
+  }
+
   if (payload) {
     return (
       <Wrapper>
@@ -244,19 +264,33 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
             {!!payload.description && <PayloadActionDescription>{payload.description}</PayloadActionDescription>}
           </PayloadContentText>
         </PayloadContentRow>
-        {payload.transactions.map((transaction, index) => (
-          <>
-            <EtherspotBatches key={index}>
-              <EtherspotBatch chainId={transaction.chainId}>
-                <EtherspotTransaction
-                  to={transaction.to}
-                  value={transaction.value || '0'}
-                  data={transaction.data || undefined}
-                />
+        {'transaction' in payload && (
+          <EtherspotBatches>
+            <EtherspotBatch chainId={payload.transaction.chainId}>
+              <EtherspotTransaction
+                to={payload.transaction.to}
+                value={payload.transaction.value || '0'}
+                data={payload.transaction.data || undefined}
+              />
+            </EtherspotBatch>
+          </EtherspotBatches>
+        )}
+        {'batches' in payload && (
+          <EtherspotBatches>
+            {payload.batches.map((batch, index) => (
+              <EtherspotBatch key={`${batch.chainId}-${index}`} chainId={batch.chainId}>
+                {batch.transactions.map((transaction, index) => (
+                  <EtherspotTransaction
+                    key={`${transaction.to}-${index}`}
+                    to={transaction.to}
+                    value={transaction.value || '0'}
+                    data={transaction.data || undefined}
+                  />
+                ))}
               </EtherspotBatch>
-            </EtherspotBatches>
-          </>
-        ))}
+            ))}
+          </EtherspotBatches>
+        )}
         <Button disabled={isSendDisabled} onClick={() => onSend(true)} $fontSize={15} $fullWidth>
           {isSending ? `${t`progress.sending`}...` : t`action.send`}
         </Button>
