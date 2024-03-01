@@ -15,6 +15,8 @@ import {
 } from '@etherspot/transaction-kit';
 import { BigNumberish, ethers } from 'ethers';
 import Chip from '@mui/joy/Chip';
+import { Alert, CssVarsProvider } from '@mui/joy';
+import { PiShieldWarningBold as WarningIcon } from 'react-icons/pi';
 
 // components
 import TextInput from '../../Form/TextInput';
@@ -62,15 +64,17 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const [selectedAsset, setSelectedAsset] = React.useState<AssetSelectOption | undefined>(undefined);
   const [amount, setAmount] = React.useState<string>('');
   const [selectedAssetPrice, setSelectedAssetPrice] = React.useState<number>(0);
+  const [nativeAssetPrice, setNativeAssetPrice] = React.useState<number>(0);
   const theme = useTheme();
   const { isZeroAddress } = useEtherspotUtils();
-  const { getPrice } = useEtherspotPrices();
+  const { getPrices } = useEtherspotPrices();
   const { send, estimate } = useEtherspotTransactions();
-  const [amountAsFiat, setAmountAsFiat] = React.useState<boolean>(false);
+  const [isAmountInputAsFiat, setIsAmountInputAsFiat] = React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [userOpHash, setUserOpHash] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [estimatedCostFormatted, setEstimatedCostFormatted] = React.useState<string>('');
+  const [safetyWarningMessage, setSafetyWarningMessage] = React.useState<string>('');
   const formRef = useRef(null);
   const { hide } = useBottomMenuModal();
   const accountAddress = useWalletAddress();
@@ -80,7 +84,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     setSelectedAsset(undefined);
     setAmount('');
     setSelectedAssetPrice(0);
-    setAmountAsFiat(false);
+    setIsAmountInputAsFiat(false);
     setIsSending(false);
     setUserOpHash('');
     setErrorMessage('');
@@ -93,9 +97,13 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
     (async () => {
       if (selectedAsset.type !== 'token') return;
-      const price = await getPrice(selectedAsset.asset.address);
-      if (expired || !price?.usd) return;
-      setSelectedAssetPrice(price.usd);
+      const [priceNative, priceSelected] = await getPrices(
+        [ethers.constants.AddressZero, selectedAsset.asset.address],
+        selectedAsset.chainId,
+      );
+      if (expired) return;
+      if (priceNative?.usd) setNativeAssetPrice(priceNative.usd);
+      if (priceSelected?.usd) setSelectedAssetPrice(priceSelected.usd);
     })();
 
     return () => {
@@ -104,7 +112,11 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAsset]);
 
-  const price = useMemo(() => {
+  useEffect(() => {
+    setSafetyWarningMessage('');
+  }, [selectedAsset, recipient, amount]);
+
+  const amountInFiat = useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
     return selectedAssetPrice * +(amount || 0);
   }, [amount, selectedAssetPrice]);
@@ -123,24 +135,47 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
   const isSendDisabled = isSending || (!payload && !isTransactionReady);
 
-  const onSend = async () => {
+  const onSend = async (ignoreSafetyWarning?: boolean) => {
     if (isSendDisabled) return;
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
 
+    // warning if sending more than half of the balance
+    if (!ignoreSafetyWarning
+      && selectedAsset?.type === 'token'
+      && selectedAsset.balance
+      && (selectedAsset.balance / 2) < +amount) {
+      setSafetyWarningMessage(t`warning.transactionSafety.amountMoreThanHalfOfBalance`);
+      setIsSending(false);
+      setErrorMessage('');
+      return;
+    }
+
     const estimated = await estimate();
 
     const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
+    let costAsFiat = 0;
     if (estimatedCostBN) {
       const nativeAsset = getNativeAssetForChainId(estimated[0].estimatedBatches[0].chainId as number);
       const estimatedCost = ethers.utils.formatUnits(estimatedCostBN, nativeAsset.decimals);
+      costAsFiat = +estimatedCost * nativeAssetPrice;
       setEstimatedCostFormatted(`${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`);
+    } else {
+      console.warn('Unable to get estimated cost', estimated);
     }
 
     const estimationErrorMessage = estimated?.[0]?.estimatedBatches?.[0]?.errorMessage
     if (estimationErrorMessage) {
       setErrorMessage(estimationErrorMessage);
+      setIsSending(false);
+      setErrorMessage('');
+      return;
+    }
+
+    // warning if cost in fiat is higher than amount
+    if (!ignoreSafetyWarning && amountInFiat && costAsFiat && costAsFiat > amountInFiat) {
+      setSafetyWarningMessage(t`warning.transactionSafety.costHigherThanAmount`);
       setIsSending(false);
       return;
     }
@@ -197,7 +232,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     )
   }
 
-  const assetValueToSend = amountAsFiat ? amountForPrice : amount;
+  const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
 
   if (payload) {
     return (
@@ -222,8 +257,8 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
             </EtherspotBatches>
           </>
         ))}
-        <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>
-          {isSending ? 'Sending...' : 'Send'}
+        <Button disabled={isSendDisabled} onClick={() => onSend(true)} $fontSize={15} $fullWidth>
+          {isSending ? `${t`progress.sending`}...` : t`action.send`}
         </Button>
         {!!errorMessage && (
           <>
@@ -266,14 +301,14 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
             onValueChange={setAmount}
             disabled={!selectedAsset}
             placeholder="0.00"
-            rightAddon={<Paragraph $fontSize={14} $fontWeight={400}>{amountAsFiat ? 'USD' : selectedAsset?.asset?.symbol}</Paragraph>}
+            rightAddon={<Paragraph $fontSize={14} $fontWeight={400}>{isAmountInputAsFiat ? 'USD' : selectedAsset?.asset?.symbol}</Paragraph>}
           />
           <AmountHelper>
-            {price !== 0 && (
-              <AmountHelperLeft onClick={() => setAmountAsFiat(!amountAsFiat)}>
+            {amountInFiat !== 0 && (
+              <AmountHelperLeft onClick={() => setIsAmountInputAsFiat(!isAmountInputAsFiat)}>
                 <HiOutlineSwitchVertical color={theme?.color?.icon?.inputHelper} />
-                {!amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>${formatAmountDisplay(price)}</Paragraph>}
-                {amountAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>{formatAmountDisplay(amountForPrice, 0, 6)} {selectedAsset?.asset.symbol}</Paragraph>}
+                {!isAmountInputAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>${formatAmountDisplay(amountInFiat)}</Paragraph>}
+                {isAmountInputAsFiat && <Paragraph $fontSize={14} $fontWeight={400}>{formatAmountDisplay(amountForPrice, 0, 6)} {selectedAsset?.asset.symbol}</Paragraph>}
               </AmountHelperLeft>
             )}
             <Paragraph $fontSize={14} $fontWeight={400}>{t('helper.amountLeft', { amount: amountLeft })}</Paragraph>
@@ -281,7 +316,27 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
         </FormGroup>
       )}
       <BottomActionBar>
-        <Button disabled={isSendDisabled} onClick={onSend} $fontSize={15} $fullWidth>{isSending ? 'Sending...' : 'Send'}</Button>
+        {!!safetyWarningMessage && (
+          <CssVarsProvider defaultMode="dark">
+            <Alert
+              variant="outlined"
+              color="neutral"
+              startDecorator={<WarningIcon />}
+              sx={{ mb: 2, width: '100%', textAlign: 'left' }}
+            >
+              {safetyWarningMessage}
+            </Alert>
+          </CssVarsProvider>
+        )}
+        <Button
+          disabled={isSendDisabled}
+          onClick={() => onSend(!!safetyWarningMessage)}
+          $fontSize={15}
+          $fullWidth
+        >
+          {isSending && `${t`progress.sending`}...`}
+          {!isSending && (safetyWarningMessage ? t`action.sendAnyway` : t`action.send`)}
+        </Button>
         {!!errorMessage && (
           <>
             {!!estimatedCostFormatted && (
