@@ -27,7 +27,8 @@
   "error": {
     "pageNotFound": "Page not found",
     "appNotFound": "App not found",
-    "transactionFailedReasonUnknown": "Transaction failed: reason unknown"
+    "transactionFailedReasonUnknown": "Transaction failed: reason unknown",
+    "noNftsFound": "No NFTs found"
   },
   "warning": {
     "transactionSafety": {
