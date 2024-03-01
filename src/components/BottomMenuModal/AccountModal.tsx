@@ -96,12 +96,22 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           </Tabs>
           {showNfts && visibleChains.map((chain) => (
             <>
-              {!nfts[chain.id]?.[accountAddress]?.length && (
+              {!nfts[chain.id]?.[accountAddress] && (
                 <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
                   <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row' }}>
                     <SkeletonLoader $height="40px" $width="40px" />
                     <SkeletonLoader $height="40px" $width="220px" />
                   </Box>
+                </Card>
+              )}
+              {!!nfts[chain.id]?.[accountAddress] && !nfts[chain.id]?.[accountAddress]?.length && (
+                <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
+                  <Typography level="title-md">
+                    {chain.name}
+                  </Typography>
+                  <Typography level="body-sm">
+                    {t`error.noNftsFound`}.
+                  </Typography>
                 </Card>
               )}
               {!!nfts[chain.id]?.[accountAddress]?.length && (
@@ -147,7 +157,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           ))}
           {!showNfts && visibleChains.map((chain) => (
             <>
-              {!balances[chain.id]?.[accountAddress]?.length && (
+              {!balances[chain.id]?.[accountAddress] && (
                 <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
                   <SkeletonLoader $height="15px" $width="45%" />
                   <SkeletonLoader $height="15px" $width="30%" />
