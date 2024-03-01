@@ -13,7 +13,7 @@ import { AppManifest, RecordPerKey } from '../types';
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useAllowedApps from '../hooks/useAllowedApps';
 
-// uit
+// utils
 import { loadApps } from '../apps';
 
 const AppsList = () => {
