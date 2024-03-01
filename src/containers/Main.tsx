@@ -129,9 +129,7 @@ const Main = () => {
 }
 
 const AuthContentWrapper = styled.div`
-  // max-width: 500px; TODO: inspect and remove/adjust
   margin: 0 auto;
-  // padding: 60px 20px 120px; TODO: inspect and remove/adjust
 `;
 
 export default Main;
