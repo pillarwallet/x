@@ -27,7 +27,7 @@
   "error": {
     "pageNotFound": "Page not found",
     "appNotFound": "App not found",
-    "transactionFailedReasonUnknown": "Transaction failed: reason unknown",
+    "failedToGetTransactionHashReachSupport": "Failed to get transaction hash. Please reach out to support.",
     "noNftsFound": "No NFTs found"
   },
   "warning": {

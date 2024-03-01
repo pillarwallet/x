@@ -207,7 +207,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
     if (!newUserOpHash) {
-      setErrorMessage(t`error.transactionFailedReasonUnknown`);
+      setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending(false);
       return;
     }
