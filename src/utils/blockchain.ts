@@ -15,7 +15,7 @@ import { callBlastApi } from '../services/blastApi';
 import { callMainApi } from '../services/mainApi';
 
 // types
-import { Transaction } from '../types/blockchain';
+import { IApiTransaction } from '../types/blockchain';
 
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
@@ -172,7 +172,7 @@ type ApiTransaction = {
 export const getAccountTransactionHistory = async (
   chainId: number,
   walletAddress: string,
-): Promise<Transaction[]> => {
+): Promise<IApiTransaction[]> => {
   const callPath = `account-history/${walletAddress}/${chainId}`;
   const result = await callMainApi<{ transactions?: ApiTransaction[] }>(callPath);
 

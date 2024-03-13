@@ -7,7 +7,7 @@ import AppIcon from './AppIcon';
 import SkeletonLoader from './SkeletonLoader';
 
 // types
-import { AppManifest, RecordPerKey } from '../types';
+import { AppManifest } from '../types';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -17,7 +17,7 @@ import useAllowedApps from '../hooks/useAllowedApps';
 import { loadApps } from '../apps';
 
 const AppsList = () => {
-  const [apps, setApps] = React.useState<RecordPerKey<AppManifest>>({});
+  const [apps, setApps] = React.useState<Record<string, AppManifest>>({});
   const navigate = useNavigate();
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();

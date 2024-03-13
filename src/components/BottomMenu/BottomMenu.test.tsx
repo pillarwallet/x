@@ -14,6 +14,7 @@ import { defaultTheme } from '../../theme';
 // providers
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
+import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 
 const ethersProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545', 'goerli'); // replace with your node's RPC URL
 const provider = ethers.Wallet.createRandom().connect(ethersProvider);
@@ -31,9 +32,11 @@ describe('<BottomMenu />', () => {
             <EtherspotTransactionKit provider={provider}>
               <ThemeProvider theme={defaultTheme}>
                 <LanguageProvider>
-                  <BottomMenuModalProvider>
-                    <BottomMenu />
-                  </BottomMenuModalProvider>
+                  <GlobalTransactionsBatchProvider>
+                    <BottomMenuModalProvider>
+                      <BottomMenu />
+                    </BottomMenuModalProvider>
+                  </GlobalTransactionsBatchProvider>
                 </LanguageProvider>
               </ThemeProvider>
             </EtherspotTransactionKit>
@@ -64,9 +67,11 @@ describe('<BottomMenu />', () => {
           <BrowserRouter>
             <ThemeProvider theme={defaultTheme}>
               <LanguageProvider>
-                <BottomMenuModalProvider>
-                  <BottomMenu />
-                </BottomMenuModalProvider>
+                <GlobalTransactionsBatchProvider>
+                  <BottomMenuModalProvider>
+                    <BottomMenu />
+                  </BottomMenuModalProvider>
+                </GlobalTransactionsBatchProvider>
               </LanguageProvider>
             </ThemeProvider>
           </BrowserRouter>

@@ -58,7 +58,7 @@ const AppSplashWrapper = styled.div`
 const AppSplashInner = styled.div`
   width: 150px;
   height: 150px;
-  animation: ${animation.pulse} 5s ease-in-out infinite;
+  animation: ${animation.pulse()} 5s ease-in-out infinite;
 `;
 
 export default App;
