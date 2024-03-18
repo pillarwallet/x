@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 
 // types
-import { AppManifest, RecordPerKey } from '../types';
+import { AppManifest } from '../types';
 
 export const loadApp = (appId: string) => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -18,7 +18,7 @@ export const loadApp = (appId: string) => {
 }
 
 export const loadApps = (allowedApps: string[]) => {
- return allowedApps.reduce((apps: RecordPerKey<AppManifest>, appId: string) => {
+ return allowedApps.reduce((apps: Record<string, AppManifest>, appId: string) => {
     apps[appId] = loadApp(appId);
     return apps;
   }, {});

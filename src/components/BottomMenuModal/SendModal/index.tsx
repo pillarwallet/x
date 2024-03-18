@@ -13,10 +13,11 @@ import {
   useEtherspotUtils,
   useWalletAddress
 } from '@etherspot/transaction-kit';
-import { BigNumberish, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import Chip from '@mui/joy/Chip';
-import { Alert, CssVarsProvider } from '@mui/joy';
+import { Alert, Box, Card, CardContent, CssVarsProvider, Typography } from '@mui/joy';
 import { PiShieldWarningBold as WarningIcon } from 'react-icons/pi';
+import { MdDelete } from 'react-icons/md';
 
 // components
 import TextInput from '../../Form/TextInput';
@@ -27,13 +28,21 @@ import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
 import Paragraph from '../../Text/Paragraph';
 import Button from '../../Button';
 import IdenticonImage from '../../IdenticonImage';
+import Select from '../../Form/Select';
 
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 
 // utils
-import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
+import { getNativeAssetForChainId, isValidEthereumAddress, supportedChains } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
+
+// providers
+import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
+
+// types
+import { ITransaction } from '../../../types/blockchain';
 
 interface SendModalDataBase {
   title: string;
@@ -41,23 +50,14 @@ interface SendModalDataBase {
   onSent?: (userOpHashes: string[]) => void;
 }
 
-interface SendModalSingleTransactionData extends SendModalDataBase {
-  transaction: {
-    to: string;
-    value?: BigNumberish;
-    data?: string;
-    chainId: number;
-  }
+export interface SendModalSingleTransactionData extends SendModalDataBase {
+  transaction: ITransaction
 }
 
 interface SendModalSingleBatchedTransactionsData extends SendModalDataBase {
   batches: {
     chainId: number;
-    transactions: {
-      to: string;
-      value?: BigNumberish;
-      data?: string;
-    }[];
+    transactions: Omit<ITransaction, 'chainId'>[];
   }[];
 }
 
@@ -94,6 +94,11 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const formRef = useRef(null);
   const { hide } = useBottomMenuModal();
   const accountAddress = useWalletAddress();
+  const { addToBatch, removeFromBatch, transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
+  const [
+    globalTransactionsBatchSelectedChainId,
+    setGlobalTransactionsBatchSelectedChainId
+  ] = React.useState<number | undefined>(undefined);
 
   const resetForm = () => {
     setRecipient('');
@@ -149,7 +154,10 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     && (selectedAsset?.type !== 'token' || isValidAmount(amount))
     && (selectedAsset?.type !== 'token' || +getAmountLeft(selectedAsset, amount) >= 0);
 
-  const isSendDisabled = isSending || (!payload && !isTransactionReady);
+  const isSendModalInvokedFromHook = !!payload;
+  const isGlobalTransactionsBatchSendModal = globalTransactionsBatch.length > 0;
+  const isRegularSendModal = !isSendModalInvokedFromHook && !isGlobalTransactionsBatchSendModal;
+  const isSendDisabled = isSending || (isRegularSendModal && !isTransactionReady);
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
     if (isSendDisabled) return;
@@ -185,7 +193,6 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     if (estimationErrorMessage) {
       setErrorMessage(estimationErrorMessage);
       setIsSending(false);
-      setErrorMessage('');
       return;
     }
 
@@ -294,6 +301,23 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
         <Button disabled={isSendDisabled} onClick={() => onSend(true)} $fontSize={15} $fullWidth>
           {isSending ? `${t`progress.sending`}...` : t`action.send`}
         </Button>
+        {'transaction' in payload && (
+          <Button
+            disabled={isSendDisabled}
+            onClick={() => {
+              addToBatch({
+                ...payload.transaction,
+                title: payload.title,
+                description: payload.description
+              });
+              hide();
+            }}
+            $fontSize={15}
+            $fullWidth
+          >
+            {t`action.addToBatch`}
+          </Button>
+        )}
         {!!errorMessage && (
           <>
             {!!estimatedCostFormatted && (
@@ -307,6 +331,95 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
           </>
         )}
       </Wrapper>
+    );
+  }
+
+  if (isGlobalTransactionsBatchSendModal) {
+    const groupedTransactionsByChainId = globalTransactionsBatch.reduce((acc, globalTransaction) => {
+      const chainId = globalTransaction.chainId;
+      if (!acc[chainId]) {
+        acc[chainId] = [];
+      }
+      acc[chainId].push(globalTransaction);
+      return acc;
+    }, {} as Record<number, IGlobalBatchTransaction[]>);
+
+    const hasMoreChains = Object.keys(groupedTransactionsByChainId).length > 1;
+
+    const globalBatchChainOptions = Object.keys(groupedTransactionsByChainId).map((chainId) => {
+      const chainName = (supportedChains.find((c) => c.id === +chainId)?.name as string) || `Chain ID ${chainId}`;
+      const chainTransactionCount = groupedTransactionsByChainId[+chainId].length;
+      return {
+        id: `${chainId}`,
+        title: `${chainName} (${chainTransactionCount})`,
+        value: chainId,
+      };
+    });
+
+    const selectedChainBatch = hasMoreChains
+      && globalTransactionsBatchSelectedChainId
+      && groupedTransactionsByChainId[+globalTransactionsBatchSelectedChainId]
+        ? groupedTransactionsByChainId[+globalTransactionsBatchSelectedChainId]
+        : Object.values(groupedTransactionsByChainId)[0];
+
+    return (
+      <CssVarsProvider defaultMode="dark">
+        <Wrapper>
+          {!hasMoreChains && (
+            <Card sx={{ mb: 0.5 }} variant="soft" size="sm">
+              <Typography level="title-sm">
+                {globalBatchChainOptions[0].title}
+              </Typography>
+            </Card>
+          )}
+          {hasMoreChains && (
+            <Select
+              options={globalBatchChainOptions}
+              onChange={(option) => setGlobalTransactionsBatchSelectedChainId(+option.value)}
+              defaultSelectedId={`${selectedChainBatch[0].chainId}`}
+              hideValue
+            />
+          )}
+          <Box sx={{ mt: 2, mb: 2.5 }}>
+            <EtherspotBatches>
+              <EtherspotBatch chainId={selectedChainBatch[0].chainId}>
+                {selectedChainBatch.map((transaction, index) => (
+                  <Card key={transaction.id} sx={{ mb: 0.5 }} variant="soft" size="sm">
+                    <CardContent>
+                      <RemoveButton onClick={() => removeFromBatch(transaction.id as string)}>
+                        <MdDelete color={theme.color.icon.delete}/>
+                      </RemoveButton>
+                      <Typography level="title-sm">{index + 1}. {transaction.title}</Typography>
+                      {!!transaction.description && <Typography level="body-sm">{transaction.description}</Typography>}
+                    </CardContent>
+                    <EtherspotTransaction
+                      key={`${transaction.to}-${index}`}
+                      to={transaction.to}
+                      value={transaction.value || '0'}
+                      data={transaction.data || undefined}
+                    />
+                  </Card>
+                ))}
+              </EtherspotBatch>
+            </EtherspotBatches>
+          </Box>
+          <Button disabled={isSendDisabled} onClick={() => onSend(true)} $fontSize={15} $fullWidth>
+            {isSending ? `${t`progress.sending`}...` : t`action.send`}
+          </Button>
+          {!!errorMessage && (
+            <>
+              {!!estimatedCostFormatted && (
+                <Chip size="sm" variant="solid" sx={{ mb: 1 }}>
+                  {t`label.cost`}: {estimatedCostFormatted}<br/>
+                </Chip>
+              )}
+              <Paragraph $fontSize={12} $center>
+                {t`label.error`}: {errorMessage}
+              </Paragraph>
+            </>
+          )}
+        </Wrapper>
+      </CssVarsProvider>
     );
   }
 
@@ -496,6 +609,20 @@ const PayloadActionTitle = styled.p`
 
 const PayloadActionDescription = styled.p`
   font-size: 14px;
+`;
+
+const RemoveButton = styled.div`
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 export default SendModal;

@@ -1,6 +1,6 @@
 import { BigNumberish } from 'ethers';
 
-export interface Transaction {
+export interface IApiTransaction {
   id: string;
   value: BigNumberish;
   to: string;
@@ -16,4 +16,11 @@ export interface Transaction {
     symbol: string;
     value: BigNumberish;
   }
+}
+
+export interface ITransaction {
+  to: string;
+  value?: BigNumberish;
+  data?: string;
+  chainId: number;
 }

@@ -20,6 +20,7 @@ import AccountTransactionHistoryProvider from '../providers/AccountTransactionHi
 import AssetsProvider from '../providers/AssetsProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
+import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -77,14 +78,16 @@ const AppAuthController = () => {
           <AssetsProvider>
             <AccountBalancesProvider>
               <AccountNftsProvider>
-                <BrowserRouter>
-                  <BottomMenuModalProvider>
-                    <AuthContentWrapper>
-                      <AuthorizedNavigation />
-                    </AuthContentWrapper>
-                    <BottomMenu />
-                  </BottomMenuModalProvider>
-                </BrowserRouter>
+                <GlobalTransactionBatchesProvider>
+                  <BrowserRouter>
+                    <BottomMenuModalProvider>
+                      <AuthContentWrapper>
+                        <AuthorizedNavigation />
+                      </AuthContentWrapper>
+                      <BottomMenu />
+                    </BottomMenuModalProvider>
+                  </BrowserRouter>
+                </GlobalTransactionBatchesProvider>
               </AccountNftsProvider>
             </AccountBalancesProvider>
           </AssetsProvider>

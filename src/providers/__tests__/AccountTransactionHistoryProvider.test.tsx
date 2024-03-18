@@ -10,10 +10,10 @@ import * as blockchainUtils from '../../utils/blockchain';
 import AccountTransactionHistoryProvider, { AccountTransactionHistoryContext } from '../../providers/AccountTransactionHistoryProvider';
 
 // types
-import { Transaction } from '../../types/blockchain';
+import { IApiTransaction } from '../../types/blockchain';
 
 describe('AccountTransactionHistoryProvider', () => {
-  const accountTransactionsMock: Transaction[] = [
+  const accountTransactionsMock: IApiTransaction[] = [
     {
       id: '1',
       hash: '0x1',

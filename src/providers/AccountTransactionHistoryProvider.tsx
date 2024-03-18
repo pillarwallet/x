@@ -10,11 +10,11 @@ import {
 } from '../utils/blockchain';
 
 // types
-import { Transaction } from '../types/blockchain';
+import { IApiTransaction } from '../types/blockchain';
 
 export interface TransactionHistory {
   [chainId: number]: {
-    [walletAddress: string]: Transaction[];
+    [walletAddress: string]: IApiTransaction[];
   };
 }
 
@@ -26,7 +26,7 @@ export interface AccountBalancesContext {
 }
 
 export interface AccountTransactionHistoryListenerRef {
-  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: Transaction) => void;
+  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: IApiTransaction) => void;
   prevHistory?: TransactionHistory;
 }
 

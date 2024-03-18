@@ -15,9 +15,13 @@ import { navigationRoute } from '../../navigation';
 
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
+import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
 
 // components
 import BottomMenuModal from '../BottomMenuModal';
+
+// theme
+import { animation } from '../../theme';
 
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
@@ -25,6 +29,7 @@ const BottomMenu = () => {
   const navigate = useNavigate();
   const [t] = useTranslation();
   const { active, showSend, showApps, showHistory, showAccount, hide } = useBottomMenuModal();
+  const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
 
   if (!authenticated) return null;
 
@@ -32,6 +37,7 @@ const BottomMenu = () => {
     {
       icon: <IconSend />,
       type: 'send',
+      iconNotificationCounter: globalTransactionsBatch.length,
       label: t`menuAction.send`,
       show: showSend,
     },
@@ -83,6 +89,9 @@ const BottomMenu = () => {
               className={active?.type === item.type ? 'active' : ''}
             >
               {item.icon}
+              {!!item.iconNotificationCounter && (
+                <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
+              )}
               <span>{item.label}</span>
             </MenuItem>
           ))}
@@ -96,6 +105,24 @@ const BottomMenu = () => {
   );
 }
 
+const MenuItemNotification = styled.div`
+  position: absolute;
+  transition: all .1s ease-in-out;
+  bottom: -4px;
+  left: 15px;
+  background: ${({ theme }) => theme.color.background.bottomMenuItemNotification};
+  padding: 2px;
+  text-align: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+  transform: scale(1);
+  animation: ${animation.pulse(0.85, 1)} 2s infinite;
+`;
+
 const MenuItem = styled.div`
   position: relative;
   display: flex;
@@ -104,7 +131,6 @@ const MenuItem = styled.div`
   gap: 12px;
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
   height: 48px;
-  overflow: hidden;
   cursor: pointer;
   transition: all .1s ease-in-out;
   font-weight: 400;
@@ -141,6 +167,10 @@ const Wrapper = styled.div`
     margin: 0;
     border-radius: 100px;
     background: ${({ theme }) => theme.color.background.bottomMenuItemHover};
+    
+    ${MenuItemNotification} {
+      left: 28px;
+    }
 
     span {
       display: block;
