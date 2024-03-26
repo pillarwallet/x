@@ -2,16 +2,16 @@
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPGEEB2SJN"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GOOGLE_ANALYTICS_MEASUREMENT_ID%"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
     
-      gtag('config', 'G-BPGEEB2SJN');
+      gtag('config', '%REACT_APP_GOOGLE_ANALYTICS_MEASUREMENT_ID%');
     </script>
     <!-- Plausible tag -->
-    <script defer data-domain="staging.pillarx.app" src="https://plausible.io/js/script.js"></script>
+    <script defer data-domain="%REACT_APP_PLAUSIBLE_DOMAIN%" src="https://plausible.io/js/script.js"></script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
