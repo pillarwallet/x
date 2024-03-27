@@ -2,7 +2,7 @@ import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { mainnet, sepolia } from 'viem/chains';
 
@@ -37,6 +37,7 @@ const AppAuthController = () => {
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const navLocation = useLocation();
 
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -79,14 +80,12 @@ const AppAuthController = () => {
             <AccountBalancesProvider>
               <AccountNftsProvider>
                 <GlobalTransactionBatchesProvider>
-                  <BrowserRouter>
-                    <BottomMenuModalProvider>
-                      <AuthContentWrapper>
-                        <AuthorizedNavigation />
-                      </AuthContentWrapper>
-                      <BottomMenu />
-                    </BottomMenuModalProvider>
-                  </BrowserRouter>
+                  <BottomMenuModalProvider>
+                    <AuthContentWrapper>
+                      <AuthorizedNavigation />
+                    </AuthContentWrapper>
+                    <BottomMenu />
+                  </BottomMenuModalProvider>
                 </GlobalTransactionBatchesProvider>
               </AccountNftsProvider>
             </AccountBalancesProvider>
@@ -96,11 +95,10 @@ const AppAuthController = () => {
     )
   }
 
-  if (isAppReady && !authenticated) {
+  const isRootPage = navLocation.pathname === '/';
+  if ((isAppReady || isRootPage) && !authenticated) {
     return (
-      <BrowserRouter>
-        <UnauthorizedNavigation />
-      </BrowserRouter>
+      <UnauthorizedNavigation />
     );
   }
 
@@ -122,9 +120,11 @@ const Main = () => {
             }
           }}
         >
-          <AllowedAppsProvider>
-            <AppAuthController />
-          </AllowedAppsProvider>
+          <BrowserRouter>
+            <AllowedAppsProvider>
+              <AppAuthController />
+            </AllowedAppsProvider>
+          </BrowserRouter>
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>

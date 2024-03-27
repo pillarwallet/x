@@ -1,24 +1,435 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Main /> renders correctly 1`] = `
-.c1 {
-  animation: cfuXhc 20s linear infinite;
-  max-width: 100%;
-  user-select: none;
-}
-
-.c0 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
 <div
-  className="c0"
+  className="flex flex-col items-center justify-start w-full sm:pb-5 pb-[30px] bg-black-900"
 >
-  <svg
-    className="c1"
-  />
+  <div
+    className="flex flex-col items-center justify-start w-full"
+  >
+    <div
+      className="h-[1374px] w-full z-[1] relative"
+    >
+      <div
+        className="flex flex-col items-center justify-start w-full top-0 right-0 left-0 m-auto absolute"
+      >
+        <div
+          className="h-16 gap-4 w-full  top-0 bg-purple-900 flex justify-center items-center px-4 border-b border-gray-300"
+        >
+          <div
+            className="items-center gap-4 font-semibold text-white-A700 font-custom"
+          >
+            Building dApps? Join the PillarX Testing Campaign before April 1st
+          </div>
+          <button
+            className="w-32 h-10 flex-shrink-0 rounded-lg font-custom border border-gray-300 bg-opacity-50 backdrop-blur-md text-white-A700 font-semibold"
+            onClick={[Function]}
+          >
+            Register now
+          </button>
+        </div>
+        <img
+          alt="top shadow"
+          className="h-auto sm:w-full w-full sm:mt-[130px] object-fill"
+          loading="lazy"
+          src="/images/topShadow.png"
+        />
+      </div>
+      <div
+        className="h-[270px] md:w-[25%] w-[20%] z-[1] relative"
+      >
+        <img
+          alt="logo box"
+          className="justify-center sm:h-[210px] md:h-[250px] h-[220px] sm:mt-[7px] sm:w-full w-full sm:ml-[-20px] left-0 bottom-0 right-0 top-0 m-auto opacity-0.8 absolute rounded-[80px]"
+          loading="lazy"
+          src="/images/logoBox.png"
+        />
+        <img
+          alt="pillarX logo"
+          className="sm:h-[12px] md:h-[12px] h-[19px] sm:left-[6%] left-[21%] top-[45%] m-auto absolute"
+          loading="lazy"
+          src="/images/pillarXLogo.svg"
+        />
+      </div>
+      <div
+        className="flex flex-col items-start justify-start w-[49%] gap-1.5 right-[5%] top-[8%] m-auto absolute"
+      >
+        <div
+          className="flex flex-row justify-between items-start w-full"
+        >
+          <button
+            onClick={[Function]}
+          >
+            <p
+              className="text-white-A700 font-custom mt-[5px] text-center font-custom  sm:ml-[-20px] text-lg font-normal leading-[130%]"
+            >
+              For developers
+              <div
+                className="h-px opacity-0.5 bg-gradient rounded-[1px] mt-1 w-90% align-center"
+              />
+            </p>
+          </button>
+          <a
+            href="https://twitter.com/PX_Web3"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="back side"
+              className="h-[27px] w-[28px]"
+              loading="lazy"
+              src="/images/backSide.svg"
+            />
+          </a>
+        </div>
+      </div>
+      <div
+        className="h-[628px] w-full sm:top-[10%] md:top-[10%] top-[5%] sm:mt-[-140px] right-0 left-0 relative"
+      >
+        <img
+          alt="middle shadow"
+          className="justify-center h-[638px] w-full left-0 bottom-0 right-0 top-0 object-fill sm:object-contain sm:mt-[-200px] md:mt-[-130px] absolute rounded-[80px] opacity-0.5"
+          loading="lazy"
+          src="/images/middleShadow.png"
+        />
+        <div
+          className="flex flex-col items-center justify-center w-full h-full left-0 bottom-0 right-0 top-0 m-auto absolute"
+        >
+          <img
+            alt="center logo"
+            className="sm:w-[300px] md:w-[35%] w-[25%] md:h-auto sm:w-full object-cover"
+            loading="lazy"
+            src="/images/centerLogo.png"
+          />
+          <p
+            className="text-white-A700 font-custom sm:w-[300px] md:w-[30%] w-[15%] mt-[31px] !text-white-A700_90 text-center opacity-0.9 font-custom text-2xl font-normal leading-[130%]"
+          >
+            Advancing the way you connect with Web3
+          </p>
+          <div
+            className="flex md:flex-col flex-row sm:w-[90%]  w-[65%] justify-between items-center w-full sm:mt-[80px] mt-[210px] p-[34px] md:gap-10 sm:p-5 border border-solid border_box bg-gray-900_33 rounded-[21px]"
+          >
+            <div
+              className="flex sm:flex-col flex-row justify-start md:w-full w-full mr-[21px] sm:gap-5 md:gap-10 gap-20 sm:mr-5"
+            >
+              <h2
+                className="text-white-A700 font-custom sm:w-full sm:text-center md:w-full w-[20%] font-custom text-lg font-bold leading-[120%]"
+              >
+                Join our exclusive early access list!
+              </h2>
+              <div
+                id="mc_embed_shell"
+              >
+                <div
+                  id="mc_embed_signup"
+                >
+                  <form
+                    action="https://pillarproject.us14.list-manage.com/subscribe/post?u=0056162978ccced9e0e2e2939&id=2b9a9790a3&f_id=0086c2e1f0"
+                    className="validate"
+                    id="mc-embedded-subscribe-form"
+                    method="post"
+                    name="mc-embedded-subscribe-form"
+                    noValidate={true}
+                    target="_self"
+                  >
+                    <div
+                      className="flex flex-row items-center justify-center sm:gap-1 md:gap-3 gap-5"
+                      id="mc_embed_signup_scroll"
+                    >
+                      <div
+                        className="mc-field-group"
+                      >
+                        <div
+                          className="flex items-center justify-center text-black-900_87 text-[15px] bg-blue_gray-100 rounded-[10px] h-12 p-2  sm:w-full md:w-[150px] w-[350px]"
+                        >
+                          <input
+                            className="required email sm:text-center font-custom"
+                            id="mce-EMAIL"
+                            name="EMAIL"
+                            onChange={[Function]}
+                            placeholder="Enter your email*"
+                            required={true}
+                            shape="round"
+                            type="email"
+                            value=""
+                          />
+                          <span
+                            className="helper_text"
+                            id="mce-EMAIL-HELPERTEXT"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="clear"
+                        id="mce-responses"
+                      >
+                        <div
+                          className="response display-none"
+                          id="mce-error-response"
+                        />
+                        <div
+                          className="response display-none"
+                          id="mce-success-response"
+                        />
+                      </div>
+                      <div
+                        className="clear"
+                      >
+                        <input
+                          className="button h-12 sm:px-5 min-w-[159px] font-custom flex items-center justify-center text-center cursor-pointer text-blue_gray-100 tracking-[-0.50px] text-[15px] font-bold bg-deep_purple-A700 rounded-[10px] font-custom"
+                          id="mc-embedded-subscribe"
+                          name="subscribe"
+                          type="submit"
+                          value="I am in!"
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex sm:flex-col flex-row items-center justify-start sm:px-0 px-50 sm:gap-0 gap-80 sm:mt-[-400px]  mt-[-270px]"
+    >
+      <img
+        alt="pillar logo"
+        className="sm:h-[150px] md:h-[212px] h-[252px] sm:w-[25%] sm:left-0 left-[10%] sm:mt-0 mt-[40px] object-cover mr-5 mb-5 mb-0 sm:ml-0 md:ml-[-30px] ml-[-50px] relative"
+        loading="lazy"
+        src="/images/pillar_big_logo.png"
+      />
+      <div
+        className="text-center sm:w-full md:w-[35%] w-[35%] sm:mt-[10px] sm:ml-0 md:ml-[-100px] ml-[170px]"
+      >
+        <h1
+          className="text-white-A700 font-custom text-center mb-[50px] text-6xl font-bold leading-[100%]"
+        >
+          What is PX?
+        </h1>
+        <p
+          className="text-white-A700 font-custom !text--A700_90 text-center opacity-0.6 font-custom sm:px-6 text-lg font-normal leading-[130%]"
+        >
+          PillarX is the next evolution in the Pillar Project story, built on the pillars of controlling your assets and data, PillarX will provide an unparalleled experience in interacting with the Web3 ecosystem.
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-row w-auto items-start right-0 justify-start mt-[50px]"
+    >
+      <img
+        alt="center image"
+        className="h-auto w-[80%] mt-[-5px] opacity-0.6 object-cover rounded-[76px]"
+        loading="lazy"
+        src="/images/centerLineGradient.png"
+      />
+      <img
+        alt="center logo"
+        className="sm:h-[80px] h-[170px] w-1/2  sm:left-[-150px] left-[-250px] sm:mt-0 mt-[20px]  bottom-0 right-0 m-auto object-fill relative"
+        loading="lazy"
+        src="/images/centerLogo.png"
+      />
+    </div>
+    <div
+      className="h-[1433px] w-full mt-[-1px] relative"
+    >
+      <div
+        className="flex flex-col items-center justify-center h-full left-0 bottom-0 right-0 top-0 m-auto absolute"
+      >
+        <div
+          className="h-[657px] sm:w-full w-[657px]  blue_gray_border rounded-[328px]"
+        />
+        <div
+          className="h-[1076px] w-full mt-[-300px] relative"
+        >
+          <img
+            alt="bottom shadow"
+            className="justify-center h-[1076px] w-full sm:w-full left-0 bottom-0 right-0 top-0 m-auto opacity-0.7 object-cover absolute"
+            loading="lazy"
+            src="/images/bottomRightShadow.png"
+          />
+          <h2
+            className="text-white-A700 font-custom sm:text-3xl top-[33%] right-0 left-0 m-auto text-center absolute font-custom text-6xl font-bold leading-[100%]"
+          >
+            Build with PillarX
+          </h2>
+          <a
+            href="https://twitter.com/PX_Web3"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="path1009_three"
+              className="h-[27px] w-[28px] bottom-[12%] right-[5%] m-auto absolute"
+              loading="lazy"
+              src="/images/backSide.svg"
+            />
+          </a>
+        </div>
+      </div>
+      <div
+        className="h-[370px] w-full bottom-[19%] right-0 left-0 m-auto absolute"
+      >
+        <img
+          alt="bottom gradient"
+          className="justify-center h-[550px] w-full left-0 bottom-0 right-0 top-0 m-auto  object-cover absolute rounded-[80px] opacity-0.6"
+          loading="lazy"
+          src="/images/topBottomGradient.png"
+        />
+        <div
+          className="flex flex-col items-center justify-start sm:mt-[-50px] sm:w-full md:w-[70%] w-[42%] sm:gap-[40px] gap-[63px] top-[10%] right-0 left-0 m-auto absolute"
+        >
+          <p
+            className="text-white-A700 font-custom w-[78%] !text-white-A700_99 text-center font-custom text-lg font-normal leading-[130%]"
+          >
+            This is your chance to spotlight your project, engage with 100k+ Pillar community members, and be part of the journey towards a more trustless future leveraging Account Abstraction.
+          </p>
+          <div
+            className="flex flex-row justify-start"
+          >
+            <p
+              className="text-white-A700 font-custom sm:text-lg sm:px-5 text-center font-custom text-2xl font-normal leading-[130%]"
+            >
+              Fill out the 
+              <a
+                className="inline-block underline "
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeFkdFhOh8vVy-qvS7ADyN6J050HAoJU6zLOkLFihE4QZlQvA/viewform"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <u>
+                  form
+                </u>
+              </a>
+               to join our groundbreaking testing campaign.
+              <b>
+                Applications will close on April 26th.
+              </b>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="h-[513px] sm:w-full md:w-[513px] w-[513px] top-[5%] right-0 left-0 m-auto bg-blue_gray-100_05 absolute rounded-[256px]"
+      />
+      <div
+        className="h-[417px] sm:w-full md:w-[417px] w-[417px] top-[8%] right-0 left-0 m-auto  white_border bg-black-900 shadow-xs absolute rounded-[208px]"
+      />
+      <div
+        className="flex flex-row justify-center w-[80%] top-[6%] right-0 left-0 p-[51px] m-auto md:p-5 border border-solid border_box bg-gray-900_33 absolute rounded-[21px]"
+      >
+        <div
+          className="flex flex-col items-center justify-start sm:w-[100%] md:w-[100%] w-[48%] mt-[3px] gap-[38px]"
+        >
+          <h3
+            className="text-white-A700 font-custom sm:text-2xl text-center font-custom text-6xl font-bold leading-[100%]"
+          >
+            Be One of the First to Experience PX
+          </h3>
+          <p
+            className="text-white-A700 font-custom sm:w-full w-[49%] text-center font-custom text-lg font-normal leading-[130%]"
+          >
+            Secure your place as a pioneer - Sign up for early access!
+          </p>
+          <div
+            className="flex flex-col items-center justify-start w-full gap-[45px] md:px-5"
+          >
+            <div
+              className="flex flex-row sm:flex-col justify-start sm:w-[300px] md:w-full gap-5 sm:gap-2"
+            >
+              <div
+                id="mc_embed_shell"
+              >
+                <div
+                  id="mc_embed_signup"
+                >
+                  <form
+                    action="https://pillarproject.us14.list-manage.com/subscribe/post?u=0056162978ccced9e0e2e2939&id=2b9a9790a3&f_id=0086c2e1f0"
+                    className="validate"
+                    id="mc-embedded-subscribe-form"
+                    method="post"
+                    name="mc-embedded-subscribe-form"
+                    noValidate={true}
+                    target="_self"
+                  >
+                    <div
+                      className="flex flex-row items-center justify-center sm:gap-1 md:gap-3 gap-5"
+                      id="mc_embed_signup_scroll"
+                    >
+                      <div
+                        className="mc-field-group"
+                      >
+                        <div
+                          className="flex items-center justify-center text-black-900_87 text-[15px] bg-blue_gray-100 rounded-[10px] h-12 p-2  sm:w-full md:w-[150px] w-[350px]"
+                        >
+                          <input
+                            className="required email sm:text-center font-custom"
+                            id="mce-EMAIL"
+                            name="EMAIL"
+                            onChange={[Function]}
+                            placeholder="Enter your email*"
+                            required={true}
+                            shape="round"
+                            type="email"
+                            value=""
+                          />
+                          <span
+                            className="helper_text"
+                            id="mce-EMAIL-HELPERTEXT"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className="clear"
+                        id="mce-responses"
+                      >
+                        <div
+                          className="response display-none"
+                          id="mce-error-response"
+                        />
+                        <div
+                          className="response display-none"
+                          id="mce-success-response"
+                        />
+                      </div>
+                      <div
+                        className="clear"
+                      >
+                        <input
+                          className="button h-12 sm:px-5 min-w-[159px] font-custom flex items-center justify-center text-center cursor-pointer text-blue_gray-100 tracking-[-0.50px] text-[15px] font-bold bg-deep_purple-A700 rounded-[10px] font-custom"
+                          id="mc-embedded-subscribe"
+                          name="subscribe"
+                          type="submit"
+                          value="I am in!"
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <p
+              className="text-white-A700 font-custom !text-white-A700_90 text-center opacity-0.6 font-custom text-lg font-normal leading-[130%]"
+            >
+              Stay tuned! We'll be unveiling more details as we approach the official launch date.
+              <a
+                className="inline-block"
+                href="https://twitter.com/PX_Web3"
+                rel="noreferrer"
+                target="_blank"
+              >
+                 
+                <u>
+                  Follow us on X.
+                </u>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;

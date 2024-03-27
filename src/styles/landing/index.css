@@ -1,0 +1,48 @@
+* {
+  font-family: Formular, serif;
+}
+a {
+  display: block;
+}
+ul {
+  margin: 0;
+  margin-inline: unset;
+  padding: 0;
+  list-style: none;
+}
+.Overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #6b6b6b;
+  border-radius: 10px;
+}
+input {
+  background-color: transparent;
+  width: 100%;
+}
+input:focus {
+  outline: none;
+}
+.white_border {
+  border-image: linear-gradient(135deg, #ffffff4c, #ffffff4c) 1;
+}
+.gray_border {
+  border-image: linear-gradient(180deg, #d9d9d94c, #d9d9d94c) 1;
+}
+.blue_gray_border {
+  border-image: linear-gradient(135deg, #322e35, #201d2200, #201d2200, #322e35) 1;
+}
+.border_box {
+  border: 1px solid #d9d9d94c;
+}

@@ -41,5 +41,9 @@
         "import/no-named-as-default": "off",
         "no-console": ["error", { "allow": ["warn", "error"] }],
         "quotes": ["error", "single"]
-    }
+    },
+    "ignorePatterns": [
+        "node_modules/",
+        "build/"
+    ]
 }
