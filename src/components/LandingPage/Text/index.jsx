@@ -42,7 +42,7 @@ const Text = ({ children, className = '', as, size = 'xs', ...restProps }) => {
 Text.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
-  size: PropTypes.oneOf(['xs']),
+  size: PropTypes.oneOf(['xs', 's']),
   as: PropTypes.string,
 };
 

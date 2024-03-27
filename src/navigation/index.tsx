@@ -5,7 +5,7 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import App from '../pages/App';
-import LandingPage from '../pages/Landing.jsx';
+import LandingPage from '../pages/Landing';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
