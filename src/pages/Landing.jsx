@@ -37,7 +37,7 @@ export default function LandingPage() {
               </button>
             </div>
             <Img
-              src='images/topShadow.png'
+              src='/images/topShadow.png'
               alt='top shadow'
               className='h-auto sm:w-full w-full sm:mt-[130px] object-fill'
               loading='lazy'
@@ -45,13 +45,13 @@ export default function LandingPage() {
           </div>
           <div className='h-[270px] md:w-[25%] w-[20%] z-[1] relative'>
             <Img
-              src='images/logoBox.png'
+              src='/images/logoBox.png'
               alt='logo box'
               className='justify-center sm:h-[210px] md:h-[250px] h-[220px] sm:mt-[7px] sm:w-full w-full sm:ml-[-20px] left-0 bottom-0 right-0 top-0 m-auto opacity-0.8 absolute rounded-[80px]'
               loading='lazy'
             />
             <Img
-              src='images/pillarXLogo.svg'
+              src='/images/pillarXLogo.svg'
               alt='pillarX logo'
               className='sm:h-[12px] md:h-[12px] h-[19px] sm:left-[6%] left-[21%] top-[45%] m-auto absolute'
               loading='lazy'
@@ -66,7 +66,7 @@ export default function LandingPage() {
                 </Text>
               </button>
               <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
-                <Img src='images/backSide.svg' alt='back side' className='h-[27px] w-[28px]' loading='lazy' />
+                <Img src='/images/backSide.svg' alt='back side' className='h-[27px] w-[28px]' loading='lazy' />
               </a>
             </div>
           </div>
@@ -81,14 +81,14 @@ export default function LandingPage() {
           )}
           <div className='h-[628px] w-full sm:top-[10%] md:top-[10%] top-[5%] sm:mt-[-140px] right-0 left-0 relative'>
             <Img
-              src='images/middleShadow.png'
+              src='/images/middleShadow.png'
               alt='middle shadow'
               className='justify-center h-[638px] w-full left-0 bottom-0 right-0 top-0 object-fill sm:object-contain sm:mt-[-200px] md:mt-[-130px] absolute rounded-[80px] opacity-0.5'
               loading='lazy'
             />
             <div className='flex flex-col items-center justify-center w-full h-full left-0 bottom-0 right-0 top-0 m-auto absolute'>
               <Img
-                src='images/centerLogo.png'
+                src='/images/centerLogo.png'
                 alt='center logo'
                 className='sm:w-[300px] md:w-[35%] w-[25%] md:h-auto sm:w-full object-cover'
                 loading='lazy'
@@ -113,7 +113,7 @@ export default function LandingPage() {
         </div>
         <div className='flex sm:flex-col flex-row items-center justify-start sm:px-0 px-50 sm:gap-0 gap-80 sm:mt-[-400px]  mt-[-270px]'>
           <Img
-            src='images/pillar_big_logo.png'
+            src='/images/pillar_big_logo.png'
             alt='pillar logo'
             className='sm:h-[150px] md:h-[212px] h-[252px] sm:w-[25%] sm:left-0 left-[10%] sm:mt-0 mt-[40px] object-cover mr-5 mb-5 mb-0 sm:ml-0 md:ml-[-30px] ml-[-50px] relative'
             loading='lazy'
@@ -130,13 +130,13 @@ export default function LandingPage() {
         </div>
         <div className='flex flex-row w-auto items-start right-0 justify-start mt-[50px]'>
           <Img
-            src='images/centerLineGradient.png'
+            src='/images/centerLineGradient.png'
             alt='center image'
             className='h-auto w-[80%] mt-[-5px] opacity-0.6 object-cover rounded-[76px]'
             loading='lazy'
           />
           <Img
-            src='images/centerLogo.png'
+            src='/images/centerLogo.png'
             alt='center logo'
             className='sm:h-[80px] h-[170px] w-1/2  sm:left-[-150px] left-[-250px] sm:mt-0 mt-[20px]  bottom-0 right-0 m-auto object-fill relative'
             loading='lazy'
@@ -147,7 +147,7 @@ export default function LandingPage() {
             <div className='h-[657px] sm:w-full w-[657px]  blue_gray_border rounded-[328px]' />
             <div className='h-[1076px] w-full mt-[-300px] relative'>
               <Img
-                src='images/bottomRightShadow.png'
+                src='/images/bottomRightShadow.png'
                 alt='bottom shadow'
                 className='justify-center h-[1076px] w-full sm:w-full left-0 bottom-0 right-0 top-0 m-auto opacity-0.7 object-cover absolute'
                 loading='lazy'
@@ -160,7 +160,7 @@ export default function LandingPage() {
               </Heading>
               <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
                 <Img
-                  src='images/backSide.svg'
+                  src='/images/backSide.svg'
                   alt='path1009_three'
                   className='h-[27px] w-[28px] bottom-[12%] right-[5%] m-auto absolute'
                   loading='lazy'
@@ -170,7 +170,7 @@ export default function LandingPage() {
           </div>
           <div className='h-[370px] w-full bottom-[19%] right-0 left-0 m-auto absolute' ref={sectionRef}>
             <Img
-              src='images/topBottomGradient.png'
+              src='/images/topBottomGradient.png'
               alt='bottom gradient'
               className='justify-center h-[550px] w-full left-0 bottom-0 right-0 top-0 m-auto  object-cover absolute rounded-[80px] opacity-0.6'
               loading='lazy'
