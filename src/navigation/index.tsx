@@ -5,12 +5,15 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import App from '../pages/App';
+import LandingPage from '../pages/Landing.jsx';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
 
 export const navigationRoute = {
   home: '/',
+  landing: '/landing',
+  login: '/login',
 }
 
 const DevApp = () => {
@@ -23,6 +26,7 @@ export const AuthorizedNavigation = () => {
   return (
     <Routes>
       <Route path={navigationRoute.home} element={<Lobby />} />
+      <Route path={navigationRoute.landing} element={<LandingPage />} />
       {allowedApps.map((appId) => (
         <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
       ))}
@@ -41,7 +45,8 @@ export const AuthorizedNavigation = () => {
 export const UnauthorizedNavigation = () => {
   return (
     <Routes>
-      <Route path={'/'} element={<Login />} />
+      <Route path={navigationRoute.home} element={<LandingPage />} />
+      <Route path={navigationRoute.login} element={<Login />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )
