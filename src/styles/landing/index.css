@@ -1,54 +1,48 @@
-#LandingPage {
-  font-family: Formular;
+* {
+  font-family: Formular, serif;
 }
-#LandingPage * {
-  box-sizing: border-box;
-  line-height: normal;
-  font-family: inherit;
-  margin: unset;
-}
-#LandingPage a {
+a {
   display: block;
 }
-#LandingPage ul {
+ul {
   margin: 0;
   margin-inline: unset;
   padding: 0;
   list-style: none;
 }
-#LandingPage .Overlay {
+.Overlay {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-#LandingPage ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 4px;
   height: 4px;
   background: transparent;
 }
-#LandingPage ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
-#LandingPage ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #6b6b6b;
   border-radius: 10px;
 }
-#LandingPage input {
+input {
   background-color: transparent;
   width: 100%;
 }
-#LandingPage input:focus {
+input:focus {
   outline: none;
 }
-#LandingPage .white_border {
+.white_border {
   border-image: linear-gradient(135deg, #ffffff4c, #ffffff4c) 1;
 }
-#LandingPage .gray_border {
+.gray_border {
   border-image: linear-gradient(180deg, #d9d9d94c, #d9d9d94c) 1;
 }
-#LandingPage .blue_gray_border {
+.blue_gray_border {
   border-image: linear-gradient(135deg, #322e35, #201d2200, #201d2200, #322e35) 1;
 }
-#LandingPage .border_box {
+.border_box {
   border: 1px solid #d9d9d94c;
 }

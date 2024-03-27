@@ -3,10 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { Buffer as ImportedBuffer } from 'buffer';
 import * as Sentry from '@sentry/react';
 
-import './styles/landing/tailwind.css';
-import './styles/landing/index.css';
-import './styles/landing/font.css';
-
 let sentryReleaseTag;
 
 // add a release tag only if REACT_APP_VERSION provided
