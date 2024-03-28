@@ -21,7 +21,7 @@
     "@sentry/react": "^7.81.1",
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/sdk-core": "^3.0.1",
-    "@uniswap/smart-order-router": "^2.5.26",
+    "@uniswap/smart-order-router": "^3.0.1",
     "@uniswap/v3-sdk": "^3.8.2",
     "axios": "^1.6.5",
     "buffer": "^6.0.3",
