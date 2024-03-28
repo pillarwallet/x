@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
 import { avalanche, bsc, gnosis, mainnet, polygon } from 'viem/chains';
-import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk';
+import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // providers
 import AccountNftsProvider from '../../providers/AccountNftsProvider';

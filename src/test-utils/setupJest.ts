@@ -15,6 +15,7 @@ Object.assign(global, { TextDecoder, TextEncoder });
 jest.mock('@firebase/app');
 jest.mock('@firebase/analytics');
 jest.mock('axios');
+jest.mock('@etherspot/prime-sdk');
 
 jest.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,

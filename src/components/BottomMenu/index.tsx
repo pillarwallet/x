@@ -2,13 +2,15 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
-// images
-import { ReactComponent as IconApps } from '../../assets/images/icon/icon-apps.svg';
-import { ReactComponent as IconHistory } from '../../assets/images/icon/icon-history.svg';
-import { ReactComponent as IconHome } from '../../assets/images/icon/icon-home.svg';
-import { ReactComponent as IconSend } from '../../assets/images/icon/icon-send.svg';
-import { ReactComponent as IconWallet } from '../../assets/images/icon/icon-wallet.svg';
+import {
+  Home2 as IconHome,
+  Send2 as IconSend,
+  Wallet2 as IconWallet,
+  Receipt1 as IconHistory,
+  Element as IconApps,
+} from 'iconsax-react';
+import React, { useEffect } from 'react';
+import { Transition } from 'react-transition-group';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -30,10 +32,37 @@ const BottomMenu = () => {
   const [t] = useTranslation();
   const { active, showSend, showApps, showHistory, showAccount, hide } = useBottomMenuModal();
   const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
+  const overlayRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const localRef = overlayRef.current;
+    if (!localRef) return;
+
+    const handleOverlayClick = (e: Event) => {
+      if (e.target !== localRef) return;
+      hide();
+      e.preventDefault();
+    };
+
+    localRef.addEventListener('click', handleOverlayClick);
+
+    return () => {
+      if (!localRef) return;
+      localRef.removeEventListener('click', handleOverlayClick);
+    };
+  }, [overlayRef, hide]);
 
   if (!authenticated) return null;
 
+  const isHomeActive = active === null
+    && navLocation.pathname === navigationRoute.home;
+
   const menuItems = [
+    {
+      icon: <IconHome />,
+      type: 'home',
+      label: t`menuAction.home`,
+    },
     {
       icon: <IconSend />,
       type: 'send',
@@ -61,49 +90,60 @@ const BottomMenu = () => {
     },
   ];
 
-  const isHomeActive = active === null
-    && navLocation.pathname === '/';
-
   return (
     <>
       <Wrapper>
-        <HomeMenuItem>
-          <MenuItem
-            onClick={() => navigate(navigationRoute.home)}
-            className={isHomeActive ? 'active' : ''}
-          >
-            <IconHome />
-          </MenuItem>
-        </HomeMenuItem>
-        <MainMenuItems>
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={item.label + index}
-              onClick={() => {
-                if (active?.type === item.type) {
-                  hide();
-                  return;
-                }
-                item.show();
-              }}
-              className={active?.type === item.type ? 'active' : ''}
-            >
-              {item.icon}
-              {!!item.iconNotificationCounter && (
-                <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
-              )}
-              <span>{item.label}</span>
-            </MenuItem>
-          ))}
+        <BottomMenuModal />
+        <MainMenuItems $modalVisible={!!active}>
+          {menuItems.map((item, index) => {
+            const isActiveItem = active?.type === item.type || (item.type === 'home' && isHomeActive);
+            return (
+              <MenuItem
+                key={item.label + index}
+                onClick={() => {
+                  if (item.type === 'home') {
+                    hide();
+                    isHomeActive && navigate(navigationRoute.home);
+                    return;
+                  }
+
+                  if (active?.type === item.type ) {
+                    hide();
+                    return;
+                  }
+
+                  if (item.show) item.show();
+                }}
+                className={isActiveItem ? 'active' : ''}
+              >
+                {item.type !== 'home' && <TopSliderIndicator />}
+                {item.icon}
+                {!!item.iconNotificationCounter && (
+                  <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
+                )}
+                <MenuItemText>{item.label}</MenuItemText>
+              </MenuItem>
+            );
+          })}
         </MainMenuItems>
       </Wrapper>
-      <BottomMenuModal
-        activeMenuItem={active}
-        onClose={hide}
-      />
+      <Transition nodeRef={overlayRef} in={!!active} timeout={100}>
+        {(overlayState) => (
+          <Overlay
+            ref={overlayRef}
+            $blur={overlayState === 'entered' ? 5 : 0}
+            $display={overlayState !== 'exited'}
+          />
+        )}
+      </Transition>
     </>
   );
 }
+
+const MenuItemText = styled.span`
+  display: none;
+  margin-left: 10px;
+`;
 
 const MenuItemNotification = styled.div`
   position: absolute;
@@ -123,19 +163,35 @@ const MenuItemNotification = styled.div`
   animation: ${animation.pulse(0.85, 1)} 2s infinite;
 `;
 
+const TopSliderIndicator = styled.div`
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: ${({ theme }) => theme.color.border.bottomMenuTopSlider};
+  width: 20px;
+`;
+
 const MenuItem = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
-  height: 48px;
   cursor: pointer;
   transition: all .1s ease-in-out;
-  font-weight: 400;
   letter-spacing: -0.5px;
   font-size: 14px;
+  user-select: none;
+  padding: 0 7px;
+  height: 100%;
+
+  &.active ${TopSliderIndicator} {
+    display: block;
+  }
 
   &:first-child {
     margin-left: 17px;
@@ -144,69 +200,74 @@ const MenuItem = styled.div`
   &:last-child {
     margin-right: 17px;
   }
-
-  span {
-    display: none;
-  }
 `;
 
 const Wrapper = styled.div`
   margin: 0 auto;
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  z-index: 100;
+  width: 338px;
+  transform: translateX(-50%);
+  border: 1px solid ${({ theme }) => theme.color.border.bottomMenu};
+  background: ${({ theme }) => theme.color.background.bottomMenu};
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+`;
+
+const MainMenuItems = styled.div<{ $modalVisible?: boolean }>`
+  position: relative;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  z-index: 100;
-  transform: translateX(-50%);
+  padding: 0 7px;
+  height: 45px;
+  width: 100%;
+  ${({ $modalVisible, theme }) => $modalVisible && `
+    height: 48px;
+    border-top: 3px solid ${theme.color.border.bottomMenu};
+  `};
 
   &:not(&:hover) ${MenuItem}.active, ${MenuItem}:hover {
-    padding: 0 13px;
+    color: ${({ theme }) => theme.color.text.bottomMenuItemActive};
+    padding: 0 15px;
     margin: 0;
-    border-radius: 100px;
-    background: ${({ theme }) => theme.color.background.bottomMenuItemHover};
-    
+
+    ${TopSliderIndicator} {
+      width: 32px;
+      transform: translateX(calc(-50% + 5px));
+    }
+
     ${MenuItemNotification} {
       left: 28px;
     }
 
-    span {
+    ${MenuItemText} {
       display: block;
     }
   }
 `;
 
-const MainMenuItems = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  backdrop-filter: blur(5px);
-  background: ${({ theme }) => theme.color.background.bottomMenu};
-  border-radius: 130px;
-  padding: 6px 7px;
-  width: 280px;
-  height: 60px;
-`;
-
-const HomeMenuItem = styled(MainMenuItems)`
-  flex: none;
-  width: 60px;
-  height: 60px;
-
-  ${MenuItem} {
-    width: 48px;
-
-    &:first-child, &:last-child {
-      margin: 0
-    }
-
-    &:hover {
-      padding: 0;
-    }
-  }
+const Overlay = styled.div<{
+  $blur: number;
+  $display: boolean;
+}>`
+  position: fixed;
+  z-index: 98;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: 100ms linear;
+  backdrop-filter: blur(${({ $blur }) => $blur}px);
+  display: ${({ $display }) => $display ? 'flex' : 'none'};
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 114px;
+  overflow: hidden;
 `;
 
 export default BottomMenu;

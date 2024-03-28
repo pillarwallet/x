@@ -12,7 +12,8 @@
     "send": "Send",
     "history": "History",
     "apps": "Apps",
-    "account": "Account"
+    "account": "Account",
+    "home": "Home"
   },
   "action": {
     "getStarted": "Get Started",

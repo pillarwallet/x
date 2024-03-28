@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useEtherspotBalances, useWalletAddress } from '@etherspot/transaction-kit';
-import { AccountBalance } from '@etherspot/prime-sdk';
+import { AccountBalance } from '@etherspot/prime-sdk/dist/sdk/data';
 import { sepolia } from 'viem/chains';
 import isEqual from 'lodash/isEqual';
 

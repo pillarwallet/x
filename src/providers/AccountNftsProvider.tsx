@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useEtherspotNfts, useWalletAddress } from '@etherspot/transaction-kit';
-import { NftCollection, Nft } from '@etherspot/prime-sdk';
+import { NftCollection, Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 import { sepolia } from 'viem/chains';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';

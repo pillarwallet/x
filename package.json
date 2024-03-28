@@ -1,6 +1,6 @@
 {
   "name": "pillarx",
-  "version": "0.13.0",
+  "version": "0.14.1",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -12,10 +12,10 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
-    "@etherspot/transaction-kit": "^0.8.0",
+    "@etherspot/transaction-kit": "^0.11.0",
     "@mui/joy": "^5.0.0-beta.22",
     "@openzeppelin/contracts": "^5.0.1",
-    "@privy-io/react-auth": "^1.57.1",
+    "@privy-io/react-auth": "^1.59.5",
     "@react-spring/web": "^9.7.3",
     "@sentry/cli": "^2.21.5",
     "@sentry/react": "^7.81.1",
@@ -28,6 +28,7 @@
     "ethers": "^5.7.2",
     "firebase": "^10.6.0",
     "i18next": "^23.7.6",
+    "iconsax-react": "^0.0.8",
     "identicon.js": "^2.3.3",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",

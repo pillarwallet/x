@@ -72,7 +72,8 @@ const AppAuthController = () => {
       <EtherspotTransactionKit
         provider={provider}
         chainId={chainId}
-        projectKey={process.env.REACT_APP_ETHERSPOT_PROJECT_KEY || undefined}
+        bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
+        dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
       >
         <AccountTransactionHistoryProvider>
           <AssetsProvider>

@@ -1,13 +1,11 @@
 import { createGlobalStyle, keyframes } from 'styled-components';
 
-// fonts
-import formularRegularFont from '../assets/fonts/Formular-Regular.otf';
-import formularMediumFont from '../assets/fonts/Formular-Medium.otf';
-import formularBoldFont from '../assets/fonts/Formular-Bold.otf';
-
 export interface Theme {
   font: {
-    primary: string;
+    primary: {
+      family: string;
+      weight: number;
+    };
   }
   color: {
     background: {
@@ -31,6 +29,7 @@ export interface Theme {
     text: {
       body: string;
       bottomMenuItem: string;
+      bottomMenuItemActive: string;
       loadingLogo: string;
       buttonPrimary: string;
       buttonPrimaryDisabled: string;
@@ -43,7 +42,8 @@ export interface Theme {
       inputHelper: string;
     },
     border: {
-      bottomMenuItemBottomActive: string;
+      bottomMenu: string;
+      bottomMenuTopSlider: string;
     },
     icon: {
       inputHelper: string;
@@ -54,12 +54,15 @@ export interface Theme {
 
 export const defaultTheme: Theme = {
   font: {
-    primary: 'Formular, serif',
+    primary: {
+      family: '"Poppins", sans-serif',
+      weight: 500
+    },
   },
   color: {
     background: {
-      body: '#101010',
-      bottomMenu: 'rgba(16,16,16,0.7)',
+      body: '#141626',
+      bottomMenu: '#120f17',
       bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
       bottomMenuModal: 'rgba(16, 16, 16, 0.70)',
       loadingLogo: '#fff',
@@ -77,7 +80,8 @@ export const defaultTheme: Theme = {
     },
     text: {
       body: '#fff',
-      bottomMenuItem: '#fff',
+      bottomMenuItem: '#89888b',
+      bottomMenuItemActive: '#fff',
       loadingLogo: '#997cfa',
       buttonPrimary: '#1D1D1D',
       buttonPrimaryDisabled: '#1D1D1D',
@@ -90,7 +94,8 @@ export const defaultTheme: Theme = {
       inputHelper: 'rgba(255, 255, 255, 0.3)',
     },
     border: {
-      bottomMenuItemBottomActive: '#fff',
+      bottomMenu: '#363439',
+      bottomMenuTopSlider: '#8A77FF',
     },
     icon: {
       inputHelper: '#fff',
@@ -164,28 +169,11 @@ export const animation = {
 }
 
 export const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: Formular;
-    font-weight: 400;
-    src: url(${formularRegularFont}) format("opentype");
-  }
-
-  @font-face {
-    font-family: Formular;
-    font-weight: 500;
-    src: url(${formularMediumFont}) format("opentype");
-  }
-
-  @font-face {
-    font-family: Formular;
-    font-weight: 700;
-    src: url(${formularBoldFont}) format("opentype");
-  }
-
   body {
-    font-family: ${({ theme }) => theme.font.primary};
+    font-family: ${({ theme }) => theme.font.primary.family};
     background: ${({ theme }) => theme.color.background.body};
     color: ${({ theme }) => theme.color.text.body};
+    font-weight: ${({ theme }) => theme.font.primary.weight};
   }
   
   input, textarea, button, select {
