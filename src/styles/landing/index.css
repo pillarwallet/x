@@ -1,3 +1,21 @@
+@font-face {
+  font-family: Formular;
+  font-weight: 400;
+  src: url("/landing-fonts/Formular-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: Formular;
+  font-weight: 500;
+  src: url("/landing-fonts/Formular-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: Formular;
+  font-weight: 700;
+  src: url("/landing-fonts/Formular-Bold.otf") format("opentype");
+}
+
 * {
   font-family: Formular, serif;
 }
