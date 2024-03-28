@@ -26,6 +26,7 @@ export interface Theme {
       horizontalDivider: string;
       selectItem: string;
       selectItemHover: string;
+      bottomMenuItemNotification: string;
     },
     text: {
       body: string;
@@ -46,6 +47,7 @@ export interface Theme {
     },
     icon: {
       inputHelper: string;
+      delete: string;
     }
   }
 }
@@ -71,6 +73,7 @@ export const defaultTheme: Theme = {
       horizontalDivider: 'linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%)',
       selectItem: 'rgba(217, 217, 217, 0.05)',
       selectItemHover: 'rgba(217, 217, 217, 0.2)',
+      bottomMenuItemNotification: 'rgb(0,111,255)',
     },
     text: {
       body: '#fff',
@@ -91,6 +94,7 @@ export const defaultTheme: Theme = {
     },
     icon: {
       inputHelper: '#fff',
+      delete: '#ff000080',
     }
   },
 };
@@ -105,15 +109,15 @@ const skeleton = keyframes`
 `;
 
 
-const pulse = keyframes`
+const pulse = (min = 1, max = 2) => keyframes`
   0% {
-    transform: scale(1);
+    transform: scale(${min});
   }
   50% {
-    transform: scale(2);
+    transform: scale(${max});
   }
   100% {
-    transform: scale(1);
+    transform: scale(${min});
   }
 `;
 
@@ -190,6 +194,7 @@ export const GlobalStyle = createGlobalStyle`
   
   * {
     box-sizing: border-box;
+    line-height: normal;
     margin: 0;
     padding: 0;
   }

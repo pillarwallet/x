@@ -2,7 +2,7 @@ import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { mainnet, sepolia } from 'viem/chains';
 
@@ -20,6 +20,7 @@ import AccountTransactionHistoryProvider from '../providers/AccountTransactionHi
 import AssetsProvider from '../providers/AssetsProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
+import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -36,6 +37,7 @@ const AppAuthController = () => {
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const navLocation = useLocation();
 
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -77,14 +79,14 @@ const AppAuthController = () => {
           <AssetsProvider>
             <AccountBalancesProvider>
               <AccountNftsProvider>
-                <BrowserRouter>
+                <GlobalTransactionBatchesProvider>
                   <BottomMenuModalProvider>
                     <AuthContentWrapper>
                       <AuthorizedNavigation />
                     </AuthContentWrapper>
                     <BottomMenu />
                   </BottomMenuModalProvider>
-                </BrowserRouter>
+                </GlobalTransactionBatchesProvider>
               </AccountNftsProvider>
             </AccountBalancesProvider>
           </AssetsProvider>
@@ -93,11 +95,10 @@ const AppAuthController = () => {
     )
   }
 
-  if (isAppReady && !authenticated) {
+  const isRootPage = navLocation.pathname === '/';
+  if ((isAppReady || isRootPage) && !authenticated) {
     return (
-      <BrowserRouter>
-        <UnauthorizedNavigation />
-      </BrowserRouter>
+      <UnauthorizedNavigation />
     );
   }
 
@@ -119,9 +120,11 @@ const Main = () => {
             }
           }}
         >
-          <AllowedAppsProvider>
-            <AppAuthController />
-          </AllowedAppsProvider>
+          <BrowserRouter>
+            <AllowedAppsProvider>
+              <AppAuthController />
+            </AllowedAppsProvider>
+          </BrowserRouter>
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>

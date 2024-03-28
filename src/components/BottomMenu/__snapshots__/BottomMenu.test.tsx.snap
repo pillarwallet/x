@@ -10,7 +10,6 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   gap: 12px;
   color: #fff;
   height: 48px;
-  overflow: hidden;
   cursor: pointer;
   transition: all .1s ease-in-out;
   font-weight: 400;

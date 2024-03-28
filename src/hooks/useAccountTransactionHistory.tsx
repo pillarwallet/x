@@ -4,10 +4,10 @@ import { useContext } from 'react';
 import { AccountTransactionHistoryContext } from '../providers/AccountTransactionHistoryProvider';
 
 // types
-import { Transaction } from '../types/blockchain';
+import { IApiTransaction } from '../types/blockchain';
 
 const useAccountTransactionHistory = (params?: {
-  onUpdated?: (chainId: number, walletAddress: string, transaction: Transaction) => void
+  onUpdated?: (chainId: number, walletAddress: string, transaction: IApiTransaction) => void
 }) => {
   const context = useContext(AccountTransactionHistoryContext);
 

@@ -19,7 +19,8 @@
     "next": "Next",
     "send": "Send",
     "logout": "Logout",
-    "sendAnyway": "Send Anyway"
+    "sendAnyway": "Send Anyway",
+    "addToBatch": "Add to Batch"
   },
   "progress": {
     "sending": "Sending"
