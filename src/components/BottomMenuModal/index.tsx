@@ -67,10 +67,13 @@ const BottomMenuModal = ({
               {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
                 <ModalContentWrapper key={index}>
                   <ModalContent>
-                    <Modal
-                      key={`${index}`}
-                      {...(activeMenuItem?.type === 'send' ? activeMenuItem.data : {})}
-                    />
+                    {activeMenuItemIndex !== null && (
+                      <Modal
+                        key={`${index}`}
+                        isContentVisible={activeMenuItemIndex === index}
+                        {...(activeMenuItem?.type === 'send' ? { payload: activeMenuItem.payload } : {})}
+                      />
+                    )}
                   </ModalContent>
                 </ModalContentWrapper>
               ))}

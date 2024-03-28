@@ -17,17 +17,34 @@
   "action": {
     "getStarted": "Get Started",
     "next": "Next",
-    "send": "Send"
+    "send": "Send",
+    "logout": "Logout",
+    "sendAnyway": "Send Anyway",
+    "addToBatch": "Add to Batch"
+  },
+  "progress": {
+    "sending": "Sending"
   },
   "error": {
     "pageNotFound": "Page not found",
     "appNotFound": "App not found",
-    "transactionFailedReasonUnknown": "Transaction failed: reason unknown"
+    "failedToGetTransactionHashReachSupport": "Failed to get transaction hash. Please reach out to support.",
+    "noNftsFound": "No NFTs found"
+  },
+  "warning": {
+    "transactionSafety": {
+      "costHigherThanAmount": "Please note that transaction cost is higher than the amount being sent",
+      "amountMoreThanHalfOfBalance": "Please note that the amount being sent is more than half of your balance"
+    }
   },
   "label": {
     "chooseRecipient": "Choose recipient",
-    "chooseToken": "Choose token",
-    "enterAmount": "Enter amount"
+    "chooseAsset": "Choose asset",
+    "enterAmount": "Enter amount",
+    "tokens": "Tokens",
+    "nfts": "NFTs",
+    "cost": "Cost",
+    "error": "Error"
   },
   "placeholder": {
     "toNameAddress": "To: name, address"

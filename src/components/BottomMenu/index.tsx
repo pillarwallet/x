@@ -15,19 +15,21 @@ import { navigationRoute } from '../../navigation';
 
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
-
-// providers
-import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
+import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
 
 // components
 import BottomMenuModal from '../BottomMenuModal';
+
+// theme
+import { animation } from '../../theme';
 
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
-  const { active, show, hide } = useBottomMenuModal();
+  const { active, showSend, showApps, showHistory, showAccount, hide } = useBottomMenuModal();
+  const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
 
   if (!authenticated) return null;
 
@@ -35,22 +37,27 @@ const BottomMenu = () => {
     {
       icon: <IconSend />,
       type: 'send',
+      iconNotificationCounter: globalTransactionsBatch.length,
       label: t`menuAction.send`,
+      show: showSend,
     },
     {
       icon: <IconHistory />,
       type: 'history',
       label: t`menuAction.history`,
+      show: showHistory,
     },
     {
       icon: <IconWallet />,
       type: 'account',
       label: t`menuAction.account`,
+      show: showAccount,
     },
     {
       icon: <IconApps />,
       type: 'apps',
       label: t`menuAction.apps`,
+      show: showApps,
     },
   ];
 
@@ -77,11 +84,14 @@ const BottomMenu = () => {
                   hide();
                   return;
                 }
-                show({ type: item.type as BottomMenuItem['type'] });
+                item.show();
               }}
               className={active?.type === item.type ? 'active' : ''}
             >
               {item.icon}
+              {!!item.iconNotificationCounter && (
+                <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
+              )}
               <span>{item.label}</span>
             </MenuItem>
           ))}
@@ -95,6 +105,24 @@ const BottomMenu = () => {
   );
 }
 
+const MenuItemNotification = styled.div`
+  position: absolute;
+  transition: all .1s ease-in-out;
+  bottom: -4px;
+  left: 15px;
+  background: ${({ theme }) => theme.color.background.bottomMenuItemNotification};
+  padding: 2px;
+  text-align: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+  transform: scale(1);
+  animation: ${animation.pulse(0.85, 1)} 2s infinite;
+`;
+
 const MenuItem = styled.div`
   position: relative;
   display: flex;
@@ -103,7 +131,6 @@ const MenuItem = styled.div`
   gap: 12px;
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
   height: 48px;
-  overflow: hidden;
   cursor: pointer;
   transition: all .1s ease-in-out;
   font-weight: 400;
@@ -124,7 +151,6 @@ const MenuItem = styled.div`
 `;
 
 const Wrapper = styled.div`
-  // max-width: 800px; TODO: inspect and remove/adjust
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -141,6 +167,10 @@ const Wrapper = styled.div`
     margin: 0;
     border-radius: 100px;
     background: ${({ theme }) => theme.color.background.bottomMenuItemHover};
+    
+    ${MenuItemNotification} {
+      left: 28px;
+    }
 
     span {
       display: block;

@@ -1,12 +1,14 @@
 import renderer, { ReactTestRendererJSON, act, ReactTestRenderer } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
 import { MemoryRouter } from 'react-router-dom';
+import axios from 'axios';
 
 // theme
 import { defaultTheme } from '../../theme';
 
 // providers
 import LanguageProvider from '../../providers/LanguageProvider';
+import AllowedAppsProvider from '../../providers/AllowedAppsProvider';
 
 // navigation
 import { AuthorizedNavigation } from '../../navigation';
@@ -20,9 +22,11 @@ describe('<App />', () => {
         .create(
           <MemoryRouter initialEntries={['/what-the-fook-unknown-app-69420']}>
             <ThemeProvider theme={defaultTheme}>
-              <LanguageProvider>
-                <AuthorizedNavigation/>
-              </LanguageProvider>
+              <AllowedAppsProvider>
+                <LanguageProvider>
+                  <AuthorizedNavigation/>
+                </LanguageProvider>
+              </AllowedAppsProvider>
             </ThemeProvider>
           </MemoryRouter>
         );
@@ -41,6 +45,8 @@ describe('<App />', () => {
   });
 
   it('successfully loads app by identifier', async () => {
+    (axios.get as jest.Mock).mockImplementation(() => Promise.resolve({ data: { apps: [{ id: 'sign-message' }] } }));
+
     let rendered: ReactTestRenderer | undefined;
 
     await act(async () => {
@@ -48,9 +54,11 @@ describe('<App />', () => {
         .create(
           <MemoryRouter initialEntries={['/sign-message']}>
             <ThemeProvider theme={defaultTheme}>
-              <LanguageProvider>
-                <AuthorizedNavigation/>
-              </LanguageProvider>
+              <AllowedAppsProvider>
+                <LanguageProvider>
+                  <AuthorizedNavigation/>
+                </LanguageProvider>
+              </AllowedAppsProvider>
             </ThemeProvider>
           </MemoryRouter>
         );
@@ -74,6 +82,10 @@ describe('<App />', () => {
     expect(treeElements[2].children?.length).toBe(1);
     expect(treeElements[2].type).toBe('button');
     expect(treeElements[2].children?.[0]).toBe('Sign Message');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });
 
