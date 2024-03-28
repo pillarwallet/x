@@ -182,6 +182,7 @@ export const GlobalStyle = createGlobalStyle`
   
   * {
     box-sizing: border-box;
+    line-height: normal;
     margin: 0;
     padding: 0;
   }
