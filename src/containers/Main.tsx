@@ -38,6 +38,7 @@ const AppAuthController = () => {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const navLocation = useLocation();
+  const previouslyAuthenticated = !!localStorage.getItem('privy:token');
 
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -97,7 +98,8 @@ const AppAuthController = () => {
   }
 
   const isRootPage = navLocation.pathname === '/';
-  if ((isAppReady || isRootPage) && !authenticated) {
+
+  if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
     return (
       <UnauthorizedNavigation />
     );
