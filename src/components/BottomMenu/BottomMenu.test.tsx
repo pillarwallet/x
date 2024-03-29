@@ -49,11 +49,8 @@ describe('<BottomMenu />', () => {
 
     const [bottomMenuElement] = tree as ReactTestRendererJSON[];
 
-    expect((bottomMenuElement.children?.[0] as ReactTestRendererJSON)?.children?.length).toBe(1); // menu home button
-    expect((bottomMenuElement.children?.[1] as ReactTestRendererJSON)?.children?.length).toBe(4); // other menu items
+    expect((bottomMenuElement.children?.[1] as ReactTestRendererJSON)?.children?.length).toBe(5); // other menu items
     expect(bottomMenuElement.type).toBe('div');
-    expect(bottomMenuElement?.children?.[0]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
-    expect(bottomMenuElement?.children?.[1]).toHaveStyleRule('background', defaultTheme.color.background.bottomMenu);
 
     jest.clearAllMocks();
   });

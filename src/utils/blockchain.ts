@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { AccountBalance, Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
+import { AccountBalance, Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import {
   polygon,
   gnosis,

@@ -38,6 +38,7 @@ const AppAuthController = () => {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const navLocation = useLocation();
+  const previouslyAuthenticated = !!localStorage.getItem('privy:token');
 
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -73,7 +74,8 @@ const AppAuthController = () => {
       <EtherspotTransactionKit
         provider={provider}
         chainId={chainId}
-        projectKey={process.env.REACT_APP_ETHERSPOT_PROJECT_KEY || undefined}
+        bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
+        dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
       >
         <AccountTransactionHistoryProvider>
           <AssetsProvider>
@@ -96,7 +98,8 @@ const AppAuthController = () => {
   }
 
   const isRootPage = navLocation.pathname === '/';
-  if ((isAppReady || isRootPage) && !authenticated) {
+
+  if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
     return (
       <UnauthorizedNavigation />
     );

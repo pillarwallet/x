@@ -2,198 +2,124 @@
 
 exports[`<BottomMenu /> renders correctly 1`] = `
 [
-  .c4 {
+  .c1 {
+  overflow: hidden;
+}
+
+.c2 {
+  transition: 100ms linear;
+  transform: translateY(1000px);
+  display: none;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+  width: 100%;
+}
+
+.c3 {
+  align-self: flex-start;
+  transform: translateX(calc(0 * -336px));
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+}
+
+.c4 {
+  width: 336px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 23px;
+  overflow: hidden;
+}
+
+.c9 {
+  display: none;
+  margin-left: 10px;
+}
+
+.c11 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #8A77FF;
+  width: 20px;
+}
+
+.c7 {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: #fff;
-  height: 48px;
+  justify-content: space-between;
+  color: #89888b;
   cursor: pointer;
   transition: all .1s ease-in-out;
-  font-weight: 400;
   letter-spacing: -0.5px;
   font-size: 14px;
+  user-select: none;
+  padding: 0 7px;
+  height: 100%;
 }
 
-.c4:first-child {
+.c7.active .c10 {
+  display: block;
+}
+
+.c7:first-child {
   margin-left: 17px;
 }
 
-.c4:last-child {
+.c7:last-child {
   margin-right: 17px;
-}
-
-.c4 span {
-  display: none;
 }
 
 .c0 {
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
   position: fixed;
-  bottom: 40px;
+  bottom: 22px;
   left: 50%;
   z-index: 100;
+  width: 338px;
   transform: translateX(-50%);
+  border: 1px solid #363439;
+  background: #120f17;
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
 }
 
-.c0:not(.c0:hover) .c3.active,
-.c0 .c3:hover {
-  padding: 0 13px;
-  margin: 0;
-  border-radius: 100px;
-  background: rgba(216, 232, 255, 0.10);
-}
-
-.c0:not(.c0:hover) .c3.active span,
-.c0 .c3:hover span {
-  display: block;
-}
-
-.c1 {
+.c5 {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  backdrop-filter: blur(5px);
-  background: rgba(16,16,16,0.7);
-  border-radius: 130px;
-  padding: 6px 7px;
-  width: 280px;
-  height: 60px;
+  padding: 0 7px;
+  height: 45px;
+  width: 100%;
 }
 
-.c2 {
-  flex: none;
-  width: 60px;
-  height: 60px;
-}
-
-.c2 .c3 {
-  width: 48px;
-}
-
-.c2 .c3:first-child,
-.c2 .c3:last-child {
+.c5:not(.c5:hover) .c6.active,
+.c5 .c6:hover {
+  color: #fff;
+  padding: 0 15px;
   margin: 0;
 }
 
-.c2 .c3:hover {
-  padding: 0;
+.c5:not(.c5:hover) .c6.active .c10,
+.c5 .c6:hover .c10 {
+  width: 32px;
+  transform: translateX(calc(-50% + 5px));
 }
 
-<div
-    className="c0"
-  >
-    <div
-      className="c1 c2"
-    >
-      <div
-        className="c3 c4 active"
-        onClick={[Function]}
-      >
-        <svg />
-      </div>
-    </div>
-    <div
-      className="c1"
-    >
-      <div
-        className="c3 c4"
-        onClick={[Function]}
-      >
-        <svg />
-        <span>
-          Send
-        </span>
-      </div>
-      <div
-        className="c3 c4"
-        onClick={[Function]}
-      >
-        <svg />
-        <span>
-          History
-        </span>
-      </div>
-      <div
-        className="c3 c4"
-        onClick={[Function]}
-      >
-        <svg />
-        <span>
-          Account
-        </span>
-      </div>
-      <div
-        className="c3 c4"
-        onClick={[Function]}
-      >
-        <svg />
-        <span>
-          Apps
-        </span>
-      </div>
-    </div>
-  </div>,
-  .c0 {
-  position: fixed;
-  z-index: 98;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: 100ms linear;
-  backdrop-filter: blur(0px);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 114px;
-  overflow: hidden;
-}
-
-.c1 {
-  transition: 100ms linear;
-  transform: translateY(1000px);
-  display: flex;
-  flex-direction: row;
-  align-content: start;
-  justify-content: start;
-  width: 100%;
-}
-
-.c2 {
-  align-self: flex-start;
-  transform: translateX(calc(0 * -100vw));
-  display: flex;
-  flex-direction: row;
-  align-content: start;
-  justify-content: start;
-}
-
-.c3 {
-  width: 100vw;
-  display: flex;
-  align-content: center;
-  justify-content: center;
-}
-
-.c4 {
-  width: 350px;
-  min-height: 350px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 32px;
-  padding: 34px 23px;
-  background: rgba(16, 16, 16, 0.70);
-  backdrop-filter: blur(5px);
-  overflow: hidden;
+.c5:not(.c5:hover) .c6.active .c8,
+.c5 .c6:hover .c8 {
+  display: block;
 }
 
 <div
@@ -211,31 +137,186 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           <div
             className="c4"
           />
-        </div>
-        <div
-          className="c3"
-        >
           <div
             className="c4"
           />
-        </div>
-        <div
-          className="c3"
-        >
           <div
             className="c4"
           />
-        </div>
-        <div
-          className="c3"
-        >
           <div
             className="c4"
           />
         </div>
       </div>
     </div>
+    <div
+      className="c5"
+    >
+      <div
+        className="c6 c7 active"
+        onClick={[Function]}
+      >
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9.02 2.84-5.39 4.2C2.73 7.74 2 9.23 2 10.36v7.41c0 2.32 1.89 4.22 4.21 4.22h11.58c2.32 0 4.21-1.9 4.21-4.21V10.5c0-1.21-.81-2.76-1.8-3.45l-6.18-4.33c-1.4-.98-3.65-.93-5 .12ZM12 17.99v-3"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c8 c9"
+        >
+          Home
+        </span>
+      </div>
+      <div
+        className="c6 c7"
+        onClick={[Function]}
+      >
+        <div
+          className="c10 c11"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m7.4 6.32 8.49-2.83c3.81-1.27 5.88.81 4.62 4.62l-2.83 8.49c-1.9 5.71-5.02 5.71-6.92 0l-.84-2.52-2.52-.84c-5.71-1.9-5.71-5.01 0-6.92ZM10.11 13.65l3.58-3.59"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c8 c9"
+        >
+          Send
+        </span>
+      </div>
+      <div
+        className="c6 c7"
+        onClick={[Function]}
+      >
+        <div
+          className="c10 c11"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.73 19.7c.82-.88 2.07-.81 2.79.15l1.01 1.35c.81 1.07 2.12 1.07 2.93 0l1.01-1.35c.72-.96 1.97-1.03 2.79-.15 1.78 1.9 3.23 1.27 3.23-1.39V7.04C20.5 3.01 19.56 2 15.78 2H8.22C4.44 2 3.5 3.01 3.5 7.04V18.3c0 2.67 1.46 3.29 3.23 1.4ZM8 7h8M9 11h6"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c8 c9"
+        >
+          History
+        </span>
+      </div>
+      <div
+        className="c6 c7"
+        onClick={[Function]}
+      >
+        <div
+          className="c10 c11"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M13 9H7M22 10.97v2.06c0 .55-.44 1-1 1.02h-1.96c-1.08 0-2.07-.79-2.16-1.87-.06-.63.18-1.22.6-1.63.37-.38.88-.6 1.44-.6H21c.56.02 1 .47 1 1.02Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M17.48 10.55c-.42.41-.66 1-.6 1.63.09 1.08 1.08 1.87 2.16 1.87H21v1.45c0 3-2 5-5 5H7c-3 0-5-2-5-5v-7c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h9c.26 0 .51.01.75.05C19.33 3.85 21 5.76 21 8.5v1.45h-2.08c-.56 0-1.07.22-1.44.6Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c8 c9"
+        >
+          Account
+        </span>
+      </div>
+      <div
+        className="c6 c7"
+        onClick={[Function]}
+      >
+        <div
+          className="c10 c11"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10.5 19.9V4.1c0-1.5-.64-2.1-2.23-2.1H4.23C2.64 2 2 2.6 2 4.1v15.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1ZM22 10.9V4.1c0-1.5-.64-2.1-2.23-2.1h-4.04c-1.59 0-2.23.6-2.23 2.1v6.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1ZM22 19.9v-1.8c0-1.5-.64-2.1-2.23-2.1h-4.04c-1.59 0-2.23.6-2.23 2.1v1.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c8 c9"
+        >
+          Apps
+        </span>
+      </div>
+    </div>
   </div>,
+  .c0 {
+  position: fixed;
+  z-index: 98;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: 100ms linear;
+  backdrop-filter: blur(0px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 114px;
+  overflow: hidden;
+}
+
+<div
+    className="c0"
+  />,
 ]
 `;
 

@@ -8,106 +8,56 @@ import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
 
-// providers
-import { BottomMenuItem } from '../../providers/BottomMenuModalProvider';
+// hooks
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
-const BottomMenuModal = ({
-  activeMenuItem,
-  onClose,
-}: {
-  activeMenuItem: BottomMenuItem | null,
-  onClose: () => void,
-}) => {
-  const overlayRef = React.useRef<HTMLDivElement>(null);
+const BottomMenuModal = () => {
+  const modalRef = React.useRef<HTMLDivElement>(null);
+  const { active, activeIndex } = useBottomMenuModal();
 
-  const activeMenuItemIndex = React.useMemo(() => {
-    return activeMenuItem?.type
-      ? ['send', 'history', 'account', 'apps'].indexOf(activeMenuItem.type)
-      : null;
-  }, [activeMenuItem?.type]);
-
-  const lastValidActiveMenuItemIndex = React.useRef<number>(activeMenuItemIndex ?? 0);
+  const lastValidActiveIndex = React.useRef<number>(activeIndex ?? 0);
 
   useEffect(() => {
-    const localRef = overlayRef.current;
-    if (!localRef) return;
-
-    const handleOverlayClick = (e: Event) => {
-      if (e.target !== localRef) return;
-      onClose();
-      e.preventDefault();
-    };
-
-    localRef.addEventListener('click', handleOverlayClick);
-
-    return () => {
-      if (!localRef) return;
-      localRef.removeEventListener('click', handleOverlayClick);
-    };
-  }, [overlayRef, onClose]);
-
-  useEffect(() => {
-    if (activeMenuItemIndex === null) return;
-    lastValidActiveMenuItemIndex.current = activeMenuItemIndex ?? 0;
-  }, [activeMenuItemIndex]);
+    if (activeIndex === null) return;
+    lastValidActiveIndex.current = activeIndex ?? 0;
+  }, [activeIndex]);
 
   return (
-    <Transition nodeRef={overlayRef} in={activeMenuItemIndex !== null} timeout={100}>
+    <Transition nodeRef={modalRef} in={!!active} timeout={100}>
       {(overlayState) => (
-        <Overlay
-          ref={overlayRef}
-          $blur={overlayState === 'entered' ? 5 : 0}
-          $display={overlayState !== 'exited'}
-        >
-          <ModalContentVerticalAnimation $in={overlayState === 'entered'}>
+        <OverflowControlWrapper>
+          <ModalContentVerticalAnimation $offset={overlayState === 'entered' ? 0 : 1000} $display={overlayState !== 'exited'}>
             <ModalContentHorizontalAnimation
               $in={overlayState === 'entered'}
-              $activeIndex={activeMenuItemIndex ?? lastValidActiveMenuItemIndex.current}
+              $activeIndex={activeIndex ?? lastValidActiveIndex.current}
             >
               {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
-                <ModalContentWrapper key={index}>
-                  <ModalContent>
-                    {activeMenuItemIndex !== null && (
-                      <Modal
-                        key={`${index}`}
-                        isContentVisible={activeMenuItemIndex === index}
-                        {...(activeMenuItem?.type === 'send' ? { payload: activeMenuItem.payload } : {})}
-                      />
-                    )}
-                  </ModalContent>
-                </ModalContentWrapper>
+                <ModalContent key={index}>
+                  {activeIndex !== null && (
+                    <Modal
+                      key={`${index}`}
+                      isContentVisible={activeIndex === index}
+                      {...(active?.type === 'send' ? { payload: active.payload } : {})}
+                    />
+                  )}
+                </ModalContent>
               ))}
             </ModalContentHorizontalAnimation>
           </ModalContentVerticalAnimation>
-        </Overlay>
+        </OverflowControlWrapper>
       )}
     </Transition>
   );
 }
 
-const Overlay = styled.div<{
-  $blur: number;
-  $display: boolean;
-}>`
-  position: fixed;
-  z-index: 98;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: 100ms linear;
-  backdrop-filter: blur(${({ $blur }) => $blur}px);
-  display: ${({ $display }) => $display ? 'flex' : 'none'};
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 114px;
+const OverflowControlWrapper = styled.div`
   overflow: hidden;
 `;
 
-const ModalContentVerticalAnimation = styled.div<{ $in: boolean }>`
+const ModalContentVerticalAnimation = styled.div<{ $offset: number; $display: boolean }>`
   transition: 100ms linear;
-  transform: translateY(${({ $in }) => $in ? 0 : 1000}px);
-  display: flex;
+  transform: translateY(${({ $offset }) => $offset}px);
+  display: ${({ $display }) => $display ? 'flex' : 'none'};
   flex-direction: row;
   align-content: start;
   justify-content: start;
@@ -116,31 +66,20 @@ const ModalContentVerticalAnimation = styled.div<{ $in: boolean }>`
 
 const ModalContentHorizontalAnimation = styled.div<{ $activeIndex: number; $in: boolean; }>`
   align-self: flex-start;
-  ${({ $in }) => $in && 'transition: 200ms linear;'};
-  ${({ $activeIndex }) => `transform: translateX(calc(${$activeIndex} * -100vw));`};
+  ${({ $in }) => $in && 'transition: 50ms linear;'};
+  ${({ $activeIndex }) => `transform: translateX(calc(${$activeIndex} * -336px));`};
   display: flex;
   flex-direction: row;
   align-content: start;
   justify-content: start;
 `;
 
-const ModalContentWrapper = styled.div`
-  width: 100vw;
-  display: flex;
-  align-content: center;
-  justify-content: center;
-`;
-
 const ModalContent = styled.div`
-  width: 350px;
-  min-height: 350px; // fixed height only for preview
+  width: 336px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 32px;
   padding: 34px 23px;
-  background: ${({ theme }) => theme.color.background.bottomMenuModal};
-  backdrop-filter: blur(5px);
   overflow: hidden;
 `;
 

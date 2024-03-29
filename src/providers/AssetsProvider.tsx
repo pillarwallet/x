@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useMemo } from 'react';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
-import { TokenListToken } from '@etherspot/prime-sdk';
+import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import { sepolia } from 'viem/chains';
 import isEqual from 'lodash/isEqual';
 

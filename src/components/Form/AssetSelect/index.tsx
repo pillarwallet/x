@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
+import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ethers } from 'ethers';
 import {
   useEtherspotUtils,
