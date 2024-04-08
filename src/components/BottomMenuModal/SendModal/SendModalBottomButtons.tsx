@@ -31,7 +31,6 @@ const SendModalBottomButtons = ({
 
   return (
     <FormGroup>
-      <Alert>test test test test test test test test test test test test</Alert>
       {!!safetyWarningMessage && !errorMessage && <Alert>{safetyWarningMessage}</Alert>}
       {!!errorMessage && <Alert>{`${t`label.error`}: ${errorMessage}`}</Alert>}
       <ButtonsWrapper>

@@ -42,5 +42,4 @@ const Content = styled.p`
   font-weight: 400;
 `;
 
-
 export default Card;
