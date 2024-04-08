@@ -61,6 +61,10 @@ const AppAuthController = () => {
       setProvider(newProvider);
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
       const isWithinVisibleChains = visibleChains.some((chain) => chain.id === walletChainId);
+      /**
+       * Sets supported chain ID rather than throw unsupported bundler error.
+       * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+       */
       setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
     }
 
