@@ -29,6 +29,7 @@ const Wrapper = styled.div`
   user-select: none;
   height: 46px;
   width: 100%;
+  gap: 10px;
 `;
 
 const StyledTextInput = styled.input`
@@ -38,7 +39,7 @@ const StyledTextInput = styled.input`
   font-size: 14px;
   font-weight: 500;
   flex: 1;
-  margin-right: 10px;
+  width: 100%;
 
   &:focus {
     outline: none;
