@@ -17,6 +17,14 @@ import { callMainApi } from '../services/mainApi';
 // types
 import { IApiTransaction } from '../types/blockchain';
 
+// images
+import logoEthereum from '../assets/images/logo-ethereum.png';
+import logoPolygon from '../assets/images/logo-polygon.png';
+import logoGnosis from '../assets/images/logo-gnosis.png';
+import logoAvalanche from '../assets/images/logo-avalanche.png';
+import logoBsc from '../assets/images/logo-bsc.png';
+import logoEvm from '../assets/images/logo-evm.png';
+
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
 
@@ -232,4 +240,29 @@ export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
   return nft.name
     ? nft.name
     : collection.contractName + ' #' + nft.tokenId
+}
+
+export const getLogoForChainId = (chainId: number): string => {
+  if (chainId === mainnet.id) {
+    return logoEthereum;
+  }
+
+  if (chainId === polygon.id
+    || chainId === polygonMumbai.id) {
+    return logoPolygon;
+  }
+
+  if (chainId === gnosis.id) {
+    return logoGnosis;
+  }
+
+  if (chainId === avalanche.id) {
+    return logoAvalanche;
+  }
+
+  if (chainId === bsc.id) {
+    return logoBsc;
+  }
+
+  return logoEvm;
 }

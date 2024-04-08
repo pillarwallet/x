@@ -30,6 +30,7 @@ import Loading from '../pages/Loading';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
+import { visibleChains } from '../utils/blockchain';
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
@@ -59,7 +60,8 @@ const AppAuthController = () => {
 
       setProvider(newProvider);
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-      setChainId(walletChainId);
+      const isWithinVisibleChains = visibleChains.some((chain) => chain.id === walletChainId);
+      setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
     }
 
     updateProvider();

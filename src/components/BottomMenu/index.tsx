@@ -147,19 +147,18 @@ const MenuItemText = styled.span`
 
 const MenuItemNotification = styled.div`
   position: absolute;
-  transition: all .1s ease-in-out;
-  bottom: -4px;
-  left: 15px;
-  background: ${({ theme }) => theme.color.background.bottomMenuItemNotification};
-  padding: 2px;
+  top: 6px;
+  left: 2px;
+  background: ${({ theme }) => theme.color.background.contentNotification};
+  color: ${({ theme }) => theme.color.text.contentNotification};
   text-align: center;
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 10px;
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
-  transform: scale(1);
+  height: 15px;
+  min-width: 15px;
+  border-radius: 3px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: ${animation.pulse(0.85, 1)} 2s infinite;
 `;
 
@@ -242,7 +241,7 @@ const MainMenuItems = styled.div<{ $modalVisible?: boolean }>`
     }
 
     ${MenuItemNotification} {
-      left: 28px;
+      left: 10px;
     }
 
     ${MenuItemText} {

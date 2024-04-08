@@ -30,16 +30,28 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 34px 23px;
+  padding: 31px 20px 20px;
   overflow: hidden;
+  position: relative;
 }
 
-.c9 {
+.c5 {
+  background: rgba(255, 255, 255, 0.4);
+  height: 4px;
+  width: 40px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  top: 14px;
+  left: calc(50% - 20px);
+}
+
+.c10 {
   display: none;
   margin-left: 10px;
 }
 
-.c11 {
+.c12 {
   display: none;
   position: absolute;
   top: -3px;
@@ -51,7 +63,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 20px;
 }
 
-.c7 {
+.c8 {
   position: relative;
   display: flex;
   align-items: center;
@@ -66,15 +78,15 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   height: 100%;
 }
 
-.c7.active .c10 {
+.c8.active .c11 {
   display: block;
 }
 
-.c7:first-child {
+.c8:first-child {
   margin-left: 17px;
 }
 
-.c7:last-child {
+.c8:last-child {
   margin-right: 17px;
 }
 
@@ -93,7 +105,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   backdrop-filter: blur(15px);
 }
 
-.c5 {
+.c6 {
   position: relative;
   flex: 1;
   display: flex;
@@ -104,21 +116,21 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 100%;
 }
 
-.c5:not(.c5:hover) .c6.active,
-.c5 .c6:hover {
+.c6:not(.c6:hover) .c7.active,
+.c6 .c7:hover {
   color: #fff;
   padding: 0 15px;
   margin: 0;
 }
 
-.c5:not(.c5:hover) .c6.active .c10,
-.c5 .c6:hover .c10 {
+.c6:not(.c6:hover) .c7.active .c11,
+.c6 .c7:hover .c11 {
   width: 32px;
   transform: translateX(calc(-50% + 5px));
 }
 
-.c5:not(.c5:hover) .c6.active .c8,
-.c5 .c6:hover .c8 {
+.c6:not(.c6:hover) .c7.active .c9,
+.c6 .c7:hover .c9 {
   display: block;
 }
 
@@ -136,24 +148,44 @@ exports[`<BottomMenu /> renders correctly 1`] = `
         >
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c5"
+              onClick={[Function]}
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c5"
+              onClick={[Function]}
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c5"
+              onClick={[Function]}
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c5"
+              onClick={[Function]}
+            />
+          </div>
         </div>
       </div>
     </div>
     <div
-      className="c5"
+      className="c6"
     >
       <div
-        className="c6 c7 active"
+        className="c7 c8 active"
         onClick={[Function]}
       >
         <svg
@@ -172,17 +204,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c8 c9"
+          className="c9 c10"
         >
           Home
         </span>
       </div>
       <div
-        className="c6 c7"
+        className="c7 c8"
         onClick={[Function]}
       >
         <div
-          className="c10 c11"
+          className="c11 c12"
         />
         <svg
           fill="none"
@@ -200,17 +232,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c8 c9"
+          className="c9 c10"
         >
           Send
         </span>
       </div>
       <div
-        className="c6 c7"
+        className="c7 c8"
         onClick={[Function]}
       >
         <div
-          className="c10 c11"
+          className="c11 c12"
         />
         <svg
           fill="none"
@@ -228,17 +260,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c8 c9"
+          className="c9 c10"
         >
           History
         </span>
       </div>
       <div
-        className="c6 c7"
+        className="c7 c8"
         onClick={[Function]}
       >
         <div
-          className="c10 c11"
+          className="c11 c12"
         />
         <svg
           fill="none"
@@ -263,17 +295,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c8 c9"
+          className="c9 c10"
         >
           Account
         </span>
       </div>
       <div
-        className="c6 c7"
+        className="c7 c8"
         onClick={[Function]}
       >
         <div
-          className="c10 c11"
+          className="c11 c12"
         />
         <svg
           fill="none"
@@ -291,7 +323,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c8 c9"
+          className="c9 c10"
         >
           Apps
         </span>

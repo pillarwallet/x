@@ -10,9 +10,12 @@ const Label = ({ children, htmlFor }: React.PropsWithChildren<{ htmlFor?: string
 }
 
 const StyledLabel = styled.label`
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 24px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 6px;
+  color: ${({ theme }) => theme.color.text.formLabel};
 `;
 
 export default Label

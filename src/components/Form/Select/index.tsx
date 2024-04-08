@@ -134,7 +134,7 @@ const ListItemRight = styled.div`
 
 const ListItemTitle = styled.p`
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 `;
 

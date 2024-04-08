@@ -3,7 +3,10 @@
     "apps": "Apps",
     "lobby": "Lobby",
     "transfer": "Transfer",
-    "history": "History"
+    "history": "History",
+    "account": "Account",
+    "batches": "Batches",
+    "assets": "Assets"
   },
   "content": {
     "welcomeToPillarX": "Welcome to PillarX"
@@ -21,7 +24,12 @@
     "send": "Send",
     "logout": "Logout",
     "sendAnyway": "Send Anyway",
-    "addToBatch": "Add to Batch"
+    "sendNow": "Send Now",
+    "addToBatch": "Add to Batch",
+    "sendAsset": "Send Asset",
+    "paste": "Paste",
+    "deleteQueue": "Delete Queue",
+    "sendAll": "Send All"
   },
   "progress": {
     "sending": "Sending"
@@ -30,27 +38,36 @@
     "pageNotFound": "Page not found",
     "appNotFound": "App not found",
     "failedToGetTransactionHashReachSupport": "Failed to get transaction hash. Please reach out to support.",
-    "noNftsFound": "No NFTs found"
+    "noNftsFound": "No NFTs found",
+    "failedToGetTransactionDataForBatching": "Failed to get transaction data for batching",
+    "cannotBatchBatchedTransactions": "Cannot batch batched transactions"
   },
   "warning": {
     "transactionSafety": {
       "costHigherThanAmount": "Please note that transaction cost is higher than the amount being sent",
       "amountMoreThanHalfOfBalance": "Please note that the amount being sent is more than half of your balance"
-    }
+    },
+    "noBatchesAddedToExecute": "No batches added to execute."
   },
   "label": {
-    "chooseRecipient": "Choose recipient",
-    "chooseAsset": "Choose asset",
+    "sendTo": "Send to",
+    "selectAsset": "Select an asset",
     "enterAmount": "Enter amount",
     "tokens": "Tokens",
     "nfts": "NFTs",
     "cost": "Cost",
+    "transactionCost": "Transaction cost",
     "error": "Error"
   },
   "placeholder": {
-    "toNameAddress": "To: name, address"
+    "enterAddress": "Enter address"
   },
   "helper": {
-    "amountLeft": "{{amount}} left"
+    "amountLeft": "{{amount}} left",
+    "max": "Max",
+    "transactionWillBeExecutedByApp": "Transaction will be executed by the app.",
+    "unknownNetwork": "Unknown network ID {{chainId}}",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
   }
 }

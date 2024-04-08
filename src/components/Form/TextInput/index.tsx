@@ -18,16 +18,17 @@ const TextInput = ({ onValueChange, rightAddon, ...props }: {
 };
 
 const Wrapper = styled.div`
-  padding: 17px;
-  border-radius: 10px;
+  padding: 8px 8px 8px 13px;
+  border-radius: 4px;
   background: ${({ theme }) => theme.color.background.input};
   color: ${({ theme }) => theme.color.text.input};
-  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   user-select: none;
+  height: 46px;
+  width: 100%;
 `;
 
 const StyledTextInput = styled.input`
@@ -35,15 +36,16 @@ const StyledTextInput = styled.input`
   color: ${({ theme }) => theme.color.text.input};
   border: none;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   flex: 1;
+  margin-right: 10px;
 
   &:focus {
     outline: none;
   }
 
   &::placeholder {
-    color: ${({ theme }) => theme.color.text.inputPlaceholder};
+    color: ${({ theme }) => theme.color.text.inputInactive};
   }
 
 `;
