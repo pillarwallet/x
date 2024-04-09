@@ -30,23 +30,33 @@ const AppIcon = ({ appId }: { appId: string }) => {
   }, [imageRef, iconSrc]);
 
   return (
-    <>
+    <AppIconWrapper>
       {!iconLoaded && <AppIconSkeleton />}
       <AppIconImage ref={imageRef} src={iconSrc} $display={iconLoaded} />
-    </>
+    </AppIconWrapper>
   );
 };
+
+const AppIconWrapper = styled.div`
+  width: 86px;
+  height: 86px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ theme }) => theme.color.background.card};
+`;
 
 const AppIconImage = styled.img<{ $display: boolean }>`
   display: ${({ $display }) => $display ? 'block' : 'none'};
   max-width: 100%;
-  border-radius: 20px;
 `;
 
 const AppIconSkeleton = styled.div`
   animation: ${animation.skeleton} 1s linear infinite alternate;
-  height: 100%;
-  border-radius: 20px;
+  width: 86px;
+  height: 86px;
 `;
 
 

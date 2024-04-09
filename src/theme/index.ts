@@ -28,6 +28,8 @@ export interface Theme {
       bottomModalHandlebar: string;
       alert: string;
       card: string;
+      exploreAppsCard: string;
+      exploreAppsCardButton: string;
     },
     text: {
       body: string;
@@ -92,6 +94,8 @@ export const defaultTheme: Theme = {
       inputButton: '#3a3843',
       alert: 'rgba(226, 221, 255, 0.1)',
       card: 'rgba(226, 221, 255, 0.1)',
+      exploreAppsCard: 'transparent linear-gradient(112deg, #8D4BFF 0%, #8A77FF 100%) 0% 0% no-repeat padding-box',
+      exploreAppsCardButton: '#27262F',
     },
     text: {
       body: '#fff',
