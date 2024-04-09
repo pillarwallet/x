@@ -16,15 +16,18 @@ export interface Theme {
       loadingLogo: string;
       buttonPrimary: string;
       buttonPrimaryDisabled: string;
+      buttonSecondary: string;
+      buttonSecondaryDisabled: string;
       input: string;
-      info: string;
-      error: string;
-      success: string;
-      warning: string;
+      inputActive: string;
+      inputButton: string;
       horizontalDivider: string;
       selectItem: string;
       selectItemHover: string;
-      bottomMenuItemNotification: string;
+      contentNotification: string;
+      bottomModalHandlebar: string;
+      alert: string;
+      card: string;
     },
     text: {
       body: string;
@@ -32,21 +35,30 @@ export interface Theme {
       bottomMenuItemActive: string;
       loadingLogo: string;
       buttonPrimary: string;
-      buttonPrimaryDisabled: string;
+      buttonPrimaryDisabled: string
+      buttonSecondary: string;
+      buttonSecondaryDisabled: string;
       input: string;
-      info: string;
-      error: string;
-      success: string;
-      warning: string;
-      inputPlaceholder: string;
+      inputButton: string;
+      inputInactive: string;
       inputHelper: string;
+      formLabel: string;
+      contentNotification: string;
+      amountInputInsideSymbol: string;
+      alert: string;
+      cardTitle: string;
+      cardContent: string;
     },
     border: {
       bottomMenu: string;
       bottomMenuTopSlider: string;
+      alertOutline: string;
+      buttonSecondary: string;
+      cardContentSeparator: string;
     },
     icon: {
       inputHelper: string;
+      inputButton: string;
       delete: string;
     }
   }
@@ -66,39 +78,51 @@ export const defaultTheme: Theme = {
       bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
       bottomMenuModal: 'rgba(16, 16, 16, 0.70)',
       loadingLogo: '#fff',
-      buttonPrimary: '#D9D9D9',
-      buttonPrimaryDisabled: '#63626B',
-      input: 'rgba(217, 217, 217, 0.05)',
-      info: '#BEF',
-      error: '#D8000C',
-      success: '#DFF2BF',
-      warning: '#FEEFB3',
+      buttonPrimary: '#997cfa',
+      buttonPrimaryDisabled: 'rgba(153, 124, 250, 0.3)',
+      buttonSecondary: 'rgba(16, 16, 16, 0.70)',
+      buttonSecondaryDisabled: 'rgba(16, 16, 16, 0.30)',
+      input: 'rgba(255, 255, 255, 0.1)',
+      inputActive: '#3a3843',
       horizontalDivider: 'linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%)',
       selectItem: 'rgba(217, 217, 217, 0.05)',
       selectItemHover: 'rgba(217, 217, 217, 0.2)',
-      bottomMenuItemNotification: 'rgb(0,111,255)',
+      contentNotification: '#7654FF',
+      bottomModalHandlebar: 'rgba(255, 255, 255, 0.4)',
+      inputButton: '#3a3843',
+      alert: 'rgba(226, 221, 255, 0.1)',
+      card: 'rgba(226, 221, 255, 0.1)',
     },
     text: {
       body: '#fff',
       bottomMenuItem: '#89888b',
       bottomMenuItemActive: '#fff',
       loadingLogo: '#997cfa',
-      buttonPrimary: '#1D1D1D',
-      buttonPrimaryDisabled: '#1D1D1D',
+      buttonPrimary: '#fff',
+      buttonPrimaryDisabled: 'rgba(255, 255, 255, 0.3)',
+      buttonSecondary: '#fff',
+      buttonSecondaryDisabled: 'rgba(255, 255, 255, 0.3)',
       input: '#fff',
-      info: '#059',
-      error: '#FFBABA',
-      success: '#270',
-      warning: '#9F6000',
-      inputPlaceholder: '#838383',
+      inputButton: '#e2ddff',
+      inputInactive: '#838383',
       inputHelper: 'rgba(255, 255, 255, 0.3)',
+      formLabel: 'rgba(226, 221, 255, 0.7)',
+      contentNotification: '#fff',
+      amountInputInsideSymbol: 'rgba(196, 185, 255, 0.9)',
+      alert: 'rgba(226, 221, 255, 0.9)',
+      cardTitle: '#fff',
+      cardContent: '#e2ddff'
     },
     border: {
       bottomMenu: '#363439',
       bottomMenuTopSlider: '#8A77FF',
+      alertOutline: 'rgba(226, 221, 255, 0.15)',
+      buttonSecondary: '#E2DDFF33',
+      cardContentSeparator: 'rgba(226, 221, 255, 0.5)',
     },
     icon: {
       inputHelper: '#fff',
+      inputButton: '#8A77FF',
       delete: '#ff000080',
     }
   },
@@ -177,7 +201,7 @@ export const GlobalStyle = createGlobalStyle`
   }
   
   input, textarea, button, select {
-    font-family: ${({ theme }) => theme.font.primary};
+    font-family: ${({ theme }) => theme.font.primary.family};
   }
   
   * {

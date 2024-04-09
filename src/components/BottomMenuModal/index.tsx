@@ -13,7 +13,7 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 const BottomMenuModal = () => {
   const modalRef = React.useRef<HTMLDivElement>(null);
-  const { active, activeIndex } = useBottomMenuModal();
+  const { active, activeIndex, hide } = useBottomMenuModal();
 
   const lastValidActiveIndex = React.useRef<number>(activeIndex ?? 0);
 
@@ -33,6 +33,7 @@ const BottomMenuModal = () => {
             >
               {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
                 <ModalContent key={index}>
+                  <ModalHandlebar onClick={hide} />
                   {activeIndex !== null && (
                     <Modal
                       key={`${index}`}
@@ -79,8 +80,20 @@ const ModalContent = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 34px 23px;
+  padding: 31px 20px 20px;
   overflow: hidden;
+  position: relative;
+`;
+
+const ModalHandlebar = styled.div`
+  background: ${({ theme }) => theme.color.background.bottomModalHandlebar};
+  height: 4px;
+  width: 40px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  top: 14px;
+  left: calc(50% - 20px);
 `;
 
 export default BottomMenuModal;

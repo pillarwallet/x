@@ -28,7 +28,7 @@ exports[`<App /> successfully loads app by identifier 1`] = `
 }
 
 .c2 {
-  background: rgba(217, 217, 217, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
   border: none;
   padding: 10px 15px;
@@ -45,7 +45,7 @@ exports[`<App /> successfully loads app by identifier 1`] = `
 }
 
 .c3 {
-  background: rgba(217, 217, 217, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-weight: 800;
   cursor: pointer;

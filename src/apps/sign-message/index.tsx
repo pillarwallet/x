@@ -5,7 +5,37 @@ import styled from 'styled-components';
 
 // components
 import { PrimaryTitle } from '../../components/Text/Title';
-import Alert from '../../components/Text/Alert';
+
+const Alert = ({
+  level = 'info',
+  children,
+}: React.PropsWithChildren<{
+  level?: 'info' | 'success' | 'warning' | 'error'
+}>) => {
+  const color = {
+    background: {
+      info: '#BEF',
+      error: '#D8000C',
+      success: '#DFF2BF',
+      warning: '#FEEFB3',
+    },
+    text: {
+      info: '#059',
+      error: '#FFBABA',
+      success: '#270',
+      warning: '#9F6000',
+    },
+  };
+
+  return (
+    <AlertText
+      $background={color.background[level]}
+      $color={color.text[level]}
+    >
+      {children}
+    </AlertText>
+  );
+}
 
 export const App = () => {
   const [t] = useTranslation();
@@ -99,6 +129,16 @@ const StyledButton = styled.button`
   &:focus {
     outline: none;
   }
+`;
+
+const AlertText = styled.p<{ $color: string; $background: string; }>`
+  padding: 13px 15px;
+  background: ${({ $background }) => $background};
+  color: ${({ $color }) => $color};
+  word-break: break-all;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-radius: 5px;
 `;
 
 export default App;

@@ -33,7 +33,7 @@ const App = ({ id }: { id: string }) => {
     try {
       return import(`../../apps/${id}`);
     } catch (e) {
-      return { default: () => <Alert level="error">{t`error.appNotFound`}</Alert> };
+      return { default: () => <Alert>{t`error.appNotFound`}</Alert> };
     }
   });
 
