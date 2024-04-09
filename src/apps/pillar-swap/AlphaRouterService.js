@@ -1,4 +1,4 @@
-import  { AlphaRouter } from '@uniswap/smart-order-router'
+import  { AlphaRouter, SwapType } from '@uniswap/smart-order-router'
 import { Token, CurrencyAmount, TradeType, Percent } from '@uniswap/sdk-core'
 import { ethers, BigNumber } from 'ethers'
 import PillarXABI from './constants/PillarXABI.json'
@@ -29,19 +29,25 @@ export const getPillarXContract = () => new ethers.Contract(address0, PillarXABI
 export const getPillarYContract = () => new ethers.Contract(address1, PillarYABI, web3Provider)
 
 export const getPrice = async (inputAmount, slippageAmount, deadline, walletAddress) => {
-    const percentSlippage = new Percent(slippageAmount, 100)
+    //const percentSlippage = new Percent(slippageAmount, 100)
     const wei = ethers.utils.parseUnits((inputAmount.toString()), 18)
     const currencyAmount = CurrencyAmount.fromRawAmount(PX, wei)
+
+    const options = {
+        recipient: walletAddress,
+        slippageTolerance: new Percent(50, 10_000),
+        deadline: Math.floor(Date.now() / 1000 + 1800),
+        type: SwapType.SWAP_ROUTER_02,
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(currencyAmount)
 
     const route = await router.route(
         currencyAmount,
         PY,
         TradeType.EXACT_INPUT,
-        {
-            recipient: walletAddress,
-            slippageTolerance: percentSlippage,
-            deadline: deadline,
-        }
+        options
     )
 
     const transaction = {

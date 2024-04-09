@@ -136,12 +136,12 @@ function App() {
             <EtherspotBatches id={'1'}>
               <EtherspotBatch chainId={11155111}>
                 <EtherspotApprovalTransaction
-                  tokenAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
-                  receiverAddress={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
+                  tokenAddress={'0x7010F7Ac55A64Ca6b48CDC7C680b1fb588dF439f'}
+                  receiverAddress={'0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E'}
                   value={inputAmount}
                 />
                 <EtherspotTransaction
-                  to={'0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'}
+                  to={'0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E'}
                   value={'0'}
                   data={transaction.data}
                 >
