@@ -57,7 +57,8 @@
     "nfts": "NFTs",
     "cost": "Cost",
     "transactionCost": "Transaction cost",
-    "error": "Error"
+    "error": "Error",
+    "latestApps": "Latest Apps"
   },
   "placeholder": {
     "enterAddress": "Enter address"
