@@ -1,20 +1,17 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useEtherspotHistory, UserOpTransaction, useWalletAddress } from '@etherspot/transaction-kit';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
 
 // utils
-import {
-  getAccountTransactionHistory,
-  visibleChains,
-} from '../utils/blockchain';
+import { visibleChains } from '../utils/blockchain';
 
-// types
-import { IApiTransaction } from '../types/blockchain';
+// services
+import { getJsonItem, setJsonItem, storageKey } from '../services/dappLocalStorage';
 
 export interface TransactionHistory {
   [chainId: number]: {
-    [walletAddress: string]: IApiTransaction[];
+    [walletAddress: string]: UserOpTransaction[];
   };
 }
 
@@ -26,7 +23,7 @@ export interface AccountBalancesContext {
 }
 
 export interface AccountTransactionHistoryListenerRef {
-  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: IApiTransaction) => void;
+  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: UserOpTransaction) => void;
   prevHistory?: TransactionHistory;
 }
 
@@ -34,8 +31,9 @@ export const AccountTransactionHistoryContext = createContext<AccountBalancesCon
 
 const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren) => {
   const walletAddress = useWalletAddress();
-  const [history, setHistory] = React.useState<TransactionHistory>({});
+  const [history, setHistory] = React.useState<TransactionHistory>(getJsonItem(storageKey.history) ?? {});
   const listenerRef = useRef<AccountTransactionHistoryListenerRef>({});
+  const { getAccountTransactions } = useEtherspotHistory();
 
   useEffect(() => {
     let expired = false;
@@ -51,15 +49,21 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
       // sequential to avoid throttling
       for (const chainId of chainIds) {
         if (expired) return;
-        const accountHistory = await getAccountTransactionHistory(chainId, walletAddress);
+        const accountHistory = await getAccountTransactions(walletAddress, chainId);
+
+        if (expired) return;
         if (!updatedHistory[chainId]) updatedHistory[chainId] = {};
-        updatedHistory[chainId][walletAddress] = accountHistory;
+
+        // update each chain ID separately for faster updates
+        setHistory((current) => {
+          // deep compare per chainId and walletAddress
+          return !accountHistory?.length || isEqual(current?.[chainId]?.[walletAddress], accountHistory)
+            ? current
+            : { ...current, [chainId]: { ...current[chainId], [walletAddress]: accountHistory } }
+        });
       }
 
       if (expired) return;
-
-      // deep compare
-      setHistory((current) => isEqual(current, updatedHistory) ? current : updatedHistory);
 
       timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
     }
@@ -70,7 +74,12 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
       expired = true;
       if (timeout) clearTimeout(timeout);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
+
+  useEffect(() => {
+    setJsonItem(storageKey.history, history);
+  }, [history]);
 
   useEffect(() => {
     if (!Object.keys(history).length) return; // nothing added yet

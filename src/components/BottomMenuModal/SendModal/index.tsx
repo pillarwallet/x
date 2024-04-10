@@ -80,14 +80,13 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
 
 const Wrapper = styled.div`
   width: 100%;
-  max-height: calc(100vh - 240px);
-  overflow: hidden;
-  min-height: 100%;
-  overflow-y: scroll;
+  max-height: 100%;
 
   &::-webkit-scrollbar {
     display: none;
   }
+
+  overflow-y: scroll;
 
   -ms-overflow-style: none;
   scrollbar-width: none;

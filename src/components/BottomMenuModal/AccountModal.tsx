@@ -26,6 +26,9 @@ import useAccountBalances from '../../hooks/useAccountBalances';
 import useAssets from '../../hooks/useAssets';
 import useAccountNfts from '../../hooks/useAccountNfts';
 
+// services
+import { clearDappStorage } from '../../services/dappLocalStorage';
+
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
 }
@@ -48,6 +51,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
   const onLogoutClick = () => {
     logout();
+    clearDappStorage();
     navigate('/');
   }
 
@@ -210,7 +214,6 @@ const Wrapper = styled.div`
   width: 100%;
   max-height: calc(100vh - 240px);
   overflow: hidden;
-  overflow-y: scroll;
 
   &::-webkit-scrollbar {
     display: none;

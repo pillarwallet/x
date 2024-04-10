@@ -1,34 +1,29 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import { avalanche, bsc, gnosis, mainnet, polygon } from 'viem/chains';
-
-// utils
-import * as blockchainUtils from '../../utils/blockchain';
+import {  mainnet } from 'viem/chains';
+import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
 
 // providers
 import AccountTransactionHistoryProvider, { AccountTransactionHistoryContext } from '../../providers/AccountTransactionHistoryProvider';
 
-// types
-import { IApiTransaction } from '../../types/blockchain';
-
 describe('AccountTransactionHistoryProvider', () => {
-  const accountTransactionsMock: IApiTransaction[] = [
+  const accountTransactionsMock = [
     {
-      id: '1',
-      hash: '0x1',
-      to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-      value: '0',
-      status: 'confirmed',
-      blockTimestamp: 1630000000,
+      transactionHash: '0x1',
+      userOpHash: '0x1a',
+      sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      value: 0,
+      success: TransactionStatuses.Completed,
+      timestamp: 1630000000,
     },
     {
-      id: '2',
-      hash: '0x2',
-      to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-      value: '0',
-      status: 'pending',
-      blockTimestamp: 1640000000,
+      transactionHash: '0x2',
+      userOpHash: '0x2a',
+      sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      value: 0,
+      success: TransactionStatuses.Pending,
+      timestamp: 1640000000,
     }
   ];
 
@@ -49,23 +44,25 @@ describe('AccountTransactionHistoryProvider', () => {
       </AccountTransactionHistoryProvider>
     );
 
-    mockGetAccountTransactionHistory = jest.fn().mockImplementation((chainId, walletAddress) => {
-      if (chainId === mainnet.id && walletAddress === '0x7F30B1960D5556929B03a0339814fE903c55a347') {
-        return returnLongerHistory
-          ? accountTransactionsMock.concat({
-              id: '3',
-              hash: '0x3',
-              to: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-              value: '0',
-              status: 'confirmed',
-              blockTimestamp: 1650000000,
+    mockGetAccountTransactionHistory = jest.fn().mockImplementation(() => ({
+      getAccountTransactions: async (walletAddress: string, chainId: number) => {
+        if (chainId === mainnet.id && walletAddress === '0x7F30B1960D5556929B03a0339814fE903c55a347') {
+          return returnLongerHistory
+            ? accountTransactionsMock.concat({
+              transactionHash: '0x3',
+              userOpHash: '0x3a',
+              sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+              value: 0,
+              success: TransactionStatuses.Completed,
+              timestamp: 1650000000,
             })
-          : accountTransactionsMock;
+            : accountTransactionsMock;
+        }
+        return [];
       }
-      return [];
-    });
+    }));
 
-    jest.spyOn(blockchainUtils, 'getAccountTransactionHistory').mockImplementation(mockGetAccountTransactionHistory);
+    jest.spyOn(TransactionKit, 'useEtherspotHistory').mockImplementation(mockGetAccountTransactionHistory);
 
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
   });
@@ -81,10 +78,6 @@ describe('AccountTransactionHistoryProvider', () => {
     await waitFor(async () => {
       expect(result.current?.data.history).toEqual({
         [mainnet.id]: accountHistoryMock,
-        [polygon.id]: { '0x7F30B1960D5556929B03a0339814fE903c55a347': [] },
-        [gnosis.id]: { '0x7F30B1960D5556929B03a0339814fE903c55a347': [] },
-        [avalanche.id]: { '0x7F30B1960D5556929B03a0339814fE903c55a347': [] },
-        [bsc.id]: { '0x7F30B1960D5556929B03a0339814fE903c55a347': [] },
       });
     });
 
@@ -96,7 +89,6 @@ describe('AccountTransactionHistoryProvider', () => {
 
     const { result } = renderHook(() => React.useContext(AccountTransactionHistoryContext), { wrapper });
 
-    expect(mockGetAccountTransactionHistory).not.toHaveBeenCalled();
     expect(result.current?.data.history).toEqual({});
   });
 

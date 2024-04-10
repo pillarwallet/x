@@ -204,7 +204,7 @@ const ChainTitle = styled.p`
 const TransactionCount = styled.p`
   font-size: 12px;
   color: ${({ theme }) => theme.color.text.cardContent};
-  border-right: 1px solid ${({ theme }) => theme.color.border.cardContentSeparator};
+  border-right: 1px solid ${({ theme }) => theme.color.border.cardContentVerticalSeparator};
   padding-right: 9px;
 `;
 

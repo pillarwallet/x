@@ -69,24 +69,28 @@ const BottomMenu = () => {
       iconNotificationCounter: globalTransactionsBatch.length,
       label: t`menuAction.send`,
       show: showSend,
+      color: '#8A77FF'
     },
     {
       icon: <IconHistory />,
       type: 'history',
       label: t`menuAction.history`,
       show: showHistory,
+      color: '#77FFF9'
     },
     {
       icon: <IconWallet />,
       type: 'account',
       label: t`menuAction.account`,
       show: showAccount,
+      color: '#D5FF48'
     },
     {
       icon: <IconApps />,
       type: 'apps',
       label: t`menuAction.apps`,
       show: showApps,
+      color: '#3699FF'
     },
   ];
 
@@ -116,7 +120,7 @@ const BottomMenu = () => {
                 }}
                 className={isActiveItem ? 'active' : ''}
               >
-                {item.type !== 'home' && <TopSliderIndicator />}
+                {item.type !== 'home' && item.color && <TopSliderIndicator $color={item.color} />}
                 {item.icon}
                 {!!item.iconNotificationCounter && (
                   <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
@@ -162,7 +166,7 @@ const MenuItemNotification = styled.div`
   animation: ${animation.pulse(0.85, 1)} 2s infinite;
 `;
 
-const TopSliderIndicator = styled.div`
+const TopSliderIndicator = styled.div<{ $color: string }>`
   display: none;
   position: absolute;
   top: -3px;
@@ -170,7 +174,7 @@ const TopSliderIndicator = styled.div`
   transform: translateX(-50%);
   border-radius: 3px;
   height: 3px;
-  background: ${({ theme }) => theme.color.border.bottomMenuTopSlider};
+  background: ${({ $color }) => $color};
   width: 20px;
 `;
 

@@ -14,9 +14,6 @@ import {
 import { callBlastApi } from '../services/blastApi';
 import { callMainApi } from '../services/mainApi';
 
-// types
-import { IApiTransaction } from '../types/blockchain';
-
 // images
 import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
@@ -153,80 +150,6 @@ export const getAssetBalance = async (
   }
 }
 
-const receiptStatusToMessage: { [key: string]: string } = {
-  0: 'Failed',
-  1: 'Completed',
-}
-
-type ApiTransaction = {
-  to_address: string;
-  value: string;
-  block_timestamp: string;
-  receipt_status?: string;
-  hash?: string; // native asset type
-  transaction_hash?: string; // token transfer type
-  input?: string;
-  token_name?: string;
-  token_symbol?: string;
-  token_decimals?: string;
-  address?: string;
-  internal_transactions?: {
-    from: string;
-    to: string;
-    type: string;
-  }[];
-}
-
-export const getAccountTransactionHistory = async (
-  chainId: number,
-  walletAddress: string,
-): Promise<IApiTransaction[]> => {
-  const callPath = `account-history/${walletAddress}/${chainId}`;
-  const result = await callMainApi<{ transactions?: ApiTransaction[] }>(callPath);
-
-  // TODO: scrap all these native x erc20 mappings when Prime SDK supports Sepolia 💀
-  return (result?.transactions ?? []).map(({
-    receipt_status,
-    hash,
-    transaction_hash,
-    input,
-    value,
-    block_timestamp,
-    to_address,
-    token_name,
-    token_symbol,
-    token_decimals,
-    address: token_address,
-    internal_transactions,
-  }) => {
-    let to = to_address;
-
-    if (internal_transactions?.length
-      && internal_transactions[0]?.type === 'DELEGATECALL') {
-      to = internal_transactions[0].to;
-    }
-
-    return {
-      id: hash ?? transaction_hash ?? '0x',
-      value: token_name ? '0' : value,
-      to,
-      data: input,
-      hash: hash ?? transaction_hash,
-      status: receiptStatusToMessage[receipt_status ?? 1] ?? 'Pending',
-      blockTimestamp: +(new Date(block_timestamp)),
-      asset: token_name
-        ? {
-          address: token_address as string,
-          decimals: +(token_decimals as string),
-          name: token_name as string,
-          symbol: token_symbol as string,
-          value,
-        }
-        : undefined,
-    }
-  });
-}
-
 export const getAccountNfts = async (
   chainId: number,
   walletAddress: string,
@@ -265,4 +188,8 @@ export const getLogoForChainId = (chainId: number): string => {
   }
 
   return logoEvm;
+}
+
+export const humanizeAddress = (address: string): string => {
+  return address.slice(0, 6) + '...' + address.slice(-4);
 }

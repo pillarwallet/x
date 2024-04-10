@@ -17,7 +17,16 @@ const AppsModal = ({ isContentVisible }: AppsModalProps) => {
 
 const DefaultWrapper = styled.div`
   width: 100%;
-  min-height: 100%;
+  max-height: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  overflow-y: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 export default AppsModal;

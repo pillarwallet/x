@@ -58,6 +58,11 @@
     "cost": "Cost",
     "transactionCost": "Transaction cost",
     "error": "Error",
+    "from": "From",
+    "to": "To",
+    "sent": "Sent",
+    "on": "On",
+    "received": "Received",
     "latestApps": "Latest Apps"
   },
   "placeholder": {
@@ -70,5 +75,10 @@
     "unknownNetwork": "Unknown network ID {{chainId}}",
     "items_one": "{{count}} item",
     "items_other": "{{count}} items"
+  },
+  "status": {
+    "completed": "Completed",
+    "reverted": "Reverted",
+    "pending": "Pending"
   }
 }
