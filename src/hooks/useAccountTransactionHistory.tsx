@@ -1,13 +1,11 @@
 import { useContext } from 'react';
+import { UserOpTransaction } from '@etherspot/transaction-kit';
 
 // providers
 import { AccountTransactionHistoryContext } from '../providers/AccountTransactionHistoryProvider';
 
-// types
-import { IApiTransaction } from '../types/blockchain';
-
 const useAccountTransactionHistory = (params?: {
-  onUpdated?: (chainId: number, walletAddress: string, transaction: IApiTransaction) => void
+  onUpdated?: (chainId: number, walletAddress: string, transaction: UserOpTransaction) => void
 }) => {
   const context = useContext(AccountTransactionHistoryContext);
 

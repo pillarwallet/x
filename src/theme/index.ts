@@ -30,6 +30,11 @@ export interface Theme {
       card: string;
       exploreAppsCard: string;
       exploreAppsCardButton: string;
+      transactionStatus: {
+        pending: string;
+        completed: string;
+        failed: string;
+      }
     },
     text: {
       body: string;
@@ -50,13 +55,21 @@ export interface Theme {
       alert: string;
       cardTitle: string;
       cardContent: string;
+      cardContentSecondary: string;
+      cardLink: string;
+      transactionStatus: {
+        pending: string;
+        completed: string;
+        failed: string;
+      }
     },
     border: {
       bottomMenu: string;
-      bottomMenuTopSlider: string;
       alertOutline: string;
       buttonSecondary: string;
-      cardContentSeparator: string;
+      cardContentVerticalSeparator: string;
+      cardContentHorizontalSeparator: string;
+      groupedIconsSmaller: string;
     },
     icon: {
       inputHelper: string;
@@ -96,6 +109,11 @@ export const defaultTheme: Theme = {
       card: 'rgba(226, 221, 255, 0.1)',
       exploreAppsCard: 'transparent linear-gradient(112deg, #8D4BFF 0%, #8A77FF 100%) 0% 0% no-repeat padding-box',
       exploreAppsCardButton: '#27262F',
+      transactionStatus: {
+        pending: 'rgba(226, 221, 255, 0.1)',
+        completed: 'rgba(5, 255, 221, 0.1)',
+        failed: 'rgba(255, 5, 113, 0.1)'
+      }
     },
     text: {
       body: '#fff',
@@ -115,14 +133,22 @@ export const defaultTheme: Theme = {
       amountInputInsideSymbol: 'rgba(196, 185, 255, 0.9)',
       alert: 'rgba(226, 221, 255, 0.9)',
       cardTitle: '#fff',
-      cardContent: '#e2ddff'
+      cardContent: '#e2ddff',
+      cardContentSecondary: 'rgba(226, 221, 255, 0.3)',
+      cardLink: '#8a77ff',
+      transactionStatus: {
+        pending: '#e2ddff',
+        completed: '#05FFDD',
+        failed: '#FF0571'
+      }
     },
     border: {
       bottomMenu: '#363439',
-      bottomMenuTopSlider: '#8A77FF',
       alertOutline: 'rgba(226, 221, 255, 0.15)',
       buttonSecondary: '#E2DDFF33',
-      cardContentSeparator: 'rgba(226, 221, 255, 0.5)',
+      cardContentVerticalSeparator: 'rgba(226, 221, 255, 0.5)',
+      cardContentHorizontalSeparator: 'rgba(226, 221, 255, 0.1)',
+      groupedIconsSmaller: '#27262E',
     },
     icon: {
       inputHelper: '#fff',

@@ -72,8 +72,8 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
 }
 
 const Wrapper = styled.div`
+  max-height: 100%;
   width: 100%;
-  min-height: 100%;
 `;
 
 const AppsListWrapper = styled.div`

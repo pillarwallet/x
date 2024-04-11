@@ -1,6 +1,6 @@
 {
   "name": "pillarx",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
