@@ -7,7 +7,8 @@
     "build": "REACT_APP_COMMIT_SHA=$CF_PAGES_COMMIT_SHA REACT_APP_VERSION=$npm_package_version react-app-rewired build && npm run sentry:sourcemaps",
     "test": "eslint . && jest --detectOpenHandles",
     "test:update": "eslint . && jest --updateSnapshot --detectOpenHandles",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -31,6 +32,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "party-js": "^2.2.0",
+    "patch-package": "^8.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap-icons": "^1.10.3",
