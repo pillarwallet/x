@@ -1,3 +1,10 @@
+if (typeof window !== 'undefined') {
+  // @ts-expect-error: issue with @uniswap/smart-order-router v3.26.1, ref – https://github.com/Uniswap/smart-order-router/issues/484
+  window.Browser = {
+    T: () => {}
+  };
+}
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Buffer as ImportedBuffer } from 'buffer';
