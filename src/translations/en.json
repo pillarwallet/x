@@ -78,7 +78,7 @@
   },
   "status": {
     "completed": "Completed",
-    "reverted": "Reverted",
+    "failed": "Failed",
     "pending": "Pending"
   }
 }

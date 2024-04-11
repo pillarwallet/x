@@ -190,6 +190,6 @@ export const getLogoForChainId = (chainId: number): string => {
   return logoEvm;
 }
 
-export const humanizeAddress = (address: string): string => {
+export const truncateAddress = (address: string): string => {
   return address.slice(0, 6) + '...' + address.slice(-4);
 }

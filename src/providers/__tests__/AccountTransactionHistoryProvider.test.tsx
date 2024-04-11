@@ -3,16 +3,19 @@ import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
 import {  mainnet } from 'viem/chains';
 import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
+import * as dappLocalStorage from '../../services/dappLocalStorage';
 
 // providers
 import AccountTransactionHistoryProvider, { AccountTransactionHistoryContext } from '../../providers/AccountTransactionHistoryProvider';
+
+const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
 
 describe('AccountTransactionHistoryProvider', () => {
   const accountTransactionsMock = [
     {
       transactionHash: '0x1',
       userOpHash: '0x1a',
-      sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      sender: accountAddress,
       value: 0,
       success: TransactionStatuses.Completed,
       timestamp: 1630000000,
@@ -20,7 +23,7 @@ describe('AccountTransactionHistoryProvider', () => {
     {
       transactionHash: '0x2',
       userOpHash: '0x2a',
-      sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      sender: accountAddress,
       value: 0,
       success: TransactionStatuses.Pending,
       timestamp: 1640000000,
@@ -28,11 +31,11 @@ describe('AccountTransactionHistoryProvider', () => {
   ];
 
   const accountHistoryMock =  {
-    '0x7F30B1960D5556929B03a0339814fE903c55a347': accountTransactionsMock
+    [accountAddress]: accountTransactionsMock
   };
 
   let wrapper: React.FC;
-  let mockGetAccountTransactionHistory: jest.Mock;
+  let mockGetAccountTransactions: jest.Mock;
   let returnLongerHistory: boolean = false;
 
   beforeEach(() => {
@@ -44,27 +47,29 @@ describe('AccountTransactionHistoryProvider', () => {
       </AccountTransactionHistoryProvider>
     );
 
-    mockGetAccountTransactionHistory = jest.fn().mockImplementation(() => ({
-      getAccountTransactions: async (walletAddress: string, chainId: number) => {
-        if (chainId === mainnet.id && walletAddress === '0x7F30B1960D5556929B03a0339814fE903c55a347') {
-          return returnLongerHistory
-            ? accountTransactionsMock.concat({
-              transactionHash: '0x3',
-              userOpHash: '0x3a',
-              sender: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-              value: 0,
-              success: TransactionStatuses.Completed,
-              timestamp: 1650000000,
-            })
-            : accountTransactionsMock;
-        }
-        return [];
+    mockGetAccountTransactions = jest.fn().mockImplementation((walletAddress: string, chainId: number) => {
+      if (chainId === mainnet.id && walletAddress === accountAddress) {
+        return returnLongerHistory
+          ? accountTransactionsMock.concat({
+            transactionHash: '0x3',
+            userOpHash: '0x3a',
+            sender: accountAddress,
+            value: 0,
+            success: TransactionStatuses.Completed,
+            timestamp: 1650000000,
+          })
+          : accountTransactionsMock;
       }
-    }));
+      return [];
+    });
 
-    jest.spyOn(TransactionKit, 'useEtherspotHistory').mockImplementation(mockGetAccountTransactionHistory);
+    jest.spyOn(TransactionKit, 'useEtherspotHistory').mockReturnValue({
+      getAccountTransactions: mockGetAccountTransactions,
+      getAccountTransaction: jest.fn(),
+    });
 
-    jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
+    jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(accountAddress);
+    jest.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
   });
 
   it('initializes with empty history', () => {
@@ -81,7 +86,7 @@ describe('AccountTransactionHistoryProvider', () => {
       });
     });
 
-    expect(mockGetAccountTransactionHistory).toHaveBeenCalled();
+    expect(mockGetAccountTransactions).toHaveBeenCalled();
   });
 
   it('does not update history when wallet address is not set', async () => {
@@ -115,14 +120,14 @@ describe('AccountTransactionHistoryProvider', () => {
       expect(result.current?.data.history).not.toEqual({});
     });
 
-    expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(2);
+    expect(result.current?.data.history[mainnet.id][accountAddress].length).toBe(2);
 
     returnLongerHistory = true;
 
     jest.runAllTimers();
 
     await waitFor(async () => {
-      expect(result.current?.data.history[mainnet.id]['0x7F30B1960D5556929B03a0339814fE903c55a347'].length).toBe(3);
+      expect(result.current?.data.history[mainnet.id][accountAddress].length).toBe(3);
     });
 
     expect(onHistoryUpdated).toHaveBeenCalledTimes(1);

@@ -33,7 +33,7 @@ export interface Theme {
       transactionStatus: {
         pending: string;
         completed: string;
-        reverted: string;
+        failed: string;
       }
     },
     text: {
@@ -60,7 +60,7 @@ export interface Theme {
       transactionStatus: {
         pending: string;
         completed: string;
-        reverted: string;
+        failed: string;
       }
     },
     border: {
@@ -112,7 +112,7 @@ export const defaultTheme: Theme = {
       transactionStatus: {
         pending: 'rgba(226, 221, 255, 0.1)',
         completed: 'rgba(5, 255, 221, 0.1)',
-        reverted: 'rgba(255, 5, 113, 0.1)'
+        failed: 'rgba(255, 5, 113, 0.1)'
       }
     },
     text: {
@@ -139,7 +139,7 @@ export const defaultTheme: Theme = {
       transactionStatus: {
         pending: '#e2ddff',
         completed: '#05FFDD',
-        reverted: '#FF0571'
+        failed: '#FF0571'
       }
     },
     border: {

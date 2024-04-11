@@ -4,19 +4,19 @@ import styled from 'styled-components';
 import { ExportSquare as IconExportSquare } from 'iconsax-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
 
 // hooks
 import useAccountTransactionHistory from '../../hooks/useAccountTransactionHistory';
 import useAssets from '../../hooks/useAssets';
 
 // utils
-import { humanizeAddress, visibleChains } from '../../utils/blockchain';
+import { truncateAddress, visibleChains } from '../../utils/blockchain';
 
 // components
 import ChainAssetIcon from '../ChainAssetIcon';
 import SkeletonLoader from '../SkeletonLoader';
 import Alert from '../Text/Alert';
-
 
 interface HistoryModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -69,16 +69,16 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
   const [t] = useTranslation();
 
   const allTransactions = useMemo(() => Object.values(history).reduce<HistoryTransaction[]>((
-    acc,
+    mergedTransactions,
     chainHistory: Record<string, UserOpTransaction[]>
   ) => {
     Object.values(chainHistory).forEach((accountTransactions) => {
       const transfersAsTransactions = accountTransactions.reduce<HistoryTransaction[]>((
-        acc2,
+        mergedTransactionTransfers,
         transaction: UserOpTransaction,
       ) => {
         if (transaction.erc20Transfers) {
-          acc2.push(...transaction.erc20Transfers.map((transfer, index) => ({
+          mergedTransactionTransfers.push(...transaction.erc20Transfers.map((transfer, index) => ({
             ...transaction,
             id: `${transaction.transactionHash ?? transaction.userOpHash}-erc20-${index}`,
             assetTransfer: {
@@ -89,7 +89,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
         }
 
         if (transaction.nftTransfers) {
-          acc2.push(...transaction.nftTransfers.map((transfer, index) => ({
+          mergedTransactionTransfers.push(...transaction.nftTransfers.map((transfer, index) => ({
             ...transaction,
             id: `${transaction.transactionHash ?? transaction.userOpHash}-nft-${index}`,
             assetTransfer: {
@@ -100,7 +100,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
         }
 
         if (transaction.nativeTransfers) {
-          acc2.push(...transaction.nativeTransfers.map((transfer, index) => ({
+          mergedTransactionTransfers.push(...transaction.nativeTransfers.map((transfer, index) => ({
             ...transaction,
             id: `${transaction.transactionHash ?? transaction.userOpHash}-native-${index}`,
             assetTransfer: {
@@ -109,11 +109,11 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
             },
           } as HistoryTransaction)))
         }
-        return acc2;
+        return mergedTransactionTransfers;
       }, []);
-      acc.push(...transfersAsTransactions);
+      mergedTransactions.push(...transfersAsTransactions);
     });
-    return acc;
+    return mergedTransactions;
   }, []), [history]);
 
   if (!isContentVisible) {
@@ -163,11 +163,11 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
         }
 
         const successToStatus: {
-          [key in UserOpTransaction['success']]: 'pending' | 'completed' | 'reverted';
+          [key in UserOpTransaction['success']]: 'pending' | 'completed' | 'failed';
         } = {
-          Pending: 'pending',
-          Completed: 'completed',
-          Reverted: 'reverted',
+          [TransactionStatuses.Pending]: 'pending',
+          [TransactionStatuses.Completed]: 'completed',
+          [TransactionStatuses.Reverted]: 'failed',
         }
 
         const transactionStatus = successToStatus[transaction.success];
@@ -210,10 +210,10 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
             </DetailsRow>
             <ActionSubtext>
               {isAssetOut && !!transaction.assetTransfer?.to && (
-                `${t`label.to`} ${humanizeAddress(transaction.assetTransfer?.to)}`
+                `${t`label.to`} ${truncateAddress(transaction.assetTransfer?.to)}`
               )}
               {(!isAssetOut || !transaction.assetTransfer?.to) && (
-                `${t`label.from`}: ${humanizeAddress(transaction.assetTransfer?.from ?? transaction.sender)}`
+                `${t`label.from`}: ${truncateAddress(transaction.assetTransfer?.from ?? transaction.sender)}`
               )}
             </ActionSubtext>
             <DetailsRow $noBorder>
@@ -320,7 +320,7 @@ const HistoryCard = styled.div`
   }
 `;
 
-const TransactionStatus = styled.div<{ $status: 'pending' | 'completed' | 'reverted' }>`
+const TransactionStatus = styled.div<{ $status: 'pending' | 'completed' | 'failed' }>`
   padding: 4px 6px;
   font-size: 12px;
   border-radius: 3px;
