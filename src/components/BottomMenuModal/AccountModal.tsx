@@ -204,53 +204,57 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </NftsWrapper>
           </>
         )}
-        {!showNfts && !tokensLoading && !Object.keys(groupedTokens).length && <Alert>{t`error.noTokensFound`}</Alert>}
-        {!showNfts && tokensLoading && (
+        {!showNfts && (
           <>
-            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
-            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
-            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+            {!tokensLoading && !Object.keys(groupedTokens).length && <Alert>{t`error.noTokensFound`}</Alert>}
+            {tokensLoading && (
+              <>
+                <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+                <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+                <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+              </>
+            )}
+            {Object.keys(groupedTokens).map((tokenSymbol) => {
+              const decimals = Object.values(groupedTokens[tokenSymbol])[0].asset.decimals;
+              const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset.logoURI;
+              const totalBalanceBN = Object.values(groupedTokens[tokenSymbol]).reduce((total, { balance }) => total.add(balance), BigNumber.from(0));
+              const totalBalance = ethers.utils.formatUnits(totalBalanceBN, decimals);
+              const tokenChainsCount = Object.values(groupedTokens[tokenSymbol]).length;
+
+              return (
+                <TokenItem key={tokenSymbol}>
+                  <TokenTotals>
+                    <img src={logoUrl} alt={tokenSymbol}/>
+                    <p>{formatAmountDisplay(totalBalance)} <TokenSymbol>{tokenSymbol}</TokenSymbol></p>
+                    <TokenTotalsRight>
+                      <IconHierarchy size={13} color={theme.color.icon.cardIcon} variant="Bold" />
+                      <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
+                      <VerticalDivider />
+                      <ToggleButton
+                        $expanded={expanded[tokenSymbol]}
+                        onClick={() => setExpanded((prev) => ({ ...prev, [tokenSymbol]: !prev[tokenSymbol] }))}
+                      >
+                        <ArrowRightIcon size={15} />
+                      </ToggleButton>
+                    </TokenTotalsRight>
+                  </TokenTotals>
+                  <TokenChainsWrapper $visible={expanded[tokenSymbol]}>
+                    {Object.values(groupedTokens[tokenSymbol]).map(({ balance, asset, chain }) => {
+                      const assetBalanceValue = ethers.utils.formatUnits(balance, asset.decimals);
+                      return (
+                        <TokenItemChain key={`${tokenSymbol}-${chain.id}`}>
+                          <ChainIcon src={getLogoForChainId(chain.id)} />
+                          <p>{chain.name}</p>
+                          <p>{formatAmountDisplay(assetBalanceValue)}</p>
+                        </TokenItemChain>
+                      );
+                    })}
+                  </TokenChainsWrapper>
+                </TokenItem>
+              );
+            })}
           </>
         )}
-        {!showNfts && Object.keys(groupedTokens).map((tokenSymbol) => {
-          const decimals = Object.values(groupedTokens[tokenSymbol])[0].asset.decimals;
-          const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset.logoURI;
-          const totalBalanceBN = Object.values(groupedTokens[tokenSymbol]).reduce((total, { balance }) => total.add(balance), BigNumber.from(0));
-          const totalBalance = ethers.utils.formatUnits(totalBalanceBN, decimals);
-          const tokenChainsCount = Object.values(groupedTokens[tokenSymbol]).length;
-
-          return (
-            <TokenItem key={tokenSymbol}>
-              <TokenTotals>
-                <img src={logoUrl} alt={tokenSymbol}/>
-                <p>{formatAmountDisplay(totalBalance)} <TokenSymbol>{tokenSymbol}</TokenSymbol></p>
-                <TokenTotalsRight>
-                  <IconHierarchy size={13} color={theme.color.icon.cardIcon} variant="Bold" />
-                  <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
-                  <VerticalDivider />
-                  <ToggleButton
-                    $expanded={expanded[tokenSymbol]}
-                    onClick={() => setExpanded((prev) => ({ ...prev, [tokenSymbol]: !prev[tokenSymbol] }))}
-                  >
-                    <ArrowRightIcon size={15} />
-                  </ToggleButton>
-                </TokenTotalsRight>
-              </TokenTotals>
-              <TokenChainsWrapper $visible={expanded[tokenSymbol]}>
-                {Object.values(groupedTokens[tokenSymbol]).map(({ balance, asset, chain }) => {
-                  const assetBalanceValue = ethers.utils.formatUnits(balance, asset.decimals);
-                  return (
-                    <TokenItemChain key={`${tokenSymbol}-${chain.id}`}>
-                      <ChainIcon src={getLogoForChainId(chain.id)} />
-                      <p>{chain.name}</p>
-                      <p>{formatAmountDisplay(assetBalanceValue)}</p>
-                    </TokenItemChain>
-                  );
-                })}
-              </TokenChainsWrapper>
-            </TokenItem>
-          );
-        })}
       </TabContent>
     </Wrapper>
   )
