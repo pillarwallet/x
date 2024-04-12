@@ -1,16 +1,13 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useEtherspotBalances, useWalletAddress } from '@etherspot/transaction-kit';
 import { AccountBalance } from '@etherspot/prime-sdk/dist/sdk/data';
-import { sepolia } from 'viem/chains';
 import isEqual from 'lodash/isEqual';
 
 // utils
-import {
-  getAssetBalance,
-  getNativeAssetBalance,
-  usdcOnSepolia,
-  visibleChains
-} from '../utils/blockchain';
+import { visibleChains } from '../utils/blockchain';
+
+// services
+import { getJsonItem, setJsonItem, storageKey } from '../services/dappLocalStorage';
 
 export interface IBalances {
   [chainId: number]: {
@@ -35,7 +32,7 @@ export const AccountBalancesContext = createContext<AccountBalancesContext | nul
 const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
   const { getAccountBalances } = useEtherspotBalances();
   const walletAddress = useWalletAddress();
-  const [balances, setBalances] = React.useState<IBalances>({});
+  const [balances, setBalances] = React.useState<IBalances>(getJsonItem(storageKey.balances) ?? {});
   const listenerRef = useRef<AccountBalancesListenerRef>({});
 
   useEffect(() => {
@@ -45,29 +42,25 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
     const refresh = async () => {
       if (!walletAddress) return;
 
-      const updatedBalances: IBalances = {};
-
       const chainIds = visibleChains.map((chain) => chain.id);
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {
         if (expired) return;
 
-        if (!updatedBalances[chainId]) updatedBalances[chainId] = {};
+        const accountBalances = await getAccountBalances(walletAddress, chainId);
+        if (expired) return;
 
-        updatedBalances[chainId][walletAddress] = chainId === sepolia.id
-          // TODO: replace once Sepolia is available on Prime SDK
-          ? [
-            await getNativeAssetBalance(sepolia.id, walletAddress),
-            await getAssetBalance(sepolia.id, usdcOnSepolia.address, walletAddress),
-          ]
-          : await getAccountBalances(walletAddress, chainId);
+        // update each chain ID separately for faster updates
+        setBalances((current) => {
+          // deep compare per chainId and walletAddress
+          return !accountBalances?.length || isEqual(current?.[chainId]?.[walletAddress], accountBalances)
+            ? current
+            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountBalances } }
+        });
       }
 
       if (expired) return;
-
-      // deep compare
-      setBalances((current) => isEqual(current, updatedBalances) ? current : updatedBalances);
 
       timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
     }
@@ -80,6 +73,10 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
+
+  useEffect(() => {
+    setJsonItem(storageKey.balances, balances);
+  }, [balances]);
 
   useEffect(() => {
     if (!Object.keys(balances).length) return; // nothing added yet

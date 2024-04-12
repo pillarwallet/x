@@ -75,6 +75,7 @@ export interface Theme {
       inputHelper: string;
       inputButton: string;
       delete: string;
+      cardIcon: string;
     }
   }
 }
@@ -154,6 +155,7 @@ export const defaultTheme: Theme = {
       inputHelper: '#fff',
       inputButton: '#8A77FF',
       delete: '#ff000080',
+      cardIcon: '#8A77FF'
     }
   },
 };

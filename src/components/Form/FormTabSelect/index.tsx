@@ -11,10 +11,14 @@ const FormTabSelect = ({
   items,
   onChange,
   defaultSelectedIndex = 0,
+  fullwidth = false,
+  transparent = false,
 }: {
   items: ITabItem[];
   defaultSelectedIndex?: number;
   onChange?: (index: number) => void;
+  fullwidth?: boolean;
+  transparent?: boolean;
 }) => {
   const [selected, setSelected] = React.useState(defaultSelectedIndex);
 
@@ -25,7 +29,7 @@ const FormTabSelect = ({
 
   return (
     <Wrapper>
-      <Tabs>
+      <Tabs $fullwidth={fullwidth} $transparent={transparent}>
         {items.map((item, index) => (
           <TabItem key={index} onClick={() => onTabItemClick(index)} selected={selected === index}>
             <span>{item.icon} </span>
@@ -45,19 +49,31 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const Tabs = styled.div`
-  background: ${({ theme }) => theme.color.background.input};
+const Tabs = styled.div<{ $fullwidth: boolean; $transparent: boolean; }>`
+  background: ${({ theme, $transparent }) => $transparent ? 'transparent' : theme.color.background.input};
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   padding: 4px;
   border-radius: 33px;
   overflow: hidden;
+  
+  ${({ $fullwidth }) => $fullwidth && `
+    width: 100%;
+
+    & > * {
+      width: 50%;
+    }
+  `};
 `;
 
 const TabItem = styled.div<{ selected: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
   padding: 9px;
   font-size: 14px;
@@ -67,7 +83,7 @@ const TabItem = styled.div<{ selected: boolean }>`
   ${({ selected, theme }) => selected && `
     background: ${theme.color.background.inputActive};
     color: ${theme.color.text.input};
-  `}
+  `};
   
   span {
     margin-right: 9px;

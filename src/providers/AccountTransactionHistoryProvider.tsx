@@ -42,24 +42,21 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
     const refresh = async () => {
       if (!walletAddress) return;
 
-      const updatedHistory: TransactionHistory = {};
-
       const chainIds = visibleChains.map((chain) => chain.id);
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {
         if (expired) return;
-        const accountHistory = await getAccountTransactions(walletAddress, chainId);
 
-        if (expired) return;
-        if (!updatedHistory[chainId]) updatedHistory[chainId] = {};
+        const accountHistory = await getAccountTransactions(walletAddress, chainId);
+        if (expired) return
 
         // update each chain ID separately for faster updates
         setHistory((current) => {
           // deep compare per chainId and walletAddress
           return !accountHistory?.length || isEqual(current?.[chainId]?.[walletAddress], accountHistory)
             ? current
-            : { ...current, [chainId]: { ...current[chainId], [walletAddress]: accountHistory } }
+            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountHistory } }
         });
       }
 

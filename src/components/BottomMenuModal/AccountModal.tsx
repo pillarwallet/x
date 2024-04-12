@@ -1,25 +1,33 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useLogout } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Card,
-  CssVarsProvider, Tab, tabClasses, TabList, Tabs,
-  Typography
-} from '@mui/joy';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
+import { Chain } from 'viem';
+import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import {
+  ArrowRight2 as ArrowRightIcon,
+  Blend2 as IconBlend,
+  Gallery as IconGallery,
+  Hierarchy as IconHierarchy,
+  User as UserIcon,
+  Copy as CopyIcon,
+  CopySuccess as CopySuccessIcon,
+  Logout as LogoutIcon
+} from 'iconsax-react';
 
 // components
-import Paragraph from '../Text/Paragraph';
-import Button from '../Button';
 import SkeletonLoader from '../SkeletonLoader';
+import FormTabSelect from '../Form/FormTabSelect';
+import ImageWithFallback from '../ImageWithFallback';
+import Alert from '../Text/Alert';
 
 // utils
-import { parseNftTitle, visibleChains } from '../../utils/blockchain';
+import { getLogoForChainId, truncateAddress, visibleChains } from '../../utils/blockchain';
 import { formatAmountDisplay } from '../../utils/number';
+import { copyToClipboard } from '../../utils/common';
 
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
@@ -43,177 +51,264 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [showNfts, setShowNfts] = React.useState(false);
-  const [hiddenImages, setHiddenImages] = React.useState<{ [key: string]: boolean }>({});
+  const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
+  const theme = useTheme();
+  const [copied, setCopied] = React.useState(false);
+
+  const groupedTokens = useMemo(() => {
+    if (!accountAddress) return {};
+
+    return visibleChains
+      .reduce<Record<string, Record<string, { asset: TokenListToken, balance: BigNumber, chain: Chain }>>>((
+        grouped,
+        chain
+      ) => {
+        const balancesForChain = balances[chain.id]?.[accountAddress] || [];
+        balancesForChain.forEach((balance) => {
+          const asset = assets[chain.id]?.find((asset) => addressesEqual(asset.address, balance.token)
+            || (balance.token === null && isZeroAddress(asset.address)));
+
+          if (!asset) {
+            console.warn(`Asset not found for balance: ${balance.token} on ${chain.name}`);
+            return;
+          }
+
+          grouped[asset.symbol] = {
+            ...grouped[asset.symbol] ?? {},
+            [chain.id]: { asset, balance: balance.balance, chain }
+          }
+        });
+        return grouped;
+      }, {});
+  }, [accountAddress, balances, assets, addressesEqual, isZeroAddress]);
+
+  const allNfts = useMemo(() => {
+    if (!accountAddress) return [];
+
+    return visibleChains.reduce<{ nft: Nft, collection: NftCollection, chain: Chain }[]>(( all, chain) => {
+      const nftCollectionsForChain = nfts[chain.id]?.[accountAddress] || [];
+      nftCollectionsForChain.forEach((collection) => {
+        collection.items.forEach((nft) => {
+          all.push({ nft, collection, chain });
+        });
+      });
+      return all;
+    }, []);
+  }, [accountAddress, nfts]);
+
+  const onCopyAddressClick = useCallback(() => {
+    if (copied) {
+      setCopied(false);
+      return;
+    }
+
+    if (!accountAddress) {
+      console.warn('No account address to copy');
+      return;
+    }
+
+    copyToClipboard(accountAddress, () => {
+      setCopied(true);
+    })
+  }, [accountAddress, copied]);
+
+  const onLogoutClick = useCallback(() => {
+    logout();
+    clearDappStorage();
+    navigate('/');
+  }, [logout, navigate]);
+
+  React.useEffect(() => {
+    const addressCopyActionTimeout = setTimeout(() => {
+      setCopied(false);
+    }, 500);
+
+    return () => {
+      clearTimeout(addressCopyActionTimeout);
+    }
+  }, [copied]);
+
+  const nftsLoading = !accountAddress || Object.keys(nfts).some((chainId) => !nfts[+chainId]?.[accountAddress]);
+  const tokensLoading = !accountAddress || Object.keys(nfts).some((chainId) => !balances[+chainId]?.[accountAddress]);
 
   if (!isContentVisible) {
     return <Wrapper />
   }
 
-  const onLogoutClick = () => {
-    logout();
-    clearDappStorage();
-    navigate('/');
-  }
-
   if (!accountAddress) {
     return (
       <Wrapper>
-        <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column', width: '100%' }}>
-          <SkeletonLoader $height="40px" $width="100%" />
-          <SkeletonLoader $height="160px" $width="100%" />
-        </Box>
+        <SkeletonLoader $height="40px" $width="100%" $radius="30px" $marginBottom="15px" />
+        <SkeletonLoader $height="160px" $width="100%" />
       </Wrapper>
     );
   }
 
   return (
     <Wrapper>
-      <AccountSection>
-        <Paragraph>
-          {accountAddress}<br/><br/>
-        </Paragraph>
-      </AccountSection>
-      <Box mb={2} sx={{ width: '100%' }}>
-        <CssVarsProvider defaultMode="dark">
-          <Tabs
-            sx={{ bgcolor: 'transparent', mb: 0.5 }}
-            value={showNfts ? 1 : 0}
-            onChange={(event, value) => setShowNfts(value === 1)}
-          >
-            <TabList
-              disableUnderline
-              sx={{
-                p: 0.5,
-                gap: 0.5,
-                borderRadius: 'sm',
-                bgcolor: 'background.level1',
-                [`& .${tabClasses.root}[aria-selected="true"]`]: {
-                  boxShadow: 'sm',
-                  bgcolor: 'background.surface',
-                },
-              }}
-              tabFlex={1}
-            >
-              <Tab disableIndicator>{t`label.tokens`}</Tab>
-              <Tab disableIndicator>{t`label.nfts`}</Tab>
-            </TabList>
-          </Tabs>
-          {showNfts && visibleChains.map((chain) => (
-            <>
-              {!nfts[chain.id]?.[accountAddress] && (
-                <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
-                  <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row' }}>
-                    <SkeletonLoader $height="40px" $width="40px" />
-                    <SkeletonLoader $height="40px" $width="220px" />
-                  </Box>
-                </Card>
+      <TopBar>
+        <AccountSection>
+          <TopBarIcon>
+            <UserIcon size={20} />
+          </TopBarIcon>
+          {truncateAddress(accountAddress, 14)}
+          <TopBarIcon onClick={onCopyAddressClick} $transparent>
+            {copied ? <CopySuccessIcon size={20} /> : <CopyIcon size={20} />}
+          </TopBarIcon>
+        </AccountSection>
+        <TopBarIcon onClick={onLogoutClick}>
+          <LogoutIcon size={20} />
+        </TopBarIcon>
+      </TopBar>
+      <FormTabSelect
+        items={[
+          { icon: <IconBlend size={20} />, title: t`label.tokens` },
+          { icon: <IconGallery size={20} />, title: t`label.nfts` },
+        ]}
+        onChange={(index) => setShowNfts(index === 1)}
+        fullwidth
+        transparent
+      />
+      <TabContent>
+        {showNfts && (
+          <>
+            {!allNfts.length && !nftsLoading && <Alert>{t`error.noNftsFound`}</Alert>}
+            <NftsWrapper>
+              {nftsLoading && (
+                <>
+                  <SkeletonLoader $height="189px" $width="143px" $radius="6px" />
+                  <SkeletonLoader $height="189px" $width="143px" $radius="6px" />
+                </>
               )}
-              {!!nfts[chain.id]?.[accountAddress] && !nfts[chain.id]?.[accountAddress]?.length && (
-                <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
-                  <Typography level="title-md">
-                    {chain.name}
-                  </Typography>
-                  <Typography level="body-sm">
-                    {t`error.noNftsFound`}.
-                  </Typography>
-                </Card>
-              )}
-              {!!nfts[chain.id]?.[accountAddress]?.length && (
-                <Card key={chain.id + '-item'} sx={{ mb: 0.5 }}>
-                  <Typography level="title-md">
-                    {chain.name}
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                    {nfts[chain.id][accountAddress].map((nftCollection) => nftCollection?.items?.map((nft) => {
-                      const nftKey = nftCollection.contractAddress + ':' + nft.tokenId;
-                      return (
-                        <Box
-                          key={nftKey}
-                          sx={{
-                              width: '100%',
-                              display: 'flex',
-                              flexDirection: 'row',
-                              gap: 2,
-                              justifyContent: 'flex-start',
-                              alignItems: 'center'
-                          }}
-                        >
-                          {(!!nft.image || !!nft.ipfsGateway) && !hiddenImages[nftKey] && (
-                            <img
-                              src={nft.image || nft.ipfsGateway}
-                              onError={() => setHiddenImages((hidden) => ({
-                                ...hidden,
-                                [nftKey]: true
-                              }))}
-                              alt={nft.name} style={{ width: '40px' }}
-                            />
-                          )}
-                          <Typography level="body-sm">
-                            {parseNftTitle(nftCollection, nft)}
-                          </Typography>
-                        </Box>
-                      );
-                    }))}
-                  </Box>
-                </Card>
-              )}
-            </>
-          ))}
-          {!showNfts && visibleChains.map((chain) => (
-            <>
-              {!balances[chain.id]?.[accountAddress] && (
-                <Card key={chain.id + '-loader'} sx={{ mb: 0.5 }}>
-                  <SkeletonLoader $height="15px" $width="45%" />
-                  <SkeletonLoader $height="15px" $width="30%" />
-                </Card>
-              )}
-              {!!balances[chain.id]?.[accountAddress]?.length && (
-                <Card key={chain.id + '-item'} sx={{ mb: 0.5 }}>
-                  <Typography level="title-md">
-                    {chain.name}
-                  </Typography>
-                  {balances[chain.id][accountAddress].map((balance) => {
-                    const asset = assets[chain.id]?.find((asset) => addressesEqual(asset.address, balance.token)
-                      || (balance.token === null && isZeroAddress(asset.address)));
+              {allNfts.map(({ nft, collection, chain }, index) => {
+                const nftKey = `${chain.id}-${collection.contractAddress}-${nft.tokenId}-${index}`;
 
-                    if (!asset) {
-                      console.warn(`Asset not found for balance: ${balance.token} on ${chain.name}`);
-                      return null;
-                    }
+                let title = nft.name;
+                if (!title && collection.contractName && nft.tokenId) title = `${collection.contractName} #${nft.tokenId}`;
+                if (!title && nft.tokenId) title = `Unknown NFT #${nft.tokenId}`;
+                if (!title) title = 'Unknown NFT';
 
-                    const assetBalanceValue = ethers.utils.formatUnits(balance.balance, asset.decimals);
+                return (
+                  <NftItem key={nftKey}>
+                    <NftImageWrapper>
+                      <ImageWithFallback src={nft.image ?? nft.ipfsGateway} alt={nftKey.replace('-', '')} />
+                    </NftImageWrapper>
+                    <NftDetails>
+                      <NftTitle>{title}</NftTitle>
+                      {!!collection.contractName && <NftCollectionTitle>{collection.contractName}</NftCollectionTitle>}
+                      <ChainIcon $size={16} src={getLogoForChainId(chain.id)} />
+                    </NftDetails>
+                  </NftItem>
+                );
+              })}
+            </NftsWrapper>
+          </>
+        )}
+        {!showNfts && !tokensLoading && !Object.keys(groupedTokens).length && <Alert>{t`error.noTokensFound`}</Alert>}
+        {!showNfts && tokensLoading && (
+          <>
+            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+            <SkeletonLoader $height="40px" $width="100%" $radius="6px" $marginBottom="15px" />
+          </>
+        )}
+        {!showNfts && Object.keys(groupedTokens).map((tokenSymbol) => {
+          const decimals = Object.values(groupedTokens[tokenSymbol])[0].asset.decimals;
+          const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset.logoURI;
+          const totalBalanceBN = Object.values(groupedTokens[tokenSymbol]).reduce((total, { balance }) => total.add(balance), BigNumber.from(0));
+          const totalBalance = ethers.utils.formatUnits(totalBalanceBN, decimals);
+          const tokenChainsCount = Object.values(groupedTokens[tokenSymbol]).length;
 
-                    return (
-                      <Typography level="body-sm" key={asset.address + chain.id}>
-                        {formatAmountDisplay(assetBalanceValue)} {asset.symbol}
-                      </Typography>
-                    );
-                  })}
-                </Card>
-              )}
-            </>
-          ))}
-        </CssVarsProvider>
-      </Box>
-      <Button onClick={onLogoutClick}>{t`action.logout`}</Button>
+          return (
+            <TokenItem key={tokenSymbol}>
+              <TokenTotals>
+                <img src={logoUrl} alt={tokenSymbol}/>
+                <p>{formatAmountDisplay(totalBalance)} <TokenSymbol>{tokenSymbol}</TokenSymbol></p>
+                <TokenTotalsRight>
+                  <IconHierarchy size={13} color={theme.color.icon.cardIcon} variant="Bold" />
+                  <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
+                  <VerticalDivider />
+                  <ToggleButton
+                    $expanded={expanded[tokenSymbol]}
+                    onClick={() => setExpanded((prev) => ({ ...prev, [tokenSymbol]: !prev[tokenSymbol] }))}
+                  >
+                    <ArrowRightIcon size={15} />
+                  </ToggleButton>
+                </TokenTotalsRight>
+              </TokenTotals>
+              <TokenChainsWrapper $visible={expanded[tokenSymbol]}>
+                {Object.values(groupedTokens[tokenSymbol]).map(({ balance, asset, chain }) => {
+                  const assetBalanceValue = ethers.utils.formatUnits(balance, asset.decimals);
+                  return (
+                    <TokenItemChain key={`${tokenSymbol}-${chain.id}`}>
+                      <ChainIcon src={getLogoForChainId(chain.id)} />
+                      <p>{chain.name}</p>
+                      <p>{formatAmountDisplay(assetBalanceValue)}</p>
+                    </TokenItemChain>
+                  );
+                })}
+              </TokenChainsWrapper>
+            </TokenItem>
+          );
+        })}
+      </TabContent>
     </Wrapper>
   )
 }
 
-const AccountSection = styled.div`
+const TopBar = styled.div`
   width: 100%;
   word-break: break-all;
   text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 15px;
+`;
+
+const TopBarIcon = styled.div<{ $transparent?: boolean }>`
+  background: ${({ theme, $transparent }) => $transparent ? 'transparent' : theme.color.background.card};
+  color: ${({ theme }) => theme.color.text.cardContent};
+  height: 38px;
+  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  ${({ onClick }) => onClick && `
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:active {
+      opacity: 0.4;
+    }
+  `}
+`;
+
+const AccountSection = styled.div`
+  background: ${({ theme }) => theme.color.background.card};
+  padding: 4px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
 `;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100%;
+  max-height: 100%;
   width: 100%;
-  max-height: calc(100vh - 240px);
-  overflow: hidden;
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -222,5 +317,154 @@ const Wrapper = styled.div`
   -ms-overflow-style: none;
   scrollbar-width: none;
 `;
+
+const TokenTotals = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  & > img {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const TokenItem = styled.div`
+  background: ${({ theme }) => theme.color.background.card};
+  padding: 11px 6px 11px 11px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.color.text.cardTitle};
+  font-weight: 700;
+  border-radius: 6px;
+  user-select: none;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const TokenItemChain = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: ${({ theme }) => theme.color.text.cardContent};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  & > *:last-child {
+    margin-left: auto;
+  }
+`;
+
+const ChainIcon = styled.img<{ $size?: number }>`
+  width: ${({ $size }) => $size ?? 20}px;
+  height: ${({ $size }) => $size ?? 20}px;
+`;
+
+const TokenSymbol = styled.span`
+  color: ${({ theme }) => theme.color.text.cardContent};
+`;
+
+const TokenTotalsRight = styled.div`
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: right;
+`;
+
+const ToggleButton = styled.span<{ $expanded: boolean }>`
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  transform: ${({ $expanded }) => $expanded ? 'rotate(-90deg)' : 'rotate(0)'};
+  padding: 3px;
+  margin-left: 4px;
+
+  &:active {
+    opacity: 0.4;
+  }
+`;
+
+const TokenChainsCount = styled.p`
+  margin-left: 6px;
+`;
+
+const VerticalDivider = styled.span`
+  height: 12px;
+  width: 1px;
+  background: ${({ theme }) => theme.color.border.cardContentVerticalSeparator};
+  margin-left: 9px;
+`;
+
+const TokenChainsWrapper = styled.div<{ $visible: boolean }>`
+  display: ${({ $visible }) => $visible ? 'block' : 'none'};
+  border-left: 4px solid ${({ theme }) => theme.color.border.cardContentVerticalSeparator};
+  border-radius: 3px;
+  margin: 14px 0 5px 10px;
+  padding: 0 5px 0 17px;
+`;
+
+const TabContent = styled.div`
+  margin-top: 15px;
+  width: 100%;
+`;
+
+const NftItem = styled.div`
+  background: ${({ theme }) => theme.color.background.card};
+  padding: 6px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.color.text.cardTitle};
+  font-weight: 700;
+  border-radius: 6px;
+  user-select: none;
+  width: calc(50% - 5px);
+`;
+
+const NftImageWrapper = styled.div`
+  img {
+    border-radius: 6px;
+    width: 100%;
+    height: auto;
+  }
+`;
+
+const NftDetails = styled.div`
+  padding: 6px;
+  position: relative;
+  
+  ${ChainIcon} {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+  }
+`;
+
+const NftTitle = styled.p`
+  font-size: 12px;
+  color: ${({ theme }) => theme.color.text.cardTitle};
+`;
+
+const NftCollectionTitle = styled.p`
+  font-size: 11px;
+  color: ${({ theme }) => theme.color.text.cardContent}
+  padding-right: 25px;
+`;
+
+const NftsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+
 
 export default AccountModal;

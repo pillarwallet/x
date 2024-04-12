@@ -2,6 +2,8 @@ const localStorageKey = '@pillarx';
 
 export const storageKey = {
   history: 'history',
+  balances: 'balances',
+  nfts: 'nfts',
 }
 
 export const getItem = (key: string) => {
