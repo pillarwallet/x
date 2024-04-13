@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import { avalanche, bsc, gnosis, mainnet, polygon } from 'viem/chains';
+import { mainnet } from 'viem/chains';
 import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // providers
@@ -9,6 +9,9 @@ import AccountNftsProvider from '../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
+
+// services
+import * as dappLocalStorage from '../../services/dappLocalStorage';
 
 const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
 
@@ -64,6 +67,7 @@ describe('AccountNftsProvider', () => {
     }));
 
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(accountAddress);
+    jest.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
   });
 
   it('initializes with empty nfts', () => {
@@ -77,10 +81,6 @@ describe('AccountNftsProvider', () => {
     await waitFor(async () => {
       expect(result.current).toEqual({
         [mainnet.id]: accountNftsMock,
-        [polygon.id]: { [accountAddress]: [] },
-        [gnosis.id]: { [accountAddress]: [] },
-        [avalanche.id]: { [accountAddress]: [] },
-        [bsc.id]: { [accountAddress]: [] },
       });
     });
 

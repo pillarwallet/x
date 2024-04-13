@@ -27,7 +27,6 @@ const BottomMenuModal = () => {
       {(overlayState) => (
         <OverflowControlWrapper>
           <ModalContentVerticalAnimation $offset={overlayState === 'entered' ? 0 : 1000} $display={overlayState !== 'exited'}>
-            <ModalHandlebar onClick={hide} />
             <ModalContentHorizontalAnimation
               $in={overlayState === 'entered'}
               $activeIndex={activeIndex ?? lastValidActiveIndex.current}
@@ -44,6 +43,7 @@ const BottomMenuModal = () => {
                 </ModalContent>
               ))}
             </ModalContentHorizontalAnimation>
+            <ModalHandlebar onClick={hide} />
           </ModalContentVerticalAnimation>
         </OverflowControlWrapper>
       )}

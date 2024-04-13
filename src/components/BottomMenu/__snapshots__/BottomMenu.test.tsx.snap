@@ -17,7 +17,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   position: relative;
 }
 
-.c4 {
+.c3 {
   align-self: flex-start;
   transform: translateX(calc(0 * -336px));
   display: flex;
@@ -26,7 +26,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   justify-content: start;
 }
 
-.c5 {
+.c4 {
   width: 336px;
   display: inline-flex;
   align-items: center;
@@ -36,7 +36,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   max-height: 50vh;
 }
 
-.c3 {
+.c5 {
   background: rgba(255, 255, 255, 0.4);
   height: 4px;
   width: 40px;
@@ -182,24 +182,24 @@ exports[`<BottomMenu /> renders correctly 1`] = `
       >
         <div
           className="c3"
-          onClick={[Function]}
-        />
-        <div
-          className="c4"
         >
           <div
-            className="c5"
+            className="c4"
           />
           <div
-            className="c5"
+            className="c4"
           />
           <div
-            className="c5"
+            className="c4"
           />
           <div
-            className="c5"
+            className="c4"
           />
         </div>
+        <div
+          className="c5"
+          onClick={[Function]}
+        />
       </div>
     </div>
     <div

@@ -1,15 +1,11 @@
 import styled from 'styled-components';
-import { useState } from 'react';
 import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
-
-// components
-import IdenticonImage from './IdenticonImage';
 
 // utils
 import { getLogoForChainId } from '../utils/blockchain';
 
 // images
-import unknownAssetImage from '../assets/images/logo-unknown.png';
+import ImageWithFallback from './ImageWithFallback';
 
 const ChainAssetIcon = ({
   asset,
@@ -19,22 +15,11 @@ const ChainAssetIcon = ({
   chainId: number;
 }) => {
   const chainLogo = getLogoForChainId(chainId);
-  const [useFallbackImage, setUseFallbackImage] = useState(false);
 
   return (
     <Wrapper>
       <AssetIconWrapper>
-      {!!asset?.logoURI && !useFallbackImage && (
-        <AssetIcon
-          src={asset.logoURI}
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null;
-            setUseFallbackImage(true);
-          }}
-        />
-      )}
-      {(!asset?.logoURI || useFallbackImage) && !!asset?.address && <IdenticonImage text={asset.address} />}
-      {(!asset || useFallbackImage) && <AssetIcon src={unknownAssetImage} />}
+        <ImageWithFallback src={asset?.logoURI} alt={asset?.address} />
       </AssetIconWrapper>
       <ChainIcon src={chainLogo} />
     </Wrapper>
@@ -51,8 +36,6 @@ const AssetIconWrapper = styled.div`
   height: 32px;
   width: 32px;
 `;
-
-const AssetIcon = styled.img``;
 
 const ChainIcon = styled.img`
   border-radius: 50%;

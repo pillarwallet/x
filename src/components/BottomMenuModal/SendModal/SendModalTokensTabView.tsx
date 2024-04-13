@@ -26,6 +26,7 @@ import Label from '../../Form/Label';
 import FormGroup from '../../Form/FormGroup';
 import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
 import SendModalBottomButtons from './SendModalBottomButtons';
+import Card from '../../Text/Card';
 
 // hooks
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
@@ -35,10 +36,10 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 // utils
 import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
+import { pasteFromClipboard } from '../../../utils/common';
 
 // types
 import { SendModalData } from './index';
-import Card from '../../Text/Card';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -257,21 +258,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     throw new Error('Invalid Send payload: both transaction and batches are present');
   }
 
-  const onAddressClipboardPasteClick = async () => {
-    try {
-      await navigator.permissions.query({ name: 'clipboard-read' as PermissionName });
-    } catch (e) {
-      //
-    }
-
-    try {
-      const copied = await navigator.clipboard.readText();
-      setRecipient(copied);
-      setPasteClicked(true);
-    } catch (e) {
-      //
-    }
-  }
+  const onAddressClipboardPasteClick = () => pasteFromClipboard((copied) => {
+    setRecipient(copied);
+    setPasteClicked(true);
+  });
 
   if (payload) {
     return (

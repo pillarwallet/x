@@ -39,6 +39,7 @@
     "appNotFound": "App not found",
     "failedToGetTransactionHashReachSupport": "Failed to get transaction hash. Please reach out to support.",
     "noNftsFound": "No NFTs found",
+    "noTokensFound": "No tokens found",
     "failedToGetTransactionDataForBatching": "Failed to get transaction data for batching",
     "cannotBatchBatchedTransactions": "Cannot batch batched transactions"
   },
