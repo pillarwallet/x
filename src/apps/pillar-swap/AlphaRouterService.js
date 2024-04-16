@@ -29,7 +29,7 @@ export const getPillarXContract = () => new ethers.Contract(address0, PillarXABI
 export const getPillarYContract = () => new ethers.Contract(address1, PillarYABI, web3Provider)
 
 export const getPrice = async (inputAmount, slippageAmount, deadline, walletAddress) => {
-    //const percentSlippage = new Percent(slippageAmount, 100)
+
     const wei = ethers.utils.parseUnits((inputAmount.toString()), 18)
     const currencyAmount = CurrencyAmount.fromRawAmount(PX, wei)
 
@@ -39,9 +39,6 @@ export const getPrice = async (inputAmount, slippageAmount, deadline, walletAddr
         deadline: Math.floor(Date.now() / 1000 + 1800),
         type: SwapType.SWAP_ROUTER_02,
     }
-
-    // eslint-disable-next-line no-console
-    console.log(currencyAmount)
 
     const route = await router.route(
         currencyAmount,
