@@ -5,12 +5,12 @@ import { createGlobalStyle } from 'styled-components';
 import '../styles/landing/tailwind.css';
 
 // components
-import { Text, Heading, Img, Form } from '../components/LandingPage';
+import { Form, Heading, Img, Text } from '../components/LandingPage';
 
 // fonts
-import formularRegularFont from '../assets/landing-fonts/Formular-Regular.otf';
-import formularMediumFont from '../assets/landing-fonts/Formular-Medium.otf';
 import formularBoldFont from '../assets/landing-fonts/Formular-Bold.otf';
+import formularMediumFont from '../assets/landing-fonts/Formular-Medium.otf';
+import formularRegularFont from '../assets/landing-fonts/Formular-Regular.otf';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -117,7 +117,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center justify-start w-full top-0 right-0 left-0 m-auto absolute">
               <div className="h-16 gap-4 w-full  top-0 bg-purple-900 flex justify-center items-center px-4 border-b border-gray-300">
                 <div className="items-center gap-4 font-semibold text-white-A700 font-custom">
-                  Building dApps? Join the PillarX Testing Campaign before April 26th
+                  Building dApps? Join the PillarX Testing Campaign before May 31st
                 </div>
                 <button
                   onClick={scrollToSection}
@@ -281,7 +281,7 @@ export default function LandingPage() {
                       <u>form</u>
                     </a>
                     &nbsp;to join our groundbreaking testing campaign.
-                    &nbsp;<b>Applications will close on April 26th.</b>
+                    &nbsp;<b>Applications will close on May 31st.</b>
                   </Text>
                 </div>
               </div>
