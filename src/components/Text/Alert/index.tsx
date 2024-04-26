@@ -1,32 +1,45 @@
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
+import { Danger as AlertIcon } from 'iconsax-react'
 
 const Alert = ({
-  level = 'info',
+  icon,
+  outline = true,
   children,
 }: React.PropsWithChildren<{
-  level?: 'info' | 'success' | 'warning' | 'error'
+  icon?: React.ReactNode;
+  outline?: boolean;
 }>) => {
-  const theme = useTheme();
   return (
-    <AlertText
-      $background={theme.color.background[level]}
-      $color={theme.color.text[level]}
-    >
+    <Wrapper $outline={outline}>
+      <Icon>
+        {icon ?? <AlertIcon size={18} />}
+      </Icon>
       {children}
-    </AlertText>
+    </Wrapper>
   );
 }
 
-const AlertText = styled.p<{ $color: string; $background: string; }>`
-  padding: 15px;
-  background: ${({ $background }) => $background};
-  color: ${({ $color }) => $color};
-  word-break: break-all;
+const Wrapper = styled.p<{ $outline?: boolean }>`
+  padding: 13px 13px 13px;
+  background: ${({ theme, $outline }) => $outline ? 'transparent' : theme.color.background.alert};
+  ${({ theme, $outline }) => $outline && `border: 1px solid ${theme.color.border.alertOutline};`}
+  color: ${({ theme }) => theme.color.text.alert};
   margin-bottom: 15px;
-  font-size: 14px;
-  border-radius: 5px;
+  font-size: 12px;
+  border-radius: 6px;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `;
 
+const Icon = styled.span`
+  display: inline-block;
+  margin-right: 10px;
+`;
 
 export default Alert;

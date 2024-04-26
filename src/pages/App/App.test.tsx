@@ -40,8 +40,8 @@ describe('<App />', () => {
 
     const treeElement = tree as ReactTestRendererJSON;
     expect(treeElement.children?.length).toBe(1);
-    expect(treeElement?.type).toBe('p');
-    expect(treeElement.children?.[0]).toBe('Page not found');
+    expect((treeElement?.children?.[0] as ReactTestRendererJSON)?.type).toBe('p');
+    expect((treeElement.children?.[0] as ReactTestRendererJSON)?.children?.[1]).toBe('Page not found');
   });
 
   it('successfully loads app by identifier', async () => {

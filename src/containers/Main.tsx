@@ -30,6 +30,7 @@ import Loading from '../pages/Loading';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
+import { visibleChains } from '../utils/blockchain';
 
 const AppAuthController = () => {
   const { ready, authenticated } = usePrivy();
@@ -38,6 +39,7 @@ const AppAuthController = () => {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const navLocation = useLocation();
+  const previouslyAuthenticated = !!localStorage.getItem('privy:token');
 
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -58,7 +60,12 @@ const AppAuthController = () => {
 
       setProvider(newProvider);
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-      setChainId(walletChainId);
+      const isWithinVisibleChains = visibleChains.some((chain) => chain.id === walletChainId);
+      /**
+       * Sets supported chain ID rather than throw unsupported bundler error.
+       * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+       */
+      setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
     }
 
     updateProvider();
@@ -73,7 +80,8 @@ const AppAuthController = () => {
       <EtherspotTransactionKit
         provider={provider}
         chainId={chainId}
-        projectKey={process.env.REACT_APP_ETHERSPOT_PROJECT_KEY || undefined}
+        bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
+        dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
       >
         <AccountTransactionHistoryProvider>
           <AssetsProvider>
@@ -96,7 +104,8 @@ const AppAuthController = () => {
   }
 
   const isRootPage = navLocation.pathname === '/';
-  if ((isAppReady || isRootPage) && !authenticated) {
+
+  if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
     return (
       <UnauthorizedNavigation />
     );

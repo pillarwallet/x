@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk';
+import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ethers } from 'ethers';
 import {
   useEtherspotUtils,
@@ -21,14 +21,14 @@ import useAccountBalances from '../../../hooks/useAccountBalances';
 import useAssets from '../../../hooks/useAssets';
 import useAccountNfts from '../../../hooks/useAccountNfts';
 
-interface TokenAssetSelectOption extends SelectOption {
+export interface TokenAssetSelectOption extends SelectOption {
   type: 'token';
   asset: TokenListToken;
   chainId: number;
   balance?: number;
 }
 
-interface NftAssetSelectOption extends SelectOption {
+export interface NftAssetSelectOption extends SelectOption {
   type: 'nft';
   nft: Nft;
   collection: NftCollection;
@@ -216,7 +216,7 @@ const ChainTitle = styled.div`
   user-select: none;
   margin-bottom: 10px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
 
   &:hover {
     background: ${({ theme }) => theme.color.background.selectItemHover};

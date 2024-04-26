@@ -1,11 +1,10 @@
 import React, { createContext, useEffect, useMemo } from 'react';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
-import { TokenListToken } from '@etherspot/prime-sdk';
-import { sepolia } from 'viem/chains';
+import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import isEqual from 'lodash/isEqual';
 
 // utils
-import { usdcOnSepolia, getNativeAssetForChainId, visibleChains } from '../utils/blockchain';
+import { getNativeAssetForChainId, visibleChains } from '../utils/blockchain';
 
 export interface IAssets {
   [chainId: number]: TokenListToken[];
@@ -40,11 +39,6 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         const nativeAsset = getNativeAssetForChainId(chainId);
         if (nativeAsset) {
           chainAssets = [nativeAsset, ...chainAssets];
-        }
-
-        // TODO: remove once Sepolia is available on Prime SDK
-        if (chainId === sepolia.id) {
-          chainAssets = [...chainAssets, usdcOnSepolia];
         }
 
         updatedAssets[chainId] = chainAssets;

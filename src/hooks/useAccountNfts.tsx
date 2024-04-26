@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Nft } from '@etherspot/prime-sdk';
+import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // providers
 import { AccountNftsContext } from '../providers/AccountNftsProvider';

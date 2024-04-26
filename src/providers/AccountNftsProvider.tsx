@@ -1,12 +1,14 @@
 import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useEtherspotNfts, useWalletAddress } from '@etherspot/transaction-kit';
-import { NftCollection, Nft } from '@etherspot/prime-sdk';
-import { sepolia } from 'viem/chains';
+import { NftCollection, Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
 
 // utils
-import { getAccountNfts as getAccountNftsFromMainApi, visibleChains } from '../utils/blockchain';
+import { visibleChains } from '../utils/blockchain';
+
+// services
+import { getJsonItem, setJsonItem, storageKey } from '../services/dappLocalStorage';
 
 export interface INfts {
   [chainId: number]: {
@@ -32,7 +34,7 @@ export const AccountNftsContext = createContext<AccountNftsContext | null>(null)
 const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
   const { getAccountNfts } = useEtherspotNfts();
   const walletAddress = useWalletAddress();
-  const [nfts, setNfts] = React.useState<INfts>({});
+  const [nfts, setNfts] = React.useState<INfts>(getJsonItem(storageKey.nfts) ?? {});
   const listenerRef = useRef<AccountNftsListenerRef>({});
 
   useEffect(() => {
@@ -42,26 +44,25 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
     const refresh = async () => {
       if (!walletAddress) return;
 
-      const updatedNfts: INfts = {};
-
       const chainIds = visibleChains.map((chain) => chain.id);
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {
         if (expired) return;
 
-        if (!updatedNfts[chainId]) updatedNfts[chainId] = {};
+        const accountNfts = await getAccountNfts(walletAddress, chainId);
+        if (expired) return;
 
-        updatedNfts[chainId][walletAddress] = chainId === sepolia.id
-          // TODO: replace once Sepolia is available on Prime SDK
-          ? await getAccountNftsFromMainApi(chainId, walletAddress)
-          : await getAccountNfts(walletAddress, chainId);
+        // update each chain ID separately for faster updates
+        setNfts((current) => {
+          // deep compare per chainId and walletAddress
+          return !accountNfts?.length || isEqual(current?.[chainId]?.[walletAddress], accountNfts)
+            ? current
+            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountNfts } }
+        });
       }
 
       if (expired) return;
-
-      // deep compare
-      setNfts((current) => isEqual(current, updatedNfts) ? current : updatedNfts);
 
       timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
     }
@@ -74,6 +75,10 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
+
+  useEffect(() => {
+    setJsonItem(storageKey.nfts, nfts);
+  }, [nfts]);
 
   useEffect(() => {
     if (!Object.keys(nfts).length) return; // nothing added yet

@@ -2,10 +2,13 @@ import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ethers } from 'ethers';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import { avalanche, bsc, gnosis, mainnet, polygon } from 'viem/chains';
+import { mainnet } from 'viem/chains';
 
 // providers
 import AccountBalancesProvider, { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
+
+// services
+import * as dappLocalStorage from '../../services/dappLocalStorage';
 
 const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
 
@@ -38,6 +41,7 @@ describe('AccountBalancesProvider', () => {
     }));
 
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(accountAddress);
+    jest.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
   });
 
   it('initializes with empty balances', () => {
@@ -51,10 +55,6 @@ describe('AccountBalancesProvider', () => {
     await waitFor(async () => {
       expect(result.current?.data.balances).toEqual({
         [mainnet.id]: { [accountAddress]: balancesMock },
-        [polygon.id]: { [accountAddress]: [] },
-        [gnosis.id]: { [accountAddress]: [] },
-        [avalanche.id]: { [accountAddress]: [] },
-        [bsc.id]: { [accountAddress]: [] },
       });
     });
 

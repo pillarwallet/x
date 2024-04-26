@@ -6,7 +6,7 @@ import AppsList from '../components/AppsList';
 const Lobby = () => {
   return (
     <Wrapper>
-      <AppsList />
+      <AppsList hideTitle />
     </Wrapper>
   );
 }

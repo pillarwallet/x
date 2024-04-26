@@ -4,7 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 import { polygonMumbai, sepolia } from 'viem/chains';
 import party from 'party-js';
-import { Nft } from '@etherspot/prime-sdk';
+import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 import { Card, Typography } from '@mui/joy';
 import { ethers } from 'ethers';
 

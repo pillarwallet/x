@@ -20,9 +20,9 @@ const MintButton = () => {
     return (
     <div className="my-2 buttonContainerTop">
         <EtherspotBatches id="2">
-            <EtherspotBatch chainId={5}>
+            <EtherspotBatch chainId={11155111}>
               <EtherspotContractTransaction
-                contractAddress={'0x9e6ce019Cd6e02D905Ee454718F3DF149fe4e5F8'}
+                contractAddress={'0x7010F7Ac55A64Ca6b48CDC7C680b1fb588dF439f'}
                 abi={['function mint(uint)']}
                 methodName={'mint'}
                 params={[utils.parseEther('100')]}

@@ -18,7 +18,7 @@ exports[`<Select /> renders correctly with default option 1`] = `
 
 .c2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -113,7 +113,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
 
 .c2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -238,7 +238,7 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 
 .c4 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -337,7 +337,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
 
 .c2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -452,7 +452,7 @@ exports[`<Select /> responds once clicked 1`] = `
 
 .c2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -527,6 +527,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
   width: 30%;
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
+  margin-bottom: 0;
 }
 
 .c6 {
@@ -548,7 +549,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 
 .c2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   word-break: break-word;
 }
 
@@ -650,6 +651,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   width: 42px;
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 50%;
+  margin-bottom: 0;
 }
 
 .c4 {
@@ -657,6 +659,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   width: 80%;
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
+  margin-bottom: 0;
 }
 
 .c5 {
@@ -664,6 +667,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   width: 30%;
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
+  margin-bottom: 0;
 }
 
 .c1 {

@@ -9,6 +9,7 @@ export interface IApiTransaction {
   hash?: string;
   userOpHash?: string;
   blockTimestamp: number;
+  chainId: number;
   asset?: {
     address: string;
     decimals: number;

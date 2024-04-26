@@ -1,4 +1,5 @@
-import { Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // pages
 import Lobby from '../pages/Lobby';
@@ -23,6 +24,15 @@ const DevApp = () => {
 
 export const AuthorizedNavigation = () => {
   const { allowed: allowedApps } = useAllowedApps();
+  const navLocation = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (navLocation.pathname && navLocation.pathname.startsWith(navigationRoute.login)) {
+      navigate(navigationRoute.home);
+    }
+  }, [navigate, navLocation.pathname]);
+
   return (
     <Routes>
       <Route path={navigationRoute.home} element={<Lobby />} />

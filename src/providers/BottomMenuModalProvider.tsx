@@ -12,6 +12,7 @@ export interface BottomMenuModalContext {
     showApps: () => void;
     hide: () => void;
     active: BottomMenuItem | null;
+    activeIndex: number | null;
   }
 }
 
@@ -31,6 +32,12 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
 
   const hide = () => setActiveMenuItem(null);
 
+  const activeIndex = useMemo(() => {
+    return activeMenuItem?.type
+      ? ['send', 'history', 'account', 'apps'].indexOf(activeMenuItem.type)
+      : null;
+  }, [activeMenuItem?.type]);
+
   const contextData = useMemo(() => ({
     showTransactionConfirmation: (payload?: SendModalData) => setActiveMenuItem({ type: 'send', payload }),
     showSend: () => setActiveMenuItem({ type: 'send' }),
@@ -38,8 +45,9 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
     showAccount: () => setActiveMenuItem({ type: 'account' }),
     showApps: () => setActiveMenuItem({ type: 'apps' }),
     hide,
-    active: activeMenuItem
-  }), [activeMenuItem]);
+    active: activeMenuItem,
+    activeIndex,
+  }), [activeMenuItem, activeIndex]);
 
   return (
     <ProviderContext.Provider value={{ data: contextData }}>
