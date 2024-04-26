@@ -19,7 +19,7 @@ exports[`<Main /> renders correctly 1`] = `
           <div
             className="items-center gap-4 font-semibold text-white-A700 font-custom"
           >
-            Building dApps? Join the PillarX Testing Campaign before April 26th
+            Building dApps? Join the PillarX Testing Campaign before May 31st
           </div>
           <button
             className="w-32 h-10 flex-shrink-0 rounded-lg font-custom border border-gray-300 bg-opacity-50 backdrop-blur-md text-white-A700 font-semibold"
@@ -305,7 +305,7 @@ exports[`<Main /> renders correctly 1`] = `
               </a>
                to join our groundbreaking testing campaign.  
               <b>
-                Applications will close on April 26th.
+                Applications will close on May 31st.
               </b>
             </p>
           </div>
