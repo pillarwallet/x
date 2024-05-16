@@ -2,7 +2,7 @@ import { useEtherspotUtils, UserOpTransaction, useWalletAddress } from '@ethersp
 import moment from 'moment';
 import styled from 'styled-components';
 import { ExportSquare as IconExportSquare } from 'iconsax-react';
-import { useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
 
@@ -17,6 +17,9 @@ import { truncateAddress, visibleChains } from '../../utils/blockchain';
 import ChainAssetIcon from '../ChainAssetIcon';
 import SkeletonLoader from '../SkeletonLoader';
 import Alert from '../Text/Alert';
+
+// context
+import { AccountTransactionHistoryContext } from '../../providers/AccountTransactionHistoryProvider';
 
 interface HistoryModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -56,17 +59,19 @@ interface EtherspotNftTransfersEntity {
 
 type HistoryTransaction = UserOpTransaction & {
   id: string;
-  assetTransfer?: (EtherspotErc20TransfersEntity & { type: 'erc20'})
-    | (EtherspotNativeTransfersEntity & { type: 'native'})
-    | (EtherspotNftTransfersEntity & { type: 'nft'});
+  assetTransfer?: (EtherspotErc20TransfersEntity & { type: 'erc20' })
+  | (EtherspotNativeTransfersEntity & { type: 'native' })
+  | (EtherspotNftTransfersEntity & { type: 'nft' });
 }
 
 const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
+  const context = useContext(AccountTransactionHistoryContext);
   const accountAddress = useWalletAddress();
   const history = useAccountTransactionHistory();
   const { addressesEqual } = useEtherspotUtils();
   const assets = useAssets();
   const [t] = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const allTransactions = useMemo(() => Object.values(history).reduce<HistoryTransaction[]>((
     mergedTransactions,
@@ -116,14 +121,27 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     return mergedTransactions;
   }, []), [history]);
 
+  useEffect(() => {
+    if (!isContentVisible) {
+      context?.data.setUpdateData(false)
+    }
+    if (isContentVisible) {
+      context?.data.setUpdateData(true)
+      setIsLoading(true);
+      const loadingTimeout = setTimeout(() => {
+        setIsLoading(false);
+      }, 5000); // to allow api to get data on chain
+
+      return () => clearTimeout(loadingTimeout);
+    }
+  }, [isContentVisible])
+
   if (!isContentVisible) {
     return <Wrapper />
   }
 
-  // no account txs per chain = loading
-  const isLoadingHistory = !Object.values(history).length;
 
-  if (!accountAddress || isLoadingHistory) {
+  if (!accountAddress || isLoading) {
     return (
       <Wrapper>
         <HistoryCard>

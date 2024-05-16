@@ -85,7 +85,7 @@ export const supportedChains = [
   avalanche,
   bsc,
   sepolia,
-  polygonMumbai,
+  // polygonMumbai,
 ];
 
 export const visibleChains = supportedChains

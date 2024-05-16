@@ -33,13 +33,11 @@ const BottomMenuModal = () => {
             >
               {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
                 <ModalContent key={index}>
-                  {activeIndex !== null && (
                     <Modal
                       key={`${index}`}
                       isContentVisible={activeIndex === index}
                       {...(active?.type === 'send' ? { payload: active.payload } : {})}
                     />
-                  )}
                 </ModalContent>
               ))}
             </ModalContentHorizontalAnimation>

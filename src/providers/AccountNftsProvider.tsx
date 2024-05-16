@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useEtherspotNfts, useWalletAddress } from '@etherspot/transaction-kit';
 import { NftCollection, Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 import isEqual from 'lodash/isEqual';
@@ -20,6 +20,8 @@ export interface AccountNftsContext {
   listenerRef: React.MutableRefObject<AccountNftsListenerRef>;
   data: {
     nfts: INfts;
+    updateData: boolean;
+    setUpdateData: React.Dispatch<React.SetStateAction<boolean>>;
   }
 }
 
@@ -36,13 +38,14 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
   const walletAddress = useWalletAddress();
   const [nfts, setNfts] = React.useState<INfts>(getJsonItem(storageKey.nfts) ?? {});
   const listenerRef = useRef<AccountNftsListenerRef>({});
+  const [updateData, setUpdateData] = useState<boolean>(false);
 
   useEffect(() => {
     let expired = false;
     let timeout: NodeJS.Timeout;
 
     const refresh = async () => {
-      if (!walletAddress) return;
+      if (!walletAddress || !updateData) return;
 
       const chainIds = visibleChains.map((chain) => chain.id);
 
@@ -64,7 +67,7 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
 
       if (expired) return;
 
-      timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
+      timeout = setTimeout(refresh, 10000); // confirmed block time depending on chain is ~1-10s
     }
 
     refresh();
@@ -74,7 +77,7 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
       if (timeout) clearTimeout(timeout);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [walletAddress, updateData]);
 
   useEffect(() => {
     setJsonItem(storageKey.nfts, nfts);
@@ -128,6 +131,8 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
 
   const contextData = useMemo(() => ({
     nfts,
+    updateData,
+    setUpdateData,
   }), [
     nfts,
   ]);
