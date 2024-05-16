@@ -5,92 +5,685 @@ import { createGlobalStyle } from 'styled-components';
 import '../styles/landing/tailwind.css';
 
 // components
-import { Form, Heading, Img, Text } from '../components/LandingPage';
+import { Form } from '../components/LandingPage';
+import { Popup} from '../components/LandingPage/Popup';
 
 // fonts
-import formularBoldFont from '../assets/landing-fonts/Formular-Bold.otf';
-import formularMediumFont from '../assets/landing-fonts/Formular-Medium.otf';
-import formularRegularFont from '../assets/landing-fonts/Formular-Regular.otf';
+import neueBoldFont from '../assets/landing-fonts/NeueHaasDisplayBold.ttf';
+import neueRegularFont from '../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
 const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: Formular;
+@font-face {
+    font-family: Neue Haas Grotesk Display Pro;
     font-weight: 400;
-    src: url(${formularRegularFont}) format("opentype");
+    src: url(${neueRegularFont}) format("truetype");
   }
-
+  
   @font-face {
-    font-family: Formular;
-    font-weight: 500;
-    src: url(${formularMediumFont}) format("opentype");
-  }
-
-  @font-face {
-    font-family: Formular;
+    font-family: Neue Haas Grotesk Display Pro;
     font-weight: 700;
-    src: url(${formularBoldFont}) format("opentype");
+    src: url(${neueBoldFont}) format("truetype");
   }
-
+  
+  :root {
+    --white: #ffffff;
+    --black: #000000;
+    --body-bg: #101010;
+    --dark-blue: #4327b1;
+    --light-blue: #5e00ff;
+    --container: 140rem;
+    --padding: 1rem;
+    --margin: 1rem;
+    --border-radius: 1rem;
+    --font-neue: "Neue Haas Grotesk Display Pro", Sans-serif;
+  }
+  
+  html {
+    height: 100%;
+    font-size: 10px;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+  body {
+    height: 100%;
+    font-family: var(--font-neue);
+    font-style: normal;
+    font-weight: 400;
+    text-align: center;
+    color: var(--white);
+    background: var(--body-bg);
+  }
+  
+  /* Resets */
+  
   * {
-    font-family: Formular, serif;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
   }
-
+  
+  a[href^="tel"] {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  a:hover,
+  a:active,
+  a:focus {
+    outline: 0;
+  }
+  
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    margin-bottom: 2rem;
+    line-height: 1.15;
+    font-weight: 700;
+  }
+  
+  p {
+    margin: 0;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  
+  p:last-child {
+    margin-bottom: 0;
+  }
+  
   a {
-    display: block;
+    line-height: inherit;
+    font-size: inherit;
+    color: inherit;
   }
-
+  
   ul {
     margin: 0;
-    margin-inline: unset;
-    padding: 0;
-    list-style: none;
   }
-
-  .Overlay {
+  
+  ul li {
+    line-height: 1.5;
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  ul li:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Components */
+  
+  .container {
+    width: 100%;
+    max-width: var(--container);
+    padding: 0 calc(var(--padding) * 4);
+    margin: 0 auto;
+  }
+  
+  .container--fluid {
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .container--no_padding {
+    padding: 0;
+  }
+  
+  @media only screen and (max-width: 1023px) {
+    .container {
+      padding: 0 calc(var(--padding) * 4);
+    }
+  }
+  
+  @media only screen and (max-width: 767px) {
+    .container {
+      padding: 0 calc(var(--padding) * 2.5);
+    }
+  }
+  
+  /* Style */
+  
+  .home_header__announcment {
+    background: rgba(94, 0, 255, 0.5);
+  }
+  
+  .home_header__announcment__wrapper {
+    padding: calc(var(--padding) * 1) 0;
     display: flex;
+    gap: 2rem;
     justify-content: center;
     align-items: center;
   }
-
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background: transparent;
+  
+  .home_header__announcment__wrapper p {
+    font-size: 1.4rem;
+    margin-bottom: 0;
+    font-weight: 700;
   }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #6b6b6b;
+  
+  .home_header__announcment__wrapper a {
+    font-size: 1.4rem;
+    margin-bottom: 0;
+    font-weight: 700;
+    background: rgba(27, 27, 27, 0.5);
+    backdrop-filter: blur(5px);
     border-radius: 10px;
+    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
+    transition: all ease 0.3s;
   }
-
-  input {
-    background-color: transparent;
+  
+  .home_header__announcment__wrapper a:hover {
+    background: var(--white);
+    color: var(--light-blue);
+  }
+  
+  .home_header__main__wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(var(--padding) * 3) 0;
+  }
+  
+  .home_header__main__logo,
+  .home_header__main__menu,
+  .home_header__main__social {
+    display: flex;
+    justify-content: center;
+    width: 177px;
+  }
+  
+  .home_header__main__menu button {
+    font-size: 1.8rem;
+    cursor: pointer;
+    position: relative;
+    color: var(--white);
+    transition: all ease 0.3s;
+  }
+  
+  .home_header__main__menu button:hover {
+    opacity: 0.8;
+  }
+  
+  .home_header__main__menu button:before {
+    position: absolute;
+    content: url("/landing-images/home-button-bg.png");
+    left: 0;
+    right: 0;
+    bottom: -15px;
+  }
+  
+  .home_header__main__social {
+    justify-content: flex-end;
+  }
+  
+  .home_hero {
+    background-image: url("/landing-images/home-hero-bg.svg");
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    padding: calc(var(--padding) * 10) 0 0 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .home_hero__wrapper {
+    padding: calc(var(--padding) * 5) calc(var(--padding) * 4);
+    position: relative;
+  }
+  
+  .home_hero__wrapper::before {
+    content: "";
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    transform: translate(-50%);
+    background: var(--dark-blue);
+    filter: blur(200px);
+  }
+  
+  .home_hero__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home_hero__content h1 {
+    font-size: 7rem;
+  }
+  
+  .home_hero__content p {
+    font-size: 2.4rem;
+    margin-bottom: calc(var(--margin) * 8);
+    opacity: 0.6;
+    letter-spacing: 0.2px;
+  }
+  
+  .home_hero__content img {
+    display: block;
+    width: 100%;
+    max-width: 65vw;
+  }
+  
+  .home_intro {
+    position: relative;
+  }
+  
+  .home_intro__wrapper {
+    padding: calc(var(--padding) * 5) 0;
+    position: relative;
+  }
+  
+  .home_intro__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home_intro__content h2 {
+    font-size: 7rem;
+  }
+  
+  .home_intro__content p {
+    font-size: 2rem;
+    max-width: 36ch;
+  }
+  
+  .home_feature {
+    position: relative;
+  }
+  
+  .home_feature__wrapper {
+    padding: calc(var(--padding) * 5) 0 0 0;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .home_feature__detail {
+    background: rgba(94, 0, 255, 0.2);
+    border-radius: calc(var(--border-radius) * 2.4);
+    overflow: hidden;
+    width: calc(50% - 0.5rem);
+    display: flex;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  
+  .home_feature__detail--flex {
     width: 100%;
   }
-
-  input:focus {
+  
+  .home_feature__detail--one {
+    background-image: url("/landing-images/home-feature-bg-1.png");
+    background-position: center bottom;
+  }
+  
+  .home_feature__detail--two {
+    background-image: url("/landing-images/home-feature-bg-2.png");
+    background-position: center center;
+  }
+  
+  .home_feature__detail--three {
+    background-image: url("/landing-images/home-feature-bg-3.png");
+    background-position: center top;
+  }
+  
+  .home_feature__detail__copy {
+    width: 60%;
+    padding: calc(var(--padding) * 3) 0 calc(var(--padding) * 3)
+      calc(var(--padding) * 3);
+    text-align: left;
+  }
+  
+  .home_feature__detail__copy h2 {
+    font-size: 4.5rem;
+    line-height: 0.9;
+    max-width: 20ch;
+  }
+  
+  .home_feature__detail__copy p {
+    font-size: 2rem;
+    max-width: 24ch;
+  }
+  
+  .home_feature__detail__image {
+    width: 40%;
+  }
+  
+  .home_feature__detail--one .home_feature__detail__image {
+    margin: calc(var(--margin) * 4) calc(var(--margin) * 1) 0 0;
+    max-width: 25rem;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  
+  .home_feature__detail--two {
+    align-items: flex-start;
+  }
+  
+  .home_feature__detail--one .home_feature__detail__image {
+    margin: calc(var(--margin) * 4) calc(var(--margin) * 1) 0 0;
+    max-width: 25rem;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  
+  .home_feature__detail--two .home_feature__detail__image {
+    margin: 0 0 calc(var(--margin) * 4) 0 calc(var(--margin) * 1);
+    max-width: 28rem;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+  }
+  
+  .home_feature__detail--three .home_feature__detail__image {
+    margin: 0 calc(var(--margin) * 1) calc(var(--margin) * 5)
+      calc(var(--margin) * 1);
+    max-width: 28rem;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+  }
+  
+  .home_feature__detail__image img {
+    width: 100%;
+  }
+  
+  .home_signup {
+    position: relative;
+  }
+  
+  .home_signup__wrapper {
+    padding: calc(var(--padding) * 15) 0;
+    position: relative;
+  }
+  
+  .home_signup__wrapper::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    bottom: 10%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    transform: translate(-50%);
+    background: var(--dark-blue);
+    filter: blur(200px);
+  }
+  
+  .home_signup__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .home_signup__content h2 {
+    font-size: 7rem;
+    max-width: 18ch;
+    line-height: 0.9;
+  }
+  
+  .home_signup__content p {
+    font-size: 2rem;
+    opacity: 0.6;
+    margin: calc(var(--margin) * 3) 0 calc(var(--margin) * 6) 0;
+  }
+  
+  .home_signup__content__form {
+    width: 100%;
+    max-width: 95rem;
+    background: linear-gradient(180deg, #5e00ff 0%, rgba(94, 0, 255, 0.58) 100%);
+    border-radius: calc(var(--border-radius) * 1.6);
+    padding: calc(var(--padding) * 3);
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+  }
+  
+  .home_signup__content__form__wrapper {
+    width: 55%;
+  }
+  
+  .home_signup__content__form__wrapper #mc_embed_signup_scroll {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .home_signup__content__form__wrapper .mc-field-group {
+    flex: 1;
+  }
+  
+  .home_signup__content__form__wrapper #mc_embed_signup_scroll input {
+    width: 100%;
+    background: #d9d9d9;
+    border-radius: calc(var(--border-radius) * 1);
+    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
+    border: 0;
+    width: 100%;
+    font-size: 1.6rem;
+    color: var(--black);
+    font-family: "Neue Haas Grotesk Display Pro";
+  }
+  
+  .home_signup__content__form__wrapper #mc_embed_signup_scroll input:focus {
     outline: none;
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
   }
+  
+  .home_signup__content__form__wrapper
+    #mc_embed_signup_scroll
+    input[type="submit"] {
+    width: 100%;
+    min-width: 15rem;
+    background: var(--white);
+    backdrop-filter: blur(2px);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all ease 0.3s;
+  }
+  
+  .home_signup__content__form__wrapper
+    #mc_embed_signup_scroll
+    input[type="submit"]:hover {
+    transform: translatey(-10%);
+  }
+  
+  .home_signup__content__form p {
+    width: 45%;
+    font-size: 1.8rem;
+    text-align: left;
+    opacity: 1;
+    margin: 0;
+  }
+  
+  .home_build {
+    position: relative;
+  }
+  
+  .home_build__wrapper {
+    position: relative;
+    background: rgba(94, 0, 255, 0.2);
+    border-radius: calc(var(--border-radius) * 2.4);
+  }
+  
+  .home_build__content {
+    position: relative;
+    display: flex;
+    z-index: 2;
+  }
+  
+  .home_build__content__left {
+    width: 53%;
+    padding: calc(var(--padding) * 4);
+    text-align: left;
+  }
+  
+  .home_build__content__left h2 {
+    font-size: 4.5rem;
+    line-height: 0.9;
+    max-width: 16ch;
+  }
+  
+  .home_build__content__left p {
+    font-size: 2rem;
+    max-width: 32ch;
+  }
+  
+  .home_build__content__right {
+    width: 47%;
+    background: rgba(94, 0, 255, 0.2);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    border-radius: calc(var(--border-radius) * 2.4);
+    transform: translatex(2rem) translatey(-5rem);
+    padding: calc(var(--padding) * 4);
+    text-align: left;
+  }
+  
+  .home_build__content__right h2 {
+    font-size: 4.5rem;
+    line-height: 0.9;
+    max-width: 16ch;
+    margin-bottom: calc(var(--margin) * 5);
+  }
+  
+  .home_build__content__right h2 a {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border-radius: calc(var(--border-radius) * 1.2);
+    transition: all ease 0.3s;
+  }
+  
+  .home_build__content__right h2 a:hover {
+    background: rgba(255, 255, 255, 1);
+    color: var(--dark-blue);
+  }
+  
+  .home_build__logo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .home_build__logo img {
+    width: 100%;
+    max-width: 30rem;
+  }
+  
+  .home_footer {
+    position: relative;
+  }
+  
+  .home_footer__wrapper {
+    padding: calc(var(--padding) * 10) 0 calc(var(--padding) * 4) 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .popup {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+  }
+  
+  .popup__wrapper {
+    max-width: 30rem;
+    border-radius: calc(var(--border-radius) * 1.6);
+    background: linear-gradient(180deg, #5e00ff 0%, rgba(94, 0, 255, 0.58) 100%);
+    backdrop-filter: blur(2px);
+    padding: calc(var(--padding) * 2) calc(var(--padding) * 2)
+      calc(var(--padding) * 1) calc(var(--padding) * 2);
+    position: relative;
+  }
+  
+  .popup__close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    opacity: 0.8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all ease 0.3s;
+  }
+  
+  .popup__form {
+    font-size: 1.4rem;
+  }
+  
+  .popup__form h3 {
+    font-size: 2.4rem;
+    text-align: left;
+    line-height: 0.9;
+    max-width: 15ch;
+  }
+  
+  .popup__form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .popup__form form input,
+  .popup__form form button {
+    width: 100%;
+    background: var(--white);
+    border-radius: calc(var(--border-radius) * 1);
+    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
+    border: 0;
+    width: 100%;
+    font-size: 1.6rem;
+    color: var(--black);
+    font-family: "Neue Haas Grotesk Display Pro";
+  }
+  
+  .popup__form form input:focus {
+    outline: none;
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  
+  .popup__form form button {
+    font-weight: 700;
+    backdrop-filter: blur(2px);
+    transition: all ease 0.3s;
+  }
+  
+  .popup__form form button:hover {
+    transform: translatey(-0.25rem);
+  }
+  
 
-  .white_border {
-    border-image: linear-gradient(135deg, #ffffff4c, #ffffff4c) 1;
-  }
-
-  .gray_border {
-    border-image: linear-gradient(180deg, #d9d9d94c, #d9d9d94c) 1;
-  }
-
-  .blue_gray_border {
-    border-image: linear-gradient(135deg, #322e35, #201d2200, #201d2200, #322e35) 1;
-  }
-
-  .border_box {
-    border: 1px solid #d9d9d94c;
-  }
 `;
 
 export default function LandingPage() {
@@ -111,207 +704,150 @@ export default function LandingPage() {
   return (
     <>
       <GlobalStyle />
-      <div className="flex flex-col items-center justify-start w-full sm:pb-5 pb-[30px] bg-black-900">
-        <div className="flex flex-col items-center justify-start w-full">
-          <div className="h-[1374px] w-full z-[1] relative">
-            <div className="flex flex-col items-center justify-start w-full top-0 right-0 left-0 m-auto absolute">
-              <div className="h-16 gap-4 w-full  top-0 bg-purple-900 flex justify-center items-center px-4 border-b border-gray-300">
-                <div className="items-center gap-4 font-semibold text-white-A700 font-custom">
-                  Building dApps? Join the PillarX Testing Campaign before May 31st
+        {/* Header */}
+        <header className='home_header'>
+          <div className='home_header__announcment'>
+            <div className='container'>
+              <div className='home_header__announcment__wrapper'>
+                <p>Building dApps? Join the PillarX Testing Campaign before May 31st</p>
+                <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer'>Register now</a>
+              </div>
+            </div>
+          </div>
+          <div className='home_header__main'>
+            <div className='container'>
+              <div className='home_header__main__wrapper'>
+                <div className='home_header__main__logo'>
+                  <img src='/landing-images/home-logo.svg'></img>
                 </div>
-                <button
-                  onClick={scrollToSection}
-                  className="w-32 h-10 flex-shrink-0 rounded-lg font-custom border border-gray-300 bg-opacity-50 backdrop-blur-md text-white-A700 font-semibold"
-                >
-                  Register now
-                </button>
-              </div>
-              <Img
-                src="/landing-images/topShadow.png"
-                alt="top shadow"
-                className="h-auto sm:w-full w-full sm:mt-[130px] object-fill"
-                loading="lazy"
-              />
-            </div>
-            <div className="h-[270px] md:w-[25%] w-[20%] z-[1] relative">
-              <Img
-                src="/landing-images/logoBox.png"
-                alt="logo box"
-                className="justify-center sm:h-[210px] md:h-[250px] h-[220px] sm:mt-[7px] sm:w-full w-full sm:ml-[-20px] left-0 bottom-0 right-0 top-0 m-auto opacity-0.8 absolute rounded-[80px]"
-                loading="lazy"
-              />
-              <Img
-                src="/landing-images/pillarXLogo.svg"
-                alt="pillarX logo"
-                className="sm:h-[12px] md:h-[12px] h-[19px] sm:left-[6%] left-[21%] top-[45%] m-auto absolute"
-              />
-            </div>
-            <div className="flex flex-col items-start justify-start w-[49%] gap-1.5 right-[5%] top-[8%] m-auto absolute">
-              <div className="flex flex-row justify-between items-start w-full">
-                <button onClick={scrollToSection}>
-                  <Text as="p" className="mt-[5px] text-center font-custom  sm:ml-[-20px]">
-                    For developers
-                    <div className="h-px opacity-0.5 bg-gradient rounded-[1px] mt-1 w-90% align-center" />
-                  </Text>
-                </button>
-                <a href="https://twitter.com/PX_Web3" target="_blank" rel="noreferrer">
-                  <Img src="/landing-images/backSide.svg" alt="back side" className="h-[27px] w-[28px]" loading="lazy" />
-                </a>
-              </div>
-            </div>
-            {confirmationMessage && (
-              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-4 h-16 sm:w-[90%] w-[40%] mt-[10px] sm:ml-[20px] sm:mr-[20px] md:ml-[50px] ml-[100px]">
-                <div className="flex">
-                  <div className="ml-3">
-                    <p className="text-lg">{confirmationMessage}</p>
-                  </div>
+                <div className='home_header__main__menu'>
+                  <button onClick={scrollToSection}>For developers</button>
+                </div>
+                <div className='home_header__main__social'>
+                  <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
+                    <img src='/landing-images/home-x.svg'></img>
+                  </a>
                 </div>
               </div>
-            )}
-            <div className="h-[628px] w-full sm:top-[10%] md:top-[10%] top-[5%] sm:mt-[-140px] right-0 left-0 relative">
-              <Img
-                src="/landing-images/middleShadow.png"
-                alt="middle shadow"
-                className="justify-center h-[638px] w-full left-0 bottom-0 right-0 top-0 object-fill sm:object-contain sm:mt-[-200px] md:mt-[-130px] absolute rounded-[80px] opacity-0.5"
-                loading="lazy"
-              />
-              <div className="flex flex-col items-center justify-center w-full h-full left-0 bottom-0 right-0 top-0 m-auto absolute">
-                <Img
-                  src="/landing-images/centerLogo.png"
-                  alt="center logo"
-                  className="sm:w-[300px] md:w-[35%] w-[25%] md:h-auto sm:w-full object-cover"
-                  loading="lazy"
-                />
-                <Text
-                  size="s"
-                  as="p"
-                  className="sm:w-[300px] md:w-[30%] w-[15%] mt-[31px] !text-white-A700_90 text-center opacity-0.9 font-custom"
-                >
-                  Advancing the way you connect with Web3
-                </Text>
-                <div className="flex md:flex-col flex-row sm:w-[90%]  w-[65%] justify-between items-center w-full sm:mt-[80px] mt-[210px] p-[34px] md:gap-10 sm:p-5 border border-solid border_box bg-gray-900_33 rounded-[21px]">
-                  <div className="flex sm:flex-col flex-row justify-start md:w-full w-full mr-[21px] sm:gap-5 md:gap-10 gap-20 sm:mr-5">
-                    <Heading size="xs" as="h2" className="sm:w-full sm:text-center md:w-full w-[20%] font-custom">
-                      Join our exclusive early access list!
-                    </Heading>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <section className='home_hero'>
+          <div className='container container--fluid'>
+            <div className='home_hero__wrapper'>
+              <div className='home_hero__content'>
+                <h1>Introducing PillarX</h1>
+                <p>Advancing the way you connect with Web3</p>
+                <img src='/landing-images/home-hero.png'></img>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Intro Section */}
+        <section className='home_intro'>
+          <div className='container'>
+            <div className='home_intro__wrapper'>
+              <div className='home_intro__content'>
+                <h2>What is PX?</h2>
+                <p>PillarX is the next evolution in the Pillar Project story, built on the pillars of controlling your assets and data, PillarX will provide an unparalleled experience in interacting with the Web3 ecosystem.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Section */}
+        <section className='home_feature'>
+          <div className='container'>
+            <div className='home_feature__wrapper'>
+              {/* Feature Detail */}
+              <div className='home_feature__detail home_feature__detail--one'>
+                <div className='home_feature__detail__copy'>
+                  <h2>Stay ahead with&nbsp;the Infinite Information Loop</h2>
+                  <p>Scroll seamlessly and receive the latest Web3 news as it happens</p>
+                </div>
+                <div className='home_feature__detail__image'>
+                  <img src='/landing-images/home-feature-1.gif' loading='lazy'></img>
+                </div>
+              </div>
+              {/* Feature Detail */}
+              <div className='home_feature__detail home_feature__detail--two'>
+                <div className='home_feature__detail__copy'>
+                  <h2>Everything at your fingertips with the PillarX Action Bar</h2>
+                  <p>Seamlessly manage transactions, assets, and explore dapps — all in one place!</p>
+                </div>
+                <div className='home_feature__detail__image'>
+                  <img src='/landing-images/home-feature-2.gif' loading='lazy'></img>
+                </div>
+              </div>
+              {/* Feature Detail */}
+              <div className='home_feature__detail home_feature__detail--flex home_feature__detail--three'>
+                <div className='home_feature__detail__copy'>
+                  <h2>Simplify your transactions with Mix and Batch</h2>
+                  <p>Combine multiple transactions into one efficient batch with PillarX 🚀&nbsp;Hassle-free and super efficient!</p>
+                </div>
+                <div className='home_feature__detail__image'>
+                  <img src='/landing-images/home-feature-3.gif' loading='lazy'></img>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Signup Section */}
+        <section className='home_signup'>
+          <div className='container'>
+            <div className='home_signup__wrapper'>
+              <div className='home_signup__content'>
+                <h2>Be One of the First to&nbsp;Experience PX</h2>
+                <p>Secure your place as a pioneer – Sign up for early access!</p>
+                <div className='home_signup__content__form'>
+                  <div className='home_signup__content__form__wrapper'>
                     <Form />
                   </div>
+                  <p>Stay tuned! We'll be unveiling more details as we approach the official launch date. Follow us on X.</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex sm:flex-col flex-row items-center justify-start sm:px-0 px-50 sm:gap-0 gap-80 sm:mt-[-400px]  mt-[-270px]">
-            <Img
-              src="/landing-images/pillar_big_logo.png"
-              alt="pillar logo"
-              className="sm:h-[150px] md:h-[212px] h-[252px] sm:w-[25%] sm:left-0 left-[10%] sm:mt-0 mt-[40px] object-cover mr-5 mb-5 mb-0 sm:ml-0 md:ml-[-30px] ml-[-50px] relative"
-              loading="lazy"
-            />
-            <div className="text-center sm:w-full md:w-[35%] w-[35%] sm:mt-[10px] sm:ml-0 md:ml-[-100px] ml-[170px]">
-              <Heading as="h1" className="text-center mb-[50px]">
-                What is PX?
-              </Heading>
-              <Text as="p" className="!text--A700_90 text-center opacity-0.6 font-custom sm:px-6">
-                PillarX is the next evolution in the Pillar Project story, built on the pillars of controlling your
-                assets and data, PillarX will provide an unparalleled experience in interacting with the Web3 ecosystem.
-              </Text>
-            </div>
-          </div>
-          <div className="flex flex-row w-auto items-start right-0 justify-start mt-[50px]">
-            <Img
-              src="/landing-images/centerLineGradient.png"
-              alt="center image"
-              className="h-auto w-[80%] mt-[-5px] opacity-0.6 object-cover rounded-[76px]"
-              loading="lazy"
-            />
-            <Img
-              src="/landing-images/centerLogo.png"
-              alt="center logo"
-              className="sm:h-[80px] h-[170px] w-1/2  sm:left-[-150px] left-[-250px] sm:mt-0 mt-[20px]  bottom-0 right-0 m-auto object-fill relative"
-              loading="lazy"
-            />
-          </div>
-          <div className="h-[1433px] w-full mt-[-1px] relative">
-            <div className="flex flex-col items-center justify-center h-full left-0 bottom-0 right-0 top-0 m-auto absolute">
-              <div className="h-[657px] sm:w-full w-[657px]  blue_gray_border rounded-[328px]" />
-              <div className="h-[1076px] w-full mt-[-300px] relative">
-                <Img
-                  src="/landing-images/bottomRightShadow.png"
-                  alt="bottom shadow"
-                  className="justify-center h-[1076px] w-full sm:w-full left-0 bottom-0 right-0 top-0 m-auto opacity-0.7 object-cover absolute"
-                  loading="lazy"
-                />
-                <Heading
-                  as="h2"
-                  className="sm:text-3xl top-[33%] right-0 left-0 m-auto text-center absolute font-custom"
-                >
-                  Build with PillarX
-                </Heading>
-                <a href="https://twitter.com/PX_Web3" target="_blank" rel="noreferrer">
-                  <Img
-                    src="/landing-images/backSide.svg"
-                    alt="path1009_three"
-                    className="h-[27px] w-[28px] bottom-[12%] right-[5%] m-auto absolute"
-                    loading="lazy"
-                  />
-                </a>
-              </div>
-            </div>
-            <div className="h-[370px] w-full bottom-[19%] right-0 left-0 m-auto absolute" ref={sectionRef}>
-              <Img
-                src="/landing-images/topBottomGradient.png"
-                alt="bottom gradient"
-                className="justify-center h-[550px] w-full left-0 bottom-0 right-0 top-0 m-auto  object-cover absolute rounded-[80px] opacity-0.6"
-                loading="lazy"
-              />
-              <div className="flex flex-col items-center justify-start sm:mt-[-50px] sm:w-full md:w-[70%] w-[42%] sm:gap-[40px] gap-[63px] top-[10%] right-0 left-0 m-auto absolute">
-                <Text as="p" className="w-[78%] !text-white-A700_99 text-center font-custom">
-                  This is your chance to spotlight your project, engage with 100k+ Pillar community members, and be part
-                  of the journey towards a more trustless future leveraging Account Abstraction.
-                </Text>
-                <div className="flex flex-row justify-start">
-                  <Text size="s" as="p" className="sm:text-lg sm:px-5 text-center font-custom">
-                    Fill in the&nbsp;
-                    <a
-                      className="inline-block underline "
-                      href="https://docs.google.com/forms/d/e/1FAIpQLSeFkdFhOh8vVy-qvS7ADyN6J050HAoJU6zLOkLFihE4QZlQvA/viewform"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <u>form</u>
-                    </a>
-                    &nbsp;to join our groundbreaking testing campaign.
-                    &nbsp;<b>Applications will close on May 31st.</b>
-                  </Text>
+        </section>
+
+        {/* Build Section */}
+        <section className='home_build' ref={sectionRef}>
+          <div className='container'>
+            <div className='home_build__wrapper'>
+              <div className='home_build__content'>
+                <div className='home_build__content__left'>
+                  <h2>Build with PillarX</h2>
+                  <p>This is your chance to spotlight your project, engage with 100k+ Pillar community members, and be part of the journey towards a more trustless future leveraging Account Abstraction.</p>
+                </div>
+                <div className='home_build__content__right'>
+                  <h2>Fill out <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer'>the form</a> to join our groundbreaking testing campaign.</h2>
+                  <h2>Applications will close&nbsp;on May 31st.</h2>
                 </div>
               </div>
-            </div>
-            <div className="h-[513px] sm:w-full md:w-[513px] w-[513px] top-[5%] right-0 left-0 m-auto bg-blue_gray-100_05 absolute rounded-[256px]" />
-            <div className="h-[417px] sm:w-full md:w-[417px] w-[417px] top-[8%] right-0 left-0 m-auto  white_border bg-black-900 shadow-xs absolute rounded-[208px]" />
-            <div className="flex flex-row justify-center w-[80%] top-[6%] right-0 left-0 p-[51px] m-auto md:p-5 border border-solid border_box bg-gray-900_33 absolute rounded-[21px]">
-              <div className="flex flex-col items-center justify-start sm:w-[100%] md:w-[100%] w-[48%] mt-[3px] gap-[38px]">
-                <Heading as="h3" className="sm:text-2xl text-center font-custom">
-                  Be One of the First to Experience PX
-                </Heading>
-                <Text as="p" className="sm:w-full w-[49%] text-center font-custom">
-                  Secure your place as a pioneer - Sign up for early access!
-                </Text>
-                <div className="flex flex-col items-center justify-start w-full gap-[45px] md:px-5">
-                  <div className="flex flex-row sm:flex-col justify-start sm:w-[300px] md:w-full gap-5 sm:gap-2">
-                    <Form />
-                  </div>
-                  <Text as="p" className="!text-white-A700_90 text-center opacity-0.6 font-custom">
-                    Stay tuned! We&#39;ll be unveiling more details as we approach the official launch date.
-                    <a href="https://twitter.com/PX_Web3" className="inline-block" target="_blank" rel="noreferrer">
-                      &nbsp;<u>Follow us on X.</u>
-                    </a>
-                  </Text>
-                </div>
+              <div className='home_build__logo'>
+                <img src='/landing-images/home-logo-px.svg'></img>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
+
+        {/* Footer */}
+        <footer className='home_footer'>
+          <div className='container'>
+            <div className='home_footer__wrapper'>
+              <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
+                <img src='/landing-images/home-x.svg'></img>
+              </a>
+            </div>
+          </div>
+        </footer>
+        {/* Build Section */}
+
+        <Popup />
     </>
   );
 }
