@@ -134,7 +134,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
 
       return () => clearTimeout(loadingTimeout);
     }
-  }, [isContentVisible])
+  }, [isContentVisible, context?.data])
 
   if (!isContentVisible) {
     return <Wrapper />

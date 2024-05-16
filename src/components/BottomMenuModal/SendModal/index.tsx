@@ -57,7 +57,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
     if (isContentVisible) {
       contextBalances?.data.setUpdateData(true)
     }
-  }, [isContentVisible])
+  }, [isContentVisible, contextBalances?.data])
 
   if (!isContentVisible) {
     return <Wrapper />;

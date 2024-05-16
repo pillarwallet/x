@@ -111,7 +111,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       contextNfts?.data.setUpdateData(true)
       contextBalances?.data.setUpdateData(true)
     }
-  }, [isContentVisible])
+  }, [isContentVisible, contextNfts?.data, contextBalances?.data])
 
   const onCopyAddressClick = useCallback(() => {
     if (copied) {

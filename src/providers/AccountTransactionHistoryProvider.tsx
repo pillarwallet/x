@@ -74,6 +74,7 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
       expired = true;
       if (timeout) clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, updateData]); // Added triggerUpdate to dependency array
 
   useEffect(() => {
@@ -113,7 +114,7 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
       updateData,
       setUpdateData,
     }),
-    [history]
+    [history, updateData]
   );
 
   return (
