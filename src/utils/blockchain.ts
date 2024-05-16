@@ -5,7 +5,6 @@ import {
   gnosis,
   avalanche,
   bsc,
-  polygonMumbai,
   mainnet,
   sepolia,
 } from 'viem/chains';
@@ -47,8 +46,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   };
 
   // only mumbai testnet is supported on Prime SDK
-  if (chainId === polygon.id
-    || chainId === polygonMumbai.id) {
+  if (chainId === polygon.id) {
     nativeAsset.name = 'Matic';
     nativeAsset.symbol = 'MATIC';
     nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png';
@@ -85,7 +83,6 @@ export const supportedChains = [
   avalanche,
   bsc,
   sepolia,
-  polygonMumbai,
 ];
 
 export const visibleChains = supportedChains
@@ -102,8 +99,7 @@ export const getLogoForChainId = (chainId: number): string => {
     return logoEthereum;
   }
 
-  if (chainId === polygon.id
-    || chainId === polygonMumbai.id) {
+  if (chainId === polygon.id) {
     return logoPolygon;
   }
 

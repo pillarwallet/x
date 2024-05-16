@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useEtherspotHistory, UserOpTransaction, useWalletAddress } from '@etherspot/transaction-kit';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
@@ -19,7 +19,9 @@ export interface AccountBalancesContext {
   listenerRef: React.MutableRefObject<AccountTransactionHistoryListenerRef>;
   data: {
     history: TransactionHistory;
-  }
+    updateData: boolean;
+    setUpdateData: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }
 
 export interface AccountTransactionHistoryListenerRef {
@@ -34,13 +36,14 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
   const [history, setHistory] = React.useState<TransactionHistory>(getJsonItem(storageKey.history) ?? {});
   const listenerRef = useRef<AccountTransactionHistoryListenerRef>({});
   const { getAccountTransactions } = useEtherspotHistory();
+  const [updateData, setUpdateData] = useState<boolean>(false);
 
   useEffect(() => {
     let expired = false;
     let timeout: NodeJS.Timeout;
 
     const refresh = async () => {
-      if (!walletAddress) return;
+      if (!walletAddress || !updateData) return;
 
       const chainIds = visibleChains.map((chain) => chain.id);
 
@@ -49,30 +52,30 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
         if (expired) return;
 
         const accountHistory = await getAccountTransactions(walletAddress, chainId);
-        if (expired) return
+        if (expired) return;
 
         // update each chain ID separately for faster updates
         setHistory((current) => {
           // deep compare per chainId and walletAddress
           return !accountHistory?.length || isEqual(current?.[chainId]?.[walletAddress], accountHistory)
             ? current
-            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountHistory } }
+            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountHistory } };
         });
       }
 
       if (expired) return;
 
-      timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
-    }
+      timeout = setTimeout(refresh, 10000); // confirmed block time depending on chain is ~1-10s
+    };
 
     refresh();
 
     return () => {
       expired = true;
       if (timeout) clearTimeout(timeout);
-    }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [walletAddress, updateData]); // Added triggerUpdate to dependency array
 
   useEffect(() => {
     setJsonItem(storageKey.history, history);
@@ -105,17 +108,20 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
     listenerRef.current.prevHistory = history;
   }, [history, listenerRef]);
 
-  const contextData = useMemo(() => ({
-    history,
-  }), [
-    history,
-  ]);
+  const contextData = useMemo(
+    () => ({
+      history,
+      updateData,
+      setUpdateData,
+    }),
+    [history, updateData]
+  );
 
   return (
     <AccountTransactionHistoryContext.Provider value={{ listenerRef, data: contextData }}>
       {children}
     </AccountTransactionHistoryContext.Provider>
   );
-}
+};
 
 export default AccountTransactionHistoryProvider;

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 import styled, { useTheme } from 'styled-components';
 import { useLogout } from '@privy-io/react-auth';
@@ -37,11 +37,17 @@ import useAccountNfts from '../../hooks/useAccountNfts';
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
 
+//context
+import { AccountNftsContext } from '../../providers/AccountNftsProvider';
+import { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
+
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
 }
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
+  const contextNfts = useContext(AccountNftsContext)
+  const contextBalances = useContext(AccountBalancesContext)
   const accountAddress = useWalletAddress();
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -85,7 +91,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];
 
-    return visibleChains.reduce<{ nft: Nft, collection: NftCollection, chain: Chain }[]>(( all, chain) => {
+    return visibleChains.reduce<{ nft: Nft, collection: NftCollection, chain: Chain }[]>((all, chain) => {
       const nftCollectionsForChain = nfts[chain.id]?.[accountAddress] || [];
       nftCollectionsForChain.forEach((collection) => {
         collection.items.forEach((nft) => {
@@ -95,6 +101,17 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       return all;
     }, []);
   }, [accountAddress, nfts]);
+
+  useEffect(() => {
+    if (!isContentVisible) {
+      contextNfts?.data.setUpdateData(false)
+      contextBalances?.data.setUpdateData(false)
+    }
+    if (isContentVisible) {
+      contextNfts?.data.setUpdateData(true)
+      contextBalances?.data.setUpdateData(true)
+    }
+  }, [isContentVisible, contextNfts?.data, contextBalances?.data])
 
   const onCopyAddressClick = useCallback(() => {
     if (copied) {
@@ -224,7 +241,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               return (
                 <TokenItem key={tokenSymbol}>
                   <TokenTotals>
-                    <img src={logoUrl} alt={tokenSymbol}/>
+                    <img src={logoUrl} alt={tokenSymbol} />
                     <p>{formatAmountDisplay(totalBalance)} <TokenSymbol>{tokenSymbol}</TokenSymbol></p>
                     <TokenTotalsRight>
                       <IconHierarchy size={13} color={theme.color.icon.cardIcon} variant="Bold" />

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useEtherspotBalances, useWalletAddress } from '@etherspot/transaction-kit';
 import { AccountBalance } from '@etherspot/prime-sdk/dist/sdk/data';
 import isEqual from 'lodash/isEqual';
@@ -19,6 +19,8 @@ export interface AccountBalancesContext {
   listenerRef: React.MutableRefObject<AccountBalancesListenerRef>;
   data: {
     balances: IBalances;
+    updateData: boolean;
+    setUpdateData: React.Dispatch<React.SetStateAction<boolean>>;
   }
 }
 
@@ -34,13 +36,14 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
   const walletAddress = useWalletAddress();
   const [balances, setBalances] = React.useState<IBalances>(getJsonItem(storageKey.balances) ?? {});
   const listenerRef = useRef<AccountBalancesListenerRef>({});
+  const [updateData, setUpdateData] = useState<boolean>(false);
 
   useEffect(() => {
     let expired = false;
     let timeout: NodeJS.Timeout;
 
     const refresh = async () => {
-      if (!walletAddress) return;
+      if (!walletAddress || !updateData) return;
 
       const chainIds = visibleChains.map((chain) => chain.id);
 
@@ -62,7 +65,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
 
       if (expired) return;
 
-      timeout = setTimeout(refresh, 5000); // confirmed block time depending on chain is ~1-10s
+      timeout = setTimeout(refresh, 10000); // confirmed block time depending on chain is ~1-10s
     }
 
     refresh();
@@ -72,7 +75,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
       if (timeout) clearTimeout(timeout);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [walletAddress, updateData]);
 
   useEffect(() => {
     setJsonItem(storageKey.balances, balances);
@@ -90,8 +93,11 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
 
   const contextData = useMemo(() => ({
     balances,
+    updateData,
+    setUpdateData,
   }), [
     balances,
+    updateData,
   ]);
 
   return (
