@@ -10,4 +10,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm i cognitive-complexity-ts
       - run: npx ccts-json ./src
-      - run: REACT_APP_COMMIT_SHA=$CF_PAGES_COMMIT_SHA REACT_APP_VERSION=$npm_package_version react-app-rewired build
+      - run: npx react-app-rewired build
