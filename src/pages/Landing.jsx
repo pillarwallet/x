@@ -687,13 +687,13 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default function LandingPage() {
-  const searchParams = new URLSearchParams(useLocation().search);
-  const signupStatus = searchParams.get('signup');
+//   const searchParams = new URLSearchParams(useLocation().search);
+//   const signupStatus = searchParams.get('signup');
 
-  let confirmationMessage = '';
-  if (signupStatus === 'complete') {
-    confirmationMessage = 'Signup process completed successfully!';
-  }
+//   let confirmationMessage = '';
+//   if (signupStatus === 'complete') {
+//     confirmationMessage = 'Signup process completed successfully!';
+//   }
 
   const sectionRef = React.useRef(null);
   const scrollToSection = () => {
@@ -709,7 +709,7 @@ export default function LandingPage() {
           <div className='home_header__announcment'>
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
-                <p>Building dApps? Join the PillarX Testing Campaign before May 31st</p>
+                <p>Building dApps? Join the PillarX Testing Campaign before May 31st</p>
                 <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer'>Register now</a>
               </div>
             </div>
@@ -807,7 +807,7 @@ export default function LandingPage() {
                   <div className='home_signup__content__form__wrapper'>
                     <Form />
                   </div>
-                  <p>Stay tuned! We'll be unveiling more details as we approach the official launch date. Follow us on X.</p>
+                  <p>Stay tuned! We&apos;ll be unveiling more details as we approach the official launch date. Follow us on X.</p>
                 </div>
               </div>
             </div>
