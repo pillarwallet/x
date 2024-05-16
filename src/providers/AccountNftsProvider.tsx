@@ -135,6 +135,7 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
     setUpdateData,
   }), [
     nfts,
+    updateData,
   ]);
 
   return (

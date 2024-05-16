@@ -97,6 +97,7 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
     setUpdateData,
   }), [
     balances,
+    updateData,
   ]);
 
   return (
