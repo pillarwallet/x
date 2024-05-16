@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 
 const Popup = () => {
