@@ -154,6 +154,12 @@ const GlobalStyle = createGlobalStyle`
   }
   
   /* Style */
+
+  @media only screen and (max-width: 767px) {
+    #root {
+      overflow: hidden;
+    }
+  }
   
   .home_header__announcment {
     background: rgba(94, 0, 255, 0.5);
@@ -166,11 +172,24 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
     align-items: center;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__announcment__wrapper {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
   
   .home_header__announcment__wrapper p {
     font-size: 1.4rem;
     margin-bottom: 0;
     font-weight: 700;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__announcment__wrapper p {
+      max-width: 30ch;
+    }
   }
   
   .home_header__announcment__wrapper a {
@@ -194,6 +213,12 @@ const GlobalStyle = createGlobalStyle`
     justify-content: space-between;
     align-items: center;
     padding: calc(var(--padding) * 3) 0;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__main__wrapper {
+      justify-content: center;
+    }
   }
   
   .home_header__main__logo,
@@ -227,6 +252,13 @@ const GlobalStyle = createGlobalStyle`
   .home_header__main__social {
     justify-content: flex-end;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__main__menu, .home_header__main__social {
+      display: none;
+    }
+  }
+  
   
   .home_hero {
     background-image: url("/landing-images/home-hero-bg.svg");
@@ -238,10 +270,23 @@ const GlobalStyle = createGlobalStyle`
     align-items: center;
     position: relative;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_hero {
+      padding: 0;
+      background-position: center center;
+    }
+  }
   
   .home_hero__wrapper {
     padding: calc(var(--padding) * 5) calc(var(--padding) * 4);
     position: relative;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_hero__wrapper {
+      padding: calc(var(--padding) * 5) 0;
+    }
   }
   
   .home_hero__wrapper::before {
@@ -266,6 +311,12 @@ const GlobalStyle = createGlobalStyle`
   .home_hero__content h1 {
     font-size: 7rem;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_hero__content h1 {
+      font-size: 5rem;
+    }
+  }
   
   .home_hero__content p {
     font-size: 2.4rem;
@@ -273,11 +324,25 @@ const GlobalStyle = createGlobalStyle`
     opacity: 0.6;
     letter-spacing: 0.2px;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_hero__content p {
+      font-size: 1.8rem;
+      margin-bottom: calc(var(--margin) * 5);
+      max-width: 20ch;
+    }
+  }
   
   .home_hero__content img {
     display: block;
     width: 100%;
     max-width: 65vw;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_hero__content img {
+      max-width: 100%;
+    }
   }
   
   .home_intro {
@@ -287,6 +352,12 @@ const GlobalStyle = createGlobalStyle`
   .home_intro__wrapper {
     padding: calc(var(--padding) * 5) 0;
     position: relative;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_intro__wrapper {
+      padding: calc(var(--padding) * 1) 0;
+    }
   }
   
   .home_intro__content {
@@ -299,10 +370,22 @@ const GlobalStyle = createGlobalStyle`
   .home_intro__content h2 {
     font-size: 7rem;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_intro__content h2 {
+      font-size: 5rem;
+    }
+  }
   
   .home_intro__content p {
     font-size: 2rem;
     max-width: 36ch;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_intro__content p {
+      font-size: 1.6rem;
+    }
   }
   
   .home_feature {
@@ -326,6 +409,13 @@ const GlobalStyle = createGlobalStyle`
     background-size: contain;
     background-repeat: no-repeat;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
   
   .home_feature__detail--flex {
     width: 100%;
@@ -348,9 +438,15 @@ const GlobalStyle = createGlobalStyle`
   
   .home_feature__detail__copy {
     width: 60%;
-    padding: calc(var(--padding) * 3) 0 calc(var(--padding) * 3)
-      calc(var(--padding) * 3);
+    padding: calc(var(--padding) * 3) 0 calc(var(--padding) * 3) calc(var(--padding) * 3);
     text-align: left;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail__copy {
+      width: 100%;
+      padding: calc(var(--padding) * 3);
+    }
   }
   
   .home_feature__detail__copy h2 {
@@ -358,10 +454,24 @@ const GlobalStyle = createGlobalStyle`
     line-height: 0.9;
     max-width: 20ch;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail__copy h2 {
+      font-size: 3.6rem;
+      max-width: none;
+    }
+  }
   
   .home_feature__detail__copy p {
     font-size: 2rem;
     max-width: 24ch;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail__copy p {
+      font-size: 1.6rem;
+      max-width: none;
+    }
   }
   
   .home_feature__detail__image {
@@ -375,17 +485,21 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 20px 20px 0 0;
     overflow: hidden;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--one .home_feature__detail__image {
+      margin: 0 auto;
+    }
+  }
   
   .home_feature__detail--two {
     align-items: flex-start;
   }
-  
-  .home_feature__detail--one .home_feature__detail__image {
-    margin: calc(var(--margin) * 4) calc(var(--margin) * 1) 0 0;
-    max-width: 25rem;
-    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
-    border-radius: 20px 20px 0 0;
-    overflow: hidden;
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--two {
+      flex-direction: column-reverse;
+    }
   }
   
   .home_feature__detail--two .home_feature__detail__image {
@@ -395,6 +509,18 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 0 0 20px 20px;
     overflow: hidden;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--two .home_feature__detail__image {
+      margin: 0 auto;
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--three {
+      flex-direction: column-reverse;
+    }
+  }
   
   .home_feature__detail--three .home_feature__detail__image {
     margin: 0 calc(var(--margin) * 1) calc(var(--margin) * 5)
@@ -403,6 +529,12 @@ const GlobalStyle = createGlobalStyle`
     filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.5));
     border-radius: 0 0 20px 20px;
     overflow: hidden;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--three .home_feature__detail__image {
+      margin: 0 auto;
+    }
   }
   
   .home_feature__detail__image img {
@@ -416,6 +548,13 @@ const GlobalStyle = createGlobalStyle`
   .home_signup__wrapper {
     padding: calc(var(--padding) * 15) 0;
     position: relative;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__wrapper {
+      padding: calc(var(--padding) * 10) 0;
+      position: relative;
+    }
   }
   
   .home_signup__wrapper::before {
@@ -442,11 +581,25 @@ const GlobalStyle = createGlobalStyle`
     max-width: 18ch;
     line-height: 0.9;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content h2 {
+      font-size: 4rem;
+    }
+  }  
   
   .home_signup__content p {
     font-size: 2rem;
     opacity: 0.6;
     margin: calc(var(--margin) * 3) 0 calc(var(--margin) * 6) 0;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content p {
+      font-size: 1.8rem;
+      margin: calc(var(--margin) * 2) 0 calc(var(--margin) * 4) 0;
+      max-width: 24ch;
+    }
   }
   
   .home_signup__content__form {
@@ -459,14 +612,33 @@ const GlobalStyle = createGlobalStyle`
     align-items: center;
     gap: 5rem;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content__form {
+      flex-direction: column;
+      gap: 2rem;
+    }
+  }
   
   .home_signup__content__form__wrapper {
     width: 55%;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content__form__wrapper {
+      width: 100%;
+    }
+  }
   
   .home_signup__content__form__wrapper #mc_embed_signup_scroll {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content__form__wrapper #mc_embed_signup_scroll {
+      flex-direction: column;
+    }
   }
   
   .home_signup__content__form__wrapper .mc-field-group {
@@ -517,6 +689,14 @@ const GlobalStyle = createGlobalStyle`
     opacity: 1;
     margin: 0;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup__content__form p {
+      width: 100%;
+      font-size: 1.6rem;
+      max-width: none;
+    }
+  }
   
   .home_build {
     position: relative;
@@ -533,11 +713,23 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     z-index: 2;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content {
+      flex-direction: column
+    }
+  }
   
   .home_build__content__left {
     width: 53%;
     padding: calc(var(--padding) * 4);
     text-align: left;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content__left {
+      width: 100%;
+    }
   }
   
   .home_build__content__left h2 {
@@ -545,10 +737,25 @@ const GlobalStyle = createGlobalStyle`
     line-height: 0.9;
     max-width: 16ch;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content__left h2 {
+      font-size: 3.6rem;
+      max-width: none;
+    }
+  }
   
   .home_build__content__left p {
     font-size: 2rem;
     max-width: 32ch;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content__left p {
+      font-size: 1.6rem;
+      max-width: none;
+      margin-bottom: calc(var(--margin) * 6);
+    }
   }
   
   .home_build__content__right {
@@ -561,12 +768,27 @@ const GlobalStyle = createGlobalStyle`
     padding: calc(var(--padding) * 4);
     text-align: left;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content__right {
+      width: 100%;
+      transform: translatex(2rem) translatey(-8rem);
+    }
+  }
   
   .home_build__content__right h2 {
     font-size: 4.5rem;
     line-height: 0.9;
     max-width: 16ch;
     margin-bottom: calc(var(--margin) * 5);
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__content__right h2 {
+      font-size: 3.6rem;
+      max-width: none;
+      margin-bottom: calc(var(--margin) * 2);
+    }
   }
   
   .home_build__content__right h2 a {
@@ -589,10 +811,27 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     justify-content: center;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__logo {
+      position: absolute;
+      left: -20px;
+      right: 0;
+      bottom: 20px;
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
   
   .home_build__logo img {
     width: 100%;
     max-width: 30rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_build__logo img {
+      max-width: 20rem;
+    }
   }
   
   .home_footer {
@@ -604,14 +843,29 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     justify-content: flex-end;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_footer__wrapper {
+      padding: calc(var(--padding) * 4) 0;
+      justify-content: center;
+    }
+  }
   
   .popup {
+    display: flex;
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
     align-items: center;
     justify-content: center;
     z-index: 99;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup {
+      bottom: 1.5rem;
+      left: 1.5rem;
+    }
   }
   
   .popup__wrapper {
@@ -802,12 +1056,12 @@ export default function LandingPage() {
             <div className='home_signup__wrapper'>
               <div className='home_signup__content'>
                 <h2>Be One of the First to&nbsp;Experience PX</h2>
-                <p>Secure your place as a pioneer – Sign up for early access!</p>
+                <p>Secure your place as a pioneer – Sign up for early&nbsp;access!</p>
                 <div className='home_signup__content__form'>
                   <div className='home_signup__content__form__wrapper'>
                     <Form />
                   </div>
-                  <p>Stay tuned! We&apos;ll be unveiling more details as we approach the official launch date. Follow us on X.</p>
+                  <p>Stay tuned! We&apos;ll be unveiling more details as we approach the official launch date. Follow us on <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>X</a>.</p>
                 </div>
               </div>
             </div>
