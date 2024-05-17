@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 
 const Popup = () => {
-  const [show, setShow] = useState(true);
+  // Show Signup Popup
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShow(true);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Mailchimp Form
   const url = 'https://pillarproject.us14.list-manage.com/subscribe/post?u=0056162978ccced9e0e2e2939&amp;id=2b9a9790a3&amp;f_id=0086c2e1f0';
