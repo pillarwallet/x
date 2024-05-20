@@ -435,6 +435,13 @@ const GlobalStyle = createGlobalStyle`
     background-image: url("/landing-images/home-feature-bg-3.png");
     background-position: center top;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail--three {
+      background-image: url("/landing-images/home-feature-bg-3-mobile.png");
+      background-position: center bottom;
+    }
+  }
   
   .home_feature__detail__copy {
     width: 60%;
@@ -1023,7 +1030,9 @@ export default function LandingPage() {
                   <p>Scroll seamlessly and receive the latest Web3 news as it happens</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <img src='/landing-images/home-feature-1.gif' loading='lazy'></img>
+                  <video width="100%" autoPlay loop muted>
+                    <source src="/landing-images/home-feature-1.mp4" type="video/mp4" />
+                  </video>
                 </div>
               </div>
               {/* Feature Detail */}
@@ -1033,7 +1042,9 @@ export default function LandingPage() {
                   <p>Seamlessly manage transactions, assets, and explore dapps — all in one place!</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <img src='/landing-images/home-feature-2.gif' loading='lazy'></img>
+                  <video width="100%" autoPlay loop muted>
+                    <source src="/landing-images/home-feature-2.mp4" type="video/mp4" />
+                  </video>
                 </div>
               </div>
               {/* Feature Detail */}
@@ -1043,7 +1054,9 @@ export default function LandingPage() {
                   <p>Combine multiple transactions into one efficient batch with PillarX 🚀&nbsp;Hassle-free and super efficient!</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <img src='/landing-images/home-feature-3.gif' loading='lazy'></img>
+                  <video width="100%" autoPlay loop muted>
+                    <source src="/landing-images/home-feature-3.mp4" type="video/mp4" />
+                  </video>
                 </div>
               </div>
             </div>
