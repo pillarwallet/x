@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 
 const Popup = () => {
-  // Show Signup Popup
-  const [show, setShow] = useState(false);
+  // Signup Popup State
+  const [showPopup, setShowPopup] = useState(false);
 
+  //Show Signup Popup
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShow(true);
-    }, 10000);
-
+      const popupState = window.localStorage.getItem('POPUP_STATE');
+      if ( popupState !== null ) setShowPopup(JSON.parse(popupState)) 
+      else setShowPopup(true);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -25,9 +27,9 @@ const Popup = () => {
   return (
     <div>
       {
-        show && <div className='popup'>
+        showPopup && <div className='popup'>
         <div className='popup__wrapper'>
-          <button  className='popup__close' onClick={() => setShow(!show)}>
+          <button  className='popup__close' onClick={() => {setShowPopup(!showPopup); window.localStorage.setItem('POPUP_STATE', false);}}>
             <p>X</p>
           </button>
           <div className='popup__form'>
@@ -36,6 +38,7 @@ const Popup = () => {
               onSubmit={event => {
                 event.preventDefault();
                 handleSubmit(fields);
+                window.localStorage.setItem('POPUP_STATE', false);
               }}
             >
               <input
