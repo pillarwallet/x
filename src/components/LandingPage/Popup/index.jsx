@@ -11,7 +11,7 @@ const Popup = () => {
       const popupState = window.localStorage.getItem('POPUP_STATE');
       if ( popupState !== null ) setShowPopup(JSON.parse(popupState)) 
       else setShowPopup(true);
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
