@@ -45,10 +45,9 @@ const Form = () => {
         >
           <div
             id="mc_embed_signup_scroll"
-            className="flex flex-row items-center justify-center sm:gap-1 md:gap-3 gap-5"
           >
             <div className="mc-field-group">
-              <div className="flex items-center justify-center text-black-900_87 text-[15px] bg-blue_gray-100 rounded-[10px] h-12 p-2  sm:w-full md:w-[150px] w-[350px]">
+              <div>
                 <input
                   shape="round"
                   className="required email sm:text-center font-custom"
@@ -72,7 +71,6 @@ const Form = () => {
                 type="submit"
                 name="subscribe"
                 id="mc-embedded-subscribe"
-                className="button h-12 sm:px-5 min-w-[159px] font-custom flex items-center justify-center text-center cursor-pointer text-blue_gray-100 tracking-[-0.50px] text-[15px] font-bold bg-deep_purple-A700 rounded-[10px] font-custom"
                 value="I am in!"
               />
             </div>

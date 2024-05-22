@@ -25,6 +25,7 @@ yarn-error.log*
 
 # IntelliJ IDE
 .idea
+.idx
 
 # Sentry Config File
 .sentryclirc
