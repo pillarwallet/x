@@ -462,7 +462,7 @@ const GlobalStyle = createGlobalStyle`
     max-width: 20ch;
   }
 
-  @media only screen and (max-width: 767px) {
+  @media only screen and (max-width: 1079px) {
     .home_feature__detail__copy h2 {
       font-size: 3.6rem;
       max-width: none;
@@ -474,7 +474,7 @@ const GlobalStyle = createGlobalStyle`
     max-width: 24ch;
   }
 
-  @media only screen and (max-width: 767px) {
+  @media only screen and (max-width: 1079px) {
     .home_feature__detail__copy p {
       font-size: 1.6rem;
       max-width: none;
@@ -697,6 +697,10 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
   }
 
+  .home_signup__content__form p a {
+    text-decoration: underline;
+  }
+
   @media only screen and (max-width: 767px) {
     .home_signup__content__form p {
       width: 100%;
@@ -861,51 +865,99 @@ const GlobalStyle = createGlobalStyle`
   .popup {
     display: flex;
     position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     align-items: center;
     justify-content: center;
     z-index: 99;
+    background: rgba(16, 16, 16, 0.85);
   }
 
   @media only screen and (max-width: 767px) {
     .popup {
+      top: unset;
       bottom: 1.5rem;
       left: 1.5rem;
+      right: 1.5rem;
+      background: none;
     }
   }
   
   .popup__wrapper {
-    max-width: 30rem;
+    min-width: 68rem;
     border-radius: calc(var(--border-radius) * 1.6);
     background: linear-gradient(180deg, #5e00ff 0%, rgba(94, 0, 255, 0.58) 100%);
     backdrop-filter: blur(2px);
-    padding: calc(var(--padding) * 2) calc(var(--padding) * 2)
-      calc(var(--padding) * 1) calc(var(--padding) * 2);
+    padding: calc(var(--padding) * 4) calc(var(--padding) * 4);
     position: relative;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup__wrapper {
+      min-width: unset;
+      padding: calc(var(--padding) * 2) calc(var(--padding) * 2) calc(var(--padding) * 1) calc(var(--padding) * 2);
+    }
   }
   
   .popup__close {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
-    font-weight: 700;
     color: var(--white);
-    opacity: 0.8;
-    font-size: 1.4rem;
+    opacity: 0.5;
     cursor: pointer;
     transition: all ease 0.3s;
   }
+
+  @media only screen and (max-width: 767px) {
+    .popup__close {
+      top: 1rem;
+      right: 1rem;
+    }
+  }
+
+  .popup__close p {
+    font-size: 3rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup__close p {
+      font-size: 2rem;
+    }
+  }
+
+  .popup__close:hover {
+    opacity: 1;
+  }
   
   .popup__form {
-    font-size: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 2rem;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup__form {
+      gap: 0;
+      font-size: 1.4rem;
+    }
   }
   
   .popup__form h3 {
-    font-size: 2.4rem;
-    text-align: left;
+    font-size: 4.5rem;
+    text-align: center;
     line-height: 0.9;
-    max-width: 15ch;
+    max-width: 16ch;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup__form h3 {
+      font-size: 2.4rem;
+    }
   }
   
   .popup__form form {
@@ -917,6 +969,7 @@ const GlobalStyle = createGlobalStyle`
   .popup__form form input,
   .popup__form form button {
     width: 100%;
+    min-width: 30rem;
     background: var(--white);
     border-radius: calc(var(--border-radius) * 1);
     padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
@@ -925,6 +978,12 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1.6rem;
     color: var(--black);
     font-family: "Neue Haas Grotesk Display Pro";
+  }
+
+  @media only screen and (max-width: 767px) {
+    .popup__form form input, .popup__form form button {
+      min-width: unset;
+    }
   }
   
   .popup__form form input:focus {
@@ -1030,8 +1089,8 @@ export default function LandingPage() {
                   <p>Scroll seamlessly and receive the latest Web3 news as it happens</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <video width="100%" autoPlay loop muted>
-                    <source src="/landing-images/home-feature-1.mp4" type="video/mp4" />
+                <video width='100%' preload='none' autoPlay loop muted playsInline poster='/landing-images/home-feature-1.png'>
+                    <source src='/landing-images/home-feature-1.mp4' type='video/mp4' />
                   </video>
                 </div>
               </div>
@@ -1042,8 +1101,8 @@ export default function LandingPage() {
                   <p>Seamlessly manage transactions, assets, and explore dapps — all in one place!</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <video width="100%" autoPlay loop muted>
-                    <source src="/landing-images/home-feature-2.mp4" type="video/mp4" />
+                  <video width='100%' preload='none' autoPlay loop muted playsInline poster='/landing-images/home-feature-2.png'>
+                    <source src='/landing-images/home-feature-2.mp4' type='video/mp4' />
                   </video>
                 </div>
               </div>
@@ -1054,8 +1113,8 @@ export default function LandingPage() {
                   <p>Combine multiple transactions into one efficient batch with PillarX 🚀&nbsp;Hassle-free and super efficient!</p>
                 </div>
                 <div className='home_feature__detail__image'>
-                  <video width="100%" autoPlay loop muted>
-                    <source src="/landing-images/home-feature-3.mp4" type="video/mp4" />
+                <video width='100%' preload='none' autoPlay loop muted playsInline poster='/landing-images/home-feature-3.png'>
+                    <source src='/landing-images/home-feature-3.mp4' type='video/mp4' />
                   </video>
                 </div>
               </div>
