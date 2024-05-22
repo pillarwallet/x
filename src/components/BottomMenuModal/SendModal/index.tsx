@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Layer as IconLayers,
@@ -17,6 +17,7 @@ import { ITransaction } from '../../../types/blockchain';
 
 // hooks
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
 
 interface SendModalDataBase {
   title: string;
@@ -43,10 +44,20 @@ interface SendModalProps extends React.PropsWithChildren {
 }
 
 const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
+  const contextBalances = useContext(AccountBalancesContext)
   const wrapperRef = React.useRef(null);
   const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
   const [t] = useTranslation();
   const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
+
+  useEffect(() => {
+    if (!isContentVisible) {
+      contextBalances?.data.setUpdateData(false)
+    }
+    if (isContentVisible) {
+      contextBalances?.data.setUpdateData(true)
+    }
+  }, [isContentVisible, contextBalances?.data])
 
   if (!isContentVisible) {
     return <Wrapper />;

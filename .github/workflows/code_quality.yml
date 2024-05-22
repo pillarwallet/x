@@ -7,6 +7,7 @@ jobs:
   run-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm i cognitive-complexity-ts
       - run: npx ccts-json ./src
+      - run: npx react-app-rewired build
