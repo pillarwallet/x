@@ -484,6 +484,13 @@ const GlobalStyle = createGlobalStyle`
   .home_feature__detail__image {
     width: 40%;
   }
+
+  @media only screen and (max-width: 767px) {
+    .home_feature__detail__image {
+      width: 80%;
+      max-width: 48rem !important;
+    }
+  }
   
   .home_feature__detail--one .home_feature__detail__image {
     margin: calc(var(--margin) * 4) calc(var(--margin) * 1) 0 0;
@@ -1030,7 +1037,7 @@ export default function LandingPage() {
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
                 <p>Building dApps? Join the PillarX Testing Campaign before May 31st</p>
-                <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer'>Register now</a>
+                <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
               </div>
             </div>
           </div>
@@ -1150,7 +1157,7 @@ export default function LandingPage() {
                   <p>This is your chance to spotlight your project, engage with 100k+ Pillar community members, and be part of the journey towards a more trustless future leveraging Account Abstraction.</p>
                 </div>
                 <div className='home_build__content__right'>
-                  <h2>Fill out <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer'>the form</a> to join our groundbreaking testing campaign.</h2>
+                  <h2>Fill out <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Testing+Form'>the form</a> to join our groundbreaking testing campaign.</h2>
                   <h2>Applications will close&nbsp;on May 31st.</h2>
                 </div>
               </div>
