@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
+import Plausible from 'plausible-tracker';
 
 const Popup = () => {
+
+  // Plausible Custom Event
+  const domain = process.env.REACT_APP_PLAUSIBLE_DOMAIN;
+  const { trackEvent } = Plausible({
+    domain: domain
+  })
+
   // Signup Popup State
   const [showPopup, setShowPopup] = useState(false);
-
+  
   //Show Signup Popup
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,7 +37,7 @@ const Popup = () => {
       {
         showPopup && <div className='popup'>
         <div className='popup__wrapper'>
-          <button  className='popup__close' onClick={() => {setShowPopup(!showPopup); window.localStorage.setItem('POPUP_STATE', false);}}>
+          <button  className='popup__close plausible-event-name=Popup+Close' onClick={() => {setShowPopup(!showPopup); window.localStorage.setItem('POPUP_STATE', false);}}>
             <p>&#x2715;</p>
           </button>
           <div className='popup__form'>
@@ -39,6 +47,7 @@ const Popup = () => {
                 event.preventDefault();
                 handleSubmit(fields);
                 window.localStorage.setItem('POPUP_STATE', false);
+                trackEvent('Popup Signup');
               }}
             >
               <input
@@ -49,7 +58,7 @@ const Popup = () => {
                 value={fields.EMAIL}
                 onChange={handleFieldChange}
               />
-              <button>Join now</button>
+              <button className='plausible-event-name=Popup+Signup'>Join now</button>
             </form>
             {loading && 'submitting'}
             {error && message}

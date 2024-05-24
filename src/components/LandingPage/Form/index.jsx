@@ -23,8 +23,16 @@
 */
 
 import { useState } from 'react';
+import Plausible from 'plausible-tracker';
 
 const Form = () => {
+
+  // Plausible Custom Event
+  const domain = process.env.REACT_APP_PLAUSIBLE_DOMAIN;
+  const { trackEvent } = Plausible({
+    domain: domain
+  })
+
   const [email, setEmail] = useState('');
 
   const handleEmailChange = (e) => {
@@ -35,6 +43,11 @@ const Form = () => {
     <div id="mc_embed_shell">
       <div id="mc_embed_signup">
         <form
+          onSubmit={event => {
+            event.preventDefault();
+            trackEvent('Page Signup');
+            event.target.submit();
+          }}
           action="https://pillarproject.us14.list-manage.com/subscribe/post?u=0056162978ccced9e0e2e2939&amp;id=2b9a9790a3&amp;f_id=0086c2e1f0"
           method="post"
           id="mc-embedded-subscribe-form"
