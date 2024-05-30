@@ -10,4 +10,3 @@ export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
 }
 
 export default PillarXLogo;
-

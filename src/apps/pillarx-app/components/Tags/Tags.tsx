@@ -13,4 +13,5 @@ const Tags = ({ icon, tagText }: TagsProps) => {
 		</div>
 	)
 }
-export default Tags
+
+export default Tags;

@@ -6,22 +6,22 @@ import { useTranslation } from 'react-i18next';
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
 import H1 from './components/Typography/H1';
-import PortofolioOverview from './components/PortofolioOverview/PortofolioOverview';
+import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
 
 export const App = () => {
   const [t] = useTranslation();
 
   const { data, isLoading } = useGetTilesInfoQuery('');
 
-  const dataPortolioOverview = isLoading ? undefined : data?.projection[0].data;
+  const dataPortlioOverview = isLoading ? undefined : data?.projection[0].data;
 
-  const {wallet} = dataPortolioOverview || {};
+  const {wallet} = dataPortlioOverview || {};
 
   return (
     <Wrapper>
       <PillarXLogo src={pillarLogoLight} className='h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
       <H1 className='py-2.5 px-4 mobile:px-0'>{t`Welcome back`} {wallet?.substring(0, 6)}...{wallet?.substring(wallet.length - 5)}</H1>
-      <PortofolioOverview data={isLoading ? undefined : data?.projection[0].data} isDataLoading={isLoading} />
+      <PortfolioOverview data={isLoading ? undefined : data?.projection[0].data} isDataLoading={isLoading} />
     </Wrapper>
   )
 }
@@ -45,7 +45,5 @@ const Wrapper = styled.div`
     padding: 32px 16px
   }
 `;
-
-
 
 export default App;

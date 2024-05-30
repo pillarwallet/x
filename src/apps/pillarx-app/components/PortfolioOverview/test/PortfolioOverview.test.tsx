@@ -1,8 +1,8 @@
 import renderer from 'react-test-renderer';
-import PortofolioOverview from '../PortofolioOverview';
+import PortfolioOverview from '../PortfolioOverview';
 
 
-describe('<PortofolioOverview />', () => {
+describe('<PortfolioOverview />', () => {
     const mockData = {
         wallet: 'wallet_address',
         wallets: [''],
@@ -16,7 +16,7 @@ describe('<PortofolioOverview />', () => {
   
     it('renders correctly and matches snapshot', () => {
         const tree = renderer
-            .create(<PortofolioOverview data={mockData} isDataLoading={mockLoading} />)
+            .create(<PortfolioOverview data={mockData} isDataLoading={mockLoading} />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();
@@ -24,7 +24,7 @@ describe('<PortofolioOverview />', () => {
 
     it('displays loading skeleton when data is loading', () => {
         const tree = renderer
-            .create(<PortofolioOverview data={undefined} isDataLoading={true} />)
+            .create(<PortfolioOverview data={undefined} isDataLoading={true} />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();

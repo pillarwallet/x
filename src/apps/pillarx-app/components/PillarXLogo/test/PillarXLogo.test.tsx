@@ -37,3 +37,4 @@ describe('<PillarXLogo />', () => {
       expect(tree.props.className).toContain(customClass);
     });
   });
+  

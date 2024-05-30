@@ -5,12 +5,14 @@ import BodySmall from '../Typography/BodySmall';
 import TriangleGreenIcon from '../../images/triangle-up-green.svg';
 import TriangleRedIcon from '../../images/triangle-down-red.svg';
 
-
 type TokensPercentageProps = {
-    percentage: number;
+    percentage?: number | null;
 }
 
 const TokensPercentage = ({percentage}: TokensPercentageProps) => {
+    if (!percentage) {
+        return null;
+    }
 
 const trianglePercentage = percentage >= 0 ? TriangleGreenIcon : TriangleRedIcon;
 
@@ -19,9 +21,7 @@ const trianglePercentage = percentage >= 0 ? TriangleGreenIcon : TriangleRedIcon
             <img src={trianglePercentage} className='w-[10px] h[9px]' />
             <BodySmall className={`${percentage >= 0 ? 'text-percentage_green' : 'text-percentage_red'}`}>{percentage.toFixed(2)}%</BodySmall>
         </div>
-
     )
-
 }
 
 export default TokensPercentage;

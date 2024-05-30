@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<PortofolioOverview /> displays loading skeleton when data is loading 1`] = `
+exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`] = `
 .c0 {
   height: 40px;
   width: 200px;
@@ -78,7 +78,7 @@ exports[`<PortofolioOverview /> displays loading skeleton when data is loading 1
 </div>
 `;
 
-exports[`<PortofolioOverview /> renders correctly and matches snapshot 1`] = `
+exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
 >
@@ -220,13 +220,10 @@ exports[`<PortofolioOverview /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-base font-medium undefined"
         >
-          across 0 chains
+          across 0 chain
         </p>
       </div>
     </div>
-    <div
-      className="w-full h-fit flex justify-end"
-    />
   </div>
 </div>
 `;

@@ -17,15 +17,15 @@ import WalletAddressOverview from '../WalletAdddressOverview/WalletAddressOvervi
 import TokensList from '../TokensList/TokensList'
 import TokensPercentage from '../TokensPercentage/TokensPercentage'
 import SkeletonLoader from '../../../../components/SkeletonLoader'
+import { getAllUniqueBlockchains } from '../../utils/blockchain'
 
 
-type PortofolioOverviewProps = {
+type PortfolioOverviewProps = {
     data: ApiData | undefined;
     isDataLoading: boolean;
 }
 
-
-const PortofolioOverview = ({ data, isDataLoading }: PortofolioOverviewProps) => {
+const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const [t] = useTranslation();
     const { assets = [], total_pnl_history = {}, total_wallet_balance } = data || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
@@ -36,26 +36,13 @@ const PortofolioOverview = ({ data, isDataLoading }: PortofolioOverviewProps) =>
 
     const allBlockchainsLogos = assets.map((asset) => asset.asset.logo ? asset.asset.logo : DefaultLogo).flat();
 
-    const getAllUniqueBlockchains = () => {
-        // eslint-disable-next-line prefer-const    
-        let uniqueBlockchains: string[] = [];
-        if (allBlockchains) {
-            allBlockchains.forEach(chain => {
-                if (!uniqueBlockchains.includes(chain)) {
-                    uniqueBlockchains.push(chain);
-                }
-            });
-        }
-        return uniqueBlockchains;
-    }
-
-    const numberOfBlockchains = getAllUniqueBlockchains().length;
+    const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length;
 
     const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
     
     const percentageChange = (totalPnl24h / (total_wallet_balance || 0)) * 100;
 
-if (!data && isDataLoading) {
+if (!data || isDataLoading) {
     return (
     <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
         <div className='flex flex-col justify-between'>
@@ -98,4 +85,4 @@ if (!data && isDataLoading) {
     )
 }
 
-export default PortofolioOverview;
+export default PortfolioOverview;

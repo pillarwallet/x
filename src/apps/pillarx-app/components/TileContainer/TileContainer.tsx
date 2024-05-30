@@ -13,4 +13,4 @@ const TileContainer = ({ children, className }: TileContainerProps) => {
 
 }
 
-export default TileContainer
+export default TileContainer;

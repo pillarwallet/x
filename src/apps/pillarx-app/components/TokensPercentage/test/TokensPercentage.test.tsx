@@ -54,4 +54,14 @@ describe('<TokensPercentage />', () => {
       expect(percentageText?.children?.[0]).toBe('-12.34');
       expect(percentageText.props.className).toContain('text-percentage_red');
     });
+
+    it('returns null when percentage is not provided', () => {
+      const tree = renderer.create(<TokensPercentage />).toJSON();
+      expect(tree).toBeNull();
+  });
+
+  it('returns null when percentage is null', () => {
+      const tree = renderer.create(<TokensPercentage percentage={null} />).toJSON();
+      expect(tree).toBeNull();
+  });
 });
