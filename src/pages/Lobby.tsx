@@ -1,20 +1,18 @@
 import styled from 'styled-components';
 
 // components
-import AppsList from '../components/AppsList';
+import App from '../apps/pillarx-app';
 
 const Lobby = () => {
   return (
     <Wrapper>
-      <AppsList hideTitle />
+      <App />
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
   display: flex;
-  padding: 120px 25px;
-  max-width: 350px;
   margin: 0 auto;
 `;
 

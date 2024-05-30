@@ -107,11 +107,11 @@ const BottomMenu = () => {
                 onClick={() => {
                   if (item.type === 'home') {
                     hide();
-                    isHomeActive && navigate(navigationRoute.home);
+                    !isHomeActive && navigate(navigationRoute.home);
                     return;
                   }
 
-                  if (active?.type === item.type ) {
+                  if (active?.type === item.type) {
                     hide();
                     return;
                   }
