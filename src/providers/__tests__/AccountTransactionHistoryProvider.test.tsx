@@ -82,6 +82,8 @@ describe('AccountTransactionHistoryProvider', () => {
   it('updates history', async () => {
     const { result } = renderHook(() => React.useContext(AccountTransactionHistoryContext), { wrapper });
 
+    result.current?.data.setUpdateData(true);
+
     await waitFor(async () => {
       expect(result.current?.data.history).toEqual({
         [mainnet.id]: accountHistoryMock,
@@ -118,6 +120,8 @@ describe('AccountTransactionHistoryProvider', () => {
       ),
     });
 
+    result.current?.data.setUpdateData(true);
+    
     await waitFor(async () => {
       expect(result.current?.data.history).not.toEqual({});
     });

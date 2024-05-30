@@ -5,7 +5,7 @@ import { mainnet } from 'viem/chains';
 import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // providers
-import AccountNftsProvider from '../../providers/AccountNftsProvider';
+import AccountNftsProvider, { AccountNftsContext } from '../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
@@ -71,15 +71,20 @@ describe('AccountNftsProvider', () => {
   });
 
   it('initializes with empty nfts', () => {
-    const { result } = renderHook(() => useAccountNfts(), { wrapper });
-    expect(result.current).toEqual({});
+    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
+
+    expect(result.current?.data.nfts).toEqual({});
   });
 
   it('updates nfts', async () => {
-    const { result } = renderHook(() => useAccountNfts(), { wrapper });
+    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
 
     await waitFor(async () => {
-      expect(result.current).toEqual({
+      expect(result.current?.data.nfts).toEqual({
         [mainnet.id]: accountNftsMock,
       });
     });
@@ -90,10 +95,12 @@ describe('AccountNftsProvider', () => {
   it('does not update nfts when wallet address is not set', async () => {
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
 
-    const { result } = renderHook(() => useAccountNfts(), { wrapper });
+    const { result } = renderHook(() => React.useContext(AccountNftsContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
 
     expect(getAccountNftsMock).not.toHaveBeenCalled();
-    expect(result.current).toEqual({});
+    expect(result.current?.data.nfts).toEqual({});
   });
 
   it('calls onNftReceived when account nft received', async () => {
@@ -105,7 +112,19 @@ describe('AccountNftsProvider', () => {
     const { result } = renderHook(() => useAccountNfts({
       onReceived: onNftReceived,
       onSent: onNftSent
-    }), { wrapper });
+    }), { 
+      wrapper: ({ children }) => (
+        <AccountNftsProvider>
+          <AccountNftsContext.Consumer>
+            {(value) => {
+              if (!value) return children;
+              value.data.setUpdateData(true);
+              return children
+            }}
+          </AccountNftsContext.Consumer>
+        </AccountNftsProvider>
+      ),
+    });
 
     await waitFor(async () => {
       expect(result.current).not.toEqual({});
@@ -136,7 +155,19 @@ describe('AccountNftsProvider', () => {
     const { result } = renderHook(() => useAccountNfts({
       onReceived: onNftReceived,
       onSent: onNftSent
-    }), { wrapper });
+    }), { 
+      wrapper: ({ children }) => (
+        <AccountNftsProvider>
+          <AccountNftsContext.Consumer>
+            {(value) => {
+              if (!value) return children;
+              value.data.setUpdateData(true);
+              return children
+            }}
+          </AccountNftsContext.Consumer>
+        </AccountNftsProvider>
+      ),
+    });
 
     await waitFor(async () => {
       expect(result.current).not.toEqual({});

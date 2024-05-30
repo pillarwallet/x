@@ -15,6 +15,10 @@ import { defaultTheme } from '../../theme';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
+import AccountTransactionHistoryProvider from '../../providers/AccountTransactionHistoryProvider';
+import AssetsProvider from '../../providers/AssetsProvider';
+import AccountBalancesProvider from '../../providers/AccountBalancesProvider';
+import AccountNftsProvider from '../../providers/AccountNftsProvider';
 
 const ethersProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545', 'goerli'); // replace with your node's RPC URL
 const provider = ethers.Wallet.createRandom().connect(ethersProvider);
@@ -30,15 +34,23 @@ describe('<BottomMenu />', () => {
         .create(
           <BrowserRouter>
             <EtherspotTransactionKit provider={provider}>
-              <ThemeProvider theme={defaultTheme}>
-                <LanguageProvider>
-                  <GlobalTransactionsBatchProvider>
-                    <BottomMenuModalProvider>
-                      <BottomMenu />
-                    </BottomMenuModalProvider>
-                  </GlobalTransactionsBatchProvider>
-                </LanguageProvider>
-              </ThemeProvider>
+              <AccountTransactionHistoryProvider>
+                <AssetsProvider>
+                  <AccountBalancesProvider>
+                    <AccountNftsProvider>
+                      <ThemeProvider theme={defaultTheme}>
+                        <LanguageProvider>
+                          <GlobalTransactionsBatchProvider>
+                            <BottomMenuModalProvider>
+                              <BottomMenu />
+                            </BottomMenuModalProvider>
+                          </GlobalTransactionsBatchProvider>
+                        </LanguageProvider>
+                      </ThemeProvider>
+                    </AccountNftsProvider>
+                  </AccountBalancesProvider>
+                </AssetsProvider>
+              </AccountTransactionHistoryProvider>
             </EtherspotTransactionKit>
           </BrowserRouter>
         )

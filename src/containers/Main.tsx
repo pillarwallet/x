@@ -20,7 +20,9 @@ import AccountTransactionHistoryProvider from '../providers/AccountTransactionHi
 import AssetsProvider from '../providers/AssetsProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
-import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
+import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider'
+import { ApiProvider } from '@reduxjs/toolkit/query/react'
+import { pillarXApi } from '../apps/pillarx-app/api/apiSlice'
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -77,29 +79,31 @@ const AppAuthController = () => {
 
   if (isAppReady && authenticated && provider && chainId) {
     return (
-      <EtherspotTransactionKit
-        provider={provider}
-        chainId={chainId}
-        bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
-        dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
-      >
-        <AccountTransactionHistoryProvider>
-          <AssetsProvider>
-            <AccountBalancesProvider>
-              <AccountNftsProvider>
-                <GlobalTransactionBatchesProvider>
-                  <BottomMenuModalProvider>
-                    <AuthContentWrapper>
-                      <AuthorizedNavigation />
-                    </AuthContentWrapper>
-                    <BottomMenu />
-                  </BottomMenuModalProvider>
-                </GlobalTransactionBatchesProvider>
-              </AccountNftsProvider>
-            </AccountBalancesProvider>
-          </AssetsProvider>
-        </AccountTransactionHistoryProvider>
-      </EtherspotTransactionKit>
+      <ApiProvider api={pillarXApi}>
+        <EtherspotTransactionKit
+          provider={provider}
+          chainId={chainId}
+          bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
+          dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
+        >
+          <AccountTransactionHistoryProvider>
+            <AssetsProvider>
+              <AccountBalancesProvider>
+                <AccountNftsProvider>
+                  <GlobalTransactionBatchesProvider>
+                    <BottomMenuModalProvider>
+                      <AuthContentWrapper>
+                        <AuthorizedNavigation />
+                      </AuthContentWrapper>
+                      <BottomMenu />
+                    </BottomMenuModalProvider>
+                  </GlobalTransactionBatchesProvider>
+                </AccountNftsProvider>
+              </AccountBalancesProvider>
+            </AssetsProvider>
+          </AccountTransactionHistoryProvider>
+        </EtherspotTransactionKit>
+      </ApiProvider>
     )
   }
 

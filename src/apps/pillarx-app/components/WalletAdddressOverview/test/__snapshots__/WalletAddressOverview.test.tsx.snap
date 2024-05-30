@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex gap-2.5 items-center custom-class"
+>
+  <div
+    className="bg-[#312F3A] p-2.5 rounded-full w-10 h-10"
+  >
+    <img
+      className="w-full h-full"
+      src={
+        {
+          "ReactComponent": {
+            "$$typeof": Symbol(react.forward_ref),
+            "render": [Function],
+          },
+          "default": "profile-icon.svg",
+        }
+      }
+    />
+  </div>
+  <p
+    className="text-base font-medium undefined"
+  >
+    0x1234
+    ...
+    67890
+  </p>
+  <div
+    className="w-4 h-4"
+    onClick={[Function]}
+  >
+    <img
+      className="cursor-pointer"
+      src={
+        {
+          "ReactComponent": {
+            "$$typeof": Symbol(react.forward_ref),
+            "render": [Function],
+          },
+          "default": "copy-icon.svg",
+        }
+      }
+      style={
+        {
+          "height": "full",
+          "width": "full",
+        }
+      }
+    />
+  </div>
+</div>
+`;

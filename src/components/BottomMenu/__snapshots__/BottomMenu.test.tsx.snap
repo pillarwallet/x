@@ -2,7 +2,58 @@
 
 exports[`<BottomMenu /> renders correctly 1`] = `
 [
-  .c1 {
+  .c5 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c5::-webkit-scrollbar {
+  display: none;
+}
+
+.c6 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c6::-webkit-scrollbar {
+  display: none;
+}
+
+.c7 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c7::-webkit-scrollbar {
+  display: none;
+}
+
+.c8 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c8::-webkit-scrollbar {
+  display: none;
+}
+
+.c1 {
   overflow: hidden;
 }
 
@@ -36,7 +87,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   max-height: 50vh;
 }
 
-.c5 {
+.c9 {
   background: rgba(255, 255, 255, 0.4);
   height: 4px;
   width: 40px;
@@ -47,12 +98,12 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   left: 148px;
 }
 
-.c10 {
+.c14 {
   display: none;
   margin-left: 10px;
 }
 
-.c12 {
+.c16 {
   display: none;
   position: absolute;
   top: -3px;
@@ -64,7 +115,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 20px;
 }
 
-.c13 {
+.c17 {
   display: none;
   position: absolute;
   top: -3px;
@@ -76,7 +127,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 20px;
 }
 
-.c14 {
+.c18 {
   display: none;
   position: absolute;
   top: -3px;
@@ -88,7 +139,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 20px;
 }
 
-.c15 {
+.c19 {
   display: none;
   position: absolute;
   top: -3px;
@@ -100,7 +151,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 20px;
 }
 
-.c8 {
+.c12 {
   position: relative;
   display: flex;
   align-items: center;
@@ -115,15 +166,15 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   height: 100%;
 }
 
-.c8.active .c11 {
+.c12.active .c15 {
   display: block;
 }
 
-.c8:first-child {
+.c12:first-child {
   margin-left: 17px;
 }
 
-.c8:last-child {
+.c12:last-child {
   margin-right: 17px;
 }
 
@@ -142,7 +193,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   backdrop-filter: blur(15px);
 }
 
-.c6 {
+.c10 {
   position: relative;
   flex: 1;
   display: flex;
@@ -153,21 +204,21 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 100%;
 }
 
-.c6:not(.c6:hover) .c7.active,
-.c6 .c7:hover {
+.c10:not(.c10:hover) .c11.active,
+.c10 .c11:hover {
   color: #fff;
   padding: 0 15px;
   margin: 0;
 }
 
-.c6:not(.c6:hover) .c7.active .c11,
-.c6 .c7:hover .c11 {
+.c10:not(.c10:hover) .c11.active .c15,
+.c10 .c11:hover .c15 {
   width: 32px;
   transform: translateX(calc(-50% + 5px));
 }
 
-.c6:not(.c6:hover) .c7.active .c9,
-.c6 .c7:hover .c9 {
+.c10:not(.c10:hover) .c11.active .c13,
+.c10 .c11:hover .c13 {
   display: block;
 }
 
@@ -185,28 +236,44 @@ exports[`<BottomMenu /> renders correctly 1`] = `
         >
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c5"
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c6"
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c7"
+            />
+          </div>
           <div
             className="c4"
-          />
+          >
+            <div
+              className="c8"
+            />
+          </div>
         </div>
         <div
-          className="c5"
+          className="c9"
           onClick={[Function]}
         />
       </div>
     </div>
     <div
-      className="c6"
+      className="c10"
     >
       <div
-        className="c7 c8 active"
+        className="c11 c12 active"
         onClick={[Function]}
       >
         <svg
@@ -225,17 +292,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c9 c10"
+          className="c13 c14"
         >
           Home
         </span>
       </div>
       <div
-        className="c7 c8"
+        className="c11 c12"
         onClick={[Function]}
       >
         <div
-          className="c11 c12"
+          className="c15 c16"
         />
         <svg
           fill="none"
@@ -253,17 +320,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c9 c10"
+          className="c13 c14"
         >
           Send
         </span>
       </div>
       <div
-        className="c7 c8"
+        className="c11 c12"
         onClick={[Function]}
       >
         <div
-          className="c11 c13"
+          className="c15 c17"
         />
         <svg
           fill="none"
@@ -281,17 +348,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c9 c10"
+          className="c13 c14"
         >
           History
         </span>
       </div>
       <div
-        className="c7 c8"
+        className="c11 c12"
         onClick={[Function]}
       >
         <div
-          className="c11 c14"
+          className="c15 c18"
         />
         <svg
           fill="none"
@@ -316,17 +383,17 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c9 c10"
+          className="c13 c14"
         >
           Account
         </span>
       </div>
       <div
-        className="c7 c8"
+        className="c11 c12"
         onClick={[Function]}
       >
         <div
-          className="c11 c15"
+          className="c15 c19"
         />
         <svg
           fill="none"
@@ -344,7 +411,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
           />
         </svg>
         <span
-          className="c9 c10"
+          className="c13 c14"
         >
           Apps
         </span>
