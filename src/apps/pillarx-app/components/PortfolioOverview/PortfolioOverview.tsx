@@ -27,7 +27,7 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const [t] = useTranslation();
-    const { assets = [], total_pnl_history = {}, total_wallet_balance } = data || {};
+    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0 } = data || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
 
     const numberOfTokens = assets.length;
@@ -40,7 +40,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
 
     const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
     
-    const percentageChange = (totalPnl24h / (total_wallet_balance || 0)) * 100;
+    const percentageChange = (totalPnl24h / (total_wallet_balance)) * 100;
 
 if (!data || isDataLoading) {
     return (
