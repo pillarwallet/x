@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokensList /> renders correctly and matches snapshot 1`] = `
+<div
+  className="w-full h-fit flex justify-end"
+>
+  <img
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo1"
+  />
+  <img
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo2"
+  />
+  <img
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo3"
+  />
+  <img
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo4"
+  />
+</div>
+`;

@@ -798,7 +798,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 4.5rem;
     line-height: 0.9;
     max-width: 16ch;
-    margin-bottom: calc(var(--margin) * 5);
+    margin-bottom: calc(var(--margin) * 15);
   }
 
   @media only screen and (max-width: 767px) {
@@ -1036,7 +1036,7 @@ export default function LandingPage() {
           <div className='home_header__announcment'>
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
-                <p>Building dApps? Join the PillarX Testing Campaign before May 31st</p>
+                <p>Building dApps? Join the PillarX Testing Campaign</p>
                 <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
               </div>
             </div>
@@ -1158,7 +1158,6 @@ export default function LandingPage() {
                 </div>
                 <div className='home_build__content__right'>
                   <h2>Fill out <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Testing+Form'>the form</a> to join our groundbreaking testing campaign.</h2>
-                  <h2>Applications will close&nbsp;on May 31st.</h2>
                 </div>
               </div>
               <div className='home_build__logo'>

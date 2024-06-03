@@ -46,11 +46,16 @@ describe('AccountBalancesProvider', () => {
 
   it('initializes with empty balances', () => {
     const { result } = renderHook(() => React.useContext(AccountBalancesContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
+
     expect(result.current?.data.balances).toEqual({});
   });
 
   it('updates balances', async () => {
     const { result } = renderHook(() => React.useContext(AccountBalancesContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
 
     await waitFor(async () => {
       expect(result.current?.data.balances).toEqual({
@@ -65,6 +70,8 @@ describe('AccountBalancesProvider', () => {
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
 
     const { result } = renderHook(() => React.useContext(AccountBalancesContext), { wrapper });
+
+    result.current?.data.setUpdateData(true);
 
     expect(mockGetAccountBalances).not.toHaveBeenCalled();
     expect(result.current?.data.balances).toEqual({});
@@ -87,6 +94,8 @@ describe('AccountBalancesProvider', () => {
       ),
     });
 
+    result.current?.data.setUpdateData(true);
+    
     await waitFor(async () => {
       expect(result.current?.data.balances).not.toEqual({});
     });

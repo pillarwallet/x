@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TileContainer /> renders correctly and matches snapshot 1`] = `
+[
+  <div
+    className="flex bg-container_grey rounded-2xl undefined"
+  >
+    <div>
+      Div as children
+    </div>
+  </div>,
+  <div
+    className="flex bg-container_grey rounded-2xl custom-class"
+  >
+    <div>
+      Div as children
+    </div>
+  </div>,
+  <div
+    className="flex bg-container_grey rounded-2xl undefined"
+  >
+    <div>
+      First child
+    </div>
+    <div>
+      Second child
+    </div>
+  </div>,
+]
+`;
