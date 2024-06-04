@@ -1,12 +1,17 @@
 {
   "title": "App name",
   "description": "App description.",
+  "support": {
+    "email": "your@email.com",
+    "telegram": "https://t.me/yourtelegram",
+    "x": "https://x.com/yourx"
+  },
   "translations": {
     "en": {
-      "title": "App name English",
-      "description": "App description English.",
-      "someInputLabel": "Some input label English"
-      "actionInfo": "Some action info English"
+      "title": "App name in English",
+      "description": "App description in English.",
+      "someInputLabel": "Some input label in English",
+      "actionInfo": "Some action info in English"
     }
   }
 }
