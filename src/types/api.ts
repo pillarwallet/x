@@ -47,7 +47,7 @@ export type Asset = {
     unrealized: number;
   }
   
-  export type ApiData = {
+  export type WalletPortfolioData = {
     total_wallet_balance: number;
     wallet: string;
     wallets: string[];
@@ -63,7 +63,7 @@ export type Asset = {
   // TO DO - meta type to change when api ready, layout should be enum
   export type Projection = {
     meta: unknown;
-    data: ApiData;
+    data: WalletPortfolioData | TrendingTokenData[];
     layout: string;
     id: string;
   }
@@ -71,4 +71,29 @@ export type Asset = {
   export type ApiResponse = {
     projection: Projection[];
   }
+
+  interface TokenContract {
+    address: string;
+    blockchain: string;
+    decimals?: number;
+  }
+  
+  interface TokenPlatform {
+    name: string;
+    rank: number;
+    weight: number;
+  }
+  
+  export type TrendingTokenData = {
+    id: number;
+    name: string;
+    symbol: string;
+    contracts: TokenContract[];
+    logo: string;
+    trending_score: number;
+    platforms: TokenPlatform[];
+    price_change_24h: number;
+    pair: string;
+  }
+
   

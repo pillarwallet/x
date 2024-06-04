@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 // types
-import { ApiData } from '../../../../types/api'
+import { WalletPortfolioData } from '../../../../types/api'
 
 // images
 import DefaultLogo from '../../images/logo-unknown.png'
@@ -21,7 +21,7 @@ import { getAllUniqueBlockchains } from '../../utils/blockchain'
 
 
 type PortfolioOverviewProps = {
-    data: ApiData | undefined;
+    data: WalletPortfolioData | undefined;
     isDataLoading: boolean;
 }
 
