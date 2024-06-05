@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 type TileContainerProps = {
     children: ReactNode;
     className?: string;
-}
+};
 
 
 const TileContainer = ({ children, className }: TileContainerProps) => {

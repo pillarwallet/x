@@ -1,12 +1,12 @@
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 // pages
+import App from '../pages/App';
+import LandingPage from '../pages/Landing';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
-import App from '../pages/App';
-import LandingPage from '../pages/Landing';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
@@ -15,11 +15,6 @@ export const navigationRoute = {
   home: '/',
   landing: '/landing',
   login: '/login',
-}
-
-const DevApp = () => {
-  const params = useParams();
-  return <App id={params?.appId as string} />
 }
 
 export const AuthorizedNavigation = () => {
@@ -40,13 +35,7 @@ export const AuthorizedNavigation = () => {
       {allowedApps.map((appId) => (
         <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
       ))}
-      {process.env.NODE_ENV === 'development' && (
-        <Route
-          key={'test-app-route'}
-          path={'/development/:appId'}
-          element={<DevApp />}
-        />
-      )}
+      {process.env.REACT_APP_PX_DEVELOPMENT_ID && <Route path={`${process.env.REACT_APP_PX_DEVELOPMENT_ID}`} element={<App id={process.env.REACT_APP_PX_DEVELOPMENT_ID!} />} />}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

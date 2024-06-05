@@ -15,9 +15,10 @@ exports[`<Main /> renders correctly 1`] = `
           className="home_header__announcment__wrapper"
         >
           <p>
-            Building dApps? Join the PillarX Testing Campaign before May 31st
+            Building dApps? Join the PillarX Testing Campaign
           </p>
           <a
+            className="plausible-event-name=Banner+Click"
             href="https://forms.gle/Eba5xTHGNXe4dGyAA"
             rel="noreferrer"
             target="_blank"
@@ -261,6 +262,7 @@ exports[`<Main /> renders correctly 1`] = `
                     method="post"
                     name="mc-embedded-subscribe-form"
                     noValidate={true}
+                    onSubmit={[Function]}
                     target="_self"
                   >
                     <div
@@ -359,6 +361,7 @@ exports[`<Main /> renders correctly 1`] = `
             <h2>
               Fill out 
               <a
+                className="plausible-event-name=Testing+Form"
                 href="https://forms.gle/Eba5xTHGNXe4dGyAA"
                 rel="noreferrer"
                 target="_blank"
@@ -366,9 +369,6 @@ exports[`<Main /> renders correctly 1`] = `
                 the form
               </a>
                to join our groundbreaking testing campaign.
-            </h2>
-            <h2>
-              Applications will close on May 31st.
             </h2>
           </div>
         </div>

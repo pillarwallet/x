@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TrendingTokenInfo /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+>
+  <img
+    className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
+    src="https://example.com/logo.png"
+  />
+  <p
+    className="text-base font-medium text-center"
+  >
+    Token Name
+  </p>
+  <p
+    className="text-sm font-medium text-center"
+  >
+    $
+    1000.0000
+  </p>
+  <div
+    className="flex gap-1 items-center"
+  >
+    <img
+      className="w-[10px] h[9px]"
+      src={
+        {
+          "ReactComponent": {
+            "$$typeof": Symbol(react.forward_ref),
+            "render": [Function],
+          },
+          "default": "triangle-up-green.svg",
+        }
+      }
+    />
+    <p
+      className="text-sm font-medium text-percentage_green"
+    >
+      5.45
+      %
+    </p>
+  </div>
+</div>
+`;

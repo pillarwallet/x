@@ -1,7 +1,10 @@
-import { createRef, useEffect, useLayoutEffect, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 
 // components
 import Body from '../Typography/Body';
+
+// hooks
+import useRefDimensions from '../../hooks/useRefDimensions';
 
 type TokensListProps = {
     logos: string[];
@@ -9,33 +12,6 @@ type TokensListProps = {
 
 const TokensList = ({ logos }: TokensListProps) => {
     const [logosWidth, setLogosWidth] = useState<number>(0);
-
-    const useRefDimensions = (ref: React.RefObject<HTMLDivElement>) => {
-        const [dimensions, setDimensions] = useState({ width: 1, height: 2 });
-
-        useLayoutEffect(() => {
-            const updateDimensions = () => {
-                if (ref.current) {
-                    const { current } = ref;
-                    const boundingRect = current.getBoundingClientRect();
-                    const { width, height } = boundingRect;
-                    const newDimensions = { width: Math.round(width), height: Math.round(height) };
-                    if (newDimensions.width !== dimensions.width || newDimensions.height !== dimensions.height) {
-                        setDimensions(newDimensions);
-                    }
-                }
-            };
-
-            updateDimensions();
-            window.addEventListener('resize', updateDimensions);
-
-            return () => {
-                window.removeEventListener('resize', updateDimensions);
-            };
-        }, [ref, dimensions]);
-
-        return dimensions;
-    };
 
     useEffect(() => {
         const handleLogosWidthResize = () => {
@@ -71,10 +47,10 @@ const TokensList = ({ logos }: TokensListProps) => {
             {logos.slice(0, numberLogos).map((logo, index) =>
                 <img key={index} src={logo} className='w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]' />
             )}
-            {numberHiddenLogos > 0 ?
+            {numberHiddenLogos > 0 &&
             <div className='flex bg-[#312F3A] min-w-fit rounded-md p-2 mobile:p-1.5 items-center'>
                 <Body className='mobile:text-xs'>+ {numberHiddenLogos}</Body>
-            </div> : null}
+            </div>}
     </div>
 
     )
