@@ -79,7 +79,7 @@ if (!data || isDataLoading) {
                     <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`Tokens`}`} />
                     <Tags icon={RoutingIcon} tagText={`${t`across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`chains` : t`chain`}`} />
                 </div>
-                {allBlockchainsLogos.length ? <TokensList logos={allBlockchainsLogos || []} /> : null}
+                {allBlockchainsLogos.length && <TokensList logos={allBlockchainsLogos || []} />}
             </div>
         </TileContainer>
     )

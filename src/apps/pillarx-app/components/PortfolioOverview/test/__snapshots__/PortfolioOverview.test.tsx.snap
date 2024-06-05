@@ -224,6 +224,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
         </p>
       </div>
     </div>
+    0
   </div>
 </div>
 `;

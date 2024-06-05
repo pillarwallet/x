@@ -47,10 +47,10 @@ const TokensList = ({ logos }: TokensListProps) => {
             {logos.slice(0, numberLogos).map((logo, index) =>
                 <img key={index} src={logo} className='w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]' />
             )}
-            {numberHiddenLogos > 0 ?
+            {numberHiddenLogos > 0 &&
             <div className='flex bg-[#312F3A] min-w-fit rounded-md p-2 mobile:p-1.5 items-center'>
                 <Body className='mobile:text-xs'>+ {numberHiddenLogos}</Body>
-            </div> : null}
+            </div>}
     </div>
 
     )
