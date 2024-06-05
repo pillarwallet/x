@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TrendingTokens /> displays loading skeleton when data is loading 1`] = `
+.c0 {
+  height: 24px;
+  width: 140px;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.c1 {
+  height: 120px;
+  width: 80px;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 10px;
+  margin-bottom: 0;
+}
+
+<div
+  className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+>
+  <div
+    className="c0"
+  />
+  <div
+    className="flex justify-between gap-2"
+  >
+    <div
+      className="c1"
+    />
+    <div
+      className="c1"
+    />
+    <div
+      className="c1"
+    />
+    <div
+      className="c1 tablet:hidden"
+    />
+    <div
+      className="c1 tablet:hidden"
+    />
+    <div
+      className="c1 tablet:hidden"
+    />
+    <div
+      className="c1 mobile:hidden"
+    />
+    <div
+      className="c1 mobile:hidden"
+    />
+  </div>
+</div>
+`;
+
+exports[`<TrendingTokens /> renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+  >
+    <p
+      className="text-base font-medium text-purple_light mb-2.5"
+    >
+      Trending tokens
+    </p>
+    <div
+      className="flex justify-between"
+    >
+      <div
+        className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+      >
+        <img
+          className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
+          src="https://www.logo.com/example/"
+        />
+        <p
+          className="text-base font-medium text-center"
+        >
+          The best token
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

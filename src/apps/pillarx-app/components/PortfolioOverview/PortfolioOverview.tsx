@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 // types
-import { ApiData } from '../../../../types/api'
+import { WalletPortfolioData } from '../../../../types/api'
 
 // images
 import DefaultLogo from '../../images/logo-unknown.png'
@@ -21,7 +21,7 @@ import { getAllUniqueBlockchains } from '../../utils/blockchain'
 
 
 type PortfolioOverviewProps = {
-    data: ApiData | undefined;
+    data: WalletPortfolioData | undefined;
     isDataLoading: boolean;
 }
 
@@ -30,13 +30,13 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const { assets = [], total_pnl_history = {}, total_wallet_balance = 0 } = data || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
 
-    const numberOfTokens = assets.length;
+    const numberOfTokens = assets.length ?? 0;
     
     const allBlockchains = assets.map((asset) => asset.asset.blockchains).flat();
 
     const allBlockchainsLogos = assets.map((asset) => asset.asset.logo ? asset.asset.logo : DefaultLogo).flat();
 
-    const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length;
+    const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length ?? 0;
 
     const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
     
@@ -68,7 +68,7 @@ if (!data || isDataLoading) {
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
                     <Body className='text-purple_light mb-2'>{t`Total balance`}</Body>
                     <div className='flex gap-4 items-end'>
-                        <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2)}</H1>
+                        <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2) ?? 0}</H1>
                         <TokensPercentage percentage={percentageChange} />
                     </div>
 
@@ -79,7 +79,7 @@ if (!data || isDataLoading) {
                     <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`Tokens`}`} />
                     <Tags icon={RoutingIcon} tagText={`${t`across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`chains` : t`chain`}`} />
                 </div>
-                {allBlockchainsLogos.length ? <TokensList logos={allBlockchainsLogos || []} /> : null}
+                {allBlockchainsLogos.length && <TokensList logos={allBlockchainsLogos || []} />}
             </div>
         </TileContainer>
     )
