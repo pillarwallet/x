@@ -27,9 +27,13 @@ export const loadApp = (appId: string) => {
 
 export const loadApps = (allowedApps: string[]) => {
   // eslint-disable-next-line no-console
-  console.log('allowedApps', allowedApps);
   const loadedApps: Record<string, AppManifest> = {};
 
+  /**
+   * Cycle through the allowedApps array and load the app manifest for each app
+   * This used to be a .reduce function but we may need to do more complicated
+   * work here in the future so we're using a for loop here.
+   */
   for (let index = 0; index < allowedApps.length; index++) {
     const appIdentifier = allowedApps[index];
     
@@ -43,21 +47,20 @@ export const loadApps = (allowedApps: string[]) => {
     }
   }
 
-  return loadedApps;
+  /**
+   * Finally, did we have a REACT_APP_PX_DEVELOPMENT_ID environment variable set?
+   * Attempt to load this also.
+   */
+  if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
+    const developmentApp = loadApp(process.env.REACT_APP_PX_DEVELOPMENT_ID);
 
-  // return allowedApps.reduce(
-  //   (apps: Record<string, AppManifest | null>, appId: string) => {
-  //     // const loadedApp = loadApp(appId);
-  //       apps[appId] = loadApp(appId);
-  //       return apps;
-      
-  //     // if (loadedApp) {
-  //     //   apps[appId] = loadedApp;
-  //     //   return apps;
-  //     // } else {
-  //     //   return apps;
-  //     // }
-  //   },
-  //   {}
-  // );
+    // Did we load it okay?
+    if (developmentApp) {
+      // Add to the loadedApps record
+      loadedApps[process.env.REACT_APP_PX_DEVELOPMENT_ID] = developmentApp;
+    }
+  }
+
+  // Return the final list of apps
+  return loadedApps;
 };
