@@ -1,9 +1,7 @@
-
-export const App = () => {
+const App = () => {
   return (
-    <p> PillarX Default App</p>
+    <p>PillarX Default App</p>
   )
 }
-
 
 export default App;
