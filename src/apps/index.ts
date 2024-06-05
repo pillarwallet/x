@@ -26,7 +26,6 @@ export const loadApp = (appId: string) => {
 };
 
 export const loadApps = (allowedApps: string[]) => {
-  // eslint-disable-next-line no-console
   const loadedApps: Record<string, AppManifest> = {};
 
   /**
