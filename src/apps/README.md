@@ -24,14 +24,32 @@ Note: We have also included several example apps in the `src/apps` folder to hel
 
 ⚠️ Note: You will see the landing page first when you launch PillarX using `npm run start` at the root (`/`) route. To log in, navigate to `/login`. The root (`/`) route will now show the PillarX app. We're hiding the ability to log in from the public at this time.
 
-4. Create a new folder in `src/apps/` with the identifier of your app, e.g. `src/apps/{your-app-identifier}`, (identifier requirements: lowercase letters, kebab case).
+4. Create a new folder in `src/apps/` with the identifier of your app as the folder name, e.g. `src/apps/your-app-identifier`, (identifier requirements: lowercase letters, kebab case). Examples of your identifier could be your brand or project name.
 
-⚠️ Note: That at this point, please let us know what your app identifier is so we can add this to our apps API. This is a method of control to stop abuse of the PillarX ecosystem and will be more automated in the near future. Once we have added this to our Apps API - your app will become visible in PillarX. Contact us via [Discord](https://discord.gg/6MKAy7gv4P) or [Telegram](https://t.me/pillarxdevelopers).
+5. Modify the `REACT_APP_PX_DEVELOPMENT_ID` property in your `.env` file to match your app identifier i.e. `your-app-identifier`. You may need to run `npm run start` again for the changes in the `.env` file to be picked up.
 
-5. Create App file `src/apps/{your-app-identifier}/index.{js|ts|tsx}` and add default export with your App React component.
+```bash
+REACT_APP_PX_DEVELOPMENT_ID="your-app-identifier"
+```
 
-6. Create app manifest file based on `src/apps/manifest.json.example` and add it to your App `src/apps/{your-app-identifier}` folder root as `manifest.json`.
+6. Create a file: `src/apps/{your-app-identifier}/index.{js|ts|tsx}` and add a default export called `App` within your React component. You can check the example app to see how it's done.
 
-7. Create icon file (requirements: 512x512px, PNG format) and add it to your App `src/apps/{your-app-identifier}` folder root as `icon.png`. [IconKitchen](https://icon.kitchen) is a great, free tool to use.
+```jsx
+const App = () => {
+  return (
+    <p>Hello app!</p>
+  )
+}
 
-8. Submit Pull Request to `staging` branch.
+export default App;
+```
+
+7. Create app manifest file based on `src/apps/manifest.json.example` and add it to your App `src/apps/{your-app-identifier}` folder root as just `manifest.json`.
+
+8. Create icon file (requirements: 512px x 512px, PNG format) and add it to your App `src/apps/{your-app-identifier}` folder root as `icon.png`. [IconKitchen](https://icon.kitchen) is a great, free tool to use.
+
+9. Submit a Pull Request to `staging` branch.
+
+
+## Need support or need to contact us?
+Contact us via [Discord](https://discord.gg/6MKAy7gv4P) or [Telegram](https://t.me/pillarxdevelopers).
