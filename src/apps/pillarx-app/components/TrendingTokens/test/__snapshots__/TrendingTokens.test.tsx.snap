@@ -79,34 +79,6 @@ exports[`<TrendingTokens /> renders correctly and matches snapshot 1`] = `
         >
           The best token
         </p>
-        <p
-          className="text-sm font-medium text-center"
-        >
-          $
-          160.1235
-        </p>
-        <div
-          className="flex gap-1 items-center"
-        >
-          <img
-            className="w-[10px] h[9px]"
-            src={
-              {
-                "ReactComponent": {
-                  "$$typeof": Symbol(react.forward_ref),
-                  "render": [Function],
-                },
-                "default": "triangle-up-green.svg",
-              }
-            }
-          />
-          <p
-            className="text-sm font-medium text-percentage_green"
-          >
-            7.84
-            %
-          </p>
-        </div>
       </div>
     </div>
   </div>

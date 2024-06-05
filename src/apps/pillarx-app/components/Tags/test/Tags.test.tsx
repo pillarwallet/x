@@ -24,6 +24,14 @@ describe('<Tags />', () => {
       expect(iconProp.type).toBe('img');
       expect(iconProp.props.src).toBe(icon);
     });
+
+    it('does not render the icon', () => {
+      const tree = renderer.create(<Tags tagText={tagText} />).toJSON() as ReactTestRendererJSON;
+      const iconProp = (tree.children?.find(child => 
+        typeof child === 'object' && child.type === 'img') as ReactTestRendererJSON) || null;
+  
+      expect(iconProp).toBeNull();
+    });
   
     it('renders the tag text correctly', () => {
       const tree = renderer.create(<Tags icon={icon} tagText={tagText} />).toJSON() as ReactTestRendererJSON;
@@ -33,6 +41,14 @@ describe('<Tags />', () => {
       expect(textProp).not.toBeNull();
       expect(textProp.type).toBe('p');
       expect(textProp.children).toContain(tagText);
+    });
+
+    it('does not render the tag text', () => {
+      const tree = renderer.create(<Tags icon={icon} />).toJSON() as ReactTestRendererJSON;
+      const textProp = (tree.children?.find(child => 
+        typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
+  
+      expect(textProp).toBeUndefined();
     });
   
     it('applies the correct style', () => {

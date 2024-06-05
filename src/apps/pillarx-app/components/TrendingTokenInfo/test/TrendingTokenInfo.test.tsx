@@ -1,5 +1,8 @@
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
+// images
+import defaultLogo from '../../../images/logo-unknown.png';
+
 // components
 import TrendingTokenInfo from '../TrendingTokenInfo';
 
@@ -26,6 +29,16 @@ describe('<TrendingTokenInfo />', () => {
       expect(logoProp.type).toBe('img');
       expect(logoProp.props.src).toBe(logo);
     });
+
+    it('renders the default logo when logo is not provided', () => {
+      const tree = renderer.create(<TrendingTokenInfo tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const logoProp = (tree.children?.find(child => 
+        typeof child === 'object' && child.type === 'img') as ReactTestRendererJSON) || null;
+  
+      expect(logoProp).not.toBeNull();
+      expect(logoProp.type).toBe('img');
+      expect(logoProp.props.src).toBe(defaultLogo);
+    });
   
     it('renders the token name correctly', () => {
       const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
@@ -37,6 +50,14 @@ describe('<TrendingTokenInfo />', () => {
       expect(tokenNameProp.children).toContain(tokenName);
     });
 
+    it('does not render the token name', () => {
+      const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tokenNameProp = (tree.children?.find(child => 
+        typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
+
+      expect(tokenNameProp.children).not.toContain(tokenName);
+    });
+
     it('renders the token value correctly', () => {
         const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
         
@@ -46,6 +67,15 @@ describe('<TrendingTokenInfo />', () => {
         expect(tokenValueProp).not.toBeNull();
         expect(tokenValueProp.type).toBe('p');
         expect(tokenValueProp.children).toContain(tokenValue.toFixed(4));
+      });
+
+      it('does not render the token value', () => {
+        const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+        
+        const tokenValueProp = (tree.children?.find(child => 
+          typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
+    
+        expect(tokenValueProp.children).not.toContain(tokenValue.toFixed(4));
       });
   
     it('applies the correct style', () => {

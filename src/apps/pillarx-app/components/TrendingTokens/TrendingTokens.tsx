@@ -49,12 +49,7 @@ const TrendingTokens = ({ data, isDataLoading }: TrendingTokensProps) => {
     const divRef = createRef()
     const dimensions = useRefDimensions(divRef as React.RefObject<HTMLDivElement>)
 
-    const numberTrendingTokens = Math.floor(dimensions.width / trendingTokenWidth);
-
-    const DUMMY_TOKEN_VALUE = 160.12345678;
-
-    const DUMMY_TOKEN_PERCENTAGE = (tokenPriceChange: number) => 
-        (tokenPriceChange / DUMMY_TOKEN_VALUE) * 100;
+    const numberTrendingTokens = Math.floor(dimensions.width / trendingTokenWidth) ?? 0;
 
 
 if (!data || isDataLoading) {
@@ -81,7 +76,7 @@ if (!data || isDataLoading) {
                 <Body className='text-purple_light mb-2.5'>{t`Trending tokens`}</Body>
                 <div className='flex justify-between'>
                 {data?.slice(0, numberTrendingTokens).map((token, index) =>
-                    <TrendingTokenInfo key={index} logo={token.logo} tokenName={token.name} tokenValue={DUMMY_TOKEN_VALUE} percentage={DUMMY_TOKEN_PERCENTAGE(token.price_change_24h)}  />
+                    <TrendingTokenInfo key={index} logo={token.logo} tokenName={token.name} tokenValue={undefined} percentage={undefined}  />
                 )}
                 </div>
             </TileContainer>

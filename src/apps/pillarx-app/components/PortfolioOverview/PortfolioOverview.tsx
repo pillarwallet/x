@@ -30,13 +30,13 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const { assets = [], total_pnl_history = {}, total_wallet_balance = 0 } = data || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
 
-    const numberOfTokens = assets.length;
+    const numberOfTokens = assets.length ?? 0;
     
     const allBlockchains = assets.map((asset) => asset.asset.blockchains).flat();
 
     const allBlockchainsLogos = assets.map((asset) => asset.asset.logo ? asset.asset.logo : DefaultLogo).flat();
 
-    const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length;
+    const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length ?? 0;
 
     const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
     
@@ -68,7 +68,7 @@ if (!data || isDataLoading) {
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
                     <Body className='text-purple_light mb-2'>{t`Total balance`}</Body>
                     <div className='flex gap-4 items-end'>
-                        <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2)}</H1>
+                        <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2) ?? 0}</H1>
                         <TokensPercentage percentage={percentageChange} />
                     </div>
 
