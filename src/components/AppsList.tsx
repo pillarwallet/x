@@ -1,20 +1,20 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { Element as IconApps } from 'iconsax-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 // components
 import AppIcon from './AppIcon';
-import SkeletonLoader from './SkeletonLoader';
 import Label from './Form/Label';
+import SkeletonLoader from './SkeletonLoader';
 
 // types
 import { AppManifest } from '../types';
 
 // hooks
-import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useAllowedApps from '../hooks/useAllowedApps';
+import useBottomMenuModal from '../hooks/useBottomMenuModal';
 
 // utils
 import { loadApps } from '../apps';
