@@ -1,9 +1,9 @@
 import renderer from 'react-test-renderer';
 
 // components
-import TrendingTokens from '../TrendingTokens';
+import TokensHorizontalTile from '../TokensHorizontalTile';
 
-describe('<TrendingTokens />', () => {
+describe('<TokensHorizontalTile />', () => {
     const mockData = [{
         id: 1,
         name: 'The best token',
@@ -28,7 +28,7 @@ describe('<TrendingTokens />', () => {
   
     it('renders correctly and matches snapshot', () => {
         const tree = renderer
-            .create(<TrendingTokens data={mockData} isDataLoading={mockLoading} />)
+            .create(<TokensHorizontalTile data={mockData} isDataLoading={mockLoading} tileTitle='Trending tokens' />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();
@@ -36,7 +36,7 @@ describe('<TrendingTokens />', () => {
 
     it('displays loading skeleton when data is loading', () => {
         const tree = renderer
-            .create(<TrendingTokens data={undefined} isDataLoading={true} />)
+            .create(<TokensHorizontalTile data={undefined} isDataLoading={true} tileTitle='Trending tokens' />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();

@@ -3,14 +3,14 @@ import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 import defaultLogo from '../../images/logo-unknown.png';
 
-type TrendingTokensProps = {
+type TokenInfoHorizontalProps = {
     logo?: string;
     tokenName?: string;
     tokenValue?: number;
     percentage?: number;
 }
 
-const TrendingTokenInfo = ({ logo, tokenName, tokenValue, percentage }: TrendingTokensProps) => {
+const TokenInfoHorizontal = ({ logo, tokenName, tokenValue, percentage }: TokenInfoHorizontalProps) => {
 
     return (
         <div className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5">
@@ -22,4 +22,4 @@ const TrendingTokenInfo = ({ logo, tokenName, tokenValue, percentage }: Trending
     );
 }
 
-export default TrendingTokenInfo;
+export default TokenInfoHorizontal;

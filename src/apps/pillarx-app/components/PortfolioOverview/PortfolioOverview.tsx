@@ -14,7 +14,7 @@ import TileContainer from '../TileContainer/TileContainer'
 import Body from '../Typography/Body'
 import H1 from '../Typography/H1'
 import WalletAddressOverview from '../WalletAdddressOverview/WalletAddressOverview'
-import TokensList from '../TokensList/TokensList'
+import TokensHorizontalList from '../TokensHorizontalList/TokensHorizontalList'
 import TokensPercentage from '../TokensPercentage/TokensPercentage'
 import SkeletonLoader from '../../../../components/SkeletonLoader'
 import { getAllUniqueBlockchains } from '../../utils/blockchain'
@@ -27,7 +27,7 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const [t] = useTranslation();
-    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0 } = data || {};
+    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0, wallet = '' } = data || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
 
     const numberOfTokens = assets.length ?? 0;
@@ -64,11 +64,11 @@ if (!data || isDataLoading) {
     return (
         <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
             <div className='flex flex-col justify-between'>
-                <WalletAddressOverview address={data?.wallet || ''} className='mobile:hidden mb-[54px]' />
+                <WalletAddressOverview address={wallet} className='mobile:hidden mb-[54px]' />
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
                     <Body className='text-purple_light mb-2'>{t`title.totalBalance`}</Body>
                     <div className='flex gap-4 items-end'>
-                        <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2) ?? 0}</H1>
+                        <H1 className='text-[50px]'>${total_wallet_balance.toFixed(2)}</H1>
                         <TokensPercentage percentage={percentageChange} />
                     </div>
 
@@ -79,7 +79,7 @@ if (!data || isDataLoading) {
                     <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`label.tokens`}`} />
                     <Tags icon={RoutingIcon} tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`} />
                 </div>
-                {allBlockchainsLogos.length && <TokensList logos={allBlockchainsLogos || []} />}
+                {allBlockchainsLogos.length && <TokensHorizontalList logos={allBlockchainsLogos || []} />}
             </div>
         </TileContainer>
     )

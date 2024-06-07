@@ -63,14 +63,16 @@ export type Asset = {
     total_pnl_history: {
       [key in '24h' | '7d' | '30d' | '1y']?: TotalPnlHistory;
   };
-  
   }
   
-  // TO DO - meta type to change when api ready, layout should be enum
   export type Projection = {
-    meta: unknown;
+    meta: {
+      display: {
+        title: string;
+      }
+    };
     data: WalletPortfolioData | TokenData[];
-    layout: string;
+    layout: ApiLayout;
     id: string;
   }
   

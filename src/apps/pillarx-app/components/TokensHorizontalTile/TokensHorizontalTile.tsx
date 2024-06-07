@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { createRef, useEffect, useState } from 'react';
 
 // types
@@ -7,50 +6,47 @@ import { TokenData } from '../../../../types/api'
 // hooks
 import useRefDimensions from '../../hooks/useRefDimensions';
 
-// images
-
 // components
 import TileContainer from '../TileContainer/TileContainer'
 import Body from '../Typography/Body';
-import TrendingTokenInfo from '../TrendingTokenInfo/TrendingTokenInfo';
+import TokenInfoHorizontal from '../TokenInfoHorizontal/TokenInfoHorizontal';
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 
 
-type TrendingTokensProps = {
+
+type TokensHorizontalTileProps = {
     data: TokenData[] | undefined;
     isDataLoading: boolean;
+    tileTitle: string;
 }
 
-const TrendingTokens = ({ data, isDataLoading }: TrendingTokensProps) => {
-    const [t] = useTranslation();
-
-    const [trendingTokenWidth, setTrendingTokenWidth] = useState<number>(0);
+const TokensHorizontalTile = ({ data, isDataLoading, tileTitle }: TokensHorizontalTileProps) => {
+    const [tokenHorizontalWidth, setTokenHorizontalWidth] = useState<number>(0);
 
     useEffect(() => {
-        const handleTrendingTokenWidthResize = () => {
+        const handleTokenHorizontalWidthResize = () => {
             if (window.innerWidth >= 1024) {
-                setTrendingTokenWidth(159);
+                setTokenHorizontalWidth(159);
             } else if (window.innerWidth >= 800) {
-                setTrendingTokenWidth(152);
+                setTokenHorizontalWidth(152);
             } else {
-                // 102px for width of the TrendingTokenInfo component 100px + 2px of space
-                setTrendingTokenWidth(102);
+                // 102px for width of the TokenInfoHorizontal component 100px + 2px of space
+                setTokenHorizontalWidth(102);
             }
         };
 
-        handleTrendingTokenWidthResize();
-        window.addEventListener('resize', handleTrendingTokenWidthResize);
+        handleTokenHorizontalWidthResize();
+        window.addEventListener('resize', handleTokenHorizontalWidthResize);
 
         return () => {
-            window.removeEventListener('resize', handleTrendingTokenWidthResize);
+            window.removeEventListener('resize', handleTokenHorizontalWidthResize);
         };
     }, []);
     
     const divRef = createRef()
     const dimensions = useRefDimensions(divRef as React.RefObject<HTMLDivElement>)
 
-    const numberTrendingTokens = Math.floor(dimensions.width / trendingTokenWidth) ?? 0;
-
+    const numberTokensHorizontal = Math.floor(dimensions.width / tokenHorizontalWidth) ?? 0;
 
 if (!data || isDataLoading) {
     return (
@@ -73,10 +69,10 @@ if (!data || isDataLoading) {
     return (
         <div ref={divRef as React.RefObject<HTMLDivElement>}>
             <TileContainer className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
-                <Body className='text-purple_light mb-2.5'>{t`title.trendingTokens`}</Body>
+                <Body className='text-purple_light mb-2.5'>{tileTitle}</Body>
                 <div className='flex justify-between'>
-                {data?.slice(0, numberTrendingTokens).map((token, index) =>
-                    <TrendingTokenInfo key={index} logo={token.logo} tokenName={token.name} tokenValue={undefined} percentage={undefined}  />
+                {data?.slice(0, numberTokensHorizontal).map((token, index) =>
+                    <TokenInfoHorizontal key={index} logo={token.logo} tokenName={token.name} tokenValue={undefined} percentage={undefined}  />
                 )}
                 </div>
             </TileContainer>
@@ -84,4 +80,4 @@ if (!data || isDataLoading) {
     )
 }
 
-export default TrendingTokens;
+export default TokensHorizontalTile;

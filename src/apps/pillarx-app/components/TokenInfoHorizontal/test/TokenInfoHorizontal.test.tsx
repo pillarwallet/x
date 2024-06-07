@@ -4,9 +4,9 @@ import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 import defaultLogo from '../../../images/logo-unknown.png';
 
 // components
-import TrendingTokenInfo from '../TrendingTokenInfo';
+import TokenInfoHorizontal from '../TokenInfoHorizontal';
 
-describe('<TrendingTokenInfo />', () => {
+describe('<TokenInfoHorizontal />', () => {
     const logo = 'https://example.com/logo.png';
     const tokenName = 'Token Name';
     const tokenValue = 1000;
@@ -14,14 +14,14 @@ describe('<TrendingTokenInfo />', () => {
   
     it('renders correctly and matches snapshot', () => {
       const tree = renderer
-        .create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />)
+        .create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />)
         .toJSON();
   
       expect(tree).toMatchSnapshot();
     });
   
     it('renders the logo with the correct src', () => {
-      const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
       const logoProp = (tree.children?.find(child => 
         typeof child === 'object' && child.type === 'img') as ReactTestRendererJSON) || null;
   
@@ -31,7 +31,7 @@ describe('<TrendingTokenInfo />', () => {
     });
 
     it('renders the default logo when logo is not provided', () => {
-      const tree = renderer.create(<TrendingTokenInfo tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tree = renderer.create(<TokenInfoHorizontal tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
       const logoProp = (tree.children?.find(child => 
         typeof child === 'object' && child.type === 'img') as ReactTestRendererJSON) || null;
   
@@ -41,7 +41,7 @@ describe('<TrendingTokenInfo />', () => {
     });
   
     it('renders the token name correctly', () => {
-      const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
       const tokenNameProp = (tree.children?.find(child => 
         typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
   
@@ -51,7 +51,7 @@ describe('<TrendingTokenInfo />', () => {
     });
 
     it('does not render the token name', () => {
-      const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
       const tokenNameProp = (tree.children?.find(child => 
         typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
 
@@ -59,7 +59,7 @@ describe('<TrendingTokenInfo />', () => {
     });
 
     it('renders the token value correctly', () => {
-        const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+        const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
         
         const tokenValueProp = (tree.children?.filter(child => 
           typeof child === 'object' && child.type === 'p')[1] as ReactTestRendererJSON);
@@ -70,7 +70,7 @@ describe('<TrendingTokenInfo />', () => {
       });
 
       it('does not render the token value', () => {
-        const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+        const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
         
         const tokenValueProp = (tree.children?.find(child => 
           typeof child === 'object' && child.type === 'p') as ReactTestRendererJSON);
@@ -79,7 +79,7 @@ describe('<TrendingTokenInfo />', () => {
       });
   
     it('applies the correct style', () => {
-      const tree = renderer.create(<TrendingTokenInfo logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
+      const tree = renderer.create(<TokenInfoHorizontal logo={logo} tokenName={tokenName} tokenValue={tokenValue} percentage={percentage} />).toJSON() as ReactTestRendererJSON;
       expect(tree.type).toBe('div');
       expect(tree.props.className).toContain('flex');
       expect(tree.props.className).toContain('flex-col');

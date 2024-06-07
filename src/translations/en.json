@@ -7,10 +7,7 @@
     "account": "Account",
     "batches": "Batches",
     "assets": "Assets",
-    "totalBalance": "Total balance",
-    "trendingTokens": "Trending tokens",
-    "topClimbers": "Top climbers",
-    "topLosers": "Top losers"
+    "totalBalance": "Total balance"
   },
   "content": {
     "welcomeToPillarX": "Welcome to PillarX",

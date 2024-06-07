@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<ClimbersLosersTokens /> displays loading skeleton when data is loading 1`] = `
+exports[`<TokensVerticalTile /> displays loading skeleton when data is loading 1`] = `
 .c0 {
   height: 24px;
   width: 120px;
@@ -63,7 +63,7 @@ exports[`<ClimbersLosersTokens /> displays loading skeleton when data is loading
 </div>
 `;
 
-exports[`<ClimbersLosersTokens /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col"
 >
@@ -73,7 +73,7 @@ exports[`<ClimbersLosersTokens /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-purple_light"
     >
-      title.topClimbers
+      Top climbers
     </p>
     <div
       className="flex flex-col"
@@ -156,7 +156,7 @@ exports[`<ClimbersLosersTokens /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-purple_light"
     >
-      title.topLosers
+      Top losers
     </p>
     <div
       className="flex flex-col"
@@ -232,6 +232,27 @@ exports[`<ClimbersLosersTokens /> renders correctly and matches snapshot 1`] = `
         />
       </div>
     </div>
+  </div>
+</div>
+`;
+
+exports[`<TokensVerticalTile /> renders correctly with empty data array 1`] = `
+<div
+  className="flex bg-container_grey rounded-2xl px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col"
+>
+  <div
+    className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
+  >
+    <div
+      className="flex flex-col"
+    />
+  </div>
+  <div
+    className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
+  >
+    <div
+      className="flex flex-col"
+    />
   </div>
 </div>
 `;
