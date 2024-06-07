@@ -1,3 +1,9 @@
+export enum ApiLayout {
+  OVERVIEW = 'OVERVIEW',
+  TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
+  TOKENS_VERTICAL = 'TOKENS_VERTICAL'
+}
+
 export type Asset = {
     name: string;
     symbol: string;
@@ -63,7 +69,7 @@ export type Asset = {
   // TO DO - meta type to change when api ready, layout should be enum
   export type Projection = {
     meta: unknown;
-    data: WalletPortfolioData | TrendingTokenData[];
+    data: WalletPortfolioData | TokenData[];
     layout: string;
     id: string;
   }
@@ -84,7 +90,7 @@ export type Asset = {
     weight: number;
   }
   
-  export type TrendingTokenData = {
+  export type TokenData = {
     id: number;
     name: string;
     symbol: string;

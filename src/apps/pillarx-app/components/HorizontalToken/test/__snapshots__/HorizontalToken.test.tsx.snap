@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HorizontalToken /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex w-full justify-between py-5 border-b border-[#1F1D23] mobile:border-[#27262F]"
+>
+  <div
+    className="flex items-center"
+  >
+    <BodySmall
+      className="text-purple_light mr-[18px]"
+    >
+      0
+      1
+    </BodySmall>
+    <img
+      className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+      src="https://example.com/logo.png"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <Body>
+        TNS
+      </Body>
+      <BodySmall
+        className="text-purple_light"
+      >
+        Token Name
+      </BodySmall>
+    </div>
+  </div>
+  <div
+    className="flex flex-col items-center"
+  >
+    <Body>
+      $
+      123.4567
+    </Body>
+    <TokensPercentage
+      percentage={12.34}
+    />
+  </div>
+</div>
+`;

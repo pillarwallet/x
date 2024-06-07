@@ -66,7 +66,7 @@ if (!data || isDataLoading) {
             <div className='flex flex-col justify-between'>
                 <WalletAddressOverview address={data?.wallet || ''} className='mobile:hidden mb-[54px]' />
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
-                    <Body className='text-purple_light mb-2'>{t`Total balance`}</Body>
+                    <Body className='text-purple_light mb-2'>{t`title.totalBalance`}</Body>
                     <div className='flex gap-4 items-end'>
                         <H1 className='text-[50px]'>${data?.total_wallet_balance.toFixed(2) ?? 0}</H1>
                         <TokensPercentage percentage={percentageChange} />
@@ -76,8 +76,8 @@ if (!data || isDataLoading) {
             </div>
             <div className='flex w-full flex-col items-end justify-end mobile:justify-normal gap-5'>
                 <div className='flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between'>
-                    <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`Tokens`}`} />
-                    <Tags icon={RoutingIcon} tagText={`${t`across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`chains` : t`chain`}`} />
+                    <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`label.tokens`}`} />
+                    <Tags icon={RoutingIcon} tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`} />
                 </div>
                 {allBlockchainsLogos.length && <TokensList logos={allBlockchainsLogos || []} />}
             </div>

@@ -62,7 +62,7 @@ exports[`<TrendingTokens /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-purple_light mb-2.5"
     >
-      Trending tokens
+      title.trendingTokens
     </p>
     <div
       className="flex justify-between"

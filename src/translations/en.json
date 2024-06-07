@@ -6,10 +6,15 @@
     "history": "History",
     "account": "Account",
     "batches": "Batches",
-    "assets": "Assets"
+    "assets": "Assets",
+    "totalBalance": "Total balance",
+    "trendingTokens": "Trending tokens",
+    "topClimbers": "Top climbers",
+    "topLosers": "Top losers"
   },
   "content": {
-    "welcomeToPillarX": "Welcome to PillarX"
+    "welcomeToPillarX": "Welcome to PillarX",
+    "welcomeBack": "Welcome back"
   },
   "menuAction": {
     "send": "Send",
@@ -75,7 +80,10 @@
     "transactionWillBeExecutedByApp": "Transaction will be executed by the app.",
     "unknownNetwork": "Unknown network ID {{chainId}}",
     "items_one": "{{count}} item",
-    "items_other": "{{count}} items"
+    "items_other": "{{count}} items",
+    "chainOne": "chain",
+    "chainSeveral": "chains",
+    "across": "across"
   },
   "status": {
     "completed": "Completed",
