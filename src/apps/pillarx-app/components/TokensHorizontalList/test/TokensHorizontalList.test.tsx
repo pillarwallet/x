@@ -1,14 +1,14 @@
 import renderer from 'react-test-renderer';
 
 // components
-import TokensList from '../TokensList';
+import TokensHorizontalList from '../TokensHorizontalList';
 
-describe('<TokensList />', () => {
+describe('<TokensHorizontalList />', () => {
     const logos = ['logo1', 'logo2', 'logo3', 'logo4'];
   
     it('renders correctly and matches snapshot', () => {
         const tree = renderer
-            .create(<TokensList logos={logos} />)
+            .create(<TokensHorizontalList logos={logos} />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();

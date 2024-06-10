@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TokensList /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensHorizontalList /> renders correctly and matches snapshot 1`] = `
 <div
   className="w-full h-fit flex justify-end"
 >

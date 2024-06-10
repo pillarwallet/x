@@ -1,33 +1,39 @@
 import styled from 'styled-components';
-import { useGetTilesInfoQuery } from './api/apiSlice';
 import { useTranslation } from 'react-i18next';
 
-// types
-import { WalletPortfolioData, TrendingTokenData } from '../../types/api';
+// hooks
+import { useApiData } from './hooks/useApiData';
 
 // components
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
 import H1 from './components/Typography/H1';
 import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
-import TrendingTokens from './components/TrendingTokens/TrendingTokens';
+import TokensHorizontalTile from './components/TokensHorizontalTile/TokensHorizontalTile';
+import TokensVerticalTile from './components/TokensVerticalTile/TokensVerticalTile';
 
 export const App = () => {
   const [t] = useTranslation();
 
-  const { data, isLoading } = useGetTilesInfoQuery('');
-
-  const dataPortlioOverview = isLoading ? undefined : data?.projection[0].data as WalletPortfolioData;
-
-  const { wallet } = dataPortlioOverview || {};
+  const {
+    isLoading,
+    dataPortlioOverview,
+    dataTokensHorizontal,
+    dataTokensVerticalLeft,
+    dataTokensVerticalRight,
+    titleTokensHorizontal,
+    titledataTokensVerticalLeft,
+    titledataTokensVerticalRight,
+  } = useApiData();
 
   return (
     <Wrapper>
       <PillarXLogo src={pillarLogoLight} className='h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
-      <H1 className='py-2.5 px-4 mobile:px-0'>{t`Welcome back`} {wallet?.substring(0, 6)}...{wallet?.substring(wallet.length - 5)}</H1>
+      <H1 className='py-2.5 px-4 mobile:px-0'>{t`content.welcomeBack`} {dataPortlioOverview?.wallet.substring(0, 6)}...{dataPortlioOverview?.wallet.substring(dataPortlioOverview?.wallet.length - 5)}</H1>
         <div className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
-          <PortfolioOverview data={isLoading ? undefined : data?.projection[0].data as WalletPortfolioData} isDataLoading={isLoading} />
-          <TrendingTokens data={isLoading ? undefined : data?.projection[1].data as TrendingTokenData[]} isDataLoading={isLoading}/>
+          <PortfolioOverview data={dataPortlioOverview} isDataLoading={isLoading} />
+          <TokensHorizontalTile data={dataTokensHorizontal} isDataLoading={isLoading} tileTitle={titleTokensHorizontal || ''}/>
+          <TokensVerticalTile dataLeft={dataTokensVerticalLeft} dataRight={dataTokensVerticalRight} titleLeft={titledataTokensVerticalLeft || ''} titleRight={titledataTokensVerticalRight || ''} isDataLoading={isLoading}/>
         </div>
     </Wrapper>
   )

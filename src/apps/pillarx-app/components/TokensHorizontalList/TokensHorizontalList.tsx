@@ -6,11 +6,11 @@ import Body from '../Typography/Body';
 // hooks
 import useRefDimensions from '../../hooks/useRefDimensions';
 
-type TokensListProps = {
+type TokensHorizontalListProps = {
     logos: string[];
 }
 
-const TokensList = ({ logos }: TokensListProps) => {
+const TokensHorizontalList = ({ logos }: TokensHorizontalListProps) => {
     const [logosWidth, setLogosWidth] = useState<number>(0);
 
     useEffect(() => {
@@ -56,4 +56,4 @@ const TokensList = ({ logos }: TokensListProps) => {
     )
 };
 
-export default TokensList;
+export default TokensHorizontalList;

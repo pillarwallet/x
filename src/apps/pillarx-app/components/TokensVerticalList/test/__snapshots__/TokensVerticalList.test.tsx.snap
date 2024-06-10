@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokensVerticalList /> renders correctly and matches snapshot for left position 1`] = `
+<div
+  className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
+>
+  <Body
+    className="text-purple_light"
+  >
+    tile left
+  </Body>
+  <div
+    className="flex flex-col"
+  >
+    <HorizontalToken
+      tokenIndex={1}
+      tokenName="Token A"
+      tokenSymbol="TKA"
+    />
+    <HorizontalToken
+      tokenIndex={2}
+      tokenName="Token B"
+      tokenSymbol="TKB"
+    />
+  </div>
+</div>
+`;
+
+exports[`<TokensVerticalList /> renders correctly and matches snapshot for right position 1`] = `
+<div
+  className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
+>
+  <Body
+    className="text-purple_light"
+  >
+    title right
+  </Body>
+  <div
+    className="flex flex-col"
+  >
+    <HorizontalToken
+      tokenIndex={1}
+      tokenName="Token A"
+      tokenSymbol="TKA"
+    />
+    <HorizontalToken
+      tokenIndex={2}
+      tokenName="Token B"
+      tokenSymbol="TKB"
+    />
+  </div>
+</div>
+`;

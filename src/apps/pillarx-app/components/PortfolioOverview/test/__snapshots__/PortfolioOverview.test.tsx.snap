@@ -141,7 +141,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       <p
         className="text-base font-medium text-purple_light mb-2"
       >
-        Total balance
+        title.totalBalance
       </p>
       <div
         className="flex gap-4 items-end"
@@ -200,7 +200,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-base font-medium undefined"
         >
-          0 Tokens
+          0 label.tokens
         </p>
       </div>
       <div
@@ -220,7 +220,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-base font-medium undefined"
         >
-          across 0 chain
+          helper.across 0 helper.chainOne
         </p>
       </div>
     </div>
