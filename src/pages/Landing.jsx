@@ -1037,7 +1037,7 @@ export default function LandingPage() {
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
                 <p>Building dApps? Join the PillarX Testing Campaign</p>
-                <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
+                <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
               </div>
             </div>
           </div>
@@ -1157,7 +1157,7 @@ export default function LandingPage() {
                   <p>This is your chance to spotlight your project, engage with 100k+ Pillar community members, and be part of the journey towards a more trustless future leveraging Account Abstraction.</p>
                 </div>
                 <div className='home_build__content__right'>
-                  <h2>Fill out <a href='https://forms.gle/Eba5xTHGNXe4dGyAA' target='_blank' rel='noreferrer' className='plausible-event-name=Testing+Form'>the form</a> to join our groundbreaking testing campaign.</h2>
+                  <h2>Fill out <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='plausible-event-name=Testing+Form'>the form</a> to join our groundbreaking testing campaign.</h2>
                 </div>
               </div>
               <div className='home_build__logo'>
