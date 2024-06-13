@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TrendingTokenInfo /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenInfoHorizontal /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
 >

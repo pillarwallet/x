@@ -1,3 +1,9 @@
+export enum ApiLayout {
+  OVERVIEW = 'OVERVIEW',
+  TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
+  TOKENS_VERTICAL = 'TOKENS_VERTICAL'
+}
+
 export type Asset = {
     name: string;
     symbol: string;
@@ -57,14 +63,16 @@ export type Asset = {
     total_pnl_history: {
       [key in '24h' | '7d' | '30d' | '1y']?: TotalPnlHistory;
   };
-  
   }
   
-  // TO DO - meta type to change when api ready, layout should be enum
   export type Projection = {
-    meta: unknown;
-    data: WalletPortfolioData | TrendingTokenData[];
-    layout: string;
+    meta: {
+      display: {
+        title: string;
+      }
+    };
+    data: WalletPortfolioData | TokenData[];
+    layout: ApiLayout;
     id: string;
   }
   
@@ -84,7 +92,7 @@ export type Asset = {
     weight: number;
   }
   
-  export type TrendingTokenData = {
+  export type TokenData = {
     id: number;
     name: string;
     symbol: string;

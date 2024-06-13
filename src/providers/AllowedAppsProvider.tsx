@@ -11,7 +11,7 @@ export interface AllowedAppsContext {
 export const AllowedAppsContext = createContext<AllowedAppsContext | null>(null);
 
 interface ApiAllowedApp {
-  id: string;
+  appId: string;
 }
 
 const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -24,8 +24,11 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     (async () => {
       try {
         const { data } = await axios.get(process.env.REACT_APP_PILLARX_APPS_SERVICE_HOST as string);
-        if (expired || !data?.apps?.length) return;
-        setAllowed(data.apps.map((app: ApiAllowedApp) => app.id));
+        if (expired || !data?.length) {
+          setIsLoading(false);
+          return;
+        }
+        setAllowed(data?.map((app: ApiAllowedApp) => app.appId));
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
       }

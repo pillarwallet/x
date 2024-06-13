@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TrendingTokens /> displays loading skeleton when data is loading 1`] = `
+exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading 1`] = `
 .c0 {
   height: 24px;
   width: 140px;
@@ -54,7 +54,7 @@ exports[`<TrendingTokens /> displays loading skeleton when data is loading 1`] =
 </div>
 `;
 
-exports[`<TrendingTokens /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
 <div>
   <div
     className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
@@ -62,7 +62,7 @@ exports[`<TrendingTokens /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-purple_light mb-2.5"
     >
-      Trending tokens
+      horzizontal title
     </p>
     <div
       className="flex justify-between"

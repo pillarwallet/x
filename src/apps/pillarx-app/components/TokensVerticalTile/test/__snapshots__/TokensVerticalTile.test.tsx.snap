@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+>
+  <p
+    className="text-base font-medium text-purple_light"
+  >
+    vertical
+  </p>
+  <div
+    className="flex mobile:flex-col"
+  >
+    <div
+      className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
+    >
+      <div
+        className="flex w-full justify-between py-5 border-b border-[#1F1D23] mobile:border-[#27262F] false"
+      >
+        <div
+          className="flex items-center"
+        >
+          <p
+            className="text-sm font-medium text-purple_light mr-[18px]"
+          >
+            0
+            1
+          </p>
+          <img
+            className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+            src="logo-unknown.png"
+          />
+          <div
+            className="flex flex-col"
+          >
+            <p
+              className="text-base font-medium undefined"
+            >
+              TKA
+            </p>
+            <p
+              className="text-sm font-medium text-purple_light"
+            >
+              Token A
+            </p>
+          </div>
+        </div>
+        <div
+          className="flex flex-col items-center"
+        />
+      </div>
+      <div
+        className="flex w-full justify-between py-5 false false"
+      >
+        <div
+          className="flex items-center"
+        >
+          <p
+            className="text-sm font-medium text-purple_light mr-[18px]"
+          >
+            0
+            2
+          </p>
+          <img
+            className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+            src="logo-unknown.png"
+          />
+          <div
+            className="flex flex-col"
+          >
+            <p
+              className="text-base font-medium undefined"
+            >
+              TKB
+            </p>
+            <p
+              className="text-sm font-medium text-purple_light"
+            >
+              Token B
+            </p>
+          </div>
+        </div>
+        <div
+          className="flex flex-col items-center"
+        />
+      </div>
+    </div>
+    <div
+      className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
+    />
+  </div>
+</div>
+`;

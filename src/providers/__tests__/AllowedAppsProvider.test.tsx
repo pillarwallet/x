@@ -10,9 +10,9 @@ import useAllowedApps from '../../hooks/useAllowedApps';
 
 describe('AllowedAppsProvider', () => {
   const allowedAppsMock =  [
-    { id: 'allowed-app-1' },
-    { id: 'allowed-app-2' },
-    { id: 'allowed-app-3' },
+    { appId: 'allowed-app-1' },
+    { appId: 'allowed-app-2' },
+    { appId: 'allowed-app-3' },
   ]
 
   let wrapper: React.FC;
@@ -24,7 +24,7 @@ describe('AllowedAppsProvider', () => {
       </AllowedAppsProvider>
     );
 
-    (axios.get as jest.Mock).mockImplementation(() => Promise.resolve({ data: { apps: allowedAppsMock } }));
+    (axios.get as jest.Mock).mockImplementation(() => Promise.resolve({ data: allowedAppsMock }));
   });
 
   it('initializes with empty list and loading state', () => {
@@ -42,7 +42,7 @@ describe('AllowedAppsProvider', () => {
       expect(result.current.isLoading).toEqual(false);
     });
 
-    expect(result.current.allowed).toEqual(allowedAppsMock.map(app => app.id));
+    expect(result.current.allowed).toEqual(allowedAppsMock.map(app => app.appId));
   });
 
   afterEach(() => {
