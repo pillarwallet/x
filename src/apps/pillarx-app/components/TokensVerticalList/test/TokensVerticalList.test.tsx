@@ -37,7 +37,7 @@ describe('<TokensVerticalList />', () => {
 
   it('renders correctly and matches snapshot for left position', () => {
     const tree = renderer
-      .create(<TokensVerticalList position="left" data={mockData} title='tile left' />)
+      .create(<TokensVerticalList position="left" data={mockData} />)
       .toJSON();
     
     expect(tree).toMatchSnapshot();
@@ -45,47 +45,30 @@ describe('<TokensVerticalList />', () => {
 
   it('renders correctly and matches snapshot for right position', () => {
     const tree = renderer
-      .create(<TokensVerticalList position="right" data={mockData} title='title right' />)
+      .create(<TokensVerticalList position="right" data={mockData} />)
       .toJSON();
     
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders the correct title', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} title='title left' />).toJSON() as ReactTestRendererJSON;
-    const titleProp = tree.children?.[0] as ReactTestRendererJSON;
-
-    expect(titleProp).not.toBeNull();
-    expect(titleProp.type).toBe('Body');
-    expect(titleProp.children).toContain('title left');
-    expect(tree.children?.length).toBe(2);
-  });
-
-  it('renders correctly without title when title is undefined', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} />).toJSON() as ReactTestRendererJSON;
-    
-    expect(tree.children?.length).toBe(1);
-  });
-
   it('renders the correct number of HorizontalToken components', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} title='title left' />).toJSON() as ReactTestRendererJSON;
-    const tokensList = tree.children?.[1] as ReactTestRendererJSON;
-    const horizontalTokens = tokensList.children as ReactTestRendererJSON[];
+    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} />).toJSON() as ReactTestRendererJSON;
+    const tokensList = tree.children as ReactTestRendererJSON[];
     
-    expect(horizontalTokens.length).toBe(mockData.length);
+    expect(tokensList.length).toBe(mockData.length);
   });
 
   it('passes the correct props to HorizontalToken components', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} title='title left' />).toJSON() as ReactTestRendererJSON;
-    const tokensList = tree.children?.[1] as ReactTestRendererJSON;
-    const horizontalTokens = tokensList.children as ReactTestRendererJSON[];
+    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} />).toJSON() as ReactTestRendererJSON;
+    const tokensList = tree.children as ReactTestRendererJSON[];
     
-    horizontalTokens.forEach((tokenElement, index) => {
+    tokensList.forEach((tokenElement, index) => {
       expect(tokenElement.props.tokenIndex).toBe(index + 1);
       expect(tokenElement.props.tokenName).toBe(mockData[index].name);
       expect(tokenElement.props.tokenSymbol).toBe(mockData[index].symbol);
       expect(tokenElement.props.tokenValue).toBeUndefined();
       expect(tokenElement.props.percentage).toBeUndefined();
+      expect(tokenElement.props.isLast).toBe(index === mockData.length - 1);
     });
   });
 });

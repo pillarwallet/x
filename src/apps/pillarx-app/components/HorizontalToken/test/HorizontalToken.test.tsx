@@ -152,4 +152,20 @@ describe('<HorizontalToken />', () => {
             expect(tree.props.className).toContain('mobile:border-[#27262F]');
         }
     });
+
+    it('applies correct mobile border style for the last token when tokenIndex is 3', () => {
+        const tree = renderer.create(<HorizontalToken 
+            tokenIndex={3} 
+            logo={logo} 
+            tokenSymbol={tokenSymbol} 
+            tokenName={tokenName} 
+            tokenValue={tokenValue} 
+            percentage={percentage} 
+            isLast={true} 
+        />).toJSON() as ReactTestRendererJSON;
+
+        expect(tree.type).toBe('div');
+        expect(tree.props.className).toContain('mobile:border-b');
+        expect(tree.props.className).toContain('mobile:border-[#27262F]');
+    });
 });

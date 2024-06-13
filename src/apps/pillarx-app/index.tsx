@@ -22,13 +22,14 @@ export const App = () => {
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   const walletAddress = useWalletAddress();
-  const { data: apiData, isLoading: isApiLoading, isFetching } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' });
+  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' });
 
   useEffect(() => {
     // when apiData loads, we save it in a state to keep previous data
-      if (apiData) {
+      if (apiData && isSuccess) {
           setPageData((prevData) => [...prevData, ...apiData.projection]);
       }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiData]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
@@ -55,8 +56,6 @@ const displayAllTiles = () => {
     
     if (TileComponent) {
       allTileComponents.push(<TileComponent key={index} data={tileData} isDataLoading={isApiLoading} />);
-    } else {
-      return null;
     }
   }
   

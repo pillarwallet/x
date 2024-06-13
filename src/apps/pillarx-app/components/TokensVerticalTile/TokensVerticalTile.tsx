@@ -45,7 +45,7 @@ if (!data || isDataLoading) {
 
     return (
     <TileContainer className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
-        {meta?.display.title && <Body className='text-purple_light'>{meta.display.title}</Body>}
+        {meta?.display?.title && <Body className='text-purple_light'>{meta.display.title}</Body>}
         <div className='flex mobile:flex-col'>
         <TokensVerticalList position='left' data={dataLeft} />
         <TokensVerticalList position='right' data={dataRight} />
