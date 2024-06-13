@@ -3,11 +3,11 @@
 exports[`<PillarXLogo /> renders correctly and matches snapshot 1`] = `
 [
   <img
-    className="w-min  undefined"
+    className="w-min undefined"
     src="https://example.com/logo.png"
   />,
   <img
-    className="w-min  custom-class"
+    className="w-min custom-class"
     src="https://example.com/logo.png"
   />,
 ]

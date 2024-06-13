@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 // types
-import { WalletPortfolioData } from '../../../../types/api'
+import { Projection, WalletPortfolioData } from '../../../../types/api'
 
 // images
 import DefaultLogo from '../../images/logo-unknown.png'
@@ -21,13 +21,16 @@ import { getAllUniqueBlockchains } from '../../utils/blockchain'
 
 
 type PortfolioOverviewProps = {
-    data: WalletPortfolioData | undefined;
+    data: Projection | undefined;
     isDataLoading: boolean;
 }
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const [t] = useTranslation();
-    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0, wallet = '' } = data || {};
+
+    const { data: dataPortlioOverview } = data || {};
+
+    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0, wallet = '' } = dataPortlioOverview as WalletPortfolioData || {};
     const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
 
     const numberOfTokens = assets.length ?? 0;

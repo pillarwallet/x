@@ -18,7 +18,7 @@ type HorizontalTokenProps = {
 
 const HorizontalToken = ({ tokenIndex, logo, tokenSymbol, tokenName, tokenValue, percentage, isLast }: HorizontalTokenProps) => {
     return (
-        <div className={`flex w-full justify-between py-5 ${!isLast && 'border-b border-[#1F1D23] mobile:border-[#27262F]'}`}>
+        <div className={`flex w-full justify-between py-5 ${!isLast && 'border-b border-[#1F1D23] mobile:border-[#27262F]'} ${isLast && tokenIndex === 3 && 'mobile:border-b mobile:border-[#27262F]'}`}>
             <div className='flex items-center'>
                 <BodySmall className='text-purple_light mr-[18px]'>0{tokenIndex}</BodySmall>
                 <img src={logo ?? defaultLogo} className='w-[50px] h-[50px] object-fill rounded mr-3.5' />

@@ -1,23 +1,26 @@
 // types
-import { TokenData } from '../../../../types/api';
+import { Projection, TokenData } from '../../../../types/api';
 
 // components
 import TileContainer from '../TileContainer/TileContainer'
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 
 import TokensVerticalList from '../TokensVerticalList/TokensVerticalList';
+import Body from '../Typography/Body';
 
 type TokensVerticalTileProps = {
-    dataLeft: TokenData[] | undefined;
-    dataRight: TokenData[] | undefined;
-    titleLeft: string;
-    titleRight: string;
+    data: Projection | undefined;
     isDataLoading: boolean;
 }
 
-const TokensVerticalTile = ({ dataLeft, dataRight, titleLeft, titleRight, isDataLoading }: TokensVerticalTileProps) => {
+const TokensVerticalTile = ({ data, isDataLoading }: TokensVerticalTileProps) => {
+    const { data: dataTokens, meta } = data || {};
 
-if (!dataLeft || !dataRight || isDataLoading) {
+    const dataTokensVertical = dataTokens as TokenData[];
+    const dataLeft = dataTokensVertical.slice(0, 3);
+    const dataRight = dataTokensVertical.slice(3, 6);
+
+if (!data || isDataLoading) {
     return (
     <TileContainer className='px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col'>
          <div className='flex flex-col flex-1 mr-5 mobile:m-0'>
@@ -41,9 +44,12 @@ if (!dataLeft || !dataRight || isDataLoading) {
 }
 
     return (
-    <TileContainer className='px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col'>
-        <TokensVerticalList position='left' data={dataLeft} title={titleLeft} />
-        <TokensVerticalList position='right' data={dataRight} title={titleRight} />
+    <TileContainer className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
+        {meta?.display?.title && <Body className='text-purple_light'>{meta.display.title}</Body>}
+        <div className='flex mobile:flex-col'>
+        <TokensVerticalList position='left' data={dataLeft} />
+        <TokensVerticalList position='right' data={dataRight} />
+        </div>
     </TileContainer>
     )
 };

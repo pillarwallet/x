@@ -5,7 +5,7 @@ type PillarXLogoProps = {
 
 export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
   return (
-    <img src={src} className={`w-min  ${className}`} />
+    <img src={src} className={`w-min ${className}`} />
   )
 }
 
