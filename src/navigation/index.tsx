@@ -35,6 +35,7 @@ export const AuthorizedNavigation = () => {
       {allowedApps.map((appId) => (
         <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
       ))}
+      <Route key={'sign-message'} path={'/s'} element={<App id={'sign-message'} />} />
       {process.env.REACT_APP_PX_DEVELOPMENT_ID && <Route path={`${process.env.REACT_APP_PX_DEVELOPMENT_ID}`} element={<App id={process.env.REACT_APP_PX_DEVELOPMENT_ID!} />} />}
       <Route path="*" element={<NotFound />} />
     </Routes>

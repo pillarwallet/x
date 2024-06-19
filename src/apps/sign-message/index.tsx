@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWallets } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
 // components
 import { PrimaryTitle } from '../../components/Text/Title';
+
+import { useEtherspot } from '@etherspot/transaction-kit';
+
 
 const Alert = ({
   level = 'info',
@@ -43,7 +45,9 @@ export const App = () => {
   const [signedMessage, setSignedMessage] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [isSigning, setIsSigning] = React.useState<boolean>(false);
-  const { wallets } = useWallets();
+  // const { wallets } = useWallets();
+  const { getSdk } = useEtherspot();
+
 
   const signMessage = async () => {
     if (isSigning) return;
@@ -52,15 +56,19 @@ export const App = () => {
     setErrorMessage('');
     setSignedMessage('');
 
-    try {
-      const newSignedMessage = await wallets[0].sign(message);
-      setSignedMessage(newSignedMessage);
-    } catch (e) {
-      const newErrorMessage = e instanceof Error && e?.message
-        ? e.message
-        : 'Failed to sign: unknown error';
-      setErrorMessage(newErrorMessage);
-    }
+      const sdk = await getSdk(1); // where 1 is, this is the chain ID
+      const result = await sdk.signMessage({message: message});
+      setSignedMessage(result);
+
+    // try {
+    //   const newSignedMessage = await wallets[0].sign(message);
+    //   setSignedMessage(newSignedMessage);
+    // } catch (e) {
+    //   const newErrorMessage = e instanceof Error && e?.message
+    //     ? e.message
+    //     : 'Failed to sign: unknown error';
+    //   setErrorMessage(newErrorMessage);
+    // }
 
     setIsSigning(false);
   }

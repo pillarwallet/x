@@ -1,16 +1,15 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import {
+  Element as IconApps,
+  Receipt1 as IconHistory,
   Home2 as IconHome,
   Send2 as IconSend,
   Wallet2 as IconWallet,
-  Receipt1 as IconHistory,
-  Element as IconApps,
 } from 'iconsax-react';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
+import styled from 'styled-components';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -26,7 +25,7 @@ import BottomMenuModal from '../BottomMenuModal';
 import { animation } from '../../theme';
 
 const BottomMenu = () => {
-  const { authenticated } = usePrivy();
+  // const { authenticated } = usePrivy();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
@@ -52,7 +51,7 @@ const BottomMenu = () => {
     };
   }, [overlayRef, hide]);
 
-  if (!authenticated) return null;
+  // if (!authenticated || !localStorage.getItem('uid')) return null;
 
   const isHomeActive = active === null
     && navLocation.pathname === navigationRoute.home;
