@@ -2,8 +2,6 @@ import React from 'react';
 // import { useLocation } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
-import '../styles/landing/tailwind.css';
-
 // components
 import { Form } from '../components/LandingPage';
 import { Popup} from '../components/LandingPage/Popup';
@@ -196,6 +194,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1.4rem;
     margin-bottom: 0;
     font-weight: 700;
+    text-decoration: none;
     background: rgba(27, 27, 27, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 10px;
@@ -230,6 +229,8 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .home_header__main__menu button {
+    background: none;
+    border: none;
     font-size: 1.8rem;
     cursor: pointer;
     position: relative;
@@ -893,12 +894,13 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .popup__wrapper {
-    min-width: 68rem;
+    min-width: 35rem;
     border-radius: calc(var(--border-radius) * 1.6);
-    background: linear-gradient(180deg, #5e00ff 0%, rgba(94, 0, 255, 0.58) 100%);
+    background: #121116;
     backdrop-filter: blur(2px);
-    padding: calc(var(--padding) * 4) calc(var(--padding) * 4);
+    padding: calc(var(--padding) * 2.5) calc(var(--padding) * 2.5);
     position: relative;
+    border: solid 1px #80868B;
   }
 
   @media only screen and (max-width: 767px) {
@@ -912,6 +914,8 @@ const GlobalStyle = createGlobalStyle`
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
+    background: none;
+    border: none;
     color: var(--white);
     opacity: 0.5;
     cursor: pointer;
@@ -937,77 +941,6 @@ const GlobalStyle = createGlobalStyle`
 
   .popup__close:hover {
     opacity: 1;
-  }
-  
-  .popup__form {
-    display: flex;
-    flex-direction: column;
-    font-size: 2rem;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form {
-      gap: 0;
-      font-size: 1.4rem;
-    }
-  }
-  
-  .popup__form h3 {
-    font-size: 4.5rem;
-    text-align: center;
-    line-height: 0.9;
-    max-width: 16ch;
-  }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form h3 {
-      font-size: 2.4rem;
-    }
-  }
-  
-  .popup__form form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .popup__form form input,
-  .popup__form form button {
-    width: 100%;
-    min-width: 30rem;
-    background: var(--white);
-    border-radius: calc(var(--border-radius) * 1);
-    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
-    border: 0;
-    width: 100%;
-    font-size: 1.6rem;
-    color: var(--black);
-    font-family: "Neue Haas Grotesk Display Pro";
-  }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form form input, .popup__form form button {
-      min-width: unset;
-    }
-  }
-  
-  .popup__form form input:focus {
-    outline: none;
-    border-color: inherit;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-  }
-  
-  .popup__form form button {
-    font-weight: 700;
-    backdrop-filter: blur(2px);
-    transition: all ease 0.3s;
-  }
-  
-  .popup__form form button:hover {
-    transform: translatey(-0.25rem);
   }
   
 
@@ -1036,8 +969,8 @@ export default function LandingPage() {
           <div className='home_header__announcment'>
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
-                <p>Building dApps? Join the PillarX Testing Campaign</p>
-                <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
+                <p>🚀 Secure Your Spot in the PillarX Testing Campaign!</p>
+                <a href='/waitlist/' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Join the Waitlist</a>
               </div>
             </div>
           </div>

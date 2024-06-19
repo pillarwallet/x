@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 // pages
 import App from '../pages/App';
 import LandingPage from '../pages/Landing';
+import WaitList from '../pages/WaitList';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
@@ -14,6 +15,7 @@ import useAllowedApps from '../hooks/useAllowedApps';
 export const navigationRoute = {
   home: '/',
   landing: '/landing',
+  waitlist: '/waitlist',
   login: '/login',
 }
 
@@ -32,6 +34,7 @@ export const AuthorizedNavigation = () => {
     <Routes>
       <Route path={navigationRoute.home} element={<Lobby />} />
       <Route path={navigationRoute.landing} element={<LandingPage />} />
+      <Route path={navigationRoute.waitlist} element={<WaitList />} />
       {allowedApps.map((appId) => (
         <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
       ))}
@@ -45,6 +48,7 @@ export const UnauthorizedNavigation = () => {
   return (
     <Routes>
       <Route path={navigationRoute.home} element={<LandingPage />} />
+      <Route path={navigationRoute.waitlist} element={<WaitList />} />
       <Route path={navigationRoute.login} element={<Login />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
