@@ -5,7 +5,6 @@ module.exports = {
   content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}'],
   darkMode: 'class',
   theme: {
-    screens: { md: { max: '1050px' }, sm: { max: '550px' }, desktop: { min: '1024px' }, tablet: { max: '1024px' }, mobile: { max: '800px' } },
     extend: {
       colors: {
         black: { 900: '#101010', '900_87': '#10101087' },
