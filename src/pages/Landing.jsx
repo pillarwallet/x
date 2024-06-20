@@ -881,6 +881,7 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
     z-index: 99;
     background: rgba(16, 16, 16, 0.85);
+    scale: 1.5;
   }
 
   @media only screen and (max-width: 767px) {
@@ -890,6 +891,7 @@ const GlobalStyle = createGlobalStyle`
       left: 1.5rem;
       right: 1.5rem;
       background: none;
+      scale: 1;
     }
   }
   
@@ -898,7 +900,7 @@ const GlobalStyle = createGlobalStyle`
     border-radius: calc(var(--border-radius) * 1.6);
     background: #121116;
     backdrop-filter: blur(2px);
-    padding: calc(var(--padding) * 2.5) calc(var(--padding) * 2.5);
+    padding: calc(var(--padding) * 1) calc(var(--padding) * 1);
     position: relative;
     border: solid 1px #80868B;
   }
@@ -920,12 +922,14 @@ const GlobalStyle = createGlobalStyle`
     opacity: 0.5;
     cursor: pointer;
     transition: all ease 0.3s;
+    scale: 0.6;
   }
 
   @media only screen and (max-width: 767px) {
     .popup__close {
       top: 1rem;
       right: 1rem;
+      scale: 1;
     }
   }
 
