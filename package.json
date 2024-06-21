@@ -22,6 +22,7 @@
     "@reduxjs/toolkit": "^2.2.5",
     "@sentry/cli": "^2.21.5",
     "@sentry/react": "^7.81.1",
+    "@stealthex-io/widget": "^1.0.1",
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/sdk-core": "^4.2.0",
     "@uniswap/smart-order-router": "3.26.1",
