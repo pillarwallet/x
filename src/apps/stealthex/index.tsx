@@ -1,10 +1,11 @@
-import widget from '@stealthex-io/widget'
+// import widget from '@stealthex-io/widget'
+import widget from '@stealthex-io/widget';
 import { useEffect } from 'react';
 
 const App = () => {
-  const width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
   useEffect(() => {
-    const cleanup =  widget.init('2859934d-7955-4903-ba70-4db42bb33f02',{size: width });
+    const width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    const cleanup =  widget.init('5a96629e-bc77-4b3a-9025-0a3b4cb35354',{size: width });
     return () => cleanup();
   },[])
   return (
