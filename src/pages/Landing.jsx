@@ -1,6 +1,8 @@
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
 
+import '../styles/landing/tailwind.css';
+
 // components
 import { Form } from '../components/LandingPage';
 import { Popup} from '../components/LandingPage/Popup';
