@@ -24,7 +24,7 @@ export default function LandingPage() {
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
                 <p>🚀 Secure Your Spot in the PillarX Testing Campaign!</p>
-                <Link to="/waitlist" className='plausible-event-name=Banner+Click'>Join the Waitlist</Link>
+                <a href='/waitlist' className='plausible-event-name=Banner+Click'>Join the Waitlist</a>
               </div>
             </div>
           </div>
