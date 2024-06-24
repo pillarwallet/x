@@ -226,6 +226,13 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
     width: 177px;
   }
+
+  .home_header__main__menu {
+    width: auto;
+    flex: 1;
+    display: flex;
+    gap: 5rem;
+  }
   
   .home_header__main__menu button {
     background: none;
@@ -235,6 +242,7 @@ const GlobalStyle = createGlobalStyle`
     position: relative;
     color: var(--white);
     transition: all ease 0.3s;
+    line-height: 1;
   }
   
   .home_header__main__menu button:hover {
@@ -242,6 +250,29 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .home_header__main__menu button:before {
+    position: absolute;
+    content: url("/landing-images/home-button-bg.png");
+    left: 0;
+    right: 0;
+    bottom: -15px;
+  }
+
+  .home_header__main__menu a {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    position: relative;
+    color: var(--white);
+    transition: all ease 0.3s;
+    text-decoration: none;
+  }
+  
+  .home_header__main__menu a:hover {
+    opacity: 0.8;
+  }
+  
+  .home_header__main__menu a:before {
     position: absolute;
     content: url("/landing-images/home-button-bg.png");
     left: 0;
@@ -997,6 +1028,7 @@ export default function LandingPage() {
                 </div>
                 <div className='home_header__main__menu'>
                   <button onClick={scrollToSection}>For developers</button>
+                  <a href='/waitlist'>Testing Campaign</a>
                 </div>
                 <div className='home_header__main__social'>
                   <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>

@@ -526,7 +526,7 @@ const Waitlist = () => {
                   <a href="/"><img src='/landing-images/home-logo.svg'></img></a>
                 </div>
                 <div className='home_header__main__menu'>
-                  <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer'>Testing Campaign</a>
+                  <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer'>For developers</a>
                 </div>
                 <div className='home_header__main__social'>
                   <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
