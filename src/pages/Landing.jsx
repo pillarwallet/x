@@ -1,5 +1,4 @@
 import React from 'react';
-// import { useLocation } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import '../styles/landing/tailwind.css';
@@ -13,7 +12,7 @@ import neueBoldFont from '../assets/landing-fonts/NeueHaasDisplayBold.ttf';
 import neueRegularFont from '../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
 const GlobalStyle = createGlobalStyle`
-@font-face {
+  @font-face {
     font-family: Neue Haas Grotesk Display Pro;
     font-weight: 400;
     src: url(${neueRegularFont}) format("truetype");
@@ -196,6 +195,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1.4rem;
     margin-bottom: 0;
     font-weight: 700;
+    text-decoration: none;
     background: rgba(27, 27, 27, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 10px;
@@ -228,13 +228,23 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
     width: 177px;
   }
+
+  .home_header__main__menu {
+    width: auto;
+    flex: 1;
+    display: flex;
+    gap: 5rem;
+  }
   
   .home_header__main__menu button {
+    background: none;
+    border: none;
     font-size: 1.8rem;
     cursor: pointer;
     position: relative;
     color: var(--white);
     transition: all ease 0.3s;
+    line-height: 1;
   }
   
   .home_header__main__menu button:hover {
@@ -242,6 +252,29 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .home_header__main__menu button:before {
+    position: absolute;
+    content: url("/landing-images/home-button-bg.png");
+    left: 0;
+    right: 0;
+    bottom: -15px;
+  }
+
+  .home_header__main__menu a {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    position: relative;
+    color: var(--white);
+    transition: all ease 0.3s;
+    text-decoration: none;
+  }
+  
+  .home_header__main__menu a:hover {
+    opacity: 0.8;
+  }
+  
+  .home_header__main__menu a:before {
     position: absolute;
     content: url("/landing-images/home-button-bg.png");
     left: 0;
@@ -881,7 +914,7 @@ const GlobalStyle = createGlobalStyle`
     z-index: 99;
     background: rgba(16, 16, 16, 0.85);
   }
-
+  
   @media only screen and (max-width: 767px) {
     .popup {
       top: unset;
@@ -893,18 +926,19 @@ const GlobalStyle = createGlobalStyle`
   }
   
   .popup__wrapper {
-    min-width: 68rem;
+    min-width: 35rem;
     border-radius: calc(var(--border-radius) * 1.6);
-    background: linear-gradient(180deg, #5e00ff 0%, rgba(94, 0, 255, 0.58) 100%);
+    background: #121116;
     backdrop-filter: blur(2px);
-    padding: calc(var(--padding) * 4) calc(var(--padding) * 4);
+    padding: calc(var(--padding) * 2.5) calc(var(--padding) * 2.5);
     position: relative;
+    border: solid 1px #80868B;
   }
-
+  
   @media only screen and (max-width: 767px) {
     .popup__wrapper {
       min-width: unset;
-      padding: calc(var(--padding) * 2) calc(var(--padding) * 2) calc(var(--padding) * 1) calc(var(--padding) * 2);
+      padding: calc(var(--padding) * 1.5);
     }
   }
   
@@ -912,115 +946,61 @@ const GlobalStyle = createGlobalStyle`
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
+    background: none;
+    border: none;
     color: var(--white);
     opacity: 0.5;
     cursor: pointer;
     transition: all ease 0.3s;
   }
-
+  
   @media only screen and (max-width: 767px) {
     .popup__close {
       top: 1rem;
       right: 1rem;
     }
   }
-
+  
   .popup__close p {
     font-size: 3rem;
   }
-
+  
   @media only screen and (max-width: 767px) {
     .popup__close p {
       font-size: 2rem;
     }
   }
-
+  
   .popup__close:hover {
     opacity: 1;
   }
   
-  .popup__form {
-    display: flex;
-    flex-direction: column;
-    font-size: 2rem;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form {
-      gap: 0;
-      font-size: 1.4rem;
-    }
-  }
-  
-  .popup__form h3 {
-    font-size: 4.5rem;
-    text-align: center;
-    line-height: 0.9;
-    max-width: 16ch;
-  }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form h3 {
-      font-size: 2.4rem;
-    }
-  }
-  
-  .popup__form form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .popup__form form input,
-  .popup__form form button {
-    width: 100%;
-    min-width: 30rem;
-    background: var(--white);
-    border-radius: calc(var(--border-radius) * 1);
-    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
-    border: 0;
-    width: 100%;
-    font-size: 1.6rem;
-    color: var(--black);
+  .popup__form .gw-text-2xl {
+    font-size: 2.4rem !important;
+    margin-bottom: 2rem !important;
     font-family: "Neue Haas Grotesk Display Pro";
   }
-
-  @media only screen and (max-width: 767px) {
-    .popup__form form input, .popup__form form button {
-      min-width: unset;
-    }
+  
+  .popup__form .gw-mt-2 span {
+    display: none !important;
   }
   
-  .popup__form form input:focus {
-    outline: none;
-    border-color: inherit;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+  .popup__form input.gw-w-full, .popup__form button.gw-w-full {
+    font-size: 1.6rem !important;
   }
   
-  .popup__form form button {
-    font-weight: 700;
-    backdrop-filter: blur(2px);
-    transition: all ease 0.3s;
+  .popup__form .gw-text-sm {
+    font-size: 1.2rem !important;
   }
   
-  .popup__form form button:hover {
-    transform: translatey(-0.25rem);
+  .popup__form .gw-text-xs {
+    font-size: 1.2rem !important;
   }
   
 
 `;
 
 export default function LandingPage() {
-//   const searchParams = new URLSearchParams(useLocation().search);
-//   const signupStatus = searchParams.get('signup');
-
-//   let confirmationMessage = '';
-//   if (signupStatus === 'complete') {
-//     confirmationMessage = 'Signup process completed successfully!';
-//   }
 
   const sectionRef = React.useRef(null);
   const scrollToSection = () => {
@@ -1028,6 +1008,7 @@ export default function LandingPage() {
       sectionRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
   return (
     <>
       <GlobalStyle />
@@ -1036,8 +1017,8 @@ export default function LandingPage() {
           <div className='home_header__announcment'>
             <div className='container'>
               <div className='home_header__announcment__wrapper'>
-                <p>Building dApps? Join the PillarX Testing Campaign</p>
-                <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='plausible-event-name=Banner+Click'>Register now</a>
+                <p>🚀 Secure Your Spot in the PillarX Testing Campaign!</p>
+                <a href='/waitlist' className='plausible-event-name=Banner+Click'>Join the Waitlist</a>
               </div>
             </div>
           </div>
@@ -1049,6 +1030,7 @@ export default function LandingPage() {
                 </div>
                 <div className='home_header__main__menu'>
                   <button onClick={scrollToSection}>For developers</button>
+                  <a href='/waitlist'>Testing Campaign</a>
                 </div>
                 <div className='home_header__main__social'>
                   <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>

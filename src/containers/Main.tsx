@@ -107,7 +107,7 @@ const AppAuthController = () => {
     )
   }
 
-  const isRootPage = navLocation.pathname === '/';
+  const isRootPage = navLocation.pathname === '/' || navLocation.pathname === '/waitlist';
 
   if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
     return (
