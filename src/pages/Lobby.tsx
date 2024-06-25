@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-
-// components
 import App from '../apps/pillarx-app';
 
+// components
 const Lobby = () => {
   return (
     <Wrapper>

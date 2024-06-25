@@ -13,16 +13,14 @@ import BottomMenu from '../components/BottomMenu';
 import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
-import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
-import LanguageProvider from '../providers/LanguageProvider';
 import AccountBalancesProvider from '../providers/AccountBalancesProvider';
-import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
-import AssetsProvider from '../providers/AssetsProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
+import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
-import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider'
-import { ApiProvider } from '@reduxjs/toolkit/query/react'
-import { pillarXApi } from '../apps/pillarx-app/api/apiSlice'
+import AssetsProvider from '../providers/AssetsProvider';
+import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
+import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
+import LanguageProvider from '../providers/LanguageProvider';
 
 // navigation
 import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
@@ -42,7 +40,6 @@ const AppAuthController = () => {
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const navLocation = useLocation();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
-
   const isAppReady = ready && !isLoadingAllowedApps;
 
   useEffect(() => {
@@ -79,7 +76,6 @@ const AppAuthController = () => {
 
   if (isAppReady && authenticated && provider && chainId) {
     return (
-      <ApiProvider api={pillarXApi}>
         <EtherspotTransactionKit
           provider={provider}
           chainId={chainId}
@@ -103,7 +99,6 @@ const AppAuthController = () => {
             </AssetsProvider>
           </AccountTransactionHistoryProvider>
         </EtherspotTransactionKit>
-      </ApiProvider>
     )
   }
 
