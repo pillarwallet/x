@@ -154,6 +154,54 @@ const GlobalStyle = createGlobalStyle`
     }
   }
   
+  .home_header__announcment {
+    background: rgba(94, 0, 255, 0.5);
+  }
+  
+  .home_header__announcment__wrapper {
+    padding: calc(var(--padding) * 1) 0;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__announcment__wrapper {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  
+  .home_header__announcment__wrapper p {
+    font-size: 1.4rem;
+    margin-bottom: 0;
+    font-weight: 700;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_header__announcment__wrapper p {
+      max-width: 30ch;
+    }
+  }
+  
+  .home_header__announcment__wrapper a {
+    font-size: 1.4rem;
+    margin-bottom: 0;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(27, 27, 27, 0.5);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
+    transition: all ease 0.3s;
+  }
+  
+  .home_header__announcment__wrapper a:hover {
+    background: var(--white);
+    color: var(--light-blue);
+  }
+  
   .home_header__main__wrapper {
     display: flex;
     justify-content: space-between;
@@ -174,7 +222,37 @@ const GlobalStyle = createGlobalStyle`
     justify-content: center;
     width: 177px;
   }
+
+  .home_header__main__menu {
+    width: auto;
+    flex: 1;
+    display: flex;
+    gap: 5rem;
+  }
   
+  .home_header__main__menu button {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    position: relative;
+    color: var(--white);
+    transition: all ease 0.3s;
+    line-height: 1;
+  }
+  
+  .home_header__main__menu button:hover {
+    opacity: 0.8;
+  }
+  
+  .home_header__main__menu button:before {
+    position: absolute;
+    content: url("/landing-images/home-button-bg.png");
+    left: 0;
+    right: 0;
+    bottom: -15px;
+  }
+
   .home_header__main__menu a {
     background: none;
     border: none;
@@ -519,6 +597,14 @@ const Waitlist = () => {
       <GlobalStyle />
       {/* Header */}
       <header className='home_header'>
+          <div className='home_header__announcment'>
+            <div className='container'>
+              <div className='home_header__announcment__wrapper'>
+                <p>🚀 Secure Your Spot in the PillarX Testing Campaign!</p>
+                <a href='/waitlist' className='plausible-event-name=Banner+Click'>Join the Waitlist</a>
+              </div>
+            </div>
+          </div>
           <div className='home_header__main'>
             <div className='container'>
               <div className='home_header__main__wrapper'>
@@ -526,7 +612,8 @@ const Waitlist = () => {
                   <a href="/"><img src='/landing-images/home-logo.svg'></img></a>
                 </div>
                 <div className='home_header__main__menu'>
-                  <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer'>For developers</a>
+                  <a href='/#developers'>For Developers</a>
+                  <a href='/waitlist'>Testing Campaign</a>
                 </div>
                 <div className='home_header__main__social'>
                   <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>

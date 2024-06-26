@@ -1,4 +1,5 @@
-import React from 'react';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import '../styles/landing/tailwind.css';
@@ -1002,12 +1003,26 @@ const GlobalStyle = createGlobalStyle`
 
 export default function LandingPage() {
 
-  const sectionRef = React.useRef(null);
-  const scrollToSection = () => {
-    if (sectionRef.current) {
-      sectionRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const developersRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const scrollToDevelopers = () => {
+      if (location.hash === '#developers' && developersRef.current) {
+        const topOffset = developersRef.current.offsetTop;
+        window.scrollTo({
+          top: topOffset,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    // Using a slight delay to ensure the element is in the DOM
+    const timer = setTimeout(scrollToDevelopers, 1000);
+
+    // Cleanup timer if the component unmounts
+    return () => clearTimeout(timer);
+  }, [location]);
 
   return (
     <>
@@ -1029,7 +1044,7 @@ export default function LandingPage() {
                   <img src='/landing-images/home-logo.svg'></img>
                 </div>
                 <div className='home_header__main__menu'>
-                  <button onClick={scrollToSection}>For developers</button>
+                  <a href='/#developers'>For Developers</a>
                   <a href='/waitlist'>Testing Campaign</a>
                 </div>
                 <div className='home_header__main__social'>
@@ -1130,7 +1145,7 @@ export default function LandingPage() {
         </section>
 
         {/* Build Section */}
-        <section className='home_build' ref={sectionRef}>
+        <section className='home_build' id='developers' ref={developersRef}>
           <div className='container'>
             <div className='home_build__wrapper'>
               <div className='home_build__content'>
