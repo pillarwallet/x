@@ -5,6 +5,9 @@
 🛠️ **Here to build a PillarX app?** Head over to the [README.md](src/apps/README.md)
 file within the `src/apps` directory to learn how to get started.
 
+> [!CAUTION]
+> We do not accept any app submissions that ultimately result in an iframe tag being rendered!
+
 💬 **Need support?** You can get in touch with us via [Discord](https://discord.gg/6MKAy7gv4P) or [Telegram](https://t.me/pillarxdevelopers). We usually reply quickly.
 
 ## Want to check out this repository and run it locally?
