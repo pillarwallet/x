@@ -5,7 +5,7 @@
 #### The guide below will show you how to get started developing an app. If you have any questions or need support, please get in touch with us via [Discord](https://discord.gg/6MKAy7gv4P) or [Telegram](https://t.me/pillarxdevelopers).
 
 > [!CAUTION]
-> We do not accept any app submissions that ultimately result in an iframe tag being rendered! This compromises the security of the PillarX ecosystem as the content inside of an iframe can be changed anytime to something deceptive and it is not a chance we are willing to take. Any app submissions that result in this will not be accepted.
+> We do not accept any app submissions that ultimately result in an iframe tag being rendered! This compromises the security of the PillarX ecosystem as the content inside of an iframe can be changed anytime to something deceptive and it is not a risk we are willing to take. Any app submissions that result in this will not be accepted.
 
 ✨ PillarX apps are simply a base React component, which can include other React components to build out a user interface. In the directory for your own app, you can include other React component files, assets and more that are needed for your app.
 
