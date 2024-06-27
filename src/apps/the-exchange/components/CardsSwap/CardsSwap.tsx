@@ -56,7 +56,7 @@ const CardsSwap = () => {
         setAmountReceive(amountSwap);
     };
 
-    const handleClick = async (position: CardPosition) => {
+    const handleOpenTokenList = async (position: CardPosition) => {
         const type = position === CardPosition.LEFT ? SwapReceive.SWAP : SwapReceive.RECEIVE;
         try {
             const assets = await getPillarSwapAssets();
@@ -77,12 +77,12 @@ const CardsSwap = () => {
     const renderCards = () => (
         <div className='flex w-full gap-4 desktop:gap-8 justify-center'>
             <SwapReceiveCard
-                onClick={() => handleClick(isInitialOrder ? cardPosition.left : cardPosition.right)}
+                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.left : cardPosition.right)}
                 position={isInitialOrder ? cardPosition.left : cardPosition.right}
                 initialPosition={isInitialOrder ? initialPosition.left : initialPosition.right}
             />
             <SwapReceiveCard
-                onClick={() => handleClick(isInitialOrder ? cardPosition.right : cardPosition.left)}
+                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.right : cardPosition.left)}
                 position={isInitialOrder ? cardPosition.right : cardPosition.left}
                 initialPosition={isInitialOrder ? initialPosition.right : initialPosition.left}
             />

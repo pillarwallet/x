@@ -48,7 +48,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
         }
     }, [type, amountSwap, amountReceive]);
 
-    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleTokenAmountChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setInputValue(value);
     
@@ -82,7 +82,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
             <input 
                 type='number' 
                 value={inputValue} 
-                onChange={handleChange} 
+                onChange={handleTokenAmountChange} 
                 onFocus={() => setIsFocus(true)} 
                 onBlur={() => setIsFocus(false)} 
                 className='text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey mobile:max-w-[120px] tablet:max-w-[260px] desktop:max-w-[260px] xs:max-w-[100px]' 
