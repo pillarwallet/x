@@ -2,10 +2,10 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   mode: 'jit',
-  content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}'],
+  content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}', '!./src/apps/**/*'],
   darkMode: 'class',
   theme: {
-    screens: { md: { max: '1050px' }, sm: { max: '550px' }, desktop: { min: '1024px' }, tablet: { max: '1024px' }, mobile: { max: '800px' } },
+    screens: { md: { max: '1050px' }, sm: { max: '550px' } },
     extend: {
       colors: {
         black: { 900: '#101010', '900_87': '#10101087' },
@@ -13,10 +13,6 @@ module.exports = {
         gray: { '900_33': '#1a1a1a33' },
         white: { A700: '#ffffff', A700_90: '#ffffff90', A700_99: '#ffffff99' },
         deep_purple: { A700: '#5e00ff' },
-        container_grey: '#27262F',
-        purple_light: '#E2DDFF',
-        percentage_green: '#05FFDD',
-        percentage_red: '#FF366C',
       },
       boxShadow: { xs: '0px 0px  30px 0px #ffffff0c' },
       fontFamily: {

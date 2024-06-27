@@ -1,4 +1,4 @@
-@config '../../../tailwind.config.js';
+@config '../tailwind.the-exchange.config.js';
 
 @tailwind base;
 @tailwind components;
@@ -21,13 +21,14 @@ input:where(:not([type])),
 textarea,
 select {
   appearance: none;
-  background-color: transparent;
-  border-color: unset;
-  border-width: 0;
-  border-radius: unset;
-  padding: unset;
-  font-size: unset;
-  line-height: unset;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  box-shadow: none;
+  outline: none;
 }
 
 /* Override default focus colors for tailwindcss-forms https://github.com/tailwindlabs/tailwindcss-forms */
@@ -37,9 +38,12 @@ select {
 [type="password"]:focus,
 [type="number"]:focus,
 [type="date"]:focus,
+[type="datetime-local"]:focus,
+[type="month"]:focus,
 [type="search"]:focus,
-[type="checkbox"]:focus,
-[type="radio"]:focus,
+[type="tel"]:focus,
+[type="time"]:focus,
+[type="week"]:focus,
 [multiple]:focus,
 textarea:focus,
 select:focus {
