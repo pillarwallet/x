@@ -5,10 +5,10 @@ if (typeof window !== 'undefined') {
   };
 }
 
+import * as Sentry from '@sentry/react';
+import { Buffer as ImportedBuffer } from 'buffer';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Buffer as ImportedBuffer } from 'buffer';
-import * as Sentry from '@sentry/react';
 
 let sentryReleaseTag;
 
@@ -35,7 +35,9 @@ Sentry.init({
 if (typeof window !== 'undefined') window.Buffer = window.Buffer ?? ImportedBuffer;
 
 // containers
+import { Provider } from 'react-redux';
 import Main from './containers/Main';
+import { store } from './store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -43,6 +45,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Main />
+    <Provider store={store}>
+      <Main />
+    </Provider>
   </React.StrictMode>
 );

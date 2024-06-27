@@ -1,16 +1,16 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import {
+  Element as IconApps,
+  Receipt1 as IconHistory,
   Home2 as IconHome,
   Send2 as IconSend,
   Wallet2 as IconWallet,
-  Receipt1 as IconHistory,
-  Element as IconApps,
 } from 'iconsax-react';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
+import styled from 'styled-components';
 
 // navigation
 import { navigationRoute } from '../../navigation';
