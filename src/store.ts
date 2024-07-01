@@ -3,6 +3,7 @@ import { Middleware, Reducer, combineReducers, configureStore, createDynamicMidd
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 // Services
+import { pillarXApiPresence } from './services/pillarXApiPresence';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
 
 // Initialisation
@@ -49,6 +50,7 @@ export const store = configureStore({
  * core API functionality for the PillarX application.
  */
 addMiddleware(pillarXApiWaitlist);
+addMiddleware(pillarXApiPresence);
 
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
