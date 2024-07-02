@@ -1,44 +1,41 @@
 import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-sdk';
-import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
-import { BrowserRouter, useLocation } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 import { mainnet, sepolia } from 'viem/chains';
 
 // components
-import BottomMenu from '../components/BottomMenu';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
-import AccountBalancesProvider from '../providers/AccountBalancesProvider';
-import AccountNftsProvider from '../providers/AccountNftsProvider';
-import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
-import AssetsProvider from '../providers/AssetsProvider';
-import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
-import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../providers/LanguageProvider';
 
 // navigation
-import { AuthorizedNavigation, UnauthorizedNavigation } from '../navigation';
 
 // pages
 import Loading from '../pages/Loading';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
+import App from '../pages/App';
+import LandingPage from '../pages/Landing';
+import Lobby from '../pages/Lobby';
+import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
+import Waitlist from '../pages/WaitList';
 import { visibleChains } from '../utils/blockchain';
+import Authorized from './Authorized';
 
-const AppAuthController = () => {
+const AuthLayout = () => {
   const { ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
-  const navLocation = useLocation();
+  const { allowed: allowedApps, isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -75,39 +72,71 @@ const AppAuthController = () => {
   }, [wallets]);
 
   if (isAppReady && authenticated && provider && chainId) {
-    return (
-        <EtherspotTransactionKit
-          provider={provider}
-          chainId={chainId}
-          bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
-          dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
-        >
-          <AccountTransactionHistoryProvider>
-            <AssetsProvider>
-              <AccountBalancesProvider>
-                <AccountNftsProvider>
-                  <GlobalTransactionBatchesProvider>
-                    <BottomMenuModalProvider>
-                      <AuthContentWrapper>
-                        <AuthorizedNavigation />
-                      </AuthContentWrapper>
-                      <BottomMenu />
-                    </BottomMenuModalProvider>
-                  </GlobalTransactionBatchesProvider>
-                </AccountNftsProvider>
-              </AccountBalancesProvider>
-            </AssetsProvider>
-          </AccountTransactionHistoryProvider>
-        </EtherspotTransactionKit>
-    )
+    const authorizedRoutesDefinition = [{
+      path: '/',
+      element: <Authorized chainId={chainId} provider={provider}  />,
+      children: [
+        {
+          index: true,
+          path: '/',
+          element: <Lobby />,
+        },
+        {
+        path: '/landing',
+        element: <LandingPage />,
+      },
+      {
+        path: '/waitlist',
+        element: <Waitlist />,
+      }]
+    }];
+
+    allowedApps.forEach((appId) => {
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${appId}`,
+        element: <App id={appId} />,
+      });
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${appId}/*`,
+        element: <App id={appId} />,
+      });
+    });
+
+    if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${process.env.REACT_APP_PX_DEVELOPMENT_ID}`,
+        element: <App id={process.env.REACT_APP_PX_DEVELOPMENT_ID} />,
+      });
+    }
+
+    authorizedRoutesDefinition.push({
+      path: '*',
+      element: <NotFound />,
+      children: []
+    });
+      
+    return <RouterProvider router={createBrowserRouter(authorizedRoutesDefinition)} />;
+    
   }
 
-  const isRootPage = navLocation.pathname === '/' || navLocation.pathname === '/waitlist';
+  const isRootPage = window.location.pathname === '/' || window.location.pathname === '/waitlist';
 
   if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
-    return (
-      <UnauthorizedNavigation />
-    );
+    const unauthorizedRoutesDefinition = [{
+      path: '/',
+      element: <LandingPage />,
+    }, {
+      path: '/waitlist',
+      element: <Waitlist />,
+    }, {
+      path: '/login',
+      element: <Login />,
+    }, {
+      path: '*',
+      element: <NotFound />,
+    }];
+
+    return <RouterProvider router={createBrowserRouter(unauthorizedRoutesDefinition)} />;
   }
 
   return <Loading />;
@@ -128,19 +157,13 @@ const Main = () => {
             }
           }}
         >
-          <BrowserRouter>
             <AllowedAppsProvider>
-              <AppAuthController />
+              <AuthLayout />
             </AllowedAppsProvider>
-          </BrowserRouter>
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
 }
-
-const AuthContentWrapper = styled.div`
-  margin: 0 auto;
-`;
 
 export default Main;
