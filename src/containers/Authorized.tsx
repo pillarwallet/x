@@ -2,7 +2,11 @@ import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+
+// components
 import BottomMenu from '../components/BottomMenu';
+
+// providers
 import AccountBalancesProvider from '../providers/AccountBalancesProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
@@ -10,7 +14,12 @@ import AssetsProvider from '../providers/AssetsProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 
-
+/**
+ * @name Authorized
+ * @description This component is the main entry point for the users
+ * that are considered authenticated. It wraps the entire <Outlet />
+ * with the providers needed for the application to function.
+ */
 export default function Authorized({provider, chainId}: {provider: WalletProviderLike, chainId: number}) {
   return (
     <EtherspotTransactionKit

@@ -5,16 +5,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { mainnet, sepolia } from 'viem/chains';
 
-// components
-
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 import LanguageProvider from '../providers/LanguageProvider';
-
-// navigation
 
 // pages
 import Loading from '../pages/Loading';
@@ -30,7 +26,22 @@ import Waitlist from '../pages/WaitList';
 import { visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
 
+/**
+ * @name AuthLayout
+ * @description This component's primary responsibility
+ * is to manage the application's authentication flow. If
+ * the user is authenticated, it will render the Authorized
+ * component which contains the main application logic. If
+ * the user is not authenticated, it will render the routes
+ * only available to unauthenticated users.
+ * @returns 
+ */
 const AuthLayout = () => {
+  /**
+   * Import all the hooks, states and other variables
+   * we will need to determine what authentication
+   * state the user is in.
+   */
   const { ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
@@ -39,6 +50,13 @@ const AuthLayout = () => {
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
 
+  /**
+   * The following useEffect is to detemine if the
+   * wallet state of Privy changed, and if it did,
+   * update the provider (if any). This would also
+   * re-render Authorized component with the new
+   * state.
+   */
   useEffect(() => {
     let expired = false;
 
@@ -71,7 +89,19 @@ const AuthLayout = () => {
     }
   }, [wallets]);
 
+  /**
+   * If all the following variables are truthy within the if
+   * statement, we can consider this user as logged in and
+   * authenticated.
+   */
   if (isAppReady && authenticated && provider && chainId) {
+
+    /**
+     * Define our authorized routes for users that are
+     * authenticated. There are a few steps here.
+     */
+
+    // First, add the core routes to the route definition
     const authorizedRoutesDefinition = [{
       path: '/',
       element: <Authorized chainId={chainId} provider={provider}  />,
@@ -91,6 +121,7 @@ const AuthLayout = () => {
       }]
     }];
 
+    // Next, add the allowed apps to the route definition
     allowedApps.forEach((appId) => {
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}`,
@@ -102,6 +133,8 @@ const AuthLayout = () => {
       });
     });
 
+    // Finally, add the development app to the route definition
+    // if it exists...
     if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
       authorizedRoutesDefinition[0].children.push({
         path: `/${process.env.REACT_APP_PX_DEVELOPMENT_ID}`,
@@ -109,19 +142,33 @@ const AuthLayout = () => {
       });
     }
 
+    // ...and add the 404 route to the route definition
+    // for good measure
     authorizedRoutesDefinition.push({
       path: '*',
       element: <NotFound />,
       children: []
     });
-      
-    return <RouterProvider router={createBrowserRouter(authorizedRoutesDefinition)} />;
     
+    // ...and return.
+    return <RouterProvider router={createBrowserRouter(authorizedRoutesDefinition)} />;
   }
 
+  // Determine if this is a root page, we'll need it later
   const isRootPage = window.location.pathname === '/' || window.location.pathname === '/waitlist';
 
+  /**
+   * The following if statement determines if the user is
+   * logged in or not. If not logged in, This particular
+   * statement will determine if the user is unauthorized.
+   */
   if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
+
+    /**
+     * Define our unauthorized routes for users that are
+     * not authenticated. This is simpler as most of the 
+     * website is locked out.
+     */
     const unauthorizedRoutesDefinition = [{
       path: '/',
       element: <LandingPage />,
@@ -136,9 +183,17 @@ const AuthLayout = () => {
       element: <NotFound />,
     }];
 
+    // ...and return.
     return <RouterProvider router={createBrowserRouter(unauthorizedRoutesDefinition)} />;
   }
 
+  /**
+   * If none of these considitions are met, we can assume that
+   * we are still waiting for something to happen such as the
+   * wallets to load. In this case, we will render the loading
+   * component until a re-render is triggered by the useEffect
+   * above.
+   */
   return <Loading />;
 }
 
