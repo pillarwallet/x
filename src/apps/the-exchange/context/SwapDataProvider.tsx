@@ -1,10 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { ExchangeOffer, Token } from '@etherspot/prime-sdk/dist/sdk/data';
-import usePillarSwapAssets from '../hooks/usePillarSwapAssets';
+import React, { createContext, useContext, useState, useMemo } from 'react';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+
+// types
+import { SwapOffer } from '../utils/types';
 
 type AmountType = {
   tokenAmount: number;
   usdAmount: number;
+}
+
+type ChainType = {
+  chainId: number;
+  chainName: string;
 }
 
 interface SwapDataContextType {
@@ -16,10 +23,10 @@ interface SwapDataContextType {
   setIsSwapOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isReceiveOpen: boolean;
   setIsReceiveOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  swapChain: number | undefined;
-  setSwapChain: React.Dispatch<React.SetStateAction<number | undefined>>;
-  receiveChain: number | undefined;
-  setReceiveChain: React.Dispatch<React.SetStateAction<number | undefined>>;
+  swapChain: ChainType | undefined;
+  setSwapChain: React.Dispatch<React.SetStateAction<ChainType | undefined>>;
+  receiveChain: ChainType | undefined;
+  setReceiveChain: React.Dispatch<React.SetStateAction<ChainType | undefined>>;
   swapToken: Token | undefined;
   setSwapToken: React.Dispatch<React.SetStateAction<Token | undefined>>;
   receiveToken: Token | undefined;
@@ -28,8 +35,10 @@ interface SwapDataContextType {
   setAmountSwap: React.Dispatch<React.SetStateAction<AmountType | undefined>>;
   amountReceive: AmountType | undefined;
   setAmountReceive: React.Dispatch<React.SetStateAction<AmountType | undefined>>;
-  bestOffer: ExchangeOffer | undefined;
-  setBestOffer: React.Dispatch<React.SetStateAction<ExchangeOffer | undefined>>;
+  bestOffer: SwapOffer | undefined;
+  setBestOffer: React.Dispatch<React.SetStateAction<SwapOffer | undefined>>;
+  searchTokenResult: Token[];
+  setSearchTokenResult: React.Dispatch<React.SetStateAction<Token[]>>;
 
 }
 
@@ -56,49 +65,23 @@ export const SwapDataContext = createContext<SwapDataContextType>({
   setAmountReceive: () => {},
   bestOffer: undefined,
   setBestOffer: () => {},
+  searchTokenResult: [],
+  setSearchTokenResult: () => {},
 });
 
 export const SwapDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { getPillarSwapAssets } = usePillarSwapAssets();
   const [swapTokenData, setSwapTokenData] = useState<Token[]>([]);
   const [receiveTokenData, setReceiveTokenData] = useState<Token[]>([]);
   const [isSwapOpen, setIsSwapOpen] = useState<boolean>(false);
   const [isReceiveOpen, setIsReceiveOpen] = useState<boolean>(false);
-  const [swapChain, setSwapChain] = useState<number | undefined>(undefined);
-  const [receiveChain, setReceiveChain] = useState<number | undefined>(undefined);
+  const [swapChain, setSwapChain] = useState<ChainType | undefined>(undefined);
+  const [receiveChain, setReceiveChain] = useState<ChainType | undefined>(undefined);
   const [swapToken, setSwapToken] = useState<Token | undefined>(undefined);
   const [receiveToken, setReceiveToken] = useState<Token | undefined>(undefined);
   const [amountSwap, setAmountSwap] = useState<AmountType | undefined>(undefined);
   const [amountReceive, setAmountReceive] = useState<AmountType | undefined>(undefined);
-  const [bestOffer, setBestOffer] = useState<ExchangeOffer | undefined>(undefined)
-
-  useEffect(() => {
-    const getAssetsSwap = async (chainId: number | undefined) => {
-      try {
-        const assets = await getPillarSwapAssets(chainId || undefined);
-        setSwapTokenData(assets);
-      } catch (error) {
-        console.error('Error fetching supported assets:', error);
-      }
-    };
-
-    getAssetsSwap(swapChain || undefined);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapChain]);
-
-  useEffect(() => {
-    const getAssetsReceive = async (chainId: number | undefined) => {
-      try {
-        const assets = await getPillarSwapAssets(chainId || undefined);
-        setReceiveTokenData(assets);
-      } catch (error) {
-        console.error('Error fetching supported assets:', error);
-      }
-    };
-
-    getAssetsReceive(receiveChain || undefined);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receiveChain]);
+  const [bestOffer, setBestOffer] = useState<SwapOffer | undefined>(undefined)
+  const [searchTokenResult, setSearchTokenResult] = useState<Token[]>([]);
 
   const contextValue = useMemo(() => ({
     swapTokenData,
@@ -123,6 +106,8 @@ export const SwapDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setAmountReceive,
     bestOffer,
     setBestOffer,
+    searchTokenResult,
+    setSearchTokenResult,
   }), [
     swapTokenData,
     receiveTokenData,
@@ -135,6 +120,7 @@ export const SwapDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     amountSwap,
     amountReceive,
     bestOffer,
+    searchTokenResult,
   ]);
 
   return (

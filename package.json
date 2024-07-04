@@ -32,6 +32,7 @@
     "axios": "^1.6.5",
     "ethers": "^5.7.2",
     "firebase": "^10.6.0",
+    "fuse.js": "^7.0.0",
     "i18next": "^23.7.6",
     "iconsax-react": "^0.0.8",
     "identicon.js": "^2.3.3",

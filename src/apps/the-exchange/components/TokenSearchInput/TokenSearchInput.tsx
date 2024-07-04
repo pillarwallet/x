@@ -1,4 +1,10 @@
-import React, { useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
+import Fuse from 'fuse.js';
+
+// context
+import { SwapDataContext } from '../../context/SwapDataProvider';
+
+// images
 import SearchIcon from '../../images/search-icon.png';
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -7,11 +13,26 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
+    const { setSearchTokenResult, isSwapOpen, swapTokenData, receiveTokenData } = useContext(SwapDataContext);
+    const [value, setValue] = useState<string>('');
 
     const handleClickIcon = () => {
         if (inputRef.current) {
             inputRef.current.focus();
         }
+    };
+
+    // the handleSearch will look for tokens close to the name or chain id being typed on ALL supported chains
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const options = {
+            includeScore: true,
+            // Search in `chainId` and in `name`
+            keys: ['chainId', 'name']
+          }
+        const fuse = new Fuse((isSwapOpen ? swapTokenData : receiveTokenData), options);
+        const result = fuse.search(event.target.value);
+        setValue(event.target.value)
+        setSearchTokenResult(result.map((tokens) => tokens.item))
     };
 
     return (
@@ -22,6 +43,8 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
                         {...props}
                         ref={inputRef}
                         className={`w-full h-full rounded-[3px] p-2 pr-9 bg-white focus:outline-none focus:ring-0 font-normal text-black text-md placeholder-[#717171] ${className}`}
+                        onChange={handleSearch}
+                        value={value}
                     />
                     <span
                         className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"
