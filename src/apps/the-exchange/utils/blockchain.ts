@@ -1,6 +1,5 @@
 import { BigNumber, BigNumberish } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
-import { formatEther } from 'viem';
+import { formatUnits, formatEther } from 'ethers/lib/utils';
 
 export const processBigNumber = (val: BigNumber): number =>
     Number(val.toString());
