@@ -8,9 +8,6 @@ import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import WaitList from '../pages/WaitList';
 
-// hooks
-// import useAllowedApps from '../hooks/useAllowedApps';
-
 
 export const navigationRoute = {
   home: '/',
@@ -20,7 +17,6 @@ export const navigationRoute = {
 }
 
 export const AuthorizedNavigation = () => {
-  // const { allowed: allowedApps } = useAllowedApps();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const router = createBrowserRouter([
@@ -45,18 +41,6 @@ export const AuthorizedNavigation = () => {
   }, [navigate, navLocation.pathname]);
 
   return <RouterProvider router={router} />
-  // return (
-  //   <Routes>
-  //     <Route path={navigationRoute.home} element={<Lobby />} />
-  //     <Route path={navigationRoute.landing} element={<LandingPage />} />
-  //     <Route path={navigationRoute.waitlist} element={<WaitList />} />
-  //     {allowedApps.map((appId) => (
-  //       <Route key={appId} path={'/' + appId} element={<App id={appId} />} />
-  //     ))}
-  //     {process.env.REACT_APP_PX_DEVELOPMENT_ID && <Route path={`${process.env.REACT_APP_PX_DEVELOPMENT_ID}`} element={<App id={process.env.REACT_APP_PX_DEVELOPMENT_ID!} />} />}
-  //     <Route path="*" element={<NotFound />} />
-  //   </Routes>
-  // );
 }
 
 export const UnauthorizedNavigation = () => {
