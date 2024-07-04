@@ -1,21 +1,22 @@
-import { ethers } from 'ethers';
 import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import { ethers } from 'ethers';
 import {
-  polygon,
-  gnosis,
   avalanche,
+  base,
   bsc,
+  gnosis,
   mainnet,
+  polygon,
   sepolia,
 } from 'viem/chains';
 
 // images
-import logoEthereum from '../assets/images/logo-ethereum.png';
-import logoPolygon from '../assets/images/logo-polygon.png';
-import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoAvalanche from '../assets/images/logo-avalanche.png';
 import logoBsc from '../assets/images/logo-bsc.png';
+import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
+import logoGnosis from '../assets/images/logo-gnosis.png';
+import logoPolygon from '../assets/images/logo-polygon.png';
 
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
@@ -80,8 +81,7 @@ export const supportedChains = [
   mainnet,
   polygon,
   gnosis,
-  avalanche,
-  bsc,
+  base,
   sepolia,
 ];
 
