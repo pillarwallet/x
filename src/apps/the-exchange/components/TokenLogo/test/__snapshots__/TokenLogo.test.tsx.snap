@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokenLogo /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex min-w-fit items-end"
+>
+  <img
+    alt="token-logo"
+    className="w-5 h-5 object-fill rounded-full grayscale"
+    src="https://example.com/token-logo.png"
+  />
+  <div
+    className="w-3 h-3 rounded-full border border-white relative right-[7px] false"
+  >
+    <img
+      alt="chain-logo"
+      className="w-full h-full object-fill rounded-full grayscale false"
+      src="https://example.com/token-chain-logo.png"
+    />
+  </div>
+</div>
+`;

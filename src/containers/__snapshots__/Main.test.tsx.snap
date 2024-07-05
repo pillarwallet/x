@@ -15,15 +15,13 @@ exports[`<Main /> renders correctly 1`] = `
           className="home_header__announcment__wrapper"
         >
           <p>
-            Building dApps? Join the PillarX Testing Campaign
+            🚀 Secure Your Spot in the PillarX Testing Campaign!
           </p>
           <a
             className="plausible-event-name=Banner+Click"
-            href="https://forms.gle/Eba5xTHGNXe4dGyAA"
-            rel="noreferrer"
-            target="_blank"
+            href="/waitlist"
           >
-            Register now
+            Join the Waitlist
           </a>
         </div>
       </div>
@@ -47,11 +45,16 @@ exports[`<Main /> renders correctly 1`] = `
           <div
             className="home_header__main__menu"
           >
-            <button
-              onClick={[Function]}
+            <a
+              href="/#developers"
             >
-              For developers
-            </button>
+              For Developers
+            </a>
+            <a
+              href="/waitlist"
+            >
+              Testing Campaign
+            </a>
           </div>
           <div
             className="home_header__main__social"
@@ -335,6 +338,7 @@ exports[`<Main /> renders correctly 1`] = `
   </section>,
   <section
     className="home_build"
+    id="developers"
   >
     <div
       className="container"
@@ -362,7 +366,7 @@ exports[`<Main /> renders correctly 1`] = `
               Fill out 
               <a
                 className="plausible-event-name=Testing+Form"
-                href="https://forms.gle/Eba5xTHGNXe4dGyAA"
+                href="https://form.pillarx.app/dapp-application/"
                 rel="noreferrer"
                 target="_blank"
               >

@@ -197,8 +197,9 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
                         onBlur={() => setIsFocus(false)}
                         style={{ width: '100%' }}
                         className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
+                        data-testid="enter-amount-input"
                     />
-                    {errorMessage && <BodySmall>{errorMessage}</BodySmall>}
+                    {errorMessage && <BodySmall data-testid="error-max-limit">{errorMessage}</BodySmall>}
                 </>
             ) : (
                 renderOffer()

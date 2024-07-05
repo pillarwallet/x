@@ -68,10 +68,11 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
 
     return (
         <>
-            <div className="fixed inset-0 bg-black_grey/[.9] -z-10">
+            <div className="fixed inset-0 bg-black_grey/[.9] -z-10" data-testid='dropdown-token-list'>
                 <button
                     onClick={() => {type === CardPosition.SWAP ? setIsSwapOpen(false) : setIsReceiveOpen(false); setSearchTokenResult([])}}
                     className="fixed top-0 right-0 w-[50px] h-[50px] mt-6 mr-4 mb-20 desktop:mr-14 desktop:mb-28 bg-black"
+                    data-testid='close-card-button'
                 >
                     <img src={CloseIcon} className="w-full h-auto" />
                 </button>

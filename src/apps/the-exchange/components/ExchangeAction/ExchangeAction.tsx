@@ -96,7 +96,7 @@ const ExchangeAction = () => {
                         {errorMessage}
                     </BodySmall>
                 )}
-                {isAddingToBatch ? <CircularProgress size={24} sx={{ color: '#343434' }}/> : <img src={ArrowRight} className='w-5 h-5'/>}
+                {isAddingToBatch ? <CircularProgress size={24} sx={{ color: '#343434' }} data-testid='loading-circular'/> : <img src={ArrowRight} className='w-5 h-5'/>}
             </div>
         </div>
     );

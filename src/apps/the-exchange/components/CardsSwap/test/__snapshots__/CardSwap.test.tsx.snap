@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex w-full justify-center"
+>
+  <div
+    className="flex w-full gap-4 desktop:gap-8 justify-center"
+    data-testid="swap-receive-cards"
+  >
+    <div
+      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-green"
+      data-testid="select-token-card"
+    >
+      <div
+        className="flex justify-between items-start"
+        onClick={[Function]}
+      >
+        <div
+          className="flex w-full flex-col"
+        >
+          <p
+            className="text-base font-medium text-black_grey capitalize"
+          >
+            Ether
+          </p>
+          <p
+            className="text-base font-medium text-black_grey font-normal capitalize"
+          >
+            On 1
+          </p>
+        </div>
+        <div
+          className="flex min-w-fit items-end"
+        >
+          <img
+            alt="token-logo"
+            className="w-5 h-5 object-fill rounded-full grayscale"
+            src="iconEth.png"
+          />
+          <div
+            className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
+          >
+            <img
+              alt="chain-logo"
+              className="w-full h-full object-fill rounded-full grayscale hidden"
+              src="logo-unknown.png"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-1 group"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <p
+          className="text-xs font-normal text-black_grey false font-normal"
+        >
+          ETH
+        </p>
+        <input
+          className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          type="number"
+          value={0}
+        />
+        <div
+          className="flex justify-between"
+        >
+          <p
+            className="text-xs font-normal text-black_grey false"
+          >
+            $
+            3000.00
+          </p>
+          <img
+            alt="Send"
+            src="send-arrow.png"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-purple"
+      data-testid="select-token-card"
+    >
+      <div
+        className="flex justify-between items-start"
+        onClick={[Function]}
+      >
+        <div
+          className="flex w-full flex-col"
+        >
+          <p
+            className="text-base font-medium text-black_grey capitalize"
+          >
+            Matic
+          </p>
+          <p
+            className="text-base font-medium text-black_grey font-normal capitalize"
+          >
+            On 137
+          </p>
+        </div>
+        <div
+          className="flex min-w-fit items-end"
+        >
+          <img
+            alt="token-logo"
+            className="w-5 h-5 object-fill rounded-full grayscale"
+            src="iconMatic.png"
+          />
+          <div
+            className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
+          >
+            <img
+              alt="chain-logo"
+              className="w-full h-full object-fill rounded-full grayscale hidden"
+              src="logo-unknown.png"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-1 group"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <p
+          className="text-xs font-normal text-black_grey false font-normal"
+        >
+          MATIC
+        </p>
+        <div
+          className="flex justify-between"
+        >
+          <p
+            className="text-xs font-normal text-black_grey false"
+          >
+            $
+            3000.00
+          </p>
+          <img
+            alt="Receive"
+            src="receive-arrow.png"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    className="absolute self-center w-[34px] h-[34px] p-2 bg-white rounded-[3px] desktop:p-4 desktop:w-14 desktop:h-14"
+    onClick={[Function]}
+  >
+    <img
+      className="w-[18px] h-[18px] desktop:w-6 desktop:h-6"
+      src="arrow-swap-horizontal.png"
+    />
+  </button>
+</div>
+`;
