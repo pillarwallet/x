@@ -1,7 +1,7 @@
 import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-sdk';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { mainnet, sepolia } from 'viem/chains';
 
@@ -112,13 +112,18 @@ const AuthLayout = () => {
           element: <Lobby />,
         },
         {
-        path: '/landing',
-        element: <LandingPage />,
-      },
-      {
-        path: '/waitlist',
-        element: <Waitlist />,
-      }]
+          path: '/landing',
+          element: <LandingPage />,
+        },
+        {
+          path: '/waitlist',
+          element: <Waitlist />,
+        },
+        {
+          path: '/login',
+          element: <Navigate to="/" />,
+        }
+      ]
     }];
 
     // Next, add the allowed apps to the route definition
