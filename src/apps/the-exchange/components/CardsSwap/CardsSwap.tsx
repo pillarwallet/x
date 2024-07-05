@@ -86,7 +86,7 @@ const CardsSwap = () => {
     const isInitialOrder = isEqual(cardPosition, initialPosition);
 
     const renderCards = () => (
-        <div className="flex w-full gap-4 desktop:gap-8 justify-center">
+        <div className="flex w-full gap-4 desktop:gap-8 justify-center" data-testid='swap-receive-cards'>
             <SwapReceiveCard
                 onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.swap : cardPosition.receive)}
                 position={isInitialOrder ? cardPosition.swap : cardPosition.receive}
