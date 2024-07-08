@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { ethers } from 'ethers';
-import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // hooks
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
@@ -9,6 +8,9 @@ import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 
 // context
 import { SwapDataContext } from '../../context/SwapDataProvider';
+
+// utils
+import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
@@ -32,7 +34,7 @@ const ExchangeAction = () => {
         setErrorMessage('');
 
         if (!bestOffer) {
-            setErrorMessage('No offer available to exchange');
+            setErrorMessage('No offer was found! Please try changing the amounts to try again.');
             return;
         }
 
@@ -73,7 +75,7 @@ const ExchangeAction = () => {
 
         } catch (error) {
             console.error('Something went wrong. Please try again', error);
-            setErrorMessage('Something went wrong with the exchange. Please try again.');
+            setErrorMessage('We were not able to add this to the queue at the moment. Please try again.');
         }
     };
 

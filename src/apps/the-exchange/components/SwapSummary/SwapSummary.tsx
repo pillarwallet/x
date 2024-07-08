@@ -1,8 +1,10 @@
 import { useContext } from 'react';
-import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // context
 import { SwapDataContext } from '../../context/SwapDataProvider';
+
+// utils
+import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // components
 import BodySmall from '../Typography/BodySmall';
