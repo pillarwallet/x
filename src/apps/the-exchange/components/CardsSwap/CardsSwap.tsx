@@ -85,7 +85,7 @@ const CardsSwap = () => {
     // isInitialOrder tells us if the cards are in the initial order or they have been switched
     const isInitialOrder = isEqual(cardPosition, initialPosition);
 
-    const renderCards = () => (
+    const SwapCards = () => (
         <div className="flex w-full gap-4 desktop:gap-8 justify-center" data-testid='swap-receive-cards'>
             <SwapReceiveCard
                 onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.swap : cardPosition.receive)}
@@ -100,7 +100,7 @@ const CardsSwap = () => {
         </div>
     );
 
-    const renderDropdown = () => (
+    const DropdownList = () => (
         <DropdownTokenList
             type={isSwapOpen ? CardPosition.SWAP : CardPosition.RECEIVE}
             initialCardPosition={(isSwapOpen && isInitialOrder) || (isReceiveOpen && !isInitialOrder) ? initialPosition.swap : initialPosition.receive}
@@ -109,7 +109,7 @@ const CardsSwap = () => {
 
     return (
         <div className="flex w-full justify-center">
-            {!isSwapOpen && !isReceiveOpen ? renderCards() : renderDropdown()}
+            {!isSwapOpen && !isReceiveOpen ? <SwapCards /> : <DropdownList />}
             {!isSwapOpen && !isReceiveOpen && (
                 <button
                     onClick={swapCards}

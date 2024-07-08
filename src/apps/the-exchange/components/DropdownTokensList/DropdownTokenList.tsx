@@ -1,11 +1,13 @@
 import { useContext, useState } from 'react';
-import { convertChainIdtoName } from '../../utils/converters';
 
 // types
 import { CardPosition } from '../../utils/types';
 
 // context
 import { SwapDataContext } from '../../context/SwapDataProvider';
+
+// utils
+import { convertChainIdtoName } from '../../utils/converters';
 
 // components
 import TokenSearchInput from '../TokenSearchInput/TokenSearchInput';

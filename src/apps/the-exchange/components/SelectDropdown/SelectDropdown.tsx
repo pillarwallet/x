@@ -1,8 +1,10 @@
 import { useContext } from 'react';
-import { convertChainIdtoName } from '../../utils/converters';
 
 // context
 import { SwapDataContext } from '../../context/SwapDataProvider';
+
+// utils
+import { convertChainIdtoName } from '../../utils/converters';
 
 // components
 import Body from '../Typography/Body';

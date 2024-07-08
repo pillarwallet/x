@@ -1,7 +1,8 @@
-import { convertChainIdtoName } from '../../utils/converters';
-
 // types
 import { CardPosition } from '../../utils/types';
+
+// utils
+import { convertChainIdtoName } from '../../utils/converters';
 
 // components
 import Body from '../Typography/Body';
