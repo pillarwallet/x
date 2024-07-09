@@ -14,6 +14,7 @@ import ExchangeAction from './components/ExchangeAction/ExchangeAction';
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 
 // images
+import { Counter } from './components/NewCounter';
 import XBackground from './images/x-background.svg';
 
 const TheExchangeApp = () => {
@@ -22,6 +23,7 @@ const TheExchangeApp = () => {
   return (
     <Wrapper>
       <ExchangeHeader />
+      <Counter />
       <div className="flex flex-col items-center z-10 gap-4 desktop:gap-8">
         <CardsSwap />
         {(isSwapOpen || isReceiveOpen) ? null :  (

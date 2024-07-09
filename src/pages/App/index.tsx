@@ -1,11 +1,11 @@
+import i18n from 'i18next';
 import React, { Suspense, useEffect } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
-import i18n from 'i18next';
 import styled from 'styled-components';
 
 // components
-import Alert from '../../components/Text/Alert';
 import AppIcon from '../../components/AppIcon';
+import Alert from '../../components/Text/Alert';
 
 // theme
 import { animation } from '../../theme';

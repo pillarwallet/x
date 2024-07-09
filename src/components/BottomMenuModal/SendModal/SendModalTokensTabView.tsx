@@ -1,6 +1,3 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import {
   EtherspotBatch,
   EtherspotBatches,
@@ -14,29 +11,35 @@ import {
 } from '@etherspot/transaction-kit';
 import { ethers } from 'ethers';
 import {
-  Flash as IconFlash,
+  ArrangeVertical as ArrangeVerticalIcon,
   ClipboardText as IconClipboardText,
   ClipboardTick as IconClipboardTick,
-  ArrangeVertical as ArrangeVerticalIcon,
+  Flash as IconFlash,
 } from 'iconsax-react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 // components
-import TextInput from '../../Form/TextInput';
-import Label from '../../Form/Label';
-import FormGroup from '../../Form/FormGroup';
 import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
-import SendModalBottomButtons from './SendModalBottomButtons';
+import FormGroup from '../../Form/FormGroup';
+import Label from '../../Form/Label';
+import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
+import SendModalBottomButtons from './SendModalBottomButtons';
 
 // hooks
-import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import useAccountBalances from '../../../hooks/useAccountBalances';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
+
+// services
+import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 
 // utils
 import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
-import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 import { pasteFromClipboard } from '../../../utils/common';
+import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import { SendModalData } from './index';
@@ -74,6 +77,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
   const { hide, showHistory } = useBottomMenuModal();
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what apps are being opened
+   */
+  const [recordPresence] = useRecordPresenceMutation();
 
   const selectedAssetBalance = React.useMemo(() => {
     if (!selectedAsset || selectedAsset.type !== 'token') return 0;
@@ -192,6 +201,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       setIsSending(false);
       return;
     }
+
+    // Record the sending of this asset
+    recordPresence({
+      address: accountAddress,
+      action: 'actionSendAsset',
+      value: selectedAsset?.id,
+      data: {
+        ...selectedAsset
+      }
+    })
 
     const sent = await send();
 
