@@ -9,9 +9,9 @@ import { SwapDataContext, SwapDataProvider } from './context/SwapDataProvider';
 
 // components
 import CardsSwap from './components/CardsSwap/CardsSwap';
-import SwapSummary from './components/SwapSummary/SwapSummary';
 import ExchangeAction from './components/ExchangeAction/ExchangeAction';
 import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
+import SwapSummary from './components/SwapSummary/SwapSummary';
 
 // images
 import { Counter } from './components/NewCounter';
