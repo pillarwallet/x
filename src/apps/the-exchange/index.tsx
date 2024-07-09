@@ -15,8 +15,8 @@ import SwapSummary from './components/SwapSummary/SwapSummary';
 import XBackground from './images/x-background.svg';
 
 export const App = () => {
-  const isSwapOpen = useAppSelector((state) => state.isSwapOpen);
-  const isReceiveOpen = useAppSelector((state) => state.isReceiveOpen);
+  const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+  const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen);
 
   return (
     <Wrapper>

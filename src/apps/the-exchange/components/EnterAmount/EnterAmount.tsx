@@ -37,11 +37,11 @@ type EnterAmountProps = {
 
 const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
-  const amountSwap = useAppSelector((state) => state.amountSwap);
-  const amountReceive = useAppSelector((state) => state.amountReceive);
-  const swapToken = useAppSelector((state) => state.swapToken);
-  const receiveToken = useAppSelector((state) => state.receiveToken);
-  const bestOffer = useAppSelector((state) => state.bestOffer);
+  const amountSwap = useAppSelector((state) => state.swap.amountSwap);
+  const amountReceive = useAppSelector((state) => state.swap.amountReceive);
+  const swapToken = useAppSelector((state) => state.swap.swapToken);
+  const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+  const bestOffer = useAppSelector((state) => state.swap.bestOffer);
   
   const walletAddress = useWalletAddress();
   const [inputValue, setInputValue] = useState<number>(0);

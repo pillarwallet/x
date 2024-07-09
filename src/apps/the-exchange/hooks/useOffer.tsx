@@ -88,7 +88,7 @@ const useOffer = (chainId: number) => {
             }
         }
 
-        // return {} as SwapOffer;
+        return {} as SwapOffer;
     };
 
     return {
