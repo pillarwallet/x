@@ -1,11 +1,26 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isEqual } from 'lodash';
+
+// reducer
+import { 
+    setAmountReceive, 
+    setAmountSwap, 
+    setIsReceiveOpen, 
+    setIsSwapOpen, 
+    setReceiveChain, 
+    setReceiveToken, 
+    setReceiveTokenData, 
+    setSwapChain, 
+    setSwapToken, 
+    setSwapTokenData 
+} from '../../reducer/theExchangeSlice';
 
 // hooks
 import usePillarSwapAssets from '../../hooks/usePillarSwapAssets';
-
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+import { 
+    useAppDispatch, 
+    useAppSelector 
+} from '../../hooks/useReducerHooks';
 
 // types
 import { CardPosition } from '../../utils/types';
@@ -23,26 +38,15 @@ type CardPositionType = {
 };
 
 const CardsSwap = () => {
-    const {
-        setSwapTokenData,
-        isSwapOpen,
-        setIsSwapOpen,
-        setIsReceiveOpen,
-        isReceiveOpen,
-        swapChain,
-        receiveChain,
-        swapToken,
-        receiveToken,
-        setSwapChain,
-        setReceiveChain,
-        setSwapToken,
-        setReceiveToken,
-        amountSwap,
-        amountReceive,
-        setAmountReceive,
-        setAmountSwap,
-        setReceiveTokenData,
-    } = useContext(SwapDataContext);
+    const dispatch = useAppDispatch();
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+    const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen);
+    const swapChain = useAppSelector((state) => state.swap.swapChain);
+    const receiveChain = useAppSelector((state) => state.swap.receiveChain);
+    const swapToken = useAppSelector((state) => state.swap.swapToken);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive);
 
     const { getPillarSwapAssets } = usePillarSwapAssets();
 
@@ -59,12 +63,12 @@ const CardsSwap = () => {
             swap: prevPosition.receive,
             receive: prevPosition.swap,
         }));
-        setSwapChain(receiveChain);
-        setReceiveChain(swapChain);
-        setSwapToken(receiveToken);
-        setReceiveToken(swapToken);
-        setAmountSwap(amountReceive);
-        setAmountReceive(amountSwap);
+        dispatch(setSwapChain(receiveChain));
+        dispatch(setReceiveChain(swapChain));
+        dispatch(setSwapToken(receiveToken));
+        dispatch(setReceiveToken(swapToken));
+        dispatch(setAmountSwap(amountReceive));
+        dispatch(setAmountReceive(amountSwap));
     };
 
     // handleOpenTokenList opens the list for selecting tokens
@@ -72,13 +76,13 @@ const CardsSwap = () => {
         // Error handled in usePillarSwapAssets hook
         const assets = await getPillarSwapAssets();
 
-        setSwapTokenData(assets);
-        setReceiveTokenData(assets);
+        dispatch(setSwapTokenData(assets));
+        dispatch(setReceiveTokenData(assets));
 
         if (position === CardPosition.SWAP) {
-            setIsSwapOpen(true);
+            dispatch(setIsSwapOpen(true));
         } else {
-            setIsReceiveOpen(true);
+            dispatch(setIsReceiveOpen(true));
         }
     };
 

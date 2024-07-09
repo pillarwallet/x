@@ -1,11 +1,14 @@
-import { ExchangeOffer } from '@etherspot/prime-sdk/dist/sdk/data';
+// hooks
 import { useEtherspotSwaps } from '@etherspot/transaction-kit';
-import { parseUnits } from 'ethers/lib/utils';
-import { processEth } from '../utils/blockchain';
-import { Route } from '@lifi/sdk';
 
 // types
 import { SwapOffer, SwapType } from '../utils/types';
+import { ExchangeOffer } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Route } from '@lifi/sdk';
+
+// utils
+import { parseUnits } from 'ethers/lib/utils';
+import { processEth } from '../utils/blockchain';
 
 const useOffer = (chainId: number) => {
     const { getOffers } = useEtherspotSwaps(chainId);
@@ -18,7 +21,7 @@ const useOffer = (chainId: number) => {
         toTokenAddress, 
         toChainId, 
         toTokenDecimals
-    }: SwapType): Promise<SwapOffer> => {
+    }: SwapType): Promise<SwapOffer | undefined> => {
         let selectedOffer: SwapOffer;
 
         // uses getAdvanceRoutesLifi (Lifi) - different chains, different tokens
@@ -85,7 +88,7 @@ const useOffer = (chainId: number) => {
             }
         }
 
-        return {} as SwapOffer;
+        // return {} as SwapOffer;
     };
 
     return {

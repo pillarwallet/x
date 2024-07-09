@@ -1,7 +1,5 @@
-import { useContext } from 'react';
-
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+// hooks
+import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
 import { CardPosition } from '../../utils/types';
@@ -17,8 +15,9 @@ type SwapReceiveCardProps = {
 }
 
 const SwapReceiveCard = ({ position, initialPosition, onClick }: SwapReceiveCardProps) => {
-    const { swapToken, receiveToken } = useContext(SwapDataContext);
-
+    const swapToken = useAppSelector((state) => state.swap.swapToken);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+  
     const isClickable = (position === CardPosition.SWAP && !swapToken) || (position === CardPosition.RECEIVE && !receiveToken);
 
     return (

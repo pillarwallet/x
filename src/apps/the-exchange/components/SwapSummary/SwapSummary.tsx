@@ -1,17 +1,24 @@
-import { useContext } from 'react';
+// hooks
+import { useAppSelector } from '../../hooks/useReducerHooks';
 
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+// types
+import { SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // components
 import BodySmall from '../Typography/BodySmall';
+
+// images
 import ArrowRightLight from '../../images/arrow-right-light.png';
 
 const SwapSummary = () => {
-    const { swapToken, receiveToken, amountSwap, amountReceive, bestOffer } = useContext(SwapDataContext);
+    const swapToken = useAppSelector((state) => state.swap.swapToken);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive);
+    const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
 
     if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer) {
         return null;

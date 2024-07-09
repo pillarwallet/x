@@ -33,7 +33,9 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
         >
           <p
             className="text-base font-medium text-black_grey text-black capitalize"
-          />
+          >
+            Polygon
+          </p>
           <img
             src="arrow-down.png"
           />
@@ -60,7 +62,56 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto bg-green"
-    />
+    >
+      <div
+        className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
+        data-testid="token-list-item"
+        onClick={[Function]}
+      >
+        <div
+          className="flex items-center"
+        >
+          <div
+            className="flex min-w-fit items-end"
+          >
+            <img
+              alt="token-logo"
+              className="w-[30px] h-[30px] object-fill rounded-full grayscale"
+              src="iconMatic.png"
+            />
+            <div
+              className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] hidden"
+            >
+              <img
+                alt="chain-logo"
+                className="w-full h-full object-fill rounded-full grayscale hidden"
+                src="logo-unknown.png"
+              />
+            </div>
+          </div>
+          <div
+            className="flex flex-col ml-[10px]"
+          >
+            <p
+              className="text-base font-medium text-black_grey group-hover:opacity-60"
+            >
+              Matic
+            </p>
+            <p
+              className="text-xs font-normal text-black_grey group-hover:opacity-60"
+            >
+              MATIC
+            </p>
+          </div>
+        </div>
+        <p
+          className="text-xs font-normal text-black_grey group-hover:opacity-60 capitalize"
+        >
+          On 
+          137
+        </p>
+      </div>
+    </div>
   </div>,
 ]
 `;

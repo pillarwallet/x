@@ -1,8 +1,13 @@
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Fuse from 'fuse.js';
 
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+// reducer
+import { setSearchTokenResult } from '../../reducer/theExchangeSlice';
+// hooks
+import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+
+// types
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // images
 import SearchIcon from '../../images/search-icon.png';
@@ -12,8 +17,12 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
+    const dispatch = useAppDispatch();
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+    const swapTokenData = useAppSelector((state) => state.swap.swapTokenData as Token[]);
+    const receiveTokenData = useAppSelector((state) => state.swap.receiveTokenData as Token[]);
+
     const inputRef = useRef<HTMLInputElement>(null);
-    const { setSearchTokenResult, isSwapOpen, swapTokenData, receiveTokenData } = useContext(SwapDataContext);
     const [value, setValue] = useState<string>('');
 
     const handleClickIcon = () => {
@@ -32,7 +41,7 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
         const fuse = new Fuse((isSwapOpen ? swapTokenData : receiveTokenData), options);
         const result = fuse.search(event.target.value);
         setValue(event.target.value)
-        setSearchTokenResult(result.map((tokens) => tokens.item))
+        dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)))
     };
 
     return (

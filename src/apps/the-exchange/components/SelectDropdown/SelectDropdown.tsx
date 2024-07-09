@@ -1,7 +1,8 @@
-import { useContext } from 'react';
+// reducer
+import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+// hooks
+import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
 import { convertChainIdtoName } from '../../utils/converters';
@@ -21,22 +22,19 @@ type DropdownProps = {
 };
 
 const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: DropdownProps) => {
-  const {
-    swapChain,
-    setSwapChain,
-    receiveChain,
-    setReceiveChain,
-    isSwapOpen,
-    isReceiveOpen,
-  } = useContext(SwapDataContext);
+  const dispatch = useAppDispatch();
+  const swapChain = useAppSelector((state) => state.swap.swapChain);
+  const receiveChain = useAppSelector((state) => state.swap.receiveChain);
+  const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+  const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen);
 
   // this will filter the tokens by chain id
   const handleSelectChainId = (option: number) => {
     if (isSwapOpen) {
-      setSwapChain({chainId: Number(option), chainName: convertChainIdtoName(option)});
+      dispatch(setSwapChain({chainId: Number(option), chainName: convertChainIdtoName(option)}));
     }
     if (isReceiveOpen) {
-      setReceiveChain({chainId: Number(option), chainName: convertChainIdtoName(option)});
+      dispatch(setReceiveChain({chainId: Number(option), chainName: convertChainIdtoName(option)}));
     }
     onSelect();
   };

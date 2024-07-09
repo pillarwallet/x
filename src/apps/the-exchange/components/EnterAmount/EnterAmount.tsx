@@ -1,18 +1,22 @@
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { useEtherspotPrices, useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
-import { hasThreeZerosAfterDecimal } from '../../utils/converters';
-import { processEth } from '../../utils/blockchain';
+
+// reducer
+import { setAmountReceive, setAmountSwap, setBestOffer } from '../../reducer/theExchangeSlice';
 
 // hooks
 import useOffer from '../../hooks/useOffer';
 import useAccountBalances from '../../../../hooks/useAccountBalances';
-
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+import { useEtherspotPrices, useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 
 // types
 import { CardPosition, SwapOffer } from '../../utils/types';
+import { RateInfo } from '@etherspot/prime-sdk/dist/sdk/data';
+
+// utils
+import { processEth } from '../../utils/blockchain';
+import { hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // components
 import BodySmall from '../Typography/BodySmall';
@@ -23,7 +27,8 @@ import { CircularProgress } from '@mui/material';
 // images
 import SendArrow from '../../images/send-arrow.png';
 import ReceiveArrow from '../../images/receive-arrow.png';
-import { RateInfo } from '@etherspot/prime-sdk/dist/sdk/data';
+
+
 
 type EnterAmountProps = {
   type: CardPosition;
@@ -31,17 +36,14 @@ type EnterAmountProps = {
 };
 
 const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
+  const dispatch = useAppDispatch();
+  const amountSwap = useAppSelector((state) => state.amountSwap);
+  const amountReceive = useAppSelector((state) => state.amountReceive);
+  const swapToken = useAppSelector((state) => state.swapToken);
+  const receiveToken = useAppSelector((state) => state.receiveToken);
+  const bestOffer = useAppSelector((state) => state.bestOffer);
+  
   const walletAddress = useWalletAddress();
-  const {
-    amountSwap,
-    setAmountSwap,
-    amountReceive,
-    setAmountReceive,
-    swapToken,
-    receiveToken,
-    setBestOffer,
-    bestOffer,
-  } = useContext(SwapDataContext);
   const [inputValue, setInputValue] = useState<number>(0);
   const { getPrice } = useEtherspotPrices();
   const balances = useAccountBalances();
@@ -75,12 +77,12 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       });
 
       if (usdPrice) {
-        setAmountReceive({
+        dispatch(setAmountReceive({
           tokenAmount: offer?.tokenAmountToReceive,
           usdAmount: usdPrice.usd * offer.tokenAmountToReceive,
-        });
+        }));
       } else {
-        setAmountReceive({ tokenAmount: offer.tokenAmountToReceive, usdAmount: 0 });
+        dispatch(setAmountReceive({ tokenAmount: offer.tokenAmountToReceive, usdAmount: 0 }));
       }
     } else {
       setIsNoOffer(true);
@@ -94,7 +96,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // Debounced getOffer function with 2-second delay
   const debouncedGetOffer = _.debounce(() => {
     getOffer().then((offer) => {
-      if (offer) setBestOffer(offer);
+      if (offer) dispatch(setBestOffer(offer));
     });
   }, 2000);
 
@@ -151,9 +153,9 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     if (type === CardPosition.SWAP && swapToken) {
       const usdPrice = await getPrice(swapToken.address, swapToken.chainId);
       if (usdPrice) {
-        setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPrice.usd * Number(value) });
+        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPrice.usd * Number(value) }));
       } else {
-        setAmountSwap({ tokenAmount: Number(value), usdAmount: 0 });
+        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: 0 }));
       }
     }
   };

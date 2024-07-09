@@ -1,35 +1,93 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { AmountType, ChainType, SwapOffer } from '../utils/types';
 
-export interface CounterState {
-  value: number
+export type SwapState = {
+  swapTokenData: Token[];
+  receiveTokenData: Token[];
+  isSwapOpen: boolean;
+  isReceiveOpen: boolean;
+  swapChain?: ChainType;
+  receiveChain?: ChainType;
+  swapToken?: Token;
+  receiveToken?: Token;
+  amountSwap?: AmountType;
+  amountReceive?: AmountType;
+  bestOffer?: SwapOffer;
+  searchTokenResult: Token[];
 }
 
-const initialState: CounterState = {
-  value: 0,
-}
+const initialState: SwapState = {
+  swapTokenData: [],
+  receiveTokenData: [],
+  isSwapOpen: false,
+  isReceiveOpen: false,
+  swapChain: undefined,
+  receiveChain: undefined,
+  swapToken: undefined,
+  receiveToken: undefined,
+  amountSwap: undefined,
+  amountReceive: undefined,
+  bestOffer: undefined,
+  searchTokenResult: [],
+};
 
-export const counterSlice = createSlice({
-  name: 'counter',
+const swapSlice = createSlice({
+  name: 'swap',
   initialState,
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1
+    setSwapTokenData(state, action: PayloadAction<Token[]>) {
+      state.swapTokenData = action.payload;
     },
-    decrement: (state) => {
-      state.value -= 1
+    setReceiveTokenData(state, action: PayloadAction<Token[]>) {
+      state.receiveTokenData = action.payload;
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
+    setIsSwapOpen(state, action: PayloadAction<boolean>) {
+      state.isSwapOpen = action.payload;
+    },
+    setIsReceiveOpen(state, action: PayloadAction<boolean>) {
+      state.isReceiveOpen = action.payload;
+    },
+    setSwapChain(state, action: PayloadAction<ChainType | undefined>) {
+      state.swapChain = action.payload;
+    },
+    setReceiveChain(state, action: PayloadAction<ChainType | undefined>) {
+      state.receiveChain = action.payload;
+    },
+    setSwapToken(state, action: PayloadAction<Token | undefined>) {
+      state.swapToken = action.payload;
+    },
+    setReceiveToken(state, action: PayloadAction<Token | undefined>) {
+      state.receiveToken = action.payload;
+    },
+    setAmountSwap(state, action: PayloadAction<AmountType | undefined>) {
+      state.amountSwap = action.payload;
+    },
+    setAmountReceive(state, action: PayloadAction<AmountType | undefined>) {
+      state.amountReceive = action.payload;
+    },
+    setBestOffer(state, action: PayloadAction<SwapOffer | undefined>) {
+      state.bestOffer = action.payload;
+    },
+    setSearchTokenResult(state, action: PayloadAction<Token[]>) {
+      state.searchTokenResult = action.payload;
     },
   },
-})
+});
 
-// Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions
+export const {
+  setSwapTokenData,
+  setReceiveTokenData,
+  setIsSwapOpen,
+  setIsReceiveOpen,
+  setSwapChain,
+  setReceiveChain,
+  setSwapToken,
+  setReceiveToken,
+  setAmountSwap,
+  setAmountReceive,
+  setBestOffer,
+  setSearchTokenResult,
+} = swapSlice.actions;
 
-export default counterSlice;
+export default swapSlice;

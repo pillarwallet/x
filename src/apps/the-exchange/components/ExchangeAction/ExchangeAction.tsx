@@ -1,13 +1,14 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { ethers } from 'ethers';
 
 // hooks
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import { useEtherspotSwaps } from '@etherspot/transaction-kit';
+import { useAppSelector } from '../../hooks/useReducerHooks';
 
-// context
-import { SwapDataContext } from '../../context/SwapDataProvider';
+// types
+import { SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
@@ -23,9 +24,12 @@ import { CircularProgress } from '@mui/material';
 import ArrowRight from '../../images/arrow-right.png';
 
 const ExchangeAction = () => {
-    const { bestOffer, swapToken, receiveToken } = useContext(SwapDataContext);
+    const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
+    const swapToken = useAppSelector((state) => state.swap.swapToken);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const [ isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
+    const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
     const { addToBatch } = useGlobalTransactionsBatch();
     const { showSend } = useBottomMenuModal();
     const { prepareCrossChainOfferTransactions } = useEtherspotSwaps();

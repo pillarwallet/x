@@ -1,11 +1,9 @@
-import { useContext } from 'react';
-
 // styles
 import styled from 'styled-components';
 import './styles/tailwindTheExchange.css';
 
-// context
-import { SwapDataContext, SwapDataProvider } from './context/SwapDataProvider';
+// hooks
+import { useAppSelector } from './hooks/useReducerHooks';
 
 // components
 import CardsSwap from './components/CardsSwap/CardsSwap';
@@ -14,16 +12,15 @@ import ExchangeHeader from './components/ExchangeHeader/ExchangeHeader';
 import SwapSummary from './components/SwapSummary/SwapSummary';
 
 // images
-import { Counter } from './components/NewCounter';
 import XBackground from './images/x-background.svg';
 
-const TheExchangeApp = () => {
-  const { isSwapOpen, isReceiveOpen } = useContext(SwapDataContext);
+export const App = () => {
+  const isSwapOpen = useAppSelector((state) => state.isSwapOpen);
+  const isReceiveOpen = useAppSelector((state) => state.isReceiveOpen);
 
   return (
     <Wrapper>
       <ExchangeHeader />
-      <Counter />
       <div className="flex flex-col items-center z-10 gap-4 desktop:gap-8">
         <CardsSwap />
         {(isSwapOpen || isReceiveOpen) ? null :  (
@@ -37,14 +34,6 @@ const TheExchangeApp = () => {
         <img src={XBackground} className="w-full h-auto transform rotate-[-15deg]" />
       </div>
     </Wrapper>
-  );
-};
-
-export const App = () => {
-  return (
-    <SwapDataProvider>
-      <TheExchangeApp />
-    </SwapDataProvider>
   );
 };
 

@@ -19,7 +19,17 @@ export type SwapType = {
     provider?: BridgingProvider;
 }
 
-export interface SwapOffer {
+export type SwapOffer = {
     tokenAmountToReceive: number;
     offer: Route | ExchangeOffer;
 }
+
+export type AmountType = {
+    tokenAmount: number;
+    usdAmount: number;
+  }
+  
+export type ChainType = {
+    chainId: number;
+    chainName: string;
+  }
