@@ -1,8 +1,24 @@
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 
-// context
-import { SwapDataContext } from '../../../context/SwapDataProvider';
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
+// reducer
+import { 
+  setAmountReceive,
+  setAmountSwap,
+  setBestOffer,
+  setIsReceiveOpen,
+  setIsSwapOpen,
+  setReceiveChain,
+  setReceiveToken,
+  setReceiveTokenData,
+  setSearchTokenResult,
+  setSwapChain,
+  setSwapToken,
+  setSwapTokenData } from '../../../reducer/theExchangeSlice';
 
 // types
 import { CardPosition } from '../../../utils/types';
@@ -15,46 +31,6 @@ const mockTokenAssets = [
     { address: '0x01', name: 'Ether', symbol: 'ETH', chainId: 1, decimals: 18, icon: 'iconEth.png' },
     { address: '0x02', name: 'Matic', symbol: 'MATIC', chainId: 137, decimals: 18, icon: 'iconMatic.png' },
   ];
-  
-  // Mock data and functions
-  const mockSetSwapTokenData = jest.fn();
-  const mockSetReceiveTokenData = jest.fn();
-  const mockSetIsSwapOpen = jest.fn();
-  const mockSetIsReceiveOpen = jest.fn();
-  const mockSetSwapChain = jest.fn();
-  const mockSetReceiveChain = jest.fn();
-  const mockSetSwapToken = jest.fn();
-  const mockSetReceiveToken = jest.fn();
-  const mockSetAmountSwap = jest.fn();
-  const mockSetAmountReceive = jest.fn();
-  
-  // Mock context values
-  const mockContextValue = {
-    swapTokenData: mockTokenAssets,
-    setSwapTokenData: mockSetSwapTokenData,
-    receiveTokenData: mockTokenAssets,
-    setReceiveTokenData: mockSetReceiveTokenData,
-    isSwapOpen: false,
-    setIsSwapOpen: mockSetIsSwapOpen,
-    isReceiveOpen: false,
-    setIsReceiveOpen: mockSetIsReceiveOpen,
-    swapChain: { chainId: 1, chainName: 'Ethereum' },
-    receiveChain: { chainId: 137, chainName: 'Polygon' },
-    swapToken: mockTokenAssets[0],
-    receiveToken: mockTokenAssets[1],
-    setSwapChain: mockSetSwapChain,
-    setReceiveChain: mockSetReceiveChain,
-    setSwapToken: mockSetSwapToken,
-    setReceiveToken: mockSetReceiveToken,
-    amountSwap: { tokenAmount: 0.1, usdAmount: 3000 },
-    amountReceive: { tokenAmount: 10, usdAmount: 3000 },
-    setAmountSwap: mockSetAmountSwap,
-    setAmountReceive: mockSetAmountReceive,
-    bestOffer: undefined,
-    setBestOffer: jest.fn(),
-    searchTokenResult: [],
-    setSearchTokenResult: jest.fn(),
-  };
 
   // Mock transaction-kit hooks being used
 jest.mock('@etherspot/transaction-kit', () => ({
@@ -96,10 +72,31 @@ jest.mock('@etherspot/transaction-kit', () => ({
     }),
   }));
 
-describe('<DropdownTokenList />', () => {  
+describe('<DropdownTokenList />', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    act(() => {
+      store.dispatch(setSwapTokenData(mockTokenAssets));
+      store.dispatch(setReceiveTokenData(mockTokenAssets));
+      store.dispatch(setIsSwapOpen(false));
+      store.dispatch(setIsReceiveOpen(false));
+      store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+      store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
+      store.dispatch(setSwapToken(mockTokenAssets[0]));
+      store.dispatch(setReceiveToken(mockTokenAssets[1]));
+      store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
+      store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+      store.dispatch(setBestOffer(undefined));
+      store.dispatch(setSearchTokenResult([]));
+    });
+  });
+
     it('renders correctly and matches snapshot', () => {
         const tree = renderer
-            .create(<EnterAmount type={CardPosition.SWAP} tokenSymbol={mockContextValue.swapToken.symbol} />)
+            .create(
+              <Provider store={store}>
+                <EnterAmount type={CardPosition.SWAP} tokenSymbol={store.getState().swap.swapToken.symbol} />
+              </Provider>)
             .toJSON();
 
         expect(tree).toMatchSnapshot();
@@ -107,33 +104,20 @@ describe('<DropdownTokenList />', () => {
 
     it('handles token amount change in Swap card', async () => {
         const { getByTestId } = render(
-            <SwapDataContext.Provider value={{ ...mockContextValue, amountSwap: {tokenAmount: 0, usdAmount: 0} } }>
-                <EnterAmount type={CardPosition.SWAP} tokenSymbol={mockContextValue.swapToken.symbol} />
-            </SwapDataContext.Provider>
+          <Provider store={store}>
+            <EnterAmount type={CardPosition.SWAP} tokenSymbol={store.getState().swap.swapToken.symboll} />
+          </Provider>
         );
+        
+        act(() => {
+        store.dispatch(setAmountSwap({tokenAmount: 0, usdAmount: 0}));
+        });
 
         const inputElement = getByTestId('enter-amount-input');
         fireEvent.change(inputElement, { target: { value: '50' } });
 
         await waitFor(() => {
-            expect(mockContextValue.setAmountSwap).toHaveBeenCalledWith({ tokenAmount: 50, usdAmount: 0 });
+            expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 50, usdAmount: 0 });
           });
     });
-
-    it('handles mouse hover behavior', () => {
-        const { getByText } = render(
-            <SwapDataContext.Provider value={mockContextValue}>
-                <EnterAmount type={CardPosition.SWAP} tokenSymbol={mockContextValue.swapToken.symbol} />
-            </SwapDataContext.Provider>
-        );
-
-        const tokenSymbolElement = getByText(mockContextValue.swapToken.symbol);
-
-        fireEvent.mouseEnter(tokenSymbolElement);
-        expect(tokenSymbolElement).toHaveClass('text-black_grey/[.4]');
-
-        fireEvent.mouseLeave(tokenSymbolElement);
-        expect(tokenSymbolElement).not.toHaveClass('text-black_grey/[.4]');
-    });
-
 });

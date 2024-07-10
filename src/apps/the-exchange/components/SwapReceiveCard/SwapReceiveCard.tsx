@@ -1,4 +1,5 @@
 // hooks
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -15,8 +16,8 @@ type SwapReceiveCardProps = {
 }
 
 const SwapReceiveCard = ({ position, initialPosition, onClick }: SwapReceiveCardProps) => {
-    const swapToken = useAppSelector((state) => state.swap.swapToken);
-    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+    const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
   
     const isClickable = (position === CardPosition.SWAP && !swapToken) || (position === CardPosition.RECEIVE && !receiveToken);
 

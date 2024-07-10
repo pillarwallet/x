@@ -11,8 +11,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { useEtherspotPrices, useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 
 // types
-import { CardPosition, SwapOffer } from '../../utils/types';
-import { RateInfo } from '@etherspot/prime-sdk/dist/sdk/data';
+import { AmountType, CardPosition, SwapOffer } from '../../utils/types';
+import { RateInfo, Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // utils
 import { processEth } from '../../utils/blockchain';
@@ -37,14 +37,14 @@ type EnterAmountProps = {
 
 const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
-  const amountSwap = useAppSelector((state) => state.swap.amountSwap);
-  const amountReceive = useAppSelector((state) => state.swap.amountReceive);
-  const swapToken = useAppSelector((state) => state.swap.swapToken);
-  const receiveToken = useAppSelector((state) => state.swap.receiveToken);
-  const bestOffer = useAppSelector((state) => state.swap.bestOffer);
+  const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
+  const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
+  const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+  const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
+  const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
   
   const walletAddress = useWalletAddress();
-  const [inputValue, setInputValue] = useState<number>(0);
+  const [inputValue, setInputValue] = useState<string>('');
   const { getPrice } = useEtherspotPrices();
   const balances = useAccountBalances();
   const { isZeroAddress, addressesEqual } = useEtherspotUtils();
@@ -131,7 +131,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
 
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
-    setInputValue(amountSwap ? amountSwap.tokenAmount : 0);
+    setInputValue(amountSwap ? amountSwap.tokenAmount.toString() : '');
     if (amountSwap?.tokenAmount) {
       setIsOfferLoading(true);
       debouncedGetOffer();
@@ -147,7 +147,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // the handleTokenAmountChange will make sure that we get a USD price, and will then add it to amountSwap
   const handleTokenAmountChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(Number(value));
+    setInputValue(value);
 
     // Might need to find a way to debounce the getPrice call too
     if (type === CardPosition.SWAP && swapToken) {
@@ -161,7 +161,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   };
 
   // Function to render offer based on loading and offer state
-  const renderOffer = () => {
+  const Offer = () => {
     if (isOfferLoading) {
       return <CircularProgress size={36} sx={{ color: '#343434' }} />;
     } else if (isNoOffer) {
@@ -188,14 +188,15 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
             type="number"
             value={inputValue}
             onChange={(e) => handleTokenAmountChange(e)}
+            placeholder='0'
             style={{ width: '100%' }}
             className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
             data-testid="enter-amount-input"
           />
-          {tokenBalanceLimit(inputValue) && <BodySmall data-testid="error-max-limit">{tokenBalanceLimit(inputValue)}</BodySmall>}
+          {tokenBalanceLimit(Number(inputValue)) && <BodySmall data-testid="error-max-limit">{tokenBalanceLimit(Number(inputValue))}</BodySmall>}
         </>
       ) : (
-        renderOffer()
+        <Offer />
       )}
       <div className="flex justify-between">
         <BodySmall className="group-hover:text-black_grey/[.4]">

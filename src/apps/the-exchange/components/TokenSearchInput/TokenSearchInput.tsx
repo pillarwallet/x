@@ -18,7 +18,7 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
     const dispatch = useAppDispatch();
-    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
     const swapTokenData = useAppSelector((state) => state.swap.swapTokenData as Token[]);
     const receiveTokenData = useAppSelector((state) => state.swap.receiveTokenData as Token[]);
 

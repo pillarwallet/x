@@ -1,10 +1,26 @@
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import { ExchangeProviders } from '@etherspot/prime-sdk/dist/sdk/data';
 
-// context
-import { SwapDataContext } from '../../../context/SwapDataProvider';
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
+// reducer
+import { 
+  setAmountReceive,
+  setAmountSwap,
+  setBestOffer,
+  setIsReceiveOpen,
+  setIsSwapOpen,
+  setReceiveChain,
+  setReceiveToken,
+  setReceiveTokenData,
+  setSearchTokenResult,
+  setSwapChain,
+  setSwapToken,
+  setSwapTokenData } from '../../../reducer/theExchangeSlice';
 
 // components
 import ExchangeAction from '../ExchangeAction';
@@ -17,18 +33,6 @@ const mockTokenAssets = [
   { address: '0x01', name: 'Ether', symbol: 'ETH', chainId: 1, decimals: 18, icon: 'iconEth.png' },
   { address: '0x02', name: 'Matic', symbol: 'MATIC', chainId: 137, decimals: 18, icon: 'iconMatic.png' },
 ];
-
-// Mock data and functions
-const mockSetSwapTokenData = jest.fn();
-const mockSetReceiveTokenData = jest.fn();
-const mockSetIsSwapOpen = jest.fn();
-const mockSetIsReceiveOpen = jest.fn();
-const mockSetSwapChain = jest.fn();
-const mockSetReceiveChain = jest.fn();
-const mockSetSwapToken = jest.fn();
-const mockSetReceiveToken = jest.fn();
-const mockSetAmountSwap = jest.fn();
-const mockSetAmountReceive = jest.fn();
 
 const mockBestOffer: SwapOffer = {
     tokenAmountToReceive: 10,
@@ -44,35 +48,6 @@ const mockBestOffer: SwapOffer = {
         ]
     }
 }
-
-// Mock context values
-const mockContextValue = {
-  swapTokenData: [],
-  setSwapTokenData: mockSetSwapTokenData,
-  receiveTokenData: [],
-  setReceiveTokenData: mockSetReceiveTokenData,
-  isSwapOpen: false,
-  setIsSwapOpen: mockSetIsSwapOpen,
-  isReceiveOpen: false,
-  setIsReceiveOpen: mockSetIsReceiveOpen,
-  swapChain: { chainId: 1, chainName: 'Ethereum' },
-  receiveChain: { chainId: 137, chainName: 'Polygon' },
-  swapToken: mockTokenAssets[0],
-  receiveToken: mockTokenAssets[1],
-  setSwapChain: mockSetSwapChain,
-  setReceiveChain: mockSetReceiveChain,
-  setSwapToken: mockSetSwapToken,
-  setReceiveToken: mockSetReceiveToken,
-  amountSwap: { tokenAmount: 0.1, usdAmount: 3000 },
-  amountReceive: { tokenAmount: 10, usdAmount: 3000 },
-  setAmountSwap: mockSetAmountSwap,
-  setAmountReceive: mockSetAmountReceive,
-  bestOffer: undefined,
-  setBestOffer: jest.fn(),
-  searchTokenResult: [],
-  setSearchTokenResult: jest.fn(),
-};
-
 // Mock hooks and utils
 jest.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
     addToBatch: jest.fn(),
@@ -93,26 +68,44 @@ jest.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
 describe('<CardsSwap />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    act(() => {
+      store.dispatch(setSwapTokenData(mockTokenAssets));
+      store.dispatch(setReceiveTokenData(mockTokenAssets));
+      store.dispatch(setIsSwapOpen(false));
+      store.dispatch(setIsReceiveOpen(false));
+      store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+      store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
+      store.dispatch(setSwapToken(mockTokenAssets[0]));
+      store.dispatch(setReceiveToken(mockTokenAssets[1]));
+      store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
+      store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+      store.dispatch(setBestOffer(undefined));
+      store.dispatch(setSearchTokenResult([]));
+    });
   });
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <SwapDataContext.Provider value={mockContextValue}>
+        <Provider store={store}>
           <ExchangeAction />
-        </SwapDataContext.Provider>
+        </Provider>
       )
       .toJSON();
 
-    expect(tree).toMatchSnapshot();  });
-
+    expect(tree).toMatchSnapshot();
+  });
 
   it('renders "You receive" and token information correctly', () => {
     render(
-      <SwapDataContext.Provider value={{...mockContextValue, bestOffer: mockBestOffer}}>
+      <Provider store={store}>
         <ExchangeAction />
-      </SwapDataContext.Provider>
+      </Provider>
     );
+
+    act(() => {
+      store.dispatch(setBestOffer(mockBestOffer));
+    });
 
     expect(screen.getByText('You receive')).toBeInTheDocument();
     expect(screen.getByText('10.00000000')).toBeInTheDocument();
@@ -121,24 +114,24 @@ describe('<CardsSwap />', () => {
 
   it('shows error message if no best offer available', async () => {
     render(
-        <SwapDataContext.Provider value={{ ...mockContextValue, bestOffer: undefined  }}>
+      <Provider store={store}>
           <ExchangeAction />
-        </SwapDataContext.Provider>
+      </Provider>
       );
 
     const exchangeButton = screen.getByText('Exchange').closest('div') as HTMLDivElement;
     fireEvent.click(exchangeButton);
 
     await waitFor(() => {
-      expect(screen.getByText('No offer available to exchange')).toBeInTheDocument();
+      expect(screen.getByText('No offer was found! Please try changing the amounts to try again.')).toBeInTheDocument();
     });
   });
 
   it('handles transactions addition and shows success', async () => {
     render(
-        <SwapDataContext.Provider value={mockContextValue}>
+        <Provider store={store}>
           <ExchangeAction />
-        </SwapDataContext.Provider>
+        </Provider>
       );
 
 

@@ -36,7 +36,7 @@ type DropdownTokenListProps = {
 
 const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps) => {
     const dispatch = useAppDispatch();
-    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
     const swapTokenData = useAppSelector((state) => state.swap.swapTokenData as Token[]);
     const receiveTokenData = useAppSelector((state) => state.swap.receiveTokenData as Token[]);
     const searchTokenResult = useAppSelector((state) => state.swap.searchTokenResult as Token[]);
@@ -46,13 +46,13 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
     const [isChainSelectionOpen, setIsChainSelectionOpen] = useState<boolean>(false);
 
     // select all chainsId of tokens available in the list for swap token
-    const allChainsSwap = swapTokenData.map((chain) => chain.chainId);
+    const allChainsSwap = swapTokenData?.map((chain) => chain.chainId);
     const uniqueChainsSwap = allChainsSwap.filter((chain, index) => {
         return allChainsSwap.indexOf(chain) === index;
     });
 
     // select all chainsId of tokens available in the list for receive token
-    const allChainsReceive = receiveTokenData.map((chain) => chain.chainId);
+    const allChainsReceive = receiveTokenData?.map((chain) => chain.chainId);
     const uniqueChainsReceive = allChainsReceive.filter((chain, index) => {
         return allChainsReceive.indexOf(chain) === index;
     });

@@ -12,6 +12,7 @@ import Body from '../Typography/Body';
 
 // images
 import ArrowDown from '../../images/arrow-down.png';
+import { ChainType } from '../../utils/types';
 
 type DropdownProps = {
   options: number[];
@@ -23,10 +24,10 @@ type DropdownProps = {
 
 const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: DropdownProps) => {
   const dispatch = useAppDispatch();
-  const swapChain = useAppSelector((state) => state.swap.swapChain);
-  const receiveChain = useAppSelector((state) => state.swap.receiveChain);
-  const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
-  const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen);
+  const swapChain = useAppSelector((state) => state.swap.swapChain as ChainType);
+  const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
+  const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
+  const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen as boolean);
 
   // this will filter the tokens by chain id
   const handleSelectChainId = (option: number) => {

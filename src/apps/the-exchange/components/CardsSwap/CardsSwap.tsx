@@ -33,8 +33,8 @@ type CardPositionType = {
 
 const CardsSwap = () => {
     const dispatch = useAppDispatch();
-    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen);
-    const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen);
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
+    const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen as boolean);
 
     const { getPillarSwapAssets } = usePillarSwapAssets();
 

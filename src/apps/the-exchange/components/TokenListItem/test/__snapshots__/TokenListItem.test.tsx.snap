@@ -3,6 +3,7 @@
 exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
+  data-testid="token-list-item"
   onClick={[MockFunction]}
 >
   <div

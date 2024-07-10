@@ -1,11 +1,27 @@
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
+// reducer
+import { 
+  setAmountReceive,
+  setAmountSwap,
+  setBestOffer,
+  setIsReceiveOpen,
+  setIsSwapOpen,
+  setReceiveChain,
+  setReceiveToken,
+  setReceiveTokenData,
+  setSearchTokenResult,
+  setSwapChain,
+  setSwapToken,
+  setSwapTokenData } from '../../../reducer/theExchangeSlice';
 
 // components
 import CardsSwap from '../CardsSwap';
-
-// context
-import { SwapDataContext } from '../../../context/SwapDataProvider';
 
 // types
 import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
@@ -14,46 +30,6 @@ const mockTokenAssets = [
   { address: '0x01', name: 'Ether', symbol: 'ETH', chainId: 1, decimals: 18, icon: 'iconEth.png' },
   { address: '0x02', name: 'Matic', symbol: 'MATIC', chainId: 137, decimals: 18, icon: 'iconMatic.png' },
 ];
-
-// Mock data and functions
-const mockSetSwapTokenData = jest.fn();
-const mockSetReceiveTokenData = jest.fn();
-const mockSetIsSwapOpen = jest.fn();
-const mockSetIsReceiveOpen = jest.fn();
-const mockSetSwapChain = jest.fn();
-const mockSetReceiveChain = jest.fn();
-const mockSetSwapToken = jest.fn();
-const mockSetReceiveToken = jest.fn();
-const mockSetAmountSwap = jest.fn();
-const mockSetAmountReceive = jest.fn();
-
-// Mock context values
-const mockContextValue = {
-  swapTokenData: [],
-  setSwapTokenData: mockSetSwapTokenData,
-  receiveTokenData: [],
-  setReceiveTokenData: mockSetReceiveTokenData,
-  isSwapOpen: false,
-  setIsSwapOpen: mockSetIsSwapOpen,
-  isReceiveOpen: false,
-  setIsReceiveOpen: mockSetIsReceiveOpen,
-  swapChain: { chainId: 1, chainName: 'Ethereum' },
-  receiveChain: { chainId: 137, chainName: 'Polygon' },
-  swapToken: mockTokenAssets[0],
-  receiveToken: mockTokenAssets[1],
-  setSwapChain: mockSetSwapChain,
-  setReceiveChain: mockSetReceiveChain,
-  setSwapToken: mockSetSwapToken,
-  setReceiveToken: mockSetReceiveToken,
-  amountSwap: { tokenAmount: 0.1, usdAmount: 3000 },
-  amountReceive: { tokenAmount: 10, usdAmount: 3000 },
-  setAmountSwap: mockSetAmountSwap,
-  setAmountReceive: mockSetAmountReceive,
-  bestOffer: undefined,
-  setBestOffer: jest.fn(),
-  searchTokenResult: [],
-  setSearchTokenResult: jest.fn(),
-};
 
 // Mock transaction-kit hooks being used
 jest.mock('@etherspot/transaction-kit', () => ({
@@ -126,14 +102,28 @@ jest.mock('../../../../../hooks/useAccountBalances', () => ({
 describe('<CardsSwap />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    act(() => {
+      store.dispatch(setSwapTokenData(mockTokenAssets));
+      store.dispatch(setReceiveTokenData(mockTokenAssets));
+      store.dispatch(setIsSwapOpen(false));
+      store.dispatch(setIsReceiveOpen(false));
+      store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+      store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
+      store.dispatch(setSwapToken(mockTokenAssets[0]));
+      store.dispatch(setReceiveToken(mockTokenAssets[1]));
+      store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
+      store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+      store.dispatch(setBestOffer(undefined));
+      store.dispatch(setSearchTokenResult([]));
+    });
   });
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <SwapDataContext.Provider value={mockContextValue}>
+        <Provider store={store}>
           <CardsSwap />
-        </SwapDataContext.Provider>
+        </Provider>
       )
       .toJSON();
 
@@ -142,9 +132,9 @@ describe('<CardsSwap />', () => {
 
   it('renders correctly the swap and receive cards with the swap button', () => {
     render(
-      <SwapDataContext.Provider value={mockContextValue}>
+      <Provider store={store}>
         <CardsSwap />
-      </SwapDataContext.Provider>
+      </Provider>
     );
 
     expect(screen.getByTestId('swap-receive-cards')).toBeInTheDocument();
@@ -153,52 +143,56 @@ describe('<CardsSwap />', () => {
 
   it('calls swapCards when the swap button is clicked', () => {
     render(
-      <SwapDataContext.Provider value={mockContextValue}>
+      <Provider store={store}>
         <CardsSwap />
-      </SwapDataContext.Provider>
+      </Provider>
     );
 
     const swapButton = screen.getByRole('button');
     fireEvent.click(swapButton);
 
-    expect(mockSetSwapChain).toHaveBeenCalledWith({ chainId: 137, chainName: 'Polygon' });
-    expect(mockSetReceiveChain).toHaveBeenCalledWith({ chainId: 1, chainName: 'Ethereum' });
-    expect(mockSetSwapToken).toHaveBeenCalledWith(mockTokenAssets[1]);
-    expect(mockSetReceiveToken).toHaveBeenCalledWith(mockTokenAssets[0]);
-    expect(mockSetAmountSwap).toHaveBeenCalledWith({ tokenAmount: 10, usdAmount: 3000 });
-    expect(mockSetAmountReceive).toHaveBeenCalledWith({ tokenAmount: 0.1, usdAmount: 3000 });
+    expect(store.getState().swap.swapChain).toEqual({ chainId: 137, chainName: 'Polygon' });
+    expect(store.getState().swap.receiveChain).toEqual({ chainId: 1, chainName: 'Ethereum' });
+    expect(store.getState().swap.swapToken).toBe(mockTokenAssets[1]);
+    expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
+    expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 10, usdAmount: 3000 });
+    expect(store.getState().swap.amountReceive).toEqual({ tokenAmount: 0.1, usdAmount: 3000 });
   });
 
   it('opens token list when a card is clicked and no token on swap card', async () => {
     render(
-      <SwapDataContext.Provider
-        value={{
-          ...mockContextValue,
-          swapToken: undefined,
-          amountSwap: undefined,
-          amountReceive: undefined,
-        }}
-      >
+      <Provider store={store}>
         <CardsSwap />
-      </SwapDataContext.Provider>
+      </Provider>
     );
+
+    act(() => {
+      store.dispatch(setSwapToken(undefined));
+      store.dispatch(setAmountSwap(undefined));
+      store.dispatch(setAmountReceive(undefined));
+    });
 
     const swapCard = screen.getAllByTestId('select-token-card');
     fireEvent.click(swapCard[0]);
 
+    expect(store.getState().swap.swapTokenData).toBe(mockTokenAssets);
+    expect(store.getState().swap.receiveTokenData).toBe(mockTokenAssets);
+
     await waitFor(() => {
-      expect(mockSetSwapTokenData).toHaveBeenCalled();
-      expect(mockSetReceiveTokenData).toHaveBeenCalled();
-      expect(mockSetIsSwapOpen).toHaveBeenCalledWith(true);
+      expect(store.getState().swap.isSwapOpen).toBe(true);
     });
   });
 
   it('renders the dropdown when isSwapOpen is true', () => {
     render(
-      <SwapDataContext.Provider value={{ ...mockContextValue, isSwapOpen: true }}>
+      <Provider store={store}>
         <CardsSwap />
-      </SwapDataContext.Provider>
+      </Provider>
     );
+
+    act(() => {
+      store.dispatch(setIsSwapOpen(true));
+    });
 
     expect(screen.getByTestId('dropdown-token-list')).toBeInTheDocument();
     expect(screen.queryByTestId('select-token-car')).not.toBeInTheDocument();
@@ -206,10 +200,14 @@ describe('<CardsSwap />', () => {
 
   it('renders the dropdown when isReceiveOpen is true', () => {
     render(
-      <SwapDataContext.Provider value={{ ...mockContextValue, isReceiveOpen: true }}>
+      <Provider store={store}>
         <CardsSwap />
-      </SwapDataContext.Provider>
+      </Provider>
     );
+
+    act(() => {
+      store.dispatch(setIsReceiveOpen(true));
+    });
 
     expect(screen.getByTestId('dropdown-token-list')).toBeInTheDocument();
     expect(screen.queryByTestId('select-token-car')).not.toBeInTheDocument();

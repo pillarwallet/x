@@ -16,6 +16,8 @@ import {
 
 // images
 import SwapIcon from '../../images/arrow-swap-horizontal.png';
+import { AmountType, ChainType } from '../../utils/types';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 type SwitchCardsButtonType = {
     onSwap: () => void;
@@ -23,12 +25,12 @@ type SwitchCardsButtonType = {
 
 const SwitchCardsButton = ({ onSwap }: SwitchCardsButtonType) => {
     const dispatch = useAppDispatch();
-    const swapChain = useAppSelector((state) => state.swap.swapChain);
-    const receiveChain = useAppSelector((state) => state.swap.receiveChain);
-    const swapToken = useAppSelector((state) => state.swap.swapToken);
-    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
-    const amountSwap = useAppSelector((state) => state.swap.amountSwap);
-    const amountReceive = useAppSelector((state) => state.swap.amountReceive);
+    const swapChain = useAppSelector((state) => state.swap.swapChain as ChainType);
+    const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
+    const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
 
     // swapCards allow the user to switch between Swap and Receive cards
     const swapCardsAction = () => {

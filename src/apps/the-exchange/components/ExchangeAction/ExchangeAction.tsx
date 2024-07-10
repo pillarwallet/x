@@ -22,11 +22,12 @@ import { CircularProgress } from '@mui/material';
 
 // images
 import ArrowRight from '../../images/arrow-right.png';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 const ExchangeAction = () => {
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
-    const swapToken = useAppSelector((state) => state.swap.swapToken);
-    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
+    const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
 
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);

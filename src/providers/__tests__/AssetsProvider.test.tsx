@@ -7,7 +7,7 @@ import * as TransactionKit from '@etherspot/transaction-kit';
 import AssetsProvider, { AssetsContext } from '../../providers/AssetsProvider';
 
 // utils
-import { etherspotTestAssets } from '../../test-utils/setupJest';
+import { etherspotTestAssets, etherspotTestSupportedAssets } from '../../test-utils/setupJest';
 import { getNativeAssetForChainId } from '../../utils/blockchain';
 
 describe('AssetsProvider', () => {
@@ -22,6 +22,7 @@ describe('AssetsProvider', () => {
 
     jest.spyOn(TransactionKit, 'useEtherspotAssets').mockReturnValue(({
       getAssets: async (chainId?: number) => chainId === 1 ? etherspotTestAssets: [],
+      getSupportedAssets: async (chainId?: number) => etherspotTestSupportedAssets.filter((asset) => asset.chainId === chainId),
     }));
   });
 

@@ -2,7 +2,7 @@
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { SwapOffer } from '../../utils/types';
+import { AmountType, SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
@@ -12,12 +12,13 @@ import BodySmall from '../Typography/BodySmall';
 
 // images
 import ArrowRightLight from '../../images/arrow-right-light.png';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 const SwapSummary = () => {
-    const swapToken = useAppSelector((state) => state.swap.swapToken);
-    const receiveToken = useAppSelector((state) => state.swap.receiveToken);
-    const amountSwap = useAppSelector((state) => state.swap.amountSwap);
-    const amountReceive = useAppSelector((state) => state.swap.amountReceive);
+    const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
 
     if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer) {
