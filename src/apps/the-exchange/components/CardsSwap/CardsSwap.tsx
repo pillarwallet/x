@@ -1,111 +1,104 @@
-import { useContext, useState } from 'react';
-import { CardPosition, SwapReceive } from '../../utils/types';
-import SwapReceiveCard from '../SwapReceiveCard/SwapReceiveCard';
-import SwapIcon from '../../images/arrow-swap-horizontal.png';
-import { SwapDataContext } from '../../context/SwapDataProvider';
-import DropdownTokenList from '../DropdownTokensList/DropdownTokenList';
-import usePillarSwapAssets from '../../hooks/usePillarSwapAssets';
+import { useState } from 'react';
 import { isEqual } from 'lodash';
 
+// reducer
+import { 
+    setIsReceiveOpen, 
+    setIsSwapOpen, 
+    setReceiveTokenData, 
+    setSwapTokenData 
+} from '../../reducer/theExchangeSlice';
+
+// hooks
+import usePillarSwapAssets from '../../hooks/usePillarSwapAssets';
+import { 
+    useAppDispatch, 
+    useAppSelector 
+} from '../../hooks/useReducerHooks';
+
+// types
+import { CardPosition } from '../../utils/types';
+
+// components
+import SwapReceiveCard from '../SwapReceiveCard/SwapReceiveCard';
+import DropdownTokenList from '../DropdownTokensList/DropdownTokenList';
+
+// images
+import SwitchCardsButton from '../SwitchCardsButton/SwitchCardsButton';
+
 type CardPositionType = {
-    left: CardPosition;
-    right: CardPosition;
-}
+    swap: CardPosition;
+    receive: CardPosition;
+};
 
 const CardsSwap = () => {
-    const {
-        setSwapTokenData,
-        isSwapOpen,
-        setIsSwapOpen,
-        setIsReceiveOpen,
-        isReceiveOpen,
-        swapChain,
-        receiveChain,
-        swapToken,
-        receiveToken,
-        setSwapChain,
-        setReceiveChain,
-        setSwapToken,
-        setReceiveToken,
-        amountSwap,
-        amountReceive,
-        setAmountReceive,
-        setAmountSwap,
-        setReceiveTokenData,
-    } = useContext(SwapDataContext);
+    const dispatch = useAppDispatch();
+    const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
+    const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen as boolean);
 
     const { getPillarSwapAssets } = usePillarSwapAssets();
 
     const initialPosition: CardPositionType = {
-        left: CardPosition.LEFT,
-        right: CardPosition.RIGHT,
+        swap: CardPosition.SWAP,
+        receive: CardPosition.RECEIVE,
     };
 
     const [cardPosition, setCardPosition] = useState<CardPositionType>(initialPosition);
 
-    const swapCards = () => {
-        setCardPosition(prevPosition => ({
-            left: prevPosition.right,
-            right: prevPosition.left,
+    // swapCards allow the user to switch between Swap and Receive cards
+    const swapCardsAction = () => {
+        setCardPosition((prevPosition) => ({
+            swap: prevPosition.receive,
+            receive: prevPosition.swap,
         }));
-        setSwapChain(receiveChain);
-        setReceiveChain(swapChain);
-        setSwapToken(receiveToken);
-        setReceiveToken(swapToken);
-        setAmountSwap(amountReceive);
-        setAmountReceive(amountSwap);
     };
 
+    // handleOpenTokenList opens the list for selecting tokens
     const handleOpenTokenList = async (position: CardPosition) => {
-        const type = position === CardPosition.LEFT ? SwapReceive.SWAP : SwapReceive.RECEIVE;
-        try {
-            const assets = await getPillarSwapAssets();
-            setSwapTokenData(assets);
-            setReceiveTokenData(assets);
-            if (type === SwapReceive.SWAP) {
-                setIsSwapOpen(true);
-            } else {
-                setIsReceiveOpen(true);
-            }
-        } catch (e) {
-            console.error(e);
+        // Error handled in usePillarSwapAssets hook
+        const assets = await getPillarSwapAssets();
+
+        dispatch(setSwapTokenData(assets));
+        dispatch(setReceiveTokenData(assets));
+
+        if (position === CardPosition.SWAP) {
+            dispatch(setIsSwapOpen(true));
+        } else {
+            dispatch(setIsReceiveOpen(true));
         }
     };
 
+    // isInitialOrder tells us if the cards are in the initial order or they have been switched
     const isInitialOrder = isEqual(cardPosition, initialPosition);
 
-    const renderCards = () => (
-        <div className='flex w-full gap-4 desktop:gap-8 justify-center'>
+    const SwapCards = () => (
+        <div className="flex w-full gap-4 desktop:gap-8 justify-center" data-testid='swap-receive-cards'>
             <SwapReceiveCard
-                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.left : cardPosition.right)}
-                position={isInitialOrder ? cardPosition.left : cardPosition.right}
-                initialPosition={isInitialOrder ? initialPosition.left : initialPosition.right}
+                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.swap : cardPosition.receive)}
+                position={isInitialOrder ? cardPosition.swap : cardPosition.receive}
+                initialPosition={isInitialOrder ? initialPosition.swap : initialPosition.receive}
             />
             <SwapReceiveCard
-                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.right : cardPosition.left)}
-                position={isInitialOrder ? cardPosition.right : cardPosition.left}
-                initialPosition={isInitialOrder ? initialPosition.right : initialPosition.left}
+                onClick={() => handleOpenTokenList(isInitialOrder ? cardPosition.receive : cardPosition.swap)}
+                position={isInitialOrder ? cardPosition.receive : cardPosition.swap}
+                initialPosition={isInitialOrder ? initialPosition.receive : initialPosition.swap}
             />
         </div>
     );
 
-    const renderDropdown = () => (
+    const DropdownList = () => (
         <DropdownTokenList
-            type={isSwapOpen ? SwapReceive.SWAP : SwapReceive.RECEIVE}
-            initialCardPosition={(isSwapOpen && isInitialOrder) || (isReceiveOpen && !isInitialOrder) ? initialPosition.left : initialPosition.right}
+            type={isSwapOpen ? CardPosition.SWAP : CardPosition.RECEIVE}
+            initialCardPosition={(isSwapOpen && isInitialOrder) || (isReceiveOpen && !isInitialOrder) ? initialPosition.swap : initialPosition.receive}
         />
     );
 
     return (
-        <div className='flex w-full justify-center'>
-            {!isSwapOpen && !isReceiveOpen ? renderCards() : renderDropdown()}
-            {(!isSwapOpen && !isReceiveOpen) &&
-            <button
-                onClick={swapCards}
-                className="absolute self-center w-[34px] h-[34px] p-2 bg-white rounded-[3px] desktop:p-4 desktop:w-14 desktop:h-14"
-            >
-                <img src={SwapIcon} className='w-[18px] h-[18px] desktop:w-6 desktop:h-6' />
-            </button>}
+        <div className="flex w-full justify-center">
+            {!isSwapOpen && !isReceiveOpen ? <SwapCards /> : <DropdownList />}
+            {!isSwapOpen && !isReceiveOpen && (
+                <SwitchCardsButton onSwap={swapCardsAction} />
+            )}
         </div>
     );
 };

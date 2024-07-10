@@ -68,6 +68,7 @@ describe('AccountTransactionHistoryProvider', () => {
     jest.spyOn(TransactionKit, 'useEtherspotHistory').mockReturnValue({
       getAccountTransactions: mockGetAccountTransactions,
       getAccountTransaction: jest.fn(),
+      getAccountTransactionStatus: jest.fn(),
     });
 
     jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(accountAddress);

@@ -1,6 +1,9 @@
-import XLogo from '../../images/x-logo.png';
+// components
 import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
+
+// images
+import XLogo from '../../images/x-logo.png';
 
 const ExchangeHeader = () => {
     return (

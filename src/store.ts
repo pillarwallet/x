@@ -5,10 +5,24 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 // Services
 import { pillarXApiPresence } from './services/pillarXApiPresence';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
+import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
 
 // Initialisation
 const dynamicMiddleware = createDynamicMiddleware();
 const middlewareReducers: { [key: string]: Reducer } = {};
+
+/**
+ * @name addReducer
+ * @description addReducer is a function that allows anyone
+ * working with PillarX to add reducers to the store
+ * from their own application.
+ *
+ * @param newReducer
+ */
+export const addReducer = (newReducer: { reducerPath: string; reducer: Reducer }) => {
+  middlewareReducers[newReducer.reducerPath as string] = newReducer.reducer;
+  store.replaceReducer(combineReducers(middlewareReducers));
+}
 
 /**
  * @name addMiddleware
@@ -51,8 +65,14 @@ export const store = configureStore({
  */
 addMiddleware(pillarXApiWaitlist);
 addMiddleware(pillarXApiPresence);
+addReducer(swapSlice);
 
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
 setupListeners(store.dispatch)
+
+// // Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch

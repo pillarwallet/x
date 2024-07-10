@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex justify-between items-start"
+  onClick={[MockFunction]}
+>
+  <div
+    className="flex w-full flex-col"
+  >
+    <p
+      className="text-base font-medium text-black_grey capitalize"
+    >
+      Token Example
+    </p>
+    <p
+      className="text-base font-medium text-black_grey font-normal capitalize"
+    >
+      On undefined
+    </p>
+  </div>
+  <div
+    className="flex min-w-fit items-end"
+  >
+    <img
+      alt="token-logo"
+      className="w-5 h-5 object-fill rounded-full grayscale"
+      src="https://example.com/token-logo.png"
+    />
+    <div
+      className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
+    >
+      <img
+        alt="chain-logo"
+        className="w-full h-full object-fill rounded-full grayscale hidden"
+        src="logo-unknown.png"
+      />
+    </div>
+  </div>
+</div>
+`;
