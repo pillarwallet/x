@@ -7,7 +7,7 @@ export const homeFeedApi = createApi({
     reducerPath: 'homeFeedApi',
     baseQuery: fetchBaseQuery({ baseUrl:
         process.env.REACT_APP_USE_TESTNETS === 'true' ?
-        'https://feed-nubpgwxpiq-uc.a.run.app/' :
+        'https://feed-nubpgwxpiq-uc.a.run.app' :
         'https://feed-7eu4izffpa-uc.a.run.app'
     }),
     endpoints: (builder) => ({
