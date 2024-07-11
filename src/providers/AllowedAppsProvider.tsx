@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import React, { createContext, useEffect, useMemo } from 'react';
 
 export interface AllowedAppsContext {
   data: {
@@ -23,7 +23,11 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
 
     (async () => {
       try {
-        const { data } = await axios.get(process.env.REACT_APP_PILLARX_APPS_SERVICE_HOST as string);
+        const { data } = await axios.get(
+          process.env.REACT_APP_USE_TESTNETS === 'true' ?
+          'https://apps-nubpgwxpiq-uc.a.run.app' :
+          'https://apps-7eu4izffpa-uc.a.run.app'
+        );
         if (expired || !data?.length) {
           setIsLoading(false);
           return;
