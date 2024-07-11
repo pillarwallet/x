@@ -5,7 +5,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const pillarXApiWaitlist = createApi({
   reducerPath: 'pillarXApiWaitlistWaitlist',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://waitlist-nubpgwxpiq-uc.a.run.app',
+    baseUrl: process.env.REACT_APP_USE_TESTNETS === 'true' ?
+    'https://waitlist-nubpgwxpiq-uc.a.run.app' : 
+    'https://waitlist-7eu4izffpa-uc.a.run.app'
   }),
   endpoints: (builder) => ({
     getWaitlist: builder.query({
