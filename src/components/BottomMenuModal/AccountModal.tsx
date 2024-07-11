@@ -1,45 +1,45 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
-import styled, { useTheme } from 'styled-components';
-import { useLogout } from '@privy-io/react-auth';
-import { useTranslation } from 'react-i18next';
-import { BigNumber, ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
-import { Chain } from 'viem';
 import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
+import { useLogout } from '@privy-io/react-auth';
+import { BigNumber, ethers } from 'ethers';
 import {
   ArrowRight2 as ArrowRightIcon,
+  Copy as CopyIcon,
+  CopySuccess as CopySuccessIcon,
   Blend2 as IconBlend,
   Gallery as IconGallery,
   Hierarchy as IconHierarchy,
-  User as UserIcon,
-  Copy as CopyIcon,
-  CopySuccess as CopySuccessIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  User as UserIcon
 } from 'iconsax-react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import styled, { useTheme } from 'styled-components';
+import { Chain } from 'viem';
 
 // components
-import SkeletonLoader from '../SkeletonLoader';
 import FormTabSelect from '../Form/FormTabSelect';
 import ImageWithFallback from '../ImageWithFallback';
+import SkeletonLoader from '../SkeletonLoader';
 import Alert from '../Text/Alert';
 
 // utils
 import { getLogoForChainId, truncateAddress, visibleChains } from '../../utils/blockchain';
-import { formatAmountDisplay } from '../../utils/number';
 import { copyToClipboard } from '../../utils/common';
+import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
-import useAssets from '../../hooks/useAssets';
 import useAccountNfts from '../../hooks/useAccountNfts';
+import useAssets from '../../hooks/useAssets';
 
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
 
 //context
-import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 import { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only

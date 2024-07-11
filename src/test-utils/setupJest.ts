@@ -30,8 +30,15 @@ export const etherspotTestAssets = [
   { address: '0xdac17f958d2ee523a2206206994597c13d831ec7', chainId: 1, name: 'tk3', symbol: 'TK3', decimals: 18, logoURI: '' }
 ];
 
+export const etherspotTestSupportedAssets = [
+  { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', chainId: 1, decimals: 6, icon: '', name:  'USDC', symbol: 'USDC' },
+  { address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', chainId: 1, decimals: 18, icon: '', name:  'Wrapped ETH', symbol: 'WETH' },
+  { address: '0x39B061B7e41DE8B721f9aEcEB6b3f17ECB7ba63E', chainId: 420, decimals: 18, icon: '', name:  'nextWETH', symbol: 'nextWETH' }
+];
+
 jest.spyOn(TransactionKit, 'useEtherspotAssets').mockReturnValue(({
   getAssets: async () => etherspotTestAssets,
+  getSupportedAssets: async () => etherspotTestSupportedAssets
 }));
 
 jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347');

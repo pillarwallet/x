@@ -1,28 +1,32 @@
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import './styles/tailwindPillarX.css';
 
 // types
 import { Projection } from '../../types/api';
 
 // hooks
-import { useGetTilesInfoQuery } from './api/apiSlice';
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useGetTilesInfoQuery } from './api/homeFeed';
 
 // components
+import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
-import pillarLogoLight from './images/pillarX_full_white.png';
-import H1 from './components/Typography/H1';
-import { componentMap } from './utils/configComponent';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
+import H1 from './components/Typography/H1';
+import pillarLogoLight from './images/pillarX_full_white.png';
+import { componentMap } from './utils/configComponent';
 
-export const App = () => {
+const App = () => {
   const [t] = useTranslation();
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   const walletAddress = useWalletAddress();
   const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' });
+  // This is a "fire and forget" call to the waitlist
+  useGetWaitlistQuery(walletAddress || '');
 
   useEffect(() => {
     // when apiData loads, we save it in a state to keep previous data
