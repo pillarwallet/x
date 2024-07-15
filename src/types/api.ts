@@ -1,7 +1,8 @@
 export enum ApiLayout {
   OVERVIEW = 'OVERVIEW',
   TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
-  TOKENS_VERTICAL = 'TOKENS_VERTICAL'
+  TOKENS_VERTICAL = 'TOKENS_VERTICAL',
+  GENERIC_BANNER = 'GENERIC_BANNER',
 }
 
 export type Asset = {
@@ -69,9 +70,15 @@ export type Asset = {
     meta: {
       display: {
         title: string;
-      }
+        subtitle?: string;
+        backgroundImage?: string;
+        cta?: {
+          text?: string;
+          href?: string;
+        };
+      };
     };
-    data: WalletPortfolioData | TokenData[];
+    data: WalletPortfolioData | TokenData[] | undefined;
     layout: ApiLayout;
     id: string;
   }
@@ -103,5 +110,4 @@ export type Asset = {
     price_change_24h: number;
     pair: string;
   }
-
   

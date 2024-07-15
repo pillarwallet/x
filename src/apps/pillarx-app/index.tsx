@@ -9,14 +9,18 @@ import { Projection } from '../../types/api';
 // hooks
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useGetTilesInfoQuery } from './api/homeFeed';
+import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
+
+// utils
+import { componentMap } from './utils/configComponent';
 
 // components
-import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
-import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import H1 from './components/Typography/H1';
+
+// images
+import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
-import { componentMap } from './utils/configComponent';
 
 const App = () => {
   const [t] = useTranslation();
@@ -48,9 +52,7 @@ const App = () => {
       return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
-
-const displayAllTiles = () => {
+const DisplayAllTiles = () => {
   const allTileComponents = [];
   
   for (let index = 0; index < pageData.length; index++) {
@@ -71,13 +73,12 @@ const displayAllTiles = () => {
       <PillarXLogo src={pillarLogoLight} className='object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
       <H1 className='py-2.5 px-4 mobile:px-0'>{t`content.welcomeBack`} {walletAddress?.substring(0, 6)}...{walletAddress?.substring(walletAddress?.length - 5)}</H1>
         <div className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
-          {displayAllTiles()}
+          <DisplayAllTiles />
           {isFetching && <><SkeletonTiles type='horizontal' /><SkeletonTiles type='vertical' /></>}
         </div>
     </Wrapper>
   )
 }
-
 
 const Wrapper = styled.div`
   display: flex;
