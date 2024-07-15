@@ -24,7 +24,9 @@ const App = () => {
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   const walletAddress = useWalletAddress();
-  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' });
+
+  // The API call will not fire if there is no walletAddress
+  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' }, { skip: !walletAddress });
   // This is a "fire and forget" call to the waitlist
   useGetWaitlistQuery(walletAddress || '');
 
