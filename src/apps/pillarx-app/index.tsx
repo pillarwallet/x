@@ -18,7 +18,6 @@ import { componentMap } from './utils/configComponent';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import H1 from './components/Typography/H1';
 
-
 // images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
@@ -53,8 +52,6 @@ const App = () => {
       return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
-
 const DisplayAllTiles = () => {
   const allTileComponents = [];
   
@@ -82,7 +79,6 @@ const DisplayAllTiles = () => {
     </Wrapper>
   )
 }
-
 
 const Wrapper = styled.div`
   display: flex;
