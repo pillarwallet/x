@@ -43,6 +43,7 @@ const TokensHorizontalList = ({ logos }: TokensHorizontalListProps) => {
     <div
             ref={divRef as React.RefObject<HTMLDivElement>}
             className='w-full h-fit flex justify-end'
+            data-testid='tokens-list'
         >
             {logos.slice(0, numberLogos).map((logo, index) =>
                 <img key={index} src={logo} className='w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]' />

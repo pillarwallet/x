@@ -12,8 +12,6 @@ import Body from '../Typography/Body';
 import TokenInfoHorizontal from '../TokenInfoHorizontal/TokenInfoHorizontal';
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 
-
-
 type TokensHorizontalTileProps = {
     data: Projection | undefined;
     isDataLoading: boolean;
