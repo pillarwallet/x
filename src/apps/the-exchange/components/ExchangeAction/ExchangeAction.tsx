@@ -89,7 +89,7 @@ const ExchangeAction = () => {
             <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer ? 'bg-white' : 'bg-white/[.6]'}`}>
                 <Body className='font-normal'>You receive</Body>
                 <div className='flex justify-between items-end'>
-                    <NumberText className='font-normal text-[43px]'>{bestOffer ? (hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive ?? 0) ? bestOffer?.tokenAmountToReceive.toFixed(8) : bestOffer?.tokenAmountToReceive.toFixed(4)) : 0}</NumberText>
+                    <NumberText className='font-normal text-[43px]'>{bestOffer?.tokenAmountToReceive ? ((hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive) ? bestOffer?.tokenAmountToReceive.toFixed(8) : bestOffer?.tokenAmountToReceive.toFixed(4))) : 0}</NumberText>
                     <div className='flex gap-1 items-center'>
                         <TokenLogo tokenLogo={receiveToken?.icon} />
                         <Body className='font-normal'>{receiveToken?.symbol ?? ''}</Body>
