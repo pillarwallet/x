@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Nft, NftCollection, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ethers } from 'ethers';
 import {
@@ -8,6 +8,10 @@ import {
 import styled from 'styled-components';
 import { CssVarsProvider, Tab, tabClasses, TabList, Tabs } from '@mui/joy';
 import { useTranslation } from 'react-i18next';
+
+// context
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
 
 // components
 import Select, { SelectOption } from '../Select';
@@ -41,6 +45,8 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
   defaultSelectedId?: string,
   onChange: (option: AssetSelectOption) => void,
 }) => {
+  const contextNfts = useContext(AccountNftsContext)
+  const contextBalances = useContext(AccountBalancesContext)
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<TokenAssetSelectOption[]>([]);
   const [nftAssetsOptions, setNftAssetsOptions] = useState<NftAssetSelectOption[]>([]);
@@ -55,6 +61,9 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
 
   useEffect(() => {
     if (!walletAddress || !chainId) return;
+
+    contextNfts?.data.setUpdateData(true)
+    contextBalances?.data.setUpdateData(true)
 
     let expired;
 
@@ -95,6 +104,8 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
 
     return () => {
       expired = true;
+      contextNfts?.data.setUpdateData(false)
+      contextBalances?.data.setUpdateData(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, chainId, assets]);
@@ -131,6 +142,8 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
       isLoadingValue: !!chainId && !balances[chainId]?.[walletAddress as string],
     }
   });
+
+  const availableAssetsInWallet = assetsOptionsWithBalances.filter((asset) => asset.balance && asset.balance > 0)
 
   return (
     <MultiSelectWrapper
@@ -191,7 +204,7 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
             </>
           )}
           <Select
-            options={showNfts ? nftAssetsOptions : assetsOptionsWithBalances}
+            options={showNfts ? nftAssetsOptions : availableAssetsInWallet}
             defaultSelectedId={defaultSelectedId}
             hideValue={showNfts}
             onChange={(option) => {

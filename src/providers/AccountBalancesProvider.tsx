@@ -49,10 +49,8 @@ const AccountBalancesProvider = ({ children }: React.PropsWithChildren) => {
 
       // sequential to avoid throttling
       for (const chainId of chainIds) {
-        if (expired) return;
 
         const accountBalances = await getAccountBalances(walletAddress, chainId);
-        if (expired) return;
 
         // update each chain ID separately for faster updates
         setBalances((current) => {
