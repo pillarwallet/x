@@ -24,8 +24,8 @@ const SwapSummary = () => {
     if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer) {
         return null;
     }
-    const exchangeRate = amountReceive.tokenAmount / amountSwap.tokenAmount;
-    const usdPerToken = amountReceive.usdAmount / amountSwap.tokenAmount;
+    const exchangeRate = (amountReceive.tokenAmount / amountSwap.tokenAmount) || 0;
+    const usdPerToken = (amountReceive.usdAmount / amountSwap.tokenAmount) || 0;
 
     return (
         <div className="flex gap-1 justify-center border border-[#999999]/[.20] rounded-[3px] p-4 w-full tablet:max-w-[420px] desktop:max-w-[420px]">

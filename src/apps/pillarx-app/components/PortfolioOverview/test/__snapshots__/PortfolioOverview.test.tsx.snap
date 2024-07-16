@@ -182,49 +182,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
   >
     <div
       className="flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between"
-    >
-      <div
-        className="flex gap-2 items-center bg-[#312F3A] py-1.5 px-4 rounded-md mobile:px-3"
-      >
-        <img
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "blend-icon.svg",
-            }
-          }
-        />
-        <p
-          className="text-base font-medium undefined"
-        >
-          0 label.tokens
-        </p>
-      </div>
-      <div
-        className="flex gap-2 items-center bg-[#312F3A] py-1.5 px-4 rounded-md mobile:px-3"
-      >
-        <img
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "routing-icon.svg",
-            }
-          }
-        />
-        <p
-          className="text-base font-medium undefined"
-        >
-          helper.across 0 helper.chainOne
-        </p>
-      </div>
-    </div>
-    0
+    />
   </div>
 </div>
 `;

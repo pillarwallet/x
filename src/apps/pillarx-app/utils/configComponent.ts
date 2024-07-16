@@ -5,6 +5,7 @@ import { ApiLayout } from '../../../types/api';
 import PortfolioOverview from '../components/PortfolioOverview/PortfolioOverview';
 import TokensHorizontalTile from '../components/TokensHorizontalTile/TokensHorizontalTile';
 import TokensVerticalTile from '../components/TokensVerticalTile/TokensVerticalTile';
+import GenericBannerTile from '../components/GenericBannerTile/GenericBannerTile';
 
 type TileComponentType = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,4 +15,6 @@ export const componentMap: TileComponentType  = {
     [ApiLayout.OVERVIEW]: PortfolioOverview,
     [ApiLayout.TOKENS_HORIZONTAL]: TokensHorizontalTile,
     [ApiLayout.TOKENS_VERTICAL]: TokensVerticalTile,
+    [ApiLayout.GENERIC_BANNER]: GenericBannerTile,
   };
+  

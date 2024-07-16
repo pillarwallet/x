@@ -16,9 +16,9 @@ type TokensVerticalTileProps = {
 const TokensVerticalTile = ({ data, isDataLoading }: TokensVerticalTileProps) => {
     const { data: dataTokens, meta } = data || {};
 
-    const dataTokensVertical = dataTokens as TokenData[];
-    const dataLeft = dataTokensVertical.slice(0, 3);
-    const dataRight = dataTokensVertical.slice(3, 6);
+    const dataTokensVertical = dataTokens as TokenData[] | undefined;
+    const dataLeft = dataTokensVertical?.slice(0, 3) || [];
+    const dataRight = dataTokensVertical?.slice(3, 6) || [];
 
 if (!data || isDataLoading) {
     return (
