@@ -70,13 +70,13 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       return {} as SwapOffer;
     });
 
-    if (offer && receiveToken) {
+    if (offer && Object.keys(offer as SwapOffer).length && receiveToken) {
       const usdPrice = await getPrice(receiveToken.address, receiveToken.chainId).catch((e) => {
         console.error('Failed to fetch USD price of token:', e);
         return {} as RateInfo;
       });
 
-      if (usdPrice) {
+      if (usdPrice && Object.keys(usdPrice).length) {
         dispatch(setAmountReceive({
           tokenAmount: offer?.tokenAmountToReceive,
           usdAmount: usdPrice.usd * offer.tokenAmountToReceive,
@@ -152,7 +152,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     // Might need to find a way to debounce the getPrice call too
     if (type === CardPosition.SWAP && swapToken) {
       const usdPrice = await getPrice(swapToken.address, swapToken.chainId);
-      if (usdPrice) {
+      if (usdPrice && Object.keys(usdPrice).length) {
         dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPrice.usd * Number(value) }));
       } else {
         dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: 0 }));
@@ -169,9 +169,11 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     } else if (bestOffer) {
       return (
         <NumberText className="text-black_grey font-normal text-3xl break-words mobile:max-w-[180px] tablet:max-w-[260px] desktop:max-w-[260px] xs:max-w-[110px]">
-          {hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive)
+          {bestOffer?.tokenAmountToReceive ?
+          (hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive)
             ? bestOffer?.tokenAmountToReceive.toFixed(8)
-            : bestOffer?.tokenAmountToReceive.toFixed(4)}
+            : bestOffer?.tokenAmountToReceive.toFixed(4))
+          : 0}
         </NumberText>
       );
     }
