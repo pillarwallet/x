@@ -12,8 +12,6 @@ import Body from '../Typography/Body';
 import TokenInfoHorizontal from '../TokenInfoHorizontal/TokenInfoHorizontal';
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 
-
-
 type TokensHorizontalTileProps = {
     data: Projection | undefined;
     isDataLoading: boolean;
@@ -22,7 +20,7 @@ type TokensHorizontalTileProps = {
 const TokensHorizontalTile = ({ data, isDataLoading }: TokensHorizontalTileProps) => {
     const [tokenHorizontalWidth, setTokenHorizontalWidth] = useState<number>(0);
     const { data: dataTokens, meta } = data || {};
-    const dataTokensHorizontal = dataTokens as TokenData[];
+    const dataTokensHorizontal = dataTokens as TokenData[] | undefined;
 
     useEffect(() => {
         const handleTokenHorizontalWidthResize = () => {
