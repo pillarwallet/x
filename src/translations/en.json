@@ -38,6 +38,7 @@
   },
   "error": {
     "pageNotFound": "Page not found",
+    "noTransactionHistory": "No transaction history found. Please complete your first transaction.",
     "appNotFound": "App not found",
     "failedToGetTransactionHashReachSupport": "Failed to get transaction hash. Please reach out to support.",
     "noNftsFound": "No NFTs found",
