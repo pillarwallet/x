@@ -91,6 +91,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
 const Wrapper = styled.div`
   max-height: 100%;
   width: 100%;
+  overflow-y: scroll;
 `;
 
 const AppsListWrapper = styled.div`
