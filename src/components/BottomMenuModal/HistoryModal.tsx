@@ -163,7 +163,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
   return (
     <Wrapper>
       {!sortedTransactions.length && (
-        <Alert>{t`error.pageNotFound`}</Alert>
+        <Alert>{t`error.noTransactionHistory`}</Alert>
       )}
       {sortedTransactions.map((transaction) => {
         const chain = visibleChains.find((c) => c.id === transaction.chainId);
