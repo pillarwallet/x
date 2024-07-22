@@ -3,7 +3,7 @@ import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { mainnet, sepolia } from 'viem/chains';
+import { polygon, sepolia } from 'viem/chains';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -211,7 +211,7 @@ const Main = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{
             appearance: { theme: 'dark' },
-            defaultChain: process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : mainnet,
+            defaultChain: process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
             embeddedWallets: {
               createOnLogin: 'users-without-wallets'
             }
