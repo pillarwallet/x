@@ -2,7 +2,7 @@ import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ethers } from 'ethers';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import { mainnet } from 'viem/chains';
+import { polygon } from 'viem/chains';
 
 // providers
 import AccountBalancesProvider, { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
@@ -34,7 +34,7 @@ describe('AccountBalancesProvider', () => {
     mockGetAccountBalances = jest.fn().mockImplementation((
       account: string,
       chainId: number,
-    ) => chainId === mainnet.id ? balancesMock : []);
+    ) => chainId === polygon.id ? balancesMock : []);
 
     jest.spyOn(TransactionKit, 'useEtherspotBalances').mockReturnValue(({
       getAccountBalances: mockGetAccountBalances,
@@ -59,7 +59,7 @@ describe('AccountBalancesProvider', () => {
 
     await waitFor(async () => {
       expect(result.current?.data.balances).toEqual({
-        [mainnet.id]: { [accountAddress]: balancesMock },
+        [polygon.id]: { [accountAddress]: balancesMock },
       });
     });
 

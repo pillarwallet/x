@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
-import { base, gnosis, mainnet, polygon } from 'viem/chains';
+import { base, gnosis, polygon } from 'viem/chains';
 import * as TransactionKit from '@etherspot/transaction-kit';
 
 // providers
@@ -36,7 +36,6 @@ describe('AssetsProvider', () => {
 
     await waitFor(async () => {
       expect(result.current?.data.assets).toEqual({
-        [mainnet.id]: [getNativeAssetForChainId(mainnet.id), ...etherspotTestAssets],
         [polygon.id]: [getNativeAssetForChainId(polygon.id)],
         [gnosis.id]: [getNativeAssetForChainId(gnosis.id)],
         [base.id]: [getNativeAssetForChainId(base.id)],

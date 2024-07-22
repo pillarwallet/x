@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import { mainnet } from 'viem/chains';
+import { polygon } from 'viem/chains';
 import { Nft, NftCollection, TokenTypes } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // providers
@@ -53,7 +53,7 @@ describe('AccountNftsProvider', () => {
     );
 
     getAccountNftsMock = jest.fn().mockImplementation((walletAddress, chainId) => {
-      if (chainId === mainnet.id && walletAddress === accountAddress) {
+      if (chainId === polygon.id && walletAddress === accountAddress) {
         const collection = returnMoreNfts
           ? { ...nftCollectionMock, items: [...nftCollectionMock.items, { ...nftMock, tokenId: 3 }] }
           : nftCollectionMock;
@@ -85,7 +85,7 @@ describe('AccountNftsProvider', () => {
 
     await waitFor(async () => {
       expect(result.current?.data.nfts).toEqual({
-        [mainnet.id]: accountNftsMock,
+        [polygon.id]: accountNftsMock,
       });
     });
 
@@ -130,7 +130,7 @@ describe('AccountNftsProvider', () => {
       expect(result.current).not.toEqual({});
     });
 
-    expect(result.current?.[mainnet.id][accountAddress][0].items.length).toBe(2);
+    expect(result.current?.[polygon.id][accountAddress][0].items.length).toBe(2);
 
     returnMoreNfts = true;
 
@@ -138,7 +138,7 @@ describe('AccountNftsProvider', () => {
     jest.useRealTimers();
 
     await waitFor(async () => {
-      expect(result.current?.[mainnet.id][accountAddress][0]?.items?.length).toBe(3);
+      expect(result.current?.[polygon.id][accountAddress][0]?.items?.length).toBe(3);
     });
 
     expect(onNftReceived).toHaveBeenCalledTimes(1);
@@ -173,14 +173,14 @@ describe('AccountNftsProvider', () => {
       expect(result.current).not.toEqual({});
     });
 
-    expect(result.current[mainnet.id][accountAddress][0].items.length).toBe(3);
+    expect(result.current[polygon.id][accountAddress][0].items.length).toBe(3);
 
     returnMoreNfts = false;
     jest.runAllTimers();
     jest.useRealTimers();
 
     await waitFor(async () => {
-      expect(result.current[mainnet.id][accountAddress][0]?.items?.length).toBe(2);
+      expect(result.current[polygon.id][accountAddress][0]?.items?.length).toBe(2);
     });
 
     expect(onNftSent).toHaveBeenCalledTimes(1);
