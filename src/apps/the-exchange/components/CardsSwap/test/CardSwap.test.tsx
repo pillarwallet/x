@@ -10,6 +10,7 @@ import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
+  setIsOfferLoading,
   setIsReceiveOpen,
   setIsSwapOpen,
   setReceiveChain,
@@ -18,7 +19,9 @@ import {
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData } from '../../../reducer/theExchangeSlice';
+  setSwapTokenData, 
+  setUsdPriceReceiveToken, 
+  setUsdPriceSwapToken} from '../../../reducer/theExchangeSlice';
 
 // components
 import CardsSwap from '../CardsSwap';
@@ -40,7 +43,7 @@ jest.mock('@etherspot/transaction-kit', () => ({
     getQuotes: jest.fn().mockResolvedValue({}),
   }),
   useEtherspotPrices: jest.fn().mockReturnValue({
-    getPrice: jest.fn(),
+    getPrice: jest.fn().mockResolvedValue({ usd: 1200 }),
     getPrices: jest.fn(),
   }),
   useWalletAddress: jest.fn().mockReturnValue({
@@ -115,6 +118,9 @@ describe('<CardsSwap />', () => {
       store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setUsdPriceSwapToken(1200));
+      store.dispatch(setUsdPriceReceiveToken(0.4));
+      store.dispatch(setIsOfferLoading(false));
     });
   });
 
