@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as TransactionKit from '@etherspot/transaction-kit';
-import {  mainnet } from 'viem/chains';
+import {  polygon } from 'viem/chains';
 import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
 
 // services
@@ -50,7 +50,7 @@ describe('AccountTransactionHistoryProvider', () => {
     );
 
     mockGetAccountTransactions = jest.fn().mockImplementation((walletAddress: string, chainId: number) => {
-      if (chainId === mainnet.id && walletAddress === accountAddress) {
+      if (chainId === polygon.id && walletAddress === accountAddress) {
         return returnLongerHistory
           ? accountTransactionsMock.concat({
             transactionHash: '0x3',
@@ -87,7 +87,7 @@ describe('AccountTransactionHistoryProvider', () => {
 
     await waitFor(async () => {
       expect(result.current?.data.history).toEqual({
-        [mainnet.id]: accountHistoryMock,
+        [polygon.id]: accountHistoryMock,
       });
     });
 
@@ -127,14 +127,14 @@ describe('AccountTransactionHistoryProvider', () => {
       expect(result.current?.data.history).not.toEqual({});
     });
 
-    expect(result.current?.data.history[mainnet.id][accountAddress].length).toBe(2);
+    expect(result.current?.data.history[polygon.id][accountAddress].length).toBe(2);
 
     returnLongerHistory = true;
 
     jest.runAllTimers();
 
     await waitFor(async () => {
-      expect(result.current?.data.history[mainnet.id][accountAddress].length).toBe(3);
+      expect(result.current?.data.history[polygon.id][accountAddress].length).toBe(3);
     });
 
     expect(onHistoryUpdated).toHaveBeenCalledTimes(1);

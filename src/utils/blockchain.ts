@@ -5,7 +5,6 @@ import {
   base,
   bsc,
   gnosis,
-  mainnet,
   polygon,
   sepolia,
 } from 'viem/chains';
@@ -13,7 +12,6 @@ import {
 // images
 import logoAvalanche from '../assets/images/logo-avalanche.png';
 import logoBsc from '../assets/images/logo-bsc.png';
-import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
@@ -78,7 +76,6 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
 }
 
 export const supportedChains = [
-  mainnet,
   polygon,
   gnosis,
   base,
@@ -95,9 +92,6 @@ export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
 }
 
 export const getLogoForChainId = (chainId: number): string => {
-  if (chainId === mainnet.id) {
-    return logoEthereum;
-  }
 
   if (chainId === polygon.id) {
     return logoPolygon;
