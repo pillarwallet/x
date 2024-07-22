@@ -32,7 +32,7 @@ const Preview: React.FC<{ config?: Config; preview?: boolean }> = () => {
                     onClick={() => {
                         setFormVisible(true);
                     }}
-                    widget
+                    widget='true'
                 >
                     {t('startExchange')}
                 </ExchangeButton>
