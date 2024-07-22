@@ -374,23 +374,25 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           )}
         </FormGroup>
       )}
-      <FormGroup>
-        <Label>{t`label.sendTo`}</Label>
-        <TextInput
-          value={recipient}
-          onValueChange={setRecipient}
-          placeholder={t`placeholder.enterAddress`}
-          rightAddon={(
-            <TextInputButton onClick={pasteClicked ? () => setPasteClicked(false) : onAddressClipboardPasteClick}>
-              {t`action.paste`}
-              <span>
-                {!pasteClicked && <IconClipboardText size={16} />}
-                {pasteClicked && <IconClipboardTick size={16} />}
-              </span>
-            </TextInputButton>
-          )}
-        />
-      </FormGroup>
+      {selectedAsset &&
+        <FormGroup>
+          <Label>{t`label.sendTo`}</Label>
+          <TextInput
+            value={recipient}
+            onValueChange={setRecipient}
+            placeholder={t`placeholder.enterAddress`}
+            rightAddon={(
+              <TextInputButton onClick={pasteClicked ? () => setPasteClicked(false) : onAddressClipboardPasteClick}>
+                {t`action.paste`}
+                <span>
+                  {!pasteClicked && <IconClipboardText size={16} />}
+                  {pasteClicked && <IconClipboardTick size={16} />}
+                </span>
+              </TextInputButton>
+            )}
+          />
+        </FormGroup>
+      }
       {isTransactionReady && (
         <EtherspotBatches>
           <EtherspotBatch chainId={selectedAsset.chainId}>
