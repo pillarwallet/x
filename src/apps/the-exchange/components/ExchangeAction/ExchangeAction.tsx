@@ -28,6 +28,7 @@ const ExchangeAction = () => {
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
     const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
     const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
+    const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
 
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
@@ -86,17 +87,19 @@ const ExchangeAction = () => {
 
     return (
         <div className='flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20'>
-            <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer ? 'bg-white' : 'bg-white/[.6]'}`}>
+            <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer || isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
                 <Body className='font-normal'>You receive</Body>
                 <div className='flex justify-between items-end'>
-                    <NumberText className='font-normal text-[43px]'>{bestOffer?.tokenAmountToReceive ? ((hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive) ? bestOffer?.tokenAmountToReceive.toFixed(8) : bestOffer?.tokenAmountToReceive.toFixed(4))) : 0}</NumberText>
+                    {isOfferLoading
+                    ? <CircularProgress size={64.5} sx={{ color: '#343434' }} />
+                    : <NumberText className='font-normal text-[43px]'>{bestOffer?.tokenAmountToReceive ? ((hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive) ? bestOffer?.tokenAmountToReceive.toFixed(8) : bestOffer?.tokenAmountToReceive.toFixed(4))) : 0}</NumberText>}
                     <div className='flex gap-1 items-center'>
                         <TokenLogo tokenLogo={receiveToken?.icon} />
                         <Body className='font-normal'>{receiveToken?.symbol ?? ''}</Body>
                     </div>
                 </div>
             </div>
-            <div onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center cursor-pointer ${bestOffer ? 'bg-white' : 'bg-white/[.6]'}`}>
+            <div onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center cursor-pointer ${bestOffer || isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
                 <Body>Exchange</Body>
                 {errorMessage && (
                     <BodySmall>

@@ -20,8 +20,9 @@ const SwapSummary = () => {
     const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
     const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
+    const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
 
-    if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer) {
+    if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer || isOfferLoading) {
         return null;
     }
     const exchangeRate = (amountReceive.tokenAmount / amountSwap.tokenAmount) || 0;
