@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
+// utils
+import { getAllUniqueBlockchains } from '../../utils/blockchain'
+
 // types
 import { Projection, WalletPortfolioData } from '../../../../types/api'
 
@@ -17,8 +20,6 @@ import WalletAddressOverview from '../WalletAdddressOverview/WalletAddressOvervi
 import TokensHorizontalList from '../TokensHorizontalList/TokensHorizontalList'
 import TokensPercentage from '../TokensPercentage/TokensPercentage'
 import SkeletonLoader from '../../../../components/SkeletonLoader'
-import { getAllUniqueBlockchains } from '../../utils/blockchain'
-
 
 type PortfolioOverviewProps = {
     data: Projection | undefined;
@@ -27,23 +28,21 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     const [t] = useTranslation();
-
     const { data: dataPortlioOverview } = data || {};
+    const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
+    const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = dataWallet?.total_pnl_history?.['24h'] || {};
 
-    const { assets = [], total_pnl_history = {}, total_wallet_balance = 0, wallet = '' } = dataPortlioOverview as WalletPortfolioData || {};
-    const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } = total_pnl_history['24h'] || {};
-
-    const numberOfTokens = assets.length ?? 0;
+    const numberOfTokens = dataWallet?.assets?.length || 0;
     
-    const allBlockchains = assets.map((asset) => asset.asset.blockchains).flat();
+    const allBlockchains = dataWallet?.assets?.map((asset) => asset.asset.blockchains).flat() || [];
 
-    const allBlockchainsLogos = assets.map((asset) => asset.asset.logo ? asset.asset.logo : DefaultLogo).flat();
+    const allBlockchainsLogos = dataWallet?.assets?.map((asset) => asset.asset.logo ? asset.asset.logo : DefaultLogo).flat() || [];
 
     const numberOfBlockchains = getAllUniqueBlockchains(allBlockchains).length ?? 0;
 
     const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
     
-    const percentageChange = (totalPnl24h / (total_wallet_balance)) * 100;
+    const percentageChange = (totalPnl24h / (dataWallet?.total_wallet_balance ?? 0)) * 100;
 
 if (!data || isDataLoading) {
     return (
@@ -67,22 +66,21 @@ if (!data || isDataLoading) {
     return (
         <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
             <div className='flex flex-col justify-between'>
-                <WalletAddressOverview address={wallet} className='mobile:hidden mb-[54px]' />
+                <WalletAddressOverview address={dataWallet?.wallet ?? ''} className='mobile:hidden mb-[54px]' />
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
                     <Body className='text-purple_light mb-2'>{t`title.totalBalance`}</Body>
                     <div className='flex gap-4 items-end'>
-                        <H1 className='text-[50px]'>${total_wallet_balance.toFixed(2)}</H1>
+                        <H1 className='text-[50px]'>${dataWallet?.total_wallet_balance?.toFixed(2) || 0}</H1>
                         <TokensPercentage percentage={percentageChange} />
                     </div>
-
                 </div>
             </div>
             <div className='flex w-full flex-col items-end justify-end mobile:justify-normal gap-5'>
                 <div className='flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between'>
-                    <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`label.tokens`}`} />
-                    <Tags icon={RoutingIcon} tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`} />
+                    {numberOfTokens > 0 && <Tags icon={BlendIcon} tagText={`${numberOfTokens} ${t`label.tokens`}`} />}
+                    {numberOfBlockchains > 0 && <Tags icon={RoutingIcon} tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`} />}
                 </div>
-                {allBlockchainsLogos.length && <TokensHorizontalList logos={allBlockchainsLogos || []} />}
+                {allBlockchainsLogos.length > 0 && <TokensHorizontalList logos={allBlockchainsLogos} />}
             </div>
         </TileContainer>
     )

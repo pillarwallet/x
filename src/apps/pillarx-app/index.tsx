@@ -1,52 +1,69 @@
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import './styles/tailwindPillarX.css';
 
 // types
 import { Projection } from '../../types/api';
 
 // hooks
-import { useGetTilesInfoQuery } from './api/apiSlice';
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useGetTilesInfoQuery } from './api/homeFeed';
+import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
+
+// utils
+import { componentMap } from './utils/configComponent';
 
 // components
+import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
+import H1 from './components/Typography/H1';
+
+// images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
-import H1 from './components/Typography/H1';
-import { componentMap } from './utils/configComponent';
-import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 
-export const App = () => {
+const App = () => {
   const [t] = useTranslation();
   const [page, setPage] = useState(1);
+  const [isLoadingNextPage, setIsLoadingNextPage] = useState(true);
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   const walletAddress = useWalletAddress();
-  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' });
+
+  // The API call will not fire if there is no walletAddress
+  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' }, { skip: !walletAddress });
+  // This is a "fire and forget" call to the waitlist
+  useGetWaitlistQuery(walletAddress || '');
 
   useEffect(() => {
     // when apiData loads, we save it in a state to keep previous data
       if (apiData && isSuccess) {
           setPageData((prevData) => [...prevData, ...apiData.projection]);
+          setIsLoadingNextPage(true);
       }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiData]);
+  }, [apiData, isSuccess]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
-  const handleScroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          setPage((prevPage) => prevPage + 1);
-      }
-  };
-
   useEffect(() => {
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+      if ((scrollTop + clientHeight >= scrollHeight - 100
+        
+      ) && !isFetching && isLoadingNextPage) {
+        setIsLoadingNextPage(false);
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isFetching, isLoadingNextPage]);
 
-
-const displayAllTiles = () => {
+// useMemo here to know reload all components and create a smoother scrolling experience
+const DisplayAllTiles = useMemo(() => {
   const allTileComponents = [];
   
   for (let index = 0; index < pageData.length; index++) {
@@ -60,20 +77,19 @@ const displayAllTiles = () => {
   }
   
   return allTileComponents;
-};
+}, [pageData, isApiLoading]);
 
   return (
     <Wrapper>
       <PillarXLogo src={pillarLogoLight} className='object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
       <H1 className='py-2.5 px-4 mobile:px-0'>{t`content.welcomeBack`} {walletAddress?.substring(0, 6)}...{walletAddress?.substring(walletAddress?.length - 5)}</H1>
         <div className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
-          {displayAllTiles()}
+          {DisplayAllTiles}
           {isFetching && <><SkeletonTiles type='horizontal' /><SkeletonTiles type='vertical' /></>}
         </div>
     </Wrapper>
   )
 }
-
 
 const Wrapper = styled.div`
   display: flex;

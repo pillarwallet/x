@@ -16,7 +16,11 @@ import { AppManifest } from '../types';
 import useAllowedApps from '../hooks/useAllowedApps';
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 
+// services
+import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
+
 // utils
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { loadApps } from '../apps';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
@@ -25,6 +29,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [t] = useTranslation()
+  const accountAddress = useWalletAddress();
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what apps are being opened
+   */
+  const [recordPresence] = useRecordPresenceMutation();
 
   React.useEffect(() => {
     const loadedApps = loadApps(allowed);
@@ -59,6 +70,12 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
             key={appId}
             onClick={() => {
               hide();
+              // Fire (and forget) the recordPresence mutation
+              recordPresence({
+                address: accountAddress,
+                action: 'appOpened',
+                value: appId,
+              });
               navigate('/' + appId);
             }}
           >
@@ -74,6 +91,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
 const Wrapper = styled.div`
   max-height: 100%;
   width: 100%;
+  overflow-y: scroll;
 `;
 
 const AppsListWrapper = styled.div`

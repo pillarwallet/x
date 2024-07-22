@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<GenericBannerTile /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex bg-container_grey rounded-2xl p-1 flex-col false"
+>
+  <div
+    className="flex flex-col rounded-2xl  bg-cover bg-no-repeat bg-center"
+    style={
+      {
+        "backgroundImage": "url(https://example.com/background-image.png)",
+      }
+    }
+  >
+    <div
+      className="mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4"
+    >
+      <h1
+        className="text-3xl leading-[45px] font-medium mobile:text-xl mobile:leading-5 text-[45px] tablet:leading-[67.5px] desktop:leading-[67.5px] mobile:text-xl mobile:leading-[30px]"
+      >
+        Banner title
+      </h1>
+      <p
+        className="text-base font-medium text-[22px] tablet:leading-[33px] desktop:leading-[33px] mobile:text-sm"
+      >
+        Banner subtitle
+      </p>
+      <button
+        className="mt-10 mobile:mt-4"
+        onClick={[Function]}
+      >
+        <p
+          className="text-base font-medium bg-container_grey rounded-md py-3 px-5 mobile:text-sm mobile:py-2 mobile:px-4"
+        >
+          This is the button text
+        </p>
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -1,7 +1,8 @@
 export enum ApiLayout {
   OVERVIEW = 'OVERVIEW',
   TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
-  TOKENS_VERTICAL = 'TOKENS_VERTICAL'
+  TOKENS_VERTICAL = 'TOKENS_VERTICAL',
+  GENERIC_BANNER = 'GENERIC_BANNER',
 }
 
 export type Asset = {
@@ -54,13 +55,13 @@ export type Asset = {
   }
   
   export type WalletPortfolioData = {
-    total_wallet_balance: number;
-    wallet: string;
-    wallets: string[];
-    total_realized_pnl: number;
-    total_unrealized_pnl: number;
-    assets: AssetData[];
-    total_pnl_history: {
+    total_wallet_balance?: number;
+    wallet?: string;
+    wallets?: string[];
+    total_realized_pnl?: number;
+    total_unrealized_pnl?: number;
+    assets?: AssetData[];
+    total_pnl_history?: {
       [key in '24h' | '7d' | '30d' | '1y']?: TotalPnlHistory;
   };
   }
@@ -69,9 +70,15 @@ export type Asset = {
     meta: {
       display: {
         title: string;
-      }
+        subtitle?: string;
+        backgroundImage?: string;
+        cta?: {
+          text?: string;
+          href?: string;
+        };
+      };
     };
-    data: WalletPortfolioData | TokenData[];
+    data: WalletPortfolioData | TokenData[] | undefined;
     layout: ApiLayout;
     id: string;
   }
@@ -93,15 +100,14 @@ export type Asset = {
   }
   
   export type TokenData = {
-    id: number;
-    name: string;
-    symbol: string;
-    contracts: TokenContract[];
-    logo: string;
-    trending_score: number;
-    platforms: TokenPlatform[];
-    price_change_24h: number;
-    pair: string;
+    id?: number;
+    name?: string;
+    symbol?: string;
+    contracts?: TokenContract[];
+    logo?: string;
+    trending_score?: number;
+    platforms?: TokenPlatform[];
+    price_change_24h?: number;
+    pair?: string;
   }
-
   

@@ -3,6 +3,7 @@
 exports[`<TokensHorizontalList /> renders correctly and matches snapshot 1`] = `
 <div
   className="w-full h-fit flex justify-end"
+  data-testid="tokens-list"
 >
   <img
     className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"

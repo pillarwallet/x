@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
+<div
+  className="undefined h-[34px] z-20"
+>
+  <button
+    className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <p
+      className="text-base font-medium text-black_grey text-[#717171]"
+    >
+      Select a chain
+    </p>
+    <p
+      className="text-base font-medium text-black_grey text-black capitalize"
+    >
+      Polygon
+    </p>
+    <img
+      src="arrow-down.png"
+    />
+  </button>
+  <div
+    className="relative bg-white border border-t-black rounded-[3px] w-full max-h-[344px] overflow-y-auto capitalize"
+  >
+    <ul>
+      <li
+        className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
+        onClick={[Function]}
+      >
+        <p
+          className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1]"
+        >
+          1
+        </p>
+      </li>
+      <li
+        className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
+        onClick={[Function]}
+      >
+        <p
+          className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1]"
+        >
+          137
+        </p>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
