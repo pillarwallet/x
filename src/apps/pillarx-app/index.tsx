@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
@@ -25,6 +25,7 @@ import pillarLogoLight from './images/pillarX_full_white.png';
 const App = () => {
   const [t] = useTranslation();
   const [page, setPage] = useState(1);
+  const [isLoadingNextPage, setIsLoadingNextPage] = useState(true);
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   const walletAddress = useWalletAddress();
@@ -38,23 +39,31 @@ const App = () => {
     // when apiData loads, we save it in a state to keep previous data
       if (apiData && isSuccess) {
           setPageData((prevData) => [...prevData, ...apiData.projection]);
+          setIsLoadingNextPage(true);
       }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiData]);
+  }, [apiData, isSuccess]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
-  const handleScroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          setPage((prevPage) => prevPage + 1);
-      }
-  };
-
   useEffect(() => {
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+      if ((scrollTop + clientHeight >= scrollHeight - 100
+        
+      ) && !isFetching && isLoadingNextPage) {
+        setIsLoadingNextPage(false);
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
 
-const DisplayAllTiles = () => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isFetching, isLoadingNextPage]);
+
+// useMemo here to know reload all components and create a smoother scrolling experience
+const DisplayAllTiles = useMemo(() => {
   const allTileComponents = [];
   
   for (let index = 0; index < pageData.length; index++) {
@@ -68,14 +77,14 @@ const DisplayAllTiles = () => {
   }
   
   return allTileComponents;
-};
+}, [pageData, isApiLoading]);
 
   return (
     <Wrapper>
       <PillarXLogo src={pillarLogoLight} className='object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
       <H1 className='py-2.5 px-4 mobile:px-0'>{t`content.welcomeBack`} {walletAddress?.substring(0, 6)}...{walletAddress?.substring(walletAddress?.length - 5)}</H1>
         <div className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
-          <DisplayAllTiles />
+          {DisplayAllTiles}
           {isFetching && <><SkeletonTiles type='horizontal' /><SkeletonTiles type='vertical' /></>}
         </div>
     </Wrapper>
