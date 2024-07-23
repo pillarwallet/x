@@ -22,7 +22,7 @@ const SelectToken = ({ type, tokenName, tokenChain, tokenLogo, onClick }: Select
     return (
         <div onClick={onClick} className='flex justify-between items-start'>
             <div className="flex w-full flex-col">
-                <Body className='capitalize'>{tokenName ?? type}</Body>
+                <Body className='capitalize line-clamp-2 text-ellipsis break-all'>{tokenName ?? type}</Body>
                 <Body className="font-normal capitalize">{tokenChain ? `On ${convertChainIdtoName(tokenChain)}` : 'Select Token'}</Body>
             </div>
             {tokenLogo &&

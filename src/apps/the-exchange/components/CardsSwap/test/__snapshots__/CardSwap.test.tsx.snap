@@ -20,7 +20,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           className="flex w-full flex-col"
         >
           <p
-            className="text-base font-medium text-black_grey capitalize"
+            className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
           >
             Ether
           </p>
@@ -53,7 +53,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
         className="flex flex-col gap-1 group"
       >
         <p
-          className="text-xs font-normal text-black_grey goup-hover:text-black_grey/[.4] font-normal"
+          className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
         >
           ETH
         </p>
@@ -98,7 +98,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           className="flex w-full flex-col"
         >
           <p
-            className="text-base font-medium text-black_grey capitalize"
+            className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
           >
             Matic
           </p>
@@ -131,7 +131,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
         className="flex flex-col gap-1 group"
       >
         <p
-          className="text-xs font-normal text-black_grey goup-hover:text-black_grey/[.4] font-normal"
+          className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
         >
           MATIC
         </p>
