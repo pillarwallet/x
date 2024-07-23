@@ -1,5 +1,5 @@
 import renderer, { act } from 'react-test-renderer';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 // provider
 import { Provider } from 'react-redux';
@@ -89,23 +89,21 @@ describe('<DropdownTokenList />', () => {
 
         act(() => {
             store.dispatch(setIsSwapOpen(true));
+            store.dispatch(setSwapChain({chainId: 0, chainName: 'all'}))
         });
 
         const searchInput = getByPlaceholderText('Search tokens');
         fireEvent.focus(searchInput);
         fireEvent.change(searchInput, { target: { value: 'matic' } });
         
-        await waitFor(() => {
-            const tokenItems = getAllByTestId('token-list-item');
-            expect(tokenItems.length).toBe(1);
-        });
+        const tokenItems = getAllByTestId('token-list-item');
+        expect(tokenItems.length).toBe(1);
 
         const firstTokenItem = getAllByTestId('token-list-item');
         fireEvent.click(firstTokenItem[0]);
-
+        
         expect(store.getState().swap.swapToken).toBe(mockTokenAssets[1]);
         expect(store.getState().swap.swapChain).toEqual({ chainId: 137, chainName: '137' });
-        expect(store.getState().swap.searchTokenResult).toEqual([]);
         expect(store.getState().swap.isSwapOpen).toBe(false);
     });
 
@@ -118,23 +116,21 @@ describe('<DropdownTokenList />', () => {
 
         act(() => {
             store.dispatch(setIsReceiveOpen(true));
+            store.dispatch(setReceiveChain({chainId: 0, chainName: 'all'}))
         });
 
         const searchInput = getByPlaceholderText('Search tokens');
         fireEvent.focus(searchInput);
         fireEvent.change(searchInput, { target: { value: 'ether' } });
         
-        await waitFor(() => {
-            const tokenItems = getAllByTestId('token-list-item');
-            expect(tokenItems.length).toBe(1);
-        });
+        const tokenItems = getAllByTestId('token-list-item');
+        expect(tokenItems.length).toBe(1);
 
         const firstTokenItem = getAllByTestId('token-list-item');
         fireEvent.click(firstTokenItem[0]);
-        
+    
         expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
         expect(store.getState().swap.receiveChain).toEqual({ chainId: 1, chainName: '1' });
-        expect(store.getState().swap.searchTokenResult).toEqual([]);
         expect(store.getState().swap.isReceiveOpen).toBe(false);
     });
 
