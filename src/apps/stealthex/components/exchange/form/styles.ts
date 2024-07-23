@@ -117,12 +117,15 @@ type FormContainerProps = {
 
 export const FormContainer = styled.div<FormContainerProps>`
   position: relative;
-  width: 100%;
-
+  width: 90vw;
   background: #fff;
   box-shadow: 0px 5px 30px rgba(196, 196, 196, 0.3);
   z-index: 3;
   border-radius: 12px;
+
+  @media (max-width: 680px) {
+    width: 100%;
+  }
 `;
 
 export const Content = styled.div``;

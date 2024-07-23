@@ -43,6 +43,11 @@ export const WidgetStyledExchange = styled(StyledExchange)`
   padding: 20px 20px 42px;
   position: relative;
   overflow: auto;
+  width: 90vw;
+
+  @media (max-width: 680px) {
+    width: 100%;
+  }
 
   @media ${device.mobileXL} {
     padding: 45px 24px;

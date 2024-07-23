@@ -21,7 +21,6 @@ export const ContainerInput = styled.div<ContainerProps>`
   flex-direction: row;
   align-items: center;
   height: 60px;
-
   ${(props) =>
     !props.widget &&
     css`
@@ -143,7 +142,7 @@ export const AmountInput = styled.input`
 
   font-size: 20px;
   font-weight: 600;
-  color: #000000
+  color: var(--black);
 
   &,
   &:disabled {

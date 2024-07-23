@@ -130,6 +130,7 @@ export const AddressInput = styled.input<AddresInputProps>`
   width: 100%;
   margin: 0;
   z-index: 1;
+  color: var(--black);
 
   ${(props) =>
         !props.widget &&
