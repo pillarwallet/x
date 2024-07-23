@@ -14,7 +14,7 @@ import Body from '../Typography/Body';
 import ArrowDown from '../../images/arrow-down.png';
 import { ChainType } from '../../utils/types';
 
-type DropdownProps = {
+type SelectDropdownProps = {
   options: number[];
   onClick: () => void;
   onSelect: () => void;
@@ -22,20 +22,27 @@ type DropdownProps = {
   className?: string;
 };
 
-const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: DropdownProps) => {
+const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: SelectDropdownProps) => {
   const dispatch = useAppDispatch();
   const swapChain = useAppSelector((state) => state.swap.swapChain as ChainType);
   const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
   const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
   const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen as boolean);
 
+  const allChainsOption: ChainType = {
+    chainId: 0,
+    chainName: 'all',
+  };
+
+  const allOptions = [allChainsOption.chainId, ...options];
+
   // this will filter the tokens by chain id
   const handleSelectChainId = (option: number) => {
     if (isSwapOpen) {
-      dispatch(setSwapChain({chainId: Number(option), chainName: convertChainIdtoName(option)}));
+      dispatch(setSwapChain({chainId: Number(option), chainName: option === 0 ? 'all' : convertChainIdtoName(option)}));
     }
     if (isReceiveOpen) {
-      dispatch(setReceiveChain({chainId: Number(option), chainName: convertChainIdtoName(option)}));
+      dispatch(setReceiveChain({chainId: Number(option), chainName:  option === 0 ? 'all' : convertChainIdtoName(option)}));
     }
     onSelect();
   };
@@ -54,13 +61,13 @@ const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: Dropd
       {isOpen && (
         <div className="relative bg-white border border-t-black rounded-[3px] w-full max-h-[344px] overflow-y-auto capitalize">
           <ul>
-            {options.map((option) => (
+            {allOptions.map((option) => (
               <li
                 key={option}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
                 onClick={() => handleSelectChainId(option)}
               >
-                <Body className="border-b-[#8C8C8C]/[.1]">{convertChainIdtoName(option)}</Body>
+                <Body className="border-b-[#8C8C8C]/[.1]">{option === 0 ? 'all' : convertChainIdtoName(option)}</Body>
               </li>
             ))}
           </ul>
