@@ -25,8 +25,14 @@ const initialState: SwapState = {
   receiveTokenData: [],
   isSwapOpen: false,
   isReceiveOpen: false,
-  swapChain: undefined,
-  receiveChain: undefined,
+  swapChain: {
+    chainId: 0,
+    chainName: 'all',
+  },
+  receiveChain: {
+    chainId: 0,
+    chainName: 'all',
+  },
   swapToken: undefined,
   receiveToken: undefined,
   amountSwap: undefined,

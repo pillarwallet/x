@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Fuse from 'fuse.js';
 
 // reducer
@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { ChainType } from '../../utils/types';
 
 // images
 import SearchIcon from '../../images/search-icon.png';
@@ -21,6 +22,8 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
     const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
     const swapTokenData = useAppSelector((state) => state.swap.swapTokenData as Token[]);
     const receiveTokenData = useAppSelector((state) => state.swap.receiveTokenData as Token[]);
+    const swapChain = useAppSelector((state) => state.swap.swapChain as ChainType);
+    const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [value, setValue] = useState<string>('');
@@ -31,17 +34,32 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
         }
     };
 
-    // the handleSearch will look for tokens close to the name or chain id being typed on ALL supported chains
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        searchTokens(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [swapChain, receiveChain]);
+
+    // The performSearch will look for tokens close to the name or chain id being typed on filtered or all supported chains
+    const searchTokens = (tokenSearch: string) => {
         const options = {
             includeScore: true,
             // Search in `chainId` and in `name`
-            keys: ['chainId', 'name']
-          }
+            keys: ['chainId', 'name'],
+        };
         const fuse = new Fuse((isSwapOpen ? swapTokenData : receiveTokenData), options);
-        const result = fuse.search(event.target.value);
-        setValue(event.target.value)
-        dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)))
+        const result = fuse.search(tokenSearch);
+
+        if ((isSwapOpen && swapChain.chainId === 0) || (!isSwapOpen && receiveChain.chainId === 0)) {
+            dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)))
+        } else {
+            dispatch(setSearchTokenResult(result.filter((tokens) => tokens.item.chainId === (isSwapOpen ? swapChain.chainId : receiveChain.chainId)).map((tokens) => tokens.item)))
+        }
+    };
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const searchValue = event.target.value;
+        setValue(searchValue);
+        searchTokens(searchValue);
     };
 
     return (
