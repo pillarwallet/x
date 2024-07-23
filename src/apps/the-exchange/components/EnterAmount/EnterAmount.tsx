@@ -210,6 +210,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
         <>
           <input
             type="number"
+            step="any"
             value={inputValue}
             onChange={(e) => handleTokenAmountChange(e)}
             placeholder='0'
