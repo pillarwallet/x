@@ -62,6 +62,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           data-testid="enter-amount-input"
           onChange={[Function]}
           placeholder="0"
+          step="any"
           style={
             {
               "width": "100%",
