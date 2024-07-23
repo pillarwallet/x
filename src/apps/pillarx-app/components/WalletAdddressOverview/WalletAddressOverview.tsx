@@ -21,7 +21,7 @@ const WalletAddressOverview = ({ address, className }: WalletAddressOverviewProp
         if (isCopied) {
           const timer = setTimeout(() => {
             setIsCopied(false);
-          }, 30000);
+          }, 3000);
     
           return () => clearTimeout(timer);
         }
