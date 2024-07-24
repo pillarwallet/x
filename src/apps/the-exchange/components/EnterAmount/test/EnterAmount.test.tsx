@@ -10,6 +10,7 @@ import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
+  setIsOfferLoading,
   setIsReceiveOpen,
   setIsSwapOpen,
   setReceiveChain,
@@ -18,7 +19,9 @@ import {
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData } from '../../../reducer/theExchangeSlice';
+  setSwapTokenData, 
+  setUsdPriceReceiveToken, 
+  setUsdPriceSwapToken} from '../../../reducer/theExchangeSlice';
 
 // types
 import { CardPosition } from '../../../utils/types';
@@ -41,7 +44,7 @@ jest.mock('@etherspot/transaction-kit', () => ({
       getQuotes: jest.fn().mockResolvedValue({}),
     }),
     useEtherspotPrices: jest.fn().mockReturnValue({
-      getPrice: jest.fn(),
+      getPrice: jest.fn().mockResolvedValue({ usd: 1200 }),
       getPrices: jest.fn(),
     }),
     useWalletAddress: jest.fn().mockReturnValue({
@@ -72,7 +75,7 @@ jest.mock('@etherspot/transaction-kit', () => ({
     }),
   }));
 
-describe('<DropdownTokenList />', () => {
+describe('<EnterAmount />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     act(() => {
@@ -88,6 +91,9 @@ describe('<DropdownTokenList />', () => {
       store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setUsdPriceSwapToken(1200));
+      store.dispatch(setUsdPriceReceiveToken(0.4));
+      store.dispatch(setIsOfferLoading(false));
     });
   });
 
@@ -117,7 +123,7 @@ describe('<DropdownTokenList />', () => {
         fireEvent.change(inputElement, { target: { value: '50' } });
 
         await waitFor(() => {
-            expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 50, usdAmount: 0 });
+            expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 50, usdAmount: 1200 * 50 });
           });
     });
 });

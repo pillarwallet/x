@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -26,7 +27,6 @@ import Alert from '../Text/Alert';
 
 // utils
 import { getLogoForChainId, truncateAddress, visibleChains } from '../../utils/blockchain';
-import { copyToClipboard } from '../../utils/common';
 import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
@@ -124,9 +124,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       return;
     }
 
-    copyToClipboard(accountAddress, () => {
-      setCopied(true);
-    })
+    setCopied(true);
+
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(() => {
@@ -169,9 +168,11 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             <UserIcon size={20} />
           </TopBarIcon>
           {truncateAddress(accountAddress, 14)}
-          <TopBarIcon onClick={onCopyAddressClick} $transparent>
-            {copied ? <CopySuccessIcon size={20} /> : <CopyIcon size={20} />}
-          </TopBarIcon>
+          <CopyToClipboard text={accountAddress} onCopy={onCopyAddressClick}>
+            <TopBarIcon $transparent>
+              {copied ? <CopySuccessIcon size={20} /> : <CopyIcon size={20} />}
+            </TopBarIcon>
+          </CopyToClipboard>
         </AccountSection>
         <TopBarIcon onClick={onLogoutClick}>
           <LogoutIcon size={20} />

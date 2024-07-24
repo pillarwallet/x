@@ -10,6 +10,7 @@ import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
+  setIsOfferLoading,
   setIsReceiveOpen,
   setIsSwapOpen,
   setReceiveChain,
@@ -18,7 +19,9 @@ import {
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData } from '../../../reducer/theExchangeSlice';
+  setSwapTokenData, 
+  setUsdPriceReceiveToken, 
+  setUsdPriceSwapToken} from '../../../reducer/theExchangeSlice';
 
 // components
 import SelectDropdown from '../SelectDropdown';
@@ -44,6 +47,9 @@ describe('<SelectDropdown />', () => {
       store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setUsdPriceSwapToken(1200));
+      store.dispatch(setUsdPriceReceiveToken(0.4));
+      store.dispatch(setIsOfferLoading(false));
     });
   });
 

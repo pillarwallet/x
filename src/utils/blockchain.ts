@@ -34,22 +34,16 @@ export const isValidEthereumAddress = (address: string | undefined): boolean => 
  * - https://docs.privy.io/guide/configuration/networks#default-configuration
  */
 export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
-  // return different native asset for chains where it's not Ether (ETH), otherwise return Ether (ETH)
+  // return different native asset for chains where it's not Matic (MATIC), otherwise return Matic (MATIC)
+  // only mumbai testnet is supported on Prime SDK
   const nativeAsset = {
     chainId,
     address: ethers.constants.AddressZero,
-    name: 'Ether',
-    symbol: 'ETH',
+    name: 'Matic',
+    symbol: 'MATIC',
     decimals: 18,
-    logoURI: 'https://public.etherspot.io/buidler/chain_logos/ethereum.png',
+    logoURI: 'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png',
   };
-
-  // only mumbai testnet is supported on Prime SDK
-  if (chainId === polygon.id) {
-    nativeAsset.name = 'Matic';
-    nativeAsset.symbol = 'MATIC';
-    nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png';
-  }
 
   // gnosis testnet not supported on Prime SDK
   if (chainId === gnosis.id) {

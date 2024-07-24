@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 
 // reducer
-import { setAmountReceive, setAmountSwap, setBestOffer } from '../../reducer/theExchangeSlice';
+import { setAmountReceive, setAmountSwap, setBestOffer, setIsOfferLoading, setUsdPriceReceiveToken, setUsdPriceSwapToken } from '../../reducer/theExchangeSlice';
 
 // hooks
 import useOffer from '../../hooks/useOffer';
@@ -12,7 +12,7 @@ import { useEtherspotPrices, useEtherspotUtils, useWalletAddress } from '@ethers
 
 // types
 import { AmountType, CardPosition, SwapOffer } from '../../utils/types';
-import { RateInfo, Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // utils
 import { processEth } from '../../utils/blockchain';
@@ -28,8 +28,6 @@ import { CircularProgress } from '@mui/material';
 import SendArrow from '../../images/send-arrow.png';
 import ReceiveArrow from '../../images/receive-arrow.png';
 
-
-
 type EnterAmountProps = {
   type: CardPosition;
   tokenSymbol?: string;
@@ -42,6 +40,9 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
   const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
+  const usdPriceSwapToken = useAppSelector((state) => state.swap.usdPriceSwapToken as number);
+  const usdPriceReceiveToken = useAppSelector((state) => state.swap.usdPriceReceiveToken as number);
+  const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
   
   const walletAddress = useWalletAddress();
   const [inputValue, setInputValue] = useState<string>('');
@@ -49,8 +50,37 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const balances = useAccountBalances();
   const { isZeroAddress, addressesEqual } = useEtherspotUtils();
   const { getBestOffer } = useOffer(swapToken?.chainId || 0);
-  const [isOfferLoading, setIsOfferLoading] = useState<boolean>(false);
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
+
+    // get usd price only when swap token changes
+    useEffect(() => {
+      if (swapToken) {
+        getPrice(swapToken.address, swapToken.chainId).then((rates) => {
+          if (rates?.usd) {
+            dispatch(setUsdPriceSwapToken(rates.usd))
+          }
+        }).catch((e) => {
+          console.error('Failed to fetch USD price of token:', e);
+          dispatch(setUsdPriceSwapToken(0))
+        })
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [swapToken]);
+
+    // get usd price only when receive token changes
+    useEffect(() => {
+      if (receiveToken) {
+        getPrice(receiveToken.address, receiveToken.chainId).then((rates) => {
+          if (rates?.usd) {
+            dispatch(setUsdPriceReceiveToken(rates.usd))
+          }
+        }).catch((e) => {
+          console.error('Failed to fetch USD price of token:', e);
+          dispatch(setUsdPriceReceiveToken(0))
+        })
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [receiveToken]);
 
   // Gets the best swap offer
   const getOffer = async () => {
@@ -71,15 +101,10 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     });
 
     if (offer && Object.keys(offer as SwapOffer).length && receiveToken) {
-      const usdPrice = await getPrice(receiveToken.address, receiveToken.chainId).catch((e) => {
-        console.error('Failed to fetch USD price of token:', e);
-        return {} as RateInfo;
-      });
-
-      if (usdPrice && Object.keys(usdPrice).length) {
+      if (usdPriceReceiveToken > 0 ) {
         dispatch(setAmountReceive({
           tokenAmount: offer?.tokenAmountToReceive,
-          usdAmount: usdPrice.usd * offer.tokenAmountToReceive,
+          usdAmount: usdPriceReceiveToken * offer.tokenAmountToReceive,
         }));
       } else {
         dispatch(setAmountReceive({ tokenAmount: offer.tokenAmountToReceive, usdAmount: 0 }));
@@ -88,7 +113,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       setIsNoOffer(true);
     }
 
-    setIsOfferLoading(false);
+    dispatch(setIsOfferLoading(false));
 
     return offer;
   };
@@ -122,18 +147,16 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     const balance = processEth(assetBalanceValue, swapToken.decimals ?? 18);
 
     // Check if the value exceeds the max token amount limit
-    if (balance && tokenAmount > balance) {
+    if (tokenAmount > balance) {
       return `The maximum amount of ${swapToken?.symbol} in your wallet is ${balance.toFixed(4)} ${swapToken?.symbol} - please change the amount and try again`;
     }
-
-    return undefined;
   };
 
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
     setInputValue(amountSwap ? amountSwap.tokenAmount.toString() : '');
     if (amountSwap?.tokenAmount) {
-      setIsOfferLoading(true);
+      dispatch(setIsOfferLoading(true));
       debouncedGetOffer();
     }
     // Clean-up debounce on component unmount
@@ -151,9 +174,8 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
 
     // Might need to find a way to debounce the getPrice call too
     if (type === CardPosition.SWAP && swapToken) {
-      const usdPrice = await getPrice(swapToken.address, swapToken.chainId);
-      if (usdPrice && Object.keys(usdPrice).length) {
-        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPrice.usd * Number(value) }));
+      if (usdPriceSwapToken > 0) {
+        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPriceSwapToken * Number(value) }));
       } else {
         dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: 0 }));
       }
@@ -165,7 +187,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     if (isOfferLoading) {
       return <CircularProgress size={36} sx={{ color: '#343434' }} />;
     } else if (isNoOffer) {
-      return <Body>Sorry, no offers were found! Please check or change the amounts and try again.</Body>;
+      return <Body className='mobile:text-xs'>Sorry, no offers were found! Please check or change the amounts and try again.</Body>;
     } else if (bestOffer) {
       return (
         <NumberText className="text-black_grey font-normal text-3xl break-words mobile:max-w-[180px] tablet:max-w-[260px] desktop:max-w-[260px] xs:max-w-[110px]">
@@ -181,13 +203,14 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
 
   return (
     <div className="flex flex-col gap-1 group">
-      <BodySmall className="goup-hover:text-black_grey/[.4] font-normal">
+      <BodySmall className="group-hover:text-black_grey/[.4] font-normal">
         {tokenSymbol}
       </BodySmall>
       {type === CardPosition.SWAP ? (
         <>
           <input
             type="number"
+            step="any"
             value={inputValue}
             onChange={(e) => handleTokenAmountChange(e)}
             placeholder='0'

@@ -15,6 +15,9 @@ export type SwapState = {
   amountReceive?: AmountType;
   bestOffer?: SwapOffer;
   searchTokenResult: Token[];
+  usdPriceSwapToken?: number;
+  usdPriceReceiveToken?: number;
+  isOfferLoading: boolean;
 }
 
 const initialState: SwapState = {
@@ -22,14 +25,23 @@ const initialState: SwapState = {
   receiveTokenData: [],
   isSwapOpen: false,
   isReceiveOpen: false,
-  swapChain: undefined,
-  receiveChain: undefined,
+  swapChain: {
+    chainId: 0,
+    chainName: 'all',
+  },
+  receiveChain: {
+    chainId: 0,
+    chainName: 'all',
+  },
   swapToken: undefined,
   receiveToken: undefined,
   amountSwap: undefined,
   amountReceive: undefined,
   bestOffer: undefined,
   searchTokenResult: [],
+  usdPriceSwapToken: undefined,
+  usdPriceReceiveToken: undefined,
+  isOfferLoading: false,
 };
 
 const swapSlice = createSlice({
@@ -72,6 +84,15 @@ const swapSlice = createSlice({
     setSearchTokenResult(state, action: PayloadAction<Token[]>) {
       state.searchTokenResult = action.payload;
     },
+    setUsdPriceSwapToken(state, action: PayloadAction<number>) {
+      state.usdPriceSwapToken = action.payload;
+    },
+    setUsdPriceReceiveToken(state, action: PayloadAction<number>) {
+      state.usdPriceReceiveToken = action.payload;
+    },
+    setIsOfferLoading(state, action: PayloadAction<boolean>) {
+      state.isOfferLoading = action.payload;
+    },
   },
 });
 
@@ -88,6 +109,9 @@ export const {
   setAmountReceive,
   setBestOffer,
   setSearchTokenResult,
+  setUsdPriceSwapToken,
+  setUsdPriceReceiveToken,
+  setIsOfferLoading,
 } = swapSlice.actions;
 
 export default swapSlice;
