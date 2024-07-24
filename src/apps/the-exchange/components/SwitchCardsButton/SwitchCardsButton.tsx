@@ -6,6 +6,8 @@ import {
     setReceiveToken,
     setSwapChain,
     setSwapToken,
+    setUsdPriceReceiveToken,
+    setUsdPriceSwapToken,
 } from '../../reducer/theExchangeSlice';
 
 // hooks
@@ -16,7 +18,7 @@ import {
 
 // images
 import SwapIcon from '../../images/arrow-swap-horizontal.png';
-import { AmountType, ChainType } from '../../utils/types';
+import { ChainType } from '../../utils/types';
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 type SwitchCardsButtonType = {
@@ -29,8 +31,9 @@ const SwitchCardsButton = ({ onSwap }: SwitchCardsButtonType) => {
     const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
     const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
     const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
-    const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
-    const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive as number);
+    const usdPriceSwapToken = useAppSelector((state) => state.swap.usdPriceSwapToken as number);
+    const usdPriceReceiveToken = useAppSelector((state) => state.swap.usdPriceReceiveToken as number);
 
     // swapCards allow the user to switch between Swap and Receive cards
     const swapCardsAction = () => {
@@ -40,7 +43,9 @@ const SwitchCardsButton = ({ onSwap }: SwitchCardsButtonType) => {
         dispatch(setSwapToken(receiveToken));
         dispatch(setReceiveToken(swapToken));
         dispatch(setAmountSwap(amountReceive));
-        dispatch(setAmountReceive(amountSwap));
+        dispatch(setAmountReceive(0));
+        dispatch(setUsdPriceSwapToken(usdPriceReceiveToken));
+        dispatch(setUsdPriceReceiveToken(usdPriceSwapToken));
     };
 
     return (

@@ -73,10 +73,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
   const { addToBatch } = useGlobalTransactionsBatch();
-  const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
-  const { hide, showHistory } = useBottomMenuModal();
+  const { hide, showHistory, showBatchSendModal, setShowBatchSendModal} = useBottomMenuModal();
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to

@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { useEtherspotPrices, useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
 
 // types
-import { AmountType, CardPosition, SwapOffer } from '../../utils/types';
+import { CardPosition, SwapOffer } from '../../utils/types';
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 
 // utils
@@ -35,13 +35,13 @@ type EnterAmountProps = {
 
 const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
-  const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
-  const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
+  const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
+  const amountReceive = useAppSelector((state) => state.swap.amountReceive as number);
+  const usdPriceSwapToken = useAppSelector((state) => state.swap.usdPriceSwapToken as number);
+  const usdPriceReceiveToken = useAppSelector((state) => state.swap.usdPriceReceiveToken as number);
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
   const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
-  const usdPriceSwapToken = useAppSelector((state) => state.swap.usdPriceSwapToken as number);
-  const usdPriceReceiveToken = useAppSelector((state) => state.swap.usdPriceReceiveToken as number);
   const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
   
   const walletAddress = useWalletAddress();
@@ -85,7 +85,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // Gets the best swap offer
   const getOffer = async () => {
     const params = {
-      fromAmount: amountSwap?.tokenAmount ?? 0,
+      fromAmount: amountSwap ?? 0,
       fromTokenAddress: swapToken?.address ?? '',
       fromChainId: swapToken?.chainId ?? 0,
       fromTokenDecimals: swapToken?.decimals ?? 0,
@@ -101,14 +101,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     });
 
     if (offer && Object.keys(offer as SwapOffer).length && receiveToken) {
-      if (usdPriceReceiveToken > 0 ) {
-        dispatch(setAmountReceive({
-          tokenAmount: offer?.tokenAmountToReceive,
-          usdAmount: usdPriceReceiveToken * offer.tokenAmountToReceive,
-        }));
-      } else {
-        dispatch(setAmountReceive({ tokenAmount: offer.tokenAmountToReceive, usdAmount: 0 }));
-      }
+        dispatch(setAmountReceive(offer?.tokenAmountToReceive));
     } else {
       setIsNoOffer(true);
     }
@@ -152,12 +145,19 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     }
   };
 
+  useEffect(() => {
+    if (amountSwap) {
+      setInputValue(amountSwap.toString());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [swapToken, receiveToken]);
+
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
-    setInputValue(amountSwap ? amountSwap.tokenAmount.toString() : '');
-    if (amountSwap?.tokenAmount) {
+    dispatch(setBestOffer(undefined))
+    if (amountSwap) {
       dispatch(setIsOfferLoading(true));
-      debouncedGetOffer();
+      debouncedGetOffer(); 
     }
     // Clean-up debounce on component unmount
     return () => {
@@ -167,21 +167,15 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   }, [amountSwap, swapToken, receiveToken]);
 
   // When the token amount value changes, the input value reflects that change
-  // the handleTokenAmountChange will make sure that we get a USD price, and will then add it to amountSwap
-  const handleTokenAmountChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
 
-    // Might need to find a way to debounce the getPrice call too
     if (type === CardPosition.SWAP && swapToken) {
-      if (usdPriceSwapToken > 0) {
-        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: usdPriceSwapToken * Number(value) }));
-      } else {
-        dispatch(setAmountSwap({ tokenAmount: Number(value), usdAmount: 0 }));
-      }
+        dispatch(setAmountSwap(Number(value)));
     }
   };
-
+  
   // Function to render offer based on loading and offer state
   const Offer = () => {
     if (isOfferLoading) {
@@ -225,7 +219,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       )}
       <div className="flex justify-between">
         <BodySmall className="group-hover:text-black_grey/[.4]">
-          ${type === CardPosition.SWAP ? amountSwap?.usdAmount.toFixed(2) : amountReceive?.usdAmount.toFixed(2)}
+          ${type === CardPosition.SWAP ? (usdPriceSwapToken * amountSwap).toFixed(2) : (usdPriceReceiveToken * amountReceive).toFixed(2)}
         </BodySmall>
         <img src={type === CardPosition.SWAP ? SendArrow : ReceiveArrow} alt={type === CardPosition.SWAP ? 'Send' : 'Receive'} />
       </div>

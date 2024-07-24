@@ -45,8 +45,8 @@ describe('<DropdownTokenList />', () => {
             store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
             store.dispatch(setSwapToken(mockTokenAssets[0]));
             store.dispatch(setReceiveToken(mockTokenAssets[1]));
-            store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
-            store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+            store.dispatch(setAmountSwap(0.1));
+            store.dispatch(setAmountReceive(10));
             store.dispatch(setBestOffer(undefined));
             store.dispatch(setSearchTokenResult([]));
             store.dispatch(setUsdPriceSwapToken(1200));
