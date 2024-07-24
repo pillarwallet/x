@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import React from 'react';
 
+// hooks
+import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+
 interface ITabItem {
   title: string;
   icon: React.ReactNode;
@@ -20,7 +23,8 @@ const FormTabSelect = ({
   fullwidth?: boolean;
   transparent?: boolean;
 }) => {
-  const [selected, setSelected] = React.useState(defaultSelectedIndex);
+  const { showBatchSendModal } = useBottomMenuModal();
+  const [selected, setSelected] = React.useState(showBatchSendModal ? 1 : defaultSelectedIndex);
 
   const onTabItemClick = (index: number) => {
     setSelected(index);

@@ -18,6 +18,7 @@ import { ITransaction } from '../../../types/blockchain';
 // hooks
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
+import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 
 interface SendModalDataBase {
   title: string;
@@ -46,7 +47,7 @@ interface SendModalProps extends React.PropsWithChildren {
 const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const contextBalances = useContext(AccountBalancesContext)
   const wrapperRef = React.useRef(null);
-  const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
+  const { showBatchSendModal, setShowBatchSendModal} = useBottomMenuModal();
   const [t] = useTranslation();
   const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
 

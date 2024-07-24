@@ -33,7 +33,7 @@ const ExchangeAction = () => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
     const { addToBatch } = useGlobalTransactionsBatch();
-    const { showSend } = useBottomMenuModal();
+    const { showSend, setShowBatchSendModal } = useBottomMenuModal();
     const { prepareCrossChainOfferTransactions } = useEtherspotSwaps();
 
     useEffect(() => {
@@ -67,6 +67,7 @@ const ExchangeAction = () => {
                         data: bestOffer.offer.transactions[i].data,
                     });
                 }
+                setShowBatchSendModal(true);
                 showSend();
             }
 
@@ -83,6 +84,7 @@ const ExchangeAction = () => {
                             data: stepTransactions[i].data?.toString() ?? '',
                         });
                     }
+                    setShowBatchSendModal(true);
                     showSend();
                 }
             }
