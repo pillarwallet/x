@@ -2,7 +2,7 @@
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { AmountType, SwapOffer } from '../../utils/types';
+import { SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
@@ -17,16 +17,17 @@ import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 const SwapSummary = () => {
     const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
     const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
-    const amountSwap = useAppSelector((state) => state.swap.amountSwap as AmountType);
-    const amountReceive = useAppSelector((state) => state.swap.amountReceive as AmountType);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
+    const amountReceive = useAppSelector((state) => state.swap.amountReceive as number);
+    const usdPriceSwapToken = useAppSelector((state) => state.swap.usdPriceSwapToken as number);
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
     const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
 
     if (!swapToken || !receiveToken || !amountSwap || !amountReceive || !bestOffer || isOfferLoading) {
         return null;
     }
-    const exchangeRate = (amountReceive.tokenAmount / amountSwap.tokenAmount) || 0;
-    const usdPerToken = (amountReceive.usdAmount / amountSwap.tokenAmount) || 0;
+    const exchangeRate = (amountReceive / amountSwap) || 0;
+    const usdPerToken = usdPriceSwapToken || 0;
 
     return (
         <div className="flex gap-1 justify-center border border-[#999999]/[.20] rounded-[3px] p-4 w-full tablet:max-w-[420px] desktop:max-w-[420px]">

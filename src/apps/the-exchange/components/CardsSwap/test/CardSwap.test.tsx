@@ -114,8 +114,8 @@ describe('<CardsSwap />', () => {
       store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
       store.dispatch(setSwapToken(mockTokenAssets[0]));
       store.dispatch(setReceiveToken(mockTokenAssets[1]));
-      store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
-      store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+      store.dispatch(setAmountSwap(0.1));
+      store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult([]));
       store.dispatch(setUsdPriceSwapToken(1200));
@@ -161,8 +161,10 @@ describe('<CardsSwap />', () => {
     expect(store.getState().swap.receiveChain).toEqual({ chainId: 1, chainName: 'Ethereum' });
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[1]);
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
-    expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 10, usdAmount: 3000 });
-    expect(store.getState().swap.amountReceive).toEqual({ tokenAmount: 0.1, usdAmount: 3000 });
+    expect(store.getState().swap.amountSwap).toEqual(10);
+    expect(store.getState().swap.amountReceive).toEqual(0);
+    expect(store.getState().swap.usdPriceSwapToken).toEqual(0.4);
+    expect(store.getState().swap.usdPriceReceiveToken).toEqual(1200);
   });
 
   it('opens token list when a card is clicked and no token on swap card', async () => {
@@ -174,8 +176,8 @@ describe('<CardsSwap />', () => {
 
     act(() => {
       store.dispatch(setSwapToken(undefined));
-      store.dispatch(setAmountSwap(undefined));
-      store.dispatch(setAmountReceive(undefined));
+      store.dispatch(setAmountSwap(0));
+      store.dispatch(setAmountReceive(0));
     });
 
     const swapCard = screen.getAllByTestId('select-token-card');

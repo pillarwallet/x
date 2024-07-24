@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
-import { AmountType, ChainType, SwapOffer } from '../utils/types';
+import { ChainType, SwapOffer } from '../utils/types';
 
 export type SwapState = {
   swapTokenData: Token[];
@@ -11,12 +11,12 @@ export type SwapState = {
   receiveChain?: ChainType;
   swapToken?: Token;
   receiveToken?: Token;
-  amountSwap?: AmountType;
-  amountReceive?: AmountType;
+  amountSwap: number;
+  amountReceive: number;
   bestOffer?: SwapOffer;
   searchTokenResult: Token[];
-  usdPriceSwapToken?: number;
-  usdPriceReceiveToken?: number;
+  usdPriceSwapToken: number;
+  usdPriceReceiveToken: number;
   isOfferLoading: boolean;
 }
 
@@ -35,12 +35,12 @@ const initialState: SwapState = {
   },
   swapToken: undefined,
   receiveToken: undefined,
-  amountSwap: undefined,
-  amountReceive: undefined,
+  amountSwap: 0,
+  amountReceive: 0,
   bestOffer: undefined,
   searchTokenResult: [],
-  usdPriceSwapToken: undefined,
-  usdPriceReceiveToken: undefined,
+  usdPriceSwapToken: 0,
+  usdPriceReceiveToken: 0,
   isOfferLoading: false,
 };
 
@@ -72,10 +72,10 @@ const swapSlice = createSlice({
     setReceiveToken(state, action: PayloadAction<Token | undefined>) {
       state.receiveToken = action.payload;
     },
-    setAmountSwap(state, action: PayloadAction<AmountType | undefined>) {
+    setAmountSwap(state, action: PayloadAction<number>) {
       state.amountSwap = action.payload;
     },
-    setAmountReceive(state, action: PayloadAction<AmountType | undefined>) {
+    setAmountReceive(state, action: PayloadAction<number>) {
       state.amountReceive = action.payload;
     },
     setBestOffer(state, action: PayloadAction<SwapOffer | undefined>) {

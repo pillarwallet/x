@@ -78,7 +78,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
             className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
           >
             $
-            3000.00
+            120.00
           </p>
           <img
             alt="Send"
@@ -143,7 +143,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
             className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
           >
             $
-            3000.00
+            4.00
           </p>
           <img
             alt="Receive"

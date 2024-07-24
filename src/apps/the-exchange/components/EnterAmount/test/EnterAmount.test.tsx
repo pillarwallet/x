@@ -87,8 +87,8 @@ describe('<EnterAmount />', () => {
       store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
       store.dispatch(setSwapToken(mockTokenAssets[0]));
       store.dispatch(setReceiveToken(mockTokenAssets[1]));
-      store.dispatch(setAmountSwap({ tokenAmount: 0.1, usdAmount: 3000 }));
-      store.dispatch(setAmountReceive({ tokenAmount: 10, usdAmount: 3000 }));
+      store.dispatch(setAmountSwap(0.1));
+      store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult([]));
       store.dispatch(setUsdPriceSwapToken(1200));
@@ -116,14 +116,16 @@ describe('<EnterAmount />', () => {
         );
         
         act(() => {
-        store.dispatch(setAmountSwap({tokenAmount: 0, usdAmount: 0}));
+          store.dispatch(setAmountSwap(0));
+          store.dispatch(setUsdPriceSwapToken(0));
         });
 
         const inputElement = getByTestId('enter-amount-input');
         fireEvent.change(inputElement, { target: { value: '50' } });
 
         await waitFor(() => {
-            expect(store.getState().swap.amountSwap).toEqual({ tokenAmount: 50, usdAmount: 1200 * 50 });
+            expect(store.getState().swap.amountSwap).toEqual(50);
+            expect(store.getState().swap.usdPriceSwapToken).toEqual(1200);
           });
     });
 });

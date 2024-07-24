@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
 // hooks
@@ -36,8 +36,17 @@ const ExchangeAction = () => {
     const { showSend } = useBottomMenuModal();
     const { prepareCrossChainOfferTransactions } = useEtherspotSwaps();
 
+    useEffect(() => {
+        setErrorMessage('');
+    }, [bestOffer])
+
     const onClickToExchange = async () => {
         setErrorMessage('');
+
+        if (isOfferLoading) {
+            setErrorMessage('Please wait until the offer is found.');
+            return;
+        }
 
         if (!bestOffer) {
             setErrorMessage('No offer was found! Please try changing the amounts to try again.');
@@ -62,7 +71,7 @@ const ExchangeAction = () => {
             }
 
             // insurance param is unique to the Route type - different chains, different tokens
-            if ('insurance' in bestOffer.offer) {
+            if ('id' in bestOffer.offer) {
                 const stepTransactions = await prepareCrossChainOfferTransactions(bestOffer.offer);
                 if (stepTransactions) {
                     for (let i = 0; i < stepTransactions.length; ++i) {
@@ -82,12 +91,13 @@ const ExchangeAction = () => {
         } catch (error) {
             console.error('Something went wrong. Please try again', error);
             setErrorMessage('We were not able to add this to the queue at the moment. Please try again.');
+            setIsAddingToBatch(false);
         }
     };
 
     return (
         <div className='flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20'>
-            <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer || isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
+            <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
                 <Body className='font-normal'>You receive</Body>
                 <div className='flex justify-between items-end'>
                     {isOfferLoading
@@ -99,7 +109,7 @@ const ExchangeAction = () => {
                     </div>
                 </div>
             </div>
-            <div onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center cursor-pointer ${bestOffer || isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
+            <div onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}>
                 <Body>Exchange</Body>
                 {errorMessage && (
                     <BodySmall>
