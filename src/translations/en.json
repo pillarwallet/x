@@ -11,7 +11,8 @@
   },
   "content": {
     "welcomeToPillarX": "Welcome to PillarX",
-    "welcomeBack": "Welcome back"
+    "welcomeBack": "Welcome back",
+    "welcomeBackTester": "Welcome back tester"
   },
   "menuAction": {
     "send": "Send",
