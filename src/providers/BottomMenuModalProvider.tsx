@@ -1,4 +1,4 @@
-import React, { createContext, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, createContext, useMemo } from 'react';
 
 // components
 import { SendModalData } from '../components/BottomMenuModal/SendModal';
@@ -13,6 +13,8 @@ export interface BottomMenuModalContext {
     hide: () => void;
     active: BottomMenuItem | null;
     activeIndex: number | null;
+    showBatchSendModal: boolean;
+    setShowBatchSendModal: Dispatch<SetStateAction<boolean>>;
   }
 }
 
@@ -29,6 +31,7 @@ export type BottomMenuItem = {
 
 const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
   const [activeMenuItem, setActiveMenuItem] = React.useState<BottomMenuItem | null>(null);
+  const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
 
   const hide = () => setActiveMenuItem(null);
 
@@ -45,9 +48,11 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
     showAccount: () => setActiveMenuItem({ type: 'account' }),
     showApps: () => setActiveMenuItem({ type: 'apps' }),
     hide,
+    setShowBatchSendModal,
     active: activeMenuItem,
     activeIndex,
-  }), [activeMenuItem, activeIndex]);
+    showBatchSendModal,
+  }), [activeMenuItem, activeIndex, showBatchSendModal]);
 
   return (
     <ProviderContext.Provider value={{ data: contextData }}>

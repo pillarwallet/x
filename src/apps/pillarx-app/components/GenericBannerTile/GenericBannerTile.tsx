@@ -46,9 +46,10 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
                 <div className='mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4'>
                     <H1 className='text-[45px] tablet:leading-[67.5px] desktop:leading-[67.5px] mobile:text-xl mobile:leading-[30px]'>{meta?.display.title && meta.display.title}</H1>
                     <Body className='text-[22px] tablet:leading-[33px] desktop:leading-[33px] mobile:text-sm'>{meta?.display.subtitle && meta.display.subtitle}</Body>
+                    {meta?.display.cta?.text &&
                     <button className='mt-10 mobile:mt-4' onClick={handleOpenBannerLink}>
                         <Body className='bg-container_grey rounded-md py-3 px-5 mobile:text-sm mobile:py-2 mobile:px-4'>{meta?.display.cta?.text && meta.display.cta.text}</Body>
-                    </button>
+                    </button>}
                     {errorLink && <BodySmall>{errorLink}</BodySmall>}
                 </div>
             </div>

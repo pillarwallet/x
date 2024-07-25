@@ -29,7 +29,7 @@ exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
           </p>
           <img
             className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-            src="logo-unknown.png"
+            src="logoA.png"
           />
           <div
             className="flex flex-col"
@@ -64,7 +64,7 @@ exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
           </p>
           <img
             className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-            src="logo-unknown.png"
+            src="logoB.png"
           />
           <div
             className="flex flex-col"
