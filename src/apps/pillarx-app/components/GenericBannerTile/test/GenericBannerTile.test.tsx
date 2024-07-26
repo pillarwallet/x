@@ -25,7 +25,6 @@ describe('<GenericBannerTile />', () => {
         id: 'genericBanner'
     };
 
-
     const mockDataGenericBannerWithoutCTA = {
         meta: {
             display: {
@@ -35,6 +34,23 @@ describe('<GenericBannerTile />', () => {
                 cta: {
                     text: 'This is the button text',
                     href: undefined,
+                },
+            },
+        },
+        data: undefined,
+        layout: ApiLayout.GENERIC_BANNER,
+        id: 'genericBanner'
+    };
+
+    const mockDataGenericBannerWithoutCTATwo = {
+        meta: {
+            display: {
+                title: 'Banner title',
+                subtitle: 'Banner subtitle',
+                backgroundImage: 'https://example.com/background-image.png',
+                cta: {
+                    text: undefined,
+                    href: 'https://example.com',
                 },
             },
         },
@@ -75,10 +91,15 @@ describe('<GenericBannerTile />', () => {
         expect(window.open).toHaveBeenCalledWith('https://example.com', '_blank');
     });
 
-    it('displays error message when button is clicked and href is missing', () => {
+    it('does not render the button if href is missing', () => {
         render(<GenericBannerTile data={mockDataGenericBannerWithoutCTA} isDataLoading={false} />);
-        fireEvent.click(screen.getByText('This is the button text'));
 
-        expect(screen.getByText('Oops, the link is not available')).toBeInTheDocument();
+        expect(screen.queryByRole('button')).toBeNull();
+    });
+
+    it('does not render the button if text is missing', () => {
+        render(<GenericBannerTile data={mockDataGenericBannerWithoutCTATwo} isDataLoading={false} />);
+
+        expect(screen.queryByRole('button')).toBeNull();
     });
 });
