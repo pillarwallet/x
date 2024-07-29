@@ -75,7 +75,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             || (balance.token === null && isZeroAddress(asset.address)));
 
           if (!asset) {
-            console.warn(`Asset not found for balance: ${balance.token} on ${chain.name}`);
             return;
           }
 

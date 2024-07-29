@@ -66,7 +66,7 @@ if (!data || isDataLoading) {
     return (
         <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
             <div className='flex flex-col justify-between'>
-                <WalletAddressOverview address={dataWallet?.wallet ?? ''} className='mobile:hidden mb-[54px]' />
+                <WalletAddressOverview address={dataWallet?.wallet ?? ''} />
                 <div className='mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
                     <Body className='text-purple_light mb-2'>{t`title.totalBalance`}</Body>
                     <div className='flex gap-4 items-end'>

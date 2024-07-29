@@ -7,7 +7,7 @@ type H1Props = {
 
 const H1 = ({ children, className }: H1Props) => {
   return (
-    <h1 className={`text-3xl leading-[45px] font-medium mobile:text-xl mobile:leading-5 ${className}`}>{children}</h1>
+    <h1 className={`desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium ${className}`}>{children}</h1>
   )
 }
 
