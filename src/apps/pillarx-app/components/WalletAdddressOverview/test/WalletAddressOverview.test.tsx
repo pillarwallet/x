@@ -4,7 +4,6 @@ import WalletAddressOverview from '../WalletAddressOverview';
 
 describe('<WalletAddressOverview />', () => {
   const address = '0x1234567890';
-  const className = 'custom-class';
   const mockSetIsCopied = jest.fn();
   const mockUseState = jest.spyOn(React, 'useState');
 
@@ -17,12 +16,12 @@ describe('<WalletAddressOverview />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer.create(<WalletAddressOverview address={address} className={className} />).toJSON();
+    const tree = renderer.create(<WalletAddressOverview address={address} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('renders the correct icon and address', () => {
-    const tree = renderer.create(<WalletAddressOverview address={address} className={className} />).toJSON() as ReactTestRendererJSON;
+    const tree = renderer.create(<WalletAddressOverview address={address} />).toJSON() as ReactTestRendererJSON;
 
     const profileIcon = (tree.children?.find(child =>
       typeof child === 'object' && child.props.className === 'bg-[#312F3A] p-2.5 rounded-full w-10 h-10'
@@ -34,6 +33,5 @@ describe('<WalletAddressOverview />', () => {
 
     expect(profileIcon).not.toBeNull();
     expect(addressText).not.toBeNull();
-    expect(tree.props.className).toContain(className);
   });
 });
