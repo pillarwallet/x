@@ -97,7 +97,7 @@ const App = () => {
   return (
     <Wrapper>
       <PillarXLogo src={pillarLogoLight} className='object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
-      <H1 className='py-2.5 px-4 mobile:px-0'>{t`content.welcomeBackTester`} {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess ? waitlistData.number : '...'}</H1>
+      <H1 className='desktop:py-2.5 desktop:px-4 tablet:py-2.5 tablet:px-4 mobile:px-0'>{t`content.welcomeBackTester`} {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess ? waitlistData.number : '...'}</H1>
       <div className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
         {DisplayAllTiles}
         {isFetching && <><SkeletonTiles type='horizontal' /><SkeletonTiles type='vertical' /></>}

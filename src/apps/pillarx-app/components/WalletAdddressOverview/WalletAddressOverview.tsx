@@ -11,10 +11,9 @@ import Body from '../Typography/Body';
 
 type WalletAddressOverviewProps = {
     address: string;
-    className?: string;
 }
 
-const WalletAddressOverview = ({ address, className }: WalletAddressOverviewProps) => {
+const WalletAddressOverview = ({ address }: WalletAddressOverviewProps) => {
     const [isCopied, setIsCopied] = useState(false);
 
     useEffect(() => {
@@ -29,7 +28,7 @@ const WalletAddressOverview = ({ address, className }: WalletAddressOverviewProp
 
 
     return (
-        <div className={`flex gap-2.5 items-center ${className}`}>
+        <div className='desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center'>
             <div className='bg-[#312F3A] p-2.5 rounded-full w-10 h-10'>
                 <img src={ProfileIcon} className='w-full h-full' />
             </div>

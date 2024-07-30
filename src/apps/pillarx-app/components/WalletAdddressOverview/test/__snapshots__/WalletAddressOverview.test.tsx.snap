@@ -2,7 +2,7 @@
 
 exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = `
 <div
-  className="flex gap-2.5 items-center custom-class"
+  className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
 >
   <div
     className="bg-[#312F3A] p-2.5 rounded-full w-10 h-10"

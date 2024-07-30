@@ -86,7 +86,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
     className="flex flex-col justify-between"
   >
     <div
-      className="flex gap-2.5 items-center mobile:hidden mb-[54px]"
+      className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
     >
       <div
         className="bg-[#312F3A] p-2.5 rounded-full w-10 h-10"
@@ -147,7 +147,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
         className="flex gap-4 items-end"
       >
         <h1
-          className="text-3xl leading-[45px] font-medium mobile:text-xl mobile:leading-5 text-[50px]"
+          className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-[50px]"
         >
           $
           1000.00
