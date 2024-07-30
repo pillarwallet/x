@@ -15,6 +15,7 @@ import logoBsc from '../assets/images/logo-bsc.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
+import logoBase from '../assets/images/logo-base.png';
 
 export const isValidEthereumAddress = (address: string | undefined): boolean => {
   if (!address) return false;
@@ -66,6 +67,13 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
     nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/binance.svg';
   }
 
+  // base testnet not supported on Prime SDK
+  if (chainId === base.id) {
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
+    nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
+
   return nativeAsset;
 }
 
@@ -101,6 +109,10 @@ export const getLogoForChainId = (chainId: number): string => {
 
   if (chainId === bsc.id) {
     return logoBsc;
+  }
+
+  if (chainId === base.id) {
+    return logoBase;
   }
 
   return logoEvm;
