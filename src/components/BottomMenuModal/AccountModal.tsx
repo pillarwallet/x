@@ -238,6 +238,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               const totalBalance = ethers.utils.formatUnits(totalBalanceBN, decimals);
               const tokenChainsCount = Object.values(groupedTokens[tokenSymbol]).length;
 
+              // This is to ensure that balances that are equal to 0 do not appear for the user
+              if (Number(totalBalance) === 0) return;
+
               return (
                 <TokenItem key={tokenSymbol}>
                   <TokenTotals>
