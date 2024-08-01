@@ -5,7 +5,7 @@ exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = 
   className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
 >
   <div
-    className="bg-[#312F3A] p-2.5 rounded-full w-10 h-10"
+    className="bg-medium_grey p-2.5 rounded-full w-10 h-10"
   >
     <img
       className="w-full h-full"
