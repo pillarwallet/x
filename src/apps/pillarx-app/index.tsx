@@ -115,15 +115,15 @@ const Wrapper = styled.div`
   flex-direction: column;
   max-width: 1248px;
 
-  @media (min-width: 800px) {
-    padding: 50px 60px
+  @media (min-width: 1024px) {
+    padding: 52px 62px
+  }
+
+  @media (max-width: 1024px) {
+    padding: 52px 32px
   }
 
   @media (max-width: 800px) {
-    padding: 50px 32px
-  }
-
-  @media (max-width: 360px) {
     padding: 32px 16px
   }
 `;

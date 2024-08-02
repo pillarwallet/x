@@ -29,7 +29,7 @@ const WalletAddressOverview = ({ address }: WalletAddressOverviewProps) => {
 
     return (
         <div className='desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center'>
-            <div className='bg-[#312F3A] p-2.5 rounded-full w-10 h-10'>
+            <div className='bg-medium_grey p-2.5 rounded-full w-10 h-10'>
                 <img src={ProfileIcon} className='w-full h-full' />
             </div>
             <Body>{address.substring(0, 6)}...{address.substring(address.length - 5)}</Body>

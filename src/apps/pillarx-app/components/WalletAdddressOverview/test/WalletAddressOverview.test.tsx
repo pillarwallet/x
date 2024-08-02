@@ -24,7 +24,7 @@ describe('<WalletAddressOverview />', () => {
     const tree = renderer.create(<WalletAddressOverview address={address} />).toJSON() as ReactTestRendererJSON;
 
     const profileIcon = (tree.children?.find(child =>
-      typeof child === 'object' && child.props.className === 'bg-[#312F3A] p-2.5 rounded-full w-10 h-10'
+      typeof child === 'object' && child.props.className === 'bg-medium_grey p-2.5 rounded-full w-10 h-10'
     ) as ReactTestRendererJSON);
 
     const addressText = (tree.children?.find(child =>

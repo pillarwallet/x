@@ -57,7 +57,7 @@ describe('<Tags />', () => {
       expect(tree.props.className).toContain('flex');
       expect(tree.props.className).toContain('gap-2');
       expect(tree.props.className).toContain('items-center');
-      expect(tree.props.className).toContain('bg-[#312F3A]');
+      expect(tree.props.className).toContain('bg-medium_grey');
       expect(tree.props.className).toContain('py-1.5');
       expect(tree.props.className).toContain('px-4');
       expect(tree.props.className).toContain('rounded-md');
