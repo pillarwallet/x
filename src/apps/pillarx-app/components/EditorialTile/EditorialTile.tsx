@@ -54,7 +54,7 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
 
     if (!data || isDataLoading) {
         return (
-            <TileContainer className='flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
+            <TileContainer id='editorial-tile-loader' className='flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
                 <SkeletonLoader $height='24px' $width='150px' $marginBottom='10px' $radius='6px' />
                 <div data-testid="editorial-tile-loading" className='flex mobile:flex-col bg-medium_grey rounded-2xl p-2 gap-4'>
                     <div className='flex desktop:basis-2/5 tablet:basis-2/5 mobile:basis-full mobile:w-full'>
@@ -99,7 +99,7 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
                             )}
                         </div>
                         <div className='mb-[18px] mt-4 flex justify-between'>
-                            <div onClick={() => window.open(editorialDisplay?.attribution?.href, '_blank', 'noreferrer')} className='flex gap-2 items-center cursor-pointer'>
+                            <div onClick={() => editorialDisplay?.attribution?.href && window.open(editorialDisplay?.attribution?.href, '_blank', 'noreferrer')} className={`flex gap-2 items-center ${editorialDisplay?.attribution?.href && 'cursor-pointer'}`}>
                                 {editorialDisplay?.attribution?.icon && <img src={editorialDisplay.attribution.icon} className='h-5' />}
                                 {editorialDisplay?.attribution?.name && <BodySmall className='text-purple_light'>{editorialDisplay.attribution.name}</BodySmall>}
                             </div>
