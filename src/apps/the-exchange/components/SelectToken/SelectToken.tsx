@@ -20,7 +20,7 @@ type SelectTokenProps = {
 
 const SelectToken = ({ type, tokenName, tokenChain, tokenLogo, onClick }: SelectTokenProps) => {
     return (
-        <div onClick={onClick} className='flex justify-between items-start'>
+        <div id='select-token-info-exchange' onClick={onClick} className='flex justify-between items-start'>
             <div className="flex w-full flex-col">
                 <Body className='capitalize line-clamp-2 text-ellipsis break-all'>{tokenName ?? type}</Body>
                 <Body className="font-normal capitalize">{tokenChain ? `On ${convertChainIdtoName(tokenChain)}` : 'Select Token'}</Body>

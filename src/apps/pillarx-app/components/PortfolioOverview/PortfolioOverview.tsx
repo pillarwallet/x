@@ -46,7 +46,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
 
 if (!data || isDataLoading) {
     return (
-    <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
+    <TileContainer id='wallet-portfolio-tile-loader' className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
         <div className='flex flex-col justify-between'>
             <SkeletonLoader $height='40px' $width='200px' $marginBottom='54px' $radius='10px' className='mobile:hidden' />
         <div className='mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full'>
@@ -64,7 +64,7 @@ if (!data || isDataLoading) {
 }
 
     return (
-        <TileContainer className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
+        <TileContainer id='wallet-portfolio-tile' className='p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4'>
             <div className='flex flex-col justify-between'>
                 <WalletAddressOverview address={dataWallet?.wallet ?? ''} />
                 <div className='mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full'>

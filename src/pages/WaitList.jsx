@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
+import Plausible from 'plausible-tracker';
+
+const { trackEvent } = Plausible({
+  domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN
+});
 
 // fonts
 import neueBoldFont from '../assets/landing-fonts/NeueHaasDisplayBold.ttf';
@@ -585,10 +590,23 @@ const Waitlist = () => {
     script.async = true;
     document.body.appendChild(script);
 
+    // Add event listener for iframe/Waitlist click
+    const waitlistContainer = document.getElementById('getWaitlistContainer');
+    const handleClick = () => {
+      trackEvent('Waitlist Click', { id: 'getWaitlistContainer' });
+    };
+
+    if (waitlistContainer) {
+      waitlistContainer.addEventListener('click', handleClick);
+    }
+
     // Cleanup
     return () => {
       document.head.removeChild(link);
       document.body.removeChild(script);
+      if (waitlistContainer) {
+        waitlistContainer.removeEventListener('click', handleClick);
+      }
     };
   }, []);
 

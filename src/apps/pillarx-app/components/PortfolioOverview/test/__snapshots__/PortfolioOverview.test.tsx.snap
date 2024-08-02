@@ -43,6 +43,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
 
 <div
   className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  id="wallet-portfolio-tile-loader"
 >
   <div
     className="flex flex-col justify-between"
@@ -81,6 +82,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
 exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  id="wallet-portfolio-tile"
 >
   <div
     className="flex flex-col justify-between"

@@ -3,6 +3,7 @@
 exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
 <div
   className="undefined h-[34px] z-20"
+  id="select-chain-dropdown-list-exchange"
 >
   <button
     className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"

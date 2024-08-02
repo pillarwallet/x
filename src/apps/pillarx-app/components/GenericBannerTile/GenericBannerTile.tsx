@@ -20,7 +20,7 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
 
     if (!data || isDataLoading) {
         return (
-        <TileContainer className='p-1 flex-col'>
+        <TileContainer id='generic-banner-tile-loader' className='p-1 flex-col'>
             <div className='mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4' data-testid='generic-banner-loading'>
                 <SkeletonLoader  $height='30px' $width='180px' $marginBottom='10px' $radius='6px' />
                 <SkeletonLoader  $height='20px' $width='150px' $marginBottom='16px' $radius='6px' />
@@ -31,7 +31,7 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
     }
 
     return (
-        <TileContainer className={`p-1 flex-col ${!bannerDisplay && 'hidden'}`}>
+        <TileContainer id='generic-banner-tile' className={`p-1 flex-col ${!bannerDisplay && 'hidden'}`}>
             <div className="flex flex-col rounded-2xl  bg-cover bg-no-repeat bg-center" style={{ backgroundImage: bannerDisplay?.backgroundImage && `url(${bannerDisplay.backgroundImage})` }}>
                 <div className='mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4'>
                     <p className='text-[45px] font-medium tablet:leading-[67.5px] desktop:leading-[67.5px] mobile:text-xl mobile:leading-[30px]'>{bannerDisplay?.title && bannerDisplay.title}</p>

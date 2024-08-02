@@ -143,7 +143,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
 
   if (!accountAddress || isLoading) {
     return (
-      <Wrapper>
+      <Wrapper id='history-modal-loader'>
         <HistoryCard>
           <DetailsRow>
             <SkeletonLoader $height="28px" $width="120px" />
@@ -161,7 +161,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
   const sortedTransactions = allTransactions.sort((a, b) => b.timestamp - a.timestamp);
 
   return (
-    <Wrapper>
+    <Wrapper id='history-modal'>
       {!sortedTransactions.length && (
         <Alert>{t`error.noTransactionHistory`}</Alert>
       )}
@@ -193,7 +193,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
           && addressesEqual(a.address, transaction.assetTransfer.address));
 
         return (
-          <HistoryCard key={transaction.id}>
+          <HistoryCard id='history-card' key={transaction.id}>
             <DetailsRow>
               <ChainAssetIcon asset={asset} chainId={transaction.chainId} />
               <div>
