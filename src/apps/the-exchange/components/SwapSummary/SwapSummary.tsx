@@ -30,7 +30,7 @@ const SwapSummary = () => {
     const usdPerToken = usdPriceSwapToken || 0;
 
     return (
-        <div className="flex gap-1 justify-center border border-[#999999]/[.20] rounded-[3px] p-4 w-full tablet:max-w-[420px] desktop:max-w-[420px]">
+        <div id='swap-summary-exchange' className="flex gap-1 justify-center border border-[#999999]/[.20] rounded-[3px] p-4 w-full tablet:max-w-[420px] desktop:max-w-[420px]">
             <BodySmall className="font-medium text-light_grey">1 {swapToken.symbol}</BodySmall>
             <img src={ArrowRightLight} className='w-3 h-3' alt="Arrow Right Light"/>
             <BodySmall className="font-medium text-light_grey">{hasThreeZerosAfterDecimal(exchangeRate) ? exchangeRate.toFixed(8) : exchangeRate.toFixed(4)} {receiveToken.symbol}</BodySmall>

@@ -3,6 +3,7 @@
 exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+  id="tokens-vertical-tile"
 >
   <p
     className="text-base font-medium text-purple_light"

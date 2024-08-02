@@ -147,6 +147,7 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
 
   return (
     <MultiSelectWrapper
+      id='assets-list-send-modal'
       onClick={() => {
         if (!isAssetSelected) return;
         // reset to chain select

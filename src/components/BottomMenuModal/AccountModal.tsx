@@ -152,7 +152,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
   if (!accountAddress) {
     return (
-      <Wrapper>
+      <Wrapper id='account-modal-loader'>
         <SkeletonLoader $height="40px" $width="100%" $radius="30px" $marginBottom="15px" />
         <SkeletonLoader $height="160px" $width="100%" />
       </Wrapper>
@@ -160,9 +160,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }
 
   return (
-    <Wrapper>
+    <Wrapper id='account-modal'>
       <TopBar>
-        <AccountSection>
+        <AccountSection id='address-account-modal'>
           <TopBarIcon>
             <UserIcon size={20} />
           </TopBarIcon>
@@ -173,7 +173,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </TopBarIcon>
           </CopyToClipboard>
         </AccountSection>
-        <TopBarIcon onClick={onLogoutClick}>
+        <TopBarIcon id='acount-logout' onClick={onLogoutClick}>
           <LogoutIcon size={20} />
         </TopBarIcon>
       </TopBar>
@@ -190,7 +190,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         {showNfts && (
           <>
             {!allNfts.length && !nftsLoading && <Alert>{t`error.noNftsFound`}</Alert>}
-            <NftsWrapper>
+            <NftsWrapper id='nfts-account-modal'>
               {nftsLoading && (
                 <>
                   <SkeletonLoader $height="189px" $width="143px" $radius="6px" />
@@ -206,7 +206,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                 if (!title) title = 'Unknown NFT';
 
                 return (
-                  <NftItem key={nftKey}>
+                  <NftItem id='nft-item-account-modal' key={nftKey}>
                     <NftImageWrapper>
                       <ImageWithFallback src={nft.image ?? nft.ipfsGateway} alt={nftKey.replace('-', '')} />
                     </NftImageWrapper>
@@ -242,8 +242,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               if (Number(totalBalance) === 0) return;
 
               return (
-                <TokenItem key={tokenSymbol}>
-                  <TokenTotals>
+                <TokenItem id='token-item-account-modal' key={tokenSymbol}>
+                  <TokenTotals id='token-totals-account-modal'>
                     <img src={logoUrl} alt={tokenSymbol} />
                     <p>{formatAmountDisplay(totalBalance)} <TokenSymbol>{tokenSymbol}</TokenSymbol></p>
                     <TokenTotalsRight>
@@ -258,7 +258,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                       </ToggleButton>
                     </TokenTotalsRight>
                   </TokenTotals>
-                  <TokenChainsWrapper $visible={expanded[tokenSymbol]}>
+                  <TokenChainsWrapper id='token-chains-account-modal' $visible={expanded[tokenSymbol]}>
                     {Object.values(groupedTokens[tokenSymbol]).map(({ balance, asset, chain }) => {
                       const assetBalanceValue = ethers.utils.formatUnits(balance, asset.decimals);
                       return (
