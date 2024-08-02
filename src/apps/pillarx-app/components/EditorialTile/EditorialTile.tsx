@@ -77,7 +77,6 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
 
     return (
         <TileContainer id='editorial-tile' className='flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
-            <Body className='text-purple_light mb-2.5'>Editorial</Body>
             <a href={editorialDisplay?.href} target="_blank" rel="noreferrer">
                 <div className='flex mobile:flex-col bg-medium_grey rounded-2xl p-2 gap-4'>
                     {editorialDisplay?.media && (
@@ -85,13 +84,13 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
                             <DisplayMedia />
                         </div>
                     )}
-                    <div className='flex flex-col justify-between w-full desktop:px-4 tablet:px-4 mobile:px-0'>
+                    <div className='flex flex-col justify-between w-full desktop:basis-3/5 tablet:basis-3/5 mobile:basis-full desktop:px-4 tablet:px-4 mobile:px-0'>
                         <div className='flex flex-col gap-2 desktop:mt-14 tablet:mt-8 mobile:mt-0'>
                             {editorialDisplay?.tags?.length && editorialDisplay.tags.map((tag, index) => (
                                 <EditorialTag key={index} color={tag.color} icon={tag.icon} label={tag.label} />
                             ))}
                             {editorialDisplay?.title && (
-                                <h1 className='text-[20px] leading-[30px] mobile:line-clamp-1 text-ellipsis break-words desktop:text-[32px] desktop:leading[48px]'>
+                                <h1 className='text-[20px] leading-[30px] desktop:text-[32px] desktop:leading[48px]'>
                                     {editorialDisplay.title}
                                 </h1>
                             )}
@@ -100,12 +99,10 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
                             )}
                         </div>
                         <div className='mb-[18px] mt-4 flex justify-between'>
-                            <a href={editorialDisplay?.attribution?.href} target="_blank" rel="noreferrer">
-                                <div className='flex gap-2'>
-                                    {editorialDisplay?.attribution?.icon && <img src={editorialDisplay.attribution.icon} />}
-                                    {editorialDisplay?.attribution?.name && <BodySmall className='text-purple_light'>{editorialDisplay.attribution.name}</BodySmall>}
-                                </div>
-                            </a>
+                            <div onClick={() => window.open(editorialDisplay?.attribution?.href, '_blank', 'noreferrer')} className='flex gap-2 items-center cursor-pointer'>
+                                {editorialDisplay?.attribution?.icon && <img src={editorialDisplay.attribution.icon} className='h-5' />}
+                                {editorialDisplay?.attribution?.name && <BodySmall className='text-purple_light'>{editorialDisplay.attribution.name}</BodySmall>}
+                            </div>
                             {editorialDate && <BodySmall className='text-purple_light'>{moment(editorialDate).format('D MMMM YYYY')}</BodySmall>}
                         </div>
                     </div>

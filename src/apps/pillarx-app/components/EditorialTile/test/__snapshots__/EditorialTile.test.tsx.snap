@@ -5,11 +5,6 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
   className="flex bg-container_grey rounded-2xl flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
   id="editorial-tile"
 >
-  <p
-    className="text-base font-medium text-purple_light mb-2.5"
-  >
-    Editorial
-  </p>
   <a
     rel="noreferrer"
     target="_blank"
@@ -27,7 +22,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
         />
       </div>
       <div
-        className="flex flex-col justify-between w-full desktop:px-4 tablet:px-4 mobile:px-0"
+        className="flex flex-col justify-between w-full desktop:basis-3/5 tablet:basis-3/5 mobile:basis-full desktop:px-4 tablet:px-4 mobile:px-0"
       >
         <div
           className="flex flex-col gap-2 desktop:mt-14 tablet:mt-8 mobile:mt-0"
@@ -99,7 +94,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
             </div>
           </div>
           <h1
-            className="text-[20px] leading-[30px] mobile:line-clamp-1 text-ellipsis break-words desktop:text-[32px] desktop:leading[48px]"
+            className="text-[20px] leading-[30px] desktop:text-[32px] desktop:leading[48px]"
           >
             Editorial title
           </h1>
@@ -112,24 +107,20 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
         <div
           className="mb-[18px] mt-4 flex justify-between"
         >
-          <a
-            href="https://youtube.com"
-            rel="noreferrer"
-            target="_blank"
+          <div
+            className="flex gap-2 items-center cursor-pointer"
+            onClick={[Function]}
           >
-            <div
-              className="flex gap-2"
+            <img
+              className="h-5"
+              src="https://example.com/youtube.png"
+            />
+            <p
+              className="text-sm font-medium text-purple_light"
             >
-              <img
-                src="https://example.com/youtube.png"
-              />
-              <p
-                className="text-sm font-medium text-purple_light"
-              >
-                Youtube
-              </p>
-            </div>
-          </a>
+              Youtube
+            </p>
+          </div>
           <p
             className="text-sm font-medium text-purple_light"
           >
