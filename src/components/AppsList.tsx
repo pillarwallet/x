@@ -43,7 +43,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   }, [allowed]);
 
   return (
-    <Wrapper>
+    <Wrapper id='apps-modal'>
       {!hideTitle && (
         <ModalTitle>
           <IconApps size={18} />
@@ -55,7 +55,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
         <ExploreAppsCardContent>Discover new apps and services</ExploreAppsCardContent>
       </ExploreAppsCard>
       <Label>{t`label.latestApps`}</Label>
-      <AppsListWrapper>
+      <AppsListWrapper id='apps-list'>
         {isLoadingAllowedApps && (
           <>
             <SkeletonLoader $height="94px" $width="94px" />
@@ -67,6 +67,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
         )}
         {!isLoadingAllowedApps && Object.keys(apps).map((appId) => (
           <AppListItem
+            id='app-list-item'
             key={appId}
             onClick={() => {
               hide();

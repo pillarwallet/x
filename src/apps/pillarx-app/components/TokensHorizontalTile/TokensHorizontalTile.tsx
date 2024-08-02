@@ -51,7 +51,7 @@ const TokensHorizontalTile = ({ data, isDataLoading }: TokensHorizontalTileProps
 
     if (!data || isDataLoading) {
         return (
-        <TileContainer className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
+        <TileContainer id='tokens-horizontal-tile-loader' className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
              <SkeletonLoader  $height='24px' $width='140px' $marginBottom='10px' $radius='10px' />
              <div className='flex justify-between gap-2'>
              <SkeletonLoader  $height='120px' $width='80px' $radius='10px' />
@@ -69,7 +69,7 @@ const TokensHorizontalTile = ({ data, isDataLoading }: TokensHorizontalTileProps
 
     return (
         <div ref={divRef}>
-            <TileContainer className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
+            <TileContainer id='tokens-horizontal-tile' className='flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
                 <Body className='text-purple_light mb-2.5'>{meta?.display?.title}</Body>
                 <div className='flex justify-between'>
                     {dataTokensHorizontal?.slice(0, numberTokensHorizontal).map((token, index) => (

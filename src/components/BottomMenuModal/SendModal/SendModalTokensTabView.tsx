@@ -337,7 +337,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       {selectedAsset?.type === 'token' && (
         <FormGroup>
           <Label>{t`label.enterAmount`}</Label>
-          <AmountInputRow>
+          <AmountInputRow id='enter-amount-input-send-modal'>
             <TextInput
               value={amount}
               onValueChange={setAmount}
@@ -377,6 +377,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         <FormGroup>
           <Label>{t`label.sendTo`}</Label>
           <TextInput
+            id='send-to-address-input-send-modal'
             value={recipient}
             onValueChange={setRecipient}
             placeholder={t`placeholder.enterAddress`}

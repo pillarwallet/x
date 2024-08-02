@@ -104,13 +104,13 @@ const SendModalBatchesTabView = () => {
         />
       )}
       {Object.keys(groupedTransactionsByChainId).map((chainId) => (
-        <ChainBatchWrapper key={`batch-${chainId}`}>
+        <ChainBatchWrapper id='chain-batch-send-modal' key={`batch-${chainId}`}>
           <BatchTopDetails $expanded={!!expanded[+chainId]}>
             <ChainDetails>
               <ChainLogo src={getLogoForChainId(+chainId)} alt={`chain ${chainId} logo`} />
-              <ChainTitle>{visibleChains.find((c) => c.id === +chainId)?.name ?? t('helper.unknownNetwork', { chainId })}</ChainTitle>
+              <ChainTitle id='chain-title-batch-send-modal'>{visibleChains.find((c) => c.id === +chainId)?.name ?? t('helper.unknownNetwork', { chainId })}</ChainTitle>
             </ChainDetails>
-            <TransactionCount>{t('helper.items', { count: groupedTransactionsByChainId[+chainId].length })}</TransactionCount>
+            <TransactionCount id='transaction-count-batch-send-modal'>{t('helper.items', { count: groupedTransactionsByChainId[+chainId].length })}</TransactionCount>
             <ToggleButton $expanded={!!expanded[+chainId]} onClick={() => setExpanded((prev) => ({ ...prev, [chainId]: !prev[+chainId] }))}>
               <ArrowRightIcon size={15} />
             </ToggleButton>
@@ -142,6 +142,7 @@ const SendModalBatchesTabView = () => {
           {!!errorMessage[+chainId] && <Alert>{`${t`label.error`}: ${errorMessage[+chainId]}`}</Alert>}
           <BatchesButtons>
             <Button
+              id='delete-queue-button-batch-send-modal'
               onClick={() => {
                 groupedTransactionsByChainId[+chainId].forEach((t) => removeFromBatch(t.id as string));
               }}
@@ -153,6 +154,7 @@ const SendModalBatchesTabView = () => {
               {t`action.deleteQueue`}
             </Button>
             <Button
+              id='send-button-batch-send-modal'
               onClick={() => onSend(+chainId, `batch-${chainId}`)}
               disabled={anyChainSending}
               $fullWidth
@@ -168,7 +170,7 @@ const SendModalBatchesTabView = () => {
             </Button>
           </BatchesButtons>
           {!!errorMessage[+chainId] && !!estimatedCostFormatted[+chainId] && (
-            <Cost>{t`label.transactionCost`}: {estimatedCostFormatted[+chainId]}</Cost>
+            <Cost id='cost--batch-send-modal'>{t`label.transactionCost`}: {estimatedCostFormatted[+chainId]}</Cost>
           )}
         </ChainBatchWrapper>
       ))}

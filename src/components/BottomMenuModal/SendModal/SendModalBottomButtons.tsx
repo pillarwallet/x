@@ -36,6 +36,7 @@ const SendModalBottomButtons = ({
       <ButtonsWrapper>
         {allowBatching && (
           <Button
+            id='add-to-batch-button-send-modal'
             disabled={isSendDisabled}
             onClick={onAddToBatch}
             $secondary
@@ -46,6 +47,7 @@ const SendModalBottomButtons = ({
           </Button>
         )}
         <Button
+          id='send-button-send-moda;'
           disabled={isSendDisabled}
           onClick={() => onSend(!!safetyWarningMessage)}
           $fullWidth
@@ -56,7 +58,7 @@ const SendModalBottomButtons = ({
         </Button>
       </ButtonsWrapper>
       {!!errorMessage && !!estimatedCostFormatted && (
-        <Cost>{t`label.transactionCost`}: {estimatedCostFormatted}</Cost>
+        <Cost id='cost-send-modal'>{t`label.transactionCost`}: {estimatedCostFormatted}</Cost>
       )}
     </FormGroup>
   );

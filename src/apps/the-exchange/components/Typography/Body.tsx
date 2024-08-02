@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { HTMLProps, ReactNode } from 'react';
 
-type BodyProps = {
+type BodyProps = HTMLProps<HTMLElement>  & {
     children: ReactNode;
     className?: string;
-}
+  }
 
 const Body = ({ children, className }: BodyProps) => {
     return (

@@ -48,7 +48,7 @@ const SelectDropdown = ({ options, onClick, onSelect, isOpen, className }: Selec
   };
 
   return (
-    <div className={`${className} h-[34px] z-20`}>
+    <div id='select-chain-dropdown-list-exchange' className={`${className} h-[34px] z-20`}>
       <button
         type="button"
         className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"

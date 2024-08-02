@@ -224,6 +224,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 
 <div
     className="c0"
+    id="bottom-menu"
   >
     <div
       className="c1"

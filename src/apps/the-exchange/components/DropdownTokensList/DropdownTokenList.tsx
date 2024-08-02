@@ -75,7 +75,7 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
 
     return (
         <>
-            <div className="fixed inset-0 bg-black_grey/[.9] -z-10" data-testid="dropdown-token-list">
+            <div id='dropdown-token-list-exchange' className="fixed inset-0 bg-black_grey/[.9] -z-10" data-testid="dropdown-token-list">
                 <button
                     onClick={() => {
                         type === CardPosition.SWAP ? dispatch(setIsSwapOpen(false)) : dispatch(setIsReceiveOpen(false));
@@ -98,7 +98,7 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
                     />
                     <TokenSearchInput placeholder="Search tokens" isShrinked={isChainSelectionOpen} />
                 </div>
-                <div className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}>
+                <div id='token-list-exchange' className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}>
                     {isSwapOpen ? 
                         swapTokenList.map((token, index) => (
                             <TokenListItem

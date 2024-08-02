@@ -96,7 +96,7 @@ const BottomMenu = () => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper id='bottom-menu'>
         <BottomMenuModal />
         <MainMenuItems $modalVisible={!!active}>
           {menuItems.map((item, index) => {

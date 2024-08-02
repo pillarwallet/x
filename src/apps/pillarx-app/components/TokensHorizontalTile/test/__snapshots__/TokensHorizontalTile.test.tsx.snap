@@ -19,6 +19,7 @@ exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading
 
 <div
   className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+  id="tokens-horizontal-tile-loader"
 >
   <div
     className="c0"
@@ -58,6 +59,7 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
 <div>
   <div
     className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+    id="tokens-horizontal-tile"
   >
     <p
       className="text-base font-medium text-purple_light mb-2.5"

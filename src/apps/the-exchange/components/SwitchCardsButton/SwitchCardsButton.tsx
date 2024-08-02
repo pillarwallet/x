@@ -50,6 +50,7 @@ const SwitchCardsButton = ({ onSwap }: SwitchCardsButtonType) => {
 
     return (
         <button
+            id='switch-cards-button-exchange'
             onClick={swapCardsAction}
             className="absolute self-center w-[34px] h-[34px] p-2 bg-white rounded-[3px] desktop:p-4 desktop:w-14 desktop:h-14"
         >

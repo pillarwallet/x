@@ -98,7 +98,7 @@ const ExchangeAction = () => {
     };
 
     return (
-        <div className='flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20'>
+        <div id='exchange-action' className='flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20'>
             <div className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}>
                 <Body className='font-normal'>You receive</Body>
                 <div className='flex justify-between items-end'>
@@ -111,7 +111,7 @@ const ExchangeAction = () => {
                     </div>
                 </div>
             </div>
-            <div onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}>
+            <div id='exchange-action-button' onClick={onClickToExchange} className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}>
                 <Body>Exchange</Body>
                 {errorMessage && (
                     <BodySmall>
