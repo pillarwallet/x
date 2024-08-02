@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { HTMLProps, ReactNode } from 'react';
 
-type NumberTextProps = {
+type NumberTextProps = HTMLProps<HTMLElement>  & {
   children: ReactNode;
   className?: string;
 }

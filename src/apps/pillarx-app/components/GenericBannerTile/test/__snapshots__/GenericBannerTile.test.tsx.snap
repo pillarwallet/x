@@ -3,6 +3,7 @@
 exports[`<GenericBannerTile /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl p-1 flex-col false"
+  id="generic-banner-tile"
 >
   <div
     className="flex flex-col rounded-2xl  bg-cover bg-no-repeat bg-center"

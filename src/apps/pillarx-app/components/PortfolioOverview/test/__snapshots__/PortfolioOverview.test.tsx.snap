@@ -43,6 +43,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
 
 <div
   className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  id="wallet-portfolio-tile-loader"
 >
   <div
     className="flex flex-col justify-between"
@@ -51,7 +52,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
       className="c0 mobile:hidden"
     />
     <div
-      className="mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full"
+      className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <div
         className="c1"
@@ -81,6 +82,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
 exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  id="wallet-portfolio-tile"
 >
   <div
     className="flex flex-col justify-between"
@@ -89,7 +91,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
     >
       <div
-        className="bg-[#312F3A] p-2.5 rounded-full w-10 h-10"
+        className="bg-medium_grey p-2.5 rounded-full w-10 h-10"
       >
         <img
           className="w-full h-full"
@@ -136,7 +138,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="mobile:border mobile:border-[#312F3A] mobile:rounded-[10px] mobile:p-4 mobile:w-full"
+      className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <p
         className="text-base font-medium text-purple_light mb-2"

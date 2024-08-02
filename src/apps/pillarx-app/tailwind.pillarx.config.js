@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         deep_purple: { A700: '#5e00ff' },
         container_grey: '#27262F',
+        medium_grey: '#312F3A',
         purple_light: '#E2DDFF',
         percentage_green: '#05FFDD',
         percentage_red: '#FF366C',

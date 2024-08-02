@@ -13,11 +13,11 @@ import { ChainType } from '../../utils/types';
 // images
 import SearchIcon from '../../images/search-icon.png';
 
-interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TokenSearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     isShrinked?: boolean;
 }
 
-const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
+const TokenSearchInput = ({ isShrinked, className, ...props }: TokenSearchInputProps) => {
     const dispatch = useAppDispatch();
     const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
     const swapTokenData = useAppSelector((state) => state.swap.swapTokenData as Token[]);
@@ -63,7 +63,7 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
     };
 
     return (
-        <div className={`${className} ${!isShrinked && 'w-full'} relative h-[34px]`}>
+        <div  id='token-search-input-exchange' className={`${className} ${!isShrinked && 'w-full'} relative h-[34px]`}>
             {!isShrinked ? (
                 <>
                     <input
@@ -92,4 +92,4 @@ const TextInput = ({ isShrinked, className, ...props }: TextInputProps) => {
     );
 };
 
-export default TextInput;
+export default TokenSearchInput;

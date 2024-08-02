@@ -3,6 +3,7 @@
 exports[`<EnterAmount /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-1 group"
+  id="enter-amount"
 >
   <p
     className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
@@ -12,6 +13,7 @@ exports[`<EnterAmount /> renders correctly and matches snapshot 1`] = `
   <input
     className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
     data-testid="enter-amount-input"
+    id="input-enter-amount"
     onChange={[Function]}
     placeholder="0"
     step="any"

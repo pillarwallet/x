@@ -65,7 +65,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   }
 
   return (
-    <Wrapper ref={wrapperRef}>
+    <Wrapper id='send-modal' ref={wrapperRef}>
       {!payload && (
         <FormGroup>
           <FormTabSelect

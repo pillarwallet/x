@@ -3,6 +3,7 @@
 exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex justify-between items-start"
+  id="select-token-info-exchange"
   onClick={[MockFunction]}
 >
   <div

@@ -181,10 +181,10 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     if (isOfferLoading) {
       return <CircularProgress size={36} sx={{ color: '#343434' }} />;
     } else if (isNoOffer) {
-      return <Body className='mobile:text-xs'>Sorry, no offers were found! Please check or change the amounts and try again.</Body>;
+      return <Body id='no-offer-exchange' className='mobile:text-xs'>Sorry, no offers were found! Please check or change the amounts and try again.</Body>;
     } else if (bestOffer) {
       return (
-        <NumberText className="text-black_grey font-normal text-3xl break-words mobile:max-w-[180px] tablet:max-w-[260px] desktop:max-w-[260px] xs:max-w-[110px]">
+        <NumberText id='offer-amount-exchange' className="text-black_grey font-normal text-3xl break-words mobile:max-w-[180px] tablet:max-w-[260px] desktop:max-w-[260px] xs:max-w-[110px]">
           {bestOffer?.tokenAmountToReceive ?
           (hasThreeZerosAfterDecimal(bestOffer?.tokenAmountToReceive)
             ? bestOffer?.tokenAmountToReceive.toFixed(8)
@@ -196,13 +196,14 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-1 group">
+    <div id='enter-amount-exchange' className="flex flex-col gap-1 group">
       <BodySmall className="group-hover:text-black_grey/[.4] font-normal">
         {tokenSymbol}
       </BodySmall>
       {type === CardPosition.SWAP ? (
         <>
           <input
+            id='input-enter-amount-exchange'
             type="number"
             step="any"
             value={inputValue}
@@ -212,13 +213,13 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
             className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
             data-testid="enter-amount-input"
           />
-          {tokenBalanceLimit(Number(inputValue)) && <BodySmall data-testid="error-max-limit">{tokenBalanceLimit(Number(inputValue))}</BodySmall>}
+          {tokenBalanceLimit(Number(inputValue)) && <BodySmall id='token-balance-limit-exchange' data-testid="error-max-limit">{tokenBalanceLimit(Number(inputValue))}</BodySmall>}
         </>
       ) : (
         <Offer />
       )}
       <div className="flex justify-between">
-        <BodySmall className="group-hover:text-black_grey/[.4]">
+        <BodySmall id='usd-conversion-exchange' className="group-hover:text-black_grey/[.4]">
           ${type === CardPosition.SWAP ? (usdPriceSwapToken * amountSwap).toFixed(2) : (usdPriceReceiveToken * amountReceive).toFixed(2)}
         </BodySmall>
         <img src={type === CardPosition.SWAP ? SendArrow : ReceiveArrow} alt={type === CardPosition.SWAP ? 'Send' : 'Receive'} />

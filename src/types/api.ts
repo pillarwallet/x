@@ -3,6 +3,7 @@ export enum ApiLayout {
   TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
   TOKENS_VERTICAL = 'TOKENS_VERTICAL',
   GENERIC_BANNER = 'GENERIC_BANNER',
+  EDITORIAL = 'EDITORIAL',
 }
 
 export type Asset = {
@@ -65,20 +66,40 @@ export type Asset = {
       [key in '24h' | '7d' | '30d' | '1y']?: TotalPnlHistory;
   };
   }
+
+  export type GenericBannerDisplay = {
+    title?: string;
+    subtitle?: string;
+    backgroundImage?: string;
+    cta?: {
+      text?: string;
+      href?: string;
+    };
+  }
+
+  export type EditorialDisplay = {
+    tags?: {
+      label?: string;
+      icon?: string;
+      color?: string;
+    }[],
+    title?: string;
+    summary?: string;
+    media?: string;
+    href?: string;
+    timestamp?: number;
+    attribution?: {
+      name?: string;
+      icon?: string;
+      href?: string;
+    }
+  }
   
   export type Projection = {
     meta: {
-      display: {
-        title: string;
-        subtitle?: string;
-        backgroundImage?: string;
-        cta?: {
-          text?: string;
-          href?: string;
-        };
-      };
+      display?: GenericBannerDisplay | EditorialDisplay;
     };
-    data: WalletPortfolioData | TokenData[] | undefined;
+    data?: WalletPortfolioData | TokenData[];
     layout: ApiLayout;
     id: string;
   }
