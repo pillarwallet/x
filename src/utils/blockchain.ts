@@ -79,6 +79,12 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
     nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
+  if (chainId === sepolia.id) {
+    nativeAsset.name = 'Sepolia ETH';
+    nativeAsset.symbol = 'SETH';
+    nativeAsset.logoURI = 'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
+
   return nativeAsset;
 }
 
