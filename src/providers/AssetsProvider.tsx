@@ -39,11 +39,11 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         // Check if Wrapped Matic as native asset
         if (chainId === 137) {
           chainAssets = chainAssets.map((token) => {
-            if (token.address.toLowerCase() === WRAPPED_MATIC_TOKEN_ADDRESS.toLowerCase()) {
+            if (token.address === WRAPPED_MATIC_TOKEN_ADDRESS) {
               return {
                 ...token,
                 name: 'Wrapped Matic (as Matic)',
-                symbol: 'WMATIC (as MATIC)',
+                symbol: 'WMATIC',
                 decimals: 18,
               };
             }
