@@ -37,7 +37,7 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 
 // utils
-import { getNativeAssetForChainId, isValidEthereumAddress } from '../../../utils/blockchain';
+import { getNativeAssetForChainId, isPolygonAssetNative, isValidEthereumAddress } from '../../../utils/blockchain';
 import { pasteFromClipboard } from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
@@ -406,17 +406,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             )}
             {selectedAsset?.type === 'token' && (
               <>
-                {isZeroAddress(selectedAsset.asset.address) && (
+                {(isZeroAddress(selectedAsset.asset.address) || isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTransaction
                     to={recipient}
                     value={assetValueToSend}
                   />
                 )}
-                {!isZeroAddress(selectedAsset.asset.address) && (
+                {(!isZeroAddress(selectedAsset.asset.address) && !isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTokenTransferTransaction
                     receiverAddress={recipient}
                     tokenAddress={selectedAsset.asset.address}
                     value={assetValueToSend}
+                    tokenDecimals={selectedAsset.asset.decimals}
                   />
                 )}
               </>
