@@ -30,7 +30,7 @@ export const StyledExchange = styled.div`
   background: #fff;
 
   @media (max-width: 1200px) {
-    padding: 0px 40px 40px;
+    padding: 0px 40px 40px; 
   }
 
   @media (max-width: 767px) {

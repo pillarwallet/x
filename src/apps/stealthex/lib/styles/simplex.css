@@ -1,9 +1,0 @@
-iframe[id*='simplex-iframe'] {
-    max-height: none !important;
-}
-
-@media (max-width: 780px) {
-    iframe[id*='simplex-iframe'] {
-        max-height: 700px !important;
-    }
-}

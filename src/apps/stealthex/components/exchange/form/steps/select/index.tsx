@@ -9,7 +9,6 @@ import {
     NotificationText,
     StyledNotificationIcon,
 } from './styles';
-import NormalView from './views/normal';
 
 import type { Config } from '../../../../../type';
 import { useAppSelector } from '../../../../../redux/hooks';
@@ -35,11 +34,8 @@ type SelectProps = {
 const Select: React.FC<SelectProps> = ({
     address,
     extraId,
-    refundAddress,
-    config,
     onExtraIdChange,
     onAddressChange,
-    onRefundAddressChange,
     onSubmit,
     isExchangeCreated,
     isExchangeCreating,
@@ -49,12 +45,10 @@ const Select: React.FC<SelectProps> = ({
     const { t } = useTranslation();
 
     const [isAddressValid, setAddressValid] = useState(true);
-    const [isRefundAddressValid, setRefundAddressValid] = useState(true);
 
-    const { fiat, sendCurrency: selectedSendCurrency, receiveCurrency } = useAppSelector(state => state.exchange);
+    const { fiat, receiveCurrency } = useAppSelector(state => state.exchange);
     const selectedReceiveCurrency = receiveCurrency;
     const currencyExtraId = selectedReceiveCurrency.extra_id;
-    const upperCasedSendSymbol = selectedSendCurrency.symbol.toUpperCase();
     const upperCasedReceiveSymbol = selectedReceiveCurrency.symbol.toUpperCase();
 
     const renderNotification = (warnings: readonly string[]) => {
@@ -97,20 +91,6 @@ const Select: React.FC<SelectProps> = ({
             testId="exchange-extraid"
         />
     ) : null;
-    const refundAddressInput = !fiat ? (
-        <CustomInput
-            value={refundAddress}
-            widget={widget}
-            onChange={onRefundAddressChange}
-            label={t('refundAddressInput', {
-                symbol: upperCasedSendSymbol,
-            })}
-            invalidLabel={t('addressIsInvalid')}
-            validation={selectedSendCurrency.validation_address}
-            onValidationStateChange={setRefundAddressValid}
-            testId="exchange-refund"
-        />
-    ) : undefined;
 
     return widget ? (
         <WidgetView
@@ -124,18 +104,7 @@ const Select: React.FC<SelectProps> = ({
             onReject={onReject}
             isExchangeCreating={isExchangeCreating}
         />
-    ) : (
-        <NormalView
-            config={config}
-            components={{
-                addressInput,
-                extraIdInput,
-                refundAddressInput,
-            }}
-            disabled={!isAddressValid || address == '' || !isRefundAddressValid}
-            onSubmit={onSubmit}
-        />
-    );
+    ) : null;
 };
 
 const CustomInput: React.FC<{
