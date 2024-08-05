@@ -4,7 +4,7 @@ import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
 import isEqual from 'lodash/isEqual';
 
 // utils
-import { getNativeAssetForChainId, visibleChains } from '../utils/blockchain';
+import { WRAPPED_MATIC_TOKEN_ADDRESS, getNativeAssetForChainId, visibleChains } from '../utils/blockchain';
 
 export interface IAssets {
   [chainId: number]: TokenListToken[];
@@ -35,6 +35,21 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         if (expired) return;
 
         let chainAssets = (await getAssets(chainId)) ?? [];
+
+        // Check if Wrapped Matic as native asset
+        if (chainId === 137) {
+          chainAssets = chainAssets.map((token) => {
+            if (token.address.toLowerCase() === WRAPPED_MATIC_TOKEN_ADDRESS.toLowerCase()) {
+              return {
+                ...token,
+                name: 'Wrapped Matic (as Matic)',
+                symbol: 'WMATIC (as MATIC)',
+                decimals: 18,
+              };
+            }
+            return token;
+          });
+        }
 
         const nativeAsset = getNativeAssetForChainId(chainId);
         if (nativeAsset) {

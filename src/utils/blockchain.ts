@@ -29,6 +29,11 @@ export const isValidEthereumAddress = (address: string | undefined): boolean => 
   return false;
 };
 
+// WRAPPED MATIC & MATIC are interchangeably Polygon native assets
+export const WRAPPED_MATIC_TOKEN_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
+
+export const isPolygonAssetNative = (address: string, chainId: number) => (address === ethers.constants.AddressZero || WRAPPED_MATIC_TOKEN_ADDRESS) && chainId === 137;
+
 /**
  * Cross-check for supported with:
  * - https://etherspot.fyi/prime-sdk/chains-supported
@@ -39,7 +44,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   // only mumbai testnet is supported on Prime SDK
   const nativeAsset = {
     chainId,
-    address: ethers.constants.AddressZero,
+    address: ethers.constants.AddressZero || (chainId === 137 && WRAPPED_MATIC_TOKEN_ADDRESS),
     name: 'Matic',
     symbol: 'MATIC',
     decimals: 18,
