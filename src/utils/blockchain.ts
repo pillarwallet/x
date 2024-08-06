@@ -32,7 +32,7 @@ export const isValidEthereumAddress = (address: string | undefined): boolean => 
 // WRAPPED MATIC & MATIC are interchangeably Polygon native assets
 export const WRAPPED_MATIC_TOKEN_ADDRESS = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
 
-export const isPolygonAssetNative = (address: string, chainId: number) => (address === ethers.constants.AddressZero || WRAPPED_MATIC_TOKEN_ADDRESS) && chainId === 137;
+export const isPolygonAssetNative = (address: string, chainId: number) => (address === ethers.constants.AddressZero || address === WRAPPED_MATIC_TOKEN_ADDRESS) && chainId === 137;
 
 /**
  * Cross-check for supported with:
