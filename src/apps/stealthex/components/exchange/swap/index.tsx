@@ -302,7 +302,7 @@ const Swap: React.FC<SwapProps> = ({
                     }}
                     loadingCurrency={sendPairs.isLoading}
                     disabled={rangesToCheck.isError}
-                    widget={false}
+                    widget={widget}
                     fixed={fixed}
                     onFixedChange={onFixedChange}
                     {...(config?.sendPairs

@@ -42,7 +42,7 @@ export const WidgetStyledExchange = styled(StyledExchange)`
   box-shadow: 0px 5px 30px rgba(196, 196, 196, 0.3);
   padding: 20px 20px 42px;
   position: relative;
-  overflow: auto;
+  overflow: visible;
   width: 90vw;
 
   @media (max-width: 680px) {
