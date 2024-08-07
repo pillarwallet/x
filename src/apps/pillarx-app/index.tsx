@@ -2,6 +2,7 @@ import { createRef, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
+import { setWalletAddresses } from '@hypelab/sdk-react';
 
 // types
 import { Projection } from '../../types/api';
@@ -77,6 +78,13 @@ const App = () => {
       window.removeEventListener('wheel', handleScrollOrWheel);
     };
   }, [dimensions.height, isFetching, isLoadingNextPage, page]);
+
+  // to track walletAddress and adverts
+  useEffect(() => {
+    if (walletAddress) {
+      setWalletAddresses([walletAddress]);
+    }
+  }, [walletAddress]);
 
   // useMemo here to reload all components and create a smoother scrolling experience
   const DisplayAllTiles = useMemo(() => {
