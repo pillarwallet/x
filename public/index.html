@@ -13,6 +13,20 @@
     <!-- Plausible tag -->
     <script defer data-domain="%REACT_APP_PLAUSIBLE_DOMAIN%" src="https://plausible.io/js/script.js"></script>
     <script defer data-domain="%REACT_APP_PLAUSIBLE_DOMAIN%" src="https://plausible.io/js/script.tagged-events.js"></script>
+    <script defer src="https://api.hypelab.com/v1/scripts/hp-sdk.js?v=0"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        HypeLab.initialize({
+          environment: 'development',
+          propertySlug: '2ced483fc3',
+          /* Optionally disable wallet detection:
+          privacy: {
+            disable_wallet_detection: true
+          }
+          */
+        });
+      });
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

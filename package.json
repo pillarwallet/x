@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.5",
     "@etherspot/prime-sdk": "^1.8.1",
     "@etherspot/transaction-kit": "^0.14.1",
+    "@hypelab/sdk-react": "^1.0.4",
     "@mui/icons-material": "^5.16.6",
     "@mui/joy": "^5.0.0-beta.22",
     "@mui/material": "^5.16.6",
