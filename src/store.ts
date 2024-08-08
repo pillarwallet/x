@@ -33,7 +33,7 @@ export const addReducer = (newReducer: { reducerPath: string; reducer: Reducer }
  * @param newMiddleware
  */
 export const addMiddleware = (newMiddleware: {
-  reducerPath: string; reducer: Reducer; middleware: Middleware 
+  reducerPath: string; reducer: Reducer; middleware: Middleware
 }) => {
   middlewareReducers[newMiddleware.reducerPath as string] = newMiddleware.reducer;
   dynamicMiddleware.addMiddleware(newMiddleware.middleware);
