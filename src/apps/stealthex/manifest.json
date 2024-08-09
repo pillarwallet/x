@@ -1,0 +1,132 @@
+{
+  "title": "Stealthex",
+  "description": "StealthEX is a registration-free, non-custodial exchange service. We support over 1500 cryptocurrencies for cross-chain, limitless swaps available worldwide. All you need to do is choose the currencies and input your receiving address – we will do the rest.",
+  "translations": {
+    "en": {
+      "exchange": "Exchange",
+      "buy": "Buy",
+      "send": "Send",
+      "get": "Get",
+      "startExchange": "Start Exchange",
+      "allCurrencies": "All currencies",
+      "popularCurrencies": "Popular currencies",
+      "fiatCurrencies": "Fiat currencies",
+      "otherCurrencies": "Other currencies",
+      "minimumError": "The minimum amount:",
+      "maximumError": "The maximum amount:",
+      "pairError": "exchange pair is not available",
+      "noFound": "No matching asset found",
+      "dropdownPlaceholder": "Type a currency or ticker",
+      "floatingTitle": "Floating exchange rate",
+      "floatingDesc": "Your amount could change depending on the market conditions.",
+      "floatingButton": "Floating",
+      "fixedTitle": "Fixed exchange rate",
+      "fixedDesc": "Your amount will remain the same irrespective of the changes on the market.",
+      "fixedButton": "Fixed",
+      "steps": ["Send to", "Confirmation", "Exchange", "Finish"],
+      "exchangeWasNotFound": "Exchange was not found",
+      "smthWentWrong": "Oops, something went wrong!",
+      "exchangeID": "Exchange ID",
+      "extraID": "Extra ID",
+      "extraIdOptionally": "{{extraId}} (optionally)",
+      "extraIdInvalid": "{{extraId}} is invalid",
+      "recipientAddress": "Recipient's address:",
+      "enterTheRecipientAddress": "Enter the recipient’s {{symbol}} address",
+      "recipientExtraId": "Recipient’s {{placeholder}}",
+      "addressIsInvalid": "Address is invalid",
+      "next": "Next",
+      "youSend": "You send",
+      "youGet": "You get",
+      "toAddress": "To address",
+      "failedCreatingExchange": "Something went wrong! Please check your address or try again a little bit later.",
+      "agreeTerms": "I've read and agree to the StealthEX <0>Terms of Service</0> and <1>Privacy Policy</1>",
+      "back": "Back",
+      "waitingStep": "Awaiting deposit",
+      "exchangingStep": "Exchanging",
+      "confirmingStep": "Confirming",
+      "sendingStep": "Sending to your wallet",
+      "refundedStep": "Your deposit has been refunded",
+      "verifyingStep": "Verifying",
+      "timeoutStep": "Deposit timeout",
+      "finishStep": "Finish",
+      "success": "Success",
+      "timeToDeposit": "Time to deposit",
+      "verifying": "Verifying",
+      "exchangeCouldNotBeCompleted": "Your exchange could not be completed for some reason.",
+      "contactSupport": "Please contact our support team for more details.",
+      "moreDetails": "More details",
+      "dontForgetAbout": "Don't forget about",
+      "inputHash": "Input hash",
+      "outputHash": "Output hash",
+      "createNewExchange": "Create a New Exchange",
+      "leaveReview": "leave a review",
+      "support": "Support",
+      "fiatModalTitle": "Special provisions to Fiat/Crypto exchange",
+      "fiatModalText": "The fiat/crypto currency exchange is fully operated by our third-party providers and governed by separated Terms of service. Please note, that we do not bear any responsibility for {{provider}} services.",
+      "fiatModalAgree": "I agree with the Terms of service and acknowledge that under no circumstances will StealthEX be held responsible or liable for any claims, damages, losses, expenses, costs or liabilities whatsoever resulting or arising from my use of {{provider}} services.",
+      "fiatModalAction": "Proceed with the exchange",
+      "notification": "Please do not refresh or close the page until your purchase is complete",
+      "refundAddress": "Refund address",
+      "refundAddressInput": "Enter {{symbol}} refund address (optional)",
+      "signatureInvalid": "Could not validate exchange signature",
+      "providerAmountBelow": "Amount is too small",
+      "providerAmountAbove": "Amount is too big",
+      "providerNotAvailable": "Not available",
+      "submitTicket": "Submit a ticket",
+      "title": "Online Crypto Exchange Platform with the Best Rates | StealthEX.io",
+      "metaDescription": "Find best crypto exchange rates: Bitcoin, Ethereum, Litecoin, XRP, Chainlink, and over {{availableCoins}} cryptocurrencies are available for instant non-custodial exchange.",
+      "heading": "Best Crypto Exchange For You",
+      "featureExchange": "Limitless, custody-free cryptocurrency exchange",
+      "featureSecure": "No registration or account needed",
+      "featurePrivacy": "Your privacy is our top concern",
+      "howToUse": "How to use StealthEX",
+      "howTo": [
+        {
+          "exchange": {
+            "title": "Pick a Crypto",
+            "content": "Choose the exchange pair"
+          },
+          "buy": {
+            "title": "Pick Currencies",
+            "content": "Choose the fiat currency you will use and the crypto to receive"
+          }
+        },
+        {
+          "exchange": {
+            "title": "Enter Wallet Address",
+            "content": "Provide the wallet address for us to send exchanged funds"
+          },
+          "buy": {
+            "title": "Enter Wallet Address",
+            "content": "Provide the wallet address for us to send exchanged funds"
+          }
+        },
+        {
+          "exchange": {
+            "title": "Send the Deposit",
+            "content": "Send in the amount of crypto needed for exchange"
+          },
+          "buy": {
+            "title": "Get Verified",
+            "content": "Pass the necessary check if it’s the first time you’re buying crypto"
+          }
+        },
+        {
+          "exchange": {
+            "title": "Receive Funds",
+            "content": "Get exchanged cryptocurrency"
+          },
+          "buy": {
+            "title": "Buy Cryptocurrency",
+            "content": "Transfer fiat money to the service provider and receive crypto"
+          }
+        }
+      ],
+      "moreInfo": "More info",
+      "ourBlog": "Our Blog",
+      "explore": "Explore more",
+      "exchangeCryptoOnTheGo": "Exchange crypto on the go with StealthEX Telegram Bot",
+      "getInTelegram": "Get in telegram"
+    }
+  }
+}
