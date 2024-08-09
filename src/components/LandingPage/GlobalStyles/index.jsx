@@ -206,13 +206,14 @@ const GlobalStyles = createGlobalStyle`
     background: rgba(27, 27, 27, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 10px;
-    padding: calc(var(--padding) * 1) calc(var(--padding) * 2);
+    padding: calc(var(--padding) * 0.75) calc(var(--padding) * 2);
     transition: all ease 0.3s;
+    border: solid 1px #6847A0;
   }
   
   .header__announcement__wrapper > a:hover {
     background: var(--white);
-    color: var(--light-blue);
+    color: var(--dark-blue);
   }
 
   @media only screen and (max-width: 1024px) {
@@ -313,14 +314,18 @@ const GlobalStyles = createGlobalStyle`
     color: var(--white);
     transition: all 0.3s ease 0s;
     text-decoration: none;
+    position: relative;
   }
 
-  #menu li.active a {
-    opacity: 0.75;
-  }
-
-  #menu li a.active {
-    opacity: 0.75;
+  #menu li a.active:after {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    right: -1rem;
+    bottom: -1rem;
+    height: 1px;
+    background: rgb(59,52,86);
+    background: linear-gradient(90deg, rgba(59,52,86,1) 0%, rgba(200,198,204,1) 35%, rgba(200,198,204,1) 65%, rgba(59,52,86,1) 100%);
   }
 
   #menu li a:hover {

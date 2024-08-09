@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 
 import '../styles/landing/tailwind.css';
@@ -11,28 +9,6 @@ import { Form } from '../components/LandingPage';
 import { Popup} from '../components/LandingPage/Popup';
 
 export default function LandingPage() {
-
-  // Scroll to Build Section
-  // const developersRef = useRef(null);
-  // const location = useLocation();
-
-  // useEffect(() => {
-  //   const scrollToDevelopers = () => {
-  //     if (location.hash === '#developers' && developersRef.current) {
-  //       const topOffset = developersRef.current.offsetTop;
-  //       window.scrollTo({
-  //         top: topOffset,
-  //         behavior: 'smooth'
-  //       });
-  //     }
-  //   };
-
-  //   // Using a slight delay to ensure the element is in the DOM
-  //   const timer = setTimeout(scrollToDevelopers, 1000);
-
-  //   // Cleanup timer if the component unmounts
-  //   return () => clearTimeout(timer);
-  // }, [location]);
 
   return (
     <>
@@ -130,7 +106,7 @@ export default function LandingPage() {
       </section>
 
       {/* Build Section */}
-      <section className='home_build' id='developers' ref={developersRef}>
+      <section className='home_build'>
         <div className='container'>
           <div className='home_build__wrapper'>
             <div className='home_build__content'>

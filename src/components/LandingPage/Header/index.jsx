@@ -29,7 +29,7 @@ const Header = () => {
           <nav className= {showMobileMenu ? 'header__menu header__menu--show' : 'header__menu'}>
             <ul id='menu' onClick={() => setShowMobileMenu(!showMobileMenu)}>
               <li>
-                <NavLink exact reloadDocument to='/#developers' activeClassName='active'>For Developers</NavLink>
+                <NavLink exact to='/developers' activeClassName='active'>For Developers</NavLink>
               </li>
               <li>
                 <NavLink reloadDocument to='/waitlist' activeClassName='active'>Testing Campaign</NavLink>
