@@ -151,7 +151,8 @@ const GlobalStyles = createGlobalStyle`
     }
   }
   
-  /* Style */
+  /* Header */
+
   .header {
     position: relative;
     z-index: 100;
@@ -412,8 +413,28 @@ const GlobalStyles = createGlobalStyle`
       display: flex;
     }
   }
+
+  /* Footer */
+
+  .footer {
+    position: relative;
+  }
   
+  .footer__wrapper {
+    padding: calc(var(--padding) * 10) 0 calc(var(--padding) * 4) 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .footer__wrapper {
+      padding: calc(var(--padding) * 4) 0;
+      justify-content: center;
+    }
+  }
   
+  /* Home Page Styles */
+
   .home_hero {
     background-image: url("/landing-images/home-hero-bg.svg");
     background-size: contain;
@@ -799,37 +820,6 @@ const GlobalStyles = createGlobalStyle`
       gap: 2rem;
     }
   }
-
-  /* Waitlist Page Style */
-  
-  .home_signup__content__form--waitlist {
-    background: #121116;
-    max-width: 55rem;
-  }
-  
-  .home_signup__content__form--waitlist .gw-text-2xl {
-    font-size: 2.4rem !important;
-    margin-bottom: 2rem !important;
-    font-family: "Neue Haas Grotesk Display Pro";
-  }
-  
-  .home_signup__content__form--waitlist .gw-mt-2 span {
-    display: none !important;
-  }
-  
-  .home_signup__content__form--waitlist input.gw-w-full, .home_signup__content__form--waitlist button.gw-w-full {
-    font-size: 1.6rem !important;
-  }
-  
-  .home_signup__content__form--waitlist .gw-text-sm {
-    font-size: 1.2rem !important;
-  }
-  
-  .home_signup__content__form--waitlist .gw-text-xs {
-    font-size: 1.2rem !important;
-  }
-
-  /* Home Page Style */
   
   .home_signup__content__form__wrapper {
     width: 55%;
@@ -1160,6 +1150,50 @@ const GlobalStyles = createGlobalStyle`
   .popup__form .gw-text-xs {
     font-size: 1.2rem !important;
   }
+
+
+  /* Waitlist Page Styles */
+
+  .home_signup--waitlist .home_signup__wrapper {
+    padding: calc(var(--padding) * 15) 0;
+    position: relative;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_signup--waitlist .home_signup__wrapper {
+      padding: calc(var(--padding) * 18) 0 calc(var(--padding) * 5) 0 ;
+      position: relative;
+    }
+  }
+  
+  .home_signup__content__form--waitlist {
+    background: #121116;
+    max-width: 55rem;
+  }
+  
+  .home_signup__content__form--waitlist .gw-text-2xl {
+    font-size: 2.4rem !important;
+    margin-bottom: 2rem !important;
+    font-family: "Neue Haas Grotesk Display Pro";
+  }
+  
+  .home_signup__content__form--waitlist .gw-mt-2 span {
+    display: none !important;
+  }
+  
+  .home_signup__content__form--waitlist input.gw-w-full, .home_signup__content__form--waitlist button.gw-w-full {
+    font-size: 1.6rem !important;
+  }
+  
+  .home_signup__content__form--waitlist .gw-text-sm {
+    font-size: 1.2rem !important;
+  }
+  
+  .home_signup__content__form--waitlist .gw-text-xs {
+    font-size: 1.2rem !important;
+  }
+
+
 `;
 
 export { GlobalStyles };

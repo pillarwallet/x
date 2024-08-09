@@ -55,7 +55,7 @@ const Waitlist = () => {
       <Header />
 
       {/* Signup Section */}
-      <section className='home_signup'>
+      <section className='home_signup home_signup--waitlist'>
         <div className='container'>
           <div className='home_signup__wrapper'>
             <div className='home_signup__content'>

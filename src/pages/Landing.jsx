@@ -13,26 +13,26 @@ import { Popup} from '../components/LandingPage/Popup';
 export default function LandingPage() {
 
   // Scroll to Build Section
-  const developersRef = useRef(null);
-  const location = useLocation();
+  // const developersRef = useRef(null);
+  // const location = useLocation();
 
-  useEffect(() => {
-    const scrollToDevelopers = () => {
-      if (location.hash === '#developers' && developersRef.current) {
-        const topOffset = developersRef.current.offsetTop;
-        window.scrollTo({
-          top: topOffset,
-          behavior: 'smooth'
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const scrollToDevelopers = () => {
+  //     if (location.hash === '#developers' && developersRef.current) {
+  //       const topOffset = developersRef.current.offsetTop;
+  //       window.scrollTo({
+  //         top: topOffset,
+  //         behavior: 'smooth'
+  //       });
+  //     }
+  //   };
 
-    // Using a slight delay to ensure the element is in the DOM
-    const timer = setTimeout(scrollToDevelopers, 1000);
+  //   // Using a slight delay to ensure the element is in the DOM
+  //   const timer = setTimeout(scrollToDevelopers, 1000);
 
-    // Cleanup timer if the component unmounts
-    return () => clearTimeout(timer);
-  }, [location]);
+  //   // Cleanup timer if the component unmounts
+  //   return () => clearTimeout(timer);
+  // }, [location]);
 
   return (
     <>
