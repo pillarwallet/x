@@ -4,7 +4,11 @@ import { createGlobalStyle } from 'styled-components';
 import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf';
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
+import slickCarouselCSS from 'slick-carousel/slick/slick.css';
+import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
+
 const GlobalStyles = createGlobalStyle`
+
   @font-face {
     font-family: Neue Haas Grotesk Display Pro;
     font-weight: 400;
@@ -16,6 +20,9 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 700;
     src: url(${neueBoldFont}) format("truetype");
   }
+
+  ${slickCarouselCSS};
+  ${slickCarouselThemeCSS};
   
   :root {
     --white: #ffffff;
@@ -237,6 +244,12 @@ const GlobalStyles = createGlobalStyle`
     background: rgba(94, 0, 255, 0.5);
     backdrop-filter: blur(10px);
     z-index: 101;
+  }
+
+  @media only screen and (max-width: 1024px) {
+    .header__announcement {
+      background: rgba(94, 0, 255, 0.9);
+    }
   }
   
   .header__announcement__wrapper {
@@ -1256,9 +1269,8 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1.2rem !important;
   }
 
-
   /* Developers Page Styles */
-
+  
   .developers_hero {
     padding: calc(var(--padding) * 10) 0 0 0;
     position: relative;
@@ -1650,9 +1662,9 @@ const GlobalStyles = createGlobalStyle`
 
   @media only screen and (max-width: 1079px) {
     .developers_module__wrapper {
-      padding: calc(var(--padding) * 10) 0;
+      padding: 0 0 calc(var(--padding) * 10) 0;
       position: relative;
-      flex-direction: column;
+      flex-direction: column-reverse;
       gap: 6rem
     }
   }
@@ -1661,13 +1673,13 @@ const GlobalStyles = createGlobalStyle`
     content: "";
     position: absolute;
     left: 0;
-    top: 15%;
-    bottom: 15%;
+    top: 0;
+    bottom: 20%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    background: #4327B1; 
+    background: #4327B1;
     filter: blur(150px);
-    transform: translateX(10%);
+    transform: translateX(6%);
   }
 
   @media only screen and (max-width: 1079px) {
@@ -1683,9 +1695,17 @@ const GlobalStyles = createGlobalStyle`
     padding: 0 5rem;
   }
 
+  @media only screen and (max-width: 1079px) {
+    .developers_module__list {
+      width: 100%;
+      padding: 0;
+      max-width: 59rem;
+    }
+  }
+
   .developers_module__list__wrapper {
-    padding: 4rem 0;
-    border-radius: calc(var(--border-radius)* 4);
+    padding: 3.6rem 0;
+    border-radius: calc(var(--border-radius) * 4);
     background: rgba(94, 0, 255, 0.2);
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5); 
     backdrop-filter: blur(5px);
@@ -1696,10 +1716,18 @@ const GlobalStyles = createGlobalStyle`
     gap: 4rem;
   }
 
-  .developers_module__list__wrapper p {
+  @media only screen and (max-width: 767px) {
+    .developers_module__list__wrapper {
+      border-radius: calc(var(--border-radius) * 3);
+    }
+  }
+  
+
+  .developers_module__list__wrapper > p {
     font-size: 1.8rem;
-    max-width: 30ch;
-    padding: 2rem 0;
+    max-width: 34ch;
+    padding: 0 2rem;
+    margin-top: 2rem;
   }
 
   @media only screen and (max-width: 1079px) {
@@ -1707,6 +1735,109 @@ const GlobalStyles = createGlobalStyle`
       font-size: 1.6rem;
       max-width: 45ch;
     }
+  }
+
+  .developers_module__list__carousel {
+    width: 100%;
+    margin: auto;
+  }
+
+  .developers_module__list__carousel__slide {
+    padding: 2rem;
+    border-radius: 1rem;
+    position: relative;
+    transition: transform 0.5s;
+    box-sizing: border-box;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .developers_module__list__carousel__slide {
+      padding: 1.5rem;
+    }
+  }
+
+  .developers_module__list__carousel__slide__content {
+    background: rgba(94, 0, 255, 0.2); 
+    border-radius: calc(var(--border-radius) * 2.4);
+    text-align: left;
+    padding: 3rem;
+    min-height: 26rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .developers_module__list__carousel__slide__content {
+      padding: 2rem;
+      border-radius: calc(var(--border-radius) * 1.6);
+    }
+  }
+
+  .developers_module__list__carousel__slide__content--last {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(94,0,255,1) 0%, rgba(145,90,239,1) 100%);
+  }
+
+  .developers_module__list__carousel__slide__content h3 {
+    font-size: 3.5rem;
+    line-height: 0.9;
+  }
+
+  @media only screen and (max-width: 1079px) {
+    .developers_module__list__carousel__slide__content h3 {
+      font-size: 2.5rem;
+    }
+  }
+  
+  .developers_module__list__carousel__slide__content p {
+    font-size: 1.6rem;
+    opacity: 0.6;
+    max-width: 31ch;
+    transition: all ease 0.5s;
+    margin-bottom: 0.5rem;
+  }
+
+  .developers_module__list__carousel__slide__content:hover p {
+    opacity: 1;
+  }
+  
+  @media only screen and (max-width: 1079px) {
+    .developers_module__list__carousel__slide__content p {
+      font-size: 1.4rem;
+    }
+  }
+
+  .developers_module__list__carousel__slide__content img {
+    margin-left: 90%;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .developers_module__list__carousel__slide__content img {
+      margin-left: 80%;
+      margin-top: 2rem;
+    }
+
+    .developers_module__list__carousel__slide__content--last img{
+      height: 50px;
+    }
+  }
+
+  .slick-center .developers_module__list__carousel__slide {
+    transform: scale(1.1);
+  }
+
+  .developers_module__list__carousel .slick-dots li {
+    width: 15px;
+    height: 15px;
+    margin: 0 2px;
+  }
+
+  .developers_module__list__carousel .slick-dots li button:before {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .developers_module__list__carousel .slick-dots li.slick-active button:before {
+    color: var(--white);
   }
 
   .developers_module__detail {
@@ -2178,6 +2309,7 @@ const GlobalStyles = createGlobalStyle`
       flex-direction: column;
     }
   }
+
 
 
 
