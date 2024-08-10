@@ -16,28 +16,28 @@ const Header = () => {
         <div className='header__announcement'>
           <div className='header__announcement__wrapper'>
             <p>🚀 Secure Your Spot in the PillarX Testing Campaign! <a href='/waitlist'>Join the Waitlist</a></p>
-            <a href='/waitlist' className='plausible-event-name=Banner+Click'>Join the Waitlist</a>
+            <a href='/waitlist' className='cta cta--secondary cta--header plausible-event-name=Banner+Click'><span>Join the Waitlist</span></a>
           </div>
         </div>
 
         <div className='container'>
           
           <Link reloadDocument to='/' className='header__logo'>
-            <img src='/landing-images/pillarXLogo.png' />
+            <img src='/landing-images/pillarXLogo.png'/>
           </Link>
           
           <nav className= {showMobileMenu ? 'header__menu header__menu--show' : 'header__menu'}>
             <ul id='menu' onClick={() => setShowMobileMenu(!showMobileMenu)}>
               <li>
-                <NavLink exact to='/developers' activeClassName='active'>For Developers</NavLink>
+                <NavLink to='/developers' className={({ isActive }) => (isActive ? 'active' : '')}>For Developers</NavLink>
               </li>
               <li>
-                <NavLink reloadDocument to='/waitlist' activeClassName='active'>Testing Campaign</NavLink>
+                <NavLink reloadDocument to='/waitlist' className={({ isActive }) => (isActive ? 'active' : '')}>Testing Campaign</NavLink>
               </li>
             </ul>
             
             <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer' className='header__social' onClick={() => setShowMobileMenu(!showMobileMenu)}>
-              <img src='/landing-images/home-x.svg'></img>
+              <img src='/landing-images/home-x.svg'/>
             </a>
           </nav>
 

@@ -7,7 +7,7 @@ const Footer = () => {
         <div className='container'>
             <div className='footer__wrapper'>
             <a href='https://twitter.com/PX_Web3' target='_blank' rel='noreferrer'>
-                <img src='/landing-images/home-x.svg'></img>
+                <img src='/landing-images/home-x.svg'/>
             </a>
             </div>
         </div>

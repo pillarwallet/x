@@ -83,7 +83,7 @@ const Waitlist = () => {
               </div>
             </div>
             <div className='home_build__logo'>
-              <img src='/landing-images/home-logo-px.svg'></img>
+              <img src='/landing-images/home-logo-px.svg'/>
             </div>
           </div>
         </div>

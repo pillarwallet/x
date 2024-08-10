@@ -25,7 +25,7 @@ export default function LandingPage() {
             <div className='home_hero__content'>
               <h1>Introducing PillarX</h1>
               <p>Advancing the way you connect with Web3</p>
-              <img src='/landing-images/home-hero.png'></img>
+              <img src='/landing-images/home-hero.png'/>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className='home_build__logo'>
-              <img src='/landing-images/home-logo-px.svg'></img>
+              <img src='/landing-images/home-logo-px.svg'/>
             </div>
           </div>
         </div>
