@@ -41,9 +41,10 @@ export interface NftAssetSelectOption extends SelectOption {
 
 export type AssetSelectOption = TokenAssetSelectOption | NftAssetSelectOption;
 
-const AssetSelect = ({ defaultSelectedId, onChange }: {
+const AssetSelect = ({ defaultSelectedId, onChange, onClose }: {
   defaultSelectedId?: string,
   onChange: (option: AssetSelectOption) => void,
+  onClose: () => void,
 }) => {
   const contextNfts = useContext(AccountNftsContext)
   const contextBalances = useContext(AccountBalancesContext)
@@ -153,6 +154,7 @@ const AssetSelect = ({ defaultSelectedId, onChange }: {
         // reset to chain select
         setChainId(undefined);
         setIsAssetSelected(false);
+        onClose();
       }}
     >
       {!chainId && (
