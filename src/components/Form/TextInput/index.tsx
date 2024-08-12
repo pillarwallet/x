@@ -7,8 +7,7 @@ const TextInput = ({ onValueChange, rightAddon, ...props }: {
 } & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
     <Wrapper>
-      <StyledTextInput
-        type="text"
+      <StyledInput
         onChange={(e) => onValueChange(e?.target?.value ?? '')}
         {...props}
       />
@@ -32,7 +31,7 @@ const Wrapper = styled.div`
   gap: 10px;
 `;
 
-const StyledTextInput = styled.input`
+const StyledInput = styled.input`
   background: transparent;
   color: ${({ theme }) => theme.color.text.input};
   border: none;
