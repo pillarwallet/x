@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 import Slider from 'react-slick';
 
@@ -6,6 +7,9 @@ import { Header } from '../components/LandingPage/Header';
 import { Footer } from '../components/LandingPage/Footer';
 
 const Developers = () => {
+
+  // Slider Ref for Arrows
+  const slider = useRef(null);
 
   // Slider Settings
   const sliderSettings = {
@@ -66,7 +70,7 @@ const Developers = () => {
               <p>With PillarX, integrating account abstraction features into your dApp is as simple as adding a few lines of code. Get up and running quickly with&nbsp;our support.</p>
               <div className='developers_signup__content__detail'>
                 <p>Sing up for the PillarX Testing Campaign&nbsp;for dApps</p>
-                <a href='/waitlist' className='cta'><span>Sign up</span></a>
+                <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='cta'><span>Sign up</span></a>
               </div>
             </div>
           </div>
@@ -105,7 +109,7 @@ const Developers = () => {
               <div className='developers_module__list__wrapper'>
                 {/* Slider Starts */}
                 <div className='developers_module__list__carousel'>
-                  <Slider {...sliderSettings}>
+                  <Slider ref={slider} {...sliderSettings}>
                       <div className='developers_module__list__carousel__slide'>
                           <div className='developers_module__list__carousel__slide__content'>
                               <h3>Session Key Module</h3>
@@ -128,12 +132,16 @@ const Developers = () => {
                           </div>
                       </div>
                       <div className='developers_module__list__carousel__slide'>
-                          <div className='developers_module__list__carousel__slide__content developers_module__list__carousel__slide__content--last'>
+                          <a href='https://erc7579.com/modules' target='_blank' rel='noreferrer' className='developers_module__list__carousel__slide__content developers_module__list__carousel__slide__content--last'>
                               <h3>Explore More<br/>Modules</h3>
                               <img src='/landing-images/developers-module-icon.svg'/>
-                          </div>
+                          </a>
                       </div>
                   </Slider>
+                  <div className='developers_module__list__carousel__nav'>
+                    <button onClick={() => slider?.current?.slickPrev()}>❮</button>
+                    <button onClick={() => slider?.current?.slickNext()}>❯</button>
+                  </div>
                 </div>
                 {/* Slider Ends */}
                 <p>By integrating these and other ERC-7579 modules, you can create feature-rich dApps that are highly responsive to user needs.</p>
@@ -236,7 +244,7 @@ const Developers = () => {
             <img src='/landing-images/home-logo-px.svg'/>
             <p>Join the growing community of developers who trust PillarX to streamline their Account Abstraction processes and maximize their revenue potential. Start integrating today and experience the difference.</p>
             <div className='developers_join__cta'>
-              <a href='/waitlist' className='cta'><span>Register for Testing&nbsp;Campaign</span></a>
+              <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='cta'><span>Register for Testing&nbsp;Campaign</span></a>
               <a href='https://discord.com/invite/cke6aYnFjG' target='_blank' rel='noreferrer' className='cta cta--secondary'><span>Join PillarX Developer Group</span></a>
             </div>
           </div>

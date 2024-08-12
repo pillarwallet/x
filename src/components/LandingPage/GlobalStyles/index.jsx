@@ -1740,6 +1740,7 @@ const GlobalStyles = createGlobalStyle`
   .developers_module__list__carousel {
     width: 100%;
     margin: auto;
+    position: relative;
   }
 
   .developers_module__list__carousel__slide {
@@ -1838,6 +1839,39 @@ const GlobalStyles = createGlobalStyle`
 
   .developers_module__list__carousel .slick-dots li.slick-active button:before {
     color: var(--white);
+  }
+
+  .developers_module__list__carousel__nav {
+    position: absolute;
+    top: 50%;
+    left: 3.5rem;
+    right: 3.5rem;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .developers_module__list__carousel__nav button {
+    width: 3rem;
+    background: rgba(94, 0, 255, 0.2);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    font-size: 2rem;
+    transition: all ease 0.5s;
+    pointer-events: all;
+  }
+
+  .developers_module__list__carousel__nav button:hover {
+    background: rgba(94, 0, 255, 0.8);
+  }
+
+  @media only screen and (max-width: 767px) {
+    .developers_module__list__carousel__nav {
+      display: none;
+    }
   }
 
   .developers_module__detail {
@@ -1959,7 +1993,7 @@ const GlobalStyles = createGlobalStyle`
   @media only screen and (max-width: 1079px) {
     .developers_benefits__list {
       width: calc(100% + 3rem);
-      margin: 0 -1.5rem;
+      margin: 0 -1.5rem 3rem -1.5rem;
       padding-right: 0;
       text-align: center;
     }
