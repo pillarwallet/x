@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import mime from 'mime';
 
@@ -17,23 +18,28 @@ type EditorialTileProps = {
 };
 
 const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
+    const [isBrokenMedia, setIsBrokenMedia] = useState<boolean>(false);
     const { meta } = data || {};
     const editorialDisplay = meta?.display as EditorialDisplay | undefined;
 
+    const handleMediaError = () => {
+        setIsBrokenMedia(true);
+    };
+
     const DisplayMedia = () => {
-        if (editorialDisplay?.media) {
+        if (editorialDisplay?.media && !isBrokenMedia) {
             const mimeType = mime.getType(editorialDisplay.media);
 
             if (mimeType?.includes('image')) {
                 return (
-                    <img src={editorialDisplay.media} className='rounded-lg object-cover object-center desktop:h-full tablet:h-full mobile:w-full' data-testid='editorial-tile-image' />
+                    <img src={editorialDisplay.media} onError={handleMediaError} className='rounded-lg object-cover object-center desktop:h-full tablet:h-full mobile:w-full' data-testid='editorial-tile-image' />
                 );
             }
 
             if (mimeType?.includes('video')) {
                 return (
                     <video className='rounded-lg w-full' preload='none' autoPlay loop muted controls playsInline data-testid='editorial-tile-video'>
-                        <source src={editorialDisplay.media} type={mimeType} />
+                        <source src={editorialDisplay.media} onError={handleMediaError} type={mimeType} />
                     </video>
                 );
             }
@@ -41,7 +47,7 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
             if (mimeType?.includes('audio')) {
                 return (
                     <audio className='w-full' preload='none' controls data-testid='editorial-tile-audio'>
-                        <source src={editorialDisplay.media} type={mimeType} />
+                        <source src={editorialDisplay.media} onError={handleMediaError} type={mimeType} />
                     </audio>
                 );
             }
@@ -49,6 +55,16 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
 
         return null;
     };
+
+    // useEffect to avoid error of changing state in component
+    useEffect(() => {
+        const displayMediaComponent = DisplayMedia();
+        if (!displayMediaComponent) {
+            setIsBrokenMedia(true);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editorialDisplay]);
+
 
     const editorialDate = editorialDisplay?.timestamp && new Date(editorialDisplay.timestamp * 1000);
 
@@ -79,18 +95,18 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
         <TileContainer id='editorial-tile' className='flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]'>
             <a href={editorialDisplay?.href} target="_blank" rel="noreferrer">
                 <div className='flex mobile:flex-col bg-medium_grey rounded-2xl p-2 gap-4'>
-                    {editorialDisplay?.media && (
+                    {(editorialDisplay?.media && !isBrokenMedia) && (
                         <div className='flex items-center justify-center overflow-hidden desktop:basis-2/5 tablet:basis-2/5 mobile:basis-full mobile:w-full'>
                             <DisplayMedia />
                         </div>
                     )}
-                    <div className='flex flex-col justify-between w-full desktop:basis-3/5 tablet:basis-3/5 mobile:basis-full desktop:px-4 tablet:px-4 mobile:px-0'>
+                    <div className={`flex flex-col justify-between w-full ${isBrokenMedia ? 'basis-full' : 'desktop:basis-3/5 tablet:basis-3/5 mobile:basis-full'} desktop:px-4 tablet:px-4 mobile:px-0`}>
                         <div className='flex flex-col gap-2 desktop:mt-14 tablet:mt-8 mobile:mt-0'>
                             {editorialDisplay?.tags?.length && editorialDisplay.tags.map((tag, index) => (
                                 <EditorialTag key={index} color={tag.color} icon={tag.icon} label={tag.label} />
                             ))}
                             {editorialDisplay?.title && (
-                                <h1 className='text-[20px] leading-[30px] desktop:text-[32px] desktop:leading[48px]'>
+                                <h1 className='text-[20px] desktop:text-[32px]'>
                                     {editorialDisplay.title}
                                 </h1>
                             )}

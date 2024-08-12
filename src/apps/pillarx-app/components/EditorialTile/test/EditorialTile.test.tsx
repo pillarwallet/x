@@ -155,4 +155,26 @@ describe('<EditorialTile />', () => {
 
         expect(screen.queryByText('Youtube')).toBeNull();
     });
+
+    it('handles invalid media data', () => {
+        const invalidMediaData = {
+            ...mockDataEditorial,
+            meta: {
+                ...mockDataEditorial.meta,
+                display: {
+                    ...mockDataEditorial.meta.display,
+                    media: 'invalid-url'
+                }
+            }
+        };
+
+        render(<EditorialTile data={invalidMediaData} isDataLoading={false} />);
+        const img = screen.queryByTestId('editorial-tile-image');
+        const video = screen.queryByTestId('editorial-tile-video');
+        const audio = screen.queryByTestId('editorial-tile-audio');
+
+        expect(img).not.toBeInTheDocument();
+        expect(video).not.toBeInTheDocument();
+        expect(audio).not.toBeInTheDocument();
+    });
 });
