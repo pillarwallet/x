@@ -24,6 +24,11 @@ const useOffer = (chainId: number) => {
     }: SwapType): Promise<SwapOffer | undefined> => {
         let selectedOffer: SwapOffer;
 
+        // when same token same chain id, it will automatically shows an empty offer
+        if ((fromChainId === toChainId) && (fromTokenAddress === toTokenAddress)) {
+            return {} as SwapOffer;
+        }
+
         // uses getAdvanceRoutesLifi (Lifi) - different chains, different tokens
         if (fromChainId !== toChainId) {
             try {
