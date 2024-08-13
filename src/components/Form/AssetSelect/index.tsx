@@ -208,6 +208,7 @@ const AssetSelect = ({ defaultSelectedId, onChange, onClose }: {
           )}
           <Select
             options={showNfts ? nftAssetsOptions : availableAssetsInWallet}
+            type={showNfts ? 'nft' : 'token'}
             defaultSelectedId={defaultSelectedId}
             hideValue={showNfts}
             onChange={(option) => {

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { PiCaretDown, PiCaretUp } from 'react-icons/pi';
+import { useTranslation } from 'react-i18next';
 
 // components
 import SkeletonLoader from '../../SkeletonLoader';
+import Alert from '../../Text/Alert';
 
 export interface SelectOption {
   id: string;
@@ -52,13 +54,15 @@ const ListItem = ({
   )
 }
 
-export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions, hideValue }: {
+export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions, hideValue, type }: {
   options: SelectOption[];
   defaultSelectedId?: string;
   onChange: (option: SelectOption) => void;
   isLoadingOptions?: boolean;
   hideValue?: boolean;
+  type?: 'token' | 'nft';
 }) => {
+  const [t] = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [selectedId, setSelectedId] = useState(defaultSelectedId);
 
@@ -104,6 +108,10 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions,
           hideValue={hideValue}
         />
       ))}
+      {!options.length && 
+      (
+        <Alert>{type === 'token' ? t`error.noTokensFound` : t`error.noNftsFound`}</Alert>
+      )}
     </div>
   );
 }
