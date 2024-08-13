@@ -33,6 +33,10 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
   const [activeMenuItem, setActiveMenuItem] = React.useState<BottomMenuItem | null>(null);
   const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
 
+  if (showBatchSendModal && activeMenuItem?.type !== 'send') {
+    setShowBatchSendModal(false);
+  }
+
   const hide = () => setActiveMenuItem(null);
 
   const activeIndex = useMemo(() => {
