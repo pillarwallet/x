@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
@@ -24,7 +24,13 @@ const FormTabSelect = ({
   transparent?: boolean;
 }) => {
   const { showBatchSendModal } = useBottomMenuModal();
-  const [selected, setSelected] = React.useState(showBatchSendModal ? 1 : defaultSelectedIndex);
+  const [selected, setSelected] = React.useState(defaultSelectedIndex);
+
+  useEffect(() => {
+    if (showBatchSendModal) {
+      setSelected(1);
+    }
+  }, [showBatchSendModal])
 
   const onTabItemClick = (index: number) => {
     setSelected(index);
