@@ -429,14 +429,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 {(isZeroAddress(selectedAsset.asset.address) || isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTransaction
                     to={recipient}
-                    value={assetValueToSend}
+                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
                   />
                 )}
                 {(!isZeroAddress(selectedAsset.asset.address) && !isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTokenTransferTransaction
                     receiverAddress={recipient}
                     tokenAddress={selectedAsset.asset.address}
-                    value={assetValueToSend}
+                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
                     tokenDecimals={selectedAsset.asset.decimals}
                   />
                 )}
