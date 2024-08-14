@@ -18,6 +18,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
         <img
           className="rounded-lg object-cover object-center desktop:h-full tablet:h-full mobile:w-full"
           data-testid="editorial-tile-image"
+          onError={[Function]}
           src="https://example.com/media-image.png"
         />
       </div>
@@ -94,7 +95,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
             </div>
           </div>
           <h1
-            className="text-[20px] leading-[30px] desktop:text-[32px] desktop:leading[48px]"
+            className="text-[20px] desktop:text-[32px]"
           >
             Editorial title
           </h1>

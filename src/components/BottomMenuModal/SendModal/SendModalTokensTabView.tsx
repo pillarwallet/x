@@ -281,6 +281,24 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setPasteClicked(true);
   });
 
+  const handleTokenValueChange = (value: string) => {
+    // max 6 decimals if no decimals are specified
+    const tokenDecimals = selectedAsset?.type === 'token' ? selectedAsset.asset.decimals : 6;
+  
+    // regex pattern to limit the number of decimals to the max token decimals
+    const pattern = `^\\d*\\.?\\d{0,${tokenDecimals}}`;
+    const regex = new RegExp(pattern);
+  
+    const match = value.match(regex);
+    setAmount(match ? match[0] : '');
+  };
+
+  const handleCloseTokenSelect = () => {
+    setSelectedAsset(undefined);
+    setAmount('');
+    setRecipient('');
+  }
+
   if (payload) {
     return (
       <>
@@ -332,15 +350,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     <>
       <FormGroup>
         <Label>{t`label.selectAsset`}</Label>
-        <AssetSelect onChange={setSelectedAsset} />
+        <AssetSelect onClose={handleCloseTokenSelect} onChange={setSelectedAsset} />
       </FormGroup>
       {selectedAsset?.type === 'token' && (
         <FormGroup>
           <Label>{t`label.enterAmount`}</Label>
           <AmountInputRow id='enter-amount-input-send-modal'>
             <TextInput
+              type="number"
               value={amount}
-              onValueChange={setAmount}
+              onValueChange={handleTokenValueChange}
               disabled={!selectedAsset}
               placeholder="0.00"
               rightAddon={
@@ -378,6 +397,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           <Label>{t`label.sendTo`}</Label>
           <TextInput
             id='send-to-address-input-send-modal'
+            type="text"
             value={recipient}
             onValueChange={setRecipient}
             placeholder={t`placeholder.enterAddress`}
