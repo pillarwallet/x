@@ -8,7 +8,7 @@ import { Footer } from '../components/LandingPage/Footer';
 
 const Developers = () => {
 
-  // Slider Ref for Arrows
+  // Slider Ref
   const slider = useRef(null);
 
   // Slider Settings
@@ -245,7 +245,7 @@ const Developers = () => {
             <p>Join the growing community of developers who trust PillarX to streamline their Account Abstraction processes and maximize their revenue potential. Start integrating today and experience the difference.</p>
             <div className='developers_join__cta'>
               <a href='https://form.pillarx.app/dapp-application/' target='_blank' rel='noreferrer' className='cta'><span>Register for Testing&nbsp;Campaign</span></a>
-              <a href='https://discord.com/invite/cke6aYnFjG' target='_blank' rel='noreferrer' className='cta cta--secondary'><span>Join PillarX Developer Group</span></a>
+              <a href='https://t.me/pillarxdevelopers' target='_blank' rel='noreferrer' className='cta cta--secondary'><span>Join PillarX Developer Group</span></a>
             </div>
           </div>
         </div>
