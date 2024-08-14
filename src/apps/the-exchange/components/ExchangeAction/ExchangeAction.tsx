@@ -23,6 +23,7 @@ import { CircularProgress } from '@mui/material';
 // images
 import ArrowRight from '../../images/arrow-right.png';
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { isApproveTransaction } from '../../../../utils/blockchain';
 
 const ExchangeAction = () => {
     const bestOffer = useAppSelector((state) => state.swap.bestOffer as SwapOffer);
@@ -41,12 +42,13 @@ const ExchangeAction = () => {
         setErrorMessage('');
     }, [bestOffer])
 
-    const getTransactionTitle = (index: number, length: number): string => {
-        if (length > 2) {
-            return `Swap assets ${index + 1}/${length}`;
+    const getTransactionTitle = (index: number, length: number, callData: string): string => {
+        const transactionApprove = isApproveTransaction(callData);
+        if (length > 1 && transactionApprove) {
+            return `Swap assets (approve) ${index + 1}/${length}`;
         }
-        if (length === 2) {
-            return index === 0 ? 'Swap assets approve' : 'Swap assets';
+        if (length > 1 && !transactionApprove) {
+            return `Swap assets ${index + 1}/${length}`;
         }
         return 'Swap assets';
     };
@@ -71,7 +73,7 @@ const ExchangeAction = () => {
             if ('receiveAmount' in bestOffer.offer) {
                 for (let i = 0; i < bestOffer.offer.transactions.length; ++i) { 
                     addToBatch({
-                        title: getTransactionTitle(i, bestOffer.offer.transactions.length),
+                        title: getTransactionTitle(i, bestOffer.offer.transactions.length, bestOffer.offer.transactions[i].data),
                         description: `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` || '',
                         chainId: swapToken?.chainId || 0,
                         to: bestOffer.offer.transactions[i].to,
@@ -89,7 +91,7 @@ const ExchangeAction = () => {
                 if (stepTransactions) {
                     for (let i = 0; i < stepTransactions.length; ++i) {
                         addToBatch({
-                            title: getTransactionTitle(i, stepTransactions.length),
+                            title: getTransactionTitle(i, stepTransactions.length, stepTransactions[i].data?.toString() ?? ''),
                             description: `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` || '',
                             chainId: swapToken?.chainId || 0,
                             to: stepTransactions[i].to || '',
