@@ -4,6 +4,7 @@ import { createGlobalStyle } from 'styled-components';
 import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf';
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
+// Slick Styles
 import slickCarouselCSS from 'slick-carousel/slick/slick.css';
 import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
 
@@ -2343,32 +2344,6 @@ const GlobalStyles = createGlobalStyle`
       flex-direction: column;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 `;
 
