@@ -42,6 +42,8 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
     const searchTokenResult = useAppSelector((state) => state.swap.searchTokenResult as Token[]);
     const swapChain = useAppSelector((state) => state.swap.swapChain as ChainType);
     const receiveChain = useAppSelector((state) => state.swap.receiveChain as ChainType);
+    const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
+    const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
 
     const [isChainSelectionOpen, setIsChainSelectionOpen] = useState<boolean>(false);
 
@@ -100,7 +102,9 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
                 </div>
                 <div id='token-list-exchange' className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}>
                     {isSwapOpen ? 
-                        swapTokenList.map((token, index) => (
+                        swapTokenList
+                        .filter((token) => token.chainId !== receiveToken?.chainId || token.address !== receiveToken?.address)
+                        .map((token, index) => (
                             <TokenListItem
                                 key={index}
                                 onClick={() => {
@@ -116,7 +120,9 @@ const DropdownTokenList = ({ type, initialCardPosition }: DropdownTokenListProps
                             />
                         ))
                     : 
-                        receiveTokenList.map((token, index) => (
+                        receiveTokenList
+                        .filter((token) => token.chainId !== swapToken?.chainId || token.address !== swapToken?.address)
+                        .map((token, index) => (
                             <TokenListItem
                                 key={index}
                                 onClick={() => {
