@@ -94,7 +94,7 @@ describe('<DropdownTokenList />', () => {
 
         const searchInput = getByPlaceholderText('Search tokens');
         fireEvent.focus(searchInput);
-        fireEvent.change(searchInput, { target: { value: 'matic' } });
+        fireEvent.change(searchInput, { target: { value: 'eth' } });
         
         const tokenItems = getAllByTestId('token-list-item');
         expect(tokenItems.length).toBe(1);
@@ -102,8 +102,8 @@ describe('<DropdownTokenList />', () => {
         const firstTokenItem = getAllByTestId('token-list-item');
         fireEvent.click(firstTokenItem[0]);
         
-        expect(store.getState().swap.swapToken).toBe(mockTokenAssets[1]);
-        expect(store.getState().swap.swapChain).toEqual({ chainId: 137, chainName: '137' });
+        expect(store.getState().swap.swapToken).toBe(mockTokenAssets[0]);
+        expect(store.getState().swap.swapChain).toEqual({ chainId: 1, chainName: '1' });
         expect(store.getState().swap.isSwapOpen).toBe(false);
     });
 
@@ -121,7 +121,7 @@ describe('<DropdownTokenList />', () => {
 
         const searchInput = getByPlaceholderText('Search tokens');
         fireEvent.focus(searchInput);
-        fireEvent.change(searchInput, { target: { value: 'ether' } });
+        fireEvent.change(searchInput, { target: { value: 'ma' } });
         
         const tokenItems = getAllByTestId('token-list-item');
         expect(tokenItems.length).toBe(1);
@@ -129,8 +129,8 @@ describe('<DropdownTokenList />', () => {
         const firstTokenItem = getAllByTestId('token-list-item');
         fireEvent.click(firstTokenItem[0]);
     
-        expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
-        expect(store.getState().swap.receiveChain).toEqual({ chainId: 1, chainName: '1' });
+        expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[1]);
+        expect(store.getState().swap.receiveChain).toEqual({ chainId: 137, chainName: '137' });
         expect(store.getState().swap.isReceiveOpen).toBe(false);
     });
 

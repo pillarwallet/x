@@ -11,7 +11,7 @@ import { useAppSelector } from '../../hooks/useReducerHooks';
 import { SwapOffer } from '../../utils/types';
 
 // utils
-import { hasThreeZerosAfterDecimal } from '../../utils/converters';
+import { convertChainIdtoName, hasThreeZerosAfterDecimal } from '../../utils/converters';
 
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
@@ -29,6 +29,7 @@ const ExchangeAction = () => {
     const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
     const receiveToken = useAppSelector((state) => state.swap.receiveToken as Token);
     const isOfferLoading = useAppSelector((state) => state.swap.isOfferLoading as boolean);
+    const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
 
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
@@ -40,6 +41,16 @@ const ExchangeAction = () => {
         setErrorMessage('');
     }, [bestOffer])
 
+    const getTransactionTitle = (index: number, length: number): string => {
+        if (length > 2) {
+            return `Swap assets ${index + 1}/${length}`;
+        }
+        if (length === 2) {
+            return index === 0 ? 'Swap assets approve' : 'Swap assets';
+        }
+        return 'Swap assets';
+    };
+    
     const onClickToExchange = async () => {
         setErrorMessage('');
 
@@ -58,9 +69,10 @@ const ExchangeAction = () => {
 
             // receiveAmount param is unique to the ExchangeOffer type - same chain, different tokens
             if ('receiveAmount' in bestOffer.offer) {
-                for (let i = 0; i < bestOffer.offer.transactions.length; ++i) {
+                for (let i = 0; i < bestOffer.offer.transactions.length; ++i) { 
                     addToBatch({
-                        title: 'Swap assets',
+                        title: getTransactionTitle(i, bestOffer.offer.transactions.length),
+                        description: `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` || '',
                         chainId: swapToken?.chainId || 0,
                         to: bestOffer.offer.transactions[i].to,
                         value: bestOffer.offer.transactions[i].value,
@@ -77,7 +89,8 @@ const ExchangeAction = () => {
                 if (stepTransactions) {
                     for (let i = 0; i < stepTransactions.length; ++i) {
                         addToBatch({
-                            title: 'Swap assets',
+                            title: getTransactionTitle(i, stepTransactions.length),
+                            description: `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` || '',
                             chainId: swapToken?.chainId || 0,
                             to: stepTransactions[i].to || '',
                             value: ethers.BigNumber.from(stepTransactions[i].value),

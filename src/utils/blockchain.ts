@@ -132,3 +132,5 @@ export const getLogoForChainId = (chainId: number): string => {
 export const truncateAddress = (address: string, displayLength = 10): string => {
   return address.slice(0, Math.round(displayLength * 0.6)) + '...' + address.slice(-Math.round(displayLength * 0.4));
 }
+
+export const decodeSendTokenCallData = (callData: string) => ethers.utils.defaultAbiCoder.decode([ 'address', 'uint256' ], ethers.utils.hexDataSlice(callData, 4));
