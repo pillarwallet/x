@@ -132,3 +132,13 @@ export const getLogoForChainId = (chainId: number): string => {
 export const truncateAddress = (address: string, displayLength = 10): string => {
   return address.slice(0, Math.round(displayLength * 0.6)) + '...' + address.slice(-Math.round(displayLength * 0.4));
 }
+
+export const decodeSendTokenCallData = (callData: string) => ethers.utils.defaultAbiCoder.decode([ 'address', 'uint256' ], ethers.utils.hexDataSlice(callData, 4));
+
+export const isApproveTransaction = (callData: string) =>   {
+  const methodId = callData.slice(0, 10);
+
+  // ERC-20 approve method id in hexadecimal format
+  const approveMethodId = '0x095ea7b3';
+  return methodId === approveMethodId;
+} 

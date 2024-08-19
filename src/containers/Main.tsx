@@ -23,6 +23,7 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
+import Developers from '../pages/Developers';
 import { visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
 
@@ -120,6 +121,10 @@ const AuthLayout = () => {
           element: <Waitlist />,
         },
         {
+          path: '/developers',
+          element: <Developers />,
+        },
+        {
           path: '/login',
           element: <Navigate to="/" />,
         }
@@ -160,7 +165,7 @@ const AuthLayout = () => {
   }
 
   // Determine if this is a root page, we'll need it later
-  const isRootPage = window.location.pathname === '/' || window.location.pathname === '/waitlist';
+  const isRootPage = window.location.pathname === '/' || window.location.pathname === '/waitlist' || window.location.pathname === '/developers';
 
   /**
    * The following if statement determines if the user is
@@ -180,6 +185,9 @@ const AuthLayout = () => {
     }, {
       path: '/waitlist',
       element: <Waitlist />,
+    }, {
+      path: '/developers',
+      element: <Developers />,
     }, {
       path: '/login',
       element: <Login />,

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Plausible from 'plausible-tracker';
 
+// Plausible Domain Config
 const { trackEvent } = Plausible({
   domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN
 });

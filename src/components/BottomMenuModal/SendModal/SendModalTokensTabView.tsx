@@ -9,7 +9,7 @@ import {
   useEtherspotUtils,
   useWalletAddress
 } from '@etherspot/transaction-kit';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   ArrangeVertical as ArrangeVerticalIcon,
   ClipboardText as IconClipboardText,
@@ -37,12 +37,13 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 
 // utils
-import { getNativeAssetForChainId, isPolygonAssetNative, isValidEthereumAddress } from '../../../utils/blockchain';
+import { decodeSendTokenCallData, getNativeAssetForChainId, isPolygonAssetNative, isValidEthereumAddress } from '../../../utils/blockchain';
 import { pasteFromClipboard } from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import { SendModalData } from './index';
+import { processEth } from '../../../apps/the-exchange/utils/blockchain';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -256,9 +257,24 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       || selectedAsset?.chainId
       || etherspotDefaultChainId;
 
+
+    const transactionDescription = () => {
+      if (selectedAsset?.type === 'token') {
+        if (transactionToBatch?.value) {
+          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`
+        }
+        if (!transactionToBatch?.value && transactionToBatch?.data) {
+          const decodedTransferData = decodeSendTokenCallData(transactionToBatch.data);
+          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`
+        }
+      }
+
+      return payload?.description;
+    } 
+
     addToBatch({
       title: payload?.title || t`action.sendAsset`,
-      description: payload?.description,
+      description: payload?.description || transactionDescription(),
       chainId: chainIdForBatch,
       ...transactionToBatch,
     });
@@ -429,14 +445,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 {(isZeroAddress(selectedAsset.asset.address) || isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTransaction
                     to={recipient}
-                    value={assetValueToSend}
+                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
                   />
                 )}
                 {(!isZeroAddress(selectedAsset.asset.address) && !isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
                   <EtherspotTokenTransferTransaction
                     receiverAddress={recipient}
                     tokenAddress={selectedAsset.asset.address}
-                    value={assetValueToSend}
+                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
                     tokenDecimals={selectedAsset.asset.decimals}
                   />
                 )}

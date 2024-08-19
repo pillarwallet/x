@@ -7,12 +7,13 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import WaitList from '../pages/WaitList';
-
+import Developers from '../pages/Developers';
 
 export const navigationRoute = {
   home: '/',
   landing: '/landing',
   waitlist: '/waitlist',
+  developers: '/developers',
   login: '/login',
 }
 
@@ -32,6 +33,10 @@ export const AuthorizedNavigation = () => {
       path: '/waitlist',
       element: <WaitList />,
     },
+    {
+      path: '/developers',
+      element: <Developers />,
+    },
   ]);
 
   useEffect(() => {
@@ -48,6 +53,7 @@ export const UnauthorizedNavigation = () => {
     <Routes>
       <Route path={navigationRoute.home} element={<LandingPage />} />
       <Route path={navigationRoute.waitlist} element={<WaitList />} />
+      <Route path={navigationRoute.developers} element={<Developers />} />
       <Route path={navigationRoute.login} element={<Login />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
