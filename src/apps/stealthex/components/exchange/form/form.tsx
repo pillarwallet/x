@@ -135,6 +135,7 @@ export const Form: React.FC<FormProps> = ({
           <ExchangeResult
             exchangeInfo={exchangeInfo.data?.data}
             onNewExchange={handleNewExchange}
+            onReject={onReject}
             widget={widget}
             status={
               !exchangeInfo.error
