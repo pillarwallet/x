@@ -76,7 +76,7 @@ export const Form: React.FC<FormProps> = ({
       currencyTo: receiveCurrency.symbol,
       address,
       extraId,
-      referral: userReferral,
+      referral: userReferral || 'qfe3AEnoxN',
       fixed,
       timezoneOffset: new Date().getTimezoneOffset(),
       ...nonFiatProps,
