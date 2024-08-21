@@ -6,6 +6,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { pillarXApiPresence } from './services/pillarXApiPresence';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
 import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
+import tokenAtlasSlice from './apps/token-atlas/reducer/tokenAtlasSlice';
 
 // Initialisation
 const dynamicMiddleware = createDynamicMiddleware();
@@ -66,6 +67,7 @@ export const store = configureStore({
 addMiddleware(pillarXApiWaitlist);
 addMiddleware(pillarXApiPresence);
 addReducer(swapSlice);
+addReducer(tokenAtlasSlice);
 
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
