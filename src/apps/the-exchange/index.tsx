@@ -45,11 +45,11 @@ const Wrapper = styled.div`
   flex-direction: column;
   background-color: #eeeeee;
 
-  @media (min-width: 800px) {
+  @media (min-width: 768px) {
     padding: 35px 60px;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 768px) {
     padding: 35px 16px;
   }
 `;
