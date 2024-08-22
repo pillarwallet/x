@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 import Slider from 'react-slick';
 
@@ -7,6 +7,11 @@ import { Header } from '../components/LandingPage/Header';
 import { Footer } from '../components/LandingPage/Footer';
 
 const Developers = () => {
+
+  // Loads page from the top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Slider Ref
   const slider = useRef(null);
@@ -31,7 +36,7 @@ const Developers = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className='developers_hero'>
+      <section className='developers_hero' id='hero'>
         <div className='container'>
           <div className='developers_hero__wrapper'>
             <div className='developers_hero__content'>

@@ -1813,14 +1813,14 @@ const GlobalStyles = createGlobalStyle`
     margin-left: 90%;
   }
 
+  .developers_module__list__carousel__slide__content--last img{
+    height: 50px;
+  }
+
   @media only screen and (max-width: 767px) {
     .developers_module__list__carousel__slide__content img {
       margin-left: 80%;
       margin-top: 2rem;
-    }
-
-    .developers_module__list__carousel__slide__content--last img{
-      height: 50px;
     }
   }
 
