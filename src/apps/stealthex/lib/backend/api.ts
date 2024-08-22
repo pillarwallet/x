@@ -145,10 +145,10 @@ export const exchange = createApi({
     reducerPath: 'exchangeInfo',
     baseQuery: fetchBaseQuery({ baseUrl }),
     endpoints: (builder) => ({
-        exchangeInfo: builder.query<{data: ExchangeInfo, signature: string}, string >({
-            query: ( exchangeId ) => ({ url: `/api/exchange/v2/${exchangeId}` })
+        exchangeInfo: builder.query<{ data: ExchangeInfo, signature: string }, string>({
+            query: (exchangeId) => ({ url: `/api/exchange/v2/${exchangeId}` })
         }),
-        createExchange: builder.mutation<{data: ExchangeInfo, signature: string}, CreateExchangeParams>({
+        createExchange: builder.mutation<{ data: ExchangeInfo, signature: string }, CreateExchangeParams>({
             query: ({ ...params }) => {
                 const { currencyFrom, currencyTo, address, extraId, amountFrom, amountTo, isWidget, partnerId, refundAddress, ...otherParams } = params;
                 return ({

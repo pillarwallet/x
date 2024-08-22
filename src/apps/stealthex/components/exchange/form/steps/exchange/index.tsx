@@ -3,7 +3,7 @@ import React from 'react';
 import type ViewProps from './views/view-props';
 import WidgetView from './views/widget';
 
-const Exchange: React.FC<ViewProps & { widget?: boolean }> = ({
+const Exchange: React.FC<ViewProps & { widget?: boolean, onReject?: () => void }> = ({
     widget,
     ...props
 }) => {
