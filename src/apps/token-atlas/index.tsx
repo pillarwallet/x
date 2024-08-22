@@ -1,7 +1,7 @@
 // styles
 import styled from 'styled-components';
 import './styles/tailwindTokenAtlas.css';
-import HearderSearch from './components/HeaderSearch/HeaderSeach';
+import HeaderSearch from './components/HeaderSearch/HeaderSeach';
 import SearchTokenModal from './components/SearchTokenModal/SearchTokenModal';
 import TokenGraphColumn from './components/TokenGraphColumn/TokenGraphColumn';
 import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
@@ -10,7 +10,7 @@ export const App = () => {
   return (
     <Wrapper>
       <SearchTokenModal />
-      <HearderSearch />
+      <HeaderSearch />
       <div className="flex w-full gap-8 mobile:flex-col">
         <TokenGraphColumn className='basis-3/5'/>
         <TokenInfoColumn className='basis-2/5' />

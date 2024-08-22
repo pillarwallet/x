@@ -11,7 +11,7 @@ import TokenAtlasLogo from '../../images/token-atlas-logo-small.svg';
 import Body from '../../components/Typography/Body';
 import SearchLogo from '../../images/circle-search.svg';
 
-const HearderSearch = () => {
+const HeaderSearch = () => {
     const dispatch = useAppDispatch();
 
     const handleSearchOpen = () => {
@@ -32,4 +32,4 @@ const HearderSearch = () => {
   );
 };
 
-export default HearderSearch;
+export default HeaderSearch;
