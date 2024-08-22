@@ -265,7 +265,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         }
         if (!transactionToBatch?.value && transactionToBatch?.data) {
           const decodedTransferData = decodeSendTokenCallData(transactionToBatch.data);
-          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`
+          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`
         }
       }
 
