@@ -36,7 +36,7 @@ const Developers = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className='developers_hero' id='hero'>
+      <section className='developers_hero'>
         <div className='container'>
           <div className='developers_hero__wrapper'>
             <div className='developers_hero__content'>
