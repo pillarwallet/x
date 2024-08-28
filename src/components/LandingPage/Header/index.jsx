@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link,  NavLink } from 'react-router-dom';
+import { Link, NavLink, ScrollRestoration } from 'react-router-dom';
 
 
 const Header = () => {
@@ -8,7 +8,9 @@ const Header = () => {
   
   return (
     <>
-      
+      {/* Browser's scroll restoration  */}
+      <ScrollRestoration />
+
       {/* Header */}
       <header className='header' id='header'>
 

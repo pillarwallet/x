@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 import Slider from 'react-slick';
 
@@ -7,11 +7,6 @@ import { Header } from '../components/LandingPage/Header';
 import { Footer } from '../components/LandingPage/Footer';
 
 const Developers = () => {
-
-  // Loads page from the top
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   // Slider Ref
   const slider = useRef(null);
