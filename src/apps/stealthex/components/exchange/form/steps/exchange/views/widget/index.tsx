@@ -18,7 +18,6 @@ import {
     IdLabel,
     Loader,
     LoaderWithTimer,
-    Status,
     StatusRow,
     StyledCopyButton,
     StyledExchangeData,
@@ -40,11 +39,14 @@ import {
     WaitingExtraRow,
     Warning,
 } from './styles';
+import Status from '../../../common/widget/status-button';
 
 import type ViewProps from '../view-props';
 import { useTranslation } from 'react-i18next';
 import Copy from '../../../../../../common/copy';
 import { CopyIcon } from '../../../../../../common/icons';
+import { useAppDispatch } from '../../../../../../../redux/hooks';
+import { setCurrentStep } from '../../../../../../../redux/reducers/exchange';
 
 const CopyButton: React.FC<{ label: string; data: string }> = ({
     label,
@@ -79,7 +81,7 @@ const CopyButton: React.FC<{ label: string; data: string }> = ({
     );
 };
 
-const WidgetView: React.FC<ViewProps> = ({ exchangeInfo }) => {
+const WidgetView: React.FC<ViewProps & {onReject?: () => void}> = ({ exchangeInfo, onReject }) => {
     const {
         status,
         id,
@@ -92,6 +94,8 @@ const WidgetView: React.FC<ViewProps> = ({ exchangeInfo }) => {
         type,
         tx_from: txFrom,
     } = exchangeInfo;
+
+    const dispatch = useAppDispatch();
 
     const { t } = useTranslation();
 
@@ -123,14 +127,16 @@ const WidgetView: React.FC<ViewProps> = ({ exchangeInfo }) => {
         !failed &&
         !finished &&
         !refunded;
-
+    const goBack = () =>{ 
+        onReject && onReject();
+        dispatch(setCurrentStep(1))};
     return (
         <Container>
             <Content>
                 <StatusRow>
                     {!failed ? (
                         <>
-                            <Status>{checkedTimeout ? t('timeoutStep') : statusTitle}</Status>
+                            <Status onClick={goBack}>{checkedTimeout ? t('timeoutStep') : statusTitle}</Status>
                             {finished && (
                                 <Success>
                                     <StyledRoundedCheck />
@@ -146,7 +152,7 @@ const WidgetView: React.FC<ViewProps> = ({ exchangeInfo }) => {
                         </>
                     ) : (
                         <FailedBlock>
-                            <Status>{t('smthWentWrong')}</Status>
+                            <Status onClick={goBack}>{t('smthWentWrong')}</Status>
                             <DividerLine />
                             <FailedDescription>
                                 {t('exchangeCouldNotBeCompleted')} {t('contactSupport')}
