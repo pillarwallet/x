@@ -16,76 +16,86 @@ exports[`<TokensVerticalTile /> renders correctly and matches snapshot 1`] = `
     <div
       className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
     >
-      <div
-        className="flex w-full justify-between py-5 border-b border-[#1F1D23] mobile:border-[#27262F] false"
+      <a
+        href="/token-atlas?asset=Token A&symbol=TKA"
+        onClick={[Function]}
       >
         <div
-          className="flex items-center"
+          className="flex w-full justify-between py-5 cursor-pointer border-b border-[#1F1D23] mobile:border-[#27262F] false"
         >
-          <p
-            className="text-sm font-medium text-purple_light mr-[18px]"
-          >
-            0
-            1
-          </p>
-          <img
-            className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-            src="logoA.png"
-          />
           <div
-            className="flex flex-col"
+            className="flex items-center"
           >
             <p
-              className="text-base font-medium undefined"
+              className="text-sm font-medium text-purple_light mr-[18px]"
             >
-              TKA
+              0
+              1
             </p>
-            <p
-              className="text-sm font-medium text-purple_light"
+            <img
+              className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+              src="logoA.png"
+            />
+            <div
+              className="flex flex-col"
             >
-              Token A
-            </p>
+              <p
+                className="text-base font-medium undefined"
+              >
+                TKA
+              </p>
+              <p
+                className="text-sm font-medium text-purple_light"
+              >
+                Token A
+              </p>
+            </div>
           </div>
+          <div
+            className="flex flex-col items-center"
+          />
         </div>
-        <div
-          className="flex flex-col items-center"
-        />
-      </div>
-      <div
-        className="flex w-full justify-between py-5 false false"
+      </a>
+      <a
+        href="/token-atlas?asset=Token B&symbol=TKB"
+        onClick={[Function]}
       >
         <div
-          className="flex items-center"
+          className="flex w-full justify-between py-5 cursor-pointer false false"
         >
-          <p
-            className="text-sm font-medium text-purple_light mr-[18px]"
-          >
-            0
-            2
-          </p>
-          <img
-            className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-            src="logoB.png"
-          />
           <div
-            className="flex flex-col"
+            className="flex items-center"
           >
             <p
-              className="text-base font-medium undefined"
+              className="text-sm font-medium text-purple_light mr-[18px]"
             >
-              TKB
+              0
+              2
             </p>
-            <p
-              className="text-sm font-medium text-purple_light"
+            <img
+              className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+              src="logoB.png"
+            />
+            <div
+              className="flex flex-col"
             >
-              Token B
-            </p>
+              <p
+                className="text-base font-medium undefined"
+              >
+                TKB
+              </p>
+              <p
+                className="text-sm font-medium text-purple_light"
+              >
+                Token B
+              </p>
+            </div>
           </div>
+          <div
+            className="flex flex-col items-center"
+          />
         </div>
-        <div
-          className="flex flex-col items-center"
-        />
-      </div>
+      </a>
     </div>
     <div
       className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
