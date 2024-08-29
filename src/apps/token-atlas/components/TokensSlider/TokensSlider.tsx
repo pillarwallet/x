@@ -2,6 +2,7 @@
 import TokenCard from '../TokenCard/TokenCard';
 import Body from '../Typography/Body';
 
+// TODO - to replace with real data when API endpoint for token list from Modula is available
 const TokensSlider = () => {
     return (
         <div className="flex flex-col overflow-x-scroll">
