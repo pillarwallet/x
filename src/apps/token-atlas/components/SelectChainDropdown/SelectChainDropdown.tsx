@@ -11,12 +11,14 @@ import {
 // types
 import { ChainType } from '../../types/types';
 
+// utils
+import { convertChainIdtoName } from '../../utils/converters';
+
 // components
 import Body from '../Typography/Body';
 
 // images
 import ArrowDown from '../../images/arrow-down.svg';
-import { convertChainIdtoName } from '../../utils/converters';
 
 type SelectChainDropdownProps = {
     options: number[];
@@ -62,7 +64,7 @@ const SelectChainDropdown = ({
     };
 
     return (
-        <div className={`relative ${className}`}>
+        <div className={`relative ${className}`} data-testid='select-chain-dropdown'>
             <button
                 className={`flex justify-between items-center w-full h-full p-4 bg-medium_grey rounded focus:outline-none ${
                     isSelectChainDropdownOpen && 'border-b border-dark_grey'

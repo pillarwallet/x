@@ -51,7 +51,7 @@ const TokenInfoColumn = ({ className, isLoadingTokenDataInfo }: TokenInfoColumnP
             <div className="flex flex-col gap-2">
                 <Body>Blockchains</Body>
                 <div className="w-full h-fit flex flex-wrap gap-2">
-                    {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} />}
+                    {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} data-testid='circular-loading' />}
                     {isAllChainsVisible
                         ? tokenBlockchainsList.map((chain, index) => <ChainCard key={index} chainName={chain} />)
                         : tokenBlockchainsList.slice(0, numberVisibleCards).map((chain, index) => <ChainCard key={index} chainName={chain} />)}
@@ -70,7 +70,7 @@ const TokenInfoColumn = ({ className, isLoadingTokenDataInfo }: TokenInfoColumnP
             <div className="flex flex-col gap-2">
                 <Body>Price changes</Body>
                 <div className="flex flex-wrap gap-2">
-                    {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} />}
+                    {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} data-testid='circular-loading' />}
                     {priceChanges.map((price, index) => <PriceCard key={index} percentage={price.percentage} timePeriod={price.period} />)}
                 </div>
             </div>

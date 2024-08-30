@@ -109,7 +109,7 @@ const TokenGraphColumn = ({ className, isLoadingTokenDataInfo }: TokenGraphColum
                     ) : (
                         <>
                             {tokenDataInfo?.logo && (
-                                <img src={tokenDataInfo.logo} className="w-[30px] h-[30px] object-fill rounded-full" />
+                                <img src={tokenDataInfo.logo} className="w-[30px] h-[30px] object-fill rounded-full" data-testid='token-logo-graph-column' />
                             )}
                             <Body className="font-medium text-[27px] mobile:text-[25px]">
                                 {tokenDataInfo ? tokenDataInfo.name : 'Token not found'}

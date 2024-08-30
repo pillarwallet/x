@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
+  data-testid="token-result-card"
+  onClick={[MockFunction]}
+>
+  <div
+    className="flex items-center"
+  >
+    <img
+      className="w-[30px] h-[30px] object-fill rounded-full mr-2"
+      src="https://example.com/logo.png"
+    />
+    <div
+      className="flex flex-col mr-2"
+    >
+      <p
+        className="text-[13px] font-semibold text-base capitalize"
+      >
+        Ethereum
+      </p>
+      <p
+        className="text-[13px] font-semibold text-white_grey"
+      >
+        ETH
+      </p>
+    </div>
+  </div>
+  <p
+    className="text-[13px] font-semibold text-base font-medium capitalize"
+  >
+    On 
+  </p>
+</div>
+`;
