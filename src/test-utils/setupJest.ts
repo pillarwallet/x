@@ -9,6 +9,21 @@ import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import * as TransactionKit from '@etherspot/transaction-kit';
 
+// mocking matchMedia for slick carousel
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 // polyfill for TextEncoder and TextDecoder for jsdom environment (viem dep related)
 Object.assign(global, { TextDecoder, TextEncoder });
 

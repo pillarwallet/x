@@ -3,73 +3,94 @@
 exports[`<Main /> renders correctly 1`] = `
 [
   <header
-    className="home_header"
+    className="header"
+    id="header"
   >
     <div
-      className="home_header__announcment"
+      className="header__announcement"
     >
       <div
-        className="container"
+        className="header__announcement__wrapper"
       >
-        <div
-          className="home_header__announcment__wrapper"
-        >
-          <p>
-            🚀 Secure Your Spot in the PillarX Testing Campaign!
-          </p>
+        <p>
+          🚀 Secure Your Spot in the PillarX Testing Campaign! 
           <a
-            className="plausible-event-name=Banner+Click"
             href="/waitlist"
           >
             Join the Waitlist
           </a>
-        </div>
+        </p>
+        <a
+          className="cta cta--secondary cta--header plausible-event-name=Banner+Click"
+          href="/waitlist"
+        >
+          <span>
+            Join the Waitlist
+          </span>
+        </a>
       </div>
     </div>
     <div
-      className="home_header__main"
+      className="container"
     >
-      <div
-        className="container"
+      <a
+        className="header__logo"
+        href="/"
       >
-        <div
-          className="home_header__main__wrapper"
+        <img
+          src="/landing-images/pillarXLogo.png"
+        />
+      </a>
+      <nav
+        className="header__menu"
+      >
+        <ul
+          id="menu"
+          onClick={[Function]}
         >
-          <div
-            className="home_header__main__logo"
-          >
-            <img
-              src="/landing-images/home-logo.svg"
-            />
-          </div>
-          <div
-            className="home_header__main__menu"
-          >
+          <li>
             <a
-              href="/#developers"
+              className=""
+              href="/developers"
+              onClick={[Function]}
             >
-              For Developers
+              For dApps
             </a>
+          </li>
+          <li>
             <a
+              className=""
               href="/waitlist"
             >
               Testing Campaign
             </a>
-          </div>
-          <div
-            className="home_header__main__social"
-          >
-            <a
-              href="https://twitter.com/PX_Web3"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <img
-                src="/landing-images/home-x.svg"
-              />
-            </a>
-          </div>
-        </div>
+          </li>
+        </ul>
+        <a
+          className="header__social"
+          href="https://twitter.com/PX_Web3"
+          onClick={[Function]}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <img
+            src="/landing-images/home-x.svg"
+          />
+        </a>
+      </nav>
+      <div
+        className="header__mobile_menu"
+        onClick={[Function]}
+      >
+        <div
+          className="bar1"
+        />
+        <div
+          className="bar2"
+        />
+        <div
+          className="bar3"
+        />
       </div>
     </div>
   </header>,
@@ -338,7 +359,6 @@ exports[`<Main /> renders correctly 1`] = `
   </section>,
   <section
     className="home_build"
-    id="developers"
   >
     <div
       className="container"
@@ -387,13 +407,13 @@ exports[`<Main /> renders correctly 1`] = `
     </div>
   </section>,
   <footer
-    className="home_footer"
+    className="footer"
   >
     <div
       className="container"
     >
       <div
-        className="home_footer__wrapper"
+        className="footer__wrapper"
       >
         <a
           href="https://twitter.com/PX_Web3"

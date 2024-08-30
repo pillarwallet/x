@@ -5,8 +5,8 @@ import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf'
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
 // Slick Styles
-import slickCarouselCSS from 'slick-carousel/slick/slick.css';
-import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const GlobalStyles = createGlobalStyle`
 
@@ -21,9 +21,6 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 700;
     src: url(${neueBoldFont}) format("truetype");
   }
-
-  ${slickCarouselCSS};
-  ${slickCarouselThemeCSS};
   
   :root {
     --white: #ffffff;
