@@ -79,19 +79,15 @@ describe('<TokensVerticalList />', () => {
       </MemoryRouter>
     ).toJSON() as ReactTestRendererJSON;
 
-    const linkElement = tree.children as ReactTestRendererJSON[];
+    const tokensList = tree.children as ReactTestRendererJSON[];
     
-    linkElement.forEach((linkElement, index) => {
-      const tokenElement = linkElement.children as ReactTestRendererJSON[];
-
-      tokenElement.forEach((token) => {
-        expect(token.props.tokenIndex).toBe(index + 1);
-        expect(token.props.tokenName).toBe(mockData[index].name);
-        expect(token.props.tokenSymbol).toBe(mockData[index].symbol);
-        expect(token.props.tokenValue).toBeUndefined();
-        expect(token.props.percentage).toBeUndefined();
-        expect(token.props.isLast).toBe(index === mockData.length - 1);
-      })
+    tokensList.forEach((tokenElement, index) => {
+      expect(tokenElement.props.tokenIndex).toBe(index + 1);
+      expect(tokenElement.props.tokenName).toBe(mockData[index].name);
+      expect(tokenElement.props.tokenSymbol).toBe(mockData[index].symbol);
+      expect(tokenElement.props.tokenValue).toBeUndefined();
+      expect(tokenElement.props.percentage).toBeUndefined();
+      expect(tokenElement.props.isLast).toBe(index === mockData.length - 1);
     });
   });
 });

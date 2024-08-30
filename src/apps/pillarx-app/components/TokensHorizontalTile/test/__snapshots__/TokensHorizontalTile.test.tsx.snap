@@ -69,24 +69,20 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
     <div
       className="flex justify-between"
     >
-      <a
-        href="/token-atlas?asset=The best token&symbol=TBT"
+      <div
+        className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
         onClick={[Function]}
       >
-        <div
-          className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+        <img
+          className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
+          src="https://www.logo.com/example/"
+        />
+        <p
+          className="text-base font-medium text-center"
         >
-          <img
-            className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
-            src="https://www.logo.com/example/"
-          />
-          <p
-            className="text-base font-medium text-center"
-          >
-            The best token
-          </p>
-        </div>
-      </a>
+          The best token
+        </p>
+      </div>
     </div>
   </div>
 </div>

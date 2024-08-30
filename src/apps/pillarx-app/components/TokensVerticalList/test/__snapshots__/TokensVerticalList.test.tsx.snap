@@ -4,30 +4,22 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for left 
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
 >
-  <a
-    href="/token-atlas?asset=Token A&symbol=TKA"
+  <HorizontalToken
+    isLast={false}
     onClick={[Function]}
-  >
-    <HorizontalToken
-      isLast={false}
-      tokenIndex={1}
-      tokenLogo="logoA.png"
-      tokenName="Token A"
-      tokenSymbol="TKA"
-    />
-  </a>
-  <a
-    href="/token-atlas?asset=Token B&symbol=TKB"
+    tokenIndex={1}
+    tokenLogo="logoA.png"
+    tokenName="Token A"
+    tokenSymbol="TKA"
+  />
+  <HorizontalToken
+    isLast={true}
     onClick={[Function]}
-  >
-    <HorizontalToken
-      isLast={true}
-      tokenIndex={2}
-      tokenLogo="logoB.png"
-      tokenName="Token B"
-      tokenSymbol="TKB"
-    />
-  </a>
+    tokenIndex={2}
+    tokenLogo="logoB.png"
+    tokenName="Token B"
+    tokenSymbol="TKB"
+  />
 </div>
 `;
 
@@ -35,29 +27,21 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for right
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
 >
-  <a
-    href="/token-atlas?asset=Token A&symbol=TKA"
+  <HorizontalToken
+    isLast={false}
     onClick={[Function]}
-  >
-    <HorizontalToken
-      isLast={false}
-      tokenIndex={4}
-      tokenLogo="logoA.png"
-      tokenName="Token A"
-      tokenSymbol="TKA"
-    />
-  </a>
-  <a
-    href="/token-atlas?asset=Token B&symbol=TKB"
+    tokenIndex={4}
+    tokenLogo="logoA.png"
+    tokenName="Token A"
+    tokenSymbol="TKA"
+  />
+  <HorizontalToken
+    isLast={true}
     onClick={[Function]}
-  >
-    <HorizontalToken
-      isLast={true}
-      tokenIndex={5}
-      tokenLogo="logoB.png"
-      tokenName="Token B"
-      tokenSymbol="TKB"
-    />
-  </a>
+    tokenIndex={5}
+    tokenLogo="logoB.png"
+    tokenName="Token B"
+    tokenSymbol="TKB"
+  />
 </div>
 `;
