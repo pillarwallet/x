@@ -1,23 +1,31 @@
-// images
-import LogoEx from '../../images/token-atlas-logo.svg';
-
 // components
 import Body from '../Typography/Body';
 
-// TO DO - to update with dynamic values once the trending token API endpoint is available
-const TokenCard = () => {
+type TokenCardProps = {
+    tokenLogo?: string;
+    tokenName?: string;
+    tokenSymbol?: string;
+    blockchainLogo?: string;
+    onClick: () => void;
+};
+
+const TokenCard = ({ tokenLogo, tokenName, tokenSymbol, blockchainLogo, onClick }: TokenCardProps) => {
     return (
-        <div className="flex flex-col relative w-full bg-medium_grey rounded-lg px-4 pb-4 pt-6 items-center justify-center">
-            <img
-                src={LogoEx}
-                className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
-            />
-            <img
-                src={LogoEx}
-                className="w-[40px] h-[40px] object-fill rounded-full"
-            />
-            <Body className="text-base">Ethereum</Body>
-            <Body className="text-white_grey">ETH</Body>
+        <div className="flex flex-col relative w-[108px] h-[125px] bg-medium_grey rounded-lg px-4 pb-4 pt-6 items-center justify-center cursor-pointer" onClick={onClick}>
+            {blockchainLogo && (
+                <img
+                    src={blockchainLogo}
+                    className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
+                />
+            )}
+            {tokenLogo && (
+                <img
+                    src={tokenLogo}
+                    className="w-[40px] h-[40px] object-fill rounded-full"
+                />
+            )}
+            <Body className="text-base capitalize w-full truncate text-center">{tokenName}</Body>
+            <Body className="text-white_grey">{tokenSymbol}</Body>
         </div>
     );
 };

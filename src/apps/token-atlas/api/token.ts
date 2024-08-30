@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addMiddleware } from '../../../store';
 
 // types
-import { TokenAtlasInfoApiResponse, TokenAtlasGraphApiResponse } from '../../../types/api';
+import { TokenAtlasInfoApiResponse, TokenAtlasGraphApiResponse, TrendingTokens, BlockchainList } from '../../../types/api';
 
 export const tokenInfoApi = createApi({
     reducerPath: 'tokenInfoApi',
@@ -34,11 +34,35 @@ export const tokenGraphApi = createApi({
     })
 })
 
+export const trendingTokensApi = createApi({
+    reducerPath: 'trendingTokensApi',
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://trendingtokens-nubpgwxpiq-uc.a.run.app' }),
+    endpoints: (builder) => ({
+        getTrendingTokens: builder.query<TrendingTokens, void>({
+            query: () => '',
+        }),
+    }),
+});
+
+export const blockchainsListApi = createApi({
+    reducerPath: 'blockchainsListApi',
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://blockchains-nubpgwxpiq-uc.a.run.app' }),
+    endpoints: (builder) => ({
+        getBlockchainsList: builder.query<BlockchainList, void>({
+            query: () => '',
+        }),
+    }),
+});
+
 /**
  * Add this to the store
  */
 addMiddleware(tokenInfoApi);
 addMiddleware(tokenGraphApi);
+addMiddleware(trendingTokensApi);
+addMiddleware(blockchainsListApi);
 
 export const { useGetTokenInfoQuery } = tokenInfoApi;
 export const { useGetTokenGraphQuery } = tokenGraphApi;
+export const { useGetTrendingTokensQuery } = trendingTokensApi;
+export const { useGetBlockchainsListQuery } = blockchainsListApi;

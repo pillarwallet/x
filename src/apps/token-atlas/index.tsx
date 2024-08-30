@@ -35,8 +35,18 @@ export const App = () => {
   const dispatch = useAppDispatch();
   const selectedToken = useAppSelector((state) => state.tokenAtlas.selectedToken as SelectedTokenType) || defaultToken;
   const priceGraphPeriod = useAppSelector((state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod);
-  const { data: tokenData, isLoading: isLoadingTokenDataInfo, isFetching: isFetchingTokenDataInfo, isSuccess: isSuccessTokenDataInfo } = useGetTokenInfoQuery({ blockchain: `${selectedToken.chainId}`, asset: selectedToken.name || selectedToken.address, symbol: selectedToken.symbol });
-  const { data: tokenGraph, isLoading: isLoadingTokenDataGraph, isFetching: isFetchingTokenDataGraph, isSuccess: isSuccessTokenDataGraph } = useGetTokenGraphQuery({ asset: selectedToken.name || selectedToken.address, from: priceGraphPeriod.from, to: priceGraphPeriod.to });
+  const {
+    data: tokenData,
+    isLoading: isLoadingTokenDataInfo,
+    isFetching: isFetchingTokenDataInfo,
+    isSuccess: isSuccessTokenDataInfo
+  } = useGetTokenInfoQuery({ blockchain: `${selectedToken.chainId}`, asset: selectedToken.name || selectedToken.address, symbol: selectedToken.symbol });
+  const {
+    data: tokenGraph,
+    isLoading: isLoadingTokenDataGraph,
+    isFetching: isFetchingTokenDataGraph,
+    isSuccess: isSuccessTokenDataGraph
+  } = useGetTokenGraphQuery({ asset: selectedToken.name || selectedToken.address, from: priceGraphPeriod.from, to: priceGraphPeriod.to });
   
   // This is to query the API when tokens are being clicked from the home feed
   const query = new URLSearchParams(window.location.search);

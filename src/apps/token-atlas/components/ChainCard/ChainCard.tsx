@@ -1,17 +1,38 @@
+import { useEffect } from 'react';
+
+// api
+import { useGetBlockchainsListQuery } from '../../api/token';
+
+// reducer
+import { setBlockchainList } from '../../reducer/tokenAtlasSlice';
+
+// hooks
+import { useAppDispatch } from '../../hooks/useReducerHooks';
+
 // components
 import Body from '../Typography/Body';
-import blockchainList from '../../utils/blockchainList.json';
 
 type ChainCardProps = {
     chainName: string;
 };
 
 const ChainCard = ({ chainName }: ChainCardProps) => {
-    const { data: blockchainsData } = blockchainList;
+    const dispatch = useAppDispatch();
+    const { data: blockchainListData, isSuccess } = useGetBlockchainsListQuery();
 
-    const blockchain = blockchainsData.find(
+  useEffect(() => {
+    if (blockchainListData && isSuccess) {
+      dispatch(setBlockchainList(blockchainListData.data))
+    }
+    if (!isSuccess) {
+      dispatch(setBlockchainList([]))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockchainListData, isSuccess]);
+
+    const blockchain = blockchainListData?.data.find(
         (blockchain) =>
-            blockchain.name.toLocaleLowerCase() === chainName.toLowerCase()
+            blockchain.name.toLowerCase() === chainName.toLowerCase()
     );
 
     const explorerLink = blockchain ? blockchain.explorer : undefined;

@@ -4,7 +4,7 @@ import { sub } from 'date-fns';
 // types
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
-import { TokenAtlasInfoData, TokenMarketHistory, TokenPriceGraphPeriod } from '../../../types/api';
+import { BlockchainData, TokenAtlasInfoData, TokenMarketHistory, TokenPriceGraphPeriod } from '../../../types/api';
 
 // utils
 import { convertDateToUnixTimestamp } from '../utils/converters';
@@ -23,6 +23,7 @@ export type TokenAltasState = {
   priceGraphPeriod: TokenPriceGraphPeriod;
   periodFilter: PeriodFilter;
   isGraphLoading: boolean;
+  blockchainList: BlockchainData[] | undefined;
 };
 
 const initialState: TokenAltasState = {
@@ -38,6 +39,7 @@ const initialState: TokenAltasState = {
     priceGraphPeriod: { from: convertDateToUnixTimestamp(sub(new Date(), { days: 1 })), to: undefined },
     periodFilter: PeriodFilter.DAY,
     isGraphLoading: false,
+    blockchainList: [],
 };
 
 const tokenAtlasSlice = createSlice({
@@ -80,6 +82,9 @@ const tokenAtlasSlice = createSlice({
     setIsGraphLoading(state, action: PayloadAction<boolean>) {
       state.isGraphLoading = action.payload;
     },
+    setBlockchainList(state, action: PayloadAction<BlockchainData[] | undefined>) {
+      state.blockchainList = action.payload;
+    },
   },
 });
 
@@ -96,6 +101,7 @@ export const {
     setPriceGraphPeriod,
     setPeriodFilter,
     setIsGraphLoading,
+    setBlockchainList,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

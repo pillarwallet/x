@@ -204,3 +204,69 @@ export type Asset = {
     to?: number;
   };
 
+  export type TrendingTokens = {
+    data: TokenData[];
+  };
+
+  export type TokenBlockchainList = {
+    symbol: string;
+    address: string;
+    decimals: number;
+    name: string;
+    type: string;
+  };
+
+  export type Stable = {
+    symbol: string;
+    address: string;
+    blockchains: string[];
+    blockchain: string;
+    decimals: number;
+    name: string;
+    logo: string;
+    contracts: string[];
+    type: string;
+  };
+
+  export type Router = {
+    factory: string;
+    address: string;
+    fee: number;
+    name: string;
+  };
+
+  export type Eth = {
+    symbol: string;
+    address: string;
+    decimals: number;
+    name: string;
+    logo: string;
+    id: number;
+    type: string;
+  };
+
+  export type BlockchainData = {
+    coverage: string[];
+    multicall_contract: string;
+    color: string;
+    evmChainId: number;
+    supportedProtocols: string[];
+    dexscreenerChain: string;
+    chainId: string;
+    coingeckoChain: string;
+    stable: Stable;
+    name: string;
+    explorer: string;
+    eth: Eth;
+    logo: string;
+    tokens: TokenBlockchainList[];
+    rpcs: string[];
+    shortName: string;
+    routers: Router[];
+    privateRpcs?: string[];
+  };
+
+  export type BlockchainList = {
+    data: BlockchainData[];
+  };
+
