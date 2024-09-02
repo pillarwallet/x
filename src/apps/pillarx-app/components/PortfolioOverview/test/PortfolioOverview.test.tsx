@@ -2,17 +2,12 @@ import renderer from 'react-test-renderer';
 import { render, screen } from '@testing-library/react';
 
 // types
-import { ApiLayout, Projection } from '../../../../../types/api';
+import { WalletData } from '../../../../../types/api';
 
 // components
 import PortfolioOverview from '../PortfolioOverview';
 
-const mockData: Projection = {
-    meta: {
-        display: {
-            title: 'title',
-        },
-    },
+const mockData: WalletData = {
     data: {
         wallet: 'wallet_address',
         wallets: [''],
@@ -21,17 +16,10 @@ const mockData: Projection = {
         total_realized_pnl: 53,
         total_unrealized_pnl: 12,
         total_pnl_history: { '24h': { realized: 100, unrealized: 200 } }
-    },
-    layout: ApiLayout.OVERVIEW,
-    id: 'overview',        
+    }     
 };
 
-const mockNoData: Projection = {
-    meta: {
-        display: {
-            title: 'title',
-        },
-    },
+const mockNoData: WalletData = {
     data: {
         wallet: undefined,
         wallets: [''],
@@ -40,9 +28,7 @@ const mockNoData: Projection = {
         total_realized_pnl: undefined,
         total_unrealized_pnl: undefined,
         total_pnl_history: undefined,
-    },
-    layout: ApiLayout.OVERVIEW,
-    id: 'overview',        
+    }      
 };
 
 const mockLoading = false;
