@@ -4,6 +4,7 @@ exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
 <div
   className="relative undefined"
   data-testid="select-chain-dropdown"
+  id="token-atlas-select-chain-dropdown"
 >
   <button
     className="flex justify-between items-center w-full h-full p-4 bg-medium_grey rounded focus:outline-none false"

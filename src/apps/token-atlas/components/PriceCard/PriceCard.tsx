@@ -14,7 +14,7 @@ const PriceCard = ({ percentage, timePeriod }: PriceCardProps) => {
     if (!timePeriod || !percentage) return null;
 
     return (
-        <div className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]">
+        <div id='token-atlas-price-card' className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]">
             <BodySmall className="text-light_grey">{timePeriod}</BodySmall>
             <Body>{limitDigits(percentage)}%</Body>
         </div>

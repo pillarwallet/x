@@ -48,23 +48,23 @@ const TokensSlider = () => {
 
     if (isLoading || isFetching) {
         return (
-            <div className="flex flex-col overflow-x-scroll">
-            <Body className="text-white_light_grey mb-4">Trending tokens</Body>
-            <div className="flex">
-                <div className="flex gap-4 mb-4">  
-                    <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
-                    <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
-                    <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
-                    <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
-                    <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+            <div id='token-atlas-token-slider-loading' className="flex flex-col overflow-x-scroll" data-testid='token-slider-loader'>
+                <Body className="text-white_light_grey mb-4">Trending tokens</Body>
+                <div className="flex">
+                    <div className="flex gap-4 mb-4">  
+                        <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+                        <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+                        <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+                        <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+                        <SkeletonLoader $height="125px" $width="108px" $radius="9px" />
+                    </div>
                 </div>
             </div>
-        </div>
         )   
     } 
 
     return (
-        <div className="flex flex-col overflow-x-scroll">
+        <div id='token-atlas-token-slider' className="flex flex-col overflow-x-scroll">
             <Body className="text-white_light_grey mb-4">Trending tokens</Body>
             <div className="flex">
                 <div className="flex gap-4 mb-4">

@@ -47,10 +47,10 @@ const TokenInfoColumn = ({ className, isLoadingTokenDataInfo }: TokenInfoColumnP
     ];
 
     return (
-        <div ref={divRef} className={`flex flex-col gap-10 ${className}`}>
+        <div id='token-atlas-token-info-column' ref={divRef} className={`flex flex-col gap-10 ${className}`}>
             <div className="flex flex-col gap-2">
                 <Body>Blockchains</Body>
-                <div className="w-full h-fit flex flex-wrap gap-2">
+                <div id='token-atlas-info-column-blockchain-list' className="w-full h-fit flex flex-wrap gap-2">
                     {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} data-testid='circular-loading' />}
                     {isAllChainsVisible
                         ? tokenBlockchainsList.map((chain, index) => <ChainCard key={index} chainName={chain} />)
@@ -67,14 +67,14 @@ const TokenInfoColumn = ({ className, isLoadingTokenDataInfo }: TokenInfoColumnP
                     )}
                 </div>
             </div>
-            <div className="flex flex-col gap-2">
+            <div id='token-atlas-info-column-price-change-cards' className="flex flex-col gap-2">
                 <Body>Price changes</Body>
                 <div className="flex flex-wrap gap-2">
                     {isLoadingTokenDataInfo && <CircularProgress size={32} sx={{ color: '#979797' }} data-testid='circular-loading' />}
                     {priceChanges.map((price, index) => <PriceCard key={index} percentage={price.percentage} timePeriod={price.period} />)}
                 </div>
             </div>
-            <div className="flex flex-col gap-2 mb-20">
+            <div id='token-atlas-info-column-stats' className="flex flex-col gap-2 mb-20">
                 <Body>Stats</Body>
                 <div className="flex flex-col rounded px-4 bg-medium_grey">
                     <div className="flex justify-between border-b border-b-dark_grey py-3">

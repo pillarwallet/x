@@ -3,6 +3,7 @@
 exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-10 undefined"
+  id="token-atlas-token-info-column"
 >
   <div
     className="flex flex-col gap-2"
@@ -14,19 +15,16 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
     </p>
     <div
       className="w-full h-fit flex flex-wrap gap-2"
+      id="token-atlas-info-column-blockchain-list"
     >
       <a
-        href="https://etherscan.io"
         rel="noopener noreferrer"
         target="_blank"
       >
         <div
-          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] cursor-pointer"
+          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
         >
-          <img
-            className="w-[24px] h-[24px] object-fill rounded-full mr-2"
-            src="https://metacore.mobula.io/60989b438a473ed77703f7bcd3530fc15542996a6607ae831de8c5e3e10f688d.png"
-          />
           <p
             className="text-[13px] font-semibold truncate capitalize"
           >
@@ -40,6 +38,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       >
         <div
           className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
         >
           <p
             className="text-[13px] font-semibold truncate capitalize"
@@ -49,17 +48,13 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         </div>
       </a>
       <a
-        href="https://polygonscan.com"
         rel="noopener noreferrer"
         target="_blank"
       >
         <div
-          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] cursor-pointer"
+          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
         >
-          <img
-            className="w-[24px] h-[24px] object-fill rounded-full mr-2"
-            src="https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912"
-          />
           <p
             className="text-[13px] font-semibold truncate capitalize"
           >
@@ -82,6 +77,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
   </div>
   <div
     className="flex flex-col gap-2"
+    id="token-atlas-info-column-price-change-cards"
   >
     <p
       className="text-[13px] font-semibold undefined"
@@ -93,6 +89,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
     >
       <div
         className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
       >
         <p
           className="text-[9px] font-semibold text-light_grey"
@@ -108,6 +105,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
       >
         <p
           className="text-[9px] font-semibold text-light_grey"
@@ -123,6 +121,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
       >
         <p
           className="text-[9px] font-semibold text-light_grey"
@@ -138,6 +137,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
       >
         <p
           className="text-[9px] font-semibold text-light_grey"
@@ -153,6 +153,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
       >
         <p
           className="text-[9px] font-semibold text-light_grey"
@@ -170,6 +171,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
   </div>
   <div
     className="flex flex-col gap-2 mb-20"
+    id="token-atlas-info-column-stats"
   >
     <p
       className="text-[13px] font-semibold undefined"

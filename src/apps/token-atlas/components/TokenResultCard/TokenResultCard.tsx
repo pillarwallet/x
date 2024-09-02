@@ -21,6 +21,7 @@ const TokenResultCard = ({
 }: TokenResultCardProps) => {
     return (
         <div
+            id='token-atlas-token-result-card'
             onClick={onClick}
             className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
             data-testid='token-result-card'

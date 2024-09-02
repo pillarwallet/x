@@ -46,7 +46,7 @@ const TokensSearchResult = () => {
     };
 
     return (
-        <div className="flex flex-col w-full">
+        <div id='token-atlas-token-search-result' className="flex flex-col w-full">
             <Body className="text-white_light_grey mb-4">Search tokens</Body>
             <div className="flex flex-col gap-4 max-h-[250px] overflow-auto">
                 {!tokenList.length && <Body className="text-base">No tokens found.</Body>}

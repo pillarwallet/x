@@ -58,6 +58,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
 
     return (
         <input
+            id='token-atlas-search-input'
             onClick={onClick}
             onChange={handleSearch}
             className={`w-full h-full p-4 bg-medium_grey rounded text-[17px] mobile:text-[15px] focus:outline-none focus:ring-0 placeholder-white ${className}`}

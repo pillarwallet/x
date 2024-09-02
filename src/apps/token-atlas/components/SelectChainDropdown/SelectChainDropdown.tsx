@@ -64,7 +64,7 @@ const SelectChainDropdown = ({
     };
 
     return (
-        <div className={`relative ${className}`} data-testid='select-chain-dropdown'>
+        <div id='token-atlas-select-chain-dropdown' className={`relative ${className}`} data-testid='select-chain-dropdown'>
             <button
                 className={`flex justify-between items-center w-full h-full p-4 bg-medium_grey rounded focus:outline-none ${
                     isSelectChainDropdownOpen && 'border-b border-dark_grey'
@@ -84,7 +84,7 @@ const SelectChainDropdown = ({
                 />
             </button>
             {isSelectChainDropdownOpen && (
-                <div className="absolute top-full left-0 bg-medium_grey rounded-b w-full max-h-[400px] border-[1px] border-dark_grey overflow-y-auto capitalize z-50">
+                <div id='token-atlas-select-chain-list' className="absolute top-full left-0 bg-medium_grey rounded-b w-full max-h-[400px] border-[1px] border-dark_grey overflow-y-auto capitalize z-50">
                     <ul>
                         {allOptions.map((option) => (
                             <li

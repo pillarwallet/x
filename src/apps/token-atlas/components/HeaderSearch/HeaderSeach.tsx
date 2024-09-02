@@ -24,7 +24,7 @@ const HeaderSearch = () => {
     };
 
     return (
-        <div className="flex justify-between mb-10">
+        <div id='token-atlas-header-search' className="flex justify-between mb-10">
             <div className="flex items-center">
                 <img src={TokenAtlasLogo} className="w-5 mobile:w-4 mr-2" />
                 <Body className="text-lg text-light_grey mobile:text-base">
@@ -34,6 +34,7 @@ const HeaderSearch = () => {
             <div
                 className="flex items-center cursor-pointer"
                 onClick={() => handleSearchOpen()}
+                id='token-atlas-search-button'
             >
                 <Body className="text-base text-light_grey mobile:text-[13px]">
                     Search

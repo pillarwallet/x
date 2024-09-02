@@ -101,9 +101,9 @@ const TokenGraphColumn = ({ className, isLoadingTokenDataInfo }: TokenGraphColum
     };
 
     return (
-        <div className={`flex flex-col ${className} mr-4`}>
+        <div id='token-atlas-token-graph-column' className={`flex flex-col ${className} mr-4`}>
             <div className="flex flex-col w-full max-w-[460px]">
-                <div className="flex items-center gap-2 mb-2">
+                <div id='token-atlas-graph-column-name-logo-symbol' className="flex items-center gap-2 mb-2">
                     {isLoadingTokenDataInfo ? (
                         <SkeletonLoader $height="29px" $radius="6px" $marginBottom="10px" />
                     ) : (
@@ -120,16 +120,16 @@ const TokenGraphColumn = ({ className, isLoadingTokenDataInfo }: TokenGraphColum
                         </>
                     )}
                 </div>
-                <div className="flex justify-between items-center desktop:items-end">
+                <div id='token-atlas-graph-column-price-change' className="flex justify-between items-center desktop:items-end">
                     {isLoadingTokenDataInfo ? (
                         <SkeletonLoader $height="50px" $radius="6px" $marginBottom="10px" />
                     ) : (
                         <>
-                            <h1 className="text-[60px] mobile:text-[40px] mr-4">
+                            <h1 id='token-atlas-graph-column-price-today' className="text-[60px] mobile:text-[40px] mr-4">
                                 <span className="text-white_light_grey">$</span>
                                 {tokenDataInfo?.price && limitDigits(tokenDataInfo.price)}
                             </h1>
-                            <div className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0">
+                            <div id='token-atlas-graph-column-price-change-percentage' className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0">
                                 {tokenDataInfo?.price_change_24h && (
                                     <>
                                         <img
@@ -152,7 +152,7 @@ const TokenGraphColumn = ({ className, isLoadingTokenDataInfo }: TokenGraphColum
                         </>
                     )}
                 </div>
-                <div className="flex rounded bg-medium_grey max-w-[460px] p-1 gap-1">
+                <div id='token-atlas-graph-column-time-filter' className="flex rounded bg-medium_grey max-w-[460px] p-1 gap-1">
                     {timeFilter.map((filter, index) => (
                         <button
                             key={index}

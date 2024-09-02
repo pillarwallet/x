@@ -3,12 +3,14 @@
 exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col undefined mr-4"
+  id="token-atlas-token-graph-column"
 >
   <div
     className="flex flex-col w-full max-w-[460px]"
   >
     <div
       className="flex items-center gap-2 mb-2"
+      id="token-atlas-graph-column-name-logo-symbol"
     >
       <img
         className="w-[30px] h-[30px] object-fill rounded-full"
@@ -28,9 +30,11 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex justify-between items-center desktop:items-end"
+      id="token-atlas-graph-column-price-change"
     >
       <h1
         className="text-[60px] mobile:text-[40px] mr-4"
+        id="token-atlas-graph-column-price-today"
       >
         <span
           className="text-white_light_grey"
@@ -41,6 +45,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       </h1>
       <div
         className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0"
+        id="token-atlas-graph-column-price-change-percentage"
       >
         <img
           className="w-[30px] mr-1 mobile:w-3.5 mobile:mb-2 false"
@@ -72,6 +77,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex rounded bg-medium_grey max-w-[460px] p-1 gap-1"
+      id="token-atlas-graph-column-time-filter"
     >
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
@@ -107,6 +113,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
   </div>
   <div
     className="flex w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0"
+    id="token-atlas-token-graph"
   >
     <canvas
       data-testid="price-graph"

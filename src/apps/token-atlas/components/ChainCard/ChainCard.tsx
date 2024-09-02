@@ -41,6 +41,7 @@ const ChainCard = ({ chainName }: ChainCardProps) => {
     return (
         <a href={explorerLink} target="_blank" rel="noopener noreferrer">
             <div
+                id='token-atlas-chain-card'
                 className={`flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] ${
                     explorerLink && 'cursor-pointer'
                 }`}

@@ -271,7 +271,7 @@ const TokenGraph = () => {
     };
 
     return (
-        <div className="flex w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0">
+        <div id='token-atlas-token-graph' className="flex w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0">
             <Line data={data} options={options} plugins={[horizontalDottedLine]} data-testid='price-graph' />
         </div>
     );
