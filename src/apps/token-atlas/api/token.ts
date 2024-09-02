@@ -8,7 +8,11 @@ import { TokenAtlasInfoApiResponse, TokenAtlasGraphApiResponse, TrendingTokens, 
 
 export const tokenInfoApi = createApi({
     reducerPath: 'tokenInfoApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://token-nubpgwxpiq-uc.a.run.app' }),
+    baseQuery: fetchBaseQuery({ baseUrl:
+        process.env.REACT_APP_USE_TESTNETS === 'true' ?
+        'https://token-nubpgwxpiq-uc.a.run.app' :
+        'https://token-7eu4izffpa-uc.a.run.app'
+    }),
     endpoints: (builder) => ({
         getTokenInfo: builder.query<TokenAtlasInfoApiResponse, { asset: string; blockchain: string; symbol: string; }>({
             query: ({ asset, blockchain, symbol }) => {
@@ -21,7 +25,11 @@ export const tokenInfoApi = createApi({
 
 export const tokenGraphApi = createApi({
     reducerPath: 'tokenGraphApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://tokenpricehistory-nubpgwxpiq-uc.a.run.app' }),
+    baseQuery: fetchBaseQuery({ baseUrl:
+        process.env.REACT_APP_USE_TESTNETS === 'true' ?
+        'https://tokenpricehistory-nubpgwxpiq-uc.a.run.app' :
+        'https://tokenpricehistory-7eu4izffpa-uc.a.run.app'
+    }),
     endpoints: (builder) => ({
         getTokenGraph: builder.query<TokenAtlasGraphApiResponse, { blockchain?: string; asset: string; from: number; to?: number; }>({
             query: ({ blockchain, asset, from, to }) => {
@@ -36,7 +44,11 @@ export const tokenGraphApi = createApi({
 
 export const trendingTokensApi = createApi({
     reducerPath: 'trendingTokensApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://trendingtokens-nubpgwxpiq-uc.a.run.app' }),
+    baseQuery: fetchBaseQuery({ baseUrl:
+        process.env.REACT_APP_USE_TESTNETS === 'true' ?
+        'https://trendingtokens-nubpgwxpiq-uc.a.run.app' :
+        'https://trendingtokens-7eu4izffpa-uc.a.run.app'
+    }),
     endpoints: (builder) => ({
         getTrendingTokens: builder.query<TrendingTokens, void>({
             query: () => '',
@@ -46,7 +58,11 @@ export const trendingTokensApi = createApi({
 
 export const blockchainsListApi = createApi({
     reducerPath: 'blockchainsListApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://blockchains-nubpgwxpiq-uc.a.run.app' }),
+    baseQuery: fetchBaseQuery({ baseUrl:
+        process.env.REACT_APP_USE_TESTNETS === 'true' ?
+        'https://blockchains-nubpgwxpiq-uc.a.run.app' :
+        'https://blockchains-7eu4izffpa-uc.a.run.app'
+    }),
     endpoints: (builder) => ({
         getBlockchainsList: builder.query<BlockchainList, void>({
             query: () => '',
