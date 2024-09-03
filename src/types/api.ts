@@ -1,5 +1,4 @@
 export enum ApiLayout {
-  OVERVIEW = 'OVERVIEW',
   TOKENS_HORIZONTAL = 'TOKENS_HORIZONTAL',
   TOKENS_VERTICAL = 'TOKENS_VERTICAL',
   GENERIC_BANNER = 'GENERIC_BANNER',
@@ -104,9 +103,13 @@ export type Asset = {
     meta: {
       display?: GenericBannerDisplay | EditorialDisplay;
     };
-    data?: WalletPortfolioData | TokenData[] | Advertisement;
+    data?: TokenData[] | Advertisement;
     layout: ApiLayout;
     id: string;
+  }
+
+  export type WalletData = {
+    data: WalletPortfolioData;
   };
   
   export type ApiResponse = {

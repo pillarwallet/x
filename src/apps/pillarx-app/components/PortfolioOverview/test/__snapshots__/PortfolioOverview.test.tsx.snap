@@ -2,14 +2,6 @@
 
 exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`] = `
 .c0 {
-  height: 40px;
-  width: 200px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 54px;
-}
-
-.c1 {
   height: 77px;
   width: 180px;
   animation: hLhBjP 1s linear infinite alternate;
@@ -17,7 +9,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   margin-bottom: 0;
 }
 
-.c2 {
+.c1 {
   height: 36px;
   width: 150px;
   animation: hLhBjP 1s linear infinite alternate;
@@ -25,7 +17,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   margin-bottom: 0;
 }
 
-.c3 {
+.c2 {
   height: 36px;
   width: 190px;
   animation: hLhBjP 1s linear infinite alternate;
@@ -33,7 +25,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   margin-bottom: 0;
 }
 
-.c4 {
+.c3 {
   height: 36px;
   width: 80px;
   animation: hLhBjP 1s linear infinite alternate;
@@ -48,14 +40,16 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   <div
     className="flex flex-col justify-between"
   >
-    <div
-      className="c0 mobile:hidden"
-    />
+    <p
+      className="text-base font-medium animate-pulse mobile:my-4"
+    >
+      Wallet portfolio data loading...
+    </p>
     <div
       className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <div
-        className="c1"
+        className="c0"
       />
     </div>
   </div>
@@ -66,14 +60,14 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
       className="flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between mobile:items-start"
     >
       <div
-        className="c2"
+        className="c1"
       />
       <div
-        className="c3"
+        className="c2"
       />
     </div>
     <div
-      className="c4"
+      className="c3"
     />
   </div>
 </div>
