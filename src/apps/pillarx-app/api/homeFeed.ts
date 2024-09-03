@@ -29,8 +29,8 @@ const staggeredBaseQuery = retry(fetchBaseQuery({baseUrl:
     maxRetries: 5,
   })
 
-export const walletTiledApi = createApi({
-    reducerPath: 'walletTiledApi',
+export const walletPortfolioTileApi = createApi({
+    reducerPath: 'walletPortfolioTileApi',
     baseQuery: staggeredBaseQuery,
     endpoints: (builder) => ({
         getWalletInfo: builder.query<WalletData, { address: string }>({
@@ -43,7 +43,7 @@ export const walletTiledApi = createApi({
  * Add this to the store
  */
 addMiddleware(homeFeedApi);
-addMiddleware(walletTiledApi);
+addMiddleware(walletPortfolioTileApi);
 
 export const { useGetTilesInfoQuery } = homeFeedApi;
-export const { useGetWalletInfoQuery } = walletTiledApi;
+export const { useGetWalletInfoQuery } = walletPortfolioTileApi;
