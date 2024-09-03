@@ -36,6 +36,8 @@
     "@uniswap/v3-sdk": "^3.11.0",
     "axios": "^1.6.5",
     "chart.js": "^4.4.3",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "ethers": "^5.7.2",
     "firebase": "^10.6.0",

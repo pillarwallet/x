@@ -1,4 +1,5 @@
 import renderer from 'react-test-renderer';
+import { MemoryRouter } from 'react-router-dom';
 
 // components
 import TokensVerticalTile from '../TokensVerticalTile';
@@ -12,7 +13,7 @@ describe('<TokensVerticalTile />', () => {
       display: {
           title: 'vertical'
       },
-  },
+    },
     data: [
       {
         id: 1,
@@ -39,14 +40,17 @@ describe('<TokensVerticalTile />', () => {
     ],
     layout: ApiLayout.TOKENS_VERTICAL,
     id: 'vertical',
-  }
-  
+  };
 
-    it('renders correctly and matches snapshot', () => {
-      const tree = renderer
-          .create(<TokensVerticalTile data={mockData} isDataLoading={false}/>)
-          .toJSON();
+  it('renders correctly and matches snapshot', () => {
+    const tree = renderer
+      .create(
+        <MemoryRouter>
+          <TokensVerticalTile data={mockData} isDataLoading={false} />
+        </MemoryRouter>
+      )
+      .toJSON();
 
-      expect(tree).toMatchSnapshot();
-    });
+    expect(tree).toMatchSnapshot();
+  });
 });

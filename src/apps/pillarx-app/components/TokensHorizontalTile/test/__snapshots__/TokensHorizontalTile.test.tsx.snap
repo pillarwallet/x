@@ -64,13 +64,14 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-purple_light mb-2.5"
     >
-      horzizontal title
+      horizontal title
     </p>
     <div
       className="flex justify-between"
     >
       <div
-        className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+        className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+        onClick={[Function]}
       >
         <img
           className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"

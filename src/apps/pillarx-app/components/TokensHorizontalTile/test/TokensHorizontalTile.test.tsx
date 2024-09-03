@@ -1,4 +1,5 @@
 import renderer from 'react-test-renderer';
+import { MemoryRouter } from 'react-router-dom';
 
 // components
 import TokensHorizontalTile from '../TokensHorizontalTile';
@@ -8,7 +9,7 @@ describe('<TokensHorizontalTile />', () => {
     const mockData: Projection = {
         meta: {
             display: {
-                title: 'horzizontal title'
+                title: 'horizontal title'
             },
         },
         data: [{
@@ -26,19 +27,23 @@ describe('<TokensHorizontalTile />', () => {
                 name: 'platform one',
                 rank: 3,
                 weight: 1,
-        }],
+            }],
             price_change_24h: 12.56,
             pair: 'pair example',
         }],
         layout: ApiLayout.TOKENS_HORIZONTAL,
-        id: 'horzizontal',
+        id: 'horizontal',
     };
 
     const mockLoading = false;
   
     it('renders correctly and matches snapshot', () => {
         const tree = renderer
-            .create(<TokensHorizontalTile data={mockData} isDataLoading={mockLoading} />)
+            .create(
+                <MemoryRouter>
+                    <TokensHorizontalTile data={mockData} isDataLoading={mockLoading} />
+                </MemoryRouter>
+            )
             .toJSON();
 
         expect(tree).toMatchSnapshot();
@@ -46,10 +51,13 @@ describe('<TokensHorizontalTile />', () => {
 
     it('displays loading skeleton when data is loading', () => {
         const tree = renderer
-            .create(<TokensHorizontalTile data={undefined} isDataLoading={true} />)
+            .create(
+                <MemoryRouter>
+                    <TokensHorizontalTile data={undefined} isDataLoading={true} />
+                </MemoryRouter>
+            )
             .toJSON();
 
         expect(tree).toMatchSnapshot();
     });
-
 });

@@ -14,14 +14,14 @@ export type Asset = {
     contracts: string[];
     logo: string;
     blockchains: string[];
-  }
+  };
   
   export type CrossChainBalance = {
     balance: number;
     balanceRaw: string;
     chainId: string;
     address: string;
-  }
+  };
   
   export type ContractBalance = {
     balance: number;
@@ -29,7 +29,7 @@ export type Asset = {
     chainId: string;
     address: string;
     decimals: number;
-  }
+  };
   
   export type AssetData = {
     asset: Asset;
@@ -49,12 +49,12 @@ export type Asset = {
       [key: string]: CrossChainBalance;
     };
     contracts_balances: ContractBalance[];
-  }
+  };
   
   export type TotalPnlHistory = {
     realized: number;
     unrealized: number;
-  }
+  };
   
   export type WalletPortfolioData = {
     total_wallet_balance?: number;
@@ -65,8 +65,8 @@ export type Asset = {
     assets?: AssetData[];
     total_pnl_history?: {
       [key in '24h' | '7d' | '30d' | '1y']?: TotalPnlHistory;
+    };
   };
-  }
 
   export type GenericBannerDisplay = {
     title?: string;
@@ -76,7 +76,7 @@ export type Asset = {
       text?: string;
       href?: string;
     };
-  }
+  };
 
   export type EditorialDisplay = {
     tags?: {
@@ -94,11 +94,11 @@ export type Asset = {
       icon?: string;
       href?: string;
     }
-  }
+  };
   
   export type Advertisement = {
     slug: string;
-  }
+  };
 
   export type Projection = {
     meta: {
@@ -107,23 +107,24 @@ export type Asset = {
     data?: WalletPortfolioData | TokenData[] | Advertisement;
     layout: ApiLayout;
     id: string;
-  }
+  };
   
   export type ApiResponse = {
     projection: Projection[];
-  }
+  };
 
-  interface TokenContract {
+  export type TokenContract = {
     address: string;
     blockchain: string;
+    blockchainId?: string;
     decimals?: number;
-  }
+  };
   
-  interface TokenPlatform {
+  export type TokenPlatform = {
     name: string;
     rank: number;
     weight: number;
-  }
+  };
   
   export type TokenData = {
     id?: number;
@@ -135,5 +136,137 @@ export type Asset = {
     platforms?: TokenPlatform[];
     price_change_24h?: number;
     pair?: string;
-  }
+  };
   
+
+  export type TokenAtlasInfoData = {
+    id: number;
+    market_cap: number;
+    market_cap_diluted: number;
+    liquidity: number;
+    price: number;
+    priceNative?: number;
+    off_chain_volume: number;
+    volume: number;
+    volume_change_24h: number;
+    volume_7d: number;
+    is_listed: boolean;
+    price_change_24h: number;
+    price_change_1h: number;
+    price_change_7d: number;
+    price_change_1m: number;
+    price_change_1y: number;
+    ath: number;
+    atl: number;
+    name: string;
+    symbol: string;
+    logo: string;
+    decimals?: number;
+    native?: {
+        symbol: string;
+        address: string;
+        decimals: number;
+        name: string;
+        logo: string;
+        id: number;
+        type: string;
+    };
+    rank: number;
+    contracts: TokenContract[];
+    total_supply: string;
+    circulating_supply: string;
+  };
+  
+  export type TokenAtlasInfoApiResponse = {
+    data?: TokenAtlasInfoData;
+  };
+
+  type HistoryPoint = {
+    priceUSD: number;
+    timestamp: number;
+  };
+
+  export type TokenMarketHistory = {
+    price_history?: HistoryPoint[];
+    market_cap_history?: HistoryPoint[];
+    market_cap_diluted_history?: HistoryPoint[];
+    volume_history?: HistoryPoint[];
+    name?: string;
+    blockchain?: string;
+  };
+
+  export type TokenAtlasGraphApiResponse = {
+    data?: TokenMarketHistory;
+  };
+
+  export type TokenPriceGraphPeriod = {
+    from: number;
+    to?: number;
+  };
+
+  export type TrendingTokens = {
+    data: TokenData[];
+  };
+
+  export type TokenBlockchainList = {
+    symbol: string;
+    address: string;
+    decimals: number;
+    name: string;
+    type: string;
+  };
+
+  export type Stable = {
+    symbol: string;
+    address: string;
+    blockchains: string[];
+    blockchain: string;
+    decimals: number;
+    name: string;
+    logo: string;
+    contracts: string[];
+    type: string;
+  };
+
+  export type Router = {
+    factory: string;
+    address: string;
+    fee: number;
+    name: string;
+  };
+
+  export type Eth = {
+    symbol: string;
+    address: string;
+    decimals: number;
+    name: string;
+    logo: string;
+    id: number;
+    type: string;
+  };
+
+  export type BlockchainData = {
+    coverage: string[];
+    multicall_contract: string;
+    color: string;
+    evmChainId: number;
+    supportedProtocols: string[];
+    dexscreenerChain: string;
+    chainId: string;
+    coingeckoChain: string;
+    stable: Stable;
+    name: string;
+    explorer: string;
+    eth: Eth;
+    logo: string;
+    tokens: TokenBlockchainList[];
+    rpcs: string[];
+    shortName: string;
+    routers: Router[];
+    privateRpcs?: string[];
+  };
+
+  export type BlockchainList = {
+    data: BlockchainData[];
+  };
+

@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col gap-10 undefined"
+  id="token-atlas-token-info-column"
+>
+  <div
+    className="flex flex-col gap-2"
+  >
+    <p
+      className="text-[13px] font-semibold undefined"
+    >
+      Blockchains
+    </p>
+    <div
+      className="w-full h-fit flex flex-wrap gap-2"
+      id="token-atlas-info-column-blockchain-list"
+    >
+      <a
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
+        >
+          <p
+            className="text-[13px] font-semibold truncate capitalize"
+          >
+            Ethereum
+          </p>
+        </div>
+      </a>
+      <a
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
+        >
+          <p
+            className="text-[13px] font-semibold truncate capitalize"
+          >
+            Binance Smart Chain
+          </p>
+        </div>
+      </a>
+      <a
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          className="flex rounded-[50px] bg-medium_grey p-1 pr-3 items-center h-8 max-w-[150px] undefined"
+          id="token-atlas-chain-card"
+        >
+          <p
+            className="text-[13px] font-semibold truncate capitalize"
+          >
+            Polygon
+          </p>
+        </div>
+      </a>
+      <div
+        className="flex rounded-full bg-medium_grey p-2 items-center h-8 cursor-pointer"
+        onClick={[Function]}
+      >
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          + 
+          5
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-col gap-2"
+    id="token-atlas-info-column-price-change-cards"
+  >
+    <p
+      className="text-[13px] font-semibold undefined"
+    >
+      Price changes
+    </p>
+    <div
+      className="flex flex-wrap gap-2"
+    >
+      <div
+        className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
+      >
+        <p
+          className="text-[9px] font-semibold text-light_grey"
+        >
+          1H
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          0.1
+          %
+        </p>
+      </div>
+      <div
+        className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
+      >
+        <p
+          className="text-[9px] font-semibold text-light_grey"
+        >
+          24H
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          0.44
+          %
+        </p>
+      </div>
+      <div
+        className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
+      >
+        <p
+          className="text-[9px] font-semibold text-light_grey"
+        >
+          7D
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          1.8
+          %
+        </p>
+      </div>
+      <div
+        className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
+      >
+        <p
+          className="text-[9px] font-semibold text-light_grey"
+        >
+          1M
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          3.3999999
+          %
+        </p>
+      </div>
+      <div
+        className="flex flex-col bg-medium_grey rounded p-2 gap-1 w-[125px]"
+        id="token-atlas-price-card"
+      >
+        <p
+          className="text-[9px] font-semibold text-light_grey"
+        >
+          1Y
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          6.7
+          %
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-col gap-2 mb-20"
+    id="token-atlas-info-column-stats"
+  >
+    <p
+      className="text-[13px] font-semibold undefined"
+    >
+      Stats
+    </p>
+    <div
+      className="flex flex-col rounded px-4 bg-medium_grey"
+    >
+      <div
+        className="flex justify-between border-b border-b-dark_grey py-3"
+      >
+        <p
+          className="text-[13px] font-normal text-light_grey undefined"
+        >
+          All time high
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          146
+        </p>
+      </div>
+      <div
+        className="flex justify-between border-b border-b-dark_grey py-3"
+      >
+        <p
+          className="text-[13px] font-normal text-light_grey undefined"
+        >
+          All time low
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          96
+        </p>
+      </div>
+      <div
+        className="flex justify-between border-b border-b-dark_grey py-3"
+      >
+        <p
+          className="text-[13px] font-normal text-light_grey undefined"
+        >
+          Total supply
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          300
+        </p>
+      </div>
+      <div
+        className="flex justify-between border-b border-b-dark_grey py-3"
+      >
+        <p
+          className="text-[13px] font-normal text-light_grey undefined"
+        >
+          Circulating supply
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          170
+        </p>
+      </div>
+      <div
+        className="flex justify-between border-b border-b-dark_grey py-3"
+      >
+        <p
+          className="text-[13px] font-normal text-light_grey undefined"
+        >
+          Diluted market cap
+        </p>
+        <p
+          className="text-[13px] font-semibold undefined"
+        >
+          100
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

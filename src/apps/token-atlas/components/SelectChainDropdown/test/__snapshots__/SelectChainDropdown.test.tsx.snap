@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
+<div
+  className="relative undefined"
+  data-testid="select-chain-dropdown"
+  id="token-atlas-select-chain-dropdown"
+>
+  <button
+    className="flex justify-between items-center w-full h-full p-4 bg-medium_grey rounded focus:outline-none false"
+    onClick={[Function]}
+  >
+    <p
+      className="text-[13px] font-semibold text-[17px] mobile:text-[15px] font-medium leading-5 line-clamp-1 capitalize"
+    >
+      Select chain
+    </p>
+    <img
+      className="transform "
+      src={
+        {
+          "ReactComponent": {
+            "$$typeof": Symbol(react.forward_ref),
+            "render": [Function],
+          },
+          "default": "arrow-down.svg",
+        }
+      }
+    />
+  </button>
+</div>
+`;
