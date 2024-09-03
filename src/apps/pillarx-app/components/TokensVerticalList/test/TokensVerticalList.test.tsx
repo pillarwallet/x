@@ -1,4 +1,5 @@
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { MemoryRouter } from 'react-router-dom';
 
 // components
 import TokensVerticalList from '../TokensVerticalList';
@@ -37,7 +38,11 @@ describe('<TokensVerticalList />', () => {
 
   it('renders correctly and matches snapshot for left position', () => {
     const tree = renderer
-      .create(<TokensVerticalList position="left" data={mockData} />)
+      .create(
+        <MemoryRouter>
+          <TokensVerticalList position="left" data={mockData} />
+        </MemoryRouter>
+      )
       .toJSON();
     
     expect(tree).toMatchSnapshot();
@@ -45,21 +50,35 @@ describe('<TokensVerticalList />', () => {
 
   it('renders correctly and matches snapshot for right position', () => {
     const tree = renderer
-      .create(<TokensVerticalList position="right" data={mockData} />)
+      .create(
+        <MemoryRouter>
+          <TokensVerticalList position="right" data={mockData} />
+        </MemoryRouter>
+      )
       .toJSON();
     
     expect(tree).toMatchSnapshot();
   });
 
   it('renders the correct number of HorizontalToken components', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} />).toJSON() as ReactTestRendererJSON;
+    const tree = renderer.create(
+      <MemoryRouter>
+        <TokensVerticalList position='left' data={mockData} />
+      </MemoryRouter>
+    ).toJSON() as ReactTestRendererJSON;
+
     const tokensList = tree.children as ReactTestRendererJSON[];
     
     expect(tokensList.length).toBe(mockData.length);
   });
 
   it('passes the correct props to HorizontalToken components', () => {
-    const tree = renderer.create(<TokensVerticalList position='left' data={mockData} />).toJSON() as ReactTestRendererJSON;
+    const tree = renderer.create(
+      <MemoryRouter>
+        <TokensVerticalList position='left' data={mockData} />
+      </MemoryRouter>
+    ).toJSON() as ReactTestRendererJSON;
+
     const tokensList = tree.children as ReactTestRendererJSON[];
     
     tokensList.forEach((tokenElement, index) => {

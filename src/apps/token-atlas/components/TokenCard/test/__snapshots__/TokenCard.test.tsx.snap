@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TokenCard /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col relative w-[108px] h-[125px] bg-medium_grey rounded-lg px-4 pb-4 pt-6 items-center justify-center cursor-pointer"
+  data-testid="token-card"
+  id="token-atlas-token-card"
+  onClick={[MockFunction]}
+>
+  <img
+    className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
+    data-testid="token-card-chain-logo"
+    src="blockchain-logo.png"
+  />
+  <img
+    className="w-[40px] h-[40px] object-fill rounded-full"
+    data-testid="token-card-token-logo"
+    src="token-logo.png"
+  />
+  <p
+    className="text-[13px] font-semibold text-base capitalize w-full truncate text-center"
+  >
+    Test Token
+  </p>
+  <p
+    className="text-[13px] font-semibold text-white_grey"
+  >
+    TTK
+  </p>
+</div>
+`;
