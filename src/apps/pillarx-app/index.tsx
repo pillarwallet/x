@@ -49,7 +49,7 @@ const App = () => {
     isFetching: isHomeFeedFetching,
     isSuccess: isHomeFeedSuccess,
   } = useGetTilesInfoQuery(
-    { page: page, address: walletAddress || '' },
+    { page, address: walletAddress || '' },
     { skip: !walletAddress }
   );
   const {

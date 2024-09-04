@@ -164,8 +164,10 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
     className="absolute self-center w-[34px] h-[34px] p-2 bg-white rounded-[3px] desktop:p-4 desktop:w-14 desktop:h-14"
     id="switch-cards-button-exchange"
     onClick={[Function]}
+    type="button"
   >
     <img
+      alt="swap-icon"
       className="w-[18px] h-[18px] desktop:w-6 desktop:h-6"
       src="arrow-swap-horizontal.png"
     />

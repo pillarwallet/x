@@ -8,11 +8,13 @@ exports[`<TokenCard /> renders correctly and matches snapshot 1`] = `
   onClick={[MockFunction]}
 >
   <img
+    alt="chain-logo"
     className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
     data-testid="token-card-chain-logo"
     src="blockchain-logo.png"
   />
   <img
+    alt="token-logo"
     className="w-[40px] h-[40px] object-fill rounded-full"
     data-testid="token-card-token-logo"
     src="token-logo.png"

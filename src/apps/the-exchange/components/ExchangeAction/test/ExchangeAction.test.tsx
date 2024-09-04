@@ -80,9 +80,13 @@ jest.mock('@etherspot/transaction-kit', () => ({
 }));
 jest.mock('../../../utils/converters', () => ({
   hasThreeZerosAfterDecimal: jest.fn((num) => num % 1 === 0),
+  formatTokenAmount: jest.fn((amount) => {
+    if (amount === undefined) return '0.00000000';
+    return Number(amount).toFixed(8);
+  }),
 }));
 
-describe('<CardsSwap />', () => {
+describe('<ExchangeAction />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     act(() => {

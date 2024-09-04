@@ -10,7 +10,7 @@ const Alert = ({
   level = 'info',
   children,
 }: React.PropsWithChildren<{
-  level?: 'info' | 'success' | 'warning' | 'error'
+  level?: 'info' | 'success' | 'warning' | 'error';
 }>) => {
   const color = {
     background: {
@@ -28,14 +28,11 @@ const Alert = ({
   };
 
   return (
-    <AlertText
-      $background={color.background[level]}
-      $color={color.text[level]}
-    >
+    <AlertText $background={color.background[level]} $color={color.text[level]}>
       {children}
     </AlertText>
   );
-}
+};
 
 export const App = () => {
   const [t] = useTranslation();
@@ -56,18 +53,19 @@ export const App = () => {
       const newSignedMessage = await wallets[0].sign(message);
       setSignedMessage(newSignedMessage);
     } catch (e) {
-      const newErrorMessage = e instanceof Error && e?.message
-        ? e.message
-        : 'Failed to sign: unknown error';
+      const newErrorMessage =
+        e instanceof Error && e?.message
+          ? e.message
+          : 'Failed to sign: unknown error';
       setErrorMessage(newErrorMessage);
     }
 
     setIsSigning(false);
-  }
+  };
 
   useEffect(() => {
-    setErrorMessage('')
-    setSignedMessage('')
+    setErrorMessage('');
+    setSignedMessage('');
   }, [message]);
 
   return (
@@ -77,18 +75,14 @@ export const App = () => {
         onChange={(e) => setMessage(e?.target?.value ?? '')}
         placeholder={t`messagePlaceholder`}
       />
-      {errorMessage && (
-        <Alert level="error">{errorMessage}</Alert>
-      )}
-      {signedMessage && (
-        <Alert level="info">{signedMessage}</Alert>
-      )}
+      {errorMessage && <Alert level="error">{errorMessage}</Alert>}
+      {signedMessage && <Alert level="info">{signedMessage}</Alert>}
       <StyledButton onClick={signMessage} disabled={isSigning}>
         {isSigning ? t`signing` : t`signMessage`}
       </StyledButton>
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   width: 100%;
@@ -131,7 +125,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const AlertText = styled.p<{ $color: string; $background: string; }>`
+const AlertText = styled.p<{ $color: string; $background: string }>`
   padding: 13px 15px;
   background: ${({ $background }) => $background};
   color: ${({ $color }) => $color};

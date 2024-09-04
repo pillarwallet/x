@@ -11,6 +11,7 @@ exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
     className="flex items-center"
   >
     <img
+      alt="token-logo"
       className="w-[30px] h-[30px] object-fill rounded-full mr-2"
       src="https://example.com/logo.png"
     />
