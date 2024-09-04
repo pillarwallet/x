@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import styled from 'styled-components';
 
 // components
@@ -15,6 +16,5 @@ const Wrapper = styled.div`
   align-items: center;
   height: 100vh;
 `;
-
 
 export default Loading;

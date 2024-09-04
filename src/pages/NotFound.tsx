@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -12,7 +13,7 @@ const NotFound = ({ message }: { message?: string }) => {
       <Alert>{message ?? t`error.pageNotFound`}</Alert>
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   display: flex;

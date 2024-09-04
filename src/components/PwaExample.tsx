@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,7 +11,8 @@ interface PWABeforeInstallPromptEvent extends Event {
 
 const PwaExample = () => {
   const [isPwaInstalled, setIsPwaInstalled] = useState<boolean>(false);
-  const [pwaInstall, setPwaInstall] = useState<PWABeforeInstallPromptEvent | null>(null);
+  const [pwaInstall, setPwaInstall] =
+    useState<PWABeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     const callback = (event: Event) => {
@@ -22,7 +24,7 @@ const PwaExample = () => {
 
     return () => {
       window.removeEventListener('beforeinstallprompt', callback);
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const PwaExample = () => {
 
     return () => {
       window.removeEventListener('appinstalled', callback);
-    }
+    };
   }, []);
 
   const handleInstall = async () => {
@@ -56,14 +58,8 @@ const PwaExample = () => {
     return null;
   }
 
-  return (
-    <InstallButton onClick={handleInstall}>
-      Install
-    </InstallButton>
-  );
-}
-
-
+  return <InstallButton onClick={handleInstall}>Install</InstallButton>;
+};
 
 const InstallButton = styled.span`
   display: inline-block;
@@ -74,7 +70,7 @@ const InstallButton = styled.span`
   color: #000;
   padding: 5px 15px;
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.5;
   }

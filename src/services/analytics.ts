@@ -1,4 +1,7 @@
-import { logEvent as logFirebaseAnalyticsEvent, AnalyticsCallOptions } from '@firebase/analytics';
+import {
+  AnalyticsCallOptions,
+  logEvent as logFirebaseAnalyticsEvent,
+} from 'firebase/analytics';
 
 // services
 import { firebaseAnalytics } from './firebase';
@@ -9,4 +12,4 @@ export const logEvent = (
   options?: AnalyticsCallOptions
 ) => {
   logFirebaseAnalyticsEvent(firebaseAnalytics, eventName, eventParams, options);
-}
+};

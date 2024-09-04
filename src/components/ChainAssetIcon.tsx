@@ -1,5 +1,6 @@
-import styled from 'styled-components';
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import styled from 'styled-components';
 
 // utils
 import { getLogoForChainId } from '../utils/blockchain';
@@ -24,7 +25,7 @@ const ChainAssetIcon = ({
       <ChainIcon src={chainLogo} />
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   position: relative;

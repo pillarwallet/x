@@ -1,50 +1,70 @@
-import React from 'react';
-import styled from 'styled-components';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable import/no-cycle */
 import {
   EtherspotBatch,
   EtherspotBatches,
   EtherspotTransaction,
-  useEtherspotTransactions
+  useEtherspotTransactions,
 } from '@etherspot/transaction-kit';
-import { Trash as TrashIcon, ArrowRight2 as ArrowRightIcon, Send2 as SendIcon } from 'iconsax-react';
 import { ethers } from 'ethers';
+import {
+  ArrowRight2 as ArrowRightIcon,
+  Send2 as SendIcon,
+  Trash as TrashIcon,
+} from 'iconsax-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 // components
-import FormGroup from '../../Form/FormGroup';
-import Card from '../../Text/Card';
-import Alert from '../../Text/Alert';
 import Button from '../../Button';
+import FormGroup from '../../Form/FormGroup';
+import Alert from '../../Text/Alert';
+import Card from '../../Text/Card';
 
 // hooks
-import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 
 // providers
 import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
 
 // utils
-import { getLogoForChainId, getNativeAssetForChainId, visibleChains } from '../../../utils/blockchain';
+import {
+  getLogoForChainId,
+  getNativeAssetForChainId,
+  visibleChains,
+} from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
 const SendModalBatchesTabView = () => {
-  const { transactions: globalTransactionsBatch, removeFromBatch } = useGlobalTransactionsBatch();
+  const { transactions: globalTransactionsBatch, removeFromBatch } =
+    useGlobalTransactionsBatch();
   const [t] = useTranslation();
-  const [expanded, setExpanded] = React.useState<Record<number, boolean | undefined>>({});
+  const [expanded, setExpanded] = React.useState<
+    Record<number, boolean | undefined>
+  >({});
   const [isSending, setIsSending] = React.useState<Record<number, boolean>>({});
-  const [estimatedCostFormatted, setEstimatedCostFormatted] = React.useState<Record<number, string>>({});
-  const [errorMessage, setErrorMessage] = React.useState<Record<number, string>>({});
+  const [estimatedCostFormatted, setEstimatedCostFormatted] = React.useState<
+    Record<number, string>
+  >({});
+  const [errorMessage, setErrorMessage] = React.useState<
+    Record<number, string>
+  >({});
   const { send, estimate } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
 
-  const groupedTransactionsByChainId = globalTransactionsBatch.reduce((acc, globalTransaction) => {
-    const chainId = globalTransaction.chainId;
-    if (!acc[chainId]) {
-      acc[chainId] = [];
-    }
-    acc[chainId].push(globalTransaction);
-    return acc;
-  }, {} as Record<number, IGlobalBatchTransaction[]>);
+  const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
+    (acc, globalTransaction) => {
+      const { chainId } = globalTransaction;
+      if (!acc[chainId]) {
+        acc[chainId] = [];
+      }
+      acc[chainId].push(globalTransaction);
+      return acc;
+    },
+    {} as Record<number, IGlobalBatchTransaction[]>
+  );
 
   const onSend = async (chainId: number, batchId: string) => {
     if (isSending[chainId]) return;
@@ -56,25 +76,35 @@ const SendModalBatchesTabView = () => {
 
     const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
     if (estimatedCostBN) {
-      const nativeAsset = getNativeAssetForChainId(estimated[0].estimatedBatches[0].chainId as number);
-      const estimatedCost = ethers.utils.formatUnits(estimatedCostBN, nativeAsset.decimals);
+      const nativeAsset = getNativeAssetForChainId(
+        estimated[0].estimatedBatches[0].chainId as number
+      );
+      const estimatedCost = ethers.utils.formatUnits(
+        estimatedCostBN,
+        nativeAsset.decimals
+      );
       setEstimatedCostFormatted((prev) => ({
-        ...prev, [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
+        ...prev,
+        [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`,
       }));
     } else {
       console.warn('Unable to get estimated cost', estimated);
     }
 
-    const estimationErrorMessage = estimated?.[0]?.estimatedBatches?.[0]?.errorMessage
+    const estimationErrorMessage =
+      estimated?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
-      setErrorMessage((prev) => ({ ...prev, [chainId]: estimationErrorMessage }));
+      setErrorMessage((prev) => ({
+        ...prev,
+        [chainId]: estimationErrorMessage,
+      }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
 
     const sent = await send([batchId]);
 
-    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage
+    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
       setErrorMessage((prev) => ({ ...prev, [chainId]: sendingErrorMessage }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
@@ -88,10 +118,12 @@ const SendModalBatchesTabView = () => {
       return;
     }
 
-    groupedTransactionsByChainId[+chainId].forEach((t) => removeFromBatch(t.id as string));
+    groupedTransactionsByChainId[+chainId].forEach((transaction) =>
+      removeFromBatch(transaction.id as string)
+    );
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
-  }
+  };
 
   const anyChainSending = Object.values(isSending).some((s) => s);
 
@@ -104,47 +136,75 @@ const SendModalBatchesTabView = () => {
         />
       )}
       {Object.keys(groupedTransactionsByChainId).map((chainId) => (
-        <ChainBatchWrapper id='chain-batch-send-modal' key={`batch-${chainId}`}>
+        <ChainBatchWrapper id="chain-batch-send-modal" key={`batch-${chainId}`}>
           <BatchTopDetails $expanded={!!expanded[+chainId]}>
             <ChainDetails>
-              <ChainLogo src={getLogoForChainId(+chainId)} alt={`chain ${chainId} logo`} />
-              <ChainTitle id='chain-title-batch-send-modal'>{visibleChains.find((c) => c.id === +chainId)?.name ?? t('helper.unknownNetwork', { chainId })}</ChainTitle>
+              <ChainLogo
+                src={getLogoForChainId(+chainId)}
+                alt={`chain ${chainId} logo`}
+              />
+              <ChainTitle id="chain-title-batch-send-modal">
+                {visibleChains.find((c) => c.id === +chainId)?.name ??
+                  t('helper.unknownNetwork', { chainId })}
+              </ChainTitle>
             </ChainDetails>
-            <TransactionCount id='transaction-count-batch-send-modal'>{t('helper.items', { count: groupedTransactionsByChainId[+chainId].length })}</TransactionCount>
-            <ToggleButton $expanded={!!expanded[+chainId]} onClick={() => setExpanded((prev) => ({ ...prev, [chainId]: !prev[+chainId] }))}>
+            <TransactionCount id="transaction-count-batch-send-modal">
+              {t('helper.items', {
+                count: groupedTransactionsByChainId[+chainId].length,
+              })}
+            </TransactionCount>
+            <ToggleButton
+              $expanded={!!expanded[+chainId]}
+              onClick={() =>
+                setExpanded((prev) => ({ ...prev, [chainId]: !prev[+chainId] }))
+              }
+            >
               <ArrowRightIcon size={15} />
             </ToggleButton>
           </BatchTopDetails>
           <EtherspotBatches id={`batch-${chainId}`}>
             <EtherspotBatch chainId={+chainId}>
-              {groupedTransactionsByChainId[+chainId].map((transaction, index) => (
-                <EtherspotTransaction
-                  key={`${transaction.to}-${index}`}
-                  to={transaction.to}
-                  value={transaction.value || '0'}
-                  data={transaction.data || undefined}
-                >
-                  {!!expanded[+chainId] && (
-                    <Card
-                      key={transaction.id}
-                      title={transaction.title}
-                      content={transaction.description ?? t`helper.transactionWillBeExecutedByApp`}
-                    >
-                      <RemoveButton onClick={() => removeFromBatch(transaction.id as string)}>
-                        <TrashIcon size={15} />
-                      </RemoveButton>
-                    </Card>
-                  )}
-                </EtherspotTransaction>
-              ))}
+              {groupedTransactionsByChainId[+chainId].map(
+                (transaction, index) => (
+                  <EtherspotTransaction
+                    key={`${transaction.to}-${index}`}
+                    to={transaction.to}
+                    value={transaction.value || '0'}
+                    data={transaction.data || undefined}
+                  >
+                    {!!expanded[+chainId] && (
+                      <Card
+                        key={transaction.id}
+                        title={transaction.title}
+                        content={
+                          transaction.description ??
+                          t`helper.transactionWillBeExecutedByApp`
+                        }
+                      >
+                        <RemoveButton
+                          onClick={() =>
+                            removeFromBatch(transaction.id as string)
+                          }
+                        >
+                          <TrashIcon size={15} />
+                        </RemoveButton>
+                      </Card>
+                    )}
+                  </EtherspotTransaction>
+                )
+              )}
             </EtherspotBatch>
           </EtherspotBatches>
-          {!!errorMessage[+chainId] && <Alert>{`${t`label.error`}: ${errorMessage[+chainId]}`}</Alert>}
+          {!!errorMessage[+chainId] && (
+            <Alert>{`${t`label.error`}: ${errorMessage[+chainId]}`}</Alert>
+          )}
           <BatchesButtons>
             <Button
-              id='delete-queue-button-batch-send-modal'
+              id="delete-queue-button-batch-send-modal"
               onClick={() => {
-                groupedTransactionsByChainId[+chainId].forEach((t) => removeFromBatch(t.id as string));
+                groupedTransactionsByChainId[+chainId].forEach((transaction) =>
+                  removeFromBatch(transaction.id as string)
+                );
               }}
               disabled={anyChainSending}
               $fullWidth
@@ -154,7 +214,7 @@ const SendModalBatchesTabView = () => {
               {t`action.deleteQueue`}
             </Button>
             <Button
-              id='send-button-batch-send-modal'
+              id="send-button-batch-send-modal"
               onClick={() => onSend(+chainId, `batch-${chainId}`)}
               disabled={anyChainSending}
               $fullWidth
@@ -170,19 +230,21 @@ const SendModalBatchesTabView = () => {
             </Button>
           </BatchesButtons>
           {!!errorMessage[+chainId] && !!estimatedCostFormatted[+chainId] && (
-            <Cost id='cost--batch-send-modal'>{t`label.transactionCost`}: {estimatedCostFormatted[+chainId]}</Cost>
+            <Cost id="cost--batch-send-modal">
+              {t`label.transactionCost`}: {estimatedCostFormatted[+chainId]}
+            </Cost>
           )}
         </ChainBatchWrapper>
       ))}
     </FormGroup>
   );
-}
+};
 
 const BatchTopDetails = styled.div<{ $expanded: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: ${({ $expanded }) => $expanded ? 10 : 0}px;
+  margin-bottom: ${({ $expanded }) => ($expanded ? 10 : 0)}px;
 `;
 
 const ChainDetails = styled.div`
@@ -206,17 +268,18 @@ const ChainTitle = styled.p`
 const TransactionCount = styled.p`
   font-size: 12px;
   color: ${({ theme }) => theme.color.text.cardContent};
-  border-right: 1px solid ${({ theme }) => theme.color.border.cardContentVerticalSeparator};
+  border-right: 1px solid
+    ${({ theme }) => theme.color.border.cardContentVerticalSeparator};
   padding-right: 9px;
 `;
 
 const ToggleButton = styled.span<{ $expanded: boolean }>`
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
-  transform: ${({ $expanded }) => $expanded ? 'rotate(-90deg)' : 'rotate(0)'};
+  transform: ${({ $expanded }) => ($expanded ? 'rotate(-90deg)' : 'rotate(0)')};
   padding: 3px 5px;
   margin-left: 4px;
-  
+
   &:active {
     opacity: 0.4;
   }

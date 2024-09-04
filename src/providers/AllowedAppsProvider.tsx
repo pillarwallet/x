@@ -1,14 +1,17 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
 import axios from 'axios';
 import React, { createContext, useEffect, useMemo } from 'react';
 
-export interface AllowedAppsContext {
+export interface AllowedAppsContextProps {
   data: {
     isLoading: boolean;
     allowed: string[];
-  }
+  };
 }
 
-export const AllowedAppsContext = createContext<AllowedAppsContext | null>(null);
+export const AllowedAppsContext = createContext<AllowedAppsContextProps | null>(
+  null
+);
 
 interface ApiAllowedApp {
   appId: string;
@@ -24,9 +27,9 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     (async () => {
       try {
         const { data } = await axios.get(
-          process.env.REACT_APP_USE_TESTNETS === 'true' ?
-          'https://apps-nubpgwxpiq-uc.a.run.app' :
-          'https://apps-7eu4izffpa-uc.a.run.app'
+          process.env.REACT_APP_USE_TESTNETS === 'true'
+            ? 'https://apps-nubpgwxpiq-uc.a.run.app'
+            : 'https://apps-7eu4izffpa-uc.a.run.app'
         );
         if (expired || !data?.length) {
           setIsLoading(false);
@@ -44,19 +47,19 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const contextData = useMemo(() => ({
-    isLoading,
-    allowed,
-  }), [
-    isLoading,
-    allowed,
-  ]);
+  const contextData = useMemo(
+    () => ({
+      isLoading,
+      allowed,
+    }),
+    [isLoading, allowed]
+  );
 
   return (
     <AllowedAppsContext.Provider value={{ data: contextData }}>
       {children}
     </AllowedAppsContext.Provider>
   );
-}
+};
 
 export default AllowedAppsProvider;

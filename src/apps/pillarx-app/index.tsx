@@ -1,16 +1,16 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+import { setWalletAddresses } from '@hypelab/sdk-react';
 import { createRef, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
-import { setWalletAddresses } from '@hypelab/sdk-react';
 
 // types
 import { Projection } from '../../types/api';
 
 // hooks
-import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useGetTilesInfoQuery } from './api/homeFeed';
 import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
+import { useGetTilesInfoQuery } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
 // utils
@@ -18,8 +18,8 @@ import { componentMap } from './utils/configComponent';
 
 // components
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
-import H1 from './components/Typography/H1';
 import Body from './components/Typography/Body';
+import H1 from './components/Typography/H1';
 
 // images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
@@ -39,16 +39,28 @@ const App = () => {
   const dimensions = useRefDimensions(divRef);
 
   // The API call will not fire if there is no walletAddress
-  const { data: apiData, isLoading: isApiLoading, isFetching, isSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' }, { skip: !walletAddress });
+  const {
+    data: apiData,
+    isLoading: isApiLoading,
+    isFetching,
+    isSuccess,
+  } = useGetTilesInfoQuery(
+    { page, address: walletAddress || '' },
+    { skip: !walletAddress }
+  );
   // This is a "fire and forget" call to the waitlist
-  const { data: waitlistData, isLoading: isWaitlistLoading, isSuccess: isWaitlistSucess  } = useGetWaitlistQuery(walletAddress || '');
+  const {
+    data: waitlistData,
+    isLoading: isWaitlistLoading,
+    isSuccess: isWaitlistSucess,
+  } = useGetWaitlistQuery(walletAddress || '');
 
   useEffect(() => {
     // when apiData loads, we save it in a state to keep previous data
     if (apiData && isSuccess) {
       setPageData((prevData) => {
         const newApiData = [...prevData];
-        apiData.projection.forEach(item => {
+        apiData.projection.forEach((item) => {
           if (!prevData.includes(item)) {
             newApiData.push(item);
           }
@@ -62,8 +74,14 @@ const App = () => {
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
   useEffect(() => {
     const handleScrollOrWheel = () => {
-      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-      if ((scrollTop + clientHeight >= scrollHeight - 300 || dimensions.height <= window.innerHeight) && !isFetching && isLoadingNextPage) {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+      if (
+        (scrollTop + clientHeight >= scrollHeight - 300 ||
+          dimensions.height <= window.innerHeight) &&
+        !isFetching &&
+        isLoadingNextPage
+      ) {
         if (PAGE_LIMIT === 0 || page < PAGE_LIMIT) {
           setIsLoadingNextPage(false);
           setPage(() => page + 1);
@@ -89,32 +107,58 @@ const App = () => {
   // useMemo here to reload all components and create a smoother scrolling experience
   const DisplayAllTiles = useMemo(() => {
     const allTileComponents = [];
-  
+
+    // eslint-disable-next-line no-plusplus
     for (let index = 0; index < pageData.length; index++) {
       const tileData = pageData[index];
-    
+
       const TileComponent = componentMap[tileData.layout];
-    
+
       if (TileComponent) {
-        allTileComponents.push(<TileComponent key={index} data={tileData} isDataLoading={isApiLoading} />);
+        allTileComponents.push(
+          <TileComponent
+            key={index}
+            data={tileData}
+            isDataLoading={isApiLoading}
+          />
+        );
       }
     }
-  
+
     return allTileComponents;
   }, [pageData, isApiLoading]);
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     <Wrapper>
-      <PillarXLogo src={pillarLogoLight} className='object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center' />
-      <H1 className='desktop:py-2.5 desktop:px-4 tablet:py-2.5 tablet:px-4 mobile:px-0'>{t`content.welcomeBackTester`} {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess ? waitlistData.number : '...'}</H1>
-      <div ref={divRef} className='flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]'>
+      <PillarXLogo
+        src={pillarLogoLight}
+        className="object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
+      />
+      <H1 className="desktop:py-2.5 desktop:px-4 tablet:py-2.5 tablet:px-4 mobile:px-0">
+        {t`content.welcomeBackTester`}{' '}
+        {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess
+          ? waitlistData.number
+          : '...'}
+      </H1>
+      <div
+        ref={divRef}
+        className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
+      >
         {DisplayAllTiles}
-        {isFetching && <><SkeletonTiles type='horizontal' /><SkeletonTiles type='vertical' /></>}
-        {page >= PAGE_LIMIT && <Body className='text-center mb-12'>That&apos;s all for now</Body>}
+        {isFetching && (
+          <>
+            <SkeletonTiles type="horizontal" />
+            <SkeletonTiles type="vertical" />
+          </>
+        )}
+        {page >= PAGE_LIMIT && (
+          <Body className="text-center mb-12">That&apos;s all for now</Body>
+        )}
       </div>
     </Wrapper>
-  )
-}
+  );
+};
 
 const Wrapper = styled.div`
   display: flex;
@@ -124,15 +168,15 @@ const Wrapper = styled.div`
   max-width: 1248px;
 
   @media (min-width: 1024px) {
-    padding: 52px 62px
+    padding: 52px 62px;
   }
 
   @media (max-width: 1024px) {
-    padding: 52px 32px
+    padding: 52px 32px;
   }
 
   @media (max-width: 768px) {
-    padding: 32px 16px
+    padding: 32px 16px;
   }
 `;
 

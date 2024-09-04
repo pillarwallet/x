@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { Outlet } from 'react-router-dom';
@@ -20,12 +21,20 @@ import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBat
  * that are considered authenticated. It wraps the entire <Outlet />
  * with the providers needed for the application to function.
  */
-export default function Authorized({provider, chainId}: {provider: WalletProviderLike, chainId: number}) {
+export default function Authorized({
+  provider,
+  chainId,
+}: {
+  provider: WalletProviderLike;
+  chainId: number;
+}) {
   return (
     <EtherspotTransactionKit
       provider={provider}
       chainId={chainId}
-      bundlerApiKey={process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined}
+      bundlerApiKey={
+        process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined
+      }
       dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
     >
       <AccountTransactionHistoryProvider>
@@ -45,7 +54,7 @@ export default function Authorized({provider, chainId}: {provider: WalletProvide
         </AssetsProvider>
       </AccountTransactionHistoryProvider>
     </EtherspotTransactionKit>
-  )
+  );
 }
 
 const AuthContentWrapper = styled.div`

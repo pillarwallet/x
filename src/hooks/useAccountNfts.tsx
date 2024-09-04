@@ -1,12 +1,12 @@
-import { useContext } from 'react';
 import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useContext } from 'react';
 
 // providers
 import { AccountNftsContext } from '../providers/AccountNftsProvider';
 
 const useAccountNfts = (params?: {
-  onReceived?: (chainId: number, walletAddress: string, nft: Nft) => void
-  onSent?: (chainId: number, walletAddress: string, nft: Nft) => void
+  onReceived?: (chainId: number, walletAddress: string, nft: Nft) => void;
+  onSent?: (chainId: number, walletAddress: string, nft: Nft) => void;
 }) => {
   const context = useContext(AccountNftsContext);
 

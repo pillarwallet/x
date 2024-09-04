@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 import styled from 'styled-components';
 
-const TextInput = ({ onValueChange, rightAddon, ...props }: {
+const TextInput = ({
+  onValueChange,
+  rightAddon,
+  ...props
+}: {
   onValueChange: (value: string) => void;
   rightAddon?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>) => {
@@ -9,6 +14,7 @@ const TextInput = ({ onValueChange, rightAddon, ...props }: {
     <Wrapper>
       <StyledInput
         onChange={(e) => onValueChange(e?.target?.value ?? '')}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
       />
       {rightAddon}
@@ -47,7 +53,6 @@ const StyledInput = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.color.text.inputInactive};
   }
-
 `;
 
 export default TextInput;

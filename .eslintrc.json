@@ -1,50 +1,106 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:react/jsx-runtime",
+    "airbnb",
+    "airbnb-typescript",
+    "airbnb/hooks",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "overrides": [
+    {
+      "env": {
         "node": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-        "plugin:react/jsx-runtime"
+      },
+      "files": [".eslintrc.{js,cjs}"],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "import",
+    "prettier"
+  ],
+  "rules": {
+    "import/no-named-as-default-member": "off",
+    "import/no-named-as-default": "off",
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
     ],
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
-        }
+    "quotes": ["error", "single"],
+    "prettier/prettier": "error",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".jsx", ".tsx"]
+      }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint",
-        "react",
-        "react-hooks",
-        "import"
+    "import/prefer-default-export": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never",
+        "jsx": "never",
+        "js": "never"
+      }
     ],
-    "rules": {
-        "import/no-named-as-default-member": "off",
-        "import/no-named-as-default": "off",
-        "no-console": ["error", { "allow": ["warn", "error"] }],
-        "quotes": ["error", "single"]
-    },
-    "ignorePatterns": [
-        "node_modules/",
-        "build/"
-    ]
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": ["function-declaration", "arrow-function"],
+        "unnamedComponents": "function-expression"
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/no-array-index-key": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "build/",
+    "postcss.config.js",
+    "config-overrides.js",
+    "tailwind.config.js",
+    "src/apps/**", // Ignore everything in src/apps/
+    "!src/apps/pillarx-app/", // Unignore this folder
+    "!src/apps/pillarx-app/**", // Unignore all contents in this folder
+    "!src/apps/the-exchange/",
+    "!src/apps/the-exchange/**",
+    "!src/apps/token-atlas/",
+    "!src/apps/token-atlas/**"
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
 }

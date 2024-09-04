@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import renderer from 'react-test-renderer';
-import { MemoryRouter } from 'react-router-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import renderer from 'react-test-renderer';
 
 // api
 import { useGetTrendingTokensQuery } from '../../../api/token';
@@ -10,135 +10,152 @@ import { useGetTrendingTokensQuery } from '../../../api/token';
 import { store } from '../../../../../store';
 
 // reducer
-import { setSelectedToken, setIsSearchTokenModalOpen, setSelectedChain } from '../../../reducer/tokenAtlasSlice';
+import {
+  setIsSearchTokenModalOpen,
+  setSelectedChain,
+  setSelectedToken,
+} from '../../../reducer/tokenAtlasSlice';
 
 // components
 import TokensSlider from '../TokensSlider';
 
 jest.mock('../../../api/token', () => ({
-    useGetTrendingTokensQuery: jest.fn(),
+  useGetTrendingTokensQuery: jest.fn(),
 }));
 
 const mockTrendingTokens = {
-    data: [
-        { name: 'Token1', symbol: 'T1', logo: 'logo1.png', contracts: [{ blockchain: 'blockchain1' }] },
-        { name: 'Token2', symbol: 'T2', logo: 'logo2.png', contracts: [{ blockchain: 'blockchain2' }] },
-    ],
+  data: [
+    {
+      name: 'Token1',
+      symbol: 'T1',
+      logo: 'logo1.png',
+      contracts: [{ blockchain: 'blockchain1' }],
+    },
+    {
+      name: 'Token2',
+      symbol: 'T2',
+      logo: 'logo2.png',
+      contracts: [{ blockchain: 'blockchain2' }],
+    },
+  ],
 };
 
 describe('<TokensSlider />', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        store.dispatch(setSelectedToken(undefined));
-        store.dispatch(setIsSearchTokenModalOpen(false));
-        store.dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store.dispatch(setSelectedToken(undefined));
+    store.dispatch(setIsSearchTokenModalOpen(false));
+    store.dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
+  });
+
+  it('renders correctly and matches snapshot when loading', () => {
+    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+      data: null,
+      isLoading: true,
+      isFetching: false,
     });
 
-    it('renders correctly and matches snapshot when loading', () => {
-        (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
-            data: null,
-            isLoading: true,
-            isFetching: false,
-        });
+    const tree = renderer
+      .create(
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensSlider />
+          </MemoryRouter>
+        </Provider>
+      )
+      .toJSON();
 
-        const tree = renderer
-            .create(
-                <Provider store={store}>
-                    <MemoryRouter>
-                        <TokensSlider />
-                    </MemoryRouter>
-                </Provider>
-            )
-            .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-        expect(tree).toMatchSnapshot();
+  it('renders loading skeletons while fetching data', () => {
+    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+      data: null,
+      isLoading: true,
+      isFetching: false,
     });
 
-    it('renders loading skeletons while fetching data', () => {
-        (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
-            data: null,
-            isLoading: true,
-            isFetching: false,
-        });
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <TokensSlider />
+        </MemoryRouter>
+      </Provider>
+    );
 
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <TokensSlider />
-                </MemoryRouter>
-            </Provider>
-        );
+    expect(screen.getByTestId('token-slider-loader')).toBeInTheDocument();
+    expect(screen.getByText(/trending tokens/i)).toBeInTheDocument();
+  });
 
-        expect(screen.getByTestId('token-slider-loader')).toBeInTheDocument();
-        expect(screen.getByText(/trending tokens/i)).toBeInTheDocument();
+  it('renders correctly when trending tokens are available', () => {
+    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+      data: mockTrendingTokens,
+      isLoading: false,
+      isFetching: false,
     });
 
-    it('renders correctly when trending tokens are available', () => {
-        (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
-            data: mockTrendingTokens,
-            isLoading: false,
-            isFetching: false,
-        });
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <TokensSlider />
+        </MemoryRouter>
+      </Provider>
+    );
 
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <TokensSlider />
-                </MemoryRouter>
-            </Provider>
-        );
+    expect(screen.getByText('Token1')).toBeInTheDocument();
+    expect(screen.getByText('Token2')).toBeInTheDocument();
+  });
 
-        expect(screen.getByText('Token1')).toBeInTheDocument();
-        expect(screen.getByText('Token2')).toBeInTheDocument();
+  it('handles token selection correctly', () => {
+    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+      data: mockTrendingTokens,
+      isLoading: false,
+      isFetching: false,
     });
 
-    it('handles token selection correctly', () => {
-        (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
-            data: mockTrendingTokens,
-            isLoading: false,
-            isFetching: false,
-        });
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <TokensSlider />
+        </MemoryRouter>
+      </Provider>
+    );
 
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <TokensSlider />
-                </MemoryRouter>
-            </Provider>
-        );
+    fireEvent.click(screen.getByText('Token1'));
 
-        fireEvent.click(screen.getByText('Token1'));
-
-        const selectedToken = store.getState().tokenAtlas.selectedToken;
-        expect(selectedToken).toEqual({
-            symbol: 'T1',
-            address: '',
-            decimals: undefined,
-            chainId: undefined,
-            name: 'Token1',
-            icon: 'logo1.png',
-        });
-
-        expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);
-        expect(store.getState().tokenAtlas.selectedChain).toEqual({ chainId: 0, chainName: 'all' });
+    const { selectedToken } = store.getState().tokenAtlas;
+    expect(selectedToken).toEqual({
+      symbol: 'T1',
+      address: '',
+      decimals: undefined,
+      chainId: undefined,
+      name: 'Token1',
+      icon: 'logo1.png',
     });
 
-    it('renders correctly when no trending tokens are available', () => {
-        (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
-            data: { data: [] },
-            isLoading: false,
-            isFetching: false,
-        });
-
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <TokensSlider />
-                </MemoryRouter>
-            </Provider>
-        );
-
-        expect(screen.getByText(/trending tokens/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Token/)).not.toBeInTheDocument();
+    expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);
+    expect(store.getState().tokenAtlas.selectedChain).toEqual({
+      chainId: 0,
+      chainName: 'all',
     });
+  });
+
+  it('renders correctly when no trending tokens are available', () => {
+    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+      data: { data: [] },
+      isLoading: false,
+      isFetching: false,
+    });
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <TokensSlider />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    expect(screen.getByText(/trending tokens/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Token/)).not.toBeInTheDocument();
+  });
 });

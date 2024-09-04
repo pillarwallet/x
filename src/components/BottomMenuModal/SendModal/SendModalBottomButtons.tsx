@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // components
-import FormGroup from '../../Form/FormGroup';
 import Button from '../../Button';
+import FormGroup from '../../Form/FormGroup';
 import Alert from '../../Text/Alert';
 
 interface SendModalBottomButtonsProps {
@@ -31,12 +32,14 @@ const SendModalBottomButtons = ({
 
   return (
     <FormGroup>
-      {!!safetyWarningMessage && !errorMessage && <Alert>{safetyWarningMessage}</Alert>}
+      {!!safetyWarningMessage && !errorMessage && (
+        <Alert>{safetyWarningMessage}</Alert>
+      )}
       {!!errorMessage && <Alert>{`${t`label.error`}: ${errorMessage}`}</Alert>}
       <ButtonsWrapper>
         {allowBatching && (
           <Button
-            id='add-to-batch-button-send-modal'
+            id="add-to-batch-button-send-modal"
             disabled={isSendDisabled}
             onClick={onAddToBatch}
             $secondary
@@ -47,22 +50,27 @@ const SendModalBottomButtons = ({
           </Button>
         )}
         <Button
-          id='send-button-send-moda;'
+          id="send-button-send-moda;"
           disabled={isSendDisabled}
           onClick={() => onSend(!!safetyWarningMessage)}
           $fullWidth
           $last
         >
           {isSending && t`progress.sending`}
-          {!isSending && (safetyWarningMessage && !errorMessage ? t`action.sendAnyway` : t`action.send`)}
+          {!isSending &&
+            (safetyWarningMessage && !errorMessage
+              ? t`action.sendAnyway`
+              : t`action.send`)}
         </Button>
       </ButtonsWrapper>
       {!!errorMessage && !!estimatedCostFormatted && (
-        <Cost id='cost-send-modal'>{t`label.transactionCost`}: {estimatedCostFormatted}</Cost>
+        <Cost id="cost-send-modal">
+          {t`label.transactionCost`}: {estimatedCostFormatted}
+        </Cost>
       )}
     </FormGroup>
   );
-}
+};
 
 const ButtonsWrapper = styled.div`
   display: flex;

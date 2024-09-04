@@ -48,7 +48,9 @@ const Button = ({
 }) => {
   return (
     <button
+      type="button"
       className={`${className} flex items-center justify-center text-center cursor-pointer text-blue_gray-100 tracking-[-0.50px] text-[15px] font-bold bg-deep_purple-A700 rounded-[10px] ${(shape && shapes[shape]) || ''} ${(size && sizes[size]) || ''} ${(variant && variants[variant]?.[color]) || ''}`}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...restProps}
     >
       {!!leftIcon && leftIcon}

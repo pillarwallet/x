@@ -1,4 +1,7 @@
-import { BridgingProvider, TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import {
+  BridgingProvider,
+  TokenListToken,
+} from '@etherspot/prime-sdk/dist/sdk/data';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
 
 // hooks
@@ -17,16 +20,21 @@ const usePillarSwapAssets = (chainId?: number) => {
   const { getSupportedAssets } = useEtherspotAssets(chainId);
   const assets = useAssets();
 
-  const getPillarSwapAssets = async (chainId?: number, bridgingProvider?: BridgingProvider): Promise<PillarSwapToken[]> => {
+  const getPillarSwapAssets = async (
+    assetChainId?: number,
+    bridgingProvider?: BridgingProvider
+  ): Promise<PillarSwapToken[]> => {
     let pillarSwapAssets: PillarSwapToken[] = [];
     try {
-
       // TO DO - add supported Assets when ready
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const supportedAssets = await getSupportedAssets(chainId, bridgingProvider);
+      const supportedAssets = await getSupportedAssets(
+        assetChainId,
+        bridgingProvider
+      );
       const nativeAssets = Object.values(assets).flat() as TokenListToken[];
 
-      const mappedAssets = nativeAssets.map(asset => ({
+      const mappedAssets = nativeAssets.map((asset) => ({
         address: asset.address,
         name: asset.name,
         symbol: asset.symbol,
@@ -47,7 +55,9 @@ const usePillarSwapAssets = (chainId?: number) => {
 
       pillarSwapAssets = [...mappedAssets];
     } catch (e) {
-      console.error(`Sorry, an error occurred when trying to fetch all supported tokens: ${e}`);
+      console.error(
+        `Sorry, an error occurred when trying to fetch all supported tokens: ${e}`
+      );
     }
 
     return pillarSwapAssets;

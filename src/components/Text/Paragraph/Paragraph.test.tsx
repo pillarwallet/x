@@ -1,7 +1,7 @@
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
 // components
-import Paragraph from './';
+import Paragraph from '.';
 
 describe('<Paragraph />', () => {
   it('renders correctly', () => {
@@ -24,4 +24,3 @@ describe('<Paragraph />', () => {
     expect(treeElements[1]).toHaveStyleRule('text-align', 'center');
   });
 });
-
