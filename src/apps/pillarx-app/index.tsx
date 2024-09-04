@@ -6,17 +6,18 @@ import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
 
 // types
-import { Projection } from '../../types/api';
+import { Projection, WalletData } from '../../types/api';
 
 // hooks
 import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
-import { useGetTilesInfoQuery } from './api/homeFeed';
+import { useGetTilesInfoQuery, useGetWalletInfoQuery } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
 // utils
 import { componentMap } from './utils/configComponent';
 
 // components
+import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
 import H1 from './components/Typography/H1';
@@ -33,19 +34,31 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [pageData, setPageData] = useState<Projection[]>([]);
+  const [walletData, setWalletData] = useState<WalletData | undefined>(
+    undefined
+  );
   const walletAddress = useWalletAddress();
 
   const divRef = createRef<HTMLDivElement>();
   const dimensions = useRefDimensions(divRef);
 
-  // The API call will not fire if there is no walletAddress
+  // The API calls below will not fire if there is no walletAddress
   const {
-    data: apiData,
-    isLoading: isApiLoading,
-    isFetching,
-    isSuccess,
+    data: homeFeed,
+    isLoading: isHomeFeedLoading,
+    isFetching: isHomeFeedFetching,
+    isSuccess: isHomeFeedSuccess,
   } = useGetTilesInfoQuery(
-    { page, address: walletAddress || '' },
+    { page: page, address: walletAddress || '' },
+    { skip: !walletAddress }
+  );
+  const {
+    data: walletTile,
+    isLoading: isWalletTileLoading,
+    isFetching: isWalletTileFetching,
+    isSuccess: isWalletTileSuccess,
+  } = useGetWalletInfoQuery(
+    { address: walletAddress || '' },
     { skip: !walletAddress }
   );
   // This is a "fire and forget" call to the waitlist
@@ -55,12 +68,22 @@ const App = () => {
     isSuccess: isWaitlistSucess,
   } = useGetWaitlistQuery(walletAddress || '');
 
+  // This useEffect is to update the wallet data
+  useEffect(() => {
+    if (walletTile && isWalletTileSuccess) {
+      setWalletData(walletTile);
+    }
+    if (!isWalletTileSuccess) {
+      setWalletData(undefined);
+    }
+  }, [walletTile, isWalletTileSuccess]);
+
   useEffect(() => {
     // when apiData loads, we save it in a state to keep previous data
-    if (apiData && isSuccess) {
+    if (homeFeed && isHomeFeedSuccess) {
       setPageData((prevData) => {
         const newApiData = [...prevData];
-        apiData.projection.forEach((item) => {
+        homeFeed.projection.forEach((item) => {
           if (!prevData.includes(item)) {
             newApiData.push(item);
           }
@@ -69,7 +92,7 @@ const App = () => {
       });
       setIsLoadingNextPage(true);
     }
-  }, [apiData, isSuccess]);
+  }, [homeFeed, isHomeFeedSuccess]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
   useEffect(() => {
@@ -79,7 +102,7 @@ const App = () => {
       if (
         (scrollTop + clientHeight >= scrollHeight - 300 ||
           dimensions.height <= window.innerHeight) &&
-        !isFetching &&
+        !isHomeFeedFetching &&
         isLoadingNextPage
       ) {
         if (PAGE_LIMIT === 0 || page < PAGE_LIMIT) {
@@ -95,7 +118,7 @@ const App = () => {
       window.removeEventListener('scroll', handleScrollOrWheel);
       window.removeEventListener('wheel', handleScrollOrWheel);
     };
-  }, [dimensions.height, isFetching, isLoadingNextPage, page]);
+  }, [dimensions.height, isHomeFeedFetching, isLoadingNextPage, page]);
 
   // to track walletAddress and adverts
   useEffect(() => {
@@ -105,7 +128,7 @@ const App = () => {
   }, [walletAddress]);
 
   // useMemo here to reload all components and create a smoother scrolling experience
-  const DisplayAllTiles = useMemo(() => {
+  const DisplayHomeFeedTiles = useMemo(() => {
     const allTileComponents = [];
 
     // eslint-disable-next-line no-plusplus
@@ -119,14 +142,14 @@ const App = () => {
           <TileComponent
             key={index}
             data={tileData}
-            isDataLoading={isApiLoading}
+            isDataLoading={isHomeFeedLoading}
           />
         );
       }
     }
 
     return allTileComponents;
-  }, [pageData, isApiLoading]);
+  }, [pageData, isHomeFeedLoading]);
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -145,8 +168,12 @@ const App = () => {
         ref={divRef}
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
       >
-        {DisplayAllTiles}
-        {isFetching && (
+        <PortfolioOverview
+          data={walletData}
+          isDataLoading={isWalletTileLoading || isWalletTileFetching}
+        />
+        {DisplayHomeFeedTiles}
+        {isHomeFeedFetching && (
           <>
             <SkeletonTiles type="horizontal" />
             <SkeletonTiles type="vertical" />

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getAllUniqueBlockchains } from '../../utils/blockchain';
 
 // types
-import { Projection, WalletPortfolioData } from '../../../../types/api';
+import { WalletData, WalletPortfolioData } from '../../../../types/api';
 
 // images
 import BlendIcon from '../../images/blend-icon.svg';
@@ -22,7 +22,7 @@ import H1 from '../Typography/H1';
 import WalletAddressOverview from '../WalletAdddressOverview/WalletAddressOverview';
 
 type PortfolioOverviewProps = {
-  data: Projection | undefined;
+  data: WalletData | undefined;
   isDataLoading: boolean;
 };
 
@@ -58,13 +58,9 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
         className="p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
       >
         <div className="flex flex-col justify-between">
-          <SkeletonLoader
-            $height="40px"
-            $width="200px"
-            $marginBottom="54px"
-            $radius="10px"
-            className="mobile:hidden"
-          />
+          <Body className="animate-pulse mobile:my-4">
+            Wallet portfolio data loading...
+          </Body>
           <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
             <SkeletonLoader $height="77px" $width="180px" $radius="10px" />
           </div>
