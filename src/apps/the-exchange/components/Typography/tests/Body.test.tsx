@@ -9,8 +9,8 @@ describe('<Body />', () => {
       .create(
         <>
           <Body>Some regular text.</Body>
-          <Body className='text-red-500'>Some red text</Body>
-          <Body className='text-[23px]'>Some text with font size 23px</Body>
+          <Body className="text-red-500">Some red text</Body>
+          <Body className="text-[23px]">Some text with font size 23px</Body>
         </>
       )
       .toJSON();
@@ -28,4 +28,3 @@ describe('<Body />', () => {
     expect(treeElements[2].props.className).toContain('text-[23px]');
   });
 });
-

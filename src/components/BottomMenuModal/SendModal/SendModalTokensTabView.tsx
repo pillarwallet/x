@@ -1,13 +1,16 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
   EtherspotBatches,
   EtherspotContractTransaction,
   EtherspotTokenTransferTransaction,
-  EtherspotTransaction, useEtherspot,
+  EtherspotTransaction,
+  useEtherspot,
   useEtherspotPrices,
   useEtherspotTransactions,
   useEtherspotUtils,
-  useWalletAddress
+  useWalletAddress,
 } from '@etherspot/transaction-kit';
 import { BigNumber, ethers } from 'ethers';
 import {
@@ -37,28 +40,35 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 
 // utils
-import { decodeSendTokenCallData, getNativeAssetForChainId, isPolygonAssetNative, isValidEthereumAddress } from '../../../utils/blockchain';
+import {
+  decodeSendTokenCallData,
+  getNativeAssetForChainId,
+  isPolygonAssetNative,
+  isValidEthereumAddress,
+} from '../../../utils/blockchain';
 import { pasteFromClipboard } from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
-import { SendModalData } from './index';
 import { processEth } from '../../../apps/the-exchange/utils/blockchain';
+import { SendModalData } from './index';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
   amount: string,
-  selectedAssetBalance: number | undefined,
+  selectedAssetBalance: number | undefined
 ): string | number => {
   if (!selectedAsset || selectedAsset?.type !== 'token') return '0.00';
   if (!selectedAssetBalance) return '0.00';
   return selectedAssetBalance - +(amount || 0);
-}
+};
 
 const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
-  const [selectedAsset, setSelectedAsset] = React.useState<AssetSelectOption | undefined>(undefined);
+  const [selectedAsset, setSelectedAsset] = React.useState<
+    AssetSelectOption | undefined
+  >(undefined);
   const [amount, setAmount] = React.useState<string>('');
   const [selectedAssetPrice, setSelectedAssetPrice] = React.useState<number>(0);
   const [nativeAssetPrice, setNativeAssetPrice] = React.useState<number>(0);
@@ -66,17 +76,21 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const { getPrices } = useEtherspotPrices();
   const { chainId: etherspotDefaultChainId } = useEtherspot();
   const { send, estimate, batches } = useEtherspotTransactions();
-  const [isAmountInputAsFiat, setIsAmountInputAsFiat] = React.useState<boolean>(false);
+  const [isAmountInputAsFiat, setIsAmountInputAsFiat] =
+    React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
-  const [estimatedCostFormatted, setEstimatedCostFormatted] = React.useState<string>('');
-  const [safetyWarningMessage, setSafetyWarningMessage] = React.useState<string>('');
+  const [estimatedCostFormatted, setEstimatedCostFormatted] =
+    React.useState<string>('');
+  const [safetyWarningMessage, setSafetyWarningMessage] =
+    React.useState<string>('');
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
   const { addToBatch } = useGlobalTransactionsBatch();
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
-  const { hide, showHistory, showBatchSendModal, setShowBatchSendModal} = useBottomMenuModal();
+  const { hide, showHistory, showBatchSendModal, setShowBatchSendModal } =
+    useBottomMenuModal();
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -86,13 +100,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const selectedAssetBalance = React.useMemo(() => {
     if (!selectedAsset || selectedAsset.type !== 'token') return 0;
-    const assetBalance = accountBalances
-      ?.[selectedAsset.chainId]
-      ?.[accountAddress as string]
-      ?.find((b) => (b.token === null && isZeroAddress(selectedAsset.asset.address))
-        || addressesEqual(b.token, selectedAsset.asset.address))
-      ?.balance;
-    return assetBalance ? +ethers.utils.formatUnits(assetBalance, selectedAsset.asset.decimals) : 0;
+    const assetBalance = accountBalances?.[selectedAsset.chainId]?.[
+      accountAddress as string
+    ]?.find(
+      (b) =>
+        (b.token === null && isZeroAddress(selectedAsset.asset.address)) ||
+        addressesEqual(b.token, selectedAsset.asset.address)
+    )?.balance;
+    return assetBalance
+      ? +ethers.utils.formatUnits(assetBalance, selectedAsset.asset.decimals)
+      : 0;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAsset, accountBalances, accountAddress]);
 
@@ -105,16 +122,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       if (selectedAsset.type !== 'token') return;
       const [priceNative, priceSelected] = await getPrices(
         [ethers.constants.AddressZero, selectedAsset.asset.address],
-        selectedAsset.chainId,
+        selectedAsset.chainId
       );
       if (expired) return;
       if (priceNative?.usd) setNativeAssetPrice(priceNative.usd);
       if (priceSelected?.usd) setSelectedAssetPrice(priceSelected.usd);
     })();
 
+    // eslint-disable-next-line consistent-return
     return () => {
       expired = true;
-    }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAsset]);
 
@@ -137,7 +155,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     return isAmountInputAsFiat
       ? selectedAssetPrice * selectedAssetBalance
       : selectedAssetBalance;
-  }, [isAmountInputAsFiat, selectedAsset?.type, selectedAssetPrice, selectedAssetBalance]);
+  }, [
+    isAmountInputAsFiat,
+    selectedAsset?.type,
+    selectedAssetPrice,
+    selectedAssetBalance,
+  ]);
 
   React.useEffect(() => {
     const addressPasteActionTimeout = setTimeout(() => {
@@ -146,17 +169,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     return () => {
       clearTimeout(addressPasteActionTimeout);
-    }
+    };
   }, [pasteClicked]);
 
-  const isTransactionReady = isValidEthereumAddress(recipient)
-    && !!selectedAsset
-    && (selectedAsset?.type !== 'token' || isValidAmount(amount))
-    && (selectedAsset?.type !== 'token' || +getAmountLeft(selectedAsset, amount, selectedAssetBalance) >= 0);
+  const isTransactionReady =
+    isValidEthereumAddress(recipient) &&
+    !!selectedAsset &&
+    (selectedAsset?.type !== 'token' || isValidAmount(amount)) &&
+    (selectedAsset?.type !== 'token' ||
+      +getAmountLeft(selectedAsset, amount, selectedAssetBalance) >= 0);
 
   const isSendModalInvokedFromHook = !!payload;
   const isRegularSendModal = !isSendModalInvokedFromHook && !showBatchSendModal;
-  const isSendDisabled = isSending || (isRegularSendModal && !isTransactionReady);
+  const isSendDisabled =
+    isSending || (isRegularSendModal && !isTransactionReady);
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
     if (isSendDisabled) return;
@@ -165,11 +191,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setErrorMessage('');
 
     // warning if sending more than half of the balance
-    if (!ignoreSafetyWarning
-      && selectedAsset?.type === 'token'
-      && selectedAssetBalance
-      && (selectedAssetBalance / 2) < +amount) {
-      setSafetyWarningMessage(t`warning.transactionSafety.amountMoreThanHalfOfBalance`);
+    if (
+      !ignoreSafetyWarning &&
+      selectedAsset?.type === 'token' &&
+      selectedAssetBalance &&
+      selectedAssetBalance / 2 < +amount
+    ) {
+      setSafetyWarningMessage(
+        t`warning.transactionSafety.amountMoreThanHalfOfBalance`
+      );
       setIsSending(false);
       setErrorMessage('');
       return;
@@ -180,15 +210,23 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
     if (estimatedCostBN) {
-      const nativeAsset = getNativeAssetForChainId(estimated[0].estimatedBatches[0].chainId as number);
-      const estimatedCost = ethers.utils.formatUnits(estimatedCostBN, nativeAsset.decimals);
+      const nativeAsset = getNativeAssetForChainId(
+        estimated[0].estimatedBatches[0].chainId as number
+      );
+      const estimatedCost = ethers.utils.formatUnits(
+        estimatedCostBN,
+        nativeAsset.decimals
+      );
       costAsFiat = +estimatedCost * nativeAssetPrice;
-      setEstimatedCostFormatted(`${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`);
+      setEstimatedCostFormatted(
+        `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
+      );
     } else {
       console.warn('Unable to get estimated cost', estimated);
     }
 
-    const estimationErrorMessage = estimated?.[0]?.estimatedBatches?.[0]?.errorMessage
+    const estimationErrorMessage =
+      estimated?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
       setErrorMessage(estimationErrorMessage);
       setIsSending(false);
@@ -196,8 +234,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     }
 
     // warning if cost in fiat is higher than amount
-    if (!ignoreSafetyWarning && amountInFiat && costAsFiat && costAsFiat > amountInFiat) {
-      setSafetyWarningMessage(t`warning.transactionSafety.costHigherThanAmount`);
+    if (
+      !ignoreSafetyWarning &&
+      amountInFiat &&
+      costAsFiat &&
+      costAsFiat > amountInFiat
+    ) {
+      setSafetyWarningMessage(
+        t`warning.transactionSafety.costHigherThanAmount`
+      );
       setIsSending(false);
       return;
     }
@@ -208,13 +253,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       action: 'actionSendAsset',
       value: selectedAsset?.id,
       data: {
-        ...selectedAsset
-      }
-    })
+        ...selectedAsset,
+      },
+    });
 
     const sent = await send();
 
-    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage
+    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
       setErrorMessage(sendingErrorMessage);
       setIsSending(false);
@@ -241,7 +286,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     showHistory();
     setIsSending(false);
-  }
+  };
 
   const onAddToBatch = async () => {
     if (isSendDisabled) return;
@@ -253,24 +298,26 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       return;
     }
 
-    const chainIdForBatch = (payload && 'transaction' in payload && payload.transaction.chainId)
-      || selectedAsset?.chainId
-      || etherspotDefaultChainId;
-
+    const chainIdForBatch =
+      (payload && 'transaction' in payload && payload.transaction.chainId) ||
+      selectedAsset?.chainId ||
+      etherspotDefaultChainId;
 
     const transactionDescription = () => {
       if (selectedAsset?.type === 'token') {
         if (transactionToBatch?.value) {
-          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`
+          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`;
         }
         if (!transactionToBatch?.value && transactionToBatch?.data) {
-          const decodedTransferData = decodeSendTokenCallData(transactionToBatch.data);
-          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`
+          const decodedTransferData = decodeSendTokenCallData(
+            transactionToBatch.data
+          );
+          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`;
         }
       }
 
       return payload?.description;
-    } 
+    };
 
     addToBatch({
       title: payload?.title || t`action.sendAsset`,
@@ -283,28 +330,32 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     // hide modal if invoked from hook
     if (payload) hide();
-  }
+  };
 
   const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
 
   // throw error if both transaction and batches are present in send modal invoked outside menu
   if (payload && 'transaction' in payload && 'batches' in payload) {
-    throw new Error('Invalid Send payload: both transaction and batches are present');
+    throw new Error(
+      'Invalid Send payload: both transaction and batches are present'
+    );
   }
 
-  const onAddressClipboardPasteClick = () => pasteFromClipboard((copied) => {
-    setRecipient(copied);
-    setPasteClicked(true);
-  });
+  const onAddressClipboardPasteClick = () =>
+    pasteFromClipboard((copied) => {
+      setRecipient(copied);
+      setPasteClicked(true);
+    });
 
   const handleTokenValueChange = (value: string) => {
     // max 6 decimals if no decimals are specified
-    const tokenDecimals = selectedAsset?.type === 'token' ? selectedAsset.asset.decimals : 6;
-  
+    const tokenDecimals =
+      selectedAsset?.type === 'token' ? selectedAsset.asset.decimals : 6;
+
     // regex pattern to limit the number of decimals to the max token decimals
     const pattern = `^\\d*\\.?\\d{0,${tokenDecimals}}`;
     const regex = new RegExp(pattern);
-  
+
     const match = value.match(regex);
     setAmount(match ? match[0] : '');
   };
@@ -313,14 +364,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setSelectedAsset(undefined);
     setAmount('');
     setRecipient('');
-  }
+  };
 
   if (payload) {
     return (
       <>
         <Card
           title={payload.title}
-          content={payload.description ?? t`helper.transactionWillBeExecutedByApp`}
+          content={
+            payload.description ?? t`helper.transactionWillBeExecutedByApp`
+          }
         />
         {'transaction' in payload && (
           <EtherspotBatches>
@@ -336,10 +389,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         {'batches' in payload && (
           <EtherspotBatches>
             {payload.batches.map((batch, index) => (
-              <EtherspotBatch key={`${batch.chainId}-${index}`} chainId={batch.chainId}>
-                {batch.transactions.map((transaction, index) => (
+              <EtherspotBatch
+                key={`${batch.chainId}-${index}`}
+                chainId={batch.chainId}
+              >
+                {batch.transactions.map((transaction, idx) => (
                   <EtherspotTransaction
-                    key={`${transaction.to}-${index}`}
+                    key={`${transaction.to}-${idx}`}
                     to={transaction.to}
                     value={transaction.value || '0'}
                     data={transaction.data || undefined}
@@ -366,12 +422,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     <>
       <FormGroup>
         <Label>{t`label.selectAsset`}</Label>
-        <AssetSelect onClose={handleCloseTokenSelect} onChange={setSelectedAsset} />
+        <AssetSelect
+          onClose={handleCloseTokenSelect}
+          onChange={setSelectedAsset}
+        />
       </FormGroup>
       {selectedAsset?.type === 'token' && (
         <FormGroup>
           <Label>{t`label.enterAmount`}</Label>
-          <AmountInputRow id='enter-amount-input-send-modal'>
+          <AmountInputRow id="enter-amount-input-send-modal">
             <TextInput
               type="number"
               value={amount}
@@ -380,18 +439,26 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               placeholder="0.00"
               rightAddon={
                 <AmountInputRight>
-                  <AmountInputSymbol>{isAmountInputAsFiat ? 'USD' : selectedAsset.asset.symbol}</AmountInputSymbol>
+                  <AmountInputSymbol>
+                    {isAmountInputAsFiat ? 'USD' : selectedAsset.asset.symbol}
+                  </AmountInputSymbol>
                   {maxAmountAvailable > 0 && (
-                    <TextInputButton onClick={() => setAmount(`${maxAmountAvailable}`)}>
+                    <TextInputButton
+                      onClick={() => setAmount(`${maxAmountAvailable}`)}
+                    >
                       {t`helper.max`}
                       <span>
-                      <IconFlash size={16} variant="Bold"/>
-                    </span>
+                        <IconFlash size={16} variant="Bold" />
+                      </span>
                     </TextInputButton>
                   )}
                   {selectedAssetPrice !== 0 && (
-                    <TextInputButton onClick={() => setIsAmountInputAsFiat(!isAmountInputAsFiat)}>
-                      <ArrangeVerticalIcon size={16} variant="Bold"/>
+                    <TextInputButton
+                      onClick={() =>
+                        setIsAmountInputAsFiat(!isAmountInputAsFiat)
+                      }
+                    >
+                      <ArrangeVerticalIcon size={16} variant="Bold" />
                     </TextInputButton>
                   )}
                 </AmountInputRight>
@@ -402,60 +469,87 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             <AmountInputConversion>
               {isAmountInputAsFiat
                 ? `${formatAmountDisplay(amountForPrice, 0, 6)} ${selectedAsset.asset.symbol}`
-                : `$${formatAmountDisplay(amountInFiat)}`
-              }
+                : `$${formatAmountDisplay(amountInFiat)}`}
             </AmountInputConversion>
           )}
         </FormGroup>
       )}
-      {selectedAsset &&
+      {selectedAsset && (
         <FormGroup>
           <Label>{t`label.sendTo`}</Label>
           <TextInput
-            id='send-to-address-input-send-modal'
+            id="send-to-address-input-send-modal"
             type="text"
             value={recipient}
             onValueChange={setRecipient}
             placeholder={t`placeholder.enterAddress`}
-            rightAddon={(
-              <TextInputButton onClick={pasteClicked ? () => setPasteClicked(false) : onAddressClipboardPasteClick}>
+            rightAddon={
+              <TextInputButton
+                onClick={
+                  pasteClicked
+                    ? () => setPasteClicked(false)
+                    : onAddressClipboardPasteClick
+                }
+              >
                 {t`action.paste`}
                 <span>
                   {!pasteClicked && <IconClipboardText size={16} />}
                   {pasteClicked && <IconClipboardTick size={16} />}
                 </span>
               </TextInputButton>
-            )}
+            }
           />
         </FormGroup>
-      }
+      )}
       {isTransactionReady && (
         <EtherspotBatches>
           <EtherspotBatch chainId={selectedAsset.chainId}>
             {selectedAsset?.type === 'nft' && (
               <EtherspotContractTransaction
                 contractAddress={selectedAsset.collection.contractAddress}
-                methodName={'transferFrom'}
-                abi={['function transferFrom(address from, address to, uint256 tokenId) external']}
-                params={[accountAddress as string, recipient, selectedAsset.nft.tokenId]}
+                methodName="transferFrom"
+                abi={[
+                  'function transferFrom(address from, address to, uint256 tokenId) external',
+                ]}
+                params={[
+                  accountAddress as string,
+                  recipient,
+                  selectedAsset.nft.tokenId,
+                ]}
               />
             )}
             {selectedAsset?.type === 'token' && (
               <>
-                {(isZeroAddress(selectedAsset.asset.address) || isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
+                {(isZeroAddress(selectedAsset.asset.address) ||
+                  isPolygonAssetNative(
+                    selectedAsset.asset.address,
+                    selectedAsset.chainId
+                  )) && (
                   <EtherspotTransaction
                     to={recipient}
-                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
+                    value={formatAmountDisplay(
+                      assetValueToSend,
+                      0,
+                      selectedAsset.asset.decimals
+                    )}
                   />
                 )}
-                {(!isZeroAddress(selectedAsset.asset.address) && !isPolygonAssetNative(selectedAsset.asset.address, selectedAsset.chainId)) && (
-                  <EtherspotTokenTransferTransaction
-                    receiverAddress={recipient}
-                    tokenAddress={selectedAsset.asset.address}
-                    value={formatAmountDisplay(assetValueToSend, 0, selectedAsset.asset.decimals)}
-                    tokenDecimals={selectedAsset.asset.decimals}
-                  />
-                )}
+                {!isZeroAddress(selectedAsset.asset.address) &&
+                  !isPolygonAssetNative(
+                    selectedAsset.asset.address,
+                    selectedAsset.chainId
+                  ) && (
+                    <EtherspotTokenTransferTransaction
+                      receiverAddress={recipient}
+                      tokenAddress={selectedAsset.asset.address}
+                      value={formatAmountDisplay(
+                        assetValueToSend,
+                        0,
+                        selectedAsset.asset.decimals
+                      )}
+                      tokenDecimals={selectedAsset.asset.decimals}
+                    />
+                  )}
               </>
             )}
           </EtherspotBatch>
@@ -472,7 +566,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       />
     </>
   );
-}
+};
 
 const TextInputButton = styled.div`
   color: ${({ theme }) => theme.color.text.inputButton};
@@ -485,7 +579,7 @@ const TextInputButton = styled.div`
   font-size: 12px;
   border-radius: 4px;
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.7;
   }

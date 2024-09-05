@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { createGlobalStyle } from 'styled-components';
-import { useEtherspotUtils, useWalletAddress } from '@etherspot/transaction-kit';
+import {
+  useEtherspotUtils,
+  useWalletAddress,
+} from '@etherspot/transaction-kit';
 import { polygonMumbai, sepolia } from 'viem/chains';
 import party from 'party-js';
 import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
@@ -49,7 +52,7 @@ const App = () => {
       party.confetti(wrapperRef.current as HTMLElement, {
         count: 1000,
       });
-    }
+    },
   });
 
   // maintain chain options within app
@@ -62,7 +65,9 @@ const App = () => {
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
   const { showTransactionConfirmation } = useBottomMenuModal();
 
-  const chainTitle = chainOptions.find((chain) => chain.value === chainId)?.title;
+  const chainTitle = chainOptions.find(
+    (chain) => chain.value === chainId
+  )?.title;
 
   const send = () => {
     if (!receiverAddress || isMinting) return;
@@ -85,9 +90,9 @@ const App = () => {
         to: contractAddress,
         value: undefined,
         data: data,
-      }
+      },
     });
-  }
+  };
 
   useEffect(() => {
     if (!receiverAddress && accountAddress) {
@@ -112,19 +117,24 @@ const App = () => {
               </FormGroup>
               <FormGroup>
                 <Label>{t`receiverAddress`}</Label>
-                <TextInput onValueChange={setReceiverAddress} value={receiverAddress ?? accountAddress ?? ''}/>
+                <TextInput
+                  onValueChange={setReceiverAddress}
+                  value={receiverAddress ?? accountAddress ?? ''}
+                />
               </FormGroup>
             </>
           )}
           {!!mintedNft && (
             <Card sx={{ mb: 2, textAlign: 'center' }}>
-              <img src={mintedNftImage} alt={mintedNft.name}/>
-              <Typography>
-                Successfully minted {mintedNft.name}
-              </Typography>
+              <img src={mintedNftImage} alt={mintedNft.name} />
+              <Typography>Successfully minted {mintedNft.name}</Typography>
             </Card>
           )}
-          <Button disabled={!receiverAddress || isMinting} onClick={mintedNft ? () => setMinedNft(null) : send} $fullWidth>
+          <Button
+            disabled={!receiverAddress || isMinting}
+            onClick={mintedNft ? () => setMinedNft(null) : send}
+            $fullWidth
+          >
             {isMinting && t`minting`}
             {!isMinting && (mintedNft ? t`mintAgain` : t`mint`)}
           </Button>
@@ -132,7 +142,7 @@ const App = () => {
       </Wrapper>
     </>
   );
-}
+};
 
 const Wrapper = styled.div`
   max-width: 500px;

@@ -6,7 +6,10 @@ export const formatAmountDisplay = (
   const amount = typeof amountRaw === 'number' ? `${amountRaw}` : amountRaw;
 
   // check string to avoid underflow
-  if ((amount !== '0.01' && amount.startsWith('0.01')) || amount.startsWith('0.00')) {
+  if (
+    (amount !== '0.01' && amount.startsWith('0.01')) ||
+    amount.startsWith('0.00')
+  ) {
     const [, fraction] = amount.split('.');
     let smallAmount = '0.';
 
@@ -30,5 +33,6 @@ export const formatAmountDisplay = (
 export const isValidAmount = (amount?: string): boolean => {
   if (!amount) return false;
   if (+amount <= 0) return false;
+  // eslint-disable-next-line no-restricted-globals
   return !isNaN(+amount);
 };

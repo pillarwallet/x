@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePrivy } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -17,8 +18,8 @@ const Login = () => {
       <AnimatedShape />
       <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
-  )
-}
+  );
+};
 
 const HeroTitle = styled(PrimaryTitle)`
   font-size: 45px;

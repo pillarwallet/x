@@ -2,7 +2,11 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   mode: 'jit',
-  content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}', '!./src/apps/**/*'],
+  content: [
+    './src/**/**/*.{js,ts,jsx,tsx,html,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,html,mdx}',
+    '!./src/apps/**/*',
+  ],
   darkMode: 'class',
   theme: {
     screens: { md: { max: '1050px' }, sm: { max: '550px' } },
@@ -16,10 +20,12 @@ module.exports = {
       },
       boxShadow: { xs: '0px 0px  30px 0px #ffffff0c' },
       fontFamily: {
-        'custom': ['Formular'],
+        custom: ['Formular'],
       },
       opacity: { 0.5: 0.5, 0.1: 0.1, 0.2: 0.2, 0.6: 0.6, 0.7: 0.7 },
-      backgroundImage: { gradient: 'linear-gradient(270deg, #ffffff87,#ffffff87,#ffffff87)' },
+      backgroundImage: {
+        gradient: 'linear-gradient(270deg, #ffffff87,#ffffff87,#ffffff87)',
+      },
     },
   },
   plugins: [],

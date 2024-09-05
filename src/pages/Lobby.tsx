@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import styled from 'styled-components';
 
 // components
@@ -9,7 +10,7 @@ const Lobby = () => {
       <App />
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   display: flex;

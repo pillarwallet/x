@@ -3,15 +3,14 @@ import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 // components
 import H1 from '../H1';
 
-
 describe('<H1 />', () => {
   it('renders correctly', () => {
     const tree = renderer
       .create(
         <>
           <H1>Some big heading text.</H1>
-          <H1 className='text-red-500'>Some red heading red text</H1>
-          <H1 className='text-[120px]'>Some heading with font size 120px</H1>
+          <H1 className="text-red-500">Some red heading red text</H1>
+          <H1 className="text-[120px]">Some heading with font size 120px</H1>
         </>
       )
       .toJSON();
@@ -29,4 +28,3 @@ describe('<H1 />', () => {
     expect(treeElements[2].props.className).toContain('text-[120px]');
   });
 });
-

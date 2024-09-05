@@ -39,10 +39,8 @@ REACT_APP_PX_DEVELOPMENT_ID="your-app-identifier"
 
 ```jsx
 const App = () => {
-  return (
-    <p>Hello app!</p>
-  )
-}
+  return <p>Hello app!</p>;
+};
 
 export default App;
 ```
@@ -53,6 +51,6 @@ export default App;
 
 9. Submit a Pull Request to `staging` branch.
 
-
 ## Need support or need to contact us?
+
 Contact us via [Discord](https://discord.gg/6MKAy7gv4P) or [Telegram](https://t.me/pillarxdevelopers).

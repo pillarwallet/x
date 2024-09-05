@@ -1,13 +1,21 @@
+/* eslint-disable import/extensions */
 import { useEffect } from 'react';
-import { Route, RouterProvider, Routes, createBrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Route,
+  RouterProvider,
+  Routes,
+  createBrowserRouter,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 
 // pages
+import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import WaitList from '../pages/WaitList';
-import Developers from '../pages/Developers';
 
 export const navigationRoute = {
   home: '/',
@@ -15,7 +23,7 @@ export const navigationRoute = {
   waitlist: '/waitlist',
   developers: '/developers',
   login: '/login',
-}
+};
 
 export const AuthorizedNavigation = () => {
   const navLocation = useLocation();
@@ -40,13 +48,16 @@ export const AuthorizedNavigation = () => {
   ]);
 
   useEffect(() => {
-    if (navLocation.pathname && navLocation.pathname.startsWith(navigationRoute.login)) {
+    if (
+      navLocation.pathname &&
+      navLocation.pathname.startsWith(navigationRoute.login)
+    ) {
       navigate(navigationRoute.home);
     }
   }, [navigate, navLocation.pathname]);
 
-  return <RouterProvider router={router} />
-}
+  return <RouterProvider router={router} />;
+};
 
 export const UnauthorizedNavigation = () => {
   return (
@@ -57,5 +68,5 @@ export const UnauthorizedNavigation = () => {
       <Route path={navigationRoute.login} element={<Login />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
-  )
-}
+  );
+};

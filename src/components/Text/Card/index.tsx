@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 import styled from 'styled-components';
 
@@ -16,15 +17,16 @@ const Card = ({
       {children}
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div<{ $outline?: boolean }>`
   padding: 12px;
-  background: ${({ theme, $outline }) => $outline ? 'transparent' : theme.color.background.card};
+  background: ${({ theme, $outline }) =>
+    $outline ? 'transparent' : theme.color.background.card};
   margin-bottom: 15px;
   border-radius: 6px;
   position: relative;
-  
+
   &:last-child {
     margin-bottom: 0;
   }

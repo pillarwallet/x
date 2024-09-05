@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePrivy } from '@privy-io/react-auth';
 import {
   Element as IconApps,
@@ -30,8 +31,10 @@ const BottomMenu = () => {
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
-  const { active, showSend, showApps, showHistory, showAccount, hide } = useBottomMenuModal();
-  const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
+  const { active, showSend, showApps, showHistory, showAccount, hide } =
+    useBottomMenuModal();
+  const { transactions: globalTransactionsBatch } =
+    useGlobalTransactionsBatch();
   const overlayRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,6 +49,7 @@ const BottomMenu = () => {
 
     localRef.addEventListener('click', handleOverlayClick);
 
+    // eslint-disable-next-line consistent-return
     return () => {
       if (!localRef) return;
       localRef.removeEventListener('click', handleOverlayClick);
@@ -54,8 +58,8 @@ const BottomMenu = () => {
 
   if (!authenticated) return null;
 
-  const isHomeActive = active === null
-    && navLocation.pathname === navigationRoute.home;
+  const isHomeActive =
+    active === null && navLocation.pathname === navigationRoute.home;
 
   const menuItems = [
     {
@@ -69,44 +73,47 @@ const BottomMenu = () => {
       iconNotificationCounter: globalTransactionsBatch.length,
       label: t`menuAction.send`,
       show: showSend,
-      color: '#8A77FF'
+      color: '#8A77FF',
     },
     {
       icon: <IconHistory />,
       type: 'history',
       label: t`menuAction.history`,
       show: showHistory,
-      color: '#77FFF9'
+      color: '#77FFF9',
     },
     {
       icon: <IconWallet />,
       type: 'account',
       label: t`menuAction.account`,
       show: showAccount,
-      color: '#D5FF48'
+      color: '#D5FF48',
     },
     {
       icon: <IconApps />,
       type: 'apps',
       label: t`menuAction.apps`,
       show: showApps,
-      color: '#3699FF'
+      color: '#3699FF',
     },
   ];
 
   return (
     <>
-      <Wrapper id='bottom-menu'>
+      <Wrapper id="bottom-menu">
         <BottomMenuModal />
         <MainMenuItems $modalVisible={!!active}>
           {menuItems.map((item, index) => {
-            const isActiveItem = active?.type === item.type || (item.type === 'home' && isHomeActive);
+            const isActiveItem =
+              active?.type === item.type ||
+              (item.type === 'home' && isHomeActive);
             return (
               <MenuItem
                 key={item.label + index}
                 onClick={() => {
                   if (item.type === 'home') {
                     hide();
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                     !isHomeActive && navigate(navigationRoute.home);
                     return;
                   }
@@ -120,10 +127,14 @@ const BottomMenu = () => {
                 }}
                 className={isActiveItem ? 'active' : ''}
               >
-                {item.type !== 'home' && item.color && <TopSliderIndicator $color={item.color} />}
+                {item.type !== 'home' && item.color && (
+                  <TopSliderIndicator $color={item.color} />
+                )}
                 {item.icon}
                 {!!item.iconNotificationCounter && (
-                  <MenuItemNotification>{item.iconNotificationCounter}</MenuItemNotification>
+                  <MenuItemNotification>
+                    {item.iconNotificationCounter}
+                  </MenuItemNotification>
                 )}
                 <MenuItemText>{item.label}</MenuItemText>
               </MenuItem>
@@ -142,7 +153,7 @@ const BottomMenu = () => {
       </Transition>
     </>
   );
-}
+};
 
 const MenuItemText = styled.span`
   display: none;
@@ -185,7 +196,7 @@ const MenuItem = styled.div`
   justify-content: space-between;
   color: ${({ theme }) => theme.color.text.bottomMenuItem};
   cursor: pointer;
-  transition: all .1s ease-in-out;
+  transition: all 0.1s ease-in-out;
   letter-spacing: -0.5px;
   font-size: 14px;
   user-select: none;
@@ -229,7 +240,9 @@ const MainMenuItems = styled.div<{ $modalVisible?: boolean }>`
   padding: 0 7px;
   height: 45px;
   width: 100%;
-  ${({ $modalVisible, theme }) => $modalVisible && `
+  ${({ $modalVisible, theme }) =>
+    $modalVisible &&
+    `
     height: 48px;
     border-top: 3px solid ${theme.color.border.bottomMenu};
   `};
@@ -266,7 +279,7 @@ const Overlay = styled.div<{
   height: 100vh;
   transition: 100ms linear;
   backdrop-filter: blur(${({ $blur }) => $blur}px);
-  display: ${({ $display }) => $display ? 'flex' : 'none'};
+  display: ${({ $display }) => ($display ? 'flex' : 'none')};
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 114px;

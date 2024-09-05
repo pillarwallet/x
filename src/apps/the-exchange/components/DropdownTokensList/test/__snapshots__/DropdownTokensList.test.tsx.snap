@@ -11,8 +11,10 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
       className="fixed top-0 right-0 w-[50px] h-[50px] mt-6 mr-4 mb-20 desktop:mr-14 desktop:mb-28 bg-black"
       data-testid="close-card-button"
       onClick={[Function]}
+      type="button"
     >
       <img
+        alt="close-modal-button"
         className="w-full h-auto"
         src="add.png"
       />
@@ -39,6 +41,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
             Polygon
           </p>
           <img
+            alt="arrow-down"
             src="arrow-down.png"
           />
         </button>
@@ -58,6 +61,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
           onClick={[Function]}
         >
           <img
+            alt="search-icon"
             src="search-icon.png"
           />
         </span>

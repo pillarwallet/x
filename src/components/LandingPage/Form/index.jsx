@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /*
 * MIT License
 
@@ -22,16 +23,15 @@
 * SOFTWARE.
 */
 
-import { useState } from 'react';
 import Plausible from 'plausible-tracker';
+import { useState } from 'react';
 
 const Form = () => {
-
   // Plausible Custom Event
   const domain = process.env.REACT_APP_PLAUSIBLE_DOMAIN;
   const { trackEvent } = Plausible({
-    domain: domain
-  })
+    domain,
+  });
 
   const [email, setEmail] = useState('');
 
@@ -43,7 +43,7 @@ const Form = () => {
     <div id="mc_embed_shell">
       <div id="mc_embed_signup">
         <form
-          onSubmit={event => {
+          onSubmit={(event) => {
             event.preventDefault();
             trackEvent('Page Signup');
             event.target.submit();
@@ -56,9 +56,7 @@ const Form = () => {
           target="_self"
           noValidate
         >
-          <div
-            id="mc_embed_signup_scroll"
-          >
+          <div id="mc_embed_signup_scroll">
             <div className="mc-field-group">
               <div>
                 <input
@@ -76,8 +74,14 @@ const Form = () => {
               </div>
             </div>
             <div id="mce-responses" className="clear">
-              <div className="response display-none" id="mce-error-response"></div>
-              <div className="response display-none" id="mce-success-response"></div>
+              <div
+                className="response display-none"
+                id="mce-error-response"
+              ></div>
+              <div
+                className="response display-none"
+                id="mce-success-response"
+              ></div>
             </div>
             <div className="clear">
               <input

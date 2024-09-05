@@ -1,8 +1,8 @@
+import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { renderHook, act } from '@testing-library/react';
 
-import useAccountBalances from '../../hooks/useAccountBalances';
 import AccountBalancesProvider from '../../providers/AccountBalancesProvider';
+import useAccountBalances from '../useAccountBalances';
 
 jest.mock('../../providers/AccountBalancesProvider');
 
@@ -15,9 +15,7 @@ describe('useAccountBalances', () => {
 
   it('not to throw error when parent provider exist', () => {
     const wrapper = ({ children }: React.PropsWithChildren) => (
-      <AccountBalancesProvider>
-        {children}
-      </AccountBalancesProvider>
+      <AccountBalancesProvider>{children}</AccountBalancesProvider>
     );
 
     expect(() => {
@@ -70,7 +68,10 @@ describe('useAccountBalances', () => {
     const newBalances = { ...prevBalances, eth: '20' };
 
     act(() => {
-      mockContextValue.listenerRef.current.onBalanceUpdated(newBalances, prevBalances);
+      mockContextValue.listenerRef.current.onBalanceUpdated(
+        newBalances,
+        prevBalances
+      );
     });
 
     expect(onUpdated).toHaveBeenCalledTimes(1);
