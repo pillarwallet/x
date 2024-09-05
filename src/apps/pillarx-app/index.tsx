@@ -1,16 +1,16 @@
+import { setWalletAddresses } from '@hypelab/sdk-react';
 import { createRef, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
-import { setWalletAddresses } from '@hypelab/sdk-react';
 
 // types
 import { Projection, WalletData } from '../../types/api';
 
 // hooks
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useGetTilesInfoQuery, useGetWalletInfoQuery } from './api/homeFeed';
 import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
+import { useGetTilesInfoQuery, useGetWalletInfoQuery } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
 // utils
@@ -18,16 +18,16 @@ import { componentMap } from './utils/configComponent';
 
 // components
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
-import H1 from './components/Typography/H1';
 import Body from './components/Typography/Body';
+import H1 from './components/Typography/H1';
 
 // images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
 import pillarLogoLight from './images/pillarX_full_white.png';
 
 // constants
-import { PAGE_LIMIT } from './utils/constants';
 import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
+import { PAGE_LIMIT } from './utils/constants';
 
 const App = () => {
   const [t] = useTranslation();
@@ -41,22 +41,32 @@ const App = () => {
   const dimensions = useRefDimensions(divRef);
 
   // The API calls below will not fire if there is no walletAddress
-  const { data: homeFeed, isLoading: isHomeFeedLoading, isFetching: isHomeFeedFetching, isSuccess: isHomeFeedSuccess } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' }, { skip: !walletAddress });
-  const { data: walletTile, isLoading: isWalletTileLoading, isFetching: isWalletTileFetching, isSuccess: isWalletTileSuccess } = useGetWalletInfoQuery( { address: walletAddress || '' }, { skip: !walletAddress });
+  const { data: homeFeed, isLoading: isHomeFeedLoading, isFetching: isHomeFeedFetching, isSuccess: isHomeFeedSuccess, refetch: refetchHomeFeed } = useGetTilesInfoQuery( { page: page, address: walletAddress || '' }, { skip: !walletAddress });
+  const { data: walletTile, isLoading: isWalletTileLoading, isFetching: isWalletTileFetching, isSuccess: isWalletTileSuccess, refetch: refetchWalletTile } = useGetWalletInfoQuery( { address: walletAddress || '' }, { skip: !walletAddress });
   // This is a "fire and forget" call to the waitlist
   const { data: waitlistData, isLoading: isWaitlistLoading, isSuccess: isWaitlistSucess  } = useGetWaitlistQuery(walletAddress || '');
 
   // This useEffect is to update the wallet data
   useEffect(() => {
+    if (!isWalletTileSuccess && walletAddress) {
+      refetchWalletTile();
+    }
+    
     if (walletTile && isWalletTileSuccess) {
       setWalletData(walletTile)
     }
+    
     if (!isWalletTileSuccess) {
       setWalletData(undefined)
     }
-  }, [walletTile, isWalletTileSuccess]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletTile, isWalletTileSuccess, walletAddress]);
 
   useEffect(() => {
+    if (!isHomeFeedSuccess && walletAddress) {
+      refetchHomeFeed();
+    }
+
     // when apiData loads, we save it in a state to keep previous data
     if (homeFeed && isHomeFeedSuccess) {
       setPageData((prevData) => {
@@ -70,7 +80,8 @@ const App = () => {
       });
       setIsLoadingNextPage(true);
     }
-  }, [homeFeed, isHomeFeedSuccess]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeFeed, isHomeFeedSuccess, walletAddress]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
   useEffect(() => {
