@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import Identicon from 'identicon.js';
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { ethers } from 'ethers';
+import Identicon from 'identicon.js';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const IdenticonImage = ({
@@ -26,11 +27,18 @@ const IdenticonImage = ({
     setImageData(identicon.toString());
   }, [text, size]);
 
-  return <StyledImage src={`data:image/png;base64,${imageData}`} alt={text} $rounded={rounded} $size={size} />;
-}
+  return (
+    <StyledImage
+      src={`data:image/png;base64,${imageData}`}
+      alt={text}
+      $rounded={rounded}
+      $size={size}
+    />
+  );
+};
 
-const StyledImage = styled.img<{ $size: number; $rounded: boolean; }>`
-  border-radius: ${({ $rounded }) => $rounded ? '50%' : '0'};
+const StyledImage = styled.img<{ $size: number; $rounded: boolean }>`
+  border-radius: ${({ $rounded }) => ($rounded ? '50%' : '0')};
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
   user-select: none;

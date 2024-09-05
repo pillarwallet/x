@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
@@ -13,7 +14,7 @@ const AppIcon = ({ appId }: { appId: string }) => {
     const loadIconSrc = async () => {
       const icon = await import(`../apps/${appId}/icon.png`);
       setIconSrc(icon.default);
-    }
+    };
 
     loadIconSrc();
   }, [appId]);
@@ -49,7 +50,7 @@ const AppIconWrapper = styled.div`
 `;
 
 const AppIconImage = styled.img<{ $display: boolean }>`
-  display: ${({ $display }) => $display ? 'block' : 'none'};
+  display: ${({ $display }) => ($display ? 'block' : 'none')};
   max-width: 100%;
 `;
 
@@ -58,6 +59,5 @@ const AppIconSkeleton = styled.div`
   width: 86px;
   height: 86px;
 `;
-
 
 export default AppIcon;

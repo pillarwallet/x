@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import styled from 'styled-components';
 
 // components
@@ -10,10 +11,8 @@ interface AppsModalProps {
 const AppsModal = ({ isContentVisible }: AppsModalProps) => {
   if (!isContentVisible) return <DefaultWrapper />;
 
-  return (
-    <AppsList />
-  )
-}
+  return <AppsList />;
+};
 
 const DefaultWrapper = styled.div`
   width: 100%;

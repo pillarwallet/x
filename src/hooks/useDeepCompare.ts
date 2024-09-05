@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import isEqual from 'lodash/isEqual';
+import { useRef } from 'react';
 
 const useDeepCompare = <T>(value: T) => {
   const ref = useRef<T>(value);
@@ -9,6 +9,6 @@ const useDeepCompare = <T>(value: T) => {
   }
 
   return ref.current;
-}
+};
 
 export default useDeepCompare;

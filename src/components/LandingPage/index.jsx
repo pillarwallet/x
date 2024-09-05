@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /*
 * MIT License
 
@@ -22,10 +23,11 @@
 * SOFTWARE.
 */
 
-import { Img } from './Img';
-import { Text } from './Text';
-import { Heading } from './Heading';
-import { Input } from './Input';
 import { Button } from './Button';
 import { Form } from './Form';
-export { Img, Text, Heading, Input, Button, Form };
+import { Heading } from './Heading';
+import { Img } from './Img';
+import { Input } from './Input';
+import { Text } from './Text';
+
+export { Button, Form, Heading, Img, Input, Text };

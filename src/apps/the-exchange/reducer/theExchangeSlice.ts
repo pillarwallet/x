@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+/* eslint-disable no-param-reassign */
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChainType, SwapOffer } from '../utils/types';
 
 export type SwapState = {
@@ -18,7 +19,7 @@ export type SwapState = {
   usdPriceSwapToken: number;
   usdPriceReceiveToken: number;
   isOfferLoading: boolean;
-}
+};
 
 const initialState: SwapState = {
   swapTokenData: [],

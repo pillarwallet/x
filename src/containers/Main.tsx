@@ -1,7 +1,15 @@
-import { WalletProviderLike, Web3eip1193WalletProvider } from '@etherspot/prime-sdk';
+/* eslint-disable import/extensions */
+import {
+  WalletProviderLike,
+  Web3eip1193WalletProvider,
+} from '@etherspot/prime-sdk';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { polygon, sepolia } from 'viem/chains';
 
@@ -18,12 +26,12 @@ import Loading from '../pages/Loading';
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
 import App from '../pages/App';
+import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
-import Developers from '../pages/Developers';
 import { visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
 
@@ -35,7 +43,7 @@ import Authorized from './Authorized';
  * component which contains the main application logic. If
  * the user is not authenticated, it will render the routes
  * only available to unauthenticated users.
- * @returns 
+ * @returns
  */
 const AuthLayout = () => {
   /**
@@ -45,9 +53,12 @@ const AuthLayout = () => {
    */
   const { ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
-  const [provider, setProvider] = useState<WalletProviderLike | undefined>(undefined);
+  const [provider, setProvider] = useState<WalletProviderLike | undefined>(
+    undefined
+  );
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  const { allowed: allowedApps, isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const { allowed: allowedApps, isLoading: isLoadingAllowedApps } =
+    useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
 
@@ -66,28 +77,32 @@ const AuthLayout = () => {
 
       const privyEthereumProvider = await wallets[0].getWeb3jsProvider();
 
-      // @ts-expect-error: provider type mismatch
       // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
-      const newProvider = new Web3eip1193WalletProvider(privyEthereumProvider.walletProvider);
+      const newProvider = new Web3eip1193WalletProvider(
+        // @ts-expect-error: provider type mismatch
+        privyEthereumProvider.walletProvider
+      );
       await newProvider.refresh();
 
       if (expired) return;
 
       setProvider(newProvider);
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-      const isWithinVisibleChains = visibleChains.some((chain) => chain.id === walletChainId);
+      const isWithinVisibleChains = visibleChains.some(
+        (chain) => chain.id === walletChainId
+      );
       /**
        * Sets supported chain ID rather than throw unsupported bundler error.
        * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
        */
       setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-    }
+    };
 
     updateProvider();
 
     return () => {
       expired = true;
-    }
+    };
   }, [wallets]);
 
   /**
@@ -96,40 +111,41 @@ const AuthLayout = () => {
    * authenticated.
    */
   if (isAppReady && authenticated && provider && chainId) {
-
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.
      */
 
     // First, add the core routes to the route definition
-    const authorizedRoutesDefinition = [{
-      path: '/',
-      element: <Authorized chainId={chainId} provider={provider}  />,
-      children: [
-        {
-          index: true,
-          path: '/',
-          element: <Lobby />,
-        },
-        {
-          path: '/landing',
-          element: <LandingPage />,
-        },
-        {
-          path: '/waitlist',
-          element: <Waitlist />,
-        },
-        {
-          path: '/developers',
-          element: <Developers />,
-        },
-        {
-          path: '/login',
-          element: <Navigate to="/" />,
-        }
-      ]
-    }];
+    const authorizedRoutesDefinition = [
+      {
+        path: '/',
+        element: <Authorized chainId={chainId} provider={provider} />,
+        children: [
+          {
+            index: true,
+            path: '/',
+            element: <Lobby />,
+          },
+          {
+            path: '/landing',
+            element: <LandingPage />,
+          },
+          {
+            path: '/waitlist',
+            element: <Waitlist />,
+          },
+          {
+            path: '/developers',
+            element: <Developers />,
+          },
+          {
+            path: '/login',
+            element: <Navigate to="/" />,
+          },
+        ],
+      },
+    ];
 
     // Next, add the allowed apps to the route definition
     allowedApps.forEach((appId) => {
@@ -157,47 +173,66 @@ const AuthLayout = () => {
     authorizedRoutesDefinition.push({
       path: '*',
       element: <NotFound />,
-      children: []
+      children: [],
     });
-    
+
     // ...and return.
-    return <RouterProvider router={createBrowserRouter(authorizedRoutesDefinition)} />;
+    return (
+      <RouterProvider
+        router={createBrowserRouter(authorizedRoutesDefinition)}
+      />
+    );
   }
 
   // Determine if this is a root page, we'll need it later
-  const isRootPage = window.location.pathname === '/' || window.location.pathname === '/waitlist' || window.location.pathname === '/developers';
+  const isRootPage =
+    window.location.pathname === '/' ||
+    window.location.pathname === '/waitlist' ||
+    window.location.pathname === '/developers';
 
   /**
    * The following if statement determines if the user is
    * logged in or not. If not logged in, This particular
    * statement will determine if the user is unauthorized.
    */
-  if ((isAppReady && !authenticated) || (isRootPage && !previouslyAuthenticated)) {
-
+  if (
+    (isAppReady && !authenticated) ||
+    (isRootPage && !previouslyAuthenticated)
+  ) {
     /**
      * Define our unauthorized routes for users that are
-     * not authenticated. This is simpler as most of the 
+     * not authenticated. This is simpler as most of the
      * website is locked out.
      */
-    const unauthorizedRoutesDefinition = [{
-      path: '/',
-      element: <LandingPage />,
-    }, {
-      path: '/waitlist',
-      element: <Waitlist />,
-    }, {
-      path: '/developers',
-      element: <Developers />,
-    }, {
-      path: '/login',
-      element: <Login />,
-    }, {
-      path: '*',
-      element: <NotFound />,
-    }];
+    const unauthorizedRoutesDefinition = [
+      {
+        path: '/',
+        element: <LandingPage />,
+      },
+      {
+        path: '/waitlist',
+        element: <Waitlist />,
+      },
+      {
+        path: '/developers',
+        element: <Developers />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
+      },
+    ];
 
     // ...and return.
-    return <RouterProvider router={createBrowserRouter(unauthorizedRoutesDefinition)} />;
+    return (
+      <RouterProvider
+        router={createBrowserRouter(unauthorizedRoutesDefinition)}
+      />
+    );
   }
 
   /**
@@ -208,7 +243,7 @@ const AuthLayout = () => {
    * above.
    */
   return <Loading />;
-}
+};
 
 const Main = () => {
   return (
@@ -219,19 +254,20 @@ const Main = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{
             appearance: { theme: 'dark' },
-            defaultChain: process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
+            defaultChain:
+              process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
             embeddedWallets: {
-              createOnLogin: 'users-without-wallets'
-            }
+              createOnLogin: 'users-without-wallets',
+            },
           }}
         >
-            <AllowedAppsProvider>
-              <AuthLayout />
-            </AllowedAppsProvider>
+          <AllowedAppsProvider>
+            <AuthLayout />
+          </AllowedAppsProvider>
         </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default Main;

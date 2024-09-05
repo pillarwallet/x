@@ -1,13 +1,10 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import React from 'react';
 import styled from 'styled-components';
 
 const FormGroup = ({ children }: React.PropsWithChildren) => {
-  return (
-    <Wrapper>
-      {children}
-    </Wrapper>
-  )
-}
+  return <Wrapper>{children}</Wrapper>;
+};
 
 const Wrapper = styled.div`
   margin-bottom: 20px;
@@ -17,4 +14,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default FormGroup
+export default FormGroup;

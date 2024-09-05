@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 
 // components
-import Select, { SelectOption } from './';
+import Select, { SelectOption } from '.';
 
 // theme
 import { defaultTheme } from '../../../theme';
@@ -24,7 +24,7 @@ const testOptions: SelectOption[] = [
     title: 'test 3',
     value: 'test3',
     imageSrc: 'https://via.placeholder.com/150',
-  }
+  },
 ];
 
 describe('<Select />', () => {
@@ -34,10 +34,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={[]}
-            onChange={() => {}}
-          />
+          <Select options={[]} onChange={() => {}} />
         </ThemeProvider>
       );
     });
@@ -49,10 +46,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={testOptions}
-            onChange={() => {}}
-          />
+          <Select options={testOptions} onChange={() => {}} />
         </ThemeProvider>
       );
     });
@@ -71,10 +65,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={testOptions}
-            onChange={onChange}
-          />
+          <Select options={testOptions} onChange={onChange} />
         </ThemeProvider>
       );
     });
@@ -117,11 +108,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={testOptions}
-            isLoadingOptions
-            onChange={() => {}}
-          />
+          <Select options={testOptions} isLoadingOptions onChange={() => {}} />
         </ThemeProvider>
       );
     });
@@ -134,8 +121,14 @@ describe('<Select />', () => {
     const animationLeft = select.children.item(0);
     const animationRight = select.children.item(1);
     const animationMatch = expect.stringContaining('1s linear infinite');
-    expect(animationLeft?.children.item(0)).toHaveStyleRule('animation', animationMatch);
-    expect(animationRight?.children.item(0)).toHaveStyleRule('animation', animationMatch);
+    expect(animationLeft?.children.item(0)).toHaveStyleRule(
+      'animation',
+      animationMatch
+    );
+    expect(animationRight?.children.item(0)).toHaveStyleRule(
+      'animation',
+      animationMatch
+    );
   });
 
   it('shows loading skeleton on option item where option value is loading', async () => {
@@ -147,10 +140,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={testOptionsWithLoadingValue}
-            onChange={() => {}}
-          />
+          <Select options={testOptionsWithLoadingValue} onChange={() => {}} />
         </ThemeProvider>
       );
     });
@@ -171,10 +161,7 @@ describe('<Select />', () => {
     await act(async () => {
       rendered = render(
         <ThemeProvider theme={defaultTheme}>
-          <Select
-            options={testOptions}
-            onChange={() => {}}
-          />
+          <Select options={testOptions} onChange={() => {}} />
         </ThemeProvider>
       );
     });

@@ -1,9 +1,9 @@
+import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { renderHook, act } from '@testing-library/react';
 import { mainnet } from 'viem/chains';
 
 // hooks
-import useAccountTransactionHistory from '../../hooks/useAccountTransactionHistory';
+import useAccountTransactionHistory from '../useAccountTransactionHistory';
 
 // providers
 import AccountTransactionHistoryProvider from '../../providers/AccountTransactionHistoryProvider';
@@ -15,7 +15,7 @@ describe('useAccountTransactionHistory', () => {
     data: {
       history: {
         [mainnet.id]: {
-          ['0x7F30B1960D5556929B03a0339814fE903c55a347']: [
+          '0x7F30B1960D5556929B03a0339814fE903c55a347': [
             {
               hash: '0x1',
               from: '0x7F30B1960D5556929B03a0339814fE903c55a347',
@@ -26,7 +26,7 @@ describe('useAccountTransactionHistory', () => {
             },
           ],
         },
-      }
+      },
     },
     listenerRef: {
       current: {
@@ -76,11 +76,19 @@ describe('useAccountTransactionHistory', () => {
     };
 
     act(() => {
-      mockContextValue.listenerRef.current.onHistoryUpdated(mainnet.id, '0x7F30B1960D5556929B03a0339814fE903c55a347', newTransaction);
+      mockContextValue.listenerRef.current.onHistoryUpdated(
+        mainnet.id,
+        '0x7F30B1960D5556929B03a0339814fE903c55a347',
+        newTransaction
+      );
     });
 
     expect(onUpdated).toHaveBeenCalledTimes(1);
-    expect(onUpdated).toHaveBeenCalledWith(mainnet.id, '0x7F30B1960D5556929B03a0339814fE903c55a347', newTransaction);
+    expect(onUpdated).toHaveBeenCalledWith(
+      mainnet.id,
+      '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      newTransaction
+    );
   });
 
   afterEach(() => {

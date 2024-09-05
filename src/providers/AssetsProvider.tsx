@@ -1,22 +1,28 @@
-import React, { createContext, useEffect, useMemo } from 'react';
-import { useEtherspotAssets } from '@etherspot/transaction-kit';
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable react/jsx-no-constructed-context-values */
 import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useEtherspotAssets } from '@etherspot/transaction-kit';
 import isEqual from 'lodash/isEqual';
+import React, { createContext, useEffect, useMemo } from 'react';
 
 // utils
-import { WRAPPED_MATIC_TOKEN_ADDRESS, getNativeAssetForChainId, visibleChains } from '../utils/blockchain';
+import {
+  WRAPPED_MATIC_TOKEN_ADDRESS,
+  getNativeAssetForChainId,
+  visibleChains,
+} from '../utils/blockchain';
 
 export interface IAssets {
   [chainId: number]: TokenListToken[];
 }
 
-export interface AssetsContext {
+export interface AssetsContextProps {
   data: {
     assets: IAssets;
-  }
+  };
 }
 
-export const AssetsContext = createContext<AssetsContext | null>(null);
+export const AssetsContext = createContext<AssetsContextProps | null>(null);
 
 const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const { getAssets } = useEtherspotAssets();
@@ -34,6 +40,7 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
       for (const chainId of chainIds) {
         if (expired) return;
 
+        // eslint-disable-next-line no-await-in-loop
         let chainAssets = (await getAssets(chainId)) ?? [];
 
         // Check if Wrapped Matic as native asset
@@ -61,28 +68,31 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
       if (expired) return;
 
-      setAssets((current) => isEqual(current, updatedAssets) ? current : updatedAssets);
-    }
+      setAssets((current) =>
+        isEqual(current, updatedAssets) ? current : updatedAssets
+      );
+    };
 
     refresh();
 
     return () => {
       expired = true;
-    }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const contextData = useMemo(() => ({
-    assets,
-  }), [
-    assets,
-  ]);
+  const contextData = useMemo(
+    () => ({
+      assets,
+    }),
+    [assets]
+  );
 
   return (
     <AssetsContext.Provider value={{ data: contextData }}>
       {children}
     </AssetsContext.Provider>
   );
-}
+};
 
 export default AssetsProvider;

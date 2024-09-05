@@ -6,6 +6,7 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for left 
 >
   <HorizontalToken
     isLast={false}
+    onClick={[Function]}
     tokenIndex={1}
     tokenLogo="logoA.png"
     tokenName="Token A"
@@ -13,6 +14,7 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for left 
   />
   <HorizontalToken
     isLast={true}
+    onClick={[Function]}
     tokenIndex={2}
     tokenLogo="logoB.png"
     tokenName="Token B"
@@ -27,6 +29,7 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for right
 >
   <HorizontalToken
     isLast={false}
+    onClick={[Function]}
     tokenIndex={4}
     tokenLogo="logoA.png"
     tokenName="Token A"
@@ -34,6 +37,7 @@ exports[`<TokensVerticalList /> renders correctly and matches snapshot for right
   />
   <HorizontalToken
     isLast={true}
+    onClick={[Function]}
     tokenIndex={5}
     tokenLogo="logoB.png"
     tokenName="Token B"

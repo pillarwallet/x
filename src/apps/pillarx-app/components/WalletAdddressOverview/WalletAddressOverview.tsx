@@ -5,41 +5,53 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
 // components
-import ProfileIcon from '../../images/profile-icon.svg';
 import CopyIcon from '../../images/copy-icon.svg';
+import ProfileIcon from '../../images/profile-icon.svg';
 import Body from '../Typography/Body';
 
 type WalletAddressOverviewProps = {
-    address: string;
-}
+  address: string;
+};
 
 const WalletAddressOverview = ({ address }: WalletAddressOverviewProps) => {
-    const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
-    useEffect(() => {
-        if (isCopied) {
-          const timer = setTimeout(() => {
-            setIsCopied(false);
-          }, 3000);
-    
-          return () => clearTimeout(timer);
-        }
-      }, [isCopied]);
+  useEffect(() => {
+    if (isCopied) {
+      const timer = setTimeout(() => {
+        setIsCopied(false);
+      }, 3000);
 
+      return () => clearTimeout(timer);
+    }
 
-    return (
-        <div className='desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center'>
-            <div className='bg-medium_grey p-2.5 rounded-full w-10 h-10'>
-                <img src={ProfileIcon} className='w-full h-full' />
-            </div>
-            <Body>{address.substring(0, 6)}...{address.substring(address.length - 5)}</Body>
-            <CopyToClipboard text={address} onCopy={() => setIsCopied(true)}>
-                <div className='w-4 h-4'>
-                {isCopied ? <MdCheck style={{ width: 'full', height: 'full' }} /> : <img src={CopyIcon} className='cursor-pointer' style={{ width: 'full', height: 'full' }}/>}
-                </div>
-            </CopyToClipboard>
+    return undefined;
+  }, [isCopied]);
+
+  return (
+    <div className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center">
+      <div className="bg-medium_grey p-2.5 rounded-full w-10 h-10">
+        <img src={ProfileIcon} alt="profile-icon" className="w-full h-full" />
+      </div>
+      <Body>
+        {address.substring(0, 6)}...{address.substring(address.length - 5)}
+      </Body>
+      <CopyToClipboard text={address} onCopy={() => setIsCopied(true)}>
+        <div className="w-4 h-4">
+          {isCopied ? (
+            <MdCheck style={{ width: 'full', height: 'full' }} />
+          ) : (
+            <img
+              src={CopyIcon}
+              alt="copy-adress-icon"
+              className="cursor-pointer"
+              style={{ width: 'full', height: 'full' }}
+            />
+          )}
         </div>
-    )
-}
+      </CopyToClipboard>
+    </div>
+  );
+};
 
 export default WalletAddressOverview;

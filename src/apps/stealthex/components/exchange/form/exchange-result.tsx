@@ -13,6 +13,7 @@ interface ExchangeResultProps {
     exchangeInfo?: ExchangeInfo;
     status: 'success' | 'notFoundError' | 'invalidSignatureError';
     widget?: boolean;
+    onReject?: () => void;
 }
 
 const ExchangeResult: FC<ExchangeResultProps> = ({
@@ -20,6 +21,7 @@ const ExchangeResult: FC<ExchangeResultProps> = ({
     exchangeInfo,
     onNewExchange,
     widget,
+    onReject
 }) => {
     const { t } = useTranslation();
 
@@ -30,6 +32,7 @@ const ExchangeResult: FC<ExchangeResultProps> = ({
                     exchangeInfo={exchangeInfo}
                     onNewExchange={onNewExchange}
                     widget={widget}
+                    onReject={onReject}
                 />
             )}
             {status !== 'success' && (

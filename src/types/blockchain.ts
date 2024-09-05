@@ -16,7 +16,7 @@ export interface IApiTransaction {
     name: string;
     symbol: string;
     value: BigNumberish;
-  }
+  };
 }
 
 export interface ITransaction {

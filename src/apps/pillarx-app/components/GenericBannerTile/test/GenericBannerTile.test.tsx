@@ -1,5 +1,5 @@
+import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
-import { render, screen, fireEvent } from '@testing-library/react';
 
 // types
 import { ApiLayout, Projection } from '../../../../../types/api';
@@ -8,98 +8,113 @@ import { ApiLayout, Projection } from '../../../../../types/api';
 import GenericBannerTile from '../GenericBannerTile';
 
 describe('<GenericBannerTile />', () => {
-    const mockDataGenericBanner: Projection = {
-        meta: {
-            display: {
-                title: 'Banner title',
-                subtitle: 'Banner subtitle',
-                backgroundImage: 'https://example.com/background-image.png',
-                cta: {
-                    text: 'This is the button text',
-                    href: 'https://example.com',
-                },
-            },
+  const mockDataGenericBanner: Projection = {
+    meta: {
+      display: {
+        title: 'Banner title',
+        subtitle: 'Banner subtitle',
+        backgroundImage: 'https://example.com/background-image.png',
+        cta: {
+          text: 'This is the button text',
+          href: 'https://example.com',
         },
-        data: undefined,
-        layout: ApiLayout.GENERIC_BANNER,
-        id: 'genericBanner'
-    };
+      },
+    },
+    data: undefined,
+    layout: ApiLayout.GENERIC_BANNER,
+    id: 'genericBanner',
+  };
 
-    const mockDataGenericBannerWithoutCTA = {
-        meta: {
-            display: {
-                title: 'Banner title',
-                subtitle: 'Banner subtitle',
-                backgroundImage: 'https://example.com/background-image.png',
-                cta: {
-                    text: 'This is the button text',
-                    href: undefined,
-                },
-            },
+  const mockDataGenericBannerWithoutCTA = {
+    meta: {
+      display: {
+        title: 'Banner title',
+        subtitle: 'Banner subtitle',
+        backgroundImage: 'https://example.com/background-image.png',
+        cta: {
+          text: 'This is the button text',
+          href: undefined,
         },
-        data: undefined,
-        layout: ApiLayout.GENERIC_BANNER,
-        id: 'genericBanner'
-    };
+      },
+    },
+    data: undefined,
+    layout: ApiLayout.GENERIC_BANNER,
+    id: 'genericBanner',
+  };
 
-    const mockDataGenericBannerWithoutCTATwo = {
-        meta: {
-            display: {
-                title: 'Banner title',
-                subtitle: 'Banner subtitle',
-                backgroundImage: 'https://example.com/background-image.png',
-                cta: {
-                    text: undefined,
-                    href: 'https://example.com',
-                },
-            },
+  const mockDataGenericBannerWithoutCTATwo = {
+    meta: {
+      display: {
+        title: 'Banner title',
+        subtitle: 'Banner subtitle',
+        backgroundImage: 'https://example.com/background-image.png',
+        cta: {
+          text: undefined,
+          href: 'https://example.com',
         },
-        data: undefined,
-        layout: ApiLayout.GENERIC_BANNER,
-        id: 'genericBanner'
-    };
+      },
+    },
+    data: undefined,
+    layout: ApiLayout.GENERIC_BANNER,
+    id: 'genericBanner',
+  };
 
-    it('renders correctly and matches snapshot', () => {
-        const tree = renderer.create(
-            <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />
-        ).toJSON();
-        expect(tree).toMatchSnapshot();
-    });
+  it('renders correctly and matches snapshot', () => {
+    const tree = renderer
+      .create(
+        <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
 
-    it('renders skeleton loader when data is loading', () => {
-        render(<GenericBannerTile data={undefined} isDataLoading={true} />);
+  it('renders skeleton loader when data is loading', () => {
+    render(<GenericBannerTile data={undefined} isDataLoading />);
 
-        expect(screen.getByTestId('generic-banner-loading')).toBeInTheDocument();
-    });
+    expect(screen.getByTestId('generic-banner-loading')).toBeInTheDocument();
+  });
 
-    it('renders correctly with all the given data', () => {
-        render(<GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />);
+  it('renders correctly with all the given data', () => {
+    render(
+      <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />
+    );
 
-        expect(screen.getByText('Banner title')).toBeInTheDocument();
-        expect(screen.getByText('Banner subtitle')).toBeInTheDocument();
-        expect(screen.getByText('This is the button text')).toBeInTheDocument();
-        expect(screen.getByRole('button')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Banner title')).toBeInTheDocument();
+    expect(screen.getByText('Banner subtitle')).toBeInTheDocument();
+    expect(screen.getByText('This is the button text')).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
 
+  it('calls window.open when button is clicked', () => {
+    window.open = jest.fn();
 
-    it('calls window.open when button is clicked', () => {
-        window.open = jest.fn();
+    render(
+      <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />
+    );
+    fireEvent.click(screen.getByText('This is the button text'));
 
-        render(<GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />);
-        fireEvent.click(screen.getByText('This is the button text'));
+    expect(window.open).toHaveBeenCalledWith('https://example.com', '_blank');
+  });
 
-        expect(window.open).toHaveBeenCalledWith('https://example.com', '_blank');
-    });
+  it('does not render the button if href is missing', () => {
+    render(
+      <GenericBannerTile
+        data={mockDataGenericBannerWithoutCTA}
+        isDataLoading={false}
+      />
+    );
 
-    it('does not render the button if href is missing', () => {
-        render(<GenericBannerTile data={mockDataGenericBannerWithoutCTA} isDataLoading={false} />);
+    expect(screen.queryByRole('button')).toBeNull();
+  });
 
-        expect(screen.queryByRole('button')).toBeNull();
-    });
+  it('does not render the button if text is missing', () => {
+    render(
+      <GenericBannerTile
+        data={mockDataGenericBannerWithoutCTATwo}
+        isDataLoading={false}
+      />
+    );
 
-    it('does not render the button if text is missing', () => {
-        render(<GenericBannerTile data={mockDataGenericBannerWithoutCTATwo} isDataLoading={false} />);
-
-        expect(screen.queryByRole('button')).toBeNull();
-    });
+    expect(screen.queryByRole('button')).toBeNull();
+  });
 });

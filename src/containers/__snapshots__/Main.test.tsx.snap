@@ -3,7 +3,7 @@
 exports[`<Main /> renders correctly 1`] = `
 [
   <header
-    className="header"
+    className="header "
     id="header"
   >
     <div
@@ -13,7 +13,8 @@ exports[`<Main /> renders correctly 1`] = `
         className="header__announcement__wrapper"
       >
         <p>
-          🚀 Secure Your Spot in the PillarX Testing Campaign! 
+          🚀 Secure Your Spot in the PillarX Testing Campaign!
+           
           <a
             href="/waitlist"
           >
@@ -38,6 +39,7 @@ exports[`<Main /> renders correctly 1`] = `
         href="/"
       >
         <img
+          alt="pillar-x-logo"
           src="/landing-images/pillarXLogo.png"
         />
       </a>
@@ -74,6 +76,7 @@ exports[`<Main /> renders correctly 1`] = `
           target="_blank"
         >
           <img
+            alt="home-image"
             src="/landing-images/home-x.svg"
           />
         </a>
@@ -113,6 +116,7 @@ exports[`<Main /> renders correctly 1`] = `
             Advancing the way you connect with Web3
           </p>
           <img
+            alt="home-hero-banner"
             src="/landing-images/home-hero.png"
           />
         </div>
@@ -342,7 +346,8 @@ exports[`<Main /> renders correctly 1`] = `
               </div>
             </div>
             <p>
-              Stay tuned! We'll be unveiling more details as we approach the official launch date. Follow us on 
+              Stay tuned! We'll be unveiling more details as we approach the official launch date. Follow us on
+               
               <a
                 href="https://twitter.com/PX_Web3"
                 rel="noreferrer"
@@ -383,7 +388,8 @@ exports[`<Main /> renders correctly 1`] = `
             className="home_build__content__right"
           >
             <h2>
-              Fill out 
+              Fill out
+               
               <a
                 className="plausible-event-name=Testing+Form"
                 href="https://form.pillarx.app/dapp-application/"
@@ -392,7 +398,8 @@ exports[`<Main /> renders correctly 1`] = `
               >
                 the form
               </a>
-               to join our groundbreaking testing campaign.
+               
+              to join our groundbreaking testing campaign.
             </h2>
           </div>
         </div>
@@ -400,6 +407,7 @@ exports[`<Main /> renders correctly 1`] = `
           className="home_build__logo"
         >
           <img
+            alt="home-logo"
             src="/landing-images/home-logo-px.svg"
           />
         </div>
@@ -421,6 +429,7 @@ exports[`<Main /> renders correctly 1`] = `
           target="_blank"
         >
           <img
+            alt="home-image"
             src="/landing-images/home-x.svg"
           />
         </a>

@@ -16,5 +16,5 @@ module.exports = {
         module.exports.default = ${pathMock};
       `,
     };
-  }
+  },
 };

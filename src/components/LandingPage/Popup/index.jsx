@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react/self-closing-comp */
 import Plausible from 'plausible-tracker';
+import { useEffect, useState } from 'react';
 
 // Plausible Domain Config
 const { trackEvent } = Plausible({
-  domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN
+  domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN,
 });
 
 const Popup = () => {
@@ -21,18 +22,21 @@ const Popup = () => {
   }, []);
 
   // Embed Waitlist Widget
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (showPopup) {
       // Load the CSS
       const link = document.createElement('link');
-      link.href = 'https://prod-waitlist-widget.s3.us-east-2.amazonaws.com/getwaitlist.min.css';
+      link.href =
+        'https://prod-waitlist-widget.s3.us-east-2.amazonaws.com/getwaitlist.min.css';
       link.rel = 'stylesheet';
       link.type = 'text/css';
       document.head.appendChild(link);
 
       // Load the JavaScript
       const script = document.createElement('script');
-      script.src = 'https://prod-waitlist-widget.s3.us-east-2.amazonaws.com/getwaitlist.min.js';
+      script.src =
+        'https://prod-waitlist-widget.s3.us-east-2.amazonaws.com/getwaitlist.min.js';
       script.async = true;
       document.body.appendChild(script);
 
@@ -60,10 +64,11 @@ const Popup = () => {
   return (
     <div>
       {showPopup && (
-        <div className='popup'>
-          <div className='popup__wrapper'>
+        <div className="popup">
+          <div className="popup__wrapper">
             <button
-              className='popup__close plausible-event-name=Popup+Close'
+              type="button"
+              className="popup__close plausible-event-name=Popup+Close"
               onClick={() => {
                 setShowPopup(!showPopup);
                 window.localStorage.setItem('POPUP_STATE', false);
@@ -71,12 +76,12 @@ const Popup = () => {
             >
               <p>&#x2715;</p>
             </button>
-            <div className='popup__form'>
+            <div className="popup__form">
               {/* Embedded Code */}
               <div
-                id='getWaitlistContainer'
-                data-waitlist_id='17924'
-                data-widget_type='WIDGET_1'
+                id="getWaitlistContainer"
+                data-waitlist_id="17924"
+                data-widget_type="WIDGET_1"
               ></div>
             </div>
           </div>

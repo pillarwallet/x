@@ -8,6 +8,7 @@ exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = 
     className="bg-medium_grey p-2.5 rounded-full w-10 h-10"
   >
     <img
+      alt="profile-icon"
       className="w-full h-full"
       src={
         {
@@ -32,6 +33,7 @@ exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = 
     onClick={[Function]}
   >
     <img
+      alt="copy-adress-icon"
       className="cursor-pointer"
       src={
         {

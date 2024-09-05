@@ -1,12 +1,12 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // provider
 import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
 
 // reducer
-import { 
+import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
@@ -19,9 +19,10 @@ import {
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData, 
-  setUsdPriceReceiveToken, 
-  setUsdPriceSwapToken} from '../../../reducer/theExchangeSlice';
+  setSwapTokenData,
+  setUsdPriceReceiveToken,
+  setUsdPriceSwapToken,
+} from '../../../reducer/theExchangeSlice';
 
 // components
 import CardsSwap from '../CardsSwap';
@@ -30,8 +31,22 @@ import CardsSwap from '../CardsSwap';
 import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
 
 const mockTokenAssets = [
-  { address: '0x01', name: 'Ether', symbol: 'ETH', chainId: 1, decimals: 18, icon: 'iconEth.png' },
-  { address: '0x02', name: 'Matic', symbol: 'MATIC', chainId: 137, decimals: 18, icon: 'iconMatic.png' },
+  {
+    address: '0x01',
+    name: 'Ether',
+    symbol: 'ETH',
+    chainId: 1,
+    decimals: 18,
+    icon: 'iconEth.png',
+  },
+  {
+    address: '0x02',
+    name: 'Matic',
+    symbol: 'MATIC',
+    chainId: 137,
+    decimals: 18,
+    icon: 'iconMatic.png',
+  },
 ];
 
 // Mock transaction-kit hooks being used
@@ -64,7 +79,7 @@ jest.mock('../../../../../hooks/useAssets', () => ({
   __esModule: true,
   default: jest.fn().mockReturnValue({
     1: [
-      { 
+      {
         address: '0x01',
         chainId: 1,
         name: 'Ether',
@@ -74,7 +89,7 @@ jest.mock('../../../../../hooks/useAssets', () => ({
       },
     ],
     137: [
-      { 
+      {
         address: '0x02',
         chainId: 137,
         name: 'Matic',
@@ -157,8 +172,14 @@ describe('<CardsSwap />', () => {
     const swapButton = screen.getByRole('button');
     fireEvent.click(swapButton);
 
-    expect(store.getState().swap.swapChain).toEqual({ chainId: 137, chainName: 'Polygon' });
-    expect(store.getState().swap.receiveChain).toEqual({ chainId: 1, chainName: 'Ethereum' });
+    expect(store.getState().swap.swapChain).toEqual({
+      chainId: 137,
+      chainName: 'Polygon',
+    });
+    expect(store.getState().swap.receiveChain).toEqual({
+      chainId: 1,
+      chainName: 'Ethereum',
+    });
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[1]);
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
     expect(store.getState().swap.amountSwap).toEqual(10);
