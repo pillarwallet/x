@@ -48,6 +48,7 @@ const App = () => {
     isLoading: isHomeFeedLoading,
     isFetching: isHomeFeedFetching,
     isSuccess: isHomeFeedSuccess,
+    refetch: refetchHomeFeed,
   } = useGetTilesInfoQuery(
     { page, address: walletAddress || '' },
     { skip: !walletAddress }
@@ -57,6 +58,7 @@ const App = () => {
     isLoading: isWalletTileLoading,
     isFetching: isWalletTileFetching,
     isSuccess: isWalletTileSuccess,
+    refetch: refetchWalletTile,
   } = useGetWalletInfoQuery(
     { address: walletAddress || '' },
     { skip: !walletAddress }
@@ -70,15 +72,25 @@ const App = () => {
 
   // This useEffect is to update the wallet data
   useEffect(() => {
+    if (!isWalletTileSuccess && walletAddress) {
+      refetchWalletTile();
+    }
+
     if (walletTile && isWalletTileSuccess) {
       setWalletData(walletTile);
     }
+
     if (!isWalletTileSuccess) {
       setWalletData(undefined);
     }
-  }, [walletTile, isWalletTileSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletTile, isWalletTileSuccess, walletAddress]);
 
   useEffect(() => {
+    if (!isHomeFeedSuccess && walletAddress) {
+      refetchHomeFeed();
+    }
+
     // when apiData loads, we save it in a state to keep previous data
     if (homeFeed && isHomeFeedSuccess) {
       setPageData((prevData) => {
@@ -92,7 +104,8 @@ const App = () => {
       });
       setIsLoadingNextPage(true);
     }
-  }, [homeFeed, isHomeFeedSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeFeed, isHomeFeedSuccess, walletAddress]);
 
   // scroll handler makes sure that when reaching the end of the page, it loads the next page
   useEffect(() => {
