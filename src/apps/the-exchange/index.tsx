@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 // styles
 import styled from 'styled-components';
 import './styles/tailwindTheExchange.css';
@@ -15,15 +16,19 @@ import SwapSummary from './components/SwapSummary/SwapSummary';
 import XBackground from './images/x-background.svg';
 
 export const App = () => {
-  const isSwapOpen = useAppSelector((state) => state.swap.isSwapOpen as boolean);
-  const isReceiveOpen = useAppSelector((state) => state.swap.isReceiveOpen as boolean);
+  const isSwapOpen = useAppSelector(
+    (state) => state.swap.isSwapOpen as boolean
+  );
+  const isReceiveOpen = useAppSelector(
+    (state) => state.swap.isReceiveOpen as boolean
+  );
 
   return (
     <Wrapper>
       <ExchangeHeader />
       <div className="flex flex-col items-center z-10 gap-4 desktop:gap-8">
         <CardsSwap />
-        {(isSwapOpen || isReceiveOpen) ? null :  (
+        {isSwapOpen || isReceiveOpen ? null : (
           <>
             <SwapSummary />
             <ExchangeAction />
@@ -31,7 +36,11 @@ export const App = () => {
         )}
       </div>
       <div className="fixed inset-x-0 mobile:bottom-0 tablet:top-0 desktop:top-0 flex justify-center overflow-hidden">
-        <img src={XBackground} className="w-full h-auto transform rotate-[-15deg]" />
+        <img
+          src={XBackground}
+          alt="the-exchange-backgroun-image"
+          className="w-full h-auto transform rotate-[-15deg]"
+        />
       </div>
     </Wrapper>
   );

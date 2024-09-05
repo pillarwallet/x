@@ -13,6 +13,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       id="token-atlas-graph-column-name-logo-symbol"
     >
       <img
+        alt="token-logo"
         className="w-[30px] h-[30px] object-fill rounded-full"
         data-testid="token-logo-graph-column"
         src="tokenLogo.png"
@@ -48,6 +49,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
         id="token-atlas-graph-column-price-change-percentage"
       >
         <img
+          alt="arrow"
           className="w-[30px] mr-1 mobile:w-3.5 mobile:mb-2 false"
           src={
             {
@@ -82,30 +84,35 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
         onClick={[Function]}
+        type="button"
       >
         HOUR
       </button>
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey bg-green text-dark_grey"
         onClick={[Function]}
+        type="button"
       >
         DAY
       </button>
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
         onClick={[Function]}
+        type="button"
       >
         WEEK
       </button>
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
         onClick={[Function]}
+        type="button"
       >
         MONTH
       </button>
       <button
         className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
         onClick={[Function]}
+        type="button"
       >
         YEAR
       </button>

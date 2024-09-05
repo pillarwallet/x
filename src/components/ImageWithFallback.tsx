@@ -21,6 +21,7 @@ const ImageWithFallback = ({
         src={src}
         alt={alt}
         onError={({ currentTarget }) => {
+          // eslint-disable-next-line no-param-reassign
           currentTarget.onerror = null;
           setUseFallbackImage(true);
         }}
@@ -33,6 +34,6 @@ const ImageWithFallback = ({
   }
 
   return <img src={unknownAssetImage} alt={alt} />;
-}
+};
 
 export default ImageWithFallback;

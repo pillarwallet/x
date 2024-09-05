@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { PiCaretDown, PiCaretUp } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
+import { PiCaretDown, PiCaretUp } from 'react-icons/pi';
+import styled from 'styled-components';
 
 // components
 import SkeletonLoader from '../../SkeletonLoader';
@@ -40,21 +41,32 @@ const ListItem = ({
           />
         </ListItemLeft>
       )}
-        <ListItemRight>
-          <ListItemTitle>{option.title}</ListItemTitle>
-          {!hideValue && (
-            <>
-              {!option.isLoadingValue && <ListItemValue>{option.value}</ListItemValue>}
-              {option.isLoadingValue && <SkeletonLoader $height="15px" $width="30%" />}
-            </>
-          )}
-        </ListItemRight>
+      <ListItemRight>
+        <ListItemTitle>{option.title}</ListItemTitle>
+        {!hideValue && (
+          <>
+            {!option.isLoadingValue && (
+              <ListItemValue>{option.value}</ListItemValue>
+            )}
+            {option.isLoadingValue && (
+              <SkeletonLoader $height="15px" $width="30%" />
+            )}
+          </>
+        )}
+      </ListItemRight>
       {rightAddon}
     </ListItemWrapper>
-  )
-}
+  );
+};
 
-export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions, hideValue, type }: {
+export const Select = ({
+  options,
+  defaultSelectedId,
+  onChange,
+  isLoadingOptions,
+  hideValue,
+  type,
+}: {
   options: SelectOption[];
   defaultSelectedId?: string;
   onChange: (option: SelectOption) => void;
@@ -77,7 +89,7 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions,
           {!hideValue && <SkeletonLoader $height="15px" $width="30%" />}
         </ListItemRight>
       </ListItemWrapper>
-    )
+    );
   }
 
   const selected = options.find((option) => option.id === selectedId);
@@ -96,25 +108,29 @@ export const Select = ({ options, defaultSelectedId, onChange, isLoadingOptions,
           hideValue={hideValue}
         />
       )}
-      {(expanded || !selected) && options.filter((option) => option.id !== selected?.id).map((option) => (
-        <ListItem
-          key={option.id}
-          option={option}
-          onClick={() => {
-            setExpanded(false);
-            setSelectedId(option.id);
-            onChange(option);
-          }}
-          hideValue={hideValue}
-        />
-      ))}
-      {!options.length && 
-      (
-        <Alert>{type === 'token' ? t`error.noTokensFound` : t`error.noNftsFound`}</Alert>
+      {(expanded || !selected) &&
+        options
+          .filter((option) => option.id !== selected?.id)
+          .map((option) => (
+            <ListItem
+              key={option.id}
+              option={option}
+              onClick={() => {
+                setExpanded(false);
+                setSelectedId(option.id);
+                onChange(option);
+              }}
+              hideValue={hideValue}
+            />
+          ))}
+      {!options.length && (
+        <Alert>
+          {type === 'token' ? t`error.noTokensFound` : t`error.noNftsFound`}
+        </Alert>
       )}
     </div>
   );
-}
+};
 
 const ListItemImage = styled.img`
   width: 42px;
@@ -165,7 +181,9 @@ const ListItemWrapper = styled.div`
   user-select: none;
   margin-bottom: 10px;
 
-  ${({ onClick, theme }) => onClick && `
+  ${({ onClick, theme }) =>
+    onClick &&
+    `
     &:hover {
       background: ${theme.color.background.selectItemHover};
     }

@@ -1,14 +1,12 @@
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
 // components
-import { PrimaryTitle } from './';
+import { PrimaryTitle } from '.';
 
 describe('<PrimaryTitle />', () => {
   it('renders correctly', () => {
     const tree = renderer
-      .create(
-        <PrimaryTitle>Some regular text.</PrimaryTitle>
-      )
+      .create(<PrimaryTitle>Some regular text.</PrimaryTitle>)
       .toJSON();
 
     expect(tree).toMatchSnapshot();
@@ -19,4 +17,3 @@ describe('<PrimaryTitle />', () => {
     expect(treeElement.type).toBe('h1');
   });
 });
-

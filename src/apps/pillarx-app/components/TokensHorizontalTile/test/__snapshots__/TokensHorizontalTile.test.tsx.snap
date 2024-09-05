@@ -74,6 +74,7 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
       >
         <img
+          alt="token-logo"
           className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
           src="https://www.logo.com/example/"
         />

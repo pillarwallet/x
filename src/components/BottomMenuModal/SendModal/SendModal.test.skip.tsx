@@ -1,28 +1,32 @@
-import { render, RenderResult, act } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import { ThemeProvider } from 'styled-components';
-import { BrowserRouter } from 'react-router-dom';
+/* eslint-disable import/no-extraneous-dependencies */
 import * as TransactionKit from '@etherspot/transaction-kit';
+import { RenderResult, act, render } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { ethers } from 'ethers';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 
 // components
-import SendModal from './';
+import SendModal from '.';
 
 // theme
 import { defaultTheme } from '../../../theme';
 
 // providers
-import BottomMenuModalProvider from '../../../providers/BottomMenuModalProvider';
-import LanguageProvider from '../../../providers/LanguageProvider';
 import AccountBalancesProvider from '../../../providers/AccountBalancesProvider';
 import AccountTransactionHistoryProvider from '../../../providers/AccountTransactionHistoryProvider';
+import BottomMenuModalProvider from '../../../providers/BottomMenuModalProvider';
+import LanguageProvider from '../../../providers/LanguageProvider';
 
-const ethersProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545', 'goerli'); // replace with your node's RPC URL
+const ethersProvider = new ethers.providers.JsonRpcProvider(
+  'http://localhost:8545',
+  'goerli'
+); // replace with your node's RPC URL
 const provider = ethers.Wallet.createRandom().connect(ethersProvider);
 
 const getFormGroupLabel = (formGroup: Element) => {
   return formGroup?.children?.item(0) as Element;
-}
+};
 
 describe('<SendModal />', () => {
   let rendered: RenderResult;
@@ -66,9 +70,13 @@ describe('<SendModal />', () => {
     formGroup4 = wrapper?.children?.item(3) as Element;
     bottomActionBar = wrapper?.children?.item(4) as Element;
 
-    formGroup1Input = (formGroup1?.children?.item(1) as Element)?.children?.item(0) as Element;
+    formGroup1Input = (
+      formGroup1?.children?.item(1) as Element
+    )?.children?.item(0) as Element;
     formGroup3Select = formGroup3?.children?.item(1) as Element;
-    formGroup4Input = (formGroup4?.children?.item(1) as Element)?.children?.item(0) as Element;
+    formGroup4Input = (
+      formGroup4?.children?.item(1) as Element
+    )?.children?.item(0) as Element;
     submitButton = bottomActionBar?.children?.item(0) as Element;
   });
 
@@ -102,8 +110,13 @@ describe('<SendModal />', () => {
     const user = userEvent.setup();
 
     // address input
-    await user.type(formGroup1Input, '0x7F30B1960D5556929B03a0339814fE903c55a347');
-    expect(formGroup1Input).toHaveValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
+    await user.type(
+      formGroup1Input,
+      '0x7F30B1960D5556929B03a0339814fE903c55a347'
+    );
+    expect(formGroup1Input).toHaveValue(
+      '0x7F30B1960D5556929B03a0339814fE903c55a347'
+    );
 
     // asset select
     await user.click(formGroup3Select.children.item(2) as Element); // click TK2
@@ -125,7 +138,10 @@ describe('<SendModal />', () => {
     const user = userEvent.setup();
 
     // address input
-    await user.type(formGroup1Input, '0x7F30B1960D5556929B03a0339814fE903c55a347');
+    await user.type(
+      formGroup1Input,
+      '0x7F30B1960D5556929B03a0339814fE903c55a347'
+    );
 
     // asset select
     await user.click(formGroup3Select.children.item(2) as Element); // click TK2
@@ -146,21 +162,30 @@ describe('<SendModal />', () => {
   it('renders error on failed send', async () => {
     const failedSendErrorMessage = 'Failed to send!';
 
-    jest.spyOn(TransactionKit, 'useEtherspotTransactions').mockReturnValue(({
+    jest.spyOn(TransactionKit, 'useEtherspotTransactions').mockReturnValue({
       chainId: 1,
       batches: [],
       estimate: async () => [],
-      send: async () => [{ sentBatches: [{ errorMessage: failedSendErrorMessage }], estimatedBatches: [], batches: [] }],
+      send: async () => [
+        {
+          sentBatches: [{ errorMessage: failedSendErrorMessage }],
+          estimatedBatches: [],
+          batches: [],
+        },
+      ],
       isEstimating: false,
       isSending: false,
       containsEstimatingError: false,
       containsSendingError: false,
-    }));
+    });
 
     const user = userEvent.setup();
 
     // address input
-    await user.type(formGroup1Input, '0x7F30B1960D5556929B03a0339814fE903c55a347');
+    await user.type(
+      formGroup1Input,
+      '0x7F30B1960D5556929B03a0339814fE903c55a347'
+    );
 
     // asset select
     await user.click(formGroup3Select.children.item(2) as Element); // click TK2
@@ -183,5 +208,3 @@ describe('<SendModal />', () => {
     rendered.unmount();
   });
 });
-
-

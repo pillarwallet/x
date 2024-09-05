@@ -1,14 +1,19 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
 // types
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import {
+  BlockchainData,
+  TokenAtlasInfoData,
+  TokenMarketHistory,
+  TokenPriceGraphPeriod,
+} from '../../../types/api';
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
-import { BlockchainData, TokenAtlasInfoData, TokenMarketHistory, TokenPriceGraphPeriod } from '../../../types/api';
 
 // utils
 import { convertDateToUnixTimestamp } from '../utils/converters';
-
 
 export type TokenAltasState = {
   isSearchTokenModalOpen: boolean;
@@ -27,19 +32,22 @@ export type TokenAltasState = {
 };
 
 const initialState: TokenAltasState = {
-    isSearchTokenModalOpen: false,
-    isSelectChainDropdownOpen: false,
-    tokenListData: [],
-    selectedChain: { chainId: 0, chainName: 'all'},
-    searchTokenResult: [],
-    selectedToken: undefined,
-    tokenDataInfo: undefined,
-    tokenDataGraph: undefined,
-    isAllChainsVisible: false,
-    priceGraphPeriod: { from: convertDateToUnixTimestamp(sub(new Date(), { days: 1 })), to: undefined },
-    periodFilter: PeriodFilter.DAY,
-    isGraphLoading: false,
-    blockchainList: [],
+  isSearchTokenModalOpen: false,
+  isSelectChainDropdownOpen: false,
+  tokenListData: [],
+  selectedChain: { chainId: 0, chainName: 'all' },
+  searchTokenResult: [],
+  selectedToken: undefined,
+  tokenDataInfo: undefined,
+  tokenDataGraph: undefined,
+  isAllChainsVisible: false,
+  priceGraphPeriod: {
+    from: convertDateToUnixTimestamp(sub(new Date(), { days: 1 })),
+    to: undefined,
+  },
+  periodFilter: PeriodFilter.DAY,
+  isGraphLoading: false,
+  blockchainList: [],
 };
 
 const tokenAtlasSlice = createSlice({
@@ -61,13 +69,22 @@ const tokenAtlasSlice = createSlice({
     setSearchTokenResult(state, action: PayloadAction<Token[]>) {
       state.searchTokenResult = action.payload;
     },
-    setSelectedToken(state, action: PayloadAction<SelectedTokenType | undefined>) {
+    setSelectedToken(
+      state,
+      action: PayloadAction<SelectedTokenType | undefined>
+    ) {
       state.selectedToken = action.payload;
     },
-    setTokenDataInfo(state, action: PayloadAction<TokenAtlasInfoData | undefined>) {
+    setTokenDataInfo(
+      state,
+      action: PayloadAction<TokenAtlasInfoData | undefined>
+    ) {
       state.tokenDataInfo = action.payload;
     },
-    setTokenDataGraph(state, action: PayloadAction<TokenMarketHistory | undefined>) {
+    setTokenDataGraph(
+      state,
+      action: PayloadAction<TokenMarketHistory | undefined>
+    ) {
       state.tokenDataGraph = action.payload;
     },
     setIsAllChainsVisible(state, action: PayloadAction<boolean>) {
@@ -82,26 +99,29 @@ const tokenAtlasSlice = createSlice({
     setIsGraphLoading(state, action: PayloadAction<boolean>) {
       state.isGraphLoading = action.payload;
     },
-    setBlockchainList(state, action: PayloadAction<BlockchainData[] | undefined>) {
+    setBlockchainList(
+      state,
+      action: PayloadAction<BlockchainData[] | undefined>
+    ) {
       state.blockchainList = action.payload;
     },
   },
 });
 
 export const {
-    setIsSearchTokenModalOpen,
-    setIsSelectChainDropdownOpen,
-    setTokenListData,
-    setSelectedChain,
-    setSearchTokenResult,
-    setSelectedToken,
-    setTokenDataInfo,
-    setTokenDataGraph,
-    setIsAllChainsVisible,
-    setPriceGraphPeriod,
-    setPeriodFilter,
-    setIsGraphLoading,
-    setBlockchainList,
+  setIsSearchTokenModalOpen,
+  setIsSelectChainDropdownOpen,
+  setTokenListData,
+  setSelectedChain,
+  setSearchTokenResult,
+  setSelectedToken,
+  setTokenDataInfo,
+  setTokenDataGraph,
+  setIsAllChainsVisible,
+  setPriceGraphPeriod,
+  setPeriodFilter,
+  setIsGraphLoading,
+  setBlockchainList,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

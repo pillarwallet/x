@@ -14,81 +14,82 @@ import {
   EtherspotTransaction,
   EtherspotApprovalTransaction,
   useWalletAddress,
-  useEtherspotTransactions
+  useEtherspotTransactions,
 } from '@etherspot/transaction-kit';
 
 import BeatLoader from 'react-spinners/BeatLoader';
-import { getPillarXContract, getPillarYContract, getPrice } from './AlphaRouterService'
-
+import {
+  getPillarXContract,
+  getPillarYContract,
+  getPrice,
+} from './AlphaRouterService';
 
 function App() {
   const { send } = useEtherspotTransactions();
-  const [slippageAmount, setSlippageAmount] = useState(2)
-  const [deadlineMinutes, setDeadlineMinutes] = useState(10)
-  const [showModal, setShowModal] = useState(undefined)
+  const [slippageAmount, setSlippageAmount] = useState(2);
+  const [deadlineMinutes, setDeadlineMinutes] = useState(10);
+  const [showModal, setShowModal] = useState(undefined);
 
-  const [inputAmount, setInputAmount] = useState('1000000')
-  const [outputAmount, setOutputAmount] = useState(undefined)
-  const [transaction, setTransaction] = useState(null)
-  const [loading, setLoading] = useState(undefined)
-  const [ratio, setRatio] = useState(undefined)
-  const [pillarXContract, setPillarXContract] = useState(undefined)
-  const [pillarYContract, setPillarYContract] = useState(undefined)
-  const [pillarXAmount, setPillarXAmount] = useState(undefined)
-  const [pillarYAmount, setPillarYAmount] = useState(undefined)
+  const [inputAmount, setInputAmount] = useState('1000000');
+  const [outputAmount, setOutputAmount] = useState(undefined);
+  const [transaction, setTransaction] = useState(null);
+  const [loading, setLoading] = useState(undefined);
+  const [ratio, setRatio] = useState(undefined);
+  const [pillarXContract, setPillarXContract] = useState(undefined);
+  const [pillarYContract, setPillarYContract] = useState(undefined);
+  const [pillarXAmount, setPillarXAmount] = useState(undefined);
+  const [pillarYAmount, setPillarYAmount] = useState(undefined);
 
   const goerliAddress = useWalletAddress('etherspot-prime', 11155111);
 
   useEffect(() => {
     const onLoad = async () => {
-      const newPillarXContract = getPillarXContract()
-      setPillarXContract(newPillarXContract)
+      const newPillarXContract = getPillarXContract();
+      setPillarXContract(newPillarXContract);
 
-      const newPillarYContract = getPillarYContract()
-      setPillarYContract(newPillarYContract)
-    }
-    onLoad()
-  }, [])
+      const newPillarYContract = getPillarYContract();
+      setPillarYContract(newPillarYContract);
+    };
+    onLoad();
+  }, []);
 
   useEffect(() => {
     const getWalletAddress = () => {
-      if (!pillarXContract || !goerliAddress) return
+      if (!pillarXContract || !goerliAddress) return;
 
-      pillarXContract.balanceOf(goerliAddress)
-      .then(res => {
-        setPillarXAmount( Number(ethers.utils.formatEther(res)) )
-      })
-      pillarYContract.balanceOf(goerliAddress)
-      .then(res => {
-        setPillarYAmount( Number(ethers.utils.formatEther(res)) )
-      })
-    }
+      pillarXContract.balanceOf(goerliAddress).then((res) => {
+        setPillarXAmount(Number(ethers.utils.formatEther(res)));
+      });
+      pillarYContract.balanceOf(goerliAddress).then((res) => {
+        setPillarYAmount(Number(ethers.utils.formatEther(res)));
+      });
+    };
 
-    getWalletAddress()
+    getWalletAddress();
   }, [pillarXContract, pillarYContract, goerliAddress]);
 
   const getSwapPrice = (inputAmount1) => {
-    setLoading(true)
+    setLoading(true);
 
     const swap = getPrice(
       inputAmount1,
       slippageAmount,
-      Math.floor(Date.now()/1000 + (deadlineMinutes * 60)),
+      Math.floor(Date.now() / 1000 + deadlineMinutes * 60),
       goerliAddress
-    ).then(data => {
-      setInputAmount(inputAmount1.toString())
-      setTransaction(data[0])
-      setOutputAmount(data[1])
-      setRatio(data[2])
-      setLoading(false)
-    })
+    ).then((data) => {
+      setInputAmount(inputAmount1.toString());
+      setTransaction(data[0]);
+      setOutputAmount(data[1]);
+      setRatio(data[2]);
+      setLoading(false);
+    });
 
-    return(swap)
-  }
+    return swap;
+  };
 
   const pillarSwap = async () => {
     await send(['1']);
-  }
+  };
 
   return (
     <div className="App">
@@ -98,7 +99,7 @@ function App() {
           <div className="swapHeader">
             <span className="swapText">Swap</span>
             <span className="gearContainer" onClick={() => setShowModal(true)}>
-              <GearFill color="black"/>
+              <GearFill color="black" />
             </span>
             {showModal && (
               <ConfigModal
@@ -106,7 +107,8 @@ function App() {
                 setDeadlineMinutes={setDeadlineMinutes}
                 deadlineMinutes={deadlineMinutes}
                 setSlippageAmount={setSlippageAmount}
-                slippageAmount={slippageAmount}/>
+                slippageAmount={slippageAmount}
+              />
             )}
           </div>
 
@@ -115,22 +117,20 @@ function App() {
               field="input"
               tokenName="PillarX"
               getSwapPrice={getSwapPrice}
-              balance={pillarXAmount}/>
+              balance={pillarXAmount}
+            />
             <CurrencyField
               field="output"
               tokenName="PillarY"
               value={outputAmount}
               balance={pillarYAmount}
               spinner={BeatLoader}
-              loading={loading}/>
+              loading={loading}
+            />
           </div>
 
           <div className="ratioContainer">
-            {ratio && (
-              <>
-                {`1 PX = ${ratio} PY`}
-              </>
-            )}
+            {ratio && <>{`1 PX = ${ratio} PY`}</>}
           </div>
           {!!transaction && (
             <EtherspotBatches id={'1'}>
@@ -146,10 +146,7 @@ function App() {
                   data={transaction.data}
                 >
                   <div className="swapButtonContainer">
-                    <div
-                      onClick={() => pillarSwap()}
-                      className="swapButton"
-                    >
+                    <div onClick={() => pillarSwap()} className="swapButton">
                       Approve PX & Swap
                     </div>
                   </div>
@@ -159,9 +156,8 @@ function App() {
           )}
         </div>
       </div>
-
     </div>
   );
 }
 
-export default App
+export default App;

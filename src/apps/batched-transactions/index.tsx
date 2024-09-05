@@ -17,11 +17,17 @@ import Select from '../../components/Form/Select';
 // utils
 import { visibleChains } from '../../utils/blockchain';
 
-interface Transaction { to: string; value: string; data: string; }
+interface Transaction {
+  to: string;
+  value: string;
+  data: string;
+}
 
 const App = () => {
   const [t] = useTranslation();
-  const [transactions, setTransactions] = React.useState<{ [id: number]: Transaction }>({
+  const [transactions, setTransactions] = React.useState<{
+    [id: number]: Transaction;
+  }>({
     [+new Date()]: { to: '', data: '', value: '' },
   });
 
@@ -34,27 +40,35 @@ const App = () => {
   const [chainId, setChainId] = React.useState<number>(+chainOptions[0]?.value);
   const { showTransactionConfirmation } = useBottomMenuModal();
 
-  const isSendDisabled = Object.values(transactions).some((transaction) => !transaction.to);
+  const isSendDisabled = Object.values(transactions).some(
+    (transaction) => !transaction.to
+  );
 
   const send = () => {
     if (isSendDisabled) return;
     showTransactionConfirmation({
       title: 'Basic Transaction',
       description: `This will execute ${Object.values(transactions).length} of your transactions on ${chainId} chain`,
-      batches: [{
-        chainId,
-        transactions: Object.values(transactions).map((transaction) => {
-          return {
-            to: transaction.to,
-            value: transaction.value || undefined,
-            data: transaction.data || undefined,
-          };
-        })
-      }],
+      batches: [
+        {
+          chainId,
+          transactions: Object.values(transactions).map((transaction) => {
+            return {
+              to: transaction.to,
+              value: transaction.value || undefined,
+              data: transaction.data || undefined,
+            };
+          }),
+        },
+      ],
     });
-  }
+  };
 
-  const updateTransaction = (id: number, key: keyof Transaction, value: string) => {
+  const updateTransaction = (
+    id: number,
+    key: keyof Transaction,
+    value: string
+  ) => {
     setTransactions((current) => ({
       ...current,
       [id]: {
@@ -62,14 +76,14 @@ const App = () => {
         [key]: value,
       },
     }));
-  }
+  };
 
   const addTransaction = () => {
     setTransactions((current) => ({
       ...current,
       [+new Date()]: { to: '', data: '', value: '' },
     }));
-  }
+  };
 
   const removeTransaction = (id: number) => {
     setTransactions((current) => {
@@ -77,7 +91,7 @@ const App = () => {
       delete newTransactions[id];
       return newTransactions;
     });
-  }
+  };
 
   return (
     <Wrapper>
@@ -101,15 +115,31 @@ const App = () => {
               <Chip>Transaction {index + 1}</Chip>
               <FormGroup>
                 <Label>{t`destinationAddress`}</Label>
-                <TextInput onValueChange={(value) => updateTransaction(+transactionId, 'to', value ?? '')} />
+                <TextInput
+                  onValueChange={(value) =>
+                    updateTransaction(+transactionId, 'to', value ?? '')
+                  }
+                />
               </FormGroup>
               <FormGroup>
                 <Label>{t`transactionValue`}</Label>
-                <TextInput onValueChange={(value) => updateTransaction(+transactionId, 'value', value ?? '')} />
-                </FormGroup>
+                <TextInput
+                  onValueChange={(value) =>
+                    updateTransaction(+transactionId, 'value', value ?? '')
+                  }
+                />
+              </FormGroup>
               <FormGroup>
                 <Label>{t`transactionCallData`}</Label>
-                <StyledTextarea onChange={(e) => updateTransaction(+transactionId, 'data', e?.target?.value ?? '')} />
+                <StyledTextarea
+                  onChange={(e) =>
+                    updateTransaction(
+                      +transactionId,
+                      'data',
+                      e?.target?.value ?? ''
+                    )
+                  }
+                />
               </FormGroup>
             </Card>
           ))}
@@ -125,11 +155,15 @@ const App = () => {
             {t`addMoreTransactions`}
           </JoyButton>
         </Box>
-        <Button disabled={isSendDisabled} onClick={send} $fullWidth>{t`send`}</Button>
+        <Button
+          disabled={isSendDisabled}
+          onClick={send}
+          $fullWidth
+        >{t`send`}</Button>
       </FormWrapper>
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   max-width: 500px;
@@ -173,7 +207,7 @@ const RemoveButton = styled.div`
   text-align: center;
   background: #ff000080;
   border-radius: 50%;
-  
+
   &:hover {
     opacity: 0.7;
   }

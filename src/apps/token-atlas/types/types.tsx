@@ -1,6 +1,6 @@
 export type ChainType = {
-    chainId: number;
-    chainName: string;
+  chainId: number;
+  chainName: string;
 };
 
 export enum PeriodFilter {

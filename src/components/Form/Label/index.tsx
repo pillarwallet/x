@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 import styled from 'styled-components';
 
-const Label = ({ children, htmlFor }: React.PropsWithChildren<{ htmlFor?: string }>) => {
-  return (
-    <StyledLabel htmlFor={htmlFor}>
-      {children}
-    </StyledLabel>
-  )
-}
+const Label = ({
+  children,
+  htmlFor,
+}: React.PropsWithChildren<{ htmlFor?: string }>) => {
+  return <StyledLabel htmlFor={htmlFor}>{children}</StyledLabel>;
+};
 
 const StyledLabel = styled.label`
   font-size: 12px;
@@ -18,4 +18,4 @@ const StyledLabel = styled.label`
   color: ${({ theme }) => theme.color.text.formLabel};
 `;
 
-export default Label
+export default Label;

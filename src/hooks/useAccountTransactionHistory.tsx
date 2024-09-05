@@ -1,11 +1,15 @@
-import { useContext } from 'react';
 import { UserOpTransaction } from '@etherspot/transaction-kit';
+import { useContext } from 'react';
 
 // providers
 import { AccountTransactionHistoryContext } from '../providers/AccountTransactionHistoryProvider';
 
 const useAccountTransactionHistory = (params?: {
-  onUpdated?: (chainId: number, walletAddress: string, transaction: UserOpTransaction) => void
+  onUpdated?: (
+    chainId: number,
+    walletAddress: string,
+    transaction: UserOpTransaction
+  ) => void;
 }) => {
   const context = useContext(AccountTransactionHistoryContext);
 

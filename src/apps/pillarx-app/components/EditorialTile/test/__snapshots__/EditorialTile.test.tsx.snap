@@ -16,6 +16,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
         className="flex items-center justify-center overflow-hidden desktop:basis-2/5 tablet:basis-2/5 mobile:basis-full mobile:w-full"
       >
         <img
+          alt="media-display"
           className="rounded-lg object-cover object-center desktop:h-full tablet:h-full mobile:w-full"
           data-testid="editorial-tile-image"
           onError={[Function]}
@@ -113,6 +114,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
             onClick={[Function]}
           >
             <img
+              alt="display-icon"
               className="h-5"
               src="https://example.com/youtube.png"
             />

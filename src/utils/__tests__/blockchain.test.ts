@@ -1,5 +1,5 @@
+import { gnosis, polygon } from 'viem/chains';
 import { getNativeAssetForChainId } from '../blockchain';
-import { polygon, gnosis } from 'viem/chains';
 
 describe('getNativeAssetForChainId', () => {
   it('returns Matic for polygon', () => {
@@ -18,4 +18,3 @@ describe('getNativeAssetForChainId', () => {
     jest.clearAllMocks();
   });
 });
-

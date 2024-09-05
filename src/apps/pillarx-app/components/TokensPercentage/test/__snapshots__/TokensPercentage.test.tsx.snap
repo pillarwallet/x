@@ -5,6 +5,7 @@ exports[`<TokensPercentage /> renders correctly and matches snapshot 1`] = `
   className="flex gap-1 items-center"
 >
   <img
+    alt="percentage-up"
     className="w-[10px] h[9px]"
     src={
       {

@@ -24,8 +24,22 @@
 
 import PropTypes from 'prop-types';
 
-const Img = ({ className, src = 'defaultNoData.png', alt = 'testImg', ...restProps }) => {
-  return <img className={className} src={src} alt={alt} {...restProps} loading={'lazy'} />;
+const Img = ({
+  className,
+  src = 'defaultNoData.png',
+  alt = 'testImg',
+  ...restProps
+}) => {
+  return (
+    <img
+      className={className}
+      src={src}
+      alt={alt}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...restProps}
+      loading="lazy"
+    />
+  );
 };
 
 Img.propTypes = {

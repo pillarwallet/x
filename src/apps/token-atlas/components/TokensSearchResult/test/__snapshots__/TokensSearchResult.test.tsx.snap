@@ -23,6 +23,7 @@ exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
         className="flex items-center"
       >
         <img
+          alt="token-logo"
           className="w-[30px] h-[30px] object-fill rounded-full mr-2"
           src="logo1.png"
         />
@@ -58,6 +59,7 @@ exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
         className="flex items-center"
       >
         <img
+          alt="token-logo"
           className="w-[30px] h-[30px] object-fill rounded-full mr-2"
           src="logo2.png"
         />

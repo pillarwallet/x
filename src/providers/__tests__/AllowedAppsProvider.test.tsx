@@ -1,30 +1,30 @@
-import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import axios from 'axios';
+import React from 'react';
 
 // providers
-import AllowedAppsProvider from '../../providers/AllowedAppsProvider';
+import AllowedAppsProvider from '../AllowedAppsProvider';
 
 // hooks
 import useAllowedApps from '../../hooks/useAllowedApps';
 
 describe('AllowedAppsProvider', () => {
-  const allowedAppsMock =  [
+  const allowedAppsMock = [
     { appId: 'allowed-app-1' },
     { appId: 'allowed-app-2' },
     { appId: 'allowed-app-3' },
-  ]
+  ];
 
   let wrapper: React.FC;
 
   beforeEach(() => {
     wrapper = ({ children }: React.PropsWithChildren) => (
-      <AllowedAppsProvider>
-        {children}
-      </AllowedAppsProvider>
+      <AllowedAppsProvider>{children}</AllowedAppsProvider>
     );
 
-    (axios.get as jest.Mock).mockImplementation(() => Promise.resolve({ data: allowedAppsMock }));
+    (axios.get as jest.Mock).mockImplementation(() =>
+      Promise.resolve({ data: allowedAppsMock })
+    );
   });
 
   it('initializes with empty list and loading state', () => {
@@ -42,7 +42,9 @@ describe('AllowedAppsProvider', () => {
       expect(result.current.isLoading).toEqual(false);
     });
 
-    expect(result.current.allowed).toEqual(allowedAppsMock.map(app => app.appId));
+    expect(result.current.allowed).toEqual(
+      allowedAppsMock.map((app) => app.appId)
+    );
   });
 
   afterEach(() => {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { Element as IconApps } from 'iconsax-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +22,6 @@ import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
 
 // utils
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { loadApps } from '../apps';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
@@ -28,7 +29,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const navigate = useNavigate();
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
-  const [t] = useTranslation()
+  const [t] = useTranslation();
   const accountAddress = useWalletAddress();
   /**
    * Import the recordPresence mutation from the
@@ -43,7 +44,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   }, [allowed]);
 
   return (
-    <Wrapper id='apps-modal'>
+    <Wrapper id="apps-modal">
       {!hideTitle && (
         <ModalTitle>
           <IconApps size={18} />
@@ -52,10 +53,12 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
       )}
       <ExploreAppsCard>
         <ExploreAppsCardTitle>Explore Apps</ExploreAppsCardTitle>
-        <ExploreAppsCardContent>Discover new apps and services</ExploreAppsCardContent>
+        <ExploreAppsCardContent>
+          Discover new apps and services
+        </ExploreAppsCardContent>
       </ExploreAppsCard>
       <Label>{t`label.latestApps`}</Label>
-      <AppsListWrapper id='apps-list'>
+      <AppsListWrapper id="apps-list">
         {isLoadingAllowedApps && (
           <>
             <SkeletonLoader $height="94px" $width="94px" />
@@ -65,29 +68,31 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
             <SkeletonLoader $height="94px" $width="94px" />
           </>
         )}
-        {!isLoadingAllowedApps && Object.keys(apps).map((appId) => (
-          <AppListItem
-            id='app-list-item'
-            key={appId}
-            onClick={() => {
-              hide();
-              // Fire (and forget) the recordPresence mutation
-              recordPresence({
-                address: accountAddress,
-                action: 'appOpened',
-                value: appId,
-              });
-              navigate('/' + appId);
-            }}
-          >
-            <AppIcon appId={appId} />
-            <AppTitle>{apps[appId].title}</AppTitle>
-          </AppListItem>
-        ))}
+        {!isLoadingAllowedApps &&
+          Object.keys(apps).map((appId) => (
+            <AppListItem
+              id="app-list-item"
+              key={appId}
+              onClick={() => {
+                hide();
+                // Fire (and forget) the recordPresence mutation
+                recordPresence({
+                  address: accountAddress,
+                  action: 'appOpened',
+                  value: appId,
+                });
+                // eslint-disable-next-line prefer-template
+                navigate('/' + appId);
+              }}
+            >
+              <AppIcon appId={appId} />
+              <AppTitle>{apps[appId].title}</AppTitle>
+            </AppListItem>
+          ))}
       </AppsListWrapper>
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   max-height: 100%;
@@ -117,11 +122,11 @@ const AppListItem = styled.div`
   width: 94px;
   border-radius: 6px;
   overflow: hidden;
-  transition: all .1s ease-in-out;
+  transition: all 0.1s ease-in-out;
   cursor: pointer;
   padding: 4px;
   background: ${({ theme }) => theme.color.background.card};
-  
+
   &:hover {
     transform: scale(1.1);
     opacity: 0.9;
@@ -140,7 +145,7 @@ const ExploreAppsCard = styled.div`
   background: ${({ theme }) => theme.color.background.exploreAppsCard};
   margin-bottom: 14px;
   border-radius: 10px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -157,6 +162,5 @@ const ExploreAppsCardContent = styled.p`
   font-size: 12px;
   font-weight: 400;
 `;
-
 
 export default AppsList;

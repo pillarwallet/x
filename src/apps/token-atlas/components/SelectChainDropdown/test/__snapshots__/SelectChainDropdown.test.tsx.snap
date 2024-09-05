@@ -9,6 +9,7 @@ exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
   <button
     className="flex justify-between items-center w-full h-full p-4 bg-medium_grey rounded focus:outline-none false"
     onClick={[Function]}
+    type="button"
   >
     <p
       className="text-[13px] font-semibold text-[17px] mobile:text-[15px] font-medium leading-5 line-clamp-1 capitalize"
@@ -16,6 +17,7 @@ exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
       Select chain
     </p>
     <img
+      alt="arrow-down"
       className="transform "
       src={
         {

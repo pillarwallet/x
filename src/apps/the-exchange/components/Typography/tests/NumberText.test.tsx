@@ -9,8 +9,12 @@ describe('<NumberText />', () => {
       .create(
         <>
           <NumberText>Some number text.</NumberText>
-          <NumberText className='text-red-500'>Some red heading red text</NumberText>
-          <NumberText className='text-[120px]'>Some heading with font size 120px</NumberText>
+          <NumberText className="text-red-500">
+            Some red heading red text
+          </NumberText>
+          <NumberText className="text-[120px]">
+            Some heading with font size 120px
+          </NumberText>
         </>
       )
       .toJSON();
@@ -27,4 +31,3 @@ describe('<NumberText />', () => {
     expect(treeElements[2].props.className).toContain('text-[120px]');
   });
 });
-

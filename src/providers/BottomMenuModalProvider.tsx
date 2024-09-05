@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
+/* eslint-disable import/no-cycle */
 import React, { Dispatch, SetStateAction, createContext, useMemo } from 'react';
 
 // components
@@ -8,30 +10,36 @@ export interface BottomMenuModalContext {
     showTransactionConfirmation: (payload: SendModalData) => void;
     showSend: () => void;
     showHistory: () => void;
-    showAccount:() => void;
+    showAccount: () => void;
     showApps: () => void;
     hide: () => void;
     active: BottomMenuItem | null;
     activeIndex: number | null;
     showBatchSendModal: boolean;
     setShowBatchSendModal: Dispatch<SetStateAction<boolean>>;
-  }
+  };
 }
 
-export const ProviderContext = createContext<BottomMenuModalContext | null>(null);
+export const ProviderContext = createContext<BottomMenuModalContext | null>(
+  null
+);
 
 interface BottomMenuSend {
   type: 'send';
-  payload?: SendModalData
+  payload?: SendModalData;
 }
 
-export type BottomMenuItem = {
-  type: 'history' | 'account' | 'apps';
-} | BottomMenuSend;
+export type BottomMenuItem =
+  | {
+      type: 'history' | 'account' | 'apps';
+    }
+  | BottomMenuSend;
 
 const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
-  const [activeMenuItem, setActiveMenuItem] = React.useState<BottomMenuItem | null>(null);
-  const [showBatchSendModal, setShowBatchSendModal] = React.useState<boolean>(false);
+  const [activeMenuItem, setActiveMenuItem] =
+    React.useState<BottomMenuItem | null>(null);
+  const [showBatchSendModal, setShowBatchSendModal] =
+    React.useState<boolean>(false);
 
   if (showBatchSendModal && activeMenuItem?.type !== 'send') {
     setShowBatchSendModal(false);
@@ -45,24 +53,28 @@ const BottomMenuModalProvider = ({ children }: React.PropsWithChildren) => {
       : null;
   }, [activeMenuItem?.type]);
 
-  const contextData = useMemo(() => ({
-    showTransactionConfirmation: (payload?: SendModalData) => setActiveMenuItem({ type: 'send', payload }),
-    showSend: () => setActiveMenuItem({ type: 'send' }),
-    showHistory: () => setActiveMenuItem({ type: 'history' }),
-    showAccount: () => setActiveMenuItem({ type: 'account' }),
-    showApps: () => setActiveMenuItem({ type: 'apps' }),
-    hide,
-    setShowBatchSendModal,
-    active: activeMenuItem,
-    activeIndex,
-    showBatchSendModal,
-  }), [activeMenuItem, activeIndex, showBatchSendModal]);
+  const contextData = useMemo(
+    () => ({
+      showTransactionConfirmation: (payload?: SendModalData) =>
+        setActiveMenuItem({ type: 'send', payload }),
+      showSend: () => setActiveMenuItem({ type: 'send' }),
+      showHistory: () => setActiveMenuItem({ type: 'history' }),
+      showAccount: () => setActiveMenuItem({ type: 'account' }),
+      showApps: () => setActiveMenuItem({ type: 'apps' }),
+      hide,
+      setShowBatchSendModal,
+      active: activeMenuItem,
+      activeIndex,
+      showBatchSendModal,
+    }),
+    [activeMenuItem, activeIndex, showBatchSendModal]
+  );
 
   return (
     <ProviderContext.Provider value={{ data: contextData }}>
       {children}
     </ProviderContext.Provider>
   );
-}
+};
 
 export default BottomMenuModalProvider;

@@ -29,6 +29,7 @@ exports[`<GenericBannerTile /> renders correctly and matches snapshot 1`] = `
       <button
         className="mt-10 mobile:mt-4"
         onClick={[Function]}
+        type="button"
       >
         <p
           className="font-medium bg-container_grey rounded-md py-3 px-5 mobile:text-sm mobile:py-2 mobile:px-4"

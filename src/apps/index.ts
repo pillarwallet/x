@@ -19,7 +19,10 @@ export const loadApp = (appId: string) => {
 
     return appManifest;
   } catch (e) {
-    console.error(`Failed to load app ${appId} - does the ${appId} directory exist in the src/apps directory?`, e);
+    console.error(
+      `Failed to load app ${appId} - does the ${appId} directory exist in the src/apps directory?`,
+      e
+    );
   }
 
   return appManifest;
@@ -35,7 +38,7 @@ export const loadApps = (allowedApps: string[]) => {
    */
   for (let index = 0; index < allowedApps.length; index++) {
     const appIdentifier = allowedApps[index];
-    
+
     if (appIdentifier) {
       const loadedApp = loadApp(appIdentifier);
       if (loadedApp) {
