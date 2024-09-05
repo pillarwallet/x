@@ -33,7 +33,11 @@ const Text = ({ children, className = '', as, size = 'xs', ...restProps }) => {
   const Component = as || 'p';
 
   return (
-    <Component className={`text-white-A700 font-custom ${className} ${sizes[size]}`} {...restProps}>
+    <Component
+      className={`text-white-A700 font-custom ${className} ${sizes[size]}`}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...restProps}
+    >
       {children}
     </Component>
   );

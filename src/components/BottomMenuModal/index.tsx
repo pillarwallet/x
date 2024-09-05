@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
 import { Transition } from 'react-transition-group';
+import styled from 'styled-components';
 
 // modals
-import SendModal from './SendModal';
-import HistoryModal from './HistoryModal';
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
+import HistoryModal from './HistoryModal';
+import SendModal from './SendModal';
 
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
@@ -26,20 +27,28 @@ const BottomMenuModal = () => {
     <Transition nodeRef={modalRef} in={!!active} timeout={100}>
       {(overlayState) => (
         <OverflowControlWrapper>
-          <ModalContentVerticalAnimation $offset={overlayState === 'entered' ? 0 : 1000} $display={overlayState !== 'exited'}>
+          <ModalContentVerticalAnimation
+            $offset={overlayState === 'entered' ? 0 : 1000}
+            $display={overlayState !== 'exited'}
+          >
             <ModalContentHorizontalAnimation
               $in={overlayState === 'entered'}
               $activeIndex={activeIndex ?? lastValidActiveIndex.current}
             >
-              {[SendModal, HistoryModal, AccountModal, AppsModal].map((Modal, index) => (
-                <ModalContent key={index}>
+              {[SendModal, HistoryModal, AccountModal, AppsModal].map(
+                (Modal, index) => (
+                  <ModalContent key={index}>
                     <Modal
                       key={`${index}`}
                       isContentVisible={activeIndex === index}
-                      {...(active?.type === 'send' ? { payload: active.payload } : {})}
+                      // eslint-disable-next-line react/jsx-props-no-spreading
+                      {...(active?.type === 'send'
+                        ? { payload: active.payload }
+                        : {})}
                     />
-                </ModalContent>
-              ))}
+                  </ModalContent>
+                )
+              )}
             </ModalContentHorizontalAnimation>
             <ModalHandlebar onClick={hide} />
           </ModalContentVerticalAnimation>
@@ -47,16 +56,19 @@ const BottomMenuModal = () => {
       )}
     </Transition>
   );
-}
+};
 
 const OverflowControlWrapper = styled.div`
   overflow: hidden;
 `;
 
-const ModalContentVerticalAnimation = styled.div<{ $offset: number; $display: boolean }>`
+const ModalContentVerticalAnimation = styled.div<{
+  $offset: number;
+  $display: boolean;
+}>`
   transition: 100ms linear;
   transform: translateY(${({ $offset }) => $offset}px);
-  display: ${({ $display }) => $display ? 'flex' : 'none'};
+  display: ${({ $display }) => ($display ? 'flex' : 'none')};
   flex-direction: row;
   align-content: start;
   justify-content: start;
@@ -64,10 +76,14 @@ const ModalContentVerticalAnimation = styled.div<{ $offset: number; $display: bo
   position: relative;
 `;
 
-const ModalContentHorizontalAnimation = styled.div<{ $activeIndex: number; $in: boolean; }>`
+const ModalContentHorizontalAnimation = styled.div<{
+  $activeIndex: number;
+  $in: boolean;
+}>`
   align-self: flex-start;
   ${({ $in }) => $in && 'transition: 50ms linear;'};
-  ${({ $activeIndex }) => `transform: translateX(calc(${$activeIndex} * -336px));`};
+  ${({ $activeIndex }) =>
+    `transform: translateX(calc(${$activeIndex} * -336px));`};
   display: flex;
   flex-direction: row;
   align-content: start;
@@ -92,7 +108,7 @@ const ModalHandlebar = styled.div`
   border-radius: 2px;
   position: absolute;
   top: 14px;
-  left: 148px
+  left: 148px;
 `;
 
 export default BottomMenuModal;

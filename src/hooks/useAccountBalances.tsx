@@ -1,10 +1,13 @@
 import { useContext } from 'react';
 
 // providers
-import { AccountBalancesContext, IBalances } from '../providers/AccountBalancesProvider';
+import {
+  AccountBalancesContext,
+  IBalances,
+} from '../providers/AccountBalancesProvider';
 
 const useAccountBalances = (params?: {
-  onUpdated?: (newBalances: IBalances, prevBalances: IBalances) => void
+  onUpdated?: (newBalances: IBalances, prevBalances: IBalances) => void;
 }) => {
   const context = useContext(AccountBalancesContext);
 

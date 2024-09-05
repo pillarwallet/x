@@ -29,11 +29,21 @@ const sizes = {
   xs: 'text-lg font-bold leading-[120%]',
 };
 
-const Heading = ({ children, className = '', size = 's', as, ...restProps }) => {
+const Heading = ({
+  children,
+  className = '',
+  size = 's',
+  as,
+  ...restProps
+}) => {
   const Component = as || 'h6';
 
   return (
-    <Component className={`text-white-A700 font-custom ${className} ${sizes[size]}`} {...restProps}>
+    <Component
+      className={`text-white-A700 font-custom ${className} ${sizes[size]}`}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...restProps}
+    >
       {children}
     </Component>
   );

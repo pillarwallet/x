@@ -1,8 +1,10 @@
-import React from 'react';
 import { act, renderHook } from '@testing-library/react';
+import React from 'react';
 
 // providers
-import GlobalTransactionsBatchProvider, { IGlobalBatchTransaction } from '../GlobalTransactionsBatchProvider';
+import GlobalTransactionsBatchProvider, {
+  IGlobalBatchTransaction,
+} from '../GlobalTransactionsBatchProvider';
 
 // hooks
 import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
@@ -11,7 +13,7 @@ const mockBlockTransaction: IGlobalBatchTransaction = {
   to: '0x123',
   title: 'test',
   chainId: 1,
-}
+};
 
 describe('GlobalTransactionsBatchProvider', () => {
   let wrapper: React.FC;
@@ -25,16 +27,24 @@ describe('GlobalTransactionsBatchProvider', () => {
   });
 
   it('initializes with empty batches', () => {
-    const { result } = renderHook(() => useGlobalTransactionsBatch(), { wrapper });
+    const { result } = renderHook(() => useGlobalTransactionsBatch(), {
+      wrapper,
+    });
     expect(result.current.transactions).toEqual([]);
   });
 
   it('adds transactions to batches correctly', async () => {
-    const { result } = renderHook(() => useGlobalTransactionsBatch(), { wrapper });
+    const { result } = renderHook(() => useGlobalTransactionsBatch(), {
+      wrapper,
+    });
 
     act(() => {
       result.current.addToBatch({ id: '1', ...mockBlockTransaction });
-      result.current.addToBatch({ id: '3', ...mockBlockTransaction, chainId: 137 });
+      result.current.addToBatch({
+        id: '3',
+        ...mockBlockTransaction,
+        chainId: 137,
+      });
       result.current.addToBatch({ id: '2', ...mockBlockTransaction });
       result.current.addToBatch(mockBlockTransaction);
     });
@@ -47,11 +57,17 @@ describe('GlobalTransactionsBatchProvider', () => {
   });
 
   it('removes transactions from batches correctly', async () => {
-    const { result } = renderHook(() => useGlobalTransactionsBatch(), { wrapper });
+    const { result } = renderHook(() => useGlobalTransactionsBatch(), {
+      wrapper,
+    });
 
     act(() => {
       result.current.addToBatch({ id: '1', ...mockBlockTransaction });
-      result.current.addToBatch({ id: '3', ...mockBlockTransaction, chainId: 137 });
+      result.current.addToBatch({
+        id: '3',
+        ...mockBlockTransaction,
+        chainId: 137,
+      });
       result.current.addToBatch({ id: '2', ...mockBlockTransaction });
     });
 

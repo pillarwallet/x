@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { Danger as AlertIcon } from 'iconsax-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Danger as AlertIcon } from 'iconsax-react'
 
 const Alert = ({
   icon,
@@ -12,18 +13,18 @@ const Alert = ({
 }>) => {
   return (
     <Wrapper $outline={outline}>
-      <Icon>
-        {icon ?? <AlertIcon size={18} />}
-      </Icon>
+      <Icon>{icon ?? <AlertIcon size={18} />}</Icon>
       {children}
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.p<{ $outline?: boolean }>`
   padding: 13px 13px 13px;
-  background: ${({ theme, $outline }) => $outline ? 'transparent' : theme.color.background.alert};
-  ${({ theme, $outline }) => $outline && `border: 1px solid ${theme.color.border.alertOutline};`}
+  background: ${({ theme, $outline }) =>
+    $outline ? 'transparent' : theme.color.background.alert};
+  ${({ theme, $outline }) =>
+    $outline && `border: 1px solid ${theme.color.border.alertOutline};`}
   color: ${({ theme }) => theme.color.text.alert};
   margin-bottom: 15px;
   font-size: 12px;

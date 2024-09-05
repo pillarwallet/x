@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import i18n from 'i18next';
 import React, { Suspense, useEffect } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
@@ -29,9 +31,11 @@ const App = ({ id }: { id: string }) => {
   }, [id]);
 
   const ComponentToRender = React.lazy(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // artificial 1s delay
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    }); // artificial 1s delay
     try {
-      return import(`../../apps/${id}`);
+      return await import(`../../apps/${id}`);
     } catch (e) {
       return { default: () => <Alert>{t`error.appNotFound`}</Alert> };
     }

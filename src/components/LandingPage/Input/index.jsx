@@ -22,8 +22,8 @@
 * SOFTWARE.
 */
 
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 const shapes = {
   round: 'rounded-[10px]',
@@ -60,16 +60,22 @@ const Input = React.forwardRef(function Input(
   };
 
   return (
-    <>
-      <div
-        className={`${className} flex items-center justify-center text-black-900_87 text-[15px] bg-blue_gray-100 rounded-[10px] ${shapes[shape] || ''} ${variants[variant]?.[color] || variants[variant] || ''} ${sizes[size] || ''}`}
-      >
-        {!!label && label}
-        {!!prefix && prefix}
-        <input ref={ref} type={type} name={name} onChange={handleChange} placeholder={placeholder} {...restProps} />
-        {!!suffix && suffix}
-      </div>
-    </>
+    <div
+      className={`${className} flex items-center justify-center text-black-900_87 text-[15px] bg-blue_gray-100 rounded-[10px] ${shapes[shape] || ''} ${variants[variant]?.[color] || variants[variant] || ''} ${sizes[size] || ''}`}
+    >
+      {!!label && label}
+      {!!prefix && prefix}
+      <input
+        ref={ref}
+        type={type}
+        name={name}
+        onChange={handleChange}
+        placeholder={placeholder}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...restProps}
+      />
+      {!!suffix && suffix}
+    </div>
   );
 });
 

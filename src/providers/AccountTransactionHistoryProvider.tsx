@@ -1,13 +1,29 @@
-import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useEtherspotHistory, UserOpTransaction, useWalletAddress } from '@etherspot/transaction-kit';
-import isEqual from 'lodash/isEqual';
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable react/jsx-no-constructed-context-values */
+import {
+  UserOpTransaction,
+  useEtherspotHistory,
+  useWalletAddress,
+} from '@etherspot/transaction-kit';
 import differenceWith from 'lodash/differenceWith';
+import isEqual from 'lodash/isEqual';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 // utils
 import { visibleChains } from '../utils/blockchain';
 
 // services
-import { getJsonItem, setJsonItem, storageKey } from '../services/dappLocalStorage';
+import {
+  getJsonItem,
+  setJsonItem,
+  storageKey,
+} from '../services/dappLocalStorage';
 
 export interface TransactionHistory {
   [chainId: number]: {
@@ -25,15 +41,24 @@ export interface AccountBalancesContext {
 }
 
 export interface AccountTransactionHistoryListenerRef {
-  onHistoryUpdated?: (chainId: number, walletAddress: string, transaction: UserOpTransaction) => void;
+  onHistoryUpdated?: (
+    chainId: number,
+    walletAddress: string,
+    transaction: UserOpTransaction
+  ) => void;
   prevHistory?: TransactionHistory;
 }
 
-export const AccountTransactionHistoryContext = createContext<AccountBalancesContext | null>(null);
+export const AccountTransactionHistoryContext =
+  createContext<AccountBalancesContext | null>(null);
 
-const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren) => {
+const AccountTransactionHistoryProvider = ({
+  children,
+}: React.PropsWithChildren) => {
   const walletAddress = useWalletAddress();
-  const [history, setHistory] = React.useState<TransactionHistory>(getJsonItem(storageKey.history) ?? {});
+  const [history, setHistory] = React.useState<TransactionHistory>(
+    getJsonItem(storageKey.history) ?? {}
+  );
   const listenerRef = useRef<AccountTransactionHistoryListenerRef>({});
   const { getAccountTransactions } = useEtherspotHistory();
   const [updateData, setUpdateData] = useState<boolean>(false);
@@ -51,15 +76,26 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
       for (const chainId of chainIds) {
         if (expired) return;
 
-        const accountHistory = await getAccountTransactions(walletAddress, chainId);
+        // eslint-disable-next-line no-await-in-loop
+        const accountHistory = await getAccountTransactions(
+          walletAddress,
+          chainId
+        );
         if (expired) return;
 
         // update each chain ID separately for faster updates
         setHistory((current) => {
           // deep compare per chainId and walletAddress
-          return !accountHistory?.length || isEqual(current?.[chainId]?.[walletAddress], accountHistory)
+          return !accountHistory?.length ||
+            isEqual(current?.[chainId]?.[walletAddress], accountHistory)
             ? current
-            : { ...current, [chainId]: { ...current[chainId] ?? {}, [walletAddress]: accountHistory } };
+            : {
+                ...current,
+                [chainId]: {
+                  ...(current[chainId] ?? {}),
+                  [walletAddress]: accountHistory,
+                },
+              };
         });
       }
 
@@ -92,14 +128,18 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
 
     if (listenerRef.current?.onHistoryUpdated) {
       Object.keys(history).forEach((chainId) => {
-        Object.keys(history[+chainId] ?? {}).forEach((walletAddress) => {
+        Object.keys(history[+chainId] ?? {}).forEach((address) => {
           const updatedTransactions = differenceWith(
-            history[+chainId][walletAddress],
-            listenerRef.current.prevHistory?.[+chainId]?.[walletAddress] ?? [],
-            isEqual,
+            history[+chainId][address],
+            listenerRef.current.prevHistory?.[+chainId]?.[address] ?? [],
+            isEqual
           );
           updatedTransactions.forEach((transaction) => {
-            listenerRef.current.onHistoryUpdated?.(+chainId, walletAddress, transaction);
+            listenerRef.current.onHistoryUpdated?.(
+              +chainId,
+              address,
+              transaction
+            );
           });
         });
       });
@@ -118,7 +158,9 @@ const AccountTransactionHistoryProvider = ({ children }: React.PropsWithChildren
   );
 
   return (
-    <AccountTransactionHistoryContext.Provider value={{ listenerRef, data: contextData }}>
+    <AccountTransactionHistoryContext.Provider
+      value={{ listenerRef, data: contextData }}
+    >
       {children}
     </AccountTransactionHistoryContext.Provider>
   );

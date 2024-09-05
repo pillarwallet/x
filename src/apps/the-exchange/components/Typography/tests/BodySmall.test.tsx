@@ -8,9 +8,11 @@ describe('<BodySmall />', () => {
     const tree = renderer
       .create(
         <>
-          <BodySmall >Some small text.</BodySmall>
-          <BodySmall className='text-red-500'>Some red small text</BodySmall>
-          <BodySmall className='text-[7px]'>Some small text with font size 7px</BodySmall>
+          <BodySmall>Some small text.</BodySmall>
+          <BodySmall className="text-red-500">Some red small text</BodySmall>
+          <BodySmall className="text-[7px]">
+            Some small text with font size 7px
+          </BodySmall>
         </>
       )
       .toJSON();
@@ -28,4 +30,3 @@ describe('<BodySmall />', () => {
     expect(treeElements[2].props.className).toContain('text-[7px]');
   });
 });
-

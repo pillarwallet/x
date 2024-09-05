@@ -6,7 +6,7 @@ export interface Theme {
       family: string;
       weight: number;
     };
-  }
+  };
   color: {
     background: {
       body: string;
@@ -34,15 +34,15 @@ export interface Theme {
         pending: string;
         completed: string;
         failed: string;
-      }
-    },
+      };
+    };
     text: {
       body: string;
       bottomMenuItem: string;
       bottomMenuItemActive: string;
       loadingLogo: string;
       buttonPrimary: string;
-      buttonPrimaryDisabled: string
+      buttonPrimaryDisabled: string;
       buttonSecondary: string;
       buttonSecondaryDisabled: string;
       input: string;
@@ -61,8 +61,8 @@ export interface Theme {
         pending: string;
         completed: string;
         failed: string;
-      }
-    },
+      };
+    };
     border: {
       bottomMenu: string;
       alertOutline: string;
@@ -70,21 +70,21 @@ export interface Theme {
       cardContentVerticalSeparator: string;
       cardContentHorizontalSeparator: string;
       groupedIconsSmaller: string;
-    },
+    };
     icon: {
       inputHelper: string;
       inputButton: string;
       delete: string;
       cardIcon: string;
-    }
-  }
+    };
+  };
 }
 
 export const defaultTheme: Theme = {
   font: {
     primary: {
       family: '"Poppins", sans-serif',
-      weight: 500
+      weight: 500,
     },
   },
   color: {
@@ -100,7 +100,8 @@ export const defaultTheme: Theme = {
       buttonSecondaryDisabled: 'rgba(16, 16, 16, 0.30)',
       input: 'rgba(255, 255, 255, 0.1)',
       inputActive: '#3a3843',
-      horizontalDivider: 'linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%)',
+      horizontalDivider:
+        'linear-gradient(270deg, rgba(217, 217, 217, 0.00) 0%, #D9D9D9 50.52%, rgba(217, 217, 217, 0.00) 100%)',
       selectItem: 'rgba(217, 217, 217, 0.05)',
       selectItemHover: 'rgba(217, 217, 217, 0.2)',
       contentNotification: '#7654FF',
@@ -108,13 +109,14 @@ export const defaultTheme: Theme = {
       inputButton: '#3a3843',
       alert: 'rgba(226, 221, 255, 0.1)',
       card: 'rgba(226, 221, 255, 0.1)',
-      exploreAppsCard: 'transparent linear-gradient(112deg, #8D4BFF 0%, #8A77FF 100%) 0% 0% no-repeat padding-box',
+      exploreAppsCard:
+        'transparent linear-gradient(112deg, #8D4BFF 0%, #8A77FF 100%) 0% 0% no-repeat padding-box',
       exploreAppsCardButton: '#27262F',
       transactionStatus: {
         pending: 'rgba(226, 221, 255, 0.1)',
         completed: 'rgba(5, 255, 221, 0.1)',
-        failed: 'rgba(255, 5, 113, 0.1)'
-      }
+        failed: 'rgba(255, 5, 113, 0.1)',
+      },
     },
     text: {
       body: '#fff',
@@ -140,8 +142,8 @@ export const defaultTheme: Theme = {
       transactionStatus: {
         pending: '#e2ddff',
         completed: '#05FFDD',
-        failed: '#FF0571'
-      }
+        failed: '#FF0571',
+      },
     },
     border: {
       bottomMenu: '#363439',
@@ -155,8 +157,8 @@ export const defaultTheme: Theme = {
       inputHelper: '#fff',
       inputButton: '#8A77FF',
       delete: '#ff000080',
-      cardIcon: '#8A77FF'
-    }
+      cardIcon: '#8A77FF',
+    },
   },
 };
 
@@ -168,7 +170,6 @@ const skeleton = keyframes`
     background-color: hsl(0, 0%, 53%);
   }
 `;
-
 
 const pulse = (min = 1, max = 2) => keyframes`
   0% {
@@ -222,7 +223,7 @@ export const animation = {
   rotateAndPulse,
   slideUp,
   slideDown,
-}
+};
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -243,4 +244,3 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 `;
-

@@ -1,10 +1,9 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { Blend2 as IconBlend, Layer as IconLayers } from 'iconsax-react';
 import React, { useContext, useEffect } from 'react';
-import styled from 'styled-components';
-import {
-  Layer as IconLayers,
-  Blend2 as IconBlend,
-} from 'iconsax-react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 // components
 import FormGroup from '../../Form/FormGroup';
@@ -16,9 +15,9 @@ import SendModalTokensTabView from './SendModalTokensTabView';
 import { ITransaction } from '../../../types/blockchain';
 
 // hooks
+import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
-import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 
 interface SendModalDataBase {
   title: string;
@@ -27,7 +26,7 @@ interface SendModalDataBase {
 }
 
 export interface SendModalSingleTransactionData extends SendModalDataBase {
-  transaction: ITransaction
+  transaction: ITransaction;
 }
 
 interface SendModalSingleBatchedTransactionsData extends SendModalDataBase {
@@ -37,7 +36,9 @@ interface SendModalSingleBatchedTransactionsData extends SendModalDataBase {
   }[];
 }
 
-export type SendModalData = SendModalSingleTransactionData | SendModalSingleBatchedTransactionsData;
+export type SendModalData =
+  | SendModalSingleTransactionData
+  | SendModalSingleBatchedTransactionsData;
 
 interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -45,27 +46,28 @@ interface SendModalProps extends React.PropsWithChildren {
 }
 
 const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
-  const contextBalances = useContext(AccountBalancesContext)
+  const contextBalances = useContext(AccountBalancesContext);
   const wrapperRef = React.useRef(null);
-  const { showBatchSendModal, setShowBatchSendModal} = useBottomMenuModal();
+  const { showBatchSendModal, setShowBatchSendModal } = useBottomMenuModal();
   const [t] = useTranslation();
-  const { transactions: globalTransactionsBatch } = useGlobalTransactionsBatch();
+  const { transactions: globalTransactionsBatch } =
+    useGlobalTransactionsBatch();
 
   useEffect(() => {
     if (!isContentVisible) {
-      contextBalances?.data.setUpdateData(false)
+      contextBalances?.data.setUpdateData(false);
     }
     if (isContentVisible) {
-      contextBalances?.data.setUpdateData(true)
+      contextBalances?.data.setUpdateData(true);
     }
-  }, [isContentVisible, contextBalances?.data])
+  }, [isContentVisible, contextBalances?.data]);
 
   if (!isContentVisible) {
     return <Wrapper />;
   }
 
   return (
-    <Wrapper id='send-modal' ref={wrapperRef}>
+    <Wrapper id="send-modal" ref={wrapperRef}>
       {!payload && (
         <FormGroup>
           <FormTabSelect
@@ -78,7 +80,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
                 title: t`title.batches`,
                 icon: <IconLayers size={20} />,
                 notificationText: `${globalTransactionsBatch.length}`,
-              }
+              },
             ]}
             onChange={(index) => setShowBatchSendModal(index === 1)}
           />
@@ -88,7 +90,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
       {!showBatchSendModal && <SendModalTokensTabView payload={payload} />}
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   width: 100%;

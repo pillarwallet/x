@@ -15,7 +15,8 @@ import { visibleChains } from '../../utils/blockchain';
 
 const App = () => {
   const [t] = useTranslation();
-  const [destinationAddress, setDestinationAddress] = React.useState<string>('');
+  const [destinationAddress, setDestinationAddress] =
+    React.useState<string>('');
   const [value, setValue] = React.useState<string>('');
   const [data, setData] = React.useState<string>('');
 
@@ -40,7 +41,7 @@ const App = () => {
         chainId,
       },
     });
-  }
+  };
 
   return (
     <Wrapper>
@@ -65,11 +66,15 @@ const App = () => {
           <Label>{t`transactionCallData`}</Label>
           <StyledTextarea onChange={(e) => setData(e?.target?.value ?? '')} />
         </FormGroup>
-        <Button disabled={!destinationAddress} onClick={send} $fullWidth>{t`send`}</Button>
+        <Button
+          disabled={!destinationAddress}
+          onClick={send}
+          $fullWidth
+        >{t`send`}</Button>
       </FormWrapper>
     </Wrapper>
   );
-}
+};
 
 const Wrapper = styled.div`
   max-width: 500px;

@@ -1,12 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 
+// Slick Styles
+import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
+import slickCarouselCSS from 'slick-carousel/slick/slick.css';
+
 // fonts
 import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf';
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
-
-// Slick Styles
-import slickCarouselCSS from 'slick-carousel/slick/slick.css';
-import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
 
 const GlobalStyles = createGlobalStyle`
 

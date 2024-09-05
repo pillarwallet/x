@@ -1,5 +1,5 @@
-import { initializeApp } from '@firebase/app';
-import { getAnalytics } from '@firebase/analytics';
+import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBqsmAxGY1Xpqlt9xAb3OzMaJdOO_QUZ3w',
@@ -8,7 +8,7 @@ const firebaseConfig = {
   storageBucket: 'pillarx-76235.appspot.com',
   messagingSenderId: '924594360100',
   appId: '1:924594360100:web:9075123e56081d30662db1',
-  measurementId: 'G-RQ0CLNGRGV'
+  measurementId: 'G-RQ0CLNGRGV',
 };
 
 const app = initializeApp(firebaseConfig);

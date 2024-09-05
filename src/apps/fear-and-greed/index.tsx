@@ -3,7 +3,7 @@
  * @description Gm. This PillarX app serves as an example
  * of how you can build a simple app within PillarX. It
  * shows the use of fetching data from external sources with
- * Axios, UI libraries like JoyUI and Google Charts, custom 
+ * Axios, UI libraries like JoyUI and Google Charts, custom
  * fonts and animations, translations using React Spring and
  * custom assets. Please feel free to use this as a template
  * and visit https://docs.pillarx.app for more.
@@ -43,8 +43,8 @@ const App = () => {
    */
   WebFont.load({
     google: {
-      families: ['Bebas Neue', 'Sora']
-    }
+      families: ['Bebas Neue', 'Sora'],
+    },
   });
 
   /**
@@ -72,7 +72,7 @@ const App = () => {
     },
     config: {
       duration: 1000,
-    }
+    },
   });
 
   /**
@@ -88,7 +88,8 @@ const App = () => {
     /**
      * Fetch the data from our API
      */
-    axios.get('https://api.alternative.me/fng/?limit=1')
+    axios
+      .get('https://api.alternative.me/fng/?limit=1')
       .then((response) => {
         setLatestData(response.data.data[0]);
         setFagIndex(parseInt(response.data.data[0].value));
@@ -102,16 +103,25 @@ const App = () => {
    * Render ✨
    */
   return (
-    <animated.div style={{ backgroundImage: `url(${BackgroundImage})`, height: '100%', ...springs }}>
+    <animated.div
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        height: '100%',
+        ...springs,
+      }}
+    >
       <Grid container>
         <Grid xs={12}>
-            <Typography mt={5} mb={5} style={{fontFamily: 'Bebas Neue'}} textAlign={'center'} sx={{color: 'white', fontSize: 50}}>{t`title`}</Typography>
+          <Typography
+            mt={5}
+            mb={5}
+            style={{ fontFamily: 'Bebas Neue' }}
+            textAlign={'center'}
+            sx={{ color: 'white', fontSize: 50 }}
+          >{t`title`}</Typography>
         </Grid>
         <Grid xs={12}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center">
+          <Box display="flex" justifyContent="center" alignItems="center">
             <Chart
               chartType="Gauge"
               data={[
@@ -123,11 +133,32 @@ const App = () => {
           </Box>
         </Grid>
         <Grid xs={12}>
-          <Typography mt={5} fontFamily={'Sora'} textAlign={'center'} fontSize={32} sx={{color: 'white'}}>{t`overview`}</Typography>
+          <Typography
+            mt={5}
+            fontFamily={'Sora'}
+            textAlign={'center'}
+            fontSize={32}
+            sx={{ color: 'white' }}
+          >{t`overview`}</Typography>
           {typeof latestData === 'object' && 'value' in latestData && (
-            <Typography mt={2} fontFamily={'Bebas Neue'} textAlign={'center'} fontSize={100} sx={{color: 'white'}}>{latestData.value_classification.toUpperCase()}</Typography>
+            <Typography
+              mt={2}
+              fontFamily={'Bebas Neue'}
+              textAlign={'center'}
+              fontSize={100}
+              sx={{ color: 'white' }}
+            >
+              {latestData.value_classification.toUpperCase()}
+            </Typography>
           )}
-          <Typography fontFamily={'Sora'} textAlign={'center'} marginX={10} mb={20} fontSize={32} sx={{color: 'white'}} >{t`greedDescription`}</Typography>
+          <Typography
+            fontFamily={'Sora'}
+            textAlign={'center'}
+            marginX={10}
+            mb={20}
+            fontSize={32}
+            sx={{ color: 'white' }}
+          >{t`greedDescription`}</Typography>
         </Grid>
       </Grid>
     </animated.div>

@@ -21,6 +21,7 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
       Polygon
     </p>
     <img
+      alt="arrow-down"
       src="arrow-down.png"
     />
   </button>
@@ -28,35 +29,44 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
     className="relative bg-white border border-t-black rounded-[3px] w-full max-h-[344px] overflow-y-auto capitalize"
   >
     <ul>
-      <li
-        className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
-        onClick={[Function]}
-      >
-        <p
-          className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1]"
+      <li>
+        <button
+          className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
+          onClick={[Function]}
+          type="button"
         >
-          all
-        </p>
+          <p
+            className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
+          >
+            all
+          </p>
+        </button>
       </li>
-      <li
-        className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
-        onClick={[Function]}
-      >
-        <p
-          className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1]"
+      <li>
+        <button
+          className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
+          onClick={[Function]}
+          type="button"
         >
-          1
-        </p>
+          <p
+            className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
+          >
+            1
+          </p>
+        </button>
       </li>
-      <li
-        className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
-        onClick={[Function]}
-      >
-        <p
-          className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1]"
+      <li>
+        <button
+          className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
+          onClick={[Function]}
+          type="button"
         >
-          137
-        </p>
+          <p
+            className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
+          >
+            137
+          </p>
+        </button>
       </li>
     </ul>
   </div>

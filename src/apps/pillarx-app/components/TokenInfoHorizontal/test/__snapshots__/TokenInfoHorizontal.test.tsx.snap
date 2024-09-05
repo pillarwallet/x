@@ -2,9 +2,10 @@
 
 exports[`<TokenInfoHorizontal /> renders correctly and matches snapshot 1`] = `
 <div
-  className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+  className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
 >
   <img
+    alt="token-logo"
     className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
     src="https://example.com/logo.png"
   />
@@ -23,6 +24,7 @@ exports[`<TokenInfoHorizontal /> renders correctly and matches snapshot 1`] = `
     className="flex gap-1 items-center"
   >
     <img
+      alt="percentage-up"
       className="w-[10px] h[9px]"
       src={
         {

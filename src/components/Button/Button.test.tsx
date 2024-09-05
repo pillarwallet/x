@@ -2,7 +2,7 @@ import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
 
 // components
-import Button from './';
+import Button from '.';
 
 // theme
 import { defaultTheme } from '../../theme';
@@ -25,7 +25,10 @@ describe('<Button />', () => {
     expect(treeElements?.[0]?.children?.length).toBe(1);
     expect(treeElements?.[0]?.children?.[0]).toBe('Some regular text.');
     expect(treeElements?.[0].type).toBe('button');
-    expect(treeElements?.[0]).toHaveStyleRule('color', defaultTheme.color.text.buttonPrimary);
+    expect(treeElements?.[0]).toHaveStyleRule(
+      'color',
+      defaultTheme.color.text.buttonPrimary
+    );
     expect(treeElements?.[0]).not.toHaveStyleRule('width', '100%');
     expect(treeElements?.[1]).toHaveStyleRule('width', '100%');
   });
