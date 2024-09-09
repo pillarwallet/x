@@ -1,9 +1,8 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-/* eslint-disable import/no-cycle */
 import React, { Dispatch, SetStateAction, createContext, useMemo } from 'react';
 
-// components
-import { SendModalData } from '../components/BottomMenuModal/SendModal';
+// types
+import { SendModalData } from '../types';
 
 export interface BottomMenuModalContext {
   data: {
