@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Blend2 as IconBlend, Layer as IconLayers } from 'iconsax-react';
 import React, { useContext, useEffect } from 'react';
@@ -12,33 +11,12 @@ import SendModalBatchesTabView from './SendModalBatchesTabView';
 import SendModalTokensTabView from './SendModalTokensTabView';
 
 // types
-import { ITransaction } from '../../../types/blockchain';
+import { SendModalData } from '../../../types';
 
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
-
-interface SendModalDataBase {
-  title: string;
-  description?: string;
-  onSent?: (userOpHashes: string[]) => void;
-}
-
-export interface SendModalSingleTransactionData extends SendModalDataBase {
-  transaction: ITransaction;
-}
-
-interface SendModalSingleBatchedTransactionsData extends SendModalDataBase {
-  batches: {
-    chainId: number;
-    transactions: Omit<ITransaction, 'chainId'>[];
-  }[];
-}
-
-export type SendModalData =
-  | SendModalSingleTransactionData
-  | SendModalSingleBatchedTransactionsData;
 
 interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only

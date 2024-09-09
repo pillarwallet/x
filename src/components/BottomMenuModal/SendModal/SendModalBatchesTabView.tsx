@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable import/no-cycle */
 import {
   EtherspotBatch,
   EtherspotBatches,

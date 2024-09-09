@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
@@ -51,7 +50,7 @@ import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import { processEth } from '../../../apps/the-exchange/utils/blockchain';
-import { SendModalData } from './index';
+import { SendModalData } from '../../../types';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,

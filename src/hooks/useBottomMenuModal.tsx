@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { useContext } from 'react';
 
 // providers
