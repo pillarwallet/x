@@ -236,7 +236,9 @@ const GlobalStyles = createGlobalStyle`
 
   @media only screen and (max-width: 1024px) {
     .header {
-      background: var(--dark-blue);
+      background: rgba(67, 39, 177, 0.9);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
     }
   }
 
@@ -253,7 +255,6 @@ const GlobalStyles = createGlobalStyle`
   .header__announcement {
     position: relative;
     background: var(--light-blue);
-    backdrop-filter: blur(10px);
     z-index: 101;
   }
 
