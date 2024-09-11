@@ -36,7 +36,7 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="text-6xl font-bold text-white">
+      <div className="text-6xl font-bold text-white sm:text-2xl">
         {trail.map((styles, i) => (
           <animated.span key={i} style={styles} className="inline-block">
             {letters[i]}
@@ -64,7 +64,7 @@ const App = ({ id }: { id: string }) => {
     api.start({
       from: { opacity: 0 },
       to: { opacity: 1 },
-      config: { duration: 2000 },
+      config: { duration: 500 },
       delay: 4000, // 4000 delay to wait for animated text to fade in and out
       reset: true,
     });
