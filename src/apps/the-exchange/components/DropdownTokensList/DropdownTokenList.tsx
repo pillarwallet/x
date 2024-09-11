@@ -134,7 +134,7 @@ const DropdownTokenList = ({
       </div>
       <div className="flex flex-col w-full max-w-[420px]">
         <div
-          className={`flex flex-row gap-[10px] p-4 w-full rounded-t-[3px] border-b border-b-black_grey ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}
+          className={`flex flex-row gap-[10px] p-4 w-full rounded-t-[3px] border-b border-b-black_grey ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
           <SelectDropdown
             options={isSwapOpen ? uniqueChainsSwap : uniqueChainsReceive}
@@ -150,7 +150,7 @@ const DropdownTokenList = ({
         </div>
         <div
           id="token-list-exchange"
-          className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}
+          className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
           {isSwapOpen
             ? swapTokenList

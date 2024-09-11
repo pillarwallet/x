@@ -28,7 +28,7 @@
     "@privy-io/react-auth": "^1.59.7",
     "@radix-ui/react-radio-group": "^1.2.0",
     "@react-icons/all-files": "^4.1.0",
-    "@react-spring/web": "^9.7.3",
+    "@react-spring/web": "^9.7.4",
     "@reduxjs/toolkit": "^2.2.5",
     "@sentry/cli": "^2.21.5",
     "@sentry/react": "^7.81.1",
