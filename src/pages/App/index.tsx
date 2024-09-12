@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import { animated, config, useSpring, useTrail } from '@react-spring/web';
+import { animated, useSpring, useTrail } from '@react-spring/web';
 import i18n from 'i18next';
 import React, { Suspense, useEffect, useState } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
@@ -26,11 +26,16 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
       opacity: isDisplaying ? 1 : 0,
       transform: isDisplaying ? 'translateY(0px)' : 'translateY(32px)',
     },
-    config: config.stiff,
+    config: {
+      tension: 210,
+      friction: 20,
+      mass: 1,
+      duration: 25, // equivalent to 250 ms
+    },
   });
 
   useEffect(() => {
-    const timeout = setTimeout(() => setIsDisplaying(false), 2000); // 2000 for fade-in and fade-out, enough for longer titles
+    const timeout = setTimeout(() => setIsDisplaying(false), 1250); // 1250 for fade-in and fade-out
     return () => clearTimeout(timeout);
   }, []);
 
@@ -39,7 +44,7 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
       <div className="text-6xl font-bold text-white sm:text-2xl">
         {trail.map((styles, i) => (
           <animated.span key={i} style={styles} className="inline-block">
-            {letters[i]}
+            {letters[i] === ' ' ? '\u00A0' : letters[i]}
           </animated.span>
         ))}
       </div>
@@ -65,7 +70,7 @@ const App = ({ id }: { id: string }) => {
       from: { opacity: 0 },
       to: { opacity: 1 },
       config: { duration: 500 },
-      delay: 4000, // 4000 delay to wait for animated text to fade in and out
+      delay: 1500, // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
       reset: true,
     });
 
@@ -74,7 +79,7 @@ const App = ({ id }: { id: string }) => {
 
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => {
-      setTimeout(resolve, 4000); // 4000 to match the time it takes to show the app title
+      setTimeout(resolve, 1500); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
     try {
       return await import(`../../apps/${id}`);
