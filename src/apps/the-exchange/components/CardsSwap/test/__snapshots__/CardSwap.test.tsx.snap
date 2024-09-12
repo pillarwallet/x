@@ -9,7 +9,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
     data-testid="swap-receive-cards"
   >
     <div
-      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-green"
+      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-light_green"
       data-testid="select-token-card"
       id="swap-receive-card-exchange"
     >
