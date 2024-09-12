@@ -1,3 +1,8 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
+
 // hooks
 import usePillarSwapAssets from '../../../the-exchange/hooks/usePillarSwapAssets';
 import { useAppDispatch } from '../../hooks/useReducerHooks';
@@ -16,11 +21,25 @@ import TokenAtlasLogo from '../../images/token-atlas-logo.svg';
 import Body from '../Typography/Body';
 
 const HeaderSearch = () => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on when the Search Modal gets opened
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const { getPillarSwapAssets } = usePillarSwapAssets();
 
   const handleSearchOpen = async () => {
     dispatch(setIsSearchTokenModalOpen(true));
+    recordPresence({
+      address: accountAddress,
+      action: 'app:tokenAtlas:searchOpen',
+      value: 'SEARCH_OPEN',
+    });
 
     const assets = await getPillarSwapAssets();
     dispatch(setTokenListData(assets));

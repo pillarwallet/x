@@ -1,5 +1,9 @@
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useState } from 'react';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // reducer
 import {
@@ -38,6 +42,15 @@ const DropdownTokenList = ({
   type,
   initialCardPosition,
 }: DropdownTokenListProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
@@ -170,6 +183,16 @@ const DropdownTokenList = ({
                           chainName: convertChainIdtoName(token.chainId),
                         })
                       );
+                      recordPresence({
+                        address: accountAddress,
+                        action: 'app:theExchange:sourceTokenSelect',
+                        value: {
+                          chainId: token.chainId,
+                          address: token.address,
+                          symbol: token.symbol,
+                          name: token.name,
+                        },
+                      });
                       dispatch(setSearchTokenResult([]));
                       dispatch(setIsSwapOpen(false));
                     }}
@@ -196,6 +219,16 @@ const DropdownTokenList = ({
                           chainName: convertChainIdtoName(token.chainId),
                         })
                       );
+                      recordPresence({
+                        address: accountAddress,
+                        action: 'app:theExchange:destinationTokenSelect',
+                        value: {
+                          chainId: token.chainId,
+                          address: token.address,
+                          symbol: token.symbol,
+                          name: token.name,
+                        },
+                      });
                       dispatch(setSearchTokenResult([]));
                       dispatch(setIsReceiveOpen(false));
                     }}

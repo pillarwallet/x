@@ -1,9 +1,12 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+
 // styles
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import './styles/tailwindTokenAtlas.css';
 
 // api
+import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
 import { useGetTokenGraphQuery, useGetTokenInfoQuery } from './api/token';
 
 // reducer
@@ -37,6 +40,15 @@ const defaultToken = {
 };
 
 export const App = () => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const selectedToken =
     useAppSelector(
@@ -121,6 +133,23 @@ export const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingTokenDataGraph, isFetchingTokenDataGraph]);
+
+  // This useEffect is to update the user activity when they select or load a different token
+  useEffect(() => {
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:tokenSelect',
+        value: {
+          chainId: selectedToken.chainId,
+          address: selectedToken.address,
+          symbol: selectedToken.symbol,
+          name: selectedToken.name,
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedToken, accountAddress]);
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
