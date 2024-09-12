@@ -1,12 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 
-// Slick Styles
-import slickCarouselThemeCSS from 'slick-carousel/slick/slick-theme.css';
-import slickCarouselCSS from 'slick-carousel/slick/slick.css';
-
 // fonts
 import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf';
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
+
+// Slick Styles
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const GlobalStyles = createGlobalStyle`
 
@@ -21,9 +21,6 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 700;
     src: url(${neueBoldFont}) format("truetype");
   }
-
-  ${slickCarouselCSS};
-  ${slickCarouselThemeCSS};
   
   :root {
     --white: #ffffff;
@@ -228,22 +225,36 @@ const GlobalStyles = createGlobalStyle`
   /* Header */
 
   .header {
-    position: relative;
+    position: fixed;
+    left: 0;
+    right: 0;
     z-index: 100;
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
   }
 
   @media only screen and (max-width: 1024px) {
-    .header  {
-      left: 0;
-      right: 0;
-      position: fixed;
+    .header {
+      background: rgba(67, 39, 177, 0.9);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  .header--hidden {
+    transform: translateY(-100%);
+  }
+
+  @media only screen and (max-width: 1024px) {
+    .header--hidden {
+      transform: translateY(0);
     }
   }
 
   .header__announcement {
     position: relative;
-    background: rgba(94, 0, 255, 0.5);
-    backdrop-filter: blur(10px);
+    background: var(--light-blue);
     z-index: 101;
   }
 
@@ -299,6 +310,13 @@ const GlobalStyles = createGlobalStyle`
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  @media only screen and (max-width: 1024px) {
+    .header .container {
+      padding-top: calc(var(--padding) * 2.5);
+      padding-bottom: calc(var(--padding) * 2.5);
+    }
   }
 
   .header__logo {
@@ -515,9 +533,9 @@ const GlobalStyles = createGlobalStyle`
   .home_hero {
     background-image: url("/landing-images/home-hero-bg.svg");
     background-size: contain;
-    background-position: center top;
+    background-position: center center;
     background-repeat: no-repeat;
-    padding: calc(var(--padding) * 10) 0 0 0;
+    padding: calc(var(--padding) * 24) 0 0 0;
     display: flex;
     align-items: center;
     position: relative;
@@ -1232,7 +1250,7 @@ const GlobalStyles = createGlobalStyle`
   /* Waitlist Page Styles */
 
   .home_signup--waitlist .home_signup__wrapper {
-    padding: calc(var(--padding) * 15) 0;
+    padding: calc(var(--padding) * 29) 0 calc(var(--padding) * 15) 0;
     position: relative;
   }
 
@@ -1273,7 +1291,7 @@ const GlobalStyles = createGlobalStyle`
   /* Developers Page Styles */
   
   .developers_hero {
-    padding: calc(var(--padding) * 10) 0 0 0;
+    padding: calc(var(--padding) * 24) 0 0 0;
     position: relative;
   }
 
@@ -1813,14 +1831,14 @@ const GlobalStyles = createGlobalStyle`
     margin-left: 90%;
   }
 
+  .developers_module__list__carousel__slide__content--last img{
+    height: 50px;
+  }
+
   @media only screen and (max-width: 767px) {
     .developers_module__list__carousel__slide__content img {
       margin-left: 80%;
       margin-top: 2rem;
-    }
-
-    .developers_module__list__carousel__slide__content--last img{
-      height: 50px;
     }
   }
 
