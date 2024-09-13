@@ -1,0 +1,1 @@
+import{aQ as a,aK as e}from"./main-C1sRb19f.js";import{u as n,a2 as o}from"./App-B0y76GMS.js";function m({exclude:i}){const r=n(a).filter(s=>!(i!=null&&i.some(t=>t===s.id)));return e.jsx("ul",{children:r.map(s=>e.jsx("li",{children:e.jsx(o,{to:s.path,children:s.id})},s.id))})}export{m as S};

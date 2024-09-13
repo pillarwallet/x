@@ -43,8 +43,7 @@ const App = () => {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1"
         />
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
-        <title>EXOLIX</title>
+        <title>Exchanger | Exolix</title>
         <!-- HEAD_SCRIPT -->
       </head>
       <body>
@@ -56,7 +55,6 @@ const App = () => {
           if (manifest) {
             const chunk = manifest['src/entrypoints/main.ts'];
             let scripts = `<script type="module" crossorigin src="/${chunk.file}"></script>\n`;
-            console.log(chunk, chunk.imports);
             if (chunk.imports && Array.isArray(chunk.imports)) {
               scripts += chunk.imports
                 .map((file: string) => {
@@ -86,7 +84,7 @@ const App = () => {
         height: '100vh',
       }}
     >
-      <iframe srcDoc={templ} width="100%" height={600}></iframe>
+      <iframe srcDoc={templ} width="100%" style={{ height: '100vh' }}></iframe>
     </div>
   );
 };
