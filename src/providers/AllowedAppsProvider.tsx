@@ -35,10 +35,7 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
           setIsLoading(false);
           return;
         }
-        setAllowed([
-          ...(data?.map((app: ApiAllowedApp) => app.appId) ?? []),
-          'exolix',
-        ]);
+        setAllowed(data?.map((app: ApiAllowedApp) => app.appId));
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
       }
