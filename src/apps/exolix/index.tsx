@@ -36,7 +36,7 @@ const App = () => {
           const manifest = JSON.parse(result);
           let template = `
 <!DOCTYPE html>
-          <html lang="en">
+          <html lang="en" style="height: 100%;">
       <head>
         <meta charset="UTF-8" />
         <meta
@@ -47,7 +47,14 @@ const App = () => {
         <!-- HEAD_SCRIPT -->
       </head>
       <body>
-        <div id="root"></div>
+      
+        <div id="root" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+        </div>
+        <style>
+      .llwSSe {
+          width: 100%;
+      }
+    </style>
         <!-- BODY_SCRIPT -->
       </body>
     </html>
@@ -84,7 +91,7 @@ const App = () => {
         height: '100vh',
       }}
     >
-      <iframe srcDoc={templ} width="100%" style={{ height: '100vh' }}></iframe>
+      <iframe srcDoc={templ} width="100%" style={{ height: '100%' }}></iframe>
     </div>
   );
 };
