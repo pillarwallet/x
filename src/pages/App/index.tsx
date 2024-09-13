@@ -40,7 +40,10 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div
+      id="app-loading-screen-animated-text"
+      className="flex justify-center items-center min-h-screen"
+    >
       <div className="text-6xl font-bold text-white sm:text-2xl">
         {trail.map((styles, i) => (
           <animated.span key={i} style={styles} className="inline-block">
