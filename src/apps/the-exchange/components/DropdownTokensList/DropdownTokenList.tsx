@@ -1,5 +1,9 @@
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useState } from 'react';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // reducer
 import {
@@ -38,6 +42,15 @@ const DropdownTokenList = ({
   type,
   initialCardPosition,
 }: DropdownTokenListProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
@@ -134,7 +147,7 @@ const DropdownTokenList = ({
       </div>
       <div className="flex flex-col w-full max-w-[420px]">
         <div
-          className={`flex flex-row gap-[10px] p-4 w-full rounded-t-[3px] border-b border-b-black_grey ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}
+          className={`flex flex-row gap-[10px] p-4 w-full rounded-t-[3px] border-b border-b-black_grey ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
           <SelectDropdown
             options={isSwapOpen ? uniqueChainsSwap : uniqueChainsReceive}
@@ -150,7 +163,7 @@ const DropdownTokenList = ({
         </div>
         <div
           id="token-list-exchange"
-          className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-green' : 'bg-purple'}`}
+          className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
           {isSwapOpen
             ? swapTokenList
@@ -170,6 +183,16 @@ const DropdownTokenList = ({
                           chainName: convertChainIdtoName(token.chainId),
                         })
                       );
+                      recordPresence({
+                        address: accountAddress,
+                        action: 'app:theExchange:sourceTokenSelect',
+                        value: {
+                          chainId: token.chainId,
+                          address: token.address,
+                          symbol: token.symbol,
+                          name: token.name,
+                        },
+                      });
                       dispatch(setSearchTokenResult([]));
                       dispatch(setIsSwapOpen(false));
                     }}
@@ -196,6 +219,16 @@ const DropdownTokenList = ({
                           chainName: convertChainIdtoName(token.chainId),
                         })
                       );
+                      recordPresence({
+                        address: accountAddress,
+                        action: 'app:theExchange:destinationTokenSelect',
+                        value: {
+                          chainId: token.chainId,
+                          address: token.address,
+                          symbol: token.symbol,
+                          name: token.name,
+                        },
+                      });
                       dispatch(setSearchTokenResult([]));
                       dispatch(setIsReceiveOpen(false));
                     }}

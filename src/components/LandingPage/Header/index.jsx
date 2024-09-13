@@ -1,16 +1,45 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, NavLink, ScrollRestoration } from 'react-router-dom';
 
 const Header = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (window.scrollY > lastScrollY) {
+        // if scroll down hide the navbar
+        setIsVisible(false);
+      } else {
+        // if scroll up show the navbar
+        setIsVisible(true);
+      }
+      // remember current page location to use in the next move
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', controlNavbar);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', controlNavbar);
+    };
+  }, [lastScrollY]);
 
   return (
     <>
+      {/* Browser's scroll restoration  */}
+      <ScrollRestoration />
+
       {/* Header */}
-      <header className="header" id="header">
+      <header
+        className={`header ${isVisible ? '' : 'header--hidden'}`}
+        id="header"
+      >
         {/* Header Announcement */}
         <div className="header__announcement">
           <div className="header__announcement__wrapper">

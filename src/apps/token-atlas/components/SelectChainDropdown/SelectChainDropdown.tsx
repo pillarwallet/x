@@ -1,3 +1,8 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
+
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -29,6 +34,15 @@ const SelectChainDropdown = ({
   className,
   options,
 }: SelectChainDropdownProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset's chain is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const isSelectChainDropdownOpen = useAppSelector(
     (state) => state.tokenAtlas.isSelectChainDropdownOpen as boolean
@@ -56,6 +70,11 @@ const SelectChainDropdown = ({
         chainName: option === 0 ? 'all' : convertChainIdtoName(option),
       })
     );
+    recordPresence({
+      address: accountAddress,
+      action: 'app:tokenAtlas:chainSelect',
+      value: { chainId: option },
+    });
     dispatch(setIsSelectChainDropdownOpen(false));
     dispatch(setIsAllChainsVisible(false));
   };

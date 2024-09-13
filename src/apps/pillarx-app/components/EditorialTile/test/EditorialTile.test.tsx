@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import renderer from 'react-test-renderer';
 
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
 // types
 import {
   ApiLayout,
@@ -41,19 +45,31 @@ describe('<EditorialTile />', () => {
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
-      .create(<EditorialTile data={mockDataEditorial} isDataLoading={false} />)
+      .create(
+        <Provider store={store}>
+          <EditorialTile data={mockDataEditorial} isDataLoading={false} />
+        </Provider>
+      )
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('renders skeleton loader when data is loading', () => {
-    render(<EditorialTile data={undefined} isDataLoading />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={undefined} isDataLoading />
+      </Provider>
+    );
 
     expect(screen.getByTestId('editorial-tile-loading')).toBeInTheDocument();
   });
 
   it('renders correctly with all the given data', () => {
-    render(<EditorialTile data={mockDataEditorial} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataEditorial} isDataLoading={false} />
+      </Provider>
+    );
 
     expect(screen.getByText('Editorial title')).toBeInTheDocument();
     expect(screen.getByText('Editorial summary')).toBeInTheDocument();
@@ -70,7 +86,11 @@ describe('<EditorialTile />', () => {
   });
 
   it('renders image media correctly', () => {
-    render(<EditorialTile data={mockDataEditorial} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataEditorial} isDataLoading={false} />
+      </Provider>
+    );
 
     const img = screen.getByTestId('editorial-tile-image');
     const video = screen.queryByTestId('editorial-tile-video');
@@ -93,7 +113,11 @@ describe('<EditorialTile />', () => {
       },
     };
 
-    render(<EditorialTile data={mockDataWithVideo} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataWithVideo} isDataLoading={false} />
+      </Provider>
+    );
 
     const img = screen.queryByTestId('editorial-tile-image');
     const video = screen.getByTestId('editorial-tile-video');
@@ -116,7 +140,11 @@ describe('<EditorialTile />', () => {
       },
     };
 
-    render(<EditorialTile data={mockDataWithAudio} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataWithAudio} isDataLoading={false} />
+      </Provider>
+    );
 
     const img = screen.queryByTestId('editorial-tile-image');
     const video = screen.queryByTestId('editorial-tile-video');
@@ -139,7 +167,11 @@ describe('<EditorialTile />', () => {
       },
     };
 
-    render(<EditorialTile data={mockDataWithoutMedia} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataWithoutMedia} isDataLoading={false} />
+      </Provider>
+    );
 
     const img = screen.queryByTestId('editorial-tile-image');
     const video = screen.queryByTestId('editorial-tile-video');
@@ -163,7 +195,12 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <EditorialTile data={mockDataWithoutAttribution} isDataLoading={false} />
+      <Provider store={store}>
+        <EditorialTile
+          data={mockDataWithoutAttribution}
+          isDataLoading={false}
+        />
+      </Provider>
     );
 
     expect(screen.queryByText('Youtube')).toBeNull();
@@ -181,7 +218,11 @@ describe('<EditorialTile />', () => {
       },
     };
 
-    render(<EditorialTile data={invalidMediaData} isDataLoading={false} />);
+    render(
+      <Provider store={store}>
+        <EditorialTile data={invalidMediaData} isDataLoading={false} />
+      </Provider>
+    );
     const img = screen.queryByTestId('editorial-tile-image');
     const video = screen.queryByTestId('editorial-tile-video');
     const audio = screen.queryByTestId('editorial-tile-audio');

@@ -1,5 +1,9 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // types
 import { EditorialDisplay, Projection } from '../../../../types/api';
@@ -18,6 +22,15 @@ type EditorialTileProps = {
 };
 
 const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const [isBrokenMedia, setIsBrokenMedia] = useState<boolean>(false);
   const { meta } = data || {};
   const editorialDisplay = meta?.display as EditorialDisplay | undefined;
@@ -43,6 +56,20 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
 
   const editorialDate =
     editorialDisplay?.timestamp && new Date(editorialDisplay.timestamp * 1000);
+
+  const handleClickOnTile = () => {
+    if (accountAddress && data) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:feed:tap',
+        value: {
+          layout: data.layout,
+          id: data.id,
+          exitHref: editorialDisplay?.href ? editorialDisplay.href : '',
+        },
+      });
+    }
+  };
 
   if (!data || isDataLoading) {
     return (
@@ -83,7 +110,12 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
       id="editorial-tile"
       className="flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
     >
-      <a href={editorialDisplay?.href} target="_blank" rel="noreferrer">
+      <a
+        href={editorialDisplay?.href}
+        target="_blank"
+        rel="noreferrer"
+        onClick={handleClickOnTile}
+      >
         <div className="flex mobile:flex-col bg-medium_grey rounded-2xl p-2 gap-4">
           {editorialDisplay?.media && !isBrokenMedia && (
             <div className="flex items-center justify-center overflow-hidden desktop:basis-2/5 tablet:basis-2/5 mobile:basis-full mobile:w-full">
