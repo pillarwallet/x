@@ -6,6 +6,7 @@ exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
   id="editorial-tile"
 >
   <a
+    onClick={[Function]}
     rel="noreferrer"
     target="_blank"
   >
