@@ -31,6 +31,8 @@ export const loadApp = (appId: string) => {
 export const loadApps = (allowedApps: string[]) => {
   const loadedApps: Record<string, AppManifest> = {};
 
+  console.log(allowedApps);
+
   /**
    * Cycle through the allowedApps array and load the app manifest for each app
    * This used to be a .reduce function but we may need to do more complicated

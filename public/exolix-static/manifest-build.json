@@ -1,0 +1,1281 @@
+{
+  "_App-!~{008}~.js": {
+    "file": "exolix-static/assets/App-Bw_SQ7J0.css",
+    "src": "_App-!~{008}~.js"
+  },
+  "_App-D9naWC8m.js": {
+    "file": "exolix-static/assets/App-D9naWC8m.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_tslib.es6-D9yd9Yl3.js"
+    ],
+    "dynamicImports": [
+      "src/Exchanger/CexDexService/CexDexService.tsx",
+      "src/Exchanger/CexService/CexService.tsx",
+      "src/Exchanger/CexService/cexStore/index.ts",
+      "src/Exchanger/DexService/DexService.tsx",
+      "src/Exchanger/DexService/dexStore/index.ts",
+      "src/Exchanger/FiatService/FiatService.tsx"
+    ],
+    "css": [
+      "exolix-static/assets/App-Bw_SQ7J0.css"
+    ],
+    "assets": [
+      "exolix-static/assets/IBMPlexSans-Bold-BZXhexr-.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-D-i7PEpe.woff",
+      "exolix-static/assets/IBMPlexSans-Bold-Cyrillic-DK74X7vP.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-Pi-C-ac7meo.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-Latin3-jnXg-uvM.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-Latin2-B_2rRmkT.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-Latin1-Dv7kJ0Pv.woff2",
+      "exolix-static/assets/IBMPlexSans-Bold-Greek-CwiBkQup.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-BKMc6BRK.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-BI3Pe8ni.woff",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Cyrillic-avfFBqWZ.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Pi-XKgzEB7F.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Latin3-a1cMSCvX.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Latin2-BIuR1aKY.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Latin1-n0nK-J7u.woff2",
+      "exolix-static/assets/IBMPlexSans-BoldItalic-Greek-ZqnfhpLi.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-DzPTXzu8.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-BWL9DqCL.woff",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Cyrillic-B_hp-Ikq.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Pi-DAB6pC-u.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Latin3-Br5UWWqx.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Latin2-C7yVa2I_.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Latin1-DjtU4NDD.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLight-Greek-DWRRuvl4.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-K5G2DEFb.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-DKjUr3zo.woff",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Cyrillic-DcZEDpvs.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Pi-DC-x7LsX.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin3-Ovd4RwWo.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin2-C5m8aH7d.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin1-B7twCAZy.woff2",
+      "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Greek-C1nDVVRe.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-CFV-IODC.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-D5D-zMDw.woff",
+      "exolix-static/assets/IBMPlexSans-Italic-Cyrillic-Ci7vELW4.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-Pi-CMxVrzLO.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-Latin3-B4XoaZQb.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-Latin2-DXPo8B-b.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-Latin1-BGgQEK-v.woff2",
+      "exolix-static/assets/IBMPlexSans-Italic-Greek-DDauN-G4.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-BzbgKPWo.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-C3fjzVsp.woff",
+      "exolix-static/assets/IBMPlexSans-Light-Cyrillic-C9HNrUj-.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-Pi-Bty4rz7H.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-Latin3-Cw2guAeE.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-Latin2-CwIxGyyq.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-Latin1-inspWVWJ.woff2",
+      "exolix-static/assets/IBMPlexSans-Light-Greek-MNyPZ_jL.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-B3UWm6I6.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-CJip8CbI.woff",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Cyrillic-BK7Ig2fy.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Pi-DM6ABiMk.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Latin3-D5i6cPHX.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Latin2-CI7WEKco.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Latin1-hm_y6vC1.woff2",
+      "exolix-static/assets/IBMPlexSans-LightItalic-Greek-_t9yjWZb.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-CPe-DJCs.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-CV2Wz-w3.woff",
+      "exolix-static/assets/IBMPlexSans-Medium-Cyrillic-9ujT398p.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-Pi-DCgt1Vx2.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-Latin3-DBY2MVHW.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-Latin2-PO2FUpvh.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-Latin1-5DHMj5pS.woff2",
+      "exolix-static/assets/IBMPlexSans-Medium-Greek-CJyCyoU4.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-CsCSCk9l.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-rIrfR5v8.woff",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Cyrillic-PyPxC8tV.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Pi-CxO7gekg.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Latin3-D0DT_enW.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Latin2-B42sz0sz.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Latin1-ynNI8d7T.woff2",
+      "exolix-static/assets/IBMPlexSans-MediumItalic-Greek-C4Ocb4wW.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-DUUdtHBf.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-rzrWfE_c.woff",
+      "exolix-static/assets/IBMPlexSans-Regular-Cyrillic-DVdV6Jmp.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-Pi-BQju4ndC.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-Latin3-C25DrRMk.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-Latin2-E0KpqOMB.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-Latin1-BRIOl7rB.woff2",
+      "exolix-static/assets/IBMPlexSans-Regular-Greek-BEa4TOQY.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-B6viZnu9.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-wufUs16K.woff",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Cyrillic-D6AAQwOE.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Pi-Qy0GYOM_.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Latin3-D2EVNHmv.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Latin2-C84Q76VV.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Latin1-lhP8hx1s.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBold-Greek-nI4Fl1yD.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-BfyQnzEv.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-C4IlXKM2.woff",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Cyrillic-B0VjzpJ2.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Pi-CHN8OoZQ.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin3-KykfaKce.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin2-BbBgrTYN.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin1-CnFGaYh3.woff2",
+      "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Greek-CtYsY53p.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-CROBZ3bD.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-HZgnyVe7.woff",
+      "exolix-static/assets/IBMPlexSans-Text-Cyrillic-BOoM4iV2.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-Pi-BapyWD6V.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-Latin3-CcmTnJdT.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-Latin2-BCsPbT6w.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-Latin1-CrQL21xa.woff2",
+      "exolix-static/assets/IBMPlexSans-Text-Greek-BunjICfJ.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Bcy3_WOb.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-CRQIK5Nb.woff",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Cyrillic-jaqnQs3j.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Pi-SPVRORk-.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Latin3-CWLbqrp2.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Latin2-Czn-ARAa.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Latin1-BE9S7nSq.woff2",
+      "exolix-static/assets/IBMPlexSans-TextItalic-Greek-CNOgFtE6.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-BsyvcP9h.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-B-q8kx1k.woff",
+      "exolix-static/assets/IBMPlexSans-Thin-Cyrillic-CdGDrnsg.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-Pi-DMVHIRAI.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-Latin3-DP43WZlR.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-Latin2-Cgt1GHtA.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-Latin1-CtgAzkmx.woff2",
+      "exolix-static/assets/IBMPlexSans-Thin-Greek-DCZGXLpD.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-NIJ9otpb.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-BJ8AKGxD.woff",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Cyrillic-Cy0XpBpG.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Pi-z68KJiPC.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Latin3-VULPd7lE.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Latin2-Bj_nrY1o.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Latin1-Bq22u4oc.woff2",
+      "exolix-static/assets/IBMPlexSans-ThinItalic-Greek-CcKvZzhW.woff2"
+    ]
+  },
+  "_Checkbox-D7eQFyF4.js": {
+    "file": "exolix-static/assets/Checkbox-D7eQFyF4.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_StepsIndicator-BM5c7mMm.js"
+    ]
+  },
+  "_Modal-C67yop3J.js": {
+    "file": "exolix-static/assets/Modal-C67yop3J.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_trustpilot-DZhaPuDo.js",
+      "_App-D9naWC8m.js",
+      "_mixins-i12hrTLx.js"
+    ]
+  },
+  "_RefreshButton-D1BA3V07.js": {
+    "file": "exolix-static/assets/RefreshButton-D1BA3V07.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_mixins-i12hrTLx.js",
+      "_App-D9naWC8m.js",
+      "_coinsSlice-BEHaDeLG.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_exchangeSelectors-BRPm40VR.js",
+      "_trustpilot-DZhaPuDo.js"
+    ],
+    "assets": [
+      "exolix-static/assets/not-found-Ch0fSy3M.svg"
+    ]
+  },
+  "_ServiceList-DVAGP29-.js": {
+    "file": "exolix-static/assets/ServiceList-DVAGP29-.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js"
+    ]
+  },
+  "_StepsIndicator-BM5c7mMm.js": {
+    "file": "exolix-static/assets/StepsIndicator-BM5c7mMm.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_mixins-i12hrTLx.js"
+    ],
+    "assets": [
+      "exolix-static/assets/coin-B3a8BqhT.png"
+    ]
+  },
+  "_Transaction-VikB7T6K.js": {
+    "file": "exolix-static/assets/Transaction-VikB7T6K.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_mixins-i12hrTLx.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_transactionSelectors-R5EINRY4.js",
+      "_transactionSlice-BP-eO20O.js",
+      "_App-D9naWC8m.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_dropdown-DvVsuBFR.js",
+      "_txToCookies-BcSdDGj0.js",
+      "_unlocked-CVJBCS6B.js"
+    ],
+    "dynamicImports": [
+      "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/TxEmailSubscribe.tsx",
+      "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx"
+    ]
+  },
+  "____vite-browser-external_commonjs-proxy-BGNYtt13.js": {
+    "file": "exolix-static/assets/___vite-browser-external_commonjs-proxy-BGNYtt13.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "__commonjs-dynamic-modules-TDtrdbi3.js": {
+    "file": "exolix-static/assets/_commonjs-dynamic-modules-TDtrdbi3.js"
+  },
+  "_browser-Dc9KYRY-.js": {
+    "file": "exolix-static/assets/browser-Dc9KYRY-.js"
+  },
+  "_coinsSlice-BEHaDeLG.js": {
+    "file": "exolix-static/assets/coinsSlice-BEHaDeLG.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_dexTransaction-C756uHQI.js": {
+    "file": "exolix-static/assets/dexTransaction-C756uHQI.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_exchangeSelectors-BRPm40VR.js",
+      "_index-dIKOytT1.js"
+    ]
+  },
+  "_dropdown-DvVsuBFR.js": {
+    "file": "exolix-static/assets/dropdown-DvVsuBFR.js"
+  },
+  "_events-8HD6CH6k.js": {
+    "file": "exolix-static/assets/events-8HD6CH6k.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_exchangeSelectors-BRPm40VR.js": {
+    "file": "exolix-static/assets/exchangeSelectors-BRPm40VR.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_exchangeSelectors-CI7Hx-bH.js": {
+    "file": "exolix-static/assets/exchangeSelectors-CI7Hx-bH.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_formUiSelectors-Fui5Vn9C.js": {
+    "file": "exolix-static/assets/formUiSelectors-Fui5Vn9C.js"
+  },
+  "_index-3aoJcirc.js": {
+    "file": "exolix-static/assets/index-3aoJcirc.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_mock-BMLqFoOj.js",
+      "_transactionReceipt-CJBsAlC6.js",
+      "_index-DyoKd2T1.js"
+    ],
+    "dynamicImports": [
+      "node_modules/viem/_esm/utils/ccip.js"
+    ]
+  },
+  "_index-BKbrE8P2.js": {
+    "file": "exolix-static/assets/index-BKbrE8P2.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "____vite-browser-external_commonjs-proxy-BGNYtt13.js",
+      "_index-DyoKd2T1.js",
+      "_events-8HD6CH6k.js",
+      "_browser-Dc9KYRY-.js",
+      "_tslib.es6-DhJCCvzd.js"
+    ]
+  },
+  "_index-DFi93KNB.js": {
+    "file": "exolix-static/assets/index-DFi93KNB.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_events-8HD6CH6k.js"
+    ]
+  },
+  "_index-DyoKd2T1.js": {
+    "file": "exolix-static/assets/index-DyoKd2T1.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_index-YlVsu8n8.js": {
+    "file": "exolix-static/assets/index-YlVsu8n8.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts"
+    ],
+    "dynamicImports": [
+      "node_modules/@walletconnect/modal-ui/dist/index.js"
+    ]
+  },
+  "_index-dIKOytT1.js": {
+    "file": "exolix-static/assets/index-dIKOytT1.js"
+  },
+  "_index-htOA9nBG.js": {
+    "file": "exolix-static/assets/index-htOA9nBG.js"
+  },
+  "_index-uW9Oh9D2.js": {
+    "file": "exolix-static/assets/index-uW9Oh9D2.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_native-Bz5QQgeN.js"
+    ]
+  },
+  "_mixins-i12hrTLx.js": {
+    "file": "exolix-static/assets/mixins-i12hrTLx.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_tslib.es6-D9yd9Yl3.js"
+    ]
+  },
+  "_mock-BMLqFoOj.js": {
+    "file": "exolix-static/assets/mock-BMLqFoOj.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ],
+    "dynamicImports": [
+      "_native-Bz5QQgeN.js"
+    ]
+  },
+  "_native-Bz5QQgeN.js": {
+    "file": "exolix-static/assets/native-Bz5QQgeN.js",
+    "isDynamicEntry": true
+  },
+  "_ratesSelectors-2mOXeI6N.js": {
+    "file": "exolix-static/assets/ratesSelectors-2mOXeI6N.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_index-dIKOytT1.js"
+    ]
+  },
+  "_ratesSlice-DrOw5cmT.js": {
+    "file": "exolix-static/assets/ratesSlice-DrOw5cmT.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_transactionReceipt-CJBsAlC6.js": {
+    "file": "exolix-static/assets/transactionReceipt-CJBsAlC6.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_transactionSelectors-R5EINRY4.js": {
+    "file": "exolix-static/assets/transactionSelectors-R5EINRY4.js",
+    "imports": [
+      "_index-dIKOytT1.js",
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_transactionSlice-BP-eO20O.js": {
+    "file": "exolix-static/assets/transactionSlice-BP-eO20O.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_trustpilot-DZhaPuDo.js": {
+    "file": "exolix-static/assets/trustpilot-DZhaPuDo.js",
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js"
+    ]
+  },
+  "_tslib.es6-D9yd9Yl3.js": {
+    "file": "exolix-static/assets/tslib.es6-D9yd9Yl3.js"
+  },
+  "_tslib.es6-DhJCCvzd.js": {
+    "file": "exolix-static/assets/tslib.es6-DhJCCvzd.js",
+    "imports": [
+      "_tslib.es6-D9yd9Yl3.js",
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_txToCookies-BcSdDGj0.js": {
+    "file": "exolix-static/assets/txToCookies-BcSdDGj0.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_unlocked-CVJBCS6B.js": {
+    "file": "exolix-static/assets/unlocked-CVJBCS6B.js"
+  },
+  "_useIsomorphicLayoutEffect-BW4gqOon.js": {
+    "file": "exolix-static/assets/useIsomorphicLayoutEffect-BW4gqOon.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "node_modules/@wagmi/connectors/dist/esm/exports/index.js": {
+    "file": "exolix-static/assets/index-QGzNNE9o.js",
+    "src": "node_modules/@wagmi/connectors/dist/esm/exports/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_mock-BMLqFoOj.js"
+    ],
+    "dynamicImports": [
+      "_index-BKbrE8P2.js",
+      "_index-uW9Oh9D2.js",
+      "_index-DFi93KNB.js",
+      "node_modules/@walletconnect/ethereum-provider/dist/index.es.js"
+    ]
+  },
+  "node_modules/@wagmi/core/dist/esm/exports/chains.js": {
+    "file": "exolix-static/assets/chains-D-6Zjx6O.js",
+    "src": "node_modules/@wagmi/core/dist/esm/exports/chains.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_transactionReceipt-CJBsAlC6.js"
+    ]
+  },
+  "node_modules/@walletconnect/ethereum-provider/dist/index.es.js": {
+    "file": "exolix-static/assets/index.es-Bh7iuItO.js",
+    "src": "node_modules/@walletconnect/ethereum-provider/dist/index.es.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_events-8HD6CH6k.js",
+      "__commonjs-dynamic-modules-TDtrdbi3.js",
+      "____vite-browser-external_commonjs-proxy-BGNYtt13.js"
+    ],
+    "dynamicImports": [
+      "_index-YlVsu8n8.js"
+    ]
+  },
+  "node_modules/@walletconnect/modal-ui/dist/index.js": {
+    "file": "exolix-static/assets/index-DUSBHbXi.js",
+    "src": "node_modules/@walletconnect/modal-ui/dist/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-YlVsu8n8.js",
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "node_modules/viem/_esm/utils/ccip.js": {
+    "file": "exolix-static/assets/ccip-BparoPgI.js",
+    "src": "node_modules/viem/_esm/utils/ccip.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-3aoJcirc.js",
+      "_mock-BMLqFoOj.js",
+      "src/entrypoints/main.ts",
+      "_transactionReceipt-CJBsAlC6.js",
+      "_index-DyoKd2T1.js"
+    ]
+  },
+  "src/Exchanger/CexDexService/CexDexService.tsx": {
+    "file": "exolix-static/assets/CexDexService-Dw4aNXpr.js",
+    "src": "src/Exchanger/CexDexService/CexDexService.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_ServiceList-DVAGP29-.js",
+      "_App-D9naWC8m.js",
+      "_tslib.es6-D9yd9Yl3.js"
+    ]
+  },
+  "src/Exchanger/CexService/CexService.tsx": {
+    "file": "exolix-static/assets/CexService-C40r4Xlk.js",
+    "src": "src/Exchanger/CexService/CexService.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_transactionSelectors-R5EINRY4.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_mixins-i12hrTLx.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_index-dIKOytT1.js"
+    ],
+    "dynamicImports": [
+      "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx",
+      "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx",
+      "_Transaction-VikB7T6K.js"
+    ]
+  },
+  "src/Exchanger/CexService/cexStore/index.ts": {
+    "file": "exolix-static/assets/index-EQeG_Ydv.js",
+    "src": "src/Exchanger/CexService/cexStore/index.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_ratesSelectors-2mOXeI6N.js",
+      "_coinsSlice-BEHaDeLG.js",
+      "_App-D9naWC8m.js",
+      "src/telegram/telegramSlice.ts",
+      "_transactionSelectors-R5EINRY4.js",
+      "_ratesSlice-DrOw5cmT.js",
+      "_index-dIKOytT1.js",
+      "_txToCookies-BcSdDGj0.js",
+      "_transactionSlice-BP-eO20O.js",
+      "_tslib.es6-D9yd9Yl3.js"
+    ]
+  },
+  "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx": {
+    "file": "exolix-static/assets/TxSuccessModal-H5un92Cd.js",
+    "src": "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_trustpilot-DZhaPuDo.js",
+      "_Modal-C67yop3J.js",
+      "_formUiSelectors-Fui5Vn9C.js",
+      "_mixins-i12hrTLx.js",
+      "_App-D9naWC8m.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_tslib.es6-D9yd9Yl3.js"
+    ],
+    "assets": [
+      "exolix-static/assets/success-modal-Bu_8kLNX.png"
+    ]
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/TxEmailSubscribe.tsx": {
+    "file": "exolix-static/assets/TxEmailSubscribe-C6GFlrv7.js",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/TxEmailSubscribe.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_index-htOA9nBG.js",
+      "_App-D9naWC8m.js",
+      "_Checkbox-D7eQFyF4.js",
+      "_transactionSelectors-R5EINRY4.js",
+      "_transactionSlice-BP-eO20O.js",
+      "_mixins-i12hrTLx.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_index-dIKOytT1.js"
+    ],
+    "assets": [
+      "exolix-static/assets/bell-message-img-DNrxlQs4.webp",
+      "exolix-static/assets/bell-message-mobile-img-yYTzxCIx.webp",
+      "exolix-static/assets/bg-img-3Me-5Rxy.webp",
+      "exolix-static/assets/bg-mobile-img-C2w4OuE-.webp",
+      "exolix-static/assets/bg-rtl-img-Bl_OR1Iu.webp"
+    ]
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bell-message-img.webp": {
+    "file": "exolix-static/assets/bell-message-img-DNrxlQs4.webp",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bell-message-img.webp"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bell-message-mobile-img.webp": {
+    "file": "exolix-static/assets/bell-message-mobile-img-yYTzxCIx.webp",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bell-message-mobile-img.webp"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-img.webp": {
+    "file": "exolix-static/assets/bg-img-3Me-5Rxy.webp",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-img.webp"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-mobile-img.webp": {
+    "file": "exolix-static/assets/bg-mobile-img-C2w4OuE-.webp",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-mobile-img.webp"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-rtl-img.webp": {
+    "file": "exolix-static/assets/bg-rtl-img-Bl_OR1Iu.webp",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-rtl-img.webp"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx": {
+    "file": "exolix-static/assets/TxStatusInfo-BPUcN9C-.js",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_Transaction-VikB7T6K.js",
+      "_transactionSelectors-R5EINRY4.js",
+      "_mixins-i12hrTLx.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_transactionSlice-BP-eO20O.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_dropdown-DvVsuBFR.js",
+      "_txToCookies-BcSdDGj0.js",
+      "_unlocked-CVJBCS6B.js",
+      "_index-dIKOytT1.js"
+    ],
+    "assets": [
+      "exolix-static/assets/overdue-icon-Bf7-j8Ua.svg",
+      "exolix-static/assets/refund-icon-SsF1n8dV.svg"
+    ]
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/icons/overdue-icon.svg": {
+    "file": "exolix-static/assets/overdue-icon-Bf7-j8Ua.svg",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/icons/overdue-icon.svg"
+  },
+  "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/icons/refund-icon.svg": {
+    "file": "exolix-static/assets/refund-icon-SsF1n8dV.svg",
+    "src": "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/icons/refund-icon.svg"
+  },
+  "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx": {
+    "file": "exolix-static/assets/Exchange-HFpfppHw.js",
+    "src": "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_RefreshButton-D1BA3V07.js",
+      "_App-D9naWC8m.js",
+      "_mixins-i12hrTLx.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_trustpilot-DZhaPuDo.js",
+      "_ratesSelectors-2mOXeI6N.js",
+      "_coinsSlice-BEHaDeLG.js",
+      "_formUiSelectors-Fui5Vn9C.js",
+      "_ratesSlice-DrOw5cmT.js",
+      "_transactionSelectors-R5EINRY4.js",
+      "_transactionSlice-BP-eO20O.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_unlocked-CVJBCS6B.js",
+      "_index-htOA9nBG.js",
+      "_Checkbox-D7eQFyF4.js",
+      "_exchangeSelectors-BRPm40VR.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_index-dIKOytT1.js"
+    ],
+    "assets": [
+      "exolix-static/assets/aml-VwToy9zL.png"
+    ]
+  },
+  "src/Exchanger/DexService/DexService.tsx": {
+    "file": "exolix-static/assets/DexService-BNNC7h_-.js",
+    "src": "src/Exchanger/DexService/DexService.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_RefreshButton-D1BA3V07.js",
+      "_App-D9naWC8m.js",
+      "_exchangeSelectors-BRPm40VR.js",
+      "_dexTransaction-C756uHQI.js",
+      "_mixins-i12hrTLx.js",
+      "_trustpilot-DZhaPuDo.js",
+      "_tslib.es6-DhJCCvzd.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_StepsIndicator-BM5c7mMm.js",
+      "_Modal-C67yop3J.js",
+      "_Checkbox-D7eQFyF4.js",
+      "_dropdown-DvVsuBFR.js",
+      "_coinsSlice-BEHaDeLG.js",
+      "_exchangeSelectors-CI7Hx-bH.js",
+      "_index-dIKOytT1.js",
+      "_useIsomorphicLayoutEffect-BW4gqOon.js"
+    ]
+  },
+  "src/Exchanger/DexService/dexStore/index.ts": {
+    "file": "exolix-static/assets/index-Dm3TDH1S.js",
+    "src": "src/Exchanger/DexService/dexStore/index.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_App-D9naWC8m.js",
+      "_exchangeSelectors-BRPm40VR.js",
+      "_dexTransaction-C756uHQI.js",
+      "_tslib.es6-D9yd9Yl3.js",
+      "_index-dIKOytT1.js"
+    ]
+  },
+  "src/Exchanger/FiatService/FiatService.tsx": {
+    "file": "exolix-static/assets/FiatService-DH81QMun.js",
+    "src": "src/Exchanger/FiatService/FiatService.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_ServiceList-DVAGP29-.js",
+      "_App-D9naWC8m.js",
+      "_tslib.es6-D9yd9Yl3.js"
+    ]
+  },
+  "src/assets/fich/images/aml.png": {
+    "file": "exolix-static/assets/aml-VwToy9zL.png",
+    "src": "src/assets/fich/images/aml.png"
+  },
+  "src/assets/icons/not-found.svg": {
+    "file": "exolix-static/assets/not-found-Ch0fSy3M.svg",
+    "src": "src/assets/icons/not-found.svg"
+  },
+  "src/assets/images/coin.png": {
+    "file": "exolix-static/assets/coin-B3a8BqhT.png",
+    "src": "src/assets/images/coin.png"
+  },
+  "src/assets/images/success-modal.png": {
+    "file": "exolix-static/assets/success-modal-Bu_8kLNX.png",
+    "src": "src/assets/images/success-modal.png"
+  },
+  "src/entrypoints/main.ts": {
+    "file": "exolix-static/assets/main-Bp11xWcs.js",
+    "src": "src/entrypoints/main.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/@wagmi/connectors/dist/esm/exports/index.js",
+      "node_modules/@wagmi/core/dist/esm/exports/chains.js",
+      "_index-3aoJcirc.js",
+      "src/partners/xumm/index.ts",
+      "src/telegram/telegramSlice.ts",
+      "src/telegram/telegramSagas.ts",
+      "_App-D9naWC8m.js"
+    ]
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Bold.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-D-i7PEpe.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Bold.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-BoldItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-BI3Pe8ni.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-BoldItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ExtraLight.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-BWL9DqCL.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ExtraLight.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ExtraLightItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-DKjUr3zo.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ExtraLightItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Italic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-D5D-zMDw.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Italic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Light.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-C3fjzVsp.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Light.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-LightItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-CJip8CbI.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-LightItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Medium.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-CV2Wz-w3.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Medium.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-MediumItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-rIrfR5v8.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-MediumItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Regular.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-rzrWfE_c.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Regular.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-SemiBold.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-wufUs16K.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-SemiBold.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-SemiBoldItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-C4IlXKM2.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-SemiBoldItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Text.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-HZgnyVe7.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Text.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-TextItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-CRQIK5Nb.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-TextItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Thin.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-B-q8kx1k.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Thin.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ThinItalic.woff": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-BJ8AKGxD.woff",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-ThinItalic.woff"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Bold.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-BZXhexr-.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Bold.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-BoldItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-BKMc6BRK.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-BoldItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ExtraLight.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-DzPTXzu8.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ExtraLight.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ExtraLightItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-K5G2DEFb.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ExtraLightItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Italic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-CFV-IODC.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Italic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Light.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-BzbgKPWo.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Light.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-LightItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-B3UWm6I6.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-LightItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Medium.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-CPe-DJCs.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Medium.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-MediumItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-CsCSCk9l.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-MediumItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Regular.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-DUUdtHBf.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Regular.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-SemiBold.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-B6viZnu9.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-SemiBold.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-SemiBoldItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-BfyQnzEv.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-SemiBoldItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Text.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-CROBZ3bD.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Text.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-TextItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Bcy3_WOb.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-TextItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Thin.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-BsyvcP9h.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-Thin.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ThinItalic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-NIJ9otpb.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/complete/woff2/IBMPlexSans-ThinItalic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Cyrillic-DK74X7vP.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Greek-CwiBkQup.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Latin1-Dv7kJ0Pv.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Latin2-B_2rRmkT.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Latin3-jnXg-uvM.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Bold-Pi-C-ac7meo.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Bold-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Cyrillic-avfFBqWZ.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Greek-ZqnfhpLi.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Latin1-n0nK-J7u.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Latin2-BIuR1aKY.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Latin3-a1cMSCvX.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-BoldItalic-Pi-XKgzEB7F.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-BoldItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Cyrillic-B_hp-Ikq.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Greek-DWRRuvl4.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Latin1-DjtU4NDD.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Latin2-C7yVa2I_.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Latin3-Br5UWWqx.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLight-Pi-DAB6pC-u.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLight-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Cyrillic-DcZEDpvs.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Greek-C1nDVVRe.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin1-B7twCAZy.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin2-C5m8aH7d.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Latin3-Ovd4RwWo.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ExtraLightItalic-Pi-DC-x7LsX.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ExtraLightItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Cyrillic-Ci7vELW4.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Greek-DDauN-G4.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Latin1-BGgQEK-v.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Latin2-DXPo8B-b.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Latin3-B4XoaZQb.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Italic-Pi-CMxVrzLO.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Italic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Cyrillic-C9HNrUj-.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Greek-MNyPZ_jL.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Latin1-inspWVWJ.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Latin2-CwIxGyyq.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Latin3-Cw2guAeE.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Light-Pi-Bty4rz7H.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Light-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Cyrillic-BK7Ig2fy.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Greek-_t9yjWZb.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Latin1-hm_y6vC1.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Latin2-CI7WEKco.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Latin3-D5i6cPHX.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-LightItalic-Pi-DM6ABiMk.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-LightItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Cyrillic-9ujT398p.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Greek-CJyCyoU4.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Latin1-5DHMj5pS.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Latin2-PO2FUpvh.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Latin3-DBY2MVHW.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Medium-Pi-DCgt1Vx2.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Medium-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Cyrillic-PyPxC8tV.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Greek-C4Ocb4wW.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Latin1-ynNI8d7T.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Latin2-B42sz0sz.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Latin3-D0DT_enW.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-MediumItalic-Pi-CxO7gekg.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-MediumItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Cyrillic-DVdV6Jmp.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Greek-BEa4TOQY.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Latin1-BRIOl7rB.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Latin2-E0KpqOMB.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Latin3-C25DrRMk.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Regular-Pi-BQju4ndC.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Regular-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Cyrillic-D6AAQwOE.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Greek-nI4Fl1yD.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Latin1-lhP8hx1s.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Latin2-C84Q76VV.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Latin3-D2EVNHmv.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBold-Pi-Qy0GYOM_.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBold-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Cyrillic-B0VjzpJ2.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Greek-CtYsY53p.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin1-CnFGaYh3.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin2-BbBgrTYN.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Latin3-KykfaKce.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-SemiBoldItalic-Pi-CHN8OoZQ.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-SemiBoldItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Cyrillic-BOoM4iV2.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Greek-BunjICfJ.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Latin1-CrQL21xa.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Latin2-BCsPbT6w.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Latin3-CcmTnJdT.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Text-Pi-BapyWD6V.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Text-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Cyrillic-jaqnQs3j.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Greek-CNOgFtE6.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Latin1-BE9S7nSq.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Latin2-Czn-ARAa.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Latin3-CWLbqrp2.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-TextItalic-Pi-SPVRORk-.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-TextItalic-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Cyrillic-CdGDrnsg.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Greek-DCZGXLpD.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Latin1-CtgAzkmx.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Latin2-Cgt1GHtA.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Latin3-DP43WZlR.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-Thin-Pi-DMVHIRAI.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-Thin-Pi.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Cyrillic.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Cyrillic-Cy0XpBpG.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Cyrillic.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Greek.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Greek-CcKvZzhW.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Greek.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin1.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Latin1-Bq22u4oc.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin1.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin2.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Latin2-Bj_nrY1o.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin2.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin3.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Latin3-VULPd7lE.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Latin3.woff2"
+  },
+  "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Pi.woff2": {
+    "file": "exolix-static/assets/IBMPlexSans-ThinItalic-Pi-z68KJiPC.woff2",
+    "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Pi.woff2"
+  },
+  "src/partners/xumm/index.ts": {
+    "file": "exolix-static/assets/index-CbSyzkZ_.js",
+    "src": "src/partners/xumm/index.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "_events-8HD6CH6k.js",
+      "_browser-Dc9KYRY-.js",
+      "__commonjs-dynamic-modules-TDtrdbi3.js",
+      "____vite-browser-external_commonjs-proxy-BGNYtt13.js",
+      "_ratesSlice-DrOw5cmT.js",
+      "_transactionSlice-BP-eO20O.js"
+    ]
+  },
+  "src/telegram/telegramSagas.ts": {
+    "file": "exolix-static/assets/telegramSagas-Bi71qmuK.js",
+    "src": "src/telegram/telegramSagas.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "src/telegram/telegramSlice.ts"
+    ]
+  },
+  "src/telegram/telegramSlice.ts": {
+    "file": "exolix-static/assets/telegramSlice-DjgmDJJo.js",
+    "src": "src/telegram/telegramSlice.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  }
+}
