@@ -1,6 +1,11 @@
 import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import Fuse from 'fuse.js';
+import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // reducer
 import { setSearchTokenResult } from '../../reducer/theExchangeSlice';
@@ -23,6 +28,15 @@ const TokenSearchInput = ({
   className,
   ...props
 }: TokenSearchInputProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset is being searched for
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
@@ -76,6 +90,17 @@ const TokenSearchInput = ({
     }
   };
 
+  // Debounced recordPresence function with 1-second delay
+  const debouncedSearchToken = _.debounce((searchText: string) => {
+    if (value !== '') {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:theExchange:search',
+        value: { searchText },
+      });
+    }
+  }, 1000);
+
   const handleClickIcon = () => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -86,6 +111,16 @@ const TokenSearchInput = ({
     searchTokens(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapChain, receiveChain]);
+
+  useEffect(() => {
+    debouncedSearchToken(value);
+
+    // Clean-up debounce on component unmount
+    return () => {
+      debouncedSearchToken.cancel();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value;

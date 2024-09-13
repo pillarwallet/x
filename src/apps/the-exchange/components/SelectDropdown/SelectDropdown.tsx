@@ -1,3 +1,8 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+
+// api
+import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
+
 // reducer
 import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 
@@ -29,6 +34,15 @@ const SelectDropdown = ({
   isOpen,
   className,
 }: SelectDropdownProps) => {
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what asset's chain is being selected
+   */
+  const [recordPresence] = useRecordPresenceMutation();
+
+  const accountAddress = useWalletAddress();
+
   const dispatch = useAppDispatch();
   const swapChain = useAppSelector(
     (state) => state.swap.swapChain as ChainType
@@ -59,6 +73,11 @@ const SelectDropdown = ({
           chainName: option === 0 ? 'all' : convertChainIdtoName(option),
         })
       );
+      recordPresence({
+        address: accountAddress,
+        action: 'app:theExchange:sourceChainSelect',
+        value: { chainId: option },
+      });
     }
     if (isReceiveOpen) {
       dispatch(
@@ -67,6 +86,11 @@ const SelectDropdown = ({
           chainName: option === 0 ? 'all' : convertChainIdtoName(option),
         })
       );
+      recordPresence({
+        address: accountAddress,
+        action: 'app:theExchange:destinationChainSelect',
+        value: { chainId: option },
+      });
     }
     onSelect();
   };
