@@ -3,8 +3,8 @@
     "file": "exolix-static/assets/App-Bw_SQ7J0.css",
     "src": "_App-!~{008}~.js"
   },
-  "_App-D9naWC8m.js": {
-    "file": "exolix-static/assets/App-D9naWC8m.js",
+  "_App-DCKfOddi.js": {
+    "file": "exolix-static/assets/App-DCKfOddi.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
@@ -152,71 +152,71 @@
       "exolix-static/assets/IBMPlexSans-ThinItalic-Greek-CcKvZzhW.woff2"
     ]
   },
-  "_Checkbox-D7eQFyF4.js": {
-    "file": "exolix-static/assets/Checkbox-D7eQFyF4.js",
+  "_Checkbox-JZJ3BKZ0.js": {
+    "file": "exolix-static/assets/Checkbox-JZJ3BKZ0.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_StepsIndicator-BM5c7mMm.js"
+      "_App-DCKfOddi.js",
+      "_StepsIndicator-DBFPQONH.js"
     ]
   },
-  "_Modal-C67yop3J.js": {
-    "file": "exolix-static/assets/Modal-C67yop3J.js",
+  "_Modal-Cx97Zwia.js": {
+    "file": "exolix-static/assets/Modal-Cx97Zwia.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_trustpilot-DZhaPuDo.js",
-      "_App-D9naWC8m.js",
-      "_mixins-i12hrTLx.js"
+      "_trustpilot-DnM8-4bM.js",
+      "_App-DCKfOddi.js",
+      "_mixins-CNu8Cr8X.js"
     ]
   },
-  "_RefreshButton-D1BA3V07.js": {
-    "file": "exolix-static/assets/RefreshButton-D1BA3V07.js",
+  "_RefreshButton-DL_d0oNf.js": {
+    "file": "exolix-static/assets/RefreshButton-DL_d0oNf.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_mixins-i12hrTLx.js",
-      "_App-D9naWC8m.js",
-      "_coinsSlice-BEHaDeLG.js",
-      "_StepsIndicator-BM5c7mMm.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_exchangeSelectors-BRPm40VR.js",
-      "_trustpilot-DZhaPuDo.js"
+      "_mixins-CNu8Cr8X.js",
+      "_App-DCKfOddi.js",
+      "_coinsSlice-DSan2S0Z.js",
+      "_StepsIndicator-DBFPQONH.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_exchangeSelectors-C6FOZc8J.js",
+      "_trustpilot-DnM8-4bM.js"
     ],
     "assets": [
       "exolix-static/assets/not-found-Ch0fSy3M.svg"
     ]
   },
-  "_ServiceList-DVAGP29-.js": {
-    "file": "exolix-static/assets/ServiceList-DVAGP29-.js",
+  "_ServiceList-CfW5g8Lj.js": {
+    "file": "exolix-static/assets/ServiceList-CfW5g8Lj.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js"
+      "_App-DCKfOddi.js"
     ]
   },
-  "_StepsIndicator-BM5c7mMm.js": {
-    "file": "exolix-static/assets/StepsIndicator-BM5c7mMm.js",
+  "_StepsIndicator-DBFPQONH.js": {
+    "file": "exolix-static/assets/StepsIndicator-DBFPQONH.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_mixins-i12hrTLx.js"
+      "_App-DCKfOddi.js",
+      "_mixins-CNu8Cr8X.js"
     ],
     "assets": [
       "exolix-static/assets/coin-B3a8BqhT.png"
     ]
   },
-  "_Transaction-VikB7T6K.js": {
-    "file": "exolix-static/assets/Transaction-VikB7T6K.js",
+  "_Transaction-CVTjKSlZ.js": {
+    "file": "exolix-static/assets/Transaction-CVTjKSlZ.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_mixins-i12hrTLx.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_transactionSelectors-R5EINRY4.js",
-      "_transactionSlice-BP-eO20O.js",
-      "_App-D9naWC8m.js",
-      "_StepsIndicator-BM5c7mMm.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_mixins-CNu8Cr8X.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_transactionSlice-BLjUsgVM.js",
+      "_App-DCKfOddi.js",
+      "_StepsIndicator-DBFPQONH.js",
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js",
       "_dropdown-DvVsuBFR.js",
-      "_txToCookies-BcSdDGj0.js",
+      "_txToCookies-CjVnD0W0.js",
       "_unlocked-CVJBCS6B.js"
     ],
     "dynamicImports": [
@@ -224,8 +224,8 @@
       "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx"
     ]
   },
-  "____vite-browser-external_commonjs-proxy-BGNYtt13.js": {
-    "file": "exolix-static/assets/___vite-browser-external_commonjs-proxy-BGNYtt13.js",
+  "____vite-browser-external_commonjs-proxy-MvlAxKD_.js": {
+    "file": "exolix-static/assets/___vite-browser-external_commonjs-proxy-MvlAxKD_.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
@@ -236,37 +236,37 @@
   "_browser-Dc9KYRY-.js": {
     "file": "exolix-static/assets/browser-Dc9KYRY-.js"
   },
-  "_coinsSlice-BEHaDeLG.js": {
-    "file": "exolix-static/assets/coinsSlice-BEHaDeLG.js",
+  "_coinsSlice-DSan2S0Z.js": {
+    "file": "exolix-static/assets/coinsSlice-DSan2S0Z.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_dexTransaction-C756uHQI.js": {
-    "file": "exolix-static/assets/dexTransaction-C756uHQI.js",
+  "_dexTransaction-EqRj2R_J.js": {
+    "file": "exolix-static/assets/dexTransaction-EqRj2R_J.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_exchangeSelectors-BRPm40VR.js",
+      "_exchangeSelectors-C6FOZc8J.js",
       "_index-dIKOytT1.js"
     ]
   },
   "_dropdown-DvVsuBFR.js": {
     "file": "exolix-static/assets/dropdown-DvVsuBFR.js"
   },
-  "_events-8HD6CH6k.js": {
-    "file": "exolix-static/assets/events-8HD6CH6k.js",
+  "_events-Jbtv7R_f.js": {
+    "file": "exolix-static/assets/events-Jbtv7R_f.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_exchangeSelectors-BRPm40VR.js": {
-    "file": "exolix-static/assets/exchangeSelectors-BRPm40VR.js",
+  "_exchangeSelectors-C6FOZc8J.js": {
+    "file": "exolix-static/assets/exchangeSelectors-C6FOZc8J.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_exchangeSelectors-CI7Hx-bH.js": {
-    "file": "exolix-static/assets/exchangeSelectors-CI7Hx-bH.js",
+  "_exchangeSelectors-DP50MkAx.js": {
+    "file": "exolix-static/assets/exchangeSelectors-DP50MkAx.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
@@ -274,47 +274,47 @@
   "_formUiSelectors-Fui5Vn9C.js": {
     "file": "exolix-static/assets/formUiSelectors-Fui5Vn9C.js"
   },
-  "_index-3aoJcirc.js": {
-    "file": "exolix-static/assets/index-3aoJcirc.js",
+  "_index-BGP_I33A.js": {
+    "file": "exolix-static/assets/index-BGP_I33A.js",
+    "imports": [
+      "src/entrypoints/main.ts"
+    ]
+  },
+  "_index-BahxWbKI.js": {
+    "file": "exolix-static/assets/index-BahxWbKI.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_mock-BMLqFoOj.js",
-      "_transactionReceipt-CJBsAlC6.js",
-      "_index-DyoKd2T1.js"
+      "_mock-D90BqPQG.js",
+      "_transactionReceipt-C8NQNoJZ.js",
+      "_index-BGP_I33A.js"
     ],
     "dynamicImports": [
       "node_modules/viem/_esm/utils/ccip.js"
     ]
   },
-  "_index-BKbrE8P2.js": {
-    "file": "exolix-static/assets/index-BKbrE8P2.js",
+  "_index-Bw50erat.js": {
+    "file": "exolix-static/assets/index-Bw50erat.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "____vite-browser-external_commonjs-proxy-BGNYtt13.js",
-      "_index-DyoKd2T1.js",
-      "_events-8HD6CH6k.js",
+      "_events-Jbtv7R_f.js"
+    ]
+  },
+  "_index-C8HvHA-z.js": {
+    "file": "exolix-static/assets/index-C8HvHA-z.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/entrypoints/main.ts",
+      "____vite-browser-external_commonjs-proxy-MvlAxKD_.js",
+      "_index-BGP_I33A.js",
+      "_events-Jbtv7R_f.js",
       "_browser-Dc9KYRY-.js",
-      "_tslib.es6-DhJCCvzd.js"
+      "_tslib.es6-CSEIE9UU.js"
     ]
   },
-  "_index-DFi93KNB.js": {
-    "file": "exolix-static/assets/index-DFi93KNB.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "src/entrypoints/main.ts",
-      "_events-8HD6CH6k.js"
-    ]
-  },
-  "_index-DyoKd2T1.js": {
-    "file": "exolix-static/assets/index-DyoKd2T1.js",
-    "imports": [
-      "src/entrypoints/main.ts"
-    ]
-  },
-  "_index-YlVsu8n8.js": {
-    "file": "exolix-static/assets/index-YlVsu8n8.js",
+  "_index-ChwItJmo.js": {
+    "file": "exolix-static/assets/index-ChwItJmo.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts"
@@ -323,30 +323,30 @@
       "node_modules/@walletconnect/modal-ui/dist/index.js"
     ]
   },
-  "_index-dIKOytT1.js": {
-    "file": "exolix-static/assets/index-dIKOytT1.js"
-  },
-  "_index-htOA9nBG.js": {
-    "file": "exolix-static/assets/index-htOA9nBG.js"
-  },
-  "_index-uW9Oh9D2.js": {
-    "file": "exolix-static/assets/index-uW9Oh9D2.js",
+  "_index-DynJ5EDi.js": {
+    "file": "exolix-static/assets/index-DynJ5EDi.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
       "_native-Bz5QQgeN.js"
     ]
   },
-  "_mixins-i12hrTLx.js": {
-    "file": "exolix-static/assets/mixins-i12hrTLx.js",
+  "_index-dIKOytT1.js": {
+    "file": "exolix-static/assets/index-dIKOytT1.js"
+  },
+  "_index-htOA9nBG.js": {
+    "file": "exolix-static/assets/index-htOA9nBG.js"
+  },
+  "_mixins-CNu8Cr8X.js": {
+    "file": "exolix-static/assets/mixins-CNu8Cr8X.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
+      "_App-DCKfOddi.js",
       "_tslib.es6-D9yd9Yl3.js"
     ]
   },
-  "_mock-BMLqFoOj.js": {
-    "file": "exolix-static/assets/mock-BMLqFoOj.js",
+  "_mock-D90BqPQG.js": {
+    "file": "exolix-static/assets/mock-D90BqPQG.js",
     "imports": [
       "src/entrypoints/main.ts"
     ],
@@ -358,59 +358,59 @@
     "file": "exolix-static/assets/native-Bz5QQgeN.js",
     "isDynamicEntry": true
   },
-  "_ratesSelectors-2mOXeI6N.js": {
-    "file": "exolix-static/assets/ratesSelectors-2mOXeI6N.js",
+  "_ratesSelectors-CrbtfYvr.js": {
+    "file": "exolix-static/assets/ratesSelectors-CrbtfYvr.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_exchangeSelectors-CI7Hx-bH.js",
+      "_exchangeSelectors-DP50MkAx.js",
       "_index-dIKOytT1.js"
     ]
   },
-  "_ratesSlice-DrOw5cmT.js": {
-    "file": "exolix-static/assets/ratesSlice-DrOw5cmT.js",
+  "_ratesSlice-DmdeARD_.js": {
+    "file": "exolix-static/assets/ratesSlice-DmdeARD_.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_transactionReceipt-CJBsAlC6.js": {
-    "file": "exolix-static/assets/transactionReceipt-CJBsAlC6.js",
+  "_transactionReceipt-C8NQNoJZ.js": {
+    "file": "exolix-static/assets/transactionReceipt-C8NQNoJZ.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_transactionSelectors-R5EINRY4.js": {
-    "file": "exolix-static/assets/transactionSelectors-R5EINRY4.js",
+  "_transactionSelectors-Bz099tFA.js": {
+    "file": "exolix-static/assets/transactionSelectors-Bz099tFA.js",
     "imports": [
       "_index-dIKOytT1.js",
       "src/entrypoints/main.ts"
     ]
   },
-  "_transactionSlice-BP-eO20O.js": {
-    "file": "exolix-static/assets/transactionSlice-BP-eO20O.js",
+  "_transactionSlice-BLjUsgVM.js": {
+    "file": "exolix-static/assets/transactionSlice-BLjUsgVM.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
-  "_trustpilot-DZhaPuDo.js": {
-    "file": "exolix-static/assets/trustpilot-DZhaPuDo.js",
+  "_trustpilot-DnM8-4bM.js": {
+    "file": "exolix-static/assets/trustpilot-DnM8-4bM.js",
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js"
+      "_App-DCKfOddi.js",
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js"
     ]
   },
-  "_tslib.es6-D9yd9Yl3.js": {
-    "file": "exolix-static/assets/tslib.es6-D9yd9Yl3.js"
-  },
-  "_tslib.es6-DhJCCvzd.js": {
-    "file": "exolix-static/assets/tslib.es6-DhJCCvzd.js",
+  "_tslib.es6-CSEIE9UU.js": {
+    "file": "exolix-static/assets/tslib.es6-CSEIE9UU.js",
     "imports": [
       "_tslib.es6-D9yd9Yl3.js",
       "src/entrypoints/main.ts"
     ]
   },
-  "_txToCookies-BcSdDGj0.js": {
-    "file": "exolix-static/assets/txToCookies-BcSdDGj0.js",
+  "_tslib.es6-D9yd9Yl3.js": {
+    "file": "exolix-static/assets/tslib.es6-D9yd9Yl3.js"
+  },
+  "_txToCookies-CjVnD0W0.js": {
+    "file": "exolix-static/assets/txToCookies-CjVnD0W0.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
@@ -418,132 +418,132 @@
   "_unlocked-CVJBCS6B.js": {
     "file": "exolix-static/assets/unlocked-CVJBCS6B.js"
   },
-  "_useIsomorphicLayoutEffect-BW4gqOon.js": {
-    "file": "exolix-static/assets/useIsomorphicLayoutEffect-BW4gqOon.js",
+  "_useIsomorphicLayoutEffect-B0TE0m4X.js": {
+    "file": "exolix-static/assets/useIsomorphicLayoutEffect-B0TE0m4X.js",
     "imports": [
       "src/entrypoints/main.ts"
     ]
   },
   "node_modules/@wagmi/connectors/dist/esm/exports/index.js": {
-    "file": "exolix-static/assets/index-QGzNNE9o.js",
+    "file": "exolix-static/assets/index-DqbH6BWH.js",
     "src": "node_modules/@wagmi/connectors/dist/esm/exports/index.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_mock-BMLqFoOj.js"
+      "_mock-D90BqPQG.js"
     ],
     "dynamicImports": [
-      "_index-BKbrE8P2.js",
-      "_index-uW9Oh9D2.js",
-      "_index-DFi93KNB.js",
+      "_index-C8HvHA-z.js",
+      "_index-DynJ5EDi.js",
+      "_index-Bw50erat.js",
       "node_modules/@walletconnect/ethereum-provider/dist/index.es.js"
     ]
   },
   "node_modules/@wagmi/core/dist/esm/exports/chains.js": {
-    "file": "exolix-static/assets/chains-D-6Zjx6O.js",
+    "file": "exolix-static/assets/chains-BHyNaayj.js",
     "src": "node_modules/@wagmi/core/dist/esm/exports/chains.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_transactionReceipt-CJBsAlC6.js"
+      "_transactionReceipt-C8NQNoJZ.js"
     ]
   },
   "node_modules/@walletconnect/ethereum-provider/dist/index.es.js": {
-    "file": "exolix-static/assets/index.es-Bh7iuItO.js",
+    "file": "exolix-static/assets/index.es-CzecgM-O.js",
     "src": "node_modules/@walletconnect/ethereum-provider/dist/index.es.js",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_events-8HD6CH6k.js",
+      "_events-Jbtv7R_f.js",
       "__commonjs-dynamic-modules-TDtrdbi3.js",
-      "____vite-browser-external_commonjs-proxy-BGNYtt13.js"
+      "____vite-browser-external_commonjs-proxy-MvlAxKD_.js"
     ],
     "dynamicImports": [
-      "_index-YlVsu8n8.js"
+      "_index-ChwItJmo.js"
     ]
   },
   "node_modules/@walletconnect/modal-ui/dist/index.js": {
-    "file": "exolix-static/assets/index-DUSBHbXi.js",
+    "file": "exolix-static/assets/index-CHTDjxQq.js",
     "src": "node_modules/@walletconnect/modal-ui/dist/index.js",
     "isDynamicEntry": true,
     "imports": [
-      "_index-YlVsu8n8.js",
+      "_index-ChwItJmo.js",
       "src/entrypoints/main.ts"
     ]
   },
   "node_modules/viem/_esm/utils/ccip.js": {
-    "file": "exolix-static/assets/ccip-BparoPgI.js",
+    "file": "exolix-static/assets/ccip-C4KAqcQZ.js",
     "src": "node_modules/viem/_esm/utils/ccip.js",
     "isDynamicEntry": true,
     "imports": [
-      "_index-3aoJcirc.js",
-      "_mock-BMLqFoOj.js",
+      "_index-BahxWbKI.js",
+      "_mock-D90BqPQG.js",
       "src/entrypoints/main.ts",
-      "_transactionReceipt-CJBsAlC6.js",
-      "_index-DyoKd2T1.js"
+      "_transactionReceipt-C8NQNoJZ.js",
+      "_index-BGP_I33A.js"
     ]
   },
   "src/Exchanger/CexDexService/CexDexService.tsx": {
-    "file": "exolix-static/assets/CexDexService-Dw4aNXpr.js",
+    "file": "exolix-static/assets/CexDexService-kETof9jW.js",
     "src": "src/Exchanger/CexDexService/CexDexService.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_ServiceList-DVAGP29-.js",
-      "_App-D9naWC8m.js",
+      "_ServiceList-CfW5g8Lj.js",
+      "_App-DCKfOddi.js",
       "_tslib.es6-D9yd9Yl3.js"
     ]
   },
   "src/Exchanger/CexService/CexService.tsx": {
-    "file": "exolix-static/assets/CexService-C40r4Xlk.js",
+    "file": "exolix-static/assets/CexService-CyLBqkFD.js",
     "src": "src/Exchanger/CexService/CexService.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_transactionSelectors-R5EINRY4.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_mixins-i12hrTLx.js",
+      "_App-DCKfOddi.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_mixins-CNu8Cr8X.js",
       "_tslib.es6-D9yd9Yl3.js",
       "_index-dIKOytT1.js"
     ],
     "dynamicImports": [
       "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx",
       "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx",
-      "_Transaction-VikB7T6K.js"
+      "_Transaction-CVTjKSlZ.js"
     ]
   },
   "src/Exchanger/CexService/cexStore/index.ts": {
-    "file": "exolix-static/assets/index-EQeG_Ydv.js",
+    "file": "exolix-static/assets/index-B_uxSxNS.js",
     "src": "src/Exchanger/CexService/cexStore/index.ts",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_ratesSelectors-2mOXeI6N.js",
-      "_coinsSlice-BEHaDeLG.js",
-      "_App-D9naWC8m.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_ratesSelectors-CrbtfYvr.js",
+      "_coinsSlice-DSan2S0Z.js",
+      "_App-DCKfOddi.js",
       "src/telegram/telegramSlice.ts",
-      "_transactionSelectors-R5EINRY4.js",
-      "_ratesSlice-DrOw5cmT.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_ratesSlice-DmdeARD_.js",
       "_index-dIKOytT1.js",
-      "_txToCookies-BcSdDGj0.js",
-      "_transactionSlice-BP-eO20O.js",
+      "_txToCookies-CjVnD0W0.js",
+      "_transactionSlice-BLjUsgVM.js",
       "_tslib.es6-D9yd9Yl3.js"
     ]
   },
   "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx": {
-    "file": "exolix-static/assets/TxSuccessModal-H5un92Cd.js",
+    "file": "exolix-static/assets/TxSuccessModal-Bmcv8w81.js",
     "src": "src/Exchanger/CexService/components/Common/Modals/TxSuccessModal/TxSuccessModal.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_trustpilot-DZhaPuDo.js",
-      "_Modal-C67yop3J.js",
+      "_trustpilot-DnM8-4bM.js",
+      "_Modal-Cx97Zwia.js",
       "_formUiSelectors-Fui5Vn9C.js",
-      "_mixins-i12hrTLx.js",
-      "_App-D9naWC8m.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_mixins-CNu8Cr8X.js",
+      "_App-DCKfOddi.js",
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js",
       "_tslib.es6-D9yd9Yl3.js"
     ],
     "assets": [
@@ -551,19 +551,19 @@
     ]
   },
   "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/TxEmailSubscribe.tsx": {
-    "file": "exolix-static/assets/TxEmailSubscribe-C6GFlrv7.js",
+    "file": "exolix-static/assets/TxEmailSubscribe-CYFT4Vpm.js",
     "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/TxEmailSubscribe.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
       "_index-htOA9nBG.js",
-      "_App-D9naWC8m.js",
-      "_Checkbox-D7eQFyF4.js",
-      "_transactionSelectors-R5EINRY4.js",
-      "_transactionSlice-BP-eO20O.js",
-      "_mixins-i12hrTLx.js",
+      "_App-DCKfOddi.js",
+      "_Checkbox-JZJ3BKZ0.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_transactionSlice-BLjUsgVM.js",
+      "_mixins-CNu8Cr8X.js",
       "_tslib.es6-D9yd9Yl3.js",
-      "_StepsIndicator-BM5c7mMm.js",
+      "_StepsIndicator-DBFPQONH.js",
       "_index-dIKOytT1.js"
     ],
     "assets": [
@@ -595,22 +595,22 @@
     "src": "src/Exchanger/CexService/components/Common/Transaction/TxEmailSubscribe/assets/bg-rtl-img.webp"
   },
   "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx": {
-    "file": "exolix-static/assets/TxStatusInfo-BPUcN9C-.js",
+    "file": "exolix-static/assets/TxStatusInfo-gMt9-_Hg.js",
     "src": "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/TxStatusInfo.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_Transaction-VikB7T6K.js",
-      "_transactionSelectors-R5EINRY4.js",
-      "_mixins-i12hrTLx.js",
+      "_App-DCKfOddi.js",
+      "_Transaction-CVTjKSlZ.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_mixins-CNu8Cr8X.js",
       "_tslib.es6-D9yd9Yl3.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_transactionSlice-BP-eO20O.js",
-      "_StepsIndicator-BM5c7mMm.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_transactionSlice-BLjUsgVM.js",
+      "_StepsIndicator-DBFPQONH.js",
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js",
       "_dropdown-DvVsuBFR.js",
-      "_txToCookies-BcSdDGj0.js",
+      "_txToCookies-CjVnD0W0.js",
       "_unlocked-CVJBCS6B.js",
       "_index-dIKOytT1.js"
     ],
@@ -628,29 +628,29 @@
     "src": "src/Exchanger/CexService/components/Common/Transaction/TxStatusInfo/icons/refund-icon.svg"
   },
   "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx": {
-    "file": "exolix-static/assets/Exchange-HFpfppHw.js",
+    "file": "exolix-static/assets/Exchange-BIjxKPwP.js",
     "src": "src/Exchanger/CexService/components/View/Exchange/Exchange.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_RefreshButton-D1BA3V07.js",
-      "_App-D9naWC8m.js",
-      "_mixins-i12hrTLx.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
-      "_trustpilot-DZhaPuDo.js",
-      "_ratesSelectors-2mOXeI6N.js",
-      "_coinsSlice-BEHaDeLG.js",
+      "_RefreshButton-DL_d0oNf.js",
+      "_App-DCKfOddi.js",
+      "_mixins-CNu8Cr8X.js",
+      "_exchangeSelectors-DP50MkAx.js",
+      "_trustpilot-DnM8-4bM.js",
+      "_ratesSelectors-CrbtfYvr.js",
+      "_coinsSlice-DSan2S0Z.js",
       "_formUiSelectors-Fui5Vn9C.js",
-      "_ratesSlice-DrOw5cmT.js",
-      "_transactionSelectors-R5EINRY4.js",
-      "_transactionSlice-BP-eO20O.js",
-      "_StepsIndicator-BM5c7mMm.js",
+      "_ratesSlice-DmdeARD_.js",
+      "_transactionSelectors-Bz099tFA.js",
+      "_transactionSlice-BLjUsgVM.js",
+      "_StepsIndicator-DBFPQONH.js",
       "_unlocked-CVJBCS6B.js",
       "_index-htOA9nBG.js",
-      "_Checkbox-D7eQFyF4.js",
-      "_exchangeSelectors-BRPm40VR.js",
+      "_Checkbox-JZJ3BKZ0.js",
+      "_exchangeSelectors-C6FOZc8J.js",
       "_tslib.es6-D9yd9Yl3.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js",
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js",
       "_index-dIKOytT1.js"
     ],
     "assets": [
@@ -658,50 +658,50 @@
     ]
   },
   "src/Exchanger/DexService/DexService.tsx": {
-    "file": "exolix-static/assets/DexService-BNNC7h_-.js",
+    "file": "exolix-static/assets/DexService-Cf7c4VHI.js",
     "src": "src/Exchanger/DexService/DexService.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_RefreshButton-D1BA3V07.js",
-      "_App-D9naWC8m.js",
-      "_exchangeSelectors-BRPm40VR.js",
-      "_dexTransaction-C756uHQI.js",
-      "_mixins-i12hrTLx.js",
-      "_trustpilot-DZhaPuDo.js",
-      "_tslib.es6-DhJCCvzd.js",
+      "_RefreshButton-DL_d0oNf.js",
+      "_App-DCKfOddi.js",
+      "_exchangeSelectors-C6FOZc8J.js",
+      "_dexTransaction-EqRj2R_J.js",
+      "_mixins-CNu8Cr8X.js",
+      "_trustpilot-DnM8-4bM.js",
+      "_tslib.es6-CSEIE9UU.js",
       "_tslib.es6-D9yd9Yl3.js",
-      "_StepsIndicator-BM5c7mMm.js",
-      "_Modal-C67yop3J.js",
-      "_Checkbox-D7eQFyF4.js",
+      "_StepsIndicator-DBFPQONH.js",
+      "_Modal-Cx97Zwia.js",
+      "_Checkbox-JZJ3BKZ0.js",
       "_dropdown-DvVsuBFR.js",
-      "_coinsSlice-BEHaDeLG.js",
-      "_exchangeSelectors-CI7Hx-bH.js",
+      "_coinsSlice-DSan2S0Z.js",
+      "_exchangeSelectors-DP50MkAx.js",
       "_index-dIKOytT1.js",
-      "_useIsomorphicLayoutEffect-BW4gqOon.js"
+      "_useIsomorphicLayoutEffect-B0TE0m4X.js"
     ]
   },
   "src/Exchanger/DexService/dexStore/index.ts": {
-    "file": "exolix-static/assets/index-Dm3TDH1S.js",
+    "file": "exolix-static/assets/index-DQJLn8YY.js",
     "src": "src/Exchanger/DexService/dexStore/index.ts",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_App-D9naWC8m.js",
-      "_exchangeSelectors-BRPm40VR.js",
-      "_dexTransaction-C756uHQI.js",
+      "_App-DCKfOddi.js",
+      "_exchangeSelectors-C6FOZc8J.js",
+      "_dexTransaction-EqRj2R_J.js",
       "_tslib.es6-D9yd9Yl3.js",
       "_index-dIKOytT1.js"
     ]
   },
   "src/Exchanger/FiatService/FiatService.tsx": {
-    "file": "exolix-static/assets/FiatService-DH81QMun.js",
+    "file": "exolix-static/assets/FiatService-D8wMEQI0.js",
     "src": "src/Exchanger/FiatService/FiatService.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_ServiceList-DVAGP29-.js",
-      "_App-D9naWC8m.js",
+      "_ServiceList-CfW5g8Lj.js",
+      "_App-DCKfOddi.js",
       "_tslib.es6-D9yd9Yl3.js"
     ]
   },
@@ -722,17 +722,17 @@
     "src": "src/assets/images/success-modal.png"
   },
   "src/entrypoints/main.ts": {
-    "file": "exolix-static/assets/main-Bp11xWcs.js",
+    "file": "exolix-static/assets/main-CDKDnvW7.js",
     "src": "src/entrypoints/main.ts",
     "isEntry": true,
     "dynamicImports": [
       "node_modules/@wagmi/connectors/dist/esm/exports/index.js",
       "node_modules/@wagmi/core/dist/esm/exports/chains.js",
-      "_index-3aoJcirc.js",
+      "_index-BahxWbKI.js",
       "src/partners/xumm/index.ts",
       "src/telegram/telegramSlice.ts",
       "src/telegram/telegramSagas.ts",
-      "_App-D9naWC8m.js"
+      "_App-DCKfOddi.js"
     ]
   },
   "src/fonts/IBM-Plex-Sans/complete/woff/IBMPlexSans-Bold.woff": {
@@ -1248,21 +1248,21 @@
     "src": "src/fonts/IBM-Plex-Sans/split/woff2/IBMPlexSans-ThinItalic-Pi.woff2"
   },
   "src/partners/xumm/index.ts": {
-    "file": "exolix-static/assets/index-CbSyzkZ_.js",
+    "file": "exolix-static/assets/index-i7XzJDk1.js",
     "src": "src/partners/xumm/index.ts",
     "isDynamicEntry": true,
     "imports": [
       "src/entrypoints/main.ts",
-      "_events-8HD6CH6k.js",
+      "_events-Jbtv7R_f.js",
       "_browser-Dc9KYRY-.js",
       "__commonjs-dynamic-modules-TDtrdbi3.js",
-      "____vite-browser-external_commonjs-proxy-BGNYtt13.js",
-      "_ratesSlice-DrOw5cmT.js",
-      "_transactionSlice-BP-eO20O.js"
+      "____vite-browser-external_commonjs-proxy-MvlAxKD_.js",
+      "_ratesSlice-DmdeARD_.js",
+      "_transactionSlice-BLjUsgVM.js"
     ]
   },
   "src/telegram/telegramSagas.ts": {
-    "file": "exolix-static/assets/telegramSagas-Bi71qmuK.js",
+    "file": "exolix-static/assets/telegramSagas-Cx5z3kDF.js",
     "src": "src/telegram/telegramSagas.ts",
     "isDynamicEntry": true,
     "imports": [
@@ -1271,7 +1271,7 @@
     ]
   },
   "src/telegram/telegramSlice.ts": {
-    "file": "exolix-static/assets/telegramSlice-DjgmDJJo.js",
+    "file": "exolix-static/assets/telegramSlice-BqfObn-v.js",
     "src": "src/telegram/telegramSlice.ts",
     "isDynamicEntry": true,
     "imports": [
