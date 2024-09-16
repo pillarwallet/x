@@ -47,7 +47,11 @@ const App = () => {
         <!-- HEAD_SCRIPT -->
       </head>
       <body>
-      
+      <style>
+      .llwSSe {
+          width: 1274px;
+      }
+      </style>
         <div id="root" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
         </div>
         <!-- BODY_SCRIPT -->
