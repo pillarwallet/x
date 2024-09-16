@@ -1,1 +1,0 @@
-import{aK as i,aN as r}from"./main-Bp11xWcs.js";import{S as e}from"./ServiceList-DVAGP29-.js";import"./App-D9naWC8m.js";import"./tslib.es6-D9yd9Yl3.js";function c(){return i.jsxs("div",{children:[i.jsx("h1",{children:"FiatService"}),i.jsx(e,{exclude:[r.FIAT]})]})}export{c as default};
