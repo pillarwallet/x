@@ -50,11 +50,6 @@ const App = () => {
       
         <div id="root" style="display: flex; align-items: center; justify-content: center; height: 100vh;">
         </div>
-        <style>
-      .llwSSe {
-          width: 100%;
-      }
-    </style>
         <!-- BODY_SCRIPT -->
       </body>
     </html>
