@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DisplayCollectionImage /> renders correctly and matches snapshot with image 1`] = `
+<img
+  alt="nft-image"
+  className="test-class undefined"
+  data-testid="display-collection-image"
+  id="pillarx-feed-display-collection-image"
+  onClick={[Function]}
+  src="test-image.png"
+/>
+`;
+
+exports[`<DisplayCollectionImage /> renders correctly and matches snapshot without image 1`] = `
+<div
+  className="overflow-hidden test-class undefined"
+  data-testid="display-collection-image"
+  id="pillarx-feed-display-collection-avatar"
+  onClick={[Function]}
+>
+  <svg
+    className="rounded-md"
+    data-testid="display-collection-avatar"
+    fill="none"
+    role="img"
+    viewBox="0 0 36 36"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      height={36}
+      id=":r0:"
+      maskUnits="userSpaceOnUse"
+      width={36}
+      x={0}
+      y={0}
+    >
+      <rect
+        fill="#FFFFFF"
+        height={36}
+        width={36}
+      />
+    </mask>
+    <g
+      mask="url(#:r0:)"
+    >
+      <rect
+        fill="#146A7C"
+        height={36}
+        width={36}
+      />
+      <rect
+        fill="#C271B4"
+        height={36}
+        rx={6}
+        transform="translate(8 -4) rotate(198 18 18) scale(1)"
+        width={36}
+        x="0"
+        y="0"
+      />
+      <g
+        transform="translate(4 -1) rotate(-8 18 18)"
+      >
+        <path
+          d="M15 19c2 1 4 1 6 0"
+          fill="none"
+          stroke="#000000"
+          strokeLinecap="round"
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={11}
+          y={14}
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={23}
+          y={14}
+        />
+      </g>
+    </g>
+  </svg>
+</div>
+`;

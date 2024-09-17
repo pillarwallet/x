@@ -15,7 +15,11 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
   if (!gridItems) return null;
 
   return (
-    <div className="flex flex-col bg-medium_grey max-w-[394px] mobile:min-w-full tablet:basis-[47%] desktop:basis-1/3 rounded-[10px] p-1 shrink">
+    <div
+      id="pillarx-feed-media-grid-collection"
+      data-testid="media-grid-collection"
+      className="flex flex-col bg-medium_grey max-w-[394px] mobile:min-w-full tablet:basis-[47%] desktop:basis-1/3 rounded-[10px] p-1 shrink"
+    >
       <div className="flex h-[274px] w-full">
         <div className="flex basis-[73%] h-full">
           <DisplayCollectionImage

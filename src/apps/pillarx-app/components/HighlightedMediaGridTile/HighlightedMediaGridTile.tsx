@@ -82,7 +82,10 @@ const HighlightedMediaGridTile = ({
 
   return (
     <div ref={divRef}>
-      <TileContainer className="flex-col p-10 pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]">
+      <TileContainer
+        id="pillarx-feed-highlighted-media-grid-tile"
+        className="flex-col p-10 pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+      >
         <Body className="text-purple_light mb-2.5">{meta?.display?.title}</Body>
         <div className="flex gap-8 tablet:flex-wrap mobile:flex-col justify-between">
           {dataMediaGrid.grids
