@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DisplayCollectionImage /> renders correctly and matches snapshot with image 1`] = `
+<img
+  alt="nft-image"
+  className="test-class undefined"
+  data-testid="display-collection-image"
+  id="pillarx-feed-display-collection-image"
+  onClick={[Function]}
+  src="test-image.png"
+/>
+`;
+
+exports[`<DisplayCollectionImage /> renders correctly and matches snapshot without image 1`] = `
+<div
+  className="overflow-hidden test-class undefined"
+  data-testid="display-collection-image"
+  id="pillarx-feed-display-collection-avatar"
+  onClick={[Function]}
+>
+  <svg
+    className="rounded-md"
+    data-testid="display-collection-avatar"
+    fill="none"
+    role="img"
+    viewBox="0 0 90 90"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      height={90}
+      id=":r0:"
+      maskUnits="userSpaceOnUse"
+      width={90}
+      x={0}
+      y={0}
+    >
+      <rect
+        fill="#FFFFFF"
+        height={90}
+        width={90}
+      />
+    </mask>
+    <g
+      mask="url(#:r0:)"
+    >
+      <path
+        d="M0 0h90v45H0z"
+        fill="#C20D90"
+      />
+      <path
+        d="M0 45h90v45H0z"
+        fill="#92A1C6"
+      />
+      <path
+        d="M83 45a38 38 0 00-76 0h76z"
+        fill="#92A1C6"
+      />
+      <path
+        d="M83 45a38 38 0 01-76 0h76z"
+        fill="#146A7C"
+      />
+      <path
+        d="M77 45a32 32 0 10-64 0h64z"
+        fill="#146A7C"
+      />
+      <path
+        d="M77 45a32 32 0 11-64 0h64z"
+        fill="#F0AB3D"
+      />
+      <path
+        d="M71 45a26 26 0 00-52 0h52z"
+        fill="#F0AB3D"
+      />
+      <path
+        d="M71 45a26 26 0 01-52 0h52z"
+        fill="#C20D90"
+      />
+      <circle
+        cx={45}
+        cy={45}
+        fill="#C271B4"
+        r={23}
+      />
+    </g>
+  </svg>
+</div>
+`;

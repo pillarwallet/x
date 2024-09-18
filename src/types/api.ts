@@ -4,6 +4,7 @@ export enum ApiLayout {
   GENERIC_BANNER = 'GENERIC_BANNER',
   EDITORIAL = 'EDITORIAL',
   AD = 'AD',
+  MEDIA_GRID_HIGHLIGHTED = 'MEDIA_GRID_HIGHLIGHTED',
 }
 
 export type Asset = {
@@ -101,9 +102,9 @@ export type Advertisement = {
 
 export type Projection = {
   meta: {
-    display?: GenericBannerDisplay | EditorialDisplay;
+    display?: GenericBannerDisplay | EditorialDisplay | TileTitle;
   };
-  data?: TokenData[] | Advertisement;
+  data?: TokenData[] | Advertisement | MediaGridData;
   layout: ApiLayout;
   id: string;
 };
@@ -270,4 +271,49 @@ export type BlockchainData = {
 
 export type BlockchainList = {
   data: BlockchainData[];
+};
+
+export type TileTitle = {
+  title: string;
+};
+
+export type MediaGridData = {
+  grids: MediaGridCollectionItem[];
+};
+
+export type MediaGridCollectionItem = {
+  collection?: string;
+  name?: string;
+  description?: string;
+  image_url?: string;
+  banner_image_url?: string;
+  owner?: string;
+  safelist_status?: string;
+  category?: string;
+  is_disabled?: boolean;
+  is_nsfw?: boolean;
+  trait_offers_enabled?: boolean;
+  collection_offers_enabled?: boolean;
+  opensea_url?: string;
+  project_url?: string;
+  wiki_url?: string;
+  discord_url?: string;
+  telegram_url?: string;
+  twitter_username?: string;
+  instagram_username?: string;
+  contracts?: MediaGridContract[];
+  items?: MediaGridItem[];
+};
+
+export type MediaGridItem = {
+  collection?: string;
+  description?: string;
+  imageUrl?: string;
+  name?: string;
+  url?: string;
+};
+
+export type MediaGridContract = {
+  address: string;
+  chain: string;
 };
