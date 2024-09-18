@@ -163,6 +163,7 @@ const ExchangeAction = () => {
           )}
           <div className="flex gap-1 items-center">
             <TokenLogo
+              tokenName={receiveToken?.name}
               tokenLogo={receiveToken?.icon}
               showLogo={Boolean(receiveToken)}
             />

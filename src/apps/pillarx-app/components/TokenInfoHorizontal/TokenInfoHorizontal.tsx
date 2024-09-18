@@ -32,7 +32,7 @@ const TokenInfoHorizontal = ({
         />
       ) : (
         <div className="w-[70px] h-[70px] object-fill rounded-full mb-3.5 overflow-hidden">
-          <RandomAvatar />
+          <RandomAvatar name={tokenName || ''} />
         </div>
       )}
       {tokenName && <Body className="text-center">{tokenName}</Body>}

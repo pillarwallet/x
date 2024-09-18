@@ -42,7 +42,7 @@ const HorizontalToken = ({
           />
         ) : (
           <div className="w-[50px] h-[50px] object-fill rounded mr-3.5 overflow-hidden">
-            <RandomAvatar />
+            <RandomAvatar name={tokenName || ''} />
           </div>
         )}
         <div className="flex flex-col">

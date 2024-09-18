@@ -2,6 +2,7 @@
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
 type TokenLogoProps = {
+  tokenName?: string;
   tokenLogo?: string;
   tokenChainLogo?: string;
   isBigger?: boolean;
@@ -9,6 +10,7 @@ type TokenLogoProps = {
 };
 
 const TokenLogo = ({
+  tokenName,
   tokenLogo,
   tokenChainLogo,
   isBigger,
@@ -28,7 +30,7 @@ const TokenLogo = ({
         <div
           className={`${isBigger ? 'w-[30px] h-[30px]' : 'w-5 h-5'} object-fill rounded-full grayscale overflow-hidden`}
         >
-          <RandomAvatar />
+          <RandomAvatar name={tokenName || ''} />
         </div>
       )}
 

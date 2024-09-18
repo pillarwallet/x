@@ -38,7 +38,7 @@ const TokenResultCard = ({
           />
         ) : (
           <div className="w-[30px] h-[30px] object-fill rounded-full mr-2 overflow-hidden">
-            <RandomAvatar />
+            <RandomAvatar name={tokenName || ''} />
           </div>
         )}
         <div className="flex flex-col mr-2">

@@ -33,7 +33,7 @@ const TokenCard = ({
         />
       ) : (
         <div className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full overflow-hidden">
-          <RandomAvatar />
+          <RandomAvatar name={tokenName || ''} />
         </div>
       )}
       {tokenLogo ? (
@@ -45,7 +45,7 @@ const TokenCard = ({
         />
       ) : (
         <div className="w-[40px] h-[40px] object-fill rounded-full overflow-hidden">
-          <RandomAvatar />
+          <RandomAvatar name={`${tokenName}-chain` || ''} />
         </div>
       )}
       <Body className="text-base capitalize w-full truncate text-center">

@@ -1,3 +1,4 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useTranslation } from 'react-i18next';
 
 // utils
@@ -27,6 +28,7 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   const [t] = useTranslation();
+  const accountAddress = useWalletAddress();
   const { data: dataPortlioOverview } = data || {};
   const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
   const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } =
@@ -81,7 +83,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
       className="p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
     >
       <div className="flex flex-col justify-between">
-        <WalletAddressOverview address={dataWallet?.wallet ?? ''} />
+        <WalletAddressOverview address={accountAddress ?? ''} />
         <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
           <Body className="text-purple_light mb-2">{t`title.totalBalance`}</Body>
           <div className="flex gap-4 items-end">

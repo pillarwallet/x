@@ -2,12 +2,14 @@
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
 type DisplayCollectionImageProps = {
+  name: string;
   image?: string;
   className: string;
   url?: string;
 };
 
 const DisplayCollectionImage = ({
+  name,
   image,
   className,
   url,
@@ -26,7 +28,7 @@ const DisplayCollectionImage = ({
         className={`overflow-hidden ${className} ${url && 'cursor-pointer'}`}
         onClick={handleClick}
       >
-        <RandomAvatar />
+        <RandomAvatar isRandomVariant name={name} />
       </div>
     );
   }

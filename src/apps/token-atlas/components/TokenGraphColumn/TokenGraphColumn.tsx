@@ -143,7 +143,7 @@ const TokenGraphColumn = ({
                 />
               ) : (
                 <div className="w-[30px] h-[30px] object-fill rounded-full overflow-hidden">
-                  <RandomAvatar />
+                  <RandomAvatar name={tokenDataInfo?.name || ''} />
                 </div>
               )}
               <Body className="font-medium text-[27px] mobile:text-[25px]">

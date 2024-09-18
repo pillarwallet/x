@@ -27,6 +27,7 @@ const TokenListItem = ({
     >
       <div className="flex items-center">
         <TokenLogo
+          tokenName={tokenName}
           tokenLogo={tokenLogo}
           isBigger
           showLogo={Boolean(tokenName)}

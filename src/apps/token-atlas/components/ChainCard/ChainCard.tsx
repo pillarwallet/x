@@ -54,7 +54,7 @@ const ChainCard = ({ chainName }: ChainCardProps) => {
           />
         ) : (
           <div className="w-[24px] h-[24px] object-fill rounded-full mr-2 overflow-hidden">
-            <RandomAvatar />
+            <RandomAvatar name={chainName} />
           </div>
         )}
         <Body className="truncate capitalize">{chainName}</Body>

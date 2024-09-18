@@ -53,7 +53,7 @@ const TokensHorizontalList = ({ logos }: TokensHorizontalListProps) => {
             key={index}
             className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px] overflow-hidden"
           >
-            <RandomAvatar />
+            <RandomAvatar name={String(index)} />
           </div>
         ) : (
           <img

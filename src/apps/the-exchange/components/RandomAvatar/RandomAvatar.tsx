@@ -1,7 +1,17 @@
 import Avatar from 'boring-avatars';
 import { AvatarVariantType } from '../../../../types';
 
-const RandomAvatar = () => {
+type RandomAvatarProps = {
+  name: string;
+  variant?: string;
+  isRandomVariant?: boolean;
+};
+
+const RandomAvatar = ({
+  name,
+  variant,
+  isRandomVariant,
+}: RandomAvatarProps) => {
   const variants: AvatarVariantType[] = [
     'marble',
     'beam',
@@ -14,10 +24,20 @@ const RandomAvatar = () => {
   const randomVariant: AvatarVariantType =
     variants[Math.floor(Math.random() * variants.length)];
 
+  const avatarVariant = () => {
+    if (isRandomVariant && !variant) {
+      return randomVariant;
+    }
+    if (variant) {
+      return variant as AvatarVariantType;
+    }
+    return 'marble';
+  };
+
   return (
     <Avatar
-      name="Random Avatar"
-      variant={randomVariant}
+      name={name}
+      variant={avatarVariant()}
       className="rounded-md"
       square
       data-testid="random-avatar"

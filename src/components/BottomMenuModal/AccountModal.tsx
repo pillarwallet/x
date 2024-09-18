@@ -18,7 +18,6 @@ import {
   Gallery as IconGallery,
   Hierarchy as IconHierarchy,
   Logout as LogoutIcon,
-  User as UserIcon,
 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -28,6 +27,7 @@ import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
 
 // components
+import RandomAvatar from '../../apps/pillarx-app/components/RandomAvatar/RandomAvatar';
 import FormTabSelect from '../Form/FormTabSelect';
 import ImageWithFallback from '../ImageWithFallback';
 import SkeletonLoader from '../SkeletonLoader';
@@ -194,7 +194,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       <TopBar>
         <AccountSection id="address-account-modal">
           <TopBarIcon>
-            <UserIcon size={20} />
+            <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full overflow-hidden">
+              <RandomAvatar name={accountAddress} />
+            </div>
           </TopBarIcon>
           {truncateAddress(accountAddress, 14)}
           <CopyToClipboard text={accountAddress} onCopy={onCopyAddressClick}>

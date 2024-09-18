@@ -6,7 +6,7 @@ import { MdCheck } from 'react-icons/md';
 
 // components
 import CopyIcon from '../../images/copy-icon.svg';
-import ProfileIcon from '../../images/profile-icon.svg';
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import Body from '../Typography/Body';
 
 type WalletAddressOverviewProps = {
@@ -30,8 +30,8 @@ const WalletAddressOverview = ({ address }: WalletAddressOverviewProps) => {
 
   return (
     <div className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center">
-      <div className="bg-medium_grey p-2.5 rounded-full w-10 h-10">
-        <img src={ProfileIcon} alt="profile-icon" className="w-full h-full" />
+      <div className="bg-medium_grey rounded-full w-10 h-10 overflow-hidden">
+        <RandomAvatar name={address} />
       </div>
       <Body>
         {address.substring(0, 6)}...{address.substring(address.length - 5)}
