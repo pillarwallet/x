@@ -23,7 +23,7 @@ exports[`<HighlightedMediaGridTile /> renders correctly and matches snapshot 1`]
           className="flex h-[274px] w-full"
         >
           <div
-            className="flex basis-[73%] h-full"
+            className="flex h-full w-full"
           >
             <img
               alt="nft-image"
@@ -34,9 +34,6 @@ exports[`<HighlightedMediaGridTile /> renders correctly and matches snapshot 1`]
               src="item1.png"
             />
           </div>
-          <div
-            className="flex flex-col basis-[27%] h-full ml-1"
-          />
         </div>
         <div
           className="flex mt-4 pb-3 px-2.5 items-center"

@@ -10,7 +10,7 @@ exports[`<MediaGridCollection /> renders correctly and matches snapshot 1`] = `
     className="flex h-[274px] w-full"
   >
     <div
-      className="flex basis-[73%] h-full"
+      className="flex h-full basis-[73%]"
     >
       <img
         alt="nft-image"
