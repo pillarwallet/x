@@ -1,7 +1,5 @@
-// images
-import defaultLogo from '../../images/logo-unknown.png';
-
 // components
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import TokensPercentage from '../TokensPercentage/TokensPercentage';
 import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
@@ -36,11 +34,17 @@ const HorizontalToken = ({
         <BodySmall className="text-purple_light mr-[18px]">
           0{tokenIndex}
         </BodySmall>
-        <img
-          src={tokenLogo ?? defaultLogo}
-          alt="token-logo"
-          className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-        />
+        {tokenLogo ? (
+          <img
+            src={tokenLogo}
+            alt="token-logo"
+            className="w-[50px] h-[50px] object-fill rounded mr-3.5"
+          />
+        ) : (
+          <div className="w-[50px] h-[50px] object-fill rounded mr-3.5 overflow-hidden">
+            <RandomAvatar />
+          </div>
+        )}
         <div className="flex flex-col">
           {tokenSymbol && <Body>{tokenSymbol}</Body>}
           {tokenName && (

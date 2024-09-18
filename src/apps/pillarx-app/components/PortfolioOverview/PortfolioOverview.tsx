@@ -8,7 +8,6 @@ import { WalletData, WalletPortfolioData } from '../../../../types/api';
 
 // images
 import BlendIcon from '../../images/blend-icon.svg';
-import DefaultLogo from '../../images/logo-unknown.png';
 import RoutingIcon from '../../images/routing-icon.svg';
 
 // components
@@ -40,7 +39,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
 
   const allBlockchainsLogos =
     dataWallet?.assets
-      ?.map((asset) => (asset.asset.logo ? asset.asset.logo : DefaultLogo))
+      ?.map((asset) => (asset.asset.logo ? asset.asset.logo : 'random-avatar'))
       .flat() || [];
 
   const numberOfBlockchains =

@@ -38,7 +38,7 @@ describe('<TokenCard />', () => {
     expect(screen.getByText('TTK')).toBeInTheDocument();
   });
 
-  it('renders without tokenLogo and blockchainLogo', () => {
+  it('renders with default tokenLogo and default blockchainLogo (random avatar)', () => {
     const propsWithoutLogos = {
       tokenName: undefined,
       tokenSymbol: undefined,
@@ -55,6 +55,7 @@ describe('<TokenCard />', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Test Token')).not.toBeInTheDocument();
     expect(screen.queryByText('TTK')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('random-avatar')).toHaveLength(2);
   });
 
   it('calls onClick when clicked', () => {

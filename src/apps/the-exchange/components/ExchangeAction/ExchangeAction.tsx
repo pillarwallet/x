@@ -162,7 +162,10 @@ const ExchangeAction = () => {
             </NumberText>
           )}
           <div className="flex gap-1 items-center">
-            <TokenLogo tokenLogo={receiveToken?.icon} />
+            <TokenLogo
+              tokenLogo={receiveToken?.icon}
+              showLogo={Boolean(receiveToken)}
+            />
             <Body className="font-normal">{receiveToken?.symbol ?? ''}</Body>
           </div>
         </div>

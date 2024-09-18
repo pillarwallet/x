@@ -1,12 +1,5 @@
-import Avatar from 'boring-avatars';
-
-type AvatarVariantType =
-  | 'marble'
-  | 'beam'
-  | 'pixel'
-  | 'sunset'
-  | 'ring'
-  | 'bauhaus';
+// components
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
 type DisplayCollectionImageProps = {
   image?: string;
@@ -26,18 +19,6 @@ const DisplayCollectionImage = ({
   };
 
   if (!image) {
-    const variants: AvatarVariantType[] = [
-      'marble',
-      'beam',
-      'pixel',
-      'sunset',
-      'ring',
-      'bauhaus',
-    ];
-
-    const randomVariant: AvatarVariantType =
-      variants[Math.floor(Math.random() * variants.length)];
-
     return (
       <div
         id="pillarx-feed-display-collection-avatar"
@@ -45,13 +26,7 @@ const DisplayCollectionImage = ({
         className={`overflow-hidden ${className} ${url && 'cursor-pointer'}`}
         onClick={handleClick}
       >
-        <Avatar
-          name="Random Avatar"
-          variant={randomVariant}
-          className="rounded-md"
-          square
-          data-testid="display-collection-avatar"
-        />
+        <RandomAvatar />
       </div>
     );
   }

@@ -1,5 +1,8 @@
-// images
+// utils
 import { convertChainIdtoName } from '../../utils/converters';
+
+// components
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
 // components
 import Body from '../Typography/Body';
@@ -27,12 +30,16 @@ const TokenResultCard = ({
       data-testid="token-result-card"
     >
       <div className="flex items-center">
-        {tokenLogo && (
+        {tokenLogo ? (
           <img
             src={tokenLogo}
             alt="token-logo"
             className="w-[30px] h-[30px] object-fill rounded-full mr-2"
           />
+        ) : (
+          <div className="w-[30px] h-[30px] object-fill rounded-full mr-2 overflow-hidden">
+            <RandomAvatar />
+          </div>
         )}
         <div className="flex flex-col mr-2">
           {tokenName && (

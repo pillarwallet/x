@@ -10,6 +10,7 @@ import { setBlockchainList } from '../../reducer/tokenAtlasSlice';
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 
 // components
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import Body from '../Typography/Body';
 
 type ChainCardProps = {
@@ -45,12 +46,16 @@ const ChainCard = ({ chainName }: ChainCardProps) => {
           explorerLink && 'cursor-pointer'
         }`}
       >
-        {blockchainLogo && (
+        {blockchainLogo ? (
           <img
             src={blockchainLogo}
             alt="chain-logo"
             className="w-[24px] h-[24px] object-fill rounded-full mr-2"
           />
+        ) : (
+          <div className="w-[24px] h-[24px] object-fill rounded-full mr-2 overflow-hidden">
+            <RandomAvatar />
+          </div>
         )}
         <Body className="truncate capitalize">{chainName}</Body>
       </div>

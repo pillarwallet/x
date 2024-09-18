@@ -41,7 +41,7 @@ const SelectToken = ({
             : 'Select Token'}
         </Body>
       </div>
-      {tokenLogo && <TokenLogo tokenLogo={tokenLogo} />}
+      <TokenLogo tokenLogo={tokenLogo} showLogo={Boolean(tokenName)} />
     </div>
   );
 };

@@ -57,7 +57,7 @@ describe('<DisplayCollectionImage />', () => {
       />
     );
 
-    const avatar = screen.getByTestId('display-collection-avatar');
+    const avatar = screen.getByTestId('random-avatar');
     expect(avatar).toBeInTheDocument();
 
     const div = screen.getByTestId('display-collection-image');

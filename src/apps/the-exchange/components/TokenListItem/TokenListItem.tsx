@@ -26,7 +26,11 @@ const TokenListItem = ({
       data-testid="token-list-item"
     >
       <div className="flex items-center">
-        <TokenLogo tokenLogo={tokenLogo} isBigger />
+        <TokenLogo
+          tokenLogo={tokenLogo}
+          isBigger
+          showLogo={Boolean(tokenName)}
+        />
         <div className="flex flex-col ml-[10px]">
           <Body className="group-hover:opacity-60">{tokenName}</Body>
           <BodySmall className="group-hover:opacity-60">
