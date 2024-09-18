@@ -23,7 +23,7 @@ const HighlightedMediaGridTile = ({
   const { data: dataMedia, meta } = data || {};
   const dataMediaGrid = dataMedia as MediaGridData | undefined;
 
-  // This mesure the window width
+  // This measures the window width
   const windowWidth = window.innerWidth;
 
   useEffect(() => {

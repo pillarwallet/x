@@ -46,7 +46,7 @@ const DisplayCollectionImage = ({
         onClick={handleClick}
       >
         <Avatar
-          name="Maria Mitchell"
+          name="Random Avatar"
           variant={randomVariant}
           className="rounded-md"
           square
