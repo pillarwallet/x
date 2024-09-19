@@ -44,14 +44,14 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
       mask="url(#:r0:)"
     >
       <rect
-        fill="#C20D90"
+        fill="#F0AB3D"
         height={80}
         width={80}
       />
       <rect
-        fill="#92A1C6"
-        height={80}
-        transform="translate(-2 -2) rotate(108 40 40)"
+        fill="#C271B4"
+        height={10}
+        transform="translate(6 -6) rotate(254 40 40)"
         width={80}
         x={10}
         y={30}
@@ -59,14 +59,14 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
       <circle
         cx={40}
         cy={40}
-        fill="#146A7C"
+        fill="#C20D90"
         r={16}
-        transform="translate(-9 -9)"
+        transform="translate(-6 6)"
       />
       <line
-        stroke="#F0AB3D"
+        stroke="#92A1C6"
         strokeWidth={2}
-        transform="translate(16 -16) rotate(216 40 40)"
+        transform="translate(-8 -8) rotate(148 40 40)"
         x1={0}
         x2={80}
         y1={40}
