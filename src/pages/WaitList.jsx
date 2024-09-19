@@ -62,7 +62,10 @@ const Waitlist = () => {
         <div className="container">
           <div className="home_signup__wrapper">
             <div className="home_signup__content">
-              <h1>Be Among the First to Test PillarX</h1>
+              <h1>
+                Test PillarX, Earn PX points and Win from the $1,000 prize pool!
+                <span>*</span>
+              </h1>
               <p>
                 Join our exclusive testing campaign and lead the Web3
                 revolution.
@@ -108,6 +111,25 @@ const Waitlist = () => {
             <div className="home_build__logo">
               <img src="/landing-images/home-logo-px.svg" alt="home-logo" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="home_signup_tnc">
+        <div className="container">
+          <div className="home_signup_tnc__content">
+            <p>
+              *A marketing campaign with a $1,000 prize pool will be hosted on{' '}
+              <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
+                PillarX’s X account
+              </a>
+              . Participants can enter weekly raffles for a chance to win a
+              share of the prize pool. Full details will be provided on{' '}
+              <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
+                X
+              </a>
+              . Stay tuned for updates!
+            </p>
           </div>
         </div>
       </section>

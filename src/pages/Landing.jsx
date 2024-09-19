@@ -6,7 +6,7 @@ import '../styles/landing/tailwind.css';
 import { Form } from '../components/LandingPage';
 import { Footer } from '../components/LandingPage/Footer';
 import { Header } from '../components/LandingPage/Header';
-import { Popup } from '../components/LandingPage/Popup';
+// import { Popup } from '../components/LandingPage/Popup';
 
 export default function LandingPage() {
   return (
@@ -19,29 +19,18 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="home_hero">
-        <div className="container container--fluid">
+        <div className="container">
           <div className="home_hero__wrapper">
             <div className="home_hero__content">
-              <h1>Introducing PillarX</h1>
-              <p>Advancing the way you connect with Web3</p>
-              <img src="/landing-images/home-hero.png" alt="home-hero-banner" />
+              <img src="/landing-images/home-px.png" alt="PillarX logo" />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="home_intro">
-        <div className="container">
-          <div className="home_intro__wrapper">
-            <div className="home_intro__content">
-              <h2>What is PX?</h2>
+            <div className="home_hero__signup">
               <p>
-                PillarX is the next evolution in the Pillar Project story, built
-                on the pillars of controlling your assets and data, PillarX will
-                provide an unparalleled experience in interacting with the Web3
-                ecosystem.
+                Earn PX points and get a chance to share the $1,000 prize pool!
               </p>
+              <a href="/waitlist" className="cta">
+                <span>Join the Waitlist!</span>
+              </a>
             </div>
           </div>
         </div>
@@ -135,6 +124,27 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Intro Section */}
+      <section className="home_intro">
+        <div className="container">
+          <div className="home_intro__wrapper">
+            <div className="home_intro__content">
+              <h2>What is PX?</h2>
+              <p>
+                PillarX is the next evolution in the Pillar Project story, built
+                on the pillars of controlling your assets and data, PillarX will
+                provide an unparalleled experience in interacting with the Web3
+                ecosystem.
+              </p>
+              <img
+                src="/landing-images/home-hero.png"
+                alt="PillarX Dashboard"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Signup Section */}
       <section className="home_signup">
         <div className="container">
@@ -206,7 +216,7 @@ export default function LandingPage() {
       <Footer />
 
       {/* Waitlist Popup */}
-      <Popup />
+      {/* <Popup /> */}
     </>
   );
 }

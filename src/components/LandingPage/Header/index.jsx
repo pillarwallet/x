@@ -41,7 +41,7 @@ const Header = () => {
         id="header"
       >
         {/* Header Announcement */}
-        <div className="header__announcement">
+        {/* <div className="header__announcement">
           <div className="header__announcement__wrapper">
             <p>
               🚀 Secure Your Spot in the PillarX Testing Campaign!{' '}
@@ -54,10 +54,10 @@ const Header = () => {
               <span>Join the Waitlist</span>
             </a>
           </div>
-        </div>
+        </div> */}
 
         <div className="container">
-          <Link reloadDocument to="/" className="header__logo">
+          <Link to="/" className="header__logo">
             <img src="/landing-images/pillarXLogo.png" alt="pillar-x-logo" />
           </Link>
 
