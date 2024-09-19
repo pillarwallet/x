@@ -9,6 +9,7 @@ import {
   useWalletAddress,
 } from '@etherspot/transaction-kit';
 import { useLogout } from '@privy-io/react-auth';
+import Avatar from 'boring-avatars';
 import { BigNumber, ethers } from 'ethers';
 import {
   ArrowRight2 as ArrowRightIcon,
@@ -27,7 +28,6 @@ import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
 
 // components
-import RandomAvatar from '../../apps/pillarx-app/components/RandomAvatar/RandomAvatar';
 import FormTabSelect from '../Form/FormTabSelect';
 import ImageWithFallback from '../ImageWithFallback';
 import SkeletonLoader from '../SkeletonLoader';
@@ -194,9 +194,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       <TopBar>
         <AccountSection id="address-account-modal">
           <TopBarIcon>
-            <div className="flex h-[38px] w-[38px] items-center justify-center rounded-full overflow-hidden">
-              <RandomAvatar name={accountAddress} />
-            </div>
+            <Avatar size={38} name={accountAddress} variant="marble" />
           </TopBarIcon>
           {truncateAddress(accountAddress, 14)}
           <CopyToClipboard text={accountAddress} onCopy={onCopyAddressClick}>
