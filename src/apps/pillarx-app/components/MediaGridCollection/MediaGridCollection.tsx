@@ -21,7 +21,9 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
       className="flex flex-col bg-medium_grey max-w-[394px] mobile:min-w-full tablet:basis-[47%] desktop:basis-1/3 rounded-[10px] p-1 shrink"
     >
       <div className="flex h-[274px] w-full">
-        <div className="flex basis-[73%] h-full">
+        <div
+          className={`flex h-full ${gridItems.length > 1 ? 'basis-[73%]' : 'w-full'}`}
+        >
           <DisplayCollectionImage
             name={gridItems[0].name || 'image 1'}
             image={gridItems[0].imageUrl}
@@ -29,32 +31,34 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
             className="object-cover w-full h-full rounded-md"
           />
         </div>
-        <div className="flex flex-col basis-[27%] h-full ml-1">
-          {gridItems[1] && (
-            <DisplayCollectionImage
-              name={gridItems[1].name || 'image 2'}
-              image={gridItems[1].imageUrl}
-              url={gridItems[1].url}
-              className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md"
-            />
-          )}
-          {gridItems[2] && (
-            <DisplayCollectionImage
-              name={gridItems[2].name || 'image 3'}
-              image={gridItems[2].imageUrl}
-              url={gridItems[2].url}
-              className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
-            />
-          )}
-          {gridItems[3] && (
-            <DisplayCollectionImage
-              name={gridItems[3].name || 'image 4'}
-              image={gridItems[3].imageUrl}
-              url={gridItems[3].url}
-              className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
-            />
-          )}
-        </div>
+        {gridItems.length > 1 && (
+          <div className="flex flex-col basis-[27%] h-full ml-1">
+            {gridItems[1] && (
+              <DisplayCollectionImage
+                name={gridItems[1].name || 'image 2'}
+                image={gridItems[1].imageUrl}
+                url={gridItems[1].url}
+                className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md"
+              />
+            )}
+            {gridItems[2] && (
+              <DisplayCollectionImage
+                name={gridItems[2].name || 'image 3'}
+                image={gridItems[2].imageUrl}
+                url={gridItems[2].url}
+                className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
+              />
+            )}
+            {gridItems[3] && (
+              <DisplayCollectionImage
+                name={gridItems[3].name || 'image 4'}
+                image={gridItems[3].imageUrl}
+                url={gridItems[3].url}
+                className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
+              />
+            )}
+          </div>
+        )}
       </div>
       <div className="flex mt-4 pb-3 px-2.5 items-center">
         <DisplayCollectionImage
