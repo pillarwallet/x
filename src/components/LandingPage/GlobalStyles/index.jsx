@@ -602,7 +602,7 @@ const GlobalStyles = createGlobalStyle`
 
   @media only screen and (max-width: 767px) {
     .home_hero__content {
-      transform: translateY(-190%);
+      transform: translateY(-210%);
     }
   }
   
@@ -651,6 +651,7 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
     max-width: 75rem;
     background: rgba(94, 0, 255, 0.2);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     border-radius: calc(var(--border-radius) * 1.6);
     padding: calc(var(--padding) * 3) calc(var(--padding) * 3);
