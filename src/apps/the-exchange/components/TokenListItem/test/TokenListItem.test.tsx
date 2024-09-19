@@ -43,7 +43,7 @@ describe('<TokenListItem />', () => {
     expect(screen.getByAltText('token-logo')).toHaveAttribute('src', tokenLogo);
   });
 
-  it('renders TokenListItem with default logo when no tokenLogo is provided', () => {
+  it('renders TokenListItem with default logo (random avatar) when no tokenLogo is provided', () => {
     render(
       <TokenListItem
         tokenName={tokenName}
@@ -53,11 +53,8 @@ describe('<TokenListItem />', () => {
       />
     );
 
-    const defaultLogo = screen.getByAltText('token-logo');
-    expect(defaultLogo).toHaveAttribute(
-      'src',
-      expect.stringContaining('logo-unknown.png')
-    );
+    const defaultLogo = screen.getByTestId('random-avatar');
+    expect(defaultLogo).toBeInTheDocument();
   });
 
   it('calls onClick when TokenListItem is clicked', () => {

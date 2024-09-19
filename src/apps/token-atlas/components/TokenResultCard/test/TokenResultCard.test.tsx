@@ -88,13 +88,13 @@ describe('<TokenResultCard />', () => {
     expect(logo).toHaveAttribute('src', mockTokenLogo);
   });
 
-  it('does not display token name, symbol, chain, or logo when not provided', () => {
+  it('does not display token name, symbol, chain but display default logo when not provided', () => {
     render(<TokenResultCard onClick={mockOnClick} />);
 
     expect(screen.queryByText(mockTokenName)).not.toBeInTheDocument();
     expect(screen.queryByText(mockTokenSymbol)).not.toBeInTheDocument();
     expect(screen.queryByText('On Ethereum')).not.toBeInTheDocument();
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByTestId('random-avatar')).toBeInTheDocument();
   });
 
   it('handles click events correctly', () => {

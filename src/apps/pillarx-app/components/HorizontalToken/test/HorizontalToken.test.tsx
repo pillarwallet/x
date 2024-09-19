@@ -3,9 +3,6 @@ import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 // components
 import HorizontalToken from '../HorizontalToken';
 
-// images
-import defaultLogo from '../../../images/logo-unknown.png';
-
 // Mock components
 jest.mock('../../Typography/BodySmall', () => 'BodySmall');
 jest.mock('../../Typography/Body', () => 'Body');
@@ -66,7 +63,7 @@ describe('<HorizontalToken />', () => {
     expect(imgProp.props.src).toBe(logo);
   });
 
-  it('renders the default logo when logo is not provided', () => {
+  it('renders the default logo (random avatar) when logo is not provided', () => {
     const tree = renderer
       .create(
         <HorizontalToken
@@ -85,12 +82,12 @@ describe('<HorizontalToken />', () => {
     ) as ReactTestRendererJSON;
 
     const imgProp = divElement.children?.find(
-      (child) => typeof child === 'object' && child.type === 'img'
+      (child) => typeof child === 'object' && child.type === 'div'
     ) as ReactTestRendererJSON;
 
     expect(imgProp).not.toBeNull();
-    expect(imgProp.type).toBe('img');
-    expect(imgProp.props.src).toBe(defaultLogo);
+    expect(imgProp.type).toBe('div');
+    expect(imgProp.props.className).toContain('overflow-hidden');
   });
 
   it('renders the token symbol and name correctly', () => {

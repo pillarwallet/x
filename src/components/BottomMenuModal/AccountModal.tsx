@@ -9,6 +9,7 @@ import {
   useWalletAddress,
 } from '@etherspot/transaction-kit';
 import { useLogout } from '@privy-io/react-auth';
+import Avatar from 'boring-avatars';
 import { BigNumber, ethers } from 'ethers';
 import {
   ArrowRight2 as ArrowRightIcon,
@@ -18,7 +19,6 @@ import {
   Gallery as IconGallery,
   Hierarchy as IconHierarchy,
   Logout as LogoutIcon,
-  User as UserIcon,
 } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -194,7 +194,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       <TopBar>
         <AccountSection id="address-account-modal">
           <TopBarIcon>
-            <UserIcon size={20} />
+            <Avatar size={38} name={accountAddress} variant="marble" />
           </TopBarIcon>
           {truncateAddress(accountAddress, 14)}
           <CopyToClipboard text={accountAddress} onCopy={onCopyAddressClick}>

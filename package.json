@@ -39,6 +39,7 @@
     "@uniswap/smart-order-router": "3.26.1",
     "@uniswap/v3-sdk": "^3.11.0",
     "axios": "^1.6.5",
+    "boring-avatars": "^1.11.2",
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^3.6.0",

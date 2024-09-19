@@ -5,6 +5,7 @@ import { ApiLayout } from '../../../types/api';
 import AdvertTile from '../components/AdvertTile/AdvertTile';
 import EditorialTile from '../components/EditorialTile/EditorialTile';
 import GenericBannerTile from '../components/GenericBannerTile/GenericBannerTile';
+import HighlightedMediaGridTile from '../components/HighlightedMediaGridTile/HighlightedMediaGridTile';
 import TokensHorizontalTile from '../components/TokensHorizontalTile/TokensHorizontalTile';
 import TokensVerticalTile from '../components/TokensVerticalTile/TokensVerticalTile';
 
@@ -18,4 +19,5 @@ export const componentMap: TileComponentType = {
   [ApiLayout.GENERIC_BANNER]: GenericBannerTile,
   [ApiLayout.EDITORIAL]: EditorialTile,
   [ApiLayout.AD]: AdvertTile,
+  [ApiLayout.MEDIA_GRID_HIGHLIGHTED]: HighlightedMediaGridTile,
 };

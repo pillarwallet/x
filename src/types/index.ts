@@ -26,3 +26,11 @@ export interface SendModalDataBase {
   description?: string;
   onSent?: (userOpHashes: string[]) => void;
 }
+
+export type AvatarVariantType =
+  | 'marble'
+  | 'beam'
+  | 'pixel'
+  | 'sunset'
+  | 'ring'
+  | 'bauhaus';
