@@ -1,4 +1,5 @@
 // components
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import Body from '../Typography/Body';
 
 type TokenCardProps = {
@@ -23,21 +24,29 @@ const TokenCard = ({
       onClick={onClick}
       data-testid="token-card"
     >
-      {blockchainLogo && (
+      {blockchainLogo ? (
         <img
           src={blockchainLogo}
           alt="chain-logo"
           className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
           data-testid="token-card-chain-logo"
         />
+      ) : (
+        <div className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full overflow-hidden">
+          <RandomAvatar name={tokenName || ''} />
+        </div>
       )}
-      {tokenLogo && (
+      {tokenLogo ? (
         <img
           src={tokenLogo}
           alt="token-logo"
           className="w-[40px] h-[40px] object-fill rounded-full"
           data-testid="token-card-token-logo"
         />
+      ) : (
+        <div className="w-[40px] h-[40px] object-fill rounded-full overflow-hidden">
+          <RandomAvatar name={`${tokenName}-chain` || ''} />
+        </div>
       )}
       <Body className="text-base capitalize w-full truncate text-center">
         {tokenName}

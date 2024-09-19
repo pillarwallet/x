@@ -5,9 +5,6 @@ import renderer from 'react-test-renderer';
 // components
 import TokenLogo from '../TokenLogo'; // Assuming the path is correct
 
-// images
-import DefaultLogo from '../../../images/logo-unknown.png';
-
 describe('<TokenLogo />', () => {
   const tokenLogo = 'https://example.com/token-logo.png';
   const tokenChainLogo = 'https://example.com/token-chain-logo.png';
@@ -15,38 +12,39 @@ describe('<TokenLogo />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <TokenLogo tokenLogo={tokenLogo} tokenChainLogo={tokenChainLogo} />
+        <TokenLogo
+          tokenLogo={tokenLogo}
+          tokenChainLogo={tokenChainLogo}
+          showLogo
+        />
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('renders the token logo', () => {
-    render(<TokenLogo tokenLogo="token-logo.png" />);
+    render(<TokenLogo tokenLogo="token-logo.png" showLogo />);
     const tokenLogo = screen.getByAltText('token-logo');
+    const defaultLogo = screen.queryByTestId('random-avatar');
+
     expect(tokenLogo).toHaveAttribute('src', 'token-logo.png');
+    expect(defaultLogo).not.toBeInTheDocument();
   });
 
-  it('renders the default token logo when no token logo is provided', () => {
-    render(<TokenLogo />);
-    const tokenLogo = screen.getByAltText('token-logo');
-    expect(tokenLogo).toHaveAttribute('src', DefaultLogo);
+  it('renders the default token logo (random avatar) when no token logo is provided', () => {
+    render(<TokenLogo showLogo />);
+    const tokenLogo = screen.getByTestId('random-avatar');
+    expect(tokenLogo).toBeInTheDocument();
   });
 
   it('renders the token chain logo', () => {
-    render(<TokenLogo tokenChainLogo="token-chain-logo.png" />);
+    render(<TokenLogo tokenChainLogo="token-chain-logo.png" showLogo />);
     const tokenChainLogo = screen.getByAltText('chain-logo');
     expect(tokenChainLogo).toHaveAttribute('src', 'token-chain-logo.png');
   });
 
-  it('renders the default token chain logo when no token chain logo is provided', () => {
-    render(<TokenLogo />);
-    const tokenChainLogo = screen.getByAltText('chain-logo');
-    expect(tokenChainLogo).toHaveAttribute('src', DefaultLogo);
-  });
-
   it('applies the correct classes when isBigger is true', () => {
-    render(<TokenLogo isBigger />);
+    render(<TokenLogo tokenLogo="token-logo.png" isBigger showLogo />);
     const tokenLogo = screen.getByAltText('token-logo');
     const tokenChainLogo = screen.getByAltText('chain-logo');
     expect(tokenLogo).toHaveClass('w-[30px] h-[30px]');
@@ -54,7 +52,7 @@ describe('<TokenLogo />', () => {
   });
 
   it('applies the correct classes when isBigger is false', () => {
-    render(<TokenLogo isBigger={false} />);
+    render(<TokenLogo tokenLogo="token-logo.png" isBigger={false} showLogo />);
     const tokenLogo = screen.getByAltText('token-logo');
     const tokenChainLogo = screen.getByAltText('chain-logo');
     expect(tokenLogo).toHaveClass('w-5 h-5');

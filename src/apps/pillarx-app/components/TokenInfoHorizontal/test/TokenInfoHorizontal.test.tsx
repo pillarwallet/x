@@ -1,8 +1,5 @@
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
-// images
-import defaultLogo from '../../../images/logo-unknown.png';
-
 // components
 import TokenInfoHorizontal from '../TokenInfoHorizontal';
 
@@ -48,7 +45,7 @@ describe('<TokenInfoHorizontal />', () => {
     expect(logoProp.props.src).toBe(logo);
   });
 
-  it('renders the default logo when logo is not provided', () => {
+  it('renders the default logo (random avatar) when logo is not provided', () => {
     const tree = renderer
       .create(
         <TokenInfoHorizontal
@@ -60,12 +57,12 @@ describe('<TokenInfoHorizontal />', () => {
       .toJSON() as ReactTestRendererJSON;
     const logoProp =
       (tree.children?.find(
-        (child) => typeof child === 'object' && child.type === 'img'
+        (child) => typeof child === 'object' && child.type === 'div'
       ) as ReactTestRendererJSON) || null;
 
     expect(logoProp).not.toBeNull();
-    expect(logoProp.type).toBe('img');
-    expect(logoProp.props.src).toBe(defaultLogo);
+    expect(logoProp.type).toBe('div');
+    expect(logoProp.props.className).toContain('overflow-hidden');
   });
 
   it('renders the token name correctly', () => {

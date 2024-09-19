@@ -17,7 +17,11 @@ describe('<DisplayCollectionImage />', () => {
   it('renders correctly and matches snapshot with image', () => {
     const tree = renderer
       .create(
-        <DisplayCollectionImage image="test-image.png" className="test-class" />
+        <DisplayCollectionImage
+          name="image-name"
+          image="test-image.png"
+          className="test-class"
+        />
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
@@ -25,7 +29,9 @@ describe('<DisplayCollectionImage />', () => {
 
   it('renders correctly and matches snapshot without image', () => {
     const tree = renderer
-      .create(<DisplayCollectionImage className="test-class" />)
+      .create(
+        <DisplayCollectionImage name="image-name" className="test-class" />
+      )
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
@@ -33,6 +39,7 @@ describe('<DisplayCollectionImage />', () => {
   it('renders image with correct attributes and handles click', () => {
     render(
       <DisplayCollectionImage
+        name="image-name"
         image="test-image.png"
         className="test-class"
         url="https://example.com"
@@ -52,12 +59,13 @@ describe('<DisplayCollectionImage />', () => {
   it('renders Avatar when no image is provided and handles click', () => {
     render(
       <DisplayCollectionImage
+        name="image-name"
         className="test-class"
         url="https://example.com"
       />
     );
 
-    const avatar = screen.getByTestId('display-collection-avatar');
+    const avatar = screen.getByTestId('random-avatar');
     expect(avatar).toBeInTheDocument();
 
     const div = screen.getByTestId('display-collection-image');
@@ -74,7 +82,11 @@ describe('<DisplayCollectionImage />', () => {
 
   it('does not render cursor-pointer class when no url is provided', () => {
     render(
-      <DisplayCollectionImage className="test-class" image="test-image.png" />
+      <DisplayCollectionImage
+        name="image-name"
+        className="test-class"
+        image="test-image.png"
+      />
     );
 
     const img = screen.getByTestId('display-collection-image');

@@ -28,6 +28,7 @@ import ArrowRed from '../../images/arrow-circle-red.svg';
 
 // components
 import SkeletonLoader from '../../../../components/SkeletonLoader';
+import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import TokenGraph from '../TokenGraph/TokenGraph';
 import Body from '../Typography/Body';
 
@@ -133,13 +134,17 @@ const TokenGraphColumn = ({
             <SkeletonLoader $height="29px" $radius="6px" $marginBottom="10px" />
           ) : (
             <>
-              {tokenDataInfo?.logo && (
+              {tokenDataInfo?.logo ? (
                 <img
                   src={tokenDataInfo.logo}
                   alt="token-logo"
                   className="w-[30px] h-[30px] object-fill rounded-full"
                   data-testid="token-logo-graph-column"
                 />
+              ) : (
+                <div className="w-[30px] h-[30px] object-fill rounded-full overflow-hidden">
+                  <RandomAvatar name={tokenDataInfo?.name || ''} />
+                </div>
               )}
               <Body className="font-medium text-[27px] mobile:text-[25px]">
                 {tokenDataInfo ? tokenDataInfo.name : 'Token not found'}

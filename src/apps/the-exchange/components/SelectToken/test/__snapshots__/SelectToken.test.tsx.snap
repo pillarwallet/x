@@ -34,7 +34,6 @@ exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
       <img
         alt="chain-logo"
         className="w-full h-full object-fill rounded-full grayscale hidden"
-        src="logo-unknown.png"
       />
     </div>
   </div>

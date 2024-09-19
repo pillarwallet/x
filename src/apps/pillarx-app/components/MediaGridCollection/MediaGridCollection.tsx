@@ -25,6 +25,7 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
           className={`flex h-full ${gridItems.length > 1 ? 'basis-[73%]' : 'w-full'}`}
         >
           <DisplayCollectionImage
+            name={gridItems[0].name || 'image 1'}
             image={gridItems[0].imageUrl}
             url={gridItems[0].url}
             className="object-cover w-full h-full rounded-md"
@@ -34,6 +35,7 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
           <div className="flex flex-col basis-[27%] h-full ml-1">
             {gridItems[1] && (
               <DisplayCollectionImage
+                name={gridItems[1].name || 'image 2'}
                 image={gridItems[1].imageUrl}
                 url={gridItems[1].url}
                 className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md"
@@ -41,6 +43,7 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
             )}
             {gridItems[2] && (
               <DisplayCollectionImage
+                name={gridItems[2].name || 'image 3'}
                 image={gridItems[2].imageUrl}
                 url={gridItems[2].url}
                 className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
@@ -48,6 +51,7 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
             )}
             {gridItems[3] && (
               <DisplayCollectionImage
+                name={gridItems[3].name || 'image 4'}
                 image={gridItems[3].imageUrl}
                 url={gridItems[3].url}
                 className="object-cover w-full h-[calc((274px-8px)/3)] rounded-md mt-1"
@@ -58,6 +62,7 @@ const MediaGridCollection = ({ gridData }: MediaGridCollectionProps) => {
       </div>
       <div className="flex mt-4 pb-3 px-2.5 items-center">
         <DisplayCollectionImage
+          name={gridData.name || 'collection'}
           image={gridData.image_url}
           url={gridData.opensea_url}
           className="object-cover w-[50px] h-[50px] rounded-2xl mr-4"
