@@ -40,22 +40,6 @@ const Header = () => {
         className={`header ${isVisible ? '' : 'header--hidden'}`}
         id="header"
       >
-        {/* Header Announcement */}
-        {/* <div className="header__announcement">
-          <div className="header__announcement__wrapper">
-            <p>
-              🚀 Secure Your Spot in the PillarX Testing Campaign!{' '}
-              <a href="/waitlist">Join the Waitlist</a>
-            </p>
-            <a
-              href="/waitlist"
-              className="cta cta--secondary cta--header plausible-event-name=Banner+Click"
-            >
-              <span>Join the Waitlist</span>
-            </a>
-          </div>
-        </div> */}
-
         <div className="container">
           <Link to="/" className="header__logo">
             <img src="/landing-images/pillarXLogo.png" alt="pillar-x-logo" />

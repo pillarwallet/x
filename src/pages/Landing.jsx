@@ -6,7 +6,6 @@ import '../styles/landing/tailwind.css';
 import { Form } from '../components/LandingPage';
 import { Footer } from '../components/LandingPage/Footer';
 import { Header } from '../components/LandingPage/Header';
-// import { Popup } from '../components/LandingPage/Popup';
 
 export default function LandingPage() {
   return (
@@ -217,9 +216,6 @@ export default function LandingPage() {
 
       {/* Footer */}
       <Footer />
-
-      {/* Waitlist Popup */}
-      {/* <Popup /> */}
     </>
   );
 }
