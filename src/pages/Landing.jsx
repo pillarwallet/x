@@ -28,7 +28,10 @@ export default function LandingPage() {
               <p>
                 Earn PX points and get a chance to share the $1,000 prize pool!
               </p>
-              <a href="/waitlist" className="cta">
+              <a
+                href="/waitlist"
+                className="cta plausible-event-name=Waitlist+Home+Hero"
+              >
                 <span>Join the Waitlist!</span>
               </a>
             </div>
