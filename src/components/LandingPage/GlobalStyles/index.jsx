@@ -567,18 +567,6 @@ const GlobalStyles = createGlobalStyle`
       padding: calc(var(--padding) * 5) 0;
     }
   }
-  
-  /* .home_hero__wrapper::before {
-    content: "";
-    position: absolute;
-    top: 10%;
-    bottom: 10%;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    transform: translate(-50%);
-    background: var(--dark-blue);
-    filter: blur(200px);
-  } */
 
   .home_hero__wrapper::before {
     content: "";
@@ -589,7 +577,9 @@ const GlobalStyles = createGlobalStyle`
     border-radius: 50%;
     transform: translateY(-40%);
     background: var(--dark-blue);
+    -webkit-filter: blur(200px);
     filter: blur(200px);
+    transform: translate3d(0, 0, 0);
   }
   
   .home_hero__content {
