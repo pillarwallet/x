@@ -71,22 +71,45 @@ const AuthLayout = () => {
    */
   useEffect(() => {
     let expired = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let privyEthereumProvider: any;
+    let timer: NodeJS.Timeout;
 
     const updateProvider = async () => {
       if (!wallets.length) return; // not yet ready
 
-      const privyEthereumProvider = await wallets[0].getWeb3jsProvider();
+      // if there is only one wallet detectable by privy, it picks it
+      if (wallets.length === 1) {
+        privyEthereumProvider = await wallets[0].getWeb3jsProvider();
+      }
 
-      // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
+      // if there are multiple wallets, we try to find the privy one, and if not we pick the first one in the list
+      if (wallets.length > 1) {
+        const privyWallet = wallets.find(
+          (wallet) => wallet.walletClientType === 'privy'
+        );
+        if (privyWallet) {
+          privyEthereumProvider = await privyWallet.getWeb3jsProvider();
+        }
+        if (!privyWallet) {
+          privyEthereumProvider = await wallets[0].getWeb3jsProvider();
+        }
+      }
+
       const newProvider = new Web3eip1193WalletProvider(
-        // @ts-expect-error: provider type mismatch
         privyEthereumProvider.walletProvider
       );
       await newProvider.refresh();
 
       if (expired) return;
 
-      setProvider(newProvider);
+      // We set a timer here because it takes less than a 500ms for privy to fetch all wallets
+      // that are embedded or injected into privy. This timing is what could make the wrong
+      // provider to be chosen by Etherspot
+      timer = setTimeout(() => {
+        setProvider(newProvider);
+      }, 500);
+
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
       const isWithinVisibleChains = visibleChains.some(
         (chain) => chain.id === walletChainId
@@ -102,6 +125,7 @@ const AuthLayout = () => {
 
     return () => {
       expired = true;
+      clearTimeout(timer);
     };
   }, [wallets]);
 

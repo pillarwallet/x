@@ -1,6 +1,6 @@
+import { useWallets } from '@privy-io/react-auth';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWallets } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
 // components
