@@ -7,36 +7,12 @@ exports[`<Main /> renders correctly 1`] = `
     id="header"
   >
     <div
-      className="header__announcement"
-    >
-      <div
-        className="header__announcement__wrapper"
-      >
-        <p>
-          🚀 Secure Your Spot in the PillarX Testing Campaign!
-           
-          <a
-            href="/waitlist"
-          >
-            Join the Waitlist
-          </a>
-        </p>
-        <a
-          className="cta cta--secondary cta--header plausible-event-name=Banner+Click"
-          href="/waitlist"
-        >
-          <span>
-            Join the Waitlist
-          </span>
-        </a>
-      </div>
-    </div>
-    <div
       className="container"
     >
       <a
         className="header__logo"
         href="/"
+        onClick={[Function]}
       >
         <img
           alt="pillar-x-logo"
@@ -101,7 +77,7 @@ exports[`<Main /> renders correctly 1`] = `
     className="home_hero"
   >
     <div
-      className="container container--fluid"
+      className="container"
     >
       <div
         className="home_hero__wrapper"
@@ -109,38 +85,25 @@ exports[`<Main /> renders correctly 1`] = `
         <div
           className="home_hero__content"
         >
-          <h1>
-            Introducing PillarX
-          </h1>
-          <p>
-            Advancing the way you connect with Web3
-          </p>
           <img
-            alt="home-hero-banner"
-            src="/landing-images/home-hero.png"
+            alt="PillarX logo"
+            src="/landing-images/home-px.png"
           />
         </div>
-      </div>
-    </div>
-  </section>,
-  <section
-    className="home_intro"
-  >
-    <div
-      className="container"
-    >
-      <div
-        className="home_intro__wrapper"
-      >
         <div
-          className="home_intro__content"
+          className="home_hero__signup"
         >
-          <h2>
-            What is PX?
-          </h2>
           <p>
-            PillarX is the next evolution in the Pillar Project story, built on the pillars of controlling your assets and data, PillarX will provide an unparalleled experience in interacting with the Web3 ecosystem.
+            Earn PX points and get a chance to share the $1,000 prize pool!
           </p>
+          <a
+            className="cta plausible-event-name=Waitlist+Home+Hero"
+            href="/waitlist"
+          >
+            <span>
+              Join the Waitlist!
+            </span>
+          </a>
         </div>
       </div>
     </div>
@@ -249,6 +212,32 @@ exports[`<Main /> renders correctly 1`] = `
               />
             </video>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>,
+  <section
+    className="home_intro"
+  >
+    <div
+      className="container"
+    >
+      <div
+        className="home_intro__wrapper"
+      >
+        <div
+          className="home_intro__content"
+        >
+          <h2>
+            What is PX?
+          </h2>
+          <p>
+            PillarX is the next evolution in the Pillar Project story, built on the pillars of controlling your assets and data, PillarX will provide an unparalleled experience in interacting with the Web3 ecosystem.
+          </p>
+          <img
+            alt="PillarX Dashboard"
+            src="/landing-images/home-hero.png"
+          />
         </div>
       </div>
     </div>
@@ -436,6 +425,5 @@ exports[`<Main /> renders correctly 1`] = `
       </div>
     </div>
   </footer>,
-  <div />,
 ]
 `;

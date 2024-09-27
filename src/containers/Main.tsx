@@ -51,7 +51,7 @@ const AuthLayout = () => {
    * we will need to determine what authentication
    * state the user is in.
    */
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(
     undefined
@@ -70,45 +70,29 @@ const AuthLayout = () => {
    * state.
    */
   useEffect(() => {
-    let expired = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let privyEthereumProvider: any;
-    let timer: NodeJS.Timeout;
+    if (!wallets.length) return;
 
     const updateProvider = async () => {
-      if (!wallets.length) return; // not yet ready
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let privyEthereumProvider: any;
 
-      // if there is only one wallet detectable by privy, it picks it
-      if (wallets.length === 1) {
-        privyEthereumProvider = await wallets[0].getWeb3jsProvider();
-      }
+      const privyWalletAddress = user?.wallet?.address;
 
-      // if there are multiple wallets, we try to find the privy one, and if not we pick the first one in the list
-      if (wallets.length > 1) {
-        const privyWallet = wallets.find(
-          (wallet) => wallet.walletClientType === 'privy'
-        );
-        if (privyWallet) {
-          privyEthereumProvider = await privyWallet.getWeb3jsProvider();
-        }
-        if (!privyWallet) {
-          privyEthereumProvider = await wallets[0].getWeb3jsProvider();
-        }
-      }
-
-      const newProvider = new Web3eip1193WalletProvider(
-        privyEthereumProvider.walletProvider
+      const walletProvider = wallets.find(
+        (wallet) => wallet.address === privyWalletAddress
       );
-      await newProvider.refresh();
 
-      if (expired) return;
+      if (walletProvider) {
+        privyEthereumProvider = await walletProvider.getWeb3jsProvider();
 
-      // We set a timer here because it takes less than a 500ms for privy to fetch all wallets
-      // that are embedded or injected into privy. This timing is what could make the wrong
-      // provider to be chosen by Etherspot
-      timer = setTimeout(() => {
+        const newProvider = new Web3eip1193WalletProvider(
+          privyEthereumProvider.walletProvider
+        );
+
+        await newProvider.refresh();
+
         setProvider(newProvider);
-      }, 500);
+      }
 
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
       const isWithinVisibleChains = visibleChains.some(
@@ -122,12 +106,7 @@ const AuthLayout = () => {
     };
 
     updateProvider();
-
-    return () => {
-      expired = true;
-      clearTimeout(timer);
-    };
-  }, [wallets]);
+  }, [wallets, user]);
 
   /**
    * If all the following variables are truthy within the if
