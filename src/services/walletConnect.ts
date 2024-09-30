@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import { useWallets } from '@privy-io/react-auth';
+import { useEtherspot } from '@etherspot/transaction-kit';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
@@ -18,7 +19,8 @@ import {
 } from '../utils/walletConnectConstants';
 
 export const useWalletConnect = (accountAddress: string) => {
-  const { wallets } = useWallets();
+  // const { wallets } = useWallets();
+  const { getSdk } = useEtherspot();
   const [walletKit, setWalletKit] = useState<Client>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeSessions, setActiveSessions] = useState<any>();
@@ -260,19 +262,32 @@ export const useWalletConnect = (accountAddress: string) => {
       // };
       // console.log('RESPONSE', response);
       // await walletKit?.respondSessionRequest({ topic, response });
+      console.log(requestEvent);
       const { topic, params, id } = requestEvent;
       const { request: requestt } = params;
       const requestParamsMessage = requestt.params[0];
 
       const message = hexToString(requestParamsMessage);
+      console.log('Message to sign:', message);
 
-      const signedMessage = await wallets[0].sign(message);
+      // const signedMessage = await wallets[0].sign(message);
+      const eSdk = await getSdk(137);
 
-      const response = { id, result: signedMessage, jsonrpc: '2.0' };
+      const signedMessageEtherspotSdk = await eSdk.signMessage({
+        message,
+      });
+
+      console.log('Signed message:', signedMessageEtherspotSdk);
+
+      const response = {
+        id,
+        result: signedMessageEtherspotSdk,
+        jsonrpc: '2.0',
+      };
 
       await walletKit?.respondSessionRequest({ topic, response });
     },
-    [walletKit, wallets]
+    [walletKit, getSdk]
   );
 
   useEffect(() => {
