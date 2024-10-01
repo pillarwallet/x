@@ -51,7 +51,7 @@ const AuthLayout = () => {
    * we will need to determine what authentication
    * state the user is in.
    */
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const [provider, setProvider] = useState<WalletProviderLike | undefined>(
     undefined
@@ -70,23 +70,30 @@ const AuthLayout = () => {
    * state.
    */
   useEffect(() => {
-    let expired = false;
+    if (!wallets.length) return;
 
     const updateProvider = async () => {
-      if (!wallets.length) return; // not yet ready
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let privyEthereumProvider: any;
 
-      const privyEthereumProvider = await wallets[0].getWeb3jsProvider();
+      const privyWalletAddress = user?.wallet?.address;
 
-      // TODO: fix provider types by either updating @etherspot/prime-sdk or @etherspot/transaction-kit
-      const newProvider = new Web3eip1193WalletProvider(
-        // @ts-expect-error: provider type mismatch
-        privyEthereumProvider.walletProvider
+      const walletProvider = wallets.find(
+        (wallet) => wallet.address === privyWalletAddress
       );
-      await newProvider.refresh();
 
-      if (expired) return;
+      if (walletProvider) {
+        privyEthereumProvider = await walletProvider.getWeb3jsProvider();
 
-      setProvider(newProvider);
+        const newProvider = new Web3eip1193WalletProvider(
+          privyEthereumProvider.walletProvider
+        );
+
+        await newProvider.refresh();
+
+        setProvider(newProvider);
+      }
+
       const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
       const isWithinVisibleChains = visibleChains.some(
         (chain) => chain.id === walletChainId
@@ -99,11 +106,7 @@ const AuthLayout = () => {
     };
 
     updateProvider();
-
-    return () => {
-      expired = true;
-    };
-  }, [wallets]);
+  }, [wallets, user]);
 
   /**
    * If all the following variables are truthy within the if
