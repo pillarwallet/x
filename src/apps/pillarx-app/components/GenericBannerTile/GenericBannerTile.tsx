@@ -54,7 +54,7 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
       className={`p-1 flex-col ${!bannerDisplay && 'hidden'}`}
     >
       <div
-        className="flex flex-col rounded-2xl  bg-cover bg-no-repeat bg-center"
+        className="flex flex-col rounded-2xl bg-cover bg-no-repeat bg-center desktop:min-h-[320px] tablet:min-h-[280px] mobile:min-h-[240px]"
         style={{
           backgroundImage:
             bannerDisplay?.backgroundImage &&
