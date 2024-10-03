@@ -11,7 +11,7 @@ exports[`<GenericBannerTile /> renders correctly and matches snapshot 1`] = `
     target="_blank"
   >
     <div
-      className="flex flex-col rounded-2xl bg-cover bg-no-repeat bg-center desktop:min-h-[320px] tablet:min-h-[280px] mobile:min-h-[240px]"
+      className="flex flex-col rounded-2xl bg-cover bg-no-repeat bg-center desktop:min-h-[320px] tablet:min-h-[280px] mobile:min-h-[240px] justify-end"
       style={
         {
           "backgroundImage": "url(https://example.com/background-image.png)",
@@ -19,7 +19,7 @@ exports[`<GenericBannerTile /> renders correctly and matches snapshot 1`] = `
       }
     >
       <div
-        className="mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4"
+        className="p-10 mobile:p-4"
       >
         <p
           className="text-[45px] font-medium tablet:leading-[67.5px] desktop:leading-[67.5px] mobile:text-xl mobile:leading-[30px]"

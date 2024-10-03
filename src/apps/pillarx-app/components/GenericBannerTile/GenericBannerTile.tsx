@@ -55,14 +55,14 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
     >
       <a href={bannerDisplay?.cta?.href} target="_blank" rel="noreferrer">
         <div
-          className="flex flex-col rounded-2xl bg-cover bg-no-repeat bg-center desktop:min-h-[320px] tablet:min-h-[280px] mobile:min-h-[240px]"
+          className="flex flex-col rounded-2xl bg-cover bg-no-repeat bg-center desktop:min-h-[320px] tablet:min-h-[280px] mobile:min-h-[240px] justify-end"
           style={{
             backgroundImage:
               bannerDisplay?.backgroundImage &&
               `url(${bannerDisplay.backgroundImage})`,
           }}
         >
-          <div className="mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4">
+          <div className="p-10 mobile:p-4">
             <p className="text-[45px] font-medium tablet:leading-[67.5px] desktop:leading-[67.5px] mobile:text-xl mobile:leading-[30px]">
               {bannerDisplay?.title && bannerDisplay.title}
             </p>
