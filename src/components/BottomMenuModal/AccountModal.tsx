@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
+import { Tooltip } from '../Tooltip';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -203,9 +204,11 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </TopBarIcon>
           </CopyToClipboard>
         </AccountSection>
-        <TopBarIcon id="acount-logout" onClick={onLogoutClick}>
-          <LogoutIcon size={20} />
-        </TopBarIcon>
+        <Tooltip content="Log Out">
+          <TopBarIcon id="account-logout" onClick={onLogoutClick}>
+            <LogoutIcon size={20} />
+          </TopBarIcon>
+        </Tooltip>
       </TopBar>
       <FormTabSelect
         items={[
