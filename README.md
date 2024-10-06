@@ -16,7 +16,7 @@ file within the `src/apps` directory to learn how to get started.
 
 2. We have included a `.env.example` file - copy ALL these values to a `.env` file in the project root. This will ensure that you can run PillarX with no issues.
 
-3. Run `npm start` at the root. This will run PillarX locally on your machine and launch the website in your default browser.
+3. Run `npm start` at the root. This will run PillarX locally on your machine and launch the website in your default browser. Login to the wallet at http://localhost:3000/login
 
 ⚠️ **Encountering 429 errors?** You may have hit a rate limit for the Etherspot service. PillarX will keep trying but it might be easier for you to register your own API keys for the Etherspot Bundler API and Etherspot Data Service API via the [Portal](https://portal.etherspot.io).
 
