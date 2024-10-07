@@ -54,6 +54,7 @@ export type AssetData = {
 export type TotalPnlHistory = {
   realized: number;
   unrealized: number;
+  percentage_change: number;
 };
 
 export type WalletPortfolioData = {
