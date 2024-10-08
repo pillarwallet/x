@@ -4,10 +4,9 @@ run-name: ${{ github.actor }} has committed new code! 🚀 Checking...
 on: [push, pull_request]
 
 jobs:
-  run-checks:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm i cognitive-complexity-ts
-      - run: npx ccts-json ./src
-      - run: npx react-app-rewired build
+      - run: npm i
+      - run: npm test
