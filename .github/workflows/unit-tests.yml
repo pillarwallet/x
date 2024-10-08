@@ -1,7 +1,7 @@
 name: Code Quality
 run-name: ${{ github.actor }} has committed new code! 🚀 Checking...
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   unit-tests:
