@@ -96,7 +96,8 @@
     "!src/apps/the-exchange/",
     "!src/apps/the-exchange/**",
     "!src/apps/token-atlas/",
-    "!src/apps/token-atlas/**"
+    "!src/apps/token-atlas/**",
+    "public/" // Ignore public folder
   ],
   "settings": {
     "import/resolver": {

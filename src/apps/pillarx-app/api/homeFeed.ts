@@ -18,7 +18,8 @@ export const homeFeedApi = createApi({
   endpoints: (builder) => ({
     getTilesInfo: builder.query<ApiResponse, { page: number; address: string }>(
       {
-        query: ({ page, address }) => `?page=${page}&address=${address}`,
+        query: ({ page, address }) =>
+          `?page=${page}&address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
       }
     ),
   }),
@@ -42,7 +43,8 @@ export const walletPortfolioTileApi = createApi({
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     getWalletInfo: builder.query<WalletData, { address: string }>({
-      query: ({ address }) => `?address=${address}`,
+      query: ({ address }) =>
+        `?address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
