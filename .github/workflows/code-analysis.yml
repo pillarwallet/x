@@ -1,0 +1,12 @@
+name: Code Quality
+run-name: ${{ github.actor }} has committed new code! 🚀 Checking...
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i
+      - run: npm run lint
