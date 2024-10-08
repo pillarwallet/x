@@ -27,7 +27,7 @@ export const tokenInfoApi = createApi({
       query: ({ asset, blockchain, symbol }) => {
         const blockchainParam =
           blockchain !== undefined ? `&blockchain=${blockchain}` : '';
-        return `?asset=${asset}&symbol=${symbol}${blockchainParam}`;
+        return `?asset=${asset}&symbol=${symbol}${blockchainParam}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
       },
     }),
   }),
@@ -51,7 +51,7 @@ export const tokenGraphApi = createApi({
         const blockchainParam =
           blockchain !== undefined ? `&blockchain=${blockchain}` : '';
         const assetParam = asset.split(' ')[0];
-        return `?asset=${assetParam}&from=${from * 1000}${toParam}${blockchainParam}`;
+        return `?asset=${assetParam}&from=${from * 1000}${toParam}${blockchainParam}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
       },
     }),
   }),
@@ -67,7 +67,7 @@ export const trendingTokensApi = createApi({
   }),
   endpoints: (builder) => ({
     getTrendingTokens: builder.query<TrendingTokens, void>({
-      query: () => '',
+      query: () => `&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
@@ -82,7 +82,7 @@ export const blockchainsListApi = createApi({
   }),
   endpoints: (builder) => ({
     getBlockchainsList: builder.query<BlockchainList, void>({
-      query: () => '',
+      query: () => `&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
