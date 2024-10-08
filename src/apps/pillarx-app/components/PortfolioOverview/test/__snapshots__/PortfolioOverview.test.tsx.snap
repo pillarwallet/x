@@ -226,7 +226,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-sm font-medium text-percentage_green"
           >
-            30.00
+            1.00
             %
           </p>
         </div>
