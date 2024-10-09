@@ -15,7 +15,9 @@ const mockData: WalletData = {
     assets: [],
     total_realized_pnl: 53,
     total_unrealized_pnl: 12,
-    total_pnl_history: { '24h': { realized: 100, unrealized: 200 } },
+    total_pnl_history: {
+      '24h': { realized: 100, unrealized: 200, percentage_change: 1.0 },
+    },
   },
 };
 
@@ -54,7 +56,7 @@ describe('<PortfolioOverview />', () => {
     render(<PortfolioOverview data={mockData} isDataLoading={false} />);
 
     expect(screen.getByText('$1000.00')).toBeInTheDocument();
-    expect(screen.getByText('30.00%')).toBeInTheDocument();
+    expect(screen.getByText('1.00%')).toBeInTheDocument();
     expect(screen.queryByText('tokens')).not.toBeInTheDocument();
     expect(screen.queryByText('chains')).not.toBeInTheDocument();
     expect(screen.queryByTestId('tokens-list')).not.toBeInTheDocument();
@@ -63,9 +65,10 @@ describe('<PortfolioOverview />', () => {
   it('calculates percentage change correctly', () => {
     render(<PortfolioOverview data={mockData} isDataLoading={false} />);
 
-    const percentageChange = (300 / 1000) * 100;
     expect(
-      screen.getByText(`${percentageChange.toFixed(2)}%`)
+      screen.getByText(
+        `${mockData.data.total_pnl_history?.['24h']?.percentage_change.toFixed(2)}%`
+      )
     ).toBeInTheDocument();
   });
 

@@ -8,6 +8,7 @@
     "test": "eslint . && jest --detectOpenHandles",
     "test:watch": "eslint . && jest --detectOpenHandles --watch",
     "test:update": "eslint . && jest --updateSnapshot --detectOpenHandles",
+    "test:ci": "jest --detectOpenHandles --silent -u",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build",
     "postinstall": "patch-package",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",

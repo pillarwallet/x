@@ -31,7 +31,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   const accountAddress = useWalletAddress();
   const { data: dataPortlioOverview } = data || {};
   const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
-  const { realized: pnl24hRealized = 0, unrealized: pnl24hUnrealized = 0 } =
+  const { percentage_change: percentageChange = 0 } =
     dataWallet?.total_pnl_history?.['24h'] || {};
 
   const numberOfTokens = dataWallet?.assets?.length || 0;
@@ -46,11 +46,6 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
 
   const numberOfBlockchains =
     getAllUniqueBlockchains(allBlockchains).length ?? 0;
-
-  const totalPnl24h = pnl24hRealized + pnl24hUnrealized;
-
-  const percentageChange =
-    (totalPnl24h / (dataWallet?.total_wallet_balance ?? 0)) * 100;
 
   if (!data || isDataLoading) {
     return (

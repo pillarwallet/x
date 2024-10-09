@@ -14,6 +14,9 @@ export const pillarXApiPresence = createApi({
       query: (payload = {}) => ({
         url: '/',
         method: 'POST',
+        params: {
+          testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
+        },
         body: payload,
       }),
     }),

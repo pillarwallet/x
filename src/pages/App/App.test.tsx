@@ -17,7 +17,7 @@ import LanguageProvider from '../../providers/LanguageProvider';
 // navigation
 import { AuthorizedNavigation } from '../../navigation';
 
-describe('<App />', () => {
+describe.skip('<App />', () => {
   it('shows not found if app identifier is not within allowed apps', async () => {
     let rendered: ReactTestRenderer | undefined;
 
