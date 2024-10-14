@@ -29,7 +29,12 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
         const { data } = await axios.get(
           process.env.REACT_APP_USE_TESTNETS === 'true'
             ? 'https://apps-nubpgwxpiq-uc.a.run.app'
-            : 'https://apps-7eu4izffpa-uc.a.run.app'
+            : 'https://apps-7eu4izffpa-uc.a.run.app',
+          {
+            params: {
+              testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
+            },
+          }
         );
         if (expired || !data?.length) {
           setIsLoading(false);
