@@ -1,0 +1,16 @@
+name: Sentry Source Maps
+run-name: ${{ github.actor }} merged to ${{ github.repository }} Sentry source maps upload...
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i
+      - run: npm run sentry:sourcemaps
