@@ -1,5 +1,4 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // utils
@@ -21,7 +20,7 @@ import TokensPercentage from '../TokensPercentage/TokensPercentage';
 import Body from '../Typography/Body';
 import H1 from '../Typography/H1';
 import WalletAddressOverview from '../WalletAdddressOverview/WalletAddressOverview';
-import WalletConnectModal from '../WalletConnectModal/WalletConnectModal';
+import WalletConnectDropdown from '../WalletConnectDropdown/WalletConnectDropdown';
 
 type PortfolioOverviewProps = {
   data: WalletData | undefined;
@@ -30,8 +29,6 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   const [t] = useTranslation();
-  const [isWalletConnectModalOpen, setIsWalletConnectModalOpen] =
-    useState<boolean>(false);
   const accountAddress = useWalletAddress();
   const { data: dataPortlioOverview } = data || {};
   const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
@@ -77,57 +74,43 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   }
 
   return (
-    <>
-      <TileContainer
-        id="wallet-portfolio-tile"
-        className="p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
-      >
-        <div className="flex flex-col justify-between">
-          <WalletAddressOverview address={accountAddress ?? ''} />
-          <button
-            type="button"
-            className="max-w-fit p-2 rounded-md bg-purple_medium text-sm mb-2"
-            onClick={() =>
-              setIsWalletConnectModalOpen((prevState) => !prevState)
-            }
-          >
-            Connect with WalletConnect
-          </button>
-          <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
-            <Body className="text-purple_light mb-2">{t`title.totalBalance`}</Body>
-            <div className="flex gap-4 items-end">
-              <H1 className="text-[50px]">
-                ${dataWallet?.total_wallet_balance?.toFixed(2) || 0}
-              </H1>
-              <TokensPercentage percentage={percentageChange} />
-            </div>
+    <TileContainer
+      id="wallet-portfolio-tile"
+      className="p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+    >
+      <div className="flex flex-col justify-between">
+        <WalletAddressOverview address={accountAddress ?? ''} />
+        <WalletConnectDropdown />
+        <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
+          <Body className="text-purple_light mb-2">{t`title.totalBalance`}</Body>
+          <div className="flex gap-4 items-end">
+            <H1 className="text-[50px]">
+              ${dataWallet?.total_wallet_balance?.toFixed(2) || 0}
+            </H1>
+            <TokensPercentage percentage={percentageChange} />
           </div>
         </div>
-        <div className="flex w-full flex-col items-end justify-end mobile:justify-normal gap-5">
-          <div className="flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between">
-            {numberOfTokens > 0 && (
-              <Tags
-                icon={BlendIcon}
-                tagText={`${numberOfTokens} ${t`label.tokens`}`}
-              />
-            )}
-            {numberOfBlockchains > 0 && (
-              <Tags
-                icon={RoutingIcon}
-                tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`}
-              />
-            )}
-          </div>
-          {allBlockchainsLogos.length > 0 && (
-            <TokensHorizontalList logos={allBlockchainsLogos} />
+      </div>
+      <div className="flex w-full flex-col items-end justify-end mobile:justify-normal gap-5">
+        <div className="flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between">
+          {numberOfTokens > 0 && (
+            <Tags
+              icon={BlendIcon}
+              tagText={`${numberOfTokens} ${t`label.tokens`}`}
+            />
+          )}
+          {numberOfBlockchains > 0 && (
+            <Tags
+              icon={RoutingIcon}
+              tagText={`${t`helper.across`} ${numberOfBlockchains} ${numberOfBlockchains > 1 ? t`helper.chainSeveral` : t`helper.chainOne`}`}
+            />
           )}
         </div>
-      </TileContainer>
-      <WalletConnectModal
-        isOpen={isWalletConnectModalOpen}
-        onClose={() => setIsWalletConnectModalOpen((prevState) => !prevState)}
-      />
-    </>
+        {allBlockchainsLogos.length > 0 && (
+          <TokensHorizontalList logos={allBlockchainsLogos} />
+        )}
+      </div>
+    </TileContainer>
   );
 };
 

@@ -15,5 +15,6 @@ export const WALLETCONNECT_EVENT = {
   AUTH_REQUEST: 'auth_request',
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
-  TRANSPORT_ERROR: 'transport_error', // websocket connection lost
+  TRANSPORT_ERROR: 'transport_error',
+  CHAIN_CHANGED: 'chainChanged',
 };
