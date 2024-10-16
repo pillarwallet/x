@@ -23,39 +23,63 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
     data-testid="random-avatar"
     fill="none"
     role="img"
-    viewBox="0 0 36 36"
+    viewBox="0 0 90 90"
     xmlns="http://www.w3.org/2000/svg"
   >
     <mask
-      height={36}
+      height={90}
       id=":r0:"
       maskUnits="userSpaceOnUse"
-      width={36}
+      width={90}
       x={0}
       y={0}
     >
       <rect
         fill="#FFFFFF"
-        height={36}
-        width={36}
+        height={90}
+        width={90}
       />
     </mask>
     <g
       mask="url(#:r0:)"
     >
-      <rect
-        fill="#92A1C6"
-        height={36}
-        width={36}
-      />
-      <rect
+      <path
+        d="M0 0h90v45H0z"
         fill="#F0AB3D"
-        height={36}
-        rx={36}
-        transform="translate(-3 7) rotate(307 18 18) scale(1.1)"
-        width={36}
-        x="0"
-        y="0"
+      />
+      <path
+        d="M0 45h90v45H0z"
+        fill="#C271B4"
+      />
+      <path
+        d="M83 45a38 38 0 00-76 0h76z"
+        fill="#C271B4"
+      />
+      <path
+        d="M83 45a38 38 0 01-76 0h76z"
+        fill="#C20D90"
+      />
+      <path
+        d="M77 45a32 32 0 10-64 0h64z"
+        fill="#C20D90"
+      />
+      <path
+        d="M77 45a32 32 0 11-64 0h64z"
+        fill="#92A1C6"
+      />
+      <path
+        d="M71 45a26 26 0 00-52 0h52z"
+        fill="#92A1C6"
+      />
+      <path
+        d="M71 45a26 26 0 01-52 0h52z"
+        fill="#F0AB3D"
+      />
+      <circle
+        cx={45}
+        cy={45}
+        fill="#146A7C"
+        r={23}
       />
       <g
         transform="translate(-3 3.5) rotate(-7 18 18)"

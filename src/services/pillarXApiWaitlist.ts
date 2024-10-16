@@ -12,7 +12,8 @@ export const pillarXApiWaitlist = createApi({
   }),
   endpoints: (builder) => ({
     getWaitlist: builder.query({
-      query: (address) => `?address=${address}`,
+      query: (address) =>
+        `?address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
