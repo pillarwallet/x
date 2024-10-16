@@ -8,7 +8,10 @@
     "\\.svg$": "./src/test-utils/svgTransformer.js"
   },
   "moduleNameMapper": {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+    "@reown/walletkit": "<rootDir>/__mocks__/walletConnectMock.ts",
+    "@walletconnect/core": "<rootDir>/__mocks__/walletConnectMock.ts",
+    "@walletconnect/utils": "<rootDir>/__mocks__/walletConnectMock.ts"
   },
   "testEnvironment": "jsdom",
   "transformIgnorePatterns": ["node_modules/(?!(mime)/)"]

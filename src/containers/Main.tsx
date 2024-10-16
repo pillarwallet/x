@@ -21,19 +21,21 @@ import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 import LanguageProvider from '../providers/LanguageProvider';
 
 // pages
-import Loading from '../pages/Loading';
-
-// hooks
-import useAllowedApps from '../hooks/useAllowedApps';
 import App from '../pages/App';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
+import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
-import { visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
+
+// hooks
+import useAllowedApps from '../hooks/useAllowedApps';
+
+// utils
+import { visibleChains } from '../utils/blockchain';
 
 /**
  * @name AuthLayout
