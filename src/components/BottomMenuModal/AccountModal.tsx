@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
+import Tippy from '@tippyjs/react';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -203,9 +204,11 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </TopBarIcon>
           </CopyToClipboard>
         </AccountSection>
-        <TopBarIcon id="acount-logout" onClick={onLogoutClick}>
-          <LogoutIcon size={20} />
-        </TopBarIcon>
+        <Tooltip content="Log Out">
+          <TopBarIcon id="account-logout" onClick={onLogoutClick}>
+            <LogoutIcon size={20} />
+          </TopBarIcon>
+        </Tooltip>
       </TopBar>
       <FormTabSelect
         items={[
@@ -591,5 +594,36 @@ const NftsWrapper = styled.div`
   gap: 10px;
   flex-wrap: wrap;
 `;
+
+const Tooltip = styled(Tippy)`
+  position: relative;
+  padding: 6px 6px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.color.background.card};
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+
+  .tippy-content {
+    padding: 0;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 1);
+    z-index: -1;
+  }
+`;
+
+Tooltip.defaultProps = {
+  delay: [1000, 0],
+};
 
 export default AccountModal;

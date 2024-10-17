@@ -2,7 +2,6 @@
 import { Projection, TokenData } from '../../../../types/api';
 
 // components
-import SkeletonLoader from '../../../../components/SkeletonLoader';
 import TileContainer from '../TileContainer/TileContainer';
 
 import TokensVerticalList from '../TokensVerticalList/TokensVerticalList';
@@ -24,69 +23,7 @@ const TokensVerticalTile = ({
   const dataRight = dataTokensVertical?.slice(3, 6) || [];
 
   if (!data || isDataLoading) {
-    return (
-      <TileContainer
-        id="tokens-vertical-tile-loader"
-        className="px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col"
-      >
-        <div className="flex flex-col flex-1 mr-5 mobile:m-0">
-          <SkeletonLoader
-            $height="24px"
-            $width="120px"
-            $marginBottom="20px"
-            $radius="10px"
-          />
-          <div className="flex flex-col">
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col flex-1 ml-5 mobile:m-0">
-          <SkeletonLoader
-            $height="24px"
-            $width="120px"
-            $marginBottom="20px"
-            $radius="10px"
-          />
-          <div className="flex flex-col">
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-            <SkeletonLoader
-              $height="50px"
-              $width="100%"
-              $marginBottom="20px"
-              $radius="10px"
-            />
-          </div>
-        </div>
-      </TileContainer>
-    );
+    return null;
   }
 
   return (
