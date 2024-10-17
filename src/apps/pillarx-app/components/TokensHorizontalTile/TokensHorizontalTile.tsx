@@ -8,7 +8,6 @@ import { Projection, TokenData } from '../../../../types/api';
 import useRefDimensions from '../../hooks/useRefDimensions';
 
 // components
-import SkeletonLoader from '../../../../components/SkeletonLoader';
 import TileContainer from '../TileContainer/TileContainer';
 import TokenInfoHorizontal from '../TokenInfoHorizontal/TokenInfoHorizontal';
 import Body from '../Typography/Body';
@@ -56,54 +55,7 @@ const TokensHorizontalTile = ({
     Math.floor(dimensions.width / tokenHorizontalWidth) ?? 0;
 
   if (!data || isDataLoading) {
-    return (
-      <TileContainer
-        id="tokens-horizontal-tile-loader"
-        className="flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
-      >
-        <SkeletonLoader
-          $height="24px"
-          $width="140px"
-          $marginBottom="10px"
-          $radius="10px"
-        />
-        <div className="flex justify-between gap-2">
-          <SkeletonLoader $height="120px" $width="80px" $radius="10px" />
-          <SkeletonLoader $height="120px" $width="80px" $radius="10px" />
-          <SkeletonLoader $height="120px" $width="80px" $radius="10px" />
-          <SkeletonLoader
-            $height="120px"
-            $width="80px"
-            $radius="10px"
-            className="tablet:hidden"
-          />
-          <SkeletonLoader
-            $height="120px"
-            $width="80px"
-            $radius="10px"
-            className="tablet:hidden"
-          />
-          <SkeletonLoader
-            $height="120px"
-            $width="80px"
-            $radius="10px"
-            className="tablet:hidden"
-          />
-          <SkeletonLoader
-            $height="120px"
-            $width="80px"
-            $radius="10px"
-            className="mobile:hidden"
-          />
-          <SkeletonLoader
-            $height="120px"
-            $width="80px"
-            $radius="10px"
-            className="mobile:hidden"
-          />
-        </div>
-      </TileContainer>
-    );
+    return null;
   }
 
   return (

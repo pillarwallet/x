@@ -3,9 +3,10 @@ import { createRef, useEffect, useState } from 'react';
 // types
 import { MediaGridData, Projection } from '../../../../types/api';
 
-// components
-import SkeletonLoader from '../../../../components/SkeletonLoader';
+// hooks
 import useRefDimensions from '../../hooks/useRefDimensions';
+
+// components
 import MediaGridCollection from '../MediaGridCollection/MediaGridCollection';
 import TileContainer from '../TileContainer/TileContainer';
 import Body from '../Typography/Body';
@@ -52,30 +53,7 @@ const HighlightedMediaGridTile = ({
     dimensions.width > mediaGridTileWidth ? 3 : 4;
 
   if (!data && isDataLoading) {
-    return (
-      <TileContainer className="flex-col p-10 pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]">
-        <SkeletonLoader
-          $height="24px"
-          $width="180px"
-          $radius="10px"
-          $marginBottom="10px"
-        />
-        <div className="flex gap-8 tablet:flex-wrap mobile:flex-col justify-between">
-          <SkeletonLoader
-            $height="300px"
-            $width="270px"
-            $radius="10px"
-            $marginBottom="16px"
-          />
-          <SkeletonLoader
-            $height="300px"
-            $width="270px"
-            $radius="10px"
-            $marginBottom="16px"
-          />
-        </div>
-      </TileContainer>
-    );
+    return null;
   }
 
   if (!dataMediaGrid?.grids) return null;
