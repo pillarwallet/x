@@ -9,7 +9,6 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 import { EditorialDisplay, Projection } from '../../../../types/api';
 
 // components
-import SkeletonLoader from '../../../../components/SkeletonLoader';
 import EditorialTag from '../EditorialTag/EditorialTag';
 import TileContainer from '../TileContainer/TileContainer';
 import Body from '../Typography/Body';
@@ -72,37 +71,7 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
   };
 
   if (!data || isDataLoading) {
-    return (
-      <TileContainer
-        id="editorial-tile-loader"
-        className="flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
-      >
-        <SkeletonLoader
-          $height="24px"
-          $width="150px"
-          $marginBottom="10px"
-          $radius="6px"
-        />
-        <div
-          data-testid="editorial-tile-loading"
-          className="flex mobile:flex-col bg-medium_grey rounded-2xl p-2 gap-4"
-        >
-          <div className="flex desktop:basis-2/5 tablet:basis-2/5 mobile:basis-full mobile:w-full">
-            <SkeletonLoader $height="250px" $width="100%" $radius="6px" />
-          </div>
-          <div className="flex flex-col justify-between desktop:basis-3/5 tablet:basis-3/5 mobile:basis-0 mobile:w-full desktop:px-4 tablet:px-4 mobile:px-0">
-            <div className="flex flex-col gap-2 desktop:mt-14 tablet:mt-8 mobile:mt-0">
-              <SkeletonLoader $height="26px" $width="50px" $radius="6px" />
-              <SkeletonLoader $height="30px" $width="200px" $radius="6px" />
-            </div>
-            <div className="mb-[18px] mt-4 flex justify-between">
-              <SkeletonLoader $height="24px" $width="80px" $radius="6px" />
-              <SkeletonLoader $height="24px" $width="60px" $radius="6px" />
-            </div>
-          </div>
-        </div>
-      </TileContainer>
-    );
+    return null;
   }
 
   return (

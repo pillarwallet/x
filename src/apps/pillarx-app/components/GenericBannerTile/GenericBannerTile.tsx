@@ -2,7 +2,6 @@
 import { GenericBannerDisplay, Projection } from '../../../../types/api';
 
 // components
-import SkeletonLoader from '../../../../components/SkeletonLoader';
 import TileContainer from '../TileContainer/TileContainer';
 
 type GenericBannerTileProps = {
@@ -19,33 +18,7 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
   };
 
   if (!data || isDataLoading) {
-    return (
-      <TileContainer id="generic-banner-tile-loader" className="p-1 flex-col">
-        <div
-          className="mt-32 p-10 tablet:mt-16 mobile:mt-9 mobile:p-4"
-          data-testid="generic-banner-loading"
-        >
-          <SkeletonLoader
-            $height="30px"
-            $width="180px"
-            $marginBottom="10px"
-            $radius="6px"
-          />
-          <SkeletonLoader
-            $height="20px"
-            $width="150px"
-            $marginBottom="16px"
-            $radius="6px"
-          />
-          <SkeletonLoader
-            $height="35px"
-            $width="100px"
-            $marginBottom="16px"
-            $radius="6px"
-          />
-        </div>
-      </TileContainer>
-    );
+    return null;
   }
 
   return (
