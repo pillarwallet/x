@@ -4,12 +4,21 @@ import {
   TokenListToken,
 } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ethers } from 'ethers';
-import { avalanche, base, bsc, gnosis, polygon, sepolia } from 'viem/chains';
+import {
+  avalanche,
+  base,
+  bsc,
+  gnosis,
+  mainnet,
+  polygon,
+  sepolia,
+} from 'viem/chains';
 
 // images
 import logoAvalanche from '../assets/images/logo-avalanche.png';
 import logoBase from '../assets/images/logo-base.png';
 import logoBsc from '../assets/images/logo-bsc.png';
+import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
@@ -57,6 +66,13 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png',
   };
 
+  if (chainId === mainnet.id) {
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
+    nativeAsset.logoURI =
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
+
   // gnosis testnet not supported on Prime SDK
   if (chainId === gnosis.id) {
     nativeAsset.name = 'XDAI';
@@ -99,7 +115,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   return nativeAsset;
 };
 
-export const supportedChains = [polygon, gnosis, base, sepolia];
+export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
 
 export const visibleChains = supportedChains.filter((chain) =>
   process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet
@@ -110,6 +126,10 @@ export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
 };
 
 export const getLogoForChainId = (chainId: number): string => {
+  if (chainId === mainnet.id) {
+    return logoEthereum;
+  }
+
   if (chainId === polygon.id) {
     return logoPolygon;
   }
