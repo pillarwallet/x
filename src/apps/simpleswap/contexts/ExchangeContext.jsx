@@ -11,8 +11,6 @@ import { resetWidgetExchangeInfo, getWidgetExchangeInfo } from '../redux/widget/
 import {widgetInfo} from '../constants/widgetInfo';
 import {getCurrencyInternalName} from '../helpers/formatCurrency';
 import PropTypes from 'prop-types';
-import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
-import {getChainIdByNetwork} from '../constants/networkData';
 import * as exchangeThunks from "../redux/exchange/thunks";
 
 export const ExchangeContext = React.createContext({ state: {}, actions: {}, error: {} });
@@ -59,7 +57,6 @@ export const ExchangeProvider = (props) => {
   const [address, setAddress] = useState('');
   const [extraId, setExtraId] = useState('');
   const [updatedCount, setUpdatedCount] = useState('');
-  const { showTransactionConfirmation } = useBottomMenuModal();
 
   const setNoSupported = useCallback(() => {
     setError(t('ERRORS.TEXT_4'));
@@ -231,18 +228,8 @@ export const ExchangeProvider = (props) => {
           dispatch(getWidgetExchangeInfo({ exchangeId: request?.result.id }));
         }, 30000),
       );
-      showTransactionConfirmation({
-        title: 'SimpleSwap Exchange',
-        description: `send ${currencyFromValue} ${currencyFrom.ticker.toUpperCase()} to ${request?.result.addressFrom} \n
-         : chainId ${getChainIdByNetwork(request?.result.networkFrom).chainId}`,
-        transaction: {
-          to: request?.result.addressFrom,
-          value: request?.result.amount,
-          chainId: getChainIdByNetwork(request?.result.networkFrom).chainId,
-        },
-      })
     } catch (e) {
-      setError(e?.response?.data?.error || e.toString());
+      setError(e?.response?.data?.message || e.toString());
     }
   };
 
@@ -265,8 +252,8 @@ export const ExchangeProvider = (props) => {
       ),
     );
     setAmount(widgetInfo.defaultPaymentAmount || 0.1);
-    dispatch(resetWidgetExchangeInfo());
     clearUpdateTimer();
+    dispatch(resetWidgetExchangeInfo());
     setAddress('');
     setExtraId('');
   };
@@ -291,9 +278,9 @@ export const ExchangeProvider = (props) => {
   }, [isFixed]);
   useEffect(() => {
     if (!allCurrencies) return;
-    if (!currencyFrom.id) setCurrencyFrom(allCurrencies?.find(
+    if (!currencyFrom.enabled) setCurrencyFrom(allCurrencies?.find(
       (i) => getCurrencyInternalName(i) === (widgetInfo.defaultCurrencyFrom || 'eth:eth')));
-    if (!currencyTo.id) setCurrencyTo(allCurrencies?.find(
+    if (!currencyTo.enabled) setCurrencyTo(allCurrencies?.find(
       (i) => getCurrencyInternalName(i) === (widgetInfo.defaultCurrencyTo || 'btc:btc')));
   }, [allCurrencies]);
 
