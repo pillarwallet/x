@@ -24,7 +24,7 @@ import { ExchangeContext } from '../../contexts/ExchangeContext';
 import {getCurrencyInternalName} from '../../helpers/formatCurrency';
 import PropTypes from 'prop-types';
 
-export default function Fields({ type, walletCurrencies }){
+export default function Fields({ type }){
   const { t } = useTranslation();
 
   const {
@@ -87,7 +87,6 @@ export default function Fields({ type, walletCurrencies }){
     const resultData = currenciesList.filter(
       (currency) =>
         Object.keys(pairsList).includes(getCurrencyInternalName(currency)) &&
-        walletCurrencies.includes(getCurrencyInternalName(currency)) &&
         getCurrencyInternalName(currencyTo) !== getCurrencyInternalName(currency),
     );
 
@@ -108,7 +107,6 @@ export default function Fields({ type, walletCurrencies }){
     fixedPairs,
     search,
     currencyFrom,
-    walletCurrencies
   ]);
 
   const [list] = useCurrenciesList({
@@ -246,5 +244,4 @@ export default function Fields({ type, walletCurrencies }){
 
 Fields.propTypes = {
   type: PropTypes.string,
-  walletCurrencies: PropTypes.array,
 }

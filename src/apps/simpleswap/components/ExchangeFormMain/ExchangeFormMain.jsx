@@ -26,9 +26,6 @@ import { Tooltip, TooltipExtras } from '../Tooltip';
 import Fields from '../Field';
 import CloseIcon from '../icons/CloseIcon';
 import PropTypes from 'prop-types';
-import { getNetworkByChainId } from '../../constants/networkData';
-import { getCurrencyInternalName } from '../../helpers/formatCurrency';
-import useAssets from '../../../../hooks/useAssets';
 
 const ExchangeFormMain = (props) => {
   const { secondStep, isDesktopHorizontal, onExchangeClick } = props;
@@ -50,7 +47,6 @@ const ExchangeFormMain = (props) => {
 
   const [isAnimateSwap, setIsAnimateSwap] = useState(false);
   const [animateTimer, setAnimateTimer] = useState(null);
-  const assets = useAssets();
 
   const { t } = useTranslation();
 
@@ -88,13 +84,9 @@ const ExchangeFormMain = (props) => {
     !`${currencyFromValue}`.length ||
     !`${currencyToValue}`.length;
 
-  const walletCurrencies = Object.entries(assets).reduce((acc, [chainId, tokens])=> {
-    return [...acc, ...tokens.map(token=>`${token.symbol.toLowerCase() === 'matic'? 'pol': token.symbol.toLowerCase() }:${getNetworkByChainId(chainId)?.shortName}`)]
-  },[])
-
   return (
     <Main second={secondStep} isDesktopHorizontal={isDesktopHorizontal}>
-      <Fields type="from" walletCurrencies={walletCurrencies}/>
+      <Fields type="from"/>
       <Controls>
         <Tooltip
           trigger="click"
@@ -156,7 +148,6 @@ const ExchangeFormMain = (props) => {
           }}
         />
         <SwapRow
-          $isDisabled={!walletCurrencies.includes(getCurrencyInternalName(currencyTo))}
           $isDesktopHorizontal={isDesktopHorizontal}
           onClick={onSwap}
         >
