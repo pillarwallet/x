@@ -10,13 +10,9 @@ import {
 } from '@etherspot/transaction-kit';
 import { CssVarsProvider, Tab, TabList, Tabs, tabClasses } from '@mui/joy';
 import { ethers } from 'ethers';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-
-// context
-import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
-import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // components
 import Select, { SelectOption } from '../Select';
@@ -55,8 +51,6 @@ const AssetSelect = ({
   onChange: (option: AssetSelectOption) => void;
   onClose: () => void;
 }) => {
-  const contextNfts = useContext(AccountNftsContext);
-  const contextBalances = useContext(AccountBalancesContext);
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<
     TokenAssetSelectOption[]
@@ -75,9 +69,6 @@ const AssetSelect = ({
 
   useEffect(() => {
     if (!walletAddress || !chainId) return;
-
-    contextNfts?.data.setUpdateData(true);
-    contextBalances?.data.setUpdateData(true);
 
     let expired;
 
@@ -126,8 +117,6 @@ const AssetSelect = ({
     // eslint-disable-next-line consistent-return
     return () => {
       expired = true;
-      contextNfts?.data.setUpdateData(false);
-      contextBalances?.data.setUpdateData(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, chainId, assets]);
