@@ -101,7 +101,7 @@ const AccountTransactionHistoryProvider = ({
 
       if (expired) return;
 
-      timeout = setTimeout(refresh, 10000); // confirmed block time depending on chain is ~1-10s
+      timeout = setTimeout(refresh, 30000); // ~30s
     };
 
     refresh();
