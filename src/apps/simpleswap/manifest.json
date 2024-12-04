@@ -1,0 +1,119 @@
+{
+  "title": "SimpleSwap",
+  "description": "SimpleSwap",
+  "translations": {
+    "en": {
+      "cookies": {
+        "title": "We use cookies to ensure you get the best experience.",
+        "link": "Learn more",
+        "text": "We use cookies and similar technologies to ensure you get the best experience. To learn more about cookies, including how to disable them, view our {{privacyLink}} and {{termsLink}}. By clicking \u201cI Accept\u201d or \u201cX\u201d on this banner, or using our site, you consent to the use of cookies unless you have disabled them.",
+        "button": "I Accept"
+      },
+      "title": "SimpleSwap | Cryptocurrency Exchange | Easy way to swap BTC to ETH, XRP, LTC, EOS, XLM",
+      "description": "SimpleSwap is a cryptocurrency exchange that allows to swap BTC and altcoins in an easy way. SimpleSwap supports 300+ cryptocurrencies. Make Bitcoin to Ethereum, Litecoin crypto exchanges at the best rates!",
+      "ERRORS": {
+        "TEXT_8": "Cryptocurrencies not found",
+        "TEXT_3": "Max amount",
+        "TEXT_4": "Pair is not supported",
+        "TEXT_2": "Min amount",
+        "TEXT_5": "Exchange creation error. Please, try again.",
+        "TEXT_6": "Cryptocurrency was not found",
+        "TEXT_7": "Invalid",
+        "TEXT_1": "Invalid address"
+      },
+      "FIELDS": {
+        "TEXT_2": "You get",
+        "TEXT_5": "Exchange",
+        "TEXT_4": "address",
+        "TEXT_3": "Enter the recipient\u2019s",
+        "TEXT_1": "You send"
+      },
+      "OTHER": {
+        "TEXT_1": "Type a cryptocurrency or ticker",
+        "TEXT_2": "Popular cryptocurrencies",
+        "TEXT_3": "All cryptocurrencies",
+        "TEXT_4": "Enter",
+        "TEXT_5": "(optional)"
+      },
+      "PREFIX": "en",
+      "MAIN": {
+        "FLOAT": "Floating rate",
+        "FIXED": "Fixed rate",
+        "HOW_IT_WORKS": "How it works",
+        "TITLE": "Crypto Exchange",
+        "TEXT": "Free from sign-up, limits, complications"
+      },
+      "new": {
+        "exchangeDetails": "Add exchange details",
+        "popularFiat": "Popular fiat",
+        "allFiat": "All fiat",
+        "floatingOnly": "Floating rate only",
+        "cryptoExchange": "Crypto Exchange",
+        "buySellCrypto": "Buy/Sell Crypto",
+        "createAnExchange": "Create an exchange"
+      },
+      "step2": {
+        "title": "Recipient info",
+        "recipientAddress": "The recipient’s {{currency}} address",
+        "button": "Create an exchange",
+        "creating": "The exchange is being created",
+        "extraId": "Enter the memo (optional)",
+        "invalidAddress": "Invalid address",
+        "tooltip": "Please be careful not to provide a smart contract instead of your {{currency}} payout address"
+      },
+      "step3": {
+        "title": "Send your {{currencyFrom}}",
+        "tooltip": "To not lose your funds please enter the memo while sending your deposit."
+      },
+      "step4": {
+        "title": "Your {{currencyFrom}} transaction is being confirmed",
+        "subTitle": "Number of blockchain confirmations:"
+      },
+      "step5": {
+        "title": "Your exchange is in progress"
+      },
+      "step6": {
+        "title": "Your {{currencyTo}} is being sent"
+      },
+      "step7": {
+        "title": "Your exchange was completed"
+      },
+      "stepRefunded": {
+        "title": "Your deposit has been <0>refunded</0>"
+      },
+      "stepVerifying": {
+        "title": "<0>Verification</0> is needed for your transaction"
+      },
+      "stepFailed": {
+        "title": "Your exchange has <0>failed</0>"
+      },
+      "stepTimeOver": {
+        "centerTitle": "The time is over",
+        "centerSubTitle": "Please, create a new fixed rate exchange.",
+        "buttonText": "Start a new exchange"
+      },
+      "stepMessageSent": {
+        "centerTitle": "Thanks!",
+        "centerSubTitle": "The message has been sent to the support team.\n You will get a response within 15 minutes.",
+        "buttonText": "Start a new exchange"
+      },
+      "newExchange": "Create a new exchange",
+      "exchangeId": "Exchange ID:",
+      "needHelp": "Need help?",
+      "depositAddress": "Deposit address:",
+      "recipientAddress": "Recipient address:",
+      "depositMemo": "Deposit memo:",
+      "depositNotification": "As soon as we receive the deposit, the info will be updated and the process will move on.",
+      "yourMemo": "Your memo:",
+      "hashIn": "Hash in:",
+      "hashOut": "Hash out:",
+      "timer": "Timer: ",
+      "email": "Email",
+      "message": "Message",
+      "send": "Send",
+      "copied": "Copied",
+      "floatingTooltip": "All changes in the final amount are due to the selected floating rate.",
+      "isBigCommission": "When exchanging a small sum, transaction fees can take a large portion of the exchange volume due to high network fees."
+    }
+  }
+}
