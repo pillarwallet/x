@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Blend2 as IconBlend, Layer as IconLayers } from 'iconsax-react';
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -16,7 +16,6 @@ import { SendModalData } from '../../../types';
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
-import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
 
 interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -24,21 +23,11 @@ interface SendModalProps extends React.PropsWithChildren {
 }
 
 const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
-  const contextBalances = useContext(AccountBalancesContext);
   const wrapperRef = React.useRef(null);
   const { showBatchSendModal, setShowBatchSendModal } = useBottomMenuModal();
   const [t] = useTranslation();
   const { transactions: globalTransactionsBatch } =
     useGlobalTransactionsBatch();
-
-  useEffect(() => {
-    if (!isContentVisible) {
-      contextBalances?.data.setUpdateData(false);
-    }
-    if (isContentVisible) {
-      contextBalances?.data.setUpdateData(true);
-    }
-  }, [isContentVisible, contextBalances?.data]);
 
   if (!isContentVisible) {
     return <Wrapper />;
