@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Transition } from 'react-transition-group';
 import styled from 'styled-components';
+
+// context
+import { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 
 // modals
 import AccountModal from './AccountModal';
@@ -14,6 +18,8 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 const BottomMenuModal = () => {
   const modalRef = React.useRef<HTMLDivElement>(null);
+  const contextNfts = useContext(AccountNftsContext);
+  const contextBalances = useContext(AccountBalancesContext);
   const { active, activeIndex, hide } = useBottomMenuModal();
 
   const lastValidActiveIndex = React.useRef<number>(activeIndex ?? 0);
@@ -22,6 +28,13 @@ const BottomMenuModal = () => {
     if (activeIndex === null) return;
     lastValidActiveIndex.current = activeIndex ?? 0;
   }, [activeIndex]);
+
+  useEffect(() => {
+    if (activeIndex === 0 || activeIndex === 2) {
+      contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
+    }
+  }, [contextNfts?.data, contextBalances?.data, activeIndex]);
 
   return (
     <Transition nodeRef={modalRef} in={!!active} timeout={100}>
