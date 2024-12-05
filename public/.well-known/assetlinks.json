@@ -3,9 +3,9 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "app.pillarx.twa",
+      "package_name": "app.pillarx.staging.twa",
       "sha256_cert_fingerprints": [
-        "4C:64:57:4F:E8:4A:A1:E7:FC:4D:76:C5:9E:87:BF:33:E6:F2:6F:BC:FA:ED:A4:77:35:7E:46:05:ED:7B:00:9B"
+        "F2:A3:40:A0:4A:F8:1A:39:C2:6C:10:12:76:9A:CA:58:22:14:6F:C0:BD:E8:A4:E9:63:BC:BC:36:23:57:24:34"
       ]
     }
   }
