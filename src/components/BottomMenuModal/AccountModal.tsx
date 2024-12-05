@@ -9,6 +9,7 @@ import {
   useWalletAddress,
 } from '@etherspot/transaction-kit';
 import { useLogout } from '@privy-io/react-auth';
+import Tippy from '@tippyjs/react';
 import Avatar from 'boring-avatars';
 import { BigNumber, ethers } from 'ethers';
 import {
@@ -20,13 +21,12 @@ import {
   Hierarchy as IconHierarchy,
   Logout as LogoutIcon,
 } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
-import Tippy from '@tippyjs/react';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -50,17 +50,11 @@ import useAssets from '../../hooks/useAssets';
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
 
-// context
-import { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
-import { AccountNftsContext } from '../../providers/AccountNftsProvider';
-
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
 }
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
-  const contextNfts = useContext(AccountNftsContext);
-  const contextBalances = useContext(AccountBalancesContext);
   const accountAddress = useWalletAddress();
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -123,17 +117,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       return all;
     }, []);
   }, [accountAddress, nfts]);
-
-  useEffect(() => {
-    if (!isContentVisible) {
-      contextNfts?.data.setUpdateData(false);
-      contextBalances?.data.setUpdateData(false);
-    }
-    if (isContentVisible) {
-      contextNfts?.data.setUpdateData(true);
-      contextBalances?.data.setUpdateData(true);
-    }
-  }, [isContentVisible, contextNfts?.data, contextBalances?.data]);
 
   const onCopyAddressClick = useCallback(() => {
     if (copied) {
