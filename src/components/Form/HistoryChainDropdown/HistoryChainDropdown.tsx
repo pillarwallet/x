@@ -47,6 +47,7 @@ const HistoryChainDropdown = () => {
     <div
       className="relative flex justify-center items-center mb-8"
       onMouseLeave={() => setIsOpen(false)}
+      id="history-chain-dropdown"
     >
       <button
         type="button"
