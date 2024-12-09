@@ -13,6 +13,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
 import tokenAtlasSlice from './apps/token-atlas/reducer/tokenAtlasSlice';
 import { pillarXApiPresence } from './services/pillarXApiPresence';
+import { pillarXApiTransactionsHistory } from './services/pillarXApiTransactionsHistory';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
 
 // Initialisation
@@ -79,6 +80,7 @@ export const store = configureStore({
  */
 addMiddleware(pillarXApiWaitlist);
 addMiddleware(pillarXApiPresence);
+addMiddleware(pillarXApiTransactionsHistory);
 addReducer(swapSlice);
 addReducer(tokenAtlasSlice);
 
