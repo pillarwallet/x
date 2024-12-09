@@ -34,6 +34,11 @@ const BottomMenuModal = () => {
       contextNfts?.data.setUpdateData(true);
       contextBalances?.data.setUpdateData(true);
     }
+
+    if (activeIndex !== 0 && activeIndex !== 2) {
+      contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
+    }
   }, [contextNfts?.data, contextBalances?.data, activeIndex]);
 
   return (
