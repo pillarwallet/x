@@ -14,6 +14,7 @@ import AccountTransactionHistoryProvider from '../providers/AccountTransactionHi
 import AssetsProvider from '../providers/AssetsProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
+import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
 
 /**
  * @name Authorized
@@ -43,10 +44,12 @@ export default function Authorized({
             <AccountNftsProvider>
               <GlobalTransactionBatchesProvider>
                 <BottomMenuModalProvider>
-                  <AuthContentWrapper>
-                    <Outlet />
-                  </AuthContentWrapper>
-                  <BottomMenu />
+                  <SelectedChainsHistoryProvider>
+                    <AuthContentWrapper>
+                      <Outlet />
+                    </AuthContentWrapper>
+                    <BottomMenu />
+                  </SelectedChainsHistoryProvider>
                 </BottomMenuModalProvider>
               </GlobalTransactionBatchesProvider>
             </AccountNftsProvider>

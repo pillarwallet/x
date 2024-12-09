@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<BottomMenu /> renders correctly 1`] = `
+exports[`<BottomMenu /> renders correctly if not authenticated 1`] = `null`;
+
+exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
 [
   .c7 {
   display: flex;
@@ -31,6 +33,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
 
 .c6 {
   width: 100%;
+  min-height: 30vh;
   max-height: 100%;
   overflow-y: scroll;
   -ms-overflow-style: none;
@@ -187,7 +190,7 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   width: 338px;
   transform: translateX(-50%);
   border: 1px solid #363439;
-  background: #120f17;
+  background: rgba(18, 15, 23, 0.70);
   border-radius: 20px;
   overflow: hidden;
   backdrop-filter: blur(15px);
@@ -440,5 +443,3 @@ exports[`<BottomMenu /> renders correctly 1`] = `
   />,
 ]
 `;
-
-exports[`<BottomMenu /> renders correctly if not authenticated 1`] = `null`;

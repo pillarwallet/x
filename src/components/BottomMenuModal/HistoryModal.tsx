@@ -1,174 +1,53 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
-import {
-  useEtherspotUtils,
-  UserOpTransaction,
-  useWalletAddress,
-} from '@etherspot/transaction-kit';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { ExportSquare as IconExportSquare } from 'iconsax-react';
 import moment from 'moment';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // hooks
-import useAccountTransactionHistory from '../../hooks/useAccountTransactionHistory';
-import useAssets from '../../hooks/useAssets';
+import { useSelectedChains } from '../../hooks/useSelectedChainsHistory';
+import { useGetTransactionsHistoryQuery } from '../../services/pillarXApiTransactionsHistory';
 
 // utils
-import { truncateAddress, visibleChains } from '../../utils/blockchain';
+import { getBlockScan, getChainName } from '../../utils/blockchain';
+
+// types
+import { TransactionHistory } from '../../types/api';
 
 // components
 import ChainAssetIcon from '../ChainAssetIcon';
+import HistoryChainDropdown from '../Form/HistoryChainDropdown/HistoryChainDropdown';
 import SkeletonLoader from '../SkeletonLoader';
 import Alert from '../Text/Alert';
-
-// context
-import { AccountTransactionHistoryContext } from '../../providers/AccountTransactionHistoryProvider';
 
 interface HistoryModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
 }
 
-// TODO: replace once exportable from Prime SDK
-interface EtherspotErc20TransfersEntity {
-  from: string;
-  to: string;
-  value: number;
-  asset?: string;
-  address: string;
-  decimal: number;
-}
-
-// TODO: replace once exportable from Prime SDK
-interface EtherspotNativeTransfersEntity {
-  from: string;
-  to: string;
-  value: string;
-  asset?: string;
-  address: string;
-  decimal: number;
-  data: string;
-}
-
-// TODO: replace once exportable from Prime SDK
-interface EtherspotNftTransfersEntity {
-  from: string;
-  to: string;
-  value: number;
-  tokenId: number;
-  asset?: string;
-  category: string;
-  address: string;
-}
-
-type HistoryTransaction = UserOpTransaction & {
-  id: string;
-  assetTransfer?:
-    | (EtherspotErc20TransfersEntity & { type: 'erc20' })
-    | (EtherspotNativeTransfersEntity & { type: 'native' })
-    | (EtherspotNftTransfersEntity & { type: 'nft' });
-};
-
 const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
-  const context = useContext(AccountTransactionHistoryContext);
   const accountAddress = useWalletAddress();
-  const history = useAccountTransactionHistory();
-  const { addressesEqual } = useEtherspotUtils();
-  const assets = useAssets();
   const [t] = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data: history,
+    isLoading: isHistoryLoading,
+    isSuccess: isHistorySucess,
+  } = useGetTransactionsHistoryQuery(accountAddress || '');
+  const { selectedChains, setSelectedChains } = useSelectedChains();
 
-  const allTransactions = useMemo(
-    () =>
-      Object.values(history).reduce<HistoryTransaction[]>(
-        (
-          mergedTransactions,
-          chainHistory: Record<string, UserOpTransaction[]>
-        ) => {
-          Object.values(chainHistory).forEach((accountTransactions) => {
-            const transfersAsTransactions = accountTransactions.reduce<
-              HistoryTransaction[]
-            >((mergedTransactionTransfers, transaction: UserOpTransaction) => {
-              if (transaction.erc20Transfers) {
-                mergedTransactionTransfers.push(
-                  ...transaction.erc20Transfers.map(
-                    (transfer, index) =>
-                      ({
-                        ...transaction,
-                        id: `${transaction.transactionHash ?? transaction.userOpHash}-erc20-${index}`,
-                        assetTransfer: {
-                          ...transfer,
-                          type: 'erc20',
-                        },
-                      }) as HistoryTransaction
-                  )
-                );
-              }
-
-              if (transaction.nftTransfers) {
-                mergedTransactionTransfers.push(
-                  ...transaction.nftTransfers.map(
-                    (transfer, index) =>
-                      ({
-                        ...transaction,
-                        id: `${transaction.transactionHash ?? transaction.userOpHash}-nft-${index}`,
-                        assetTransfer: {
-                          ...transfer,
-                          type: 'nft',
-                        },
-                      }) as HistoryTransaction
-                  )
-                );
-              }
-
-              if (transaction.nativeTransfers) {
-                mergedTransactionTransfers.push(
-                  ...transaction.nativeTransfers.map(
-                    (transfer, index) =>
-                      ({
-                        ...transaction,
-                        id: `${transaction.transactionHash ?? transaction.userOpHash}-native-${index}`,
-                        assetTransfer: {
-                          ...transfer,
-                          type: 'native',
-                        },
-                      }) as HistoryTransaction
-                  )
-                );
-              }
-              return mergedTransactionTransfers;
-            }, []);
-            mergedTransactions.push(...transfersAsTransactions);
-          });
-          return mergedTransactions;
-        },
-        []
-      ),
-    [history]
-  );
-
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (!isContentVisible) {
-      context?.data.setUpdateData(false);
+      setSelectedChains([]);
     }
-    if (isContentVisible) {
-      context?.data.setUpdateData(true);
-      setIsLoading(true);
-      const loadingTimeout = setTimeout(() => {
-        setIsLoading(false);
-      }, 5000); // to allow api to get data on chain
-
-      return () => clearTimeout(loadingTimeout);
-    }
-  }, [isContentVisible, context?.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isContentVisible]);
 
   if (!isContentVisible) {
     return <Wrapper />;
   }
 
-  if (!accountAddress || isLoading) {
+  if (!accountAddress || isHistoryLoading) {
     return (
       <Wrapper id="history-modal-loader">
         <HistoryCard>
@@ -185,68 +64,59 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     );
   }
 
-  const sortedTransactions = allTransactions.sort(
-    (a, b) => b.timestamp - a.timestamp
+  const transactions = (history as TransactionHistory).results;
+
+  const allIncomingTransactions = transactions.incoming.length
+    ? transactions.incoming.map((transaction) => ({
+        ...transaction,
+        type: 'incoming',
+      }))
+    : [];
+
+  const allOutgoingTransactions = transactions.outgoing.length
+    ? transactions.outgoing.map((transaction) => ({
+        ...transaction,
+        type: 'outgoing',
+      }))
+    : [];
+
+  // TODO - sort by transaction execution date and time
+  const allTransactions = [
+    ...allIncomingTransactions,
+    ...allOutgoingTransactions,
+  ];
+
+  const filteredTransactions = allTransactions.filter((txs) =>
+    selectedChains.length ? selectedChains.includes(Number(txs.chainId)) : txs
   );
 
   return (
     <Wrapper id="history-modal">
-      {!sortedTransactions.length && (
-        <Alert>{t`error.noTransactionHistory`}</Alert>
-      )}
-      {sortedTransactions.map((transaction) => {
-        const chain = visibleChains.find((c) => c.id === transaction.chainId);
-        const isAssetOut = addressesEqual(
-          accountAddress,
-          transaction?.assetTransfer?.from ?? transaction.sender
-        );
-        const momentTs = moment.unix(transaction.timestamp);
-
-        let assetSymbol;
-        let assetValue;
-        if (
-          transaction.assetTransfer?.type === 'erc20' ||
-          transaction.assetTransfer?.type === 'native'
-        ) {
-          assetSymbol = ` ${transaction.assetTransfer.asset ?? `${transaction.assetTransfer.type.toUpperCase()} TOKEN`}`;
-          assetValue = transaction.assetTransfer.value;
-        } else if (transaction.assetTransfer?.type === 'nft') {
-          assetSymbol = ` ${transaction.assetTransfer.asset ?? `${transaction.assetTransfer.category.toUpperCase()} NFT`}`;
-          assetValue =
-            transaction.assetTransfer.tokenId &&
-            ` ID ${transaction.assetTransfer.tokenId}`;
-        }
-
-        const successToStatus: {
-          [key in UserOpTransaction['success']]:
-            | 'pending'
-            | 'completed'
-            | 'failed';
-        } = {
-          [TransactionStatuses.Pending]: 'pending',
-          [TransactionStatuses.Completed]: 'completed',
-          [TransactionStatuses.Reverted]: 'failed',
-        };
-
-        const transactionStatus = successToStatus[transaction.success];
-        const asset = assets[transaction.chainId].find(
-          (a) =>
-            transaction.assetTransfer?.address &&
-            addressesEqual(a.address, transaction.assetTransfer.address)
-        );
-
+      <HistoryChainDropdown />
+      {(!allTransactions.length && !isHistoryLoading && isHistorySucess) ||
+        (!filteredTransactions.length && (
+          <Alert>
+            No transaction history found on {getChainName(selectedChains[0])}.
+          </Alert>
+        ))}
+      {filteredTransactions.map((transaction) => {
+        // TO DO - to replace with transaction execution time
+        const momentTs = moment.unix(Number(transaction.entityUpdatedAt));
         return (
-          <HistoryCard id="history-card" key={transaction.id}>
+          <HistoryCard id="history-card" key={transaction.txHash}>
             <DetailsRow>
-              <ChainAssetIcon asset={asset} chainId={transaction.chainId} />
+              <ChainAssetIcon
+                asset="chain-only"
+                chainId={Number(transaction.chainId)}
+              />
               <div>
                 <ActionText>
-                  {isAssetOut ? t`label.sent` : t`label.received`}
-                  {assetSymbol}
-                  {!!chain && (
+                  {transaction.txHash.slice(0, 8)}...
+                  {transaction.txHash.slice(-8)}
+                  {!!transaction.chainId && (
                     // eslint-disable-next-line jsx-a11y/control-has-associated-label
                     <a
-                      href={transaction.blockExplorerUrl}
+                      href={`${getBlockScan(Number(transaction.chainId))}${transaction.txHash}`}
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -256,40 +126,24 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
                 </ActionText>
                 <ActionSubtext>
                   {t`label.on`}{' '}
-                  {chain?.name ??
+                  {getChainName(Number(transaction.chainId)) ??
                     t('helper.unknownNetwork', {
                       chainId: transaction.chainId,
                     })}
                 </ActionSubtext>
               </div>
-              {!!assetValue && (
-                <div>
-                  <ActionText>
-                    {isAssetOut ? '-' : '+'} {assetValue}
-                  </ActionText>
-                  {/* TODO: add price when returned from Prime SDK */}
-                  {/* <ActionSubtext> */}
-                  {/*  $100 */}
-                  {/* </ActionSubtext> */}
-                </div>
-              )}
+              <div>
+                <ActionText>
+                  {transaction.type === 'outgoing' ? 'Sent' : 'Received'}
+                </ActionText>
+              </div>
             </DetailsRow>
-            <ActionSubtext>
-              {isAssetOut &&
-                !!transaction.assetTransfer?.to &&
-                `${t`label.to`} ${truncateAddress(transaction.assetTransfer?.to)}`}
-              {(!isAssetOut || !transaction.assetTransfer?.to) &&
-                `${t`label.from`}: ${truncateAddress(transaction.assetTransfer?.from ?? transaction.sender)}`}
-            </ActionSubtext>
             <DetailsRow $noBorder>
               <Timestamp>
                 {momentTs.format('DD-MM-YYYY')}
                 <span />
                 {momentTs.format('HH:mm')}
               </Timestamp>
-              <TransactionStatus $status={transactionStatus}>
-                {t(`status.${transactionStatus}`)}
-              </TransactionStatus>
             </DetailsRow>
           </HistoryCard>
         );
@@ -300,6 +154,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
 
 const Wrapper = styled.div`
   width: 100%;
+  min-height: 30vh;
   max-height: 100%;
 
   &::-webkit-scrollbar {
@@ -388,15 +243,16 @@ const HistoryCard = styled.div`
   }
 `;
 
-const TransactionStatus = styled.div<{
-  $status: 'pending' | 'completed' | 'failed';
-}>`
-  padding: 4px 6px;
-  font-size: 12px;
-  border-radius: 3px;
-  background: ${({ theme, $status }) =>
-    theme.color.background.transactionStatus[$status]};
-  color: ${({ theme, $status }) => theme.color.text.transactionStatus[$status]};
-`;
+// TO DO - might need to use this in the future
+// const TransactionStatus = styled.div<{
+//   $status: 'pending' | 'completed' | 'failed';
+// }>`
+//   padding: 4px 6px;
+//   font-size: 12px;
+//   border-radius: 3px;
+//   background: ${({ theme, $status }) =>
+//     theme.color.background.transactionStatus[$status]};
+//   color: ${({ theme, $status }) => theme.color.text.transactionStatus[$status]};
+// `;
 
 export default HistoryModal;

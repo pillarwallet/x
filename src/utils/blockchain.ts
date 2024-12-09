@@ -176,3 +176,33 @@ export const isApproveTransaction = (callData: string) => {
   const approveMethodId = '0x095ea7b3';
   return methodId === approveMethodId;
 };
+
+export const getBlockScan = (chain: number) => {
+  switch (chain) {
+    case 1:
+      return 'https://etherscan.io/tx/';
+    case 137:
+      return 'https://polygonscan.com/tx/';
+    case 8453:
+      return 'https://basescan.org/tx/';
+    case 100:
+      return 'https://gnosisscan.io/tx/';
+    default:
+      return '';
+  }
+};
+
+export const getChainName = (chain: number) => {
+  switch (chain) {
+    case 1:
+      return 'Ethereum';
+    case 137:
+      return 'Polygon';
+    case 8453:
+      return 'Base';
+    case 100:
+      return 'Gnosis';
+    default:
+      return `${chain}`;
+  }
+};

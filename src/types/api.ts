@@ -318,3 +318,34 @@ export type MediaGridContract = {
   address: string;
   chain: string;
 };
+
+export type TransactionHistory = {
+  results: TransactionHistoryItem;
+};
+
+export type TransactionHistoryItem = {
+  outgoing: Transaction[];
+  incoming: Transaction[];
+};
+
+export type Transaction = {
+  entityId: string;
+  entityUpdatedAt: string;
+  chainId: string;
+  contractAddress: string;
+  horizon: string;
+  paymaster: string;
+  sender: string;
+  userOpHash: string;
+  actualGasUsed: string;
+  actualGasCost: string;
+  txHash: string;
+  success: boolean;
+  nonce: string;
+  blockNumber: string;
+  transactionIndex: string;
+  forkIndex: string;
+  logIndex: string;
+  localIndex: string;
+  namespace: string;
+};
