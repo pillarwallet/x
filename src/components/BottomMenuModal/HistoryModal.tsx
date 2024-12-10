@@ -14,7 +14,11 @@ import { useGetTransactionsHistoryQuery } from '../../services/pillarXApiTransac
 import { getBlockScan, getChainName } from '../../utils/blockchain';
 
 // types
-import { FlairTransactionHistory } from '../../types/api';
+import {
+  EtherscanTransaction,
+  FlairTransaction,
+  TransactionHistory,
+} from '../../types/api';
 
 // components
 import ChainAssetIcon from '../ChainAssetIcon';
@@ -64,13 +68,16 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     );
   }
 
-  const transactions = (history as FlairTransactionHistory)?.results;
+  const transactions = (history as TransactionHistory)?.results;
 
-  const allIncomingTransactions = transactions?.incoming.length
-    ? transactions.incoming.map((transaction) => ({
-        ...transaction,
-        type: 'incoming',
-      }))
+  const allIncomingTransactions = transactions?.incoming
+    ? Object.entries(transactions.incoming).flatMap(([chainId, tsx]) =>
+        tsx.map((transaction) => ({
+          ...transaction,
+          chainId,
+          type: 'incoming',
+        }))
+      )
     : [];
 
   const allOutgoingTransactions = transactions?.outgoing.length
@@ -90,20 +97,31 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     selectedChains.length ? selectedChains.includes(Number(txs.chainId)) : txs
   );
 
+  const transactionHash = (
+    transaction: EtherscanTransaction | FlairTransaction
+  ) =>
+    (transaction as EtherscanTransaction).hash ||
+    (transaction as FlairTransaction).txHash;
+
   return (
     <Wrapper id="history-modal">
       <HistoryChainDropdown />
       {(!allTransactions.length && !isHistoryLoading && isHistorySucess) ||
         (!filteredTransactions.length && (
           <Alert>
-            No transaction history found on {getChainName(selectedChains[0])}.
+            {getChainName(selectedChains[0]) === 'undefined'
+              ? t`error.noTransactionHistory`
+              : `No transaction history found on ${getChainName(selectedChains[0])}.`}
           </Alert>
         ))}
       {filteredTransactions.map((transaction) => {
-        // TO DO - to replace with transaction execution time
-        const momentTs = moment.unix(Number(transaction.entityUpdatedAt));
+        const momentTs = moment.unix(
+          transaction.type === 'incoming'
+            ? Number((transaction as EtherscanTransaction).timeStamp)
+            : Number((transaction as FlairTransaction).entityUpdatedAt)
+        );
         return (
-          <HistoryCard id="history-card" key={transaction.txHash}>
+          <HistoryCard id="history-card" key={transactionHash(transaction)}>
             <DetailsRow>
               <ChainAssetIcon
                 asset="chain-only"
@@ -111,12 +129,12 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
               />
               <div>
                 <ActionText>
-                  {transaction.txHash.slice(0, 8)}...
-                  {transaction.txHash.slice(-8)}
+                  {transactionHash(transaction).slice(0, 6)}...
+                  {transactionHash(transaction).slice(-6)}
                   {!!transaction.chainId && (
                     // eslint-disable-next-line jsx-a11y/control-has-associated-label
                     <a
-                      href={`${getBlockScan(Number(transaction.chainId))}${transaction.txHash}`}
+                      href={`${getBlockScan(Number(transaction.chainId))}${transactionHash(transaction)}`}
                       target="_blank"
                       rel="noreferrer"
                     >
