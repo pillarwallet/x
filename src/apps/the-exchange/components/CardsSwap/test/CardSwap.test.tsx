@@ -41,8 +41,8 @@ const mockTokenAssets = [
   },
   {
     address: '0x02',
-    name: 'Matic',
-    symbol: 'MATIC',
+    name: 'POL',
+    symbol: 'POL',
     chainId: 137,
     decimals: 18,
     icon: 'iconMatic.png',
@@ -92,8 +92,8 @@ jest.mock('../../../../../hooks/useAssets', () => ({
       {
         address: '0x02',
         chainId: 137,
-        name: 'Matic',
-        symbol: 'MATIC',
+        name: 'POL',
+        symbol: 'POL',
         decimals: 18,
         logoURI: 'iconMatic.png',
       },

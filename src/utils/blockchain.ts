@@ -37,13 +37,13 @@ export const isValidEthereumAddress = (
   return false;
 };
 
-// WRAPPED MATIC & MATIC are interchangeably Polygon native assets
-export const WRAPPED_MATIC_TOKEN_ADDRESS =
+// WRAPPED POL & POL are interchangeably Polygon native assets
+export const WRAPPED_POL_TOKEN_ADDRESS =
   '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
 
 export const isPolygonAssetNative = (address: string, chainId: number) =>
   (address === ethers.constants.AddressZero ||
-    address === WRAPPED_MATIC_TOKEN_ADDRESS) &&
+    address === WRAPPED_POL_TOKEN_ADDRESS) &&
   chainId === 137;
 
 /**
@@ -52,15 +52,15 @@ export const isPolygonAssetNative = (address: string, chainId: number) =>
  * - https://docs.privy.io/guide/configuration/networks#default-configuration
  */
 export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
-  // return different native asset for chains where it's not Matic (MATIC), otherwise return Matic (MATIC)
+  // return different native asset for chains where it's not POL (POL), otherwise return POL (POL)
   // only mumbai testnet is supported on Prime SDK
   const nativeAsset = {
     chainId,
     address:
       ethers.constants.AddressZero ||
-      (chainId === 137 && WRAPPED_MATIC_TOKEN_ADDRESS),
-    name: 'Matic',
-    symbol: 'MATIC',
+      (chainId === 137 && WRAPPED_POL_TOKEN_ADDRESS),
+    name: 'POL',
+    symbol: 'POL',
     decimals: 18,
     logoURI:
       'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png',

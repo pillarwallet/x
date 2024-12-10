@@ -7,7 +7,7 @@ import React, { createContext, useEffect, useMemo } from 'react';
 
 // utils
 import {
-  WRAPPED_MATIC_TOKEN_ADDRESS,
+  WRAPPED_POL_TOKEN_ADDRESS,
   getNativeAssetForChainId,
   visibleChains,
 } from '../utils/blockchain';
@@ -43,14 +43,14 @@ const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         // eslint-disable-next-line no-await-in-loop
         let chainAssets = (await getAssets(chainId)) ?? [];
 
-        // Check if Wrapped Matic as native asset
+        // Check if Wrapped POL as native asset
         if (chainId === 137) {
           chainAssets = chainAssets.map((token) => {
-            if (token.address === WRAPPED_MATIC_TOKEN_ADDRESS) {
+            if (token.address === WRAPPED_POL_TOKEN_ADDRESS) {
               return {
                 ...token,
-                name: 'Wrapped Matic (as Matic)',
-                symbol: 'WMATIC',
+                name: 'Wrapped POL (as POL)',
+                symbol: 'WPOL',
                 decimals: 18,
               };
             }
