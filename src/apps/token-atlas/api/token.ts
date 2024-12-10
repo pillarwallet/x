@@ -11,6 +11,15 @@ import {
   TrendingTokens,
 } from '../../../types/api';
 
+// utils
+import { CompatibleChains } from '../../../utils/blockchain';
+
+const chainIds =
+  process.env.REACT_APP_USE_TESTNETS === 'true'
+    ? [11155111]
+    : CompatibleChains.map((chain) => chain.chainId);
+const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+
 export const tokenInfoApi = createApi({
   reducerPath: 'tokenInfoApi',
   baseQuery: fetchBaseQuery({
@@ -27,7 +36,7 @@ export const tokenInfoApi = createApi({
       query: ({ asset, blockchain, symbol }) => {
         const blockchainParam =
           blockchain !== undefined ? `&blockchain=${blockchain}` : '';
-        return `?asset=${asset}&symbol=${symbol}${blockchainParam}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
+        return `?asset=${asset}&symbol=${symbol}${blockchainParam}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
       },
     }),
   }),
@@ -51,7 +60,7 @@ export const tokenGraphApi = createApi({
         const blockchainParam =
           blockchain !== undefined ? `&blockchain=${blockchain}` : '';
         const assetParam = asset.split(' ')[0];
-        return `?asset=${assetParam}&from=${from * 1000}${toParam}${blockchainParam}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
+        return `?asset=${assetParam}&from=${from * 1000}${toParam}${blockchainParam}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
       },
     }),
   }),
@@ -67,7 +76,8 @@ export const trendingTokensApi = createApi({
   }),
   endpoints: (builder) => ({
     getTrendingTokens: builder.query<TrendingTokens, void>({
-      query: () => `&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+      query: () =>
+        `&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
@@ -82,7 +92,8 @@ export const blockchainsListApi = createApi({
   }),
   endpoints: (builder) => ({
     getBlockchainsList: builder.query<BlockchainList, void>({
-      query: () => `&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+      query: () =>
+        `&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });

@@ -318,3 +318,57 @@ export type MediaGridContract = {
   address: string;
   chain: string;
 };
+
+export type TransactionHistory = {
+  results: TransactionHistoryItem;
+};
+
+export type TransactionHistoryItem = {
+  outgoing: FlairTransaction[];
+  incoming: { [chainId: string]: EtherscanTransaction[] };
+};
+
+export type FlairTransaction = {
+  entityId: string;
+  entityUpdatedAt: string;
+  chainId: string;
+  contractAddress: string;
+  horizon: string;
+  paymaster: string;
+  sender: string;
+  userOpHash: string;
+  actualGasUsed: string;
+  actualGasCost: string;
+  txHash: string;
+  success: boolean;
+  nonce: string;
+  blockNumber: string;
+  transactionIndex: string;
+  forkIndex: string;
+  logIndex: string;
+  localIndex: string;
+  namespace: string;
+};
+
+export type EtherscanTransaction = {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  transactionIndex: string;
+  from: string;
+  to: string;
+  value: string;
+  gas: string;
+  gasPrice: string;
+  isError: string;
+  txreceipt_status: string;
+  input: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  gasUsed: string;
+  confirmations: string;
+  methodId: string;
+  functionName: string;
+};

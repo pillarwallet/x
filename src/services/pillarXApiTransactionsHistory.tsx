@@ -5,26 +5,27 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { CompatibleChains } from '../utils/blockchain';
 
 // Define a service using a base URL and expected endpoints
-export const pillarXApiWaitlist = createApi({
-  reducerPath: 'pillarXApiWaitlistWaitlist',
+export const pillarXApiTransactionsHistory = createApi({
+  reducerPath: 'pillarXApiTransactionsHistory',
   baseQuery: fetchBaseQuery({
     baseUrl:
       process.env.REACT_APP_USE_TESTNETS === 'true'
-        ? 'https://waitlist-nubpgwxpiq-uc.a.run.app'
-        : 'https://waitlist-7eu4izffpa-uc.a.run.app',
+        ? 'https://transactions-nubpgwxpiq-uc.a.run.app'
+        : 'https://transactions-7eu4izffpa-uc.a.run.app',
   }),
   endpoints: (builder) => ({
-    getWaitlist: builder.query({
+    getTransactionsHistory: builder.query({
       query: (address) => {
         const chainIds =
           process.env.REACT_APP_USE_TESTNETS === 'true'
             ? [11155111]
             : CompatibleChains.map((chain) => chain.chainId);
         const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+
         return `?address=${address}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
       },
     }),
   }),
 });
 
-export const { useGetWaitlistQuery } = pillarXApiWaitlist;
+export const { useGetTransactionsHistoryQuery } = pillarXApiTransactionsHistory;

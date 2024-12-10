@@ -6,6 +6,7 @@ import { Native } from '@hypelab/sdk-react';
 import { Advertisement, Projection } from '../../../../types/api';
 
 // components
+import EditorialTag from '../EditorialTag/EditorialTag';
 import TileContainer from '../TileContainer/TileContainer';
 
 type AdvertTileProps = {
@@ -26,7 +27,8 @@ const AdvertTile = ({ data, isDataLoading }: AdvertTileProps) => {
         className="mobile:bg-[#1F1D23] xs:flex-col"
       >
         <div className="flex flex-col p-4 justify-between desktop:basis-1/2 tablet:basis-1/2 mobile:basis-1/2 xs:basis-full xs:order-2">
-          <div className="flex items-center gap-5 mb-2">
+          <EditorialTag label="Advert" color="white" />
+          <div className="flex items-center gap-5 mb-2 mt-4">
             <img
               data-ref="icon"
               className="h-10 w-10 rounded-full"

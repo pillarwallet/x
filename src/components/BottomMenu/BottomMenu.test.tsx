@@ -1,6 +1,7 @@
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { usePrivy } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import renderer, {
   ReactTestRenderer,
@@ -23,6 +24,11 @@ import AssetsProvider from '../../providers/AssetsProvider';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
+import SelectedChainsHistoryProvider from '../../providers/SelectedChainsHistoryProvider';
+
+// services and store
+import { pillarXApiTransactionsHistory } from '../../services/pillarXApiTransactionsHistory';
+import { addMiddleware, store } from '../../store';
 
 const ethersProvider = new ethers.providers.JsonRpcProvider(
   'http://localhost:8545',
@@ -33,32 +39,42 @@ const provider = ethers.Wallet.createRandom().connect(ethersProvider);
 describe('<BottomMenu />', () => {
   let rendered: ReactTestRenderer | null = null;
 
-  it('renders correctly', async () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store.replaceReducer(() => ({}));
+    addMiddleware(pillarXApiTransactionsHistory);
+  });
+
+  it('renders correctly when authenticated', async () => {
     (usePrivy as jest.Mock).mockImplementation(() => ({ authenticated: true }));
 
     await act(async () => {
       rendered = renderer.create(
-        <BrowserRouter>
-          <EtherspotTransactionKit provider={provider}>
-            <AccountTransactionHistoryProvider>
-              <AssetsProvider>
-                <AccountBalancesProvider>
-                  <AccountNftsProvider>
-                    <ThemeProvider theme={defaultTheme}>
-                      <LanguageProvider>
-                        <GlobalTransactionsBatchProvider>
-                          <BottomMenuModalProvider>
-                            <BottomMenu />
-                          </BottomMenuModalProvider>
-                        </GlobalTransactionsBatchProvider>
-                      </LanguageProvider>
-                    </ThemeProvider>
-                  </AccountNftsProvider>
-                </AccountBalancesProvider>
-              </AssetsProvider>
-            </AccountTransactionHistoryProvider>
-          </EtherspotTransactionKit>
-        </BrowserRouter>
+        <Provider store={store}>
+          <BrowserRouter>
+            <EtherspotTransactionKit provider={provider}>
+              <AccountTransactionHistoryProvider>
+                <AssetsProvider>
+                  <AccountBalancesProvider>
+                    <AccountNftsProvider>
+                      <ThemeProvider theme={defaultTheme}>
+                        <LanguageProvider>
+                          <GlobalTransactionsBatchProvider>
+                            <BottomMenuModalProvider>
+                              <SelectedChainsHistoryProvider>
+                                <BottomMenu />
+                              </SelectedChainsHistoryProvider>
+                            </BottomMenuModalProvider>
+                          </GlobalTransactionsBatchProvider>
+                        </LanguageProvider>
+                      </ThemeProvider>
+                    </AccountNftsProvider>
+                  </AccountBalancesProvider>
+                </AssetsProvider>
+              </AccountTransactionHistoryProvider>
+            </EtherspotTransactionKit>
+          </BrowserRouter>
+        </Provider>
       );
     });
 
@@ -88,7 +104,9 @@ describe('<BottomMenu />', () => {
             <LanguageProvider>
               <GlobalTransactionsBatchProvider>
                 <BottomMenuModalProvider>
-                  <BottomMenu />
+                  <SelectedChainsHistoryProvider>
+                    <BottomMenu />
+                  </SelectedChainsHistoryProvider>
                 </BottomMenuModalProvider>
               </GlobalTransactionsBatchProvider>
             </LanguageProvider>

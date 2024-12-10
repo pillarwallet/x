@@ -12,7 +12,7 @@ const ChainAssetIcon = ({
   asset,
   chainId,
 }: {
-  asset: TokenListToken | undefined;
+  asset: TokenListToken | undefined | 'chain-only';
   chainId: number;
 }) => {
   const chainLogo = getLogoForChainId(chainId);
@@ -20,9 +20,12 @@ const ChainAssetIcon = ({
   return (
     <Wrapper>
       <AssetIconWrapper>
-        <ImageWithFallback src={asset?.logoURI} alt={asset?.address} />
+        <ImageWithFallback
+          src={asset !== 'chain-only' ? asset?.logoURI : chainLogo}
+          alt={asset !== 'chain-only' ? asset?.address : 'chain-logo'}
+        />
       </AssetIconWrapper>
-      <ChainIcon src={chainLogo} />
+      {asset !== 'chain-only' && <ChainIcon src={chainLogo} />}
     </Wrapper>
   );
 };
