@@ -43,8 +43,8 @@ const mockTokenAssets = [
   },
   {
     address: '0x02',
-    name: 'Matic',
-    symbol: 'MATIC',
+    name: 'POL',
+    symbol: 'POL',
     chainId: 137,
     decimals: 18,
     icon: 'iconMatic.png',
@@ -133,7 +133,7 @@ describe('<ExchangeAction />', () => {
 
     expect(screen.getByText('You receive')).toBeInTheDocument();
     expect(screen.getByText('10.00000000')).toBeInTheDocument();
-    expect(screen.getByText('MATIC')).toBeInTheDocument();
+    expect(screen.getByText('POL')).toBeInTheDocument();
   });
 
   it('shows error message if no best offer available', async () => {

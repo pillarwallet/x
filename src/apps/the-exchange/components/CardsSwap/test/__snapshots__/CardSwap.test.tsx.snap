@@ -106,7 +106,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
           >
-            Matic
+            POL
           </p>
           <p
             className="text-base font-medium text-black_grey font-normal capitalize"
@@ -139,7 +139,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
         >
-          MATIC
+          POL
         </p>
         <div
           className="flex justify-between"
