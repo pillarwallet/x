@@ -8,10 +8,10 @@ import { CompatibleChains } from '../utils/blockchain';
 export const pillarXApiTransactionsHistory = createApi({
   reducerPath: 'pillarXApiTransactionsHistory',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://transactions-nubpgwxpiq-uc.a.run.app',
-    // process.env.REACT_APP_USE_TESTNETS === 'true'
-    //   ? 'https://transactions-nubpgwxpiq-uc.a.run.app'
-    //   : 'https://transactions-7eu4izffpa-uc.a.run.app',
+    baseUrl:
+      process.env.REACT_APP_USE_TESTNETS === 'true'
+        ? 'https://transactions-nubpgwxpiq-uc.a.run.app'
+        : 'https://transactions-7eu4izffpa-uc.a.run.app',
   }),
   endpoints: (builder) => ({
     getTransactionsHistory: builder.query({
