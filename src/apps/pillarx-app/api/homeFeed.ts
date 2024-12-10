@@ -7,6 +7,16 @@ import { addMiddleware } from '../../../store';
 // types
 import { ApiResponse, WalletData } from '../../../types/api';
 
+// utils
+import { CompatibleChains } from '../../../utils/blockchain';
+
+const chainIds =
+  process.env.REACT_APP_USE_TESTNETS === 'true'
+    ? [11155111]
+    : CompatibleChains.map((chain) => chain.chainId);
+
+const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+
 export const homeFeedApi = createApi({
   reducerPath: 'homeFeedApi',
   baseQuery: fetchBaseQuery({
@@ -19,7 +29,7 @@ export const homeFeedApi = createApi({
     getTilesInfo: builder.query<ApiResponse, { page: number; address: string }>(
       {
         query: ({ page, address }) =>
-          `?page=${page}&address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+          `?page=${page}&address=${address}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
       }
     ),
   }),
@@ -44,7 +54,7 @@ export const walletPortfolioTileApi = createApi({
   endpoints: (builder) => ({
     getWalletInfo: builder.query<WalletData, { address: string }>({
       query: ({ address }) =>
-        `?address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+        `?address=${address}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
