@@ -14,7 +14,7 @@ import { useGetTransactionsHistoryQuery } from '../../services/pillarXApiTransac
 import { getBlockScan, getChainName } from '../../utils/blockchain';
 
 // types
-import { TransactionHistory } from '../../types/api';
+import { FlairTransactionHistory } from '../../types/api';
 
 // components
 import ChainAssetIcon from '../ChainAssetIcon';
@@ -64,16 +64,16 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     );
   }
 
-  const transactions = (history as TransactionHistory).results;
+  const transactions = (history as FlairTransactionHistory)?.results;
 
-  const allIncomingTransactions = transactions.incoming.length
+  const allIncomingTransactions = transactions?.incoming.length
     ? transactions.incoming.map((transaction) => ({
         ...transaction,
         type: 'incoming',
       }))
     : [];
 
-  const allOutgoingTransactions = transactions.outgoing.length
+  const allOutgoingTransactions = transactions?.outgoing.length
     ? transactions.outgoing.map((transaction) => ({
         ...transaction,
         type: 'outgoing',

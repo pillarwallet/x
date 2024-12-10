@@ -6,30 +6,11 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { useSelectedChains } from '../../../hooks/useSelectedChainsHistory';
 
 // utils
-import { getChainName } from '../../../utils/blockchain';
+import { CompatibleChains, getChainName } from '../../../utils/blockchain';
 
 const HistoryChainDropdown = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { selectedChains, setSelectedChains } = useSelectedChains();
-
-  const allChainsOptions = [
-    {
-      chainId: 1,
-      chainName: 'Ethereum',
-    },
-    {
-      chainId: 137,
-      chainName: 'Polygon',
-    },
-    {
-      chainId: 8453,
-      chainName: 'Base',
-    },
-    {
-      chainId: 100,
-      chainName: 'Gnosis',
-    },
-  ];
 
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
@@ -51,10 +32,10 @@ const HistoryChainDropdown = () => {
     >
       <button
         type="button"
-        className={`flex justify-between items-center w-[70%] h-full py-2 px-4 ${isOpen ? 'bg-[#120f17] rounded-t-xl border-[1px] border-[#e2ddff1a]' : 'bg-[#e2ddff1a] : rounded-full'} focus:outline-none`}
+        className={`flex justify-between items-center w-[70%] h-full py-2 px-4 ${isOpen ? 'bg-dark_grey rounded-t-xl border-[1px] border-[#e2ddff1a]' : 'bg-transparent_medium_grey : rounded-full'} focus:outline-none`}
         onClick={handleDropdownToggle}
       >
-        <p className="text-[14px] text-[#e2ddff4d] font-light">Select chain</p>
+        <p className="text-[14px] text-medium_grey font-light">Select chain</p>
         <IoIosArrowDown
           size={16}
           color="#e2ddff"
@@ -63,11 +44,11 @@ const HistoryChainDropdown = () => {
       </button>
       {isOpen && (
         <div
-          className="absolute left-0 right-0 mx-auto w-[70%] bg-[#120f17] rounded-b-xl border-[1px] border-[#e2ddff1a] border-t-[4px] rounded-t-none  overflow-y-auto capitalize z-50"
+          className="absolute left-0 right-0 mx-auto w-[70%] bg-dark_grey rounded-b-xl border-[1px] border-transparent_medium_grey border-t-[4px] rounded-t-none  overflow-y-auto capitalize z-50"
           style={{ top: '100%' }}
         >
           <ul>
-            {allChainsOptions.map((option) => (
+            {CompatibleChains.map((option) => (
               // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <li
                 key={option.chainId}
@@ -78,17 +59,17 @@ const HistoryChainDropdown = () => {
                   className={`text-[14px] font-light ${
                     selectedChains.includes(option.chainId)
                       ? 'text-white'
-                      : 'text-[#e2ddff4d]'
+                      : 'text-medium_grey'
                   }`}
                 >
                   {getChainName(option.chainId)}
                 </p>
                 <BiCheckboxChecked
                   size={20}
-                  color={`${
+                  className={`${
                     selectedChains.includes(option.chainId)
-                      ? '#8A77FF'
-                      : '#e2ddff4d'
+                      ? 'text-medium_purple'
+                      : 'text-medium_grey'
                   }`}
                 />
               </li>

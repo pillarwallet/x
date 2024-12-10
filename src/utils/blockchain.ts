@@ -206,3 +206,22 @@ export const getChainName = (chain: number) => {
       return `${chain}`;
   }
 };
+
+export const CompatibleChains = [
+  {
+    chainId: 1,
+    chainName: 'Ethereum',
+  },
+  {
+    chainId: 137,
+    chainName: 'Polygon',
+  },
+  {
+    chainId: 8453,
+    chainName: 'Base',
+  },
+  {
+    chainId: 100,
+    chainName: 'Gnosis',
+  },
+];

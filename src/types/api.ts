@@ -319,16 +319,16 @@ export type MediaGridContract = {
   chain: string;
 };
 
-export type TransactionHistory = {
-  results: TransactionHistoryItem;
+export type FlairTransactionHistory = {
+  results: FlairTransactionHistoryItem;
 };
 
-export type TransactionHistoryItem = {
-  outgoing: Transaction[];
-  incoming: Transaction[];
+export type FlairTransactionHistoryItem = {
+  outgoing: FlairTransaction[];
+  incoming: FlairTransaction[];
 };
 
-export type Transaction = {
+export type FlairTransaction = {
   entityId: string;
   entityUpdatedAt: string;
   chainId: string;

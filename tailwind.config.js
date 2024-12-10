@@ -17,6 +17,11 @@ module.exports = {
         gray: { '900_33': '#1a1a1a33' },
         white: { A700: '#ffffff', A700_90: '#ffffff90', A700_99: '#ffffff99' },
         deep_purple: { A700: '#5e00ff' },
+        medium_purple: '#8A77FF',
+        light_purple: '#e2ddff',
+        transparent_medium_grey: '#e2ddff1a',
+        dark_grey: '#120f17',
+        medium_grey: '#e2ddff4d',
       },
       boxShadow: { xs: '0px 0px  30px 0px #ffffff0c' },
       fontFamily: {
