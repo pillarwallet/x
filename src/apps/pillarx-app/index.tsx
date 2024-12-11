@@ -71,7 +71,10 @@ const App = () => {
     data: waitlistData,
     isLoading: isWaitlistLoading,
     isSuccess: isWaitlistSucess,
-  } = useGetWaitlistQuery(walletAddress || '');
+  } = useGetWaitlistQuery(
+    { address: walletAddress || '' },
+    { skip: !walletAddress }
+  );
 
   // This useEffect is to update the wallet data
   useEffect(() => {
