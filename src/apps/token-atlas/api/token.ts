@@ -77,7 +77,7 @@ export const trendingTokensApi = createApi({
   endpoints: (builder) => ({
     getTrendingTokens: builder.query<TrendingTokens, void>({
       query: () =>
-        `&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+        `?${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });
@@ -93,7 +93,7 @@ export const blockchainsListApi = createApi({
   endpoints: (builder) => ({
     getBlockchainsList: builder.query<BlockchainList, void>({
       query: () =>
-        `&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+        `?${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
     }),
   }),
 });

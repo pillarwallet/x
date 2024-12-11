@@ -22,12 +22,8 @@ export const pillarXApiPresence = createApi({
         const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
         return {
-          url: '/',
+          url: `?${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
           method: 'POST',
-          params: {
-            testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
-            chainIds: chainIdsQuery,
-          },
           body: payload,
         };
       },
