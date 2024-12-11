@@ -37,7 +37,10 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     data: history,
     isLoading: isHistoryLoading,
     isSuccess: isHistorySucess,
-  } = useGetTransactionsHistoryQuery(accountAddress || '');
+  } = useGetTransactionsHistoryQuery(
+    { address: accountAddress || '' },
+    { skip: !accountAddress }
+  );
   const { selectedChains, setSelectedChains } = useSelectedChains();
 
   useEffect(() => {
