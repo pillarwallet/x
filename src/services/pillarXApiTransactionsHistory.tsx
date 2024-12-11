@@ -15,7 +15,7 @@ export const pillarXApiTransactionsHistory = createApi({
   }),
   endpoints: (builder) => ({
     getTransactionsHistory: builder.query({
-      query: (address) => {
+      query: ({ address }) => {
         const chainIds =
           process.env.REACT_APP_USE_TESTNETS === 'true'
             ? [11155111]
