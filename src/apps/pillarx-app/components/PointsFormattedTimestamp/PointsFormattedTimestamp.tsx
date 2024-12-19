@@ -11,7 +11,10 @@ const PointsFormattedTimestamp = ({
   const minutes = Math.floor((totalSeconds % 3600) / 60);
 
   return (
-    <p className="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white">
+    <p
+      className="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+      data-testid="points-fornatted-timestamp"
+    >
       {days}
       <span className="text-base">d</span> {hours}
       <span className="text-base">h</span> {minutes}

@@ -105,22 +105,22 @@ export type Advertisement = {
 export type Points = {
   address: {
     points: {
-      total: number;
-      lastWeek: number;
+      total?: number;
+      lastWeek?: number;
     };
     ranking: {
-      global: number;
-      leaderboardPosition: number;
+      global?: number;
+      leaderboardPosition?: number;
     };
   };
   drops: {
     upcoming: {
-      timestamp: number;
+      timestamp?: number;
     };
   };
   referrals: {
-    code: string;
-    href: string;
+    code?: string;
+    href?: string;
   };
 };
 

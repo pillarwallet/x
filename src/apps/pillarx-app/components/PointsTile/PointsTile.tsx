@@ -66,7 +66,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
     }
 
     setCopied(true);
-  }, [pointsData.referrals.code, copied]);
+  }, [pointsData?.referrals?.code, copied]);
 
   useEffect(() => {
     const codeCopyActionTimeout = setTimeout(() => {
@@ -105,7 +105,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                   />
                   <div className="flex items-end mb-6">
                     <p className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light">
-                      {pointsData.address.points.total}
+                      {pointsData.address.points.total || ''}
                     </p>
                     <p className="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal">
                       PX
@@ -124,7 +124,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                       #
                     </p>
                     <p className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light">
-                      {pointsData.address.ranking.global}
+                      {pointsData.address.ranking.global || ''}
                     </p>
                   </div>
                   <Body>Current ranking</Body>
@@ -137,13 +137,13 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                 <>
                   <PointsInfo
                     icon={PxLogo}
-                    value={pointsData.address.points.total}
+                    value={pointsData.address.points.total || ''}
                     afterValue="PX"
                     label="My PX points"
                   />
                   <PointsInfo
                     icon={CrownIcon}
-                    value={pointsData.address.ranking.global}
+                    value={pointsData.address.ranking.global || ''}
                     beforeValue="#"
                     label="Current ranking"
                   />
@@ -151,13 +151,13 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
               ) : null}
               <PointsInfo
                 icon={CalendarIcon}
-                value={pointsData.address.points.lastWeek}
+                value={pointsData.address.points.lastWeek || ''}
                 afterValue="PX"
                 label="Earned last week"
               />
               <PointsInfo
                 icon={RankingIcon}
-                value={pointsData.address.ranking.leaderboardPosition}
+                value={pointsData.address.ranking.leaderboardPosition || ''}
                 beforeValue="#"
                 label="Weekly ranking"
               />
@@ -165,7 +165,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                 icon={ClockIcon}
                 value={
                   <PointsFormattedTimestamp
-                    timestamp={pointsData.drops.upcoming.timestamp}
+                    timestamp={pointsData.drops.upcoming.timestamp || 0}
                   />
                 }
                 label="Next drop"
@@ -186,17 +186,25 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
             </div>
             <div className="flex flex-col gap-4 w-full">
               <div className="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3">
-                <Body>{pointsData.referrals.code}</Body>
+                <Body>{pointsData.referrals.code || ''}</Body>
                 <div className="flex gap-2 items-center">
                   <BodySmall className="text-purple_light">Copy</BodySmall>
                   <CopyToClipboard
-                    text={pointsData.referrals.code}
+                    text={pointsData.referrals.code || ''}
                     onCopy={onCopyCodeClick}
                   >
                     {copied ? (
-                      <CopySuccessIcon size={16} color="#E2DDFF" />
+                      <CopySuccessIcon
+                        size={16}
+                        color="#E2DDFF"
+                        data-testid="copy-success-icon"
+                      />
                     ) : (
-                      <CopyIcon size={15} color="#E2DDFF" />
+                      <CopyIcon
+                        size={15}
+                        color="#E2DDFF"
+                        data-testid="copy-icon"
+                      />
                     )}
                   </CopyToClipboard>
                 </div>
