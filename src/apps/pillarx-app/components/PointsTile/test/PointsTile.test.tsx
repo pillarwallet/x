@@ -79,6 +79,27 @@ describe('<PointsTile />', () => {
     expect(screen.queryByTestId('copy-success-icon')).not.toBeInTheDocument();
   });
 
+  it('it does not renders referral section if no code and link', () => {
+    const mockPointsDataNoCode: Projection = {
+      ...mockPointsData,
+      data: {
+        ...mockPointsData.data,
+        referrals: {
+          code: undefined,
+          href: undefined,
+        },
+      } as Points,
+    };
+
+    render(<PointsTile data={mockPointsDataNoCode} isDataLoading={false} />);
+
+    const referralsSection = screen.queryByTestId(
+      'points-tile-referrals-section'
+    );
+
+    expect(referralsSection).not.toBeInTheDocument();
+  });
+
   it('does not render when data is loading', () => {
     render(<PointsTile data={mockPointsData} isDataLoading />);
 

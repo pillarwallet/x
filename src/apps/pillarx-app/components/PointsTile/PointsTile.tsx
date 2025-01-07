@@ -174,54 +174,59 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
             </div>
           </div>
 
-          <div className="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4">
-            <div className="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4">
-              <Body className="desktop:text-base tablet:text-sm mobile:text-sm">
-                Share with friends
-              </Body>
-              <p className="desktop:text-[15px] tablet:text-[13px] mobile:text-[13px] text-purple_light desktop:leading-[30px] tablet:leading-6 mobile:leading-6">
-                Earn points when your referrals do stuff on PillarX. Plus earn
-                10% of the points your referrals earn.
-              </p>
-            </div>
-            <div className="flex flex-col gap-4 w-full">
-              <div className="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3">
-                <Body>{pointsData.referrals.code || ''}</Body>
-                <div className="flex gap-2 items-center">
-                  <BodySmall className="text-purple_light">Copy</BodySmall>
-                  <CopyToClipboard
-                    text={pointsData.referrals.code || ''}
-                    onCopy={onCopyCodeClick}
-                  >
-                    {copied ? (
-                      <CopySuccessIcon
-                        size={16}
-                        color="#E2DDFF"
-                        data-testid="copy-success-icon"
-                      />
-                    ) : (
-                      <CopyIcon
-                        size={15}
-                        color="#E2DDFF"
-                        data-testid="copy-icon"
-                      />
-                    )}
-                  </CopyToClipboard>
-                </div>
+          {pointsData.referrals.code && pointsData.referrals.href && (
+            <div
+              data-testid="points-tile-referrals-section"
+              className="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4"
+            >
+              <div className="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4">
+                <Body className="desktop:text-base tablet:text-sm mobile:text-sm">
+                  Share with friends
+                </Body>
+                <p className="desktop:text-[15px] tablet:text-[13px] mobile:text-[13px] text-purple_light desktop:leading-[30px] tablet:leading-6 mobile:leading-6">
+                  Earn points when your referrals do stuff on PillarX. Plus earn
+                  10% of the points your referrals earn.
+                </p>
               </div>
-              <button
-                className="flex w-full bg-purple_medium justify-center items-center gap-2 rounded-md p-3"
-                type="button"
-              >
-                <img
-                  src={ShareIcon}
-                  alt="share-code-icon"
-                  className="flex w-[20px] h-[20px]"
-                />
-                Share link
-              </button>
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3">
+                  <Body>{pointsData.referrals.code || ''}</Body>
+                  <div className="flex gap-2 items-center">
+                    <BodySmall className="text-purple_light">Copy</BodySmall>
+                    <CopyToClipboard
+                      text={pointsData.referrals.code || ''}
+                      onCopy={onCopyCodeClick}
+                    >
+                      {copied ? (
+                        <CopySuccessIcon
+                          size={16}
+                          color="#E2DDFF"
+                          data-testid="copy-success-icon"
+                        />
+                      ) : (
+                        <CopyIcon
+                          size={15}
+                          color="#E2DDFF"
+                          data-testid="copy-icon"
+                        />
+                      )}
+                    </CopyToClipboard>
+                  </div>
+                </div>
+                <button
+                  className="flex w-full bg-purple_medium justify-center items-center gap-2 rounded-md p-3"
+                  type="button"
+                >
+                  <img
+                    src={ShareIcon}
+                    alt="share-code-icon"
+                    className="flex w-[20px] h-[20px]"
+                  />
+                  Share link
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </TileContainer>

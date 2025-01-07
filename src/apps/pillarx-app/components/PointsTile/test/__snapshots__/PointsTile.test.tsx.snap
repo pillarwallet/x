@@ -192,6 +192,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
             </div>
             <div
               class="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4"
+              data-testid="points-tile-referrals-section"
             >
               <div
                 class="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4"
@@ -457,6 +458,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
           </div>
           <div
             class="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4"
+            data-testid="points-tile-referrals-section"
           >
             <div
               class="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4"
