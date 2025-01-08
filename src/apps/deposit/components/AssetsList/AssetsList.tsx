@@ -1,18 +1,26 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable no-await-in-loop */
-import Avatar from 'boring-avatars';
 import { useCallback, useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
+
+// hooks
+import { useAppDispatch } from '../../hooks/useReducerHooks';
+
+// reducer
+import { setDepositStep, setSelectedAsset } from '../../reducer/depositSlice';
+
+// types
 import {
   AddedAssets,
   BalanceInfo,
   Network,
   TokenList,
 } from '../../types/types';
+
+// utils
 import {
   allNativeTokens,
   getBalances,
-  getChainName,
   getDecimal,
   getNativeBalance,
   getNetworkViem,
@@ -21,6 +29,10 @@ import {
 import EthereumList from '../../utils/tokens/ethereum-tokens.json';
 import GnosisList from '../../utils/tokens/gnosis-tokens.json';
 import PolygonList from '../../utils/tokens/polygon-tokens.json';
+
+// components
+import SkeletonLoader from '../../../../components/SkeletonLoader';
+import Asset from '../Asset/Asset';
 
 const tokenLists = {
   1: EthereumList,
@@ -37,14 +49,13 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   const [isAddingAsset, setIsAddingAsset] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [newAsset, setNewAsset] = useState({
     chain: '',
     tokenAddress: '',
     tokenId: '',
   });
-  const [selectedAsset, setSelectedAsset] = useState<
-    BalanceInfo | AddedAssets | null
-  >(null);
+  const dispatch = useAppDispatch();
   const [addedAssets, setAddedAssets] = useState<AddedAssets[]>(() => {
     const storedAssets = localStorage.getItem('addedAssets');
     return storedAssets
@@ -55,12 +66,13 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   });
   const [activeTab, setActiveTab] = useState<'tokens' | 'nfts'>('tokens');
 
+  const chainName = getNetworkViem(chainId).name.toLowerCase();
+
   const getAllBalances = useCallback(
     async (tokenList: TokenList[]): Promise<BalanceInfo[]> => {
       const tokenAddresses = tokenList.map((token) => token.address);
       let retries = 0;
       const maxRetries = 3;
-      const chainName = getNetworkViem(chainId).name.toLowerCase();
 
       setError(null);
 
@@ -80,13 +92,13 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
             chain: chainName,
             address: '0x0000000000000000000000000000000000000000',
             decimals: 18,
-            balance: nativeBalance.toString(),
+            balance: nativeBalance,
             name: allNativeTokens[chainName as Network].name,
             symbol: allNativeTokens[chainName as Network].symbol,
             logoURI: '',
           };
 
-          // Convert balances array to BalanceInfo format
+          // Convert balances array to BalanceInfo
           const tokenBalances = allBalances
             .map(
               (
@@ -131,7 +143,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
       }
       return [];
     },
-    [accountAddress, chainId]
+    [accountAddress, chainId, chainName]
   );
 
   const getNftBalances = async (
@@ -209,10 +221,27 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   };
 
   useEffect(() => {
+    const handleBalances = async () => {
+      if (accountAddress && chainId) {
+        setIsLoading(true); // Start loading
+
+        await fetchBalances();
+        await refetchBalances();
+
+        setIsLoading(false);
+      }
+    };
+
+    handleBalances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountAddress, chainId]);
+
+  useEffect(() => {
     if (accountAddress && chainId) {
       fetchBalances();
       refetchBalances();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAddress, chainId]);
 
@@ -239,16 +268,16 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   };
 
   const handleAddAssetSubmit = async (type: 'tokens' | 'nfts') => {
-    if (newAsset.tokenAddress && newAsset.chain && type === 'tokens') {
+    if (newAsset.tokenAddress && chainName && type === 'tokens') {
       const newAssetBalance = await getBalances(
         accountAddress,
         [newAsset.tokenAddress],
-        Number(newAsset.chain)
+        chainId
       );
 
       const newAssetDecimals = await getDecimal(
         newAssetBalance[0].address,
-        Number(chainId)
+        chainId
       );
 
       const readableBalance = formatUnits(
@@ -258,7 +287,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
 
       if (Number(readableBalance) > 0) {
         addAsset({
-          chain: newAsset.chain.toLowerCase(),
+          chain: chainName,
           tokenAddress: newAsset.tokenAddress,
           balance: Number(readableBalance),
           assetType: 'token',
@@ -266,7 +295,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
       }
       setMessage(
         `New asset ${newAsset.tokenAddress} on ${(
-          <span className="capitalize">{newAsset.chain}</span>
+          <span className="capitalize">{chainName}</span>
         )} successfully added`
       );
       setTimeout(() => {
@@ -278,7 +307,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
 
     if (
       newAsset.tokenAddress &&
-      newAsset.chain &&
+      chainName &&
       newAsset.tokenId &&
       type === 'nfts'
     ) {
@@ -289,7 +318,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
 
       if (newAssetBalance > 0) {
         addAsset({
-          chain: newAsset.chain.toLowerCase(),
+          chain: chainName,
           tokenAddress: newAsset.tokenAddress,
           balance: newAssetBalance,
           assetType: 'nft',
@@ -308,21 +337,19 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   const combinedTokens = [
     ...balances,
     ...addedAssets.filter(
-      (asset) =>
-        asset.assetType === 'token' &&
-        asset.chain === getChainName(Number(chainId)).toLowerCase()
+      (asset) => asset.assetType === 'token' && asset.chain === chainName
     ),
   ];
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full mt-8">
       <p className="text-sm text-left">Select the asset you want to move</p>
       <div className="flex mb-4 w-full">
         <button
           type="button"
           className={`px-4 py-2 w-full ${
             activeTab === 'tokens'
-              ? 'border-b-2 border-[#A55CD6] font-bold'
+              ? 'border-b-2 border-purple_medium font-bold'
               : 'border-b border-gray-400'
           }`}
           onClick={() => setActiveTab('tokens')}
@@ -333,7 +360,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
           type="button"
           className={`px-4 py-2 w-full ${
             activeTab === 'nfts'
-              ? 'border-b-2 border-[#A55CD6] font-bold'
+              ? 'border-b-2 border-purple_medium font-bold'
               : 'border-b border-gray-400'
           }`}
           onClick={() => setActiveTab('nfts')}
@@ -344,85 +371,75 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
 
       {activeTab === 'tokens' ? (
         <div>
-          {combinedTokens.map((token) => (
-            <div
-              key={`${
-                token && 'name' in token ? token.address : token.tokenAddress
-              }-${token.chain}`}
-              className="flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 cursor-pointer"
-              onClick={() => {
-                setSelectedAsset(token);
-              }}
-            >
-              <div className="flex justify-between">
-                <div className="flex">
-                  {token && 'name' in token && token.logoURI ? (
-                    <img
-                      src={token.logoURI}
-                      alt="token-logo"
-                      className="h-6 w-6 rounded"
-                    />
-                  ) : (
-                    <Avatar
-                      className="rounded-md"
-                      size={24}
-                      name={
-                        token && 'name' in token
-                          ? token.address
-                          : token.tokenAddress
-                      }
-                      variant="marble"
-                    />
-                  )}
-                  <p className="text-lg text-left">
-                    {token && 'name' in token
-                      ? `${token.name} (${token.symbol})`
-                      : `${token.tokenAddress.substring(
-                          0,
-                          6
-                        )}...${token.tokenAddress.substring(
-                          token.tokenAddress.length - 6
-                        )}`}
-                  </p>
-                </div>
-
-                <p className="text-lg text-left">{token.balance}</p>
-              </div>
-
-              <p className="text-sm text-left">
-                on{' '}
-                <span className="capitalize">
-                  {token.chain === 'xdai' ? 'gnosis' : token.chain}
-                </span>
-              </p>
+          {isLoading ? (
+            <div className="flex flex-col">
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
             </div>
-          ))}
+          ) : (
+            combinedTokens.map((token) => (
+              <Asset
+                key={`${
+                  token && 'name' in token ? token.address : token.tokenAddress
+                }-${token.chain}`}
+                onSelectAsset={() => {
+                  dispatch(setSelectedAsset(token));
+                  dispatch(setDepositStep('send'));
+                }}
+                type="token"
+                asset={token}
+              />
+            ))
+          )}
         </div>
       ) : (
         <div>
-          {addedAssets
-            .filter((asset) => asset.assetType === 'nft')
-            .map((asset) => (
-              <div
-                key={`${asset.tokenAddress}`}
-                className="flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 cursor-pointer"
-                onClick={() => {
-                  setSelectedAsset(asset);
-                }}
-              >
-                <div className="flex justify-between">
-                  <p className="text-lg text-left">
-                    {`${asset.tokenAddress.substring(
-                      0,
-                      6
-                    )}...${asset.tokenAddress.substring(
-                      asset.tokenAddress.length - 6
-                    )}`}
-                  </p>
-                  <p className="text-lg text-left">{asset.balance}</p>
-                </div>
-              </div>
-            ))}
+          {isLoading ? (
+            <div className="flex flex-col">
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
+              <SkeletonLoader
+                $height="82px"
+                $radius="6px"
+                $marginBottom="16px"
+              />
+            </div>
+          ) : (
+            addedAssets
+              .filter((asset) => asset.assetType === 'nft')
+              .map((asset) => (
+                <Asset
+                  key={`${(asset as AddedAssets).tokenAddress}`}
+                  onSelectAsset={() => {
+                    dispatch(setSelectedAsset(asset));
+                    dispatch(setDepositStep('send'));
+                  }}
+                  type="nft"
+                  asset={asset}
+                />
+              ))
+          )}
         </div>
       )}
 
@@ -459,20 +476,17 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
           <label className="text-sm text-left">
             Chain
             <select
-              value={newAsset.chain.toLowerCase()}
+              value={chainName}
               onChange={(e) =>
                 setNewAsset({ ...newAsset, chain: e.target.value })
               }
+              disabled
               required
               className="w-full h-8 !px-2 text-black !text-base !bg-white !rounded-md outline-none focus:outline-none focus:ring-0 focus:border focus:border-[#3C3C53]"
             >
-              <option value="" disabled>
-                Select a chain
+              <option value={chainName} className="capitalize">
+                {chainName.charAt(0).toUpperCase() + chainName.slice(1)}
               </option>
-              <option value="ethereum">Ethereum</option>
-              <option value="polygon">Polygon</option>
-              <option value="optimism">Gnosis</option>
-              <option value="xdai">Base</option>
             </select>
           </label>
           <div className="flex items-center">
@@ -494,12 +508,12 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
         </div>
       ) : (
         <div
-          className="flex flex-col w-full bg-[#A55CD6] hover:bg-[#B578DD] rounded-xl px-6 py-4 cursor-pointer"
+          className="flex flex-col w-fit self-center bg-purple_medium hover:bg-purple_light rounded-xl px-6 py-4 cursor-pointer"
           onClick={() => {
             setIsAddingAsset(true);
           }}
         >
-          <p className="text-lg text-white">Add token or NFT</p>
+          <p className="text-lg text-white text-center">Add token or NFT</p>
         </div>
       )}
       <p className="text-sm text-white mt-4">{error || message}</p>

@@ -14,7 +14,10 @@ module.exports = {
       xs: { max: '470px' },
     },
     extend: {
-      colors: {},
+      colors: {
+        purple_medium: '#A55CD6',
+        purple_light: '#B578DD',
+      },
       fontFamily: {
         custom: ['Formular'],
       },
