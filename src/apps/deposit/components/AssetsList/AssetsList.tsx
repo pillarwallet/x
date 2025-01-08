@@ -342,7 +342,10 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   ];
 
   return (
-    <div className="flex flex-col gap-4 w-full mt-8">
+    <div
+      id="deposit-app-assets-list"
+      className="flex flex-col gap-4 w-full mt-8"
+    >
       <p className="text-sm text-left">Select the asset you want to move</p>
       <div className="flex mb-4 w-full">
         <button
@@ -372,7 +375,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
       {activeTab === 'tokens' ? (
         <div>
           {isLoading ? (
-            <div className="flex flex-col">
+            <div data-testid="assets-list-loader" className="flex flex-col">
               <SkeletonLoader
                 $height="82px"
                 $radius="6px"
@@ -408,7 +411,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
       ) : (
         <div>
           {isLoading ? (
-            <div className="flex flex-col">
+            <div data-testid="assets-list-loader" className="flex flex-col">
               <SkeletonLoader
                 $height="82px"
                 $radius="6px"

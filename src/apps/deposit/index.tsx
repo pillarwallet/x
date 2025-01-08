@@ -49,7 +49,7 @@ const App = () => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper id="deposit-app">
       <h1 className="text-4xl mb-8">Deposit</h1>
       <div className="flex flex-col gap-2 w-full items-center">
         <p className={`text-base self-center ${!isConnected && 'mb-8'}`}>
@@ -60,11 +60,15 @@ const App = () => {
           className={`flex gap-4 w-full ${isConnected ? 'justify-between' : 'justify-center'} desktop:max-w-[680px]`}
         >
           {isConnected && (
-            <p className="truncate text-base bg-white/10 px-4 py-2 rounded-3xl max-w-full">
+            <p
+              id="deposit-app-address-connected"
+              className="truncate text-base bg-white/10 px-4 py-2 rounded-3xl max-w-full"
+            >
               {address}
             </p>
           )}
           <button
+            id="deposit-app-connect-disconnect-button"
             type="button"
             className="w-fit h-fit px-4 py-2 rounded-md bg-purple_medium hover:bg-purple_light"
             onClick={
@@ -81,6 +85,7 @@ const App = () => {
             {getNetworkViem(Number(chainId)).name}
           </p>
           <button
+            id="deposit-app-switch-network-button"
             type="button"
             className="w-fit h-fit px-4 py-2 rounded-md bg-purple_medium hover:bg-purple_light"
             onClick={() => open({ view: 'Networks' })}

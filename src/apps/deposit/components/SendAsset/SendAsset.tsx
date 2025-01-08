@@ -114,7 +114,7 @@ const SendAsset = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div id="deposit-app-send-asset" className="flex flex-col">
       <button
         type="button"
         onClick={() => dispatch(setDepositStep('list'))}

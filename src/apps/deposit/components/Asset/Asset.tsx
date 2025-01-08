@@ -18,8 +18,10 @@ const Asset = ({ onSelectAsset, type, asset }: AssetProps) => {
   );
   return type === 'token' ? (
     <div
+      id="deposit-app-token-asset"
       className={`flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 mt-8 ${!selectedAsset && 'cursor-pointer mt-0'}`}
       onClick={onSelectAsset}
+      data-testid="deposit-asset"
     >
       <div className="flex justify-between">
         <div className="flex gap-2">
@@ -63,8 +65,10 @@ const Asset = ({ onSelectAsset, type, asset }: AssetProps) => {
     </div>
   ) : (
     <div
+      id="deposit-app-nft-asset"
       className={`flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 mt-8 ${!selectedAsset && 'cursor-pointer mt-0'}`}
       onClick={onSelectAsset}
+      data-testid="deposit-asset"
     >
       <div className="flex justify-between">
         <p className="text-lg text-left">
