@@ -220,7 +220,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                     PILLARX123
                   </p>
                   <div
-                    class="flex gap-2 items-center"
+                    class="flex gap-2 items-center cursor-pointer"
                   >
                     <p
                       class="text-sm font-medium text-purple_light"
@@ -486,7 +486,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                   PILLARX123
                 </p>
                 <div
-                  class="flex gap-2 items-center"
+                  class="flex gap-2 items-center cursor-pointer"
                 >
                   <p
                     class="text-sm font-medium text-purple_light"

@@ -75,8 +75,8 @@ describe('<PointsTile />', () => {
 
     fireEvent.click(copyButton);
 
-    expect(screen.getByTestId('copy-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('copy-success-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('copy-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('copy-success-icon')).toBeInTheDocument();
   });
 
   it('it does not renders referral section if no code and link', () => {
