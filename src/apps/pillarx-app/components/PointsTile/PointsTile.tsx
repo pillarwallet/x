@@ -16,7 +16,7 @@ import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
 // images
-import PointsTileImage from '../../images/pillarX-points-tile.jpeg';
+import PointsTileImage from '../../images/pillarX-points-tile.webp';
 import CalendarIcon from '../../images/points-calendar.svg';
 import ClockIcon from '../../images/points-clock.svg';
 import CrownIcon from '../../images/points-crown.svg';
