@@ -1,0 +1,590 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="flex bg-container_grey rounded-2xl undefined"
+        id="points-tile"
+      >
+        <div
+          class="flex flex-col w-full rounded-2xl bg-no-repeat bg-center desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-3"
+          style="background-image: url(pillarX-points-tile.webp); background-size: 200%;"
+        >
+          <p
+            class="text-base font-medium mb-4"
+          >
+            My Points Tile
+          </p>
+          <div
+            class="flex gap-4 desktop:flex-row tablet:flex-col mobile:flex-col"
+          >
+            <div
+              class="flex gap-4 desktop:w-[75%] tablet:w-full mobile:w-full"
+            >
+              <div
+                class="flex flex-col w-full h-full justify-center items-center"
+              >
+                <img
+                  alt="pillar-x-logo"
+                  class="flex w-[52px] h-[52px] items-center justify-center p-2.5 rounded-md bg-container_grey mb-8"
+                  src="[object Object]"
+                />
+                <div
+                  class="flex items-end mb-6"
+                >
+                  <p
+                    class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                  >
+                    500
+                  </p>
+                  <p
+                    class="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal"
+                  >
+                    PX
+                  </p>
+                </div>
+                <p
+                  class="text-base font-medium undefined"
+                >
+                  My PX points
+                </p>
+              </div>
+              <div
+                class="flex flex-col w-full h-full justify-center items-center"
+              >
+                <img
+                  alt="crown-icon"
+                  class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey mb-8"
+                  src="[object Object]"
+                />
+                <div
+                  class="flex items-end mb-6"
+                >
+                  <p
+                    class="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal"
+                  >
+                    #
+                  </p>
+                  <p
+                    class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                  >
+                    5
+                  </p>
+                </div>
+                <p
+                  class="text-base font-medium undefined"
+                >
+                  Current ranking
+                </p>
+              </div>
+              <div
+                class="flex desktop:flex-col tablet:flex-col mobile:flex-row mobile:flex-wrap desktop:justify-center w-full h-full"
+              >
+                <div
+                  class="flex gap-4 p-3 items-center"
+                >
+                  <img
+                    alt="Earned last week"
+                    class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey"
+                    src="[object Object]"
+                  />
+                  <div
+                    class="flex flex-col"
+                  >
+                    <div
+                      class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                    >
+                      120
+                      <span
+                        class="desktop:text-base tablet:text-sm mobile:text-sm"
+                      >
+                         
+                        PX
+                      </span>
+                    </div>
+                    <p
+                      class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                    >
+                      Earned last week
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex gap-4 p-3 items-center"
+                >
+                  <img
+                    alt="Weekly ranking"
+                    class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey"
+                    src="[object Object]"
+                  />
+                  <div
+                    class="flex flex-col"
+                  >
+                    <div
+                      class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                    >
+                      <span
+                        class="desktop:text-base tablet:text-sm mobile:text-sm"
+                      >
+                        #
+                         
+                      </span>
+                      3
+                    </div>
+                    <p
+                      class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                    >
+                      Weekly ranking
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex gap-4 p-3 items-center"
+                >
+                  <img
+                    alt="Next drop"
+                    class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-white"
+                    src="[object Object]"
+                  />
+                  <div
+                    class="flex flex-col"
+                  >
+                    <div
+                      class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                    >
+                      <p
+                        class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                        data-testid="points-fornatted-timestamp"
+                      >
+                        19
+                        <span
+                          class="text-base"
+                        >
+                          d
+                        </span>
+                         
+                        8
+                        <span
+                          class="text-base"
+                        >
+                          h
+                        </span>
+                         
+                        35
+                        <span
+                          class="text-base"
+                        >
+                          m
+                        </span>
+                      </p>
+                    </div>
+                    <p
+                      class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                    >
+                      Next drop
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4"
+              data-testid="points-tile-referrals-section"
+            >
+              <div
+                class="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4"
+              >
+                <p
+                  class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                >
+                  Share with friends
+                </p>
+                <p
+                  class="desktop:text-[15px] tablet:text-[13px] mobile:text-[13px] text-purple_light desktop:leading-[30px] tablet:leading-6 mobile:leading-6"
+                >
+                  Earn points when your referrals do stuff on PillarX. Plus earn 10% of the points your referrals earn.
+                </p>
+              </div>
+              <div
+                class="flex flex-col gap-4 w-full"
+              >
+                <div
+                  class="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3"
+                >
+                  <p
+                    class="text-base font-medium undefined"
+                  >
+                    PILLARX123
+                  </p>
+                  <div
+                    class="flex gap-2 items-center"
+                  >
+                    <p
+                      class="text-sm font-medium text-purple_light"
+                    >
+                      Copy
+                    </p>
+                    <svg
+                      data-testid="copy-icon"
+                      fill="none"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      width="15"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
+                        stroke="#E2DDFF"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                      />
+                      <path
+                        d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
+                        stroke="#E2DDFF"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <button
+                  class="flex w-full bg-purple_medium justify-center items-center gap-2 rounded-md p-3"
+                  type="button"
+                >
+                  <img
+                    alt="share-code-icon"
+                    class="flex w-[20px] h-[20px]"
+                    src="[object Object]"
+                  />
+                  Share link
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="flex bg-container_grey rounded-2xl undefined"
+      id="points-tile"
+    >
+      <div
+        class="flex flex-col w-full rounded-2xl bg-no-repeat bg-center desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-3"
+        style="background-image: url(pillarX-points-tile.webp); background-size: 200%;"
+      >
+        <p
+          class="text-base font-medium mb-4"
+        >
+          My Points Tile
+        </p>
+        <div
+          class="flex gap-4 desktop:flex-row tablet:flex-col mobile:flex-col"
+        >
+          <div
+            class="flex gap-4 desktop:w-[75%] tablet:w-full mobile:w-full"
+          >
+            <div
+              class="flex flex-col w-full h-full justify-center items-center"
+            >
+              <img
+                alt="pillar-x-logo"
+                class="flex w-[52px] h-[52px] items-center justify-center p-2.5 rounded-md bg-container_grey mb-8"
+                src="[object Object]"
+              />
+              <div
+                class="flex items-end mb-6"
+              >
+                <p
+                  class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                >
+                  500
+                </p>
+                <p
+                  class="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal"
+                >
+                  PX
+                </p>
+              </div>
+              <p
+                class="text-base font-medium undefined"
+              >
+                My PX points
+              </p>
+            </div>
+            <div
+              class="flex flex-col w-full h-full justify-center items-center"
+            >
+              <img
+                alt="crown-icon"
+                class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey mb-8"
+                src="[object Object]"
+              />
+              <div
+                class="flex items-end mb-6"
+              >
+                <p
+                  class="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal"
+                >
+                  #
+                </p>
+                <p
+                  class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                >
+                  5
+                </p>
+              </div>
+              <p
+                class="text-base font-medium undefined"
+              >
+                Current ranking
+              </p>
+            </div>
+            <div
+              class="flex desktop:flex-col tablet:flex-col mobile:flex-row mobile:flex-wrap desktop:justify-center w-full h-full"
+            >
+              <div
+                class="flex gap-4 p-3 items-center"
+              >
+                <img
+                  alt="Earned last week"
+                  class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey"
+                  src="[object Object]"
+                />
+                <div
+                  class="flex flex-col"
+                >
+                  <div
+                    class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                  >
+                    120
+                    <span
+                      class="desktop:text-base tablet:text-sm mobile:text-sm"
+                    >
+                       
+                      PX
+                    </span>
+                  </div>
+                  <p
+                    class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                  >
+                    Earned last week
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex gap-4 p-3 items-center"
+              >
+                <img
+                  alt="Weekly ranking"
+                  class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-container_grey"
+                  src="[object Object]"
+                />
+                <div
+                  class="flex flex-col"
+                >
+                  <div
+                    class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                  >
+                    <span
+                      class="desktop:text-base tablet:text-sm mobile:text-sm"
+                    >
+                      #
+                       
+                    </span>
+                    3
+                  </div>
+                  <p
+                    class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                  >
+                    Weekly ranking
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex gap-4 p-3 items-center"
+              >
+                <img
+                  alt="Next drop"
+                  class="flex w-[52px] h-[52px] items-center justify-center p-3 rounded-md bg-white"
+                  src="[object Object]"
+                />
+                <div
+                  class="flex flex-col"
+                >
+                  <div
+                    class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                  >
+                    <p
+                      class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
+                      data-testid="points-fornatted-timestamp"
+                    >
+                      19
+                      <span
+                        class="text-base"
+                      >
+                        d
+                      </span>
+                       
+                      8
+                      <span
+                        class="text-base"
+                      >
+                        h
+                      </span>
+                       
+                      35
+                      <span
+                        class="text-base"
+                      >
+                        m
+                      </span>
+                    </p>
+                  </div>
+                  <p
+                    class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+                  >
+                    Next drop
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex desktop:flex-col tablet:flex-row mobile:flex-row desktop:w-[25%] tablet:w-full mobile:w-full h-full bg-container_grey/[.9] rounded-[10px] p-4 pt-8 justify-between gap-4"
+            data-testid="points-tile-referrals-section"
+          >
+            <div
+              class="flex flex-col w-full desktop:gap-6 tablet:gap-4 mobile:gap-4"
+            >
+              <p
+                class="text-base font-medium desktop:text-base tablet:text-sm mobile:text-sm"
+              >
+                Share with friends
+              </p>
+              <p
+                class="desktop:text-[15px] tablet:text-[13px] mobile:text-[13px] text-purple_light desktop:leading-[30px] tablet:leading-6 mobile:leading-6"
+              >
+                Earn points when your referrals do stuff on PillarX. Plus earn 10% of the points your referrals earn.
+              </p>
+            </div>
+            <div
+              class="flex flex-col gap-4 w-full"
+            >
+              <div
+                class="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3"
+              >
+                <p
+                  class="text-base font-medium undefined"
+                >
+                  PILLARX123
+                </p>
+                <div
+                  class="flex gap-2 items-center"
+                >
+                  <p
+                    class="text-sm font-medium text-purple_light"
+                  >
+                    Copy
+                  </p>
+                  <svg
+                    data-testid="copy-icon"
+                    fill="none"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    width="15"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
+                      stroke="#E2DDFF"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
+                      stroke="#E2DDFF"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <button
+                class="flex w-full bg-purple_medium justify-center items-center gap-2 rounded-md p-3"
+                type="button"
+              >
+                <img
+                  alt="share-code-icon"
+                  class="flex w-[20px] h-[20px]"
+                  src="[object Object]"
+                />
+                Share link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

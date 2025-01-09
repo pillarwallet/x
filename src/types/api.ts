@@ -5,6 +5,7 @@ export enum ApiLayout {
   EDITORIAL = 'EDITORIAL',
   AD = 'AD',
   MEDIA_GRID_HIGHLIGHTED = 'MEDIA_GRID_HIGHLIGHTED',
+  PXPOINTS = 'PXPOINTS',
 }
 
 export type Asset = {
@@ -101,11 +102,33 @@ export type Advertisement = {
   slug: string;
 };
 
+export type Points = {
+  address: {
+    points: {
+      total?: number;
+      lastWeek?: number;
+    };
+    ranking: {
+      global?: number;
+      leaderboardPosition?: number;
+    };
+  };
+  drops: {
+    upcoming: {
+      timestamp?: number;
+    };
+  };
+  referrals: {
+    code?: string;
+    href?: string;
+  };
+};
+
 export type Projection = {
   meta: {
     display?: GenericBannerDisplay | EditorialDisplay | TileTitle;
   };
-  data?: TokenData[] | Advertisement | MediaGridData;
+  data?: TokenData[] | Advertisement | MediaGridData | Points;
   layout: ApiLayout;
   id: string;
 };
