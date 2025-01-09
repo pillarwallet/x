@@ -26,6 +26,7 @@ import {
   getNetworkViem,
   getNftBalance,
 } from '../../utils/blockchain';
+import BaseList from '../../utils/tokens/base-tokens.json';
 import EthereumList from '../../utils/tokens/ethereum-tokens.json';
 import GnosisList from '../../utils/tokens/gnosis-tokens.json';
 import PolygonList from '../../utils/tokens/polygon-tokens.json';
@@ -38,6 +39,7 @@ const tokenLists = {
   1: EthereumList,
   137: PolygonList,
   100: GnosisList,
+  8453: BaseList,
 };
 
 type AssetsListProps = {
@@ -58,12 +60,9 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
   const dispatch = useAppDispatch();
   const [addedAssets, setAddedAssets] = useState<AddedAssets[]>(() => {
     const storedAssets = localStorage.getItem('addedAssets');
-    return storedAssets
-      ? JSON.parse(storedAssets).filter(
-          (token: AddedAssets) => token.balance > 0
-        )
-      : [];
+    return storedAssets ? JSON.parse(storedAssets) : [];
   });
+
   const [activeTab, setActiveTab] = useState<'tokens' | 'nfts'>('tokens');
 
   const chainName = getNetworkViem(chainId).name.toLowerCase();
@@ -260,9 +259,7 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
       return;
     }
 
-    const updatedAssets = [...addedAssets, asset].filter(
-      (token) => token.balance > 0
-    );
+    const updatedAssets = [...addedAssets, asset];
     setAddedAssets(updatedAssets);
     localStorage.setItem('addedAssets', JSON.stringify(updatedAssets));
   };
@@ -292,17 +289,27 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
           balance: Number(readableBalance),
           assetType: 'token',
         });
+
+        setMessage(
+          `New asset ${newAsset.tokenAddress} on ${chainName} successfully added`
+        );
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
+        setIsAddingAsset(false);
       }
-      setMessage(
-        `New asset ${newAsset.tokenAddress} on ${(
-          <span className="capitalize">{chainName}</span>
-        )} successfully added`
-      );
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
-      setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
-      setIsAddingAsset(false);
+
+      if (Number(readableBalance) === 0) {
+        setMessage(
+          `New asset ${newAsset.tokenAddress} on ${chainName} has not been added because there is no balance in your wallet.`
+        );
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
+        setIsAddingAsset(false);
+      }
     }
 
     if (
@@ -324,13 +331,25 @@ const AssetsList = ({ accountAddress, chainId }: AssetsListProps) => {
           assetType: 'nft',
           tokenId: newAsset.tokenId,
         });
+
+        setMessage(`New asset ${newAsset.tokenAddress} successfully added`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
+        setIsAddingAsset(false);
       }
-      setMessage(`New asset ${newAsset.tokenAddress} successfully added`);
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
-      setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
-      setIsAddingAsset(false);
+
+      if (newAssetBalance === 0) {
+        setMessage(
+          `New asset ${newAsset.tokenAddress} has not been added because there is no balance in your wallet.`
+        );
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        setNewAsset({ tokenAddress: '', chain: '', tokenId: '' });
+        setIsAddingAsset(false);
+      }
     }
   };
 
