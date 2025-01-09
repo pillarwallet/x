@@ -1,0 +1,308 @@
+{
+  "name": "EtherspotPopularTokens",
+  "timestamp": "2023-01-13T00:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": ["etherspot", "popular", "tokens"],
+  "tokens": [
+    {
+      "address": "0x10bEEa85519a704A63765d396415f9eA5aa30A17",
+      "chainId": 100,
+      "decimals": "18",
+      "name": "PILLAR",
+      "symbol": "PLR",
+      "logoURI": "https://images.prismic.io/pillar-app/83dcf8ff-6459-41d4-8d43-7ec143814b2d_pillar-logo-5.png?auto=compress,format"
+    },
+    {
+      "address": "0x4ecaba5870353805a9f068101a40e0f32ed605c6",
+      "chainId": 100,
+      "decimals": 6,
+      "name": "USDT",
+      "symbol": "USDT",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/usdt/usdt.png"
+    },
+    {
+      "address": "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
+      "chainId": 100,
+      "decimals": 6,
+      "name": "USDC",
+      "symbol": "USDC",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/usdc/USDC-CD2.png"
+    },
+    {
+      "address": "0x7122d7661c4564b7c6cd4878b06766489a6028a2",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Matic",
+      "symbol": "MATIC",
+      "logoURI": "https://gnosisscan.io/images/main/empty-token.png"
+    },
+    {
+      "address": "0x4537e328bf7e4efa29d05caea260d7fe26af9d74",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Uniswap",
+      "symbol": "UNI",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/uni/UNI-DD8.png"
+    },
+    {
+      "address": "0xe2e73a1c69ecf83f464efce6a5be353a37ca09b2",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "ChainLink",
+      "symbol": "LINK",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/link/LINK-AAD.png"
+    },
+    {
+      "address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Gnosis",
+      "symbol": "GNO",
+      "logoURI": "https://dynamic-assets.coinbase.com/d1afa9a4f7ce51fa1af1ab94a15ea875a4df2b9a0b6ca619ea3de482d688198d67112c70516b703405b01d9abd5856493c238fe58004b63f4c5b5986a7624da2/asset_icons/b2e81465e2ac5d20898c4793c1c672073895ba71688ad1044a01011fe555ca88.png"
+    },
+    {
+      "address": "0xbf65bfcb5da067446cee6a706ba3fe2fb1a9fdfd",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "yearn.finance",
+      "symbol": "YFI",
+      "logoURI": "https://gnosisscan.io/token/images/yearnfingno_32.png"
+    },
+    {
+      "address": "0x21a42669643f45bc0e086b8fc2ed70c23d67509d",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "FOX",
+      "symbol": "FOX",
+      "logoURI": "https://gnosisscan.io/token/images/shapeshiftfox_32.png"
+    },
+    {
+      "address": "0xb90d6bec20993be5d72a5ab353343f7a0281f158",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "DXdao",
+      "symbol": "DXD",
+      "logoURI": "https://gnosisscan.io/token/images/dxdaogno_32.png"
+    },
+    {
+      "address": "0x0116e28b43a358162b96f70b4de14c98a4465f25",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "UniCrypt",
+      "symbol": "UNCX",
+      "logoURI": "https://gnosisscan.io/token/images/unicryptuncx_32.png"
+    },
+    {
+      "address": "0xd057604a14982fe8d88c5fc25aac3267ea142a08",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "HOPR",
+      "symbol": "HOPR",
+      "logoURI": "https://gnosisscan.io/token/images/hoprgno_32.png"
+    },
+    {
+      "address": "0x177127622c4a00f3d409b75571e12cb3c8973d3c",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "CoW Protocol Token from Mainnet",
+      "symbol": "COW",
+      "logoURI": "https://gnosisscan.io/token/images/cowprotocolgno2_32.png"
+    },
+    {
+      "address": "0x84e2c67cbefae6b5148fca7d02b341b12ff4b5bb",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Swash",
+      "symbol": "SWASH",
+      "logoURI": "https://gnosisscan.io/token/images/swashgno_32.png"
+    },
+    {
+      "address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Hop",
+      "symbol": "HOP",
+      "logoURI": "https://gnosisscan.io/token/images/Hop_32.png"
+    },
+    {
+      "address": "0xb0c5f3100a4d9d9532a4cfd68c55f1ae8da987eb",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "DAOhaus",
+      "symbol": "HAUS",
+      "logoURI": "https://gnosisscan.io/token/images/daohausgno_32.png"
+    },
+    {
+      "address": "0x4f4f9b8d5b4d0dc10506e5551b0513b61fd59e75",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Giveth from Mainnet",
+      "symbol": "GIV",
+      "logoURI": "https://gnosisscan.io/token/images/givethgno_32.png"
+    },
+    {
+      "address": "0xb7d311e2eb55f2f68a9440da38e7989210b9a05e",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "STAKE",
+      "symbol": "STAKE",
+      "logoURI": "https://gnosisscan.io/token/images/stakexDAI_32.png"
+    },
+    {
+      "address": "0x3a97704a1b25f08aa230ae53b352e2e72ef52843",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Agave",
+      "symbol": "AGVE",
+      "logoURI": "https://gnosisscan.io/token/images/agavetoken_32.png"
+    },
+    {
+      "address": "0x532801ed6f82fffd2dab70a19fc2d7b2772c4f4b",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Swapr",
+      "symbol": "SWPR",
+      "logoURI": "https://gnosisscan.io/token/images/swaprswpr_32.png"
+    },
+    {
+      "address": "0x1698cd22278ef6e7c0df45a8dea72edbea9e42aa",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Levin",
+      "symbol": "LEVIN",
+      "logoURI": "https://gnosisscan.io/token/images/levinswap_32.png"
+    },
+    {
+      "address": "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "logoURI": "https://gnosisscan.io/token/images/wethgno_32.png"
+    },
+    {
+      "address": "0x71850b7e9ee3f13ab46d67167341e4bdc905eef9",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Honey",
+      "symbol": "HNY",
+      "logoURI": "https://gnosisscan.io/token/images/1hivehoney_32.png"
+    },
+    {
+      "address": "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Wrapped XDAI",
+      "symbol": "WXDAI",
+      "logoURI": "https://gnosisscan.io/token/images/wrappedxDAI_32.png"
+    },
+    {
+      "address": "0x5df8339c5e282ee48c0c7ce8a7d01a73d38b3b27",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Token Engineering Commons",
+      "symbol": "TEC",
+      "logoURI": "https://gnosisscan.io/token/images/tecommons_32.png"
+    },
+    {
+      "address": "0x97edc0e345fbbbd8460847fcfa3bc2a13bf8641f",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "DAOSquare Governance",
+      "symbol": "RICE",
+      "logoURI": "https://gnosisscan.io/token/images/daosquarerice_32.png"
+    },
+    {
+      "address": "0x4291f029b9e7acb02d49428458cf6fceac545f81",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Water",
+      "symbol": "WATER",
+      "logoURI": "https://gnosisscan.io/token/images/1hivewater_32.png"
+    },
+    {
+      "address": "0x38fb649ad3d6ba1113be5f57b927053e97fc5bf7",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "xDAI Native Comb",
+      "symbol": "xCOMB",
+      "logoURI": "https://gnosisscan.io/token/images/xcombnative_32.png"
+    },
+    {
+      "address": "0x83ff60e2f93f8edd0637ef669c69d5fb4f64ca8e",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Bright",
+      "symbol": "BRIGHT",
+      "logoURI": "https://gnosisscan.io/token/images/brightid_32.png"
+    },
+    {
+      "address": "0x18e9262e68cc6c6004db93105cc7c001bb103e49",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Raid Guild Token ⚔️",
+      "symbol": "RAID",
+      "logoURI": "https://gnosisscan.io/token/images/raidgno_32.png"
+    },
+    {
+      "address": "0x3f56e0c36d275367b8c502090edf38289b3dea0d",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "MAI",
+      "symbol": "MAI",
+      "logoURI": "https://gnosisscan.io/token/images/maimimaticgno_32.png"
+    },
+    {
+      "address": "0x8e5bbbb09ed1ebde8674cda39a0c169401db4252",
+      "chainId": 100,
+      "decimals": 8,
+      "name": "Bitcoin",
+      "symbol": "WBTC",
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png"
+    },
+    {
+      "address": "0x712b3d230f3c1c19db860d80619288b1f0bdd0bd",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Curve",
+      "symbol": "CRV",
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD533a949740bb3306d119CC777fa900bA034cd52/logo.png"
+    },
+    {
+      "address": "0xdd96b45877d0e8361a4ddb732da741e97f3191ff",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "BUSD",
+      "symbol": "BUSD",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/busd/BUSD-BD1.png"
+    },
+    {
+      "address": "0xeeeeeb57642040be42185f49c52f7e9b38f8eeee",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "ELK",
+      "symbol": "ELK",
+      "logoURI": "https://gnosisscan.io/token/images/elkfinance_32.png"
+    },
+    {
+      "address": "0x256eb8a51f382650b2a1e946b8811953640ee47d",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Streamr",
+      "symbol": "DATA",
+      "logoURI": "https://gnosisscan.io/token/images/elkfinance_32.png"
+    },
+    {
+      "address": "0xc9b6218affe8aba68a13899cbf7cf7f14ddd304c",
+      "chainId": 100,
+      "decimals": 18,
+      "name": "Colony Network",
+      "symbol": "CLNY",
+      "logoURI": "https://assets-stage.dex.guru/icons/0xc9b6218affe8aba68a13899cbf7cf7f14ddd304c-gnosis.png"
+    }
+  ]
+}
