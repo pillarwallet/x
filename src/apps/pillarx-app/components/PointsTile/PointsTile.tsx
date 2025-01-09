@@ -105,7 +105,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                   />
                   <div className="flex items-end mb-6">
                     <p className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light">
-                      {pointsData.address.points.total || ''}
+                      {pointsData.address.points.total || '0'}
                     </p>
                     <p className="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal">
                       PX
@@ -124,7 +124,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                       #
                     </p>
                     <p className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light">
-                      {pointsData.address.ranking.global || ''}
+                      {pointsData.address.ranking.global || '0'}
                     </p>
                   </div>
                   <Body>Current ranking</Body>
@@ -137,13 +137,13 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                 <>
                   <PointsInfo
                     icon={PxLogo}
-                    value={pointsData.address.points.total || ''}
+                    value={pointsData.address.points.total || '0'}
                     afterValue="PX"
                     label="My PX points"
                   />
                   <PointsInfo
                     icon={CrownIcon}
-                    value={pointsData.address.ranking.global || ''}
+                    value={pointsData.address.ranking.global || '0'}
                     beforeValue="#"
                     label="Current ranking"
                   />
@@ -151,13 +151,13 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
               ) : null}
               <PointsInfo
                 icon={CalendarIcon}
-                value={pointsData.address.points.lastWeek || ''}
+                value={pointsData.address.points.lastWeek || '0'}
                 afterValue="PX"
                 label="Earned last week"
               />
               <PointsInfo
                 icon={RankingIcon}
-                value={pointsData.address.ranking.leaderboardPosition || ''}
+                value={pointsData.address.ranking.leaderboardPosition || '0'}
                 beforeValue="#"
                 label="Weekly ranking"
               />
@@ -191,12 +191,13 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex justify-between items-center bg-container_grey rounded-md px-3.5 py-3">
                   <Body>{pointsData.referrals.code || ''}</Body>
-                  <div className="flex gap-2 items-center">
-                    <BodySmall className="text-purple_light">Copy</BodySmall>
-                    <CopyToClipboard
-                      text={pointsData.referrals.code || ''}
-                      onCopy={onCopyCodeClick}
-                    >
+                  <CopyToClipboard
+                    text={pointsData.referrals.code || ''}
+                    onCopy={onCopyCodeClick}
+                  >
+                    <div className="flex gap-2 items-center cursor-pointer">
+                      <BodySmall className="text-purple_light">Copy</BodySmall>
+
                       {copied ? (
                         <CopySuccessIcon
                           size={16}
@@ -210,8 +211,8 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                           data-testid="copy-icon"
                         />
                       )}
-                    </CopyToClipboard>
-                  </div>
+                    </div>
+                  </CopyToClipboard>
                 </div>
                 <button
                   className="flex w-full bg-purple_medium justify-center items-center gap-2 rounded-md p-3"
