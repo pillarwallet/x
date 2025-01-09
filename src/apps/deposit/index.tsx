@@ -5,16 +5,31 @@ import {
   createAppKit,
   useAppKit,
   useAppKitAccount,
+  useAppKitEvents,
   useAppKitNetworkCore,
   useDisconnect,
 } from '@reown/appkit/react';
+import { useEffect } from 'react';
+
+// styles
 import styled from 'styled-components';
+import './styles/tailwindDeposit.css';
+
+// utils
+import { getNetworkViem } from './utils/blockchain';
+
+// reducer
+import { setDepositStep } from './reducer/depositSlice';
+
+// hooks
+import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
+
+// components
 import AssetsList from './components/AssetsList/AssetsList';
 import SendAsset from './components/SendAsset/SendAsset';
-import { useAppSelector } from './hooks/useReducerHooks';
+
+// images
 import PillarXLogo from './images/logo512.png';
-import './styles/tailwindDeposit.css';
-import { getNetworkViem } from './utils/blockchain';
 
 const metadataReownAppKit = {
   name: 'PillarX',
@@ -32,6 +47,9 @@ createAppKit({
     swaps: false,
     onramp: false,
     history: false,
+    email: false,
+    socials: false,
+    emailShowWallets: false,
   },
 });
 
@@ -40,9 +58,17 @@ const App = () => {
   const { address, isConnected } = useAppKitAccount();
   const { disconnect } = useDisconnect();
   const { chainId } = useAppKitNetworkCore();
+  const events = useAppKitEvents();
+  const dispatch = useAppDispatch();
   const depositStep = useAppSelector(
     (state) => state.deposit.depositStep as 'list' | 'send'
   );
+
+  useEffect(() => {
+    if (events.data.event === 'SWITCH_NETWORK') {
+      dispatch(setDepositStep('list'));
+    }
+  }, [events, dispatch]);
 
   const handleDisconnect = async () => {
     await disconnect();
@@ -107,7 +133,7 @@ const Wrapper = styled.div`
   display: flex;
   width: 100%;
   min-height: 100vh;
-  margin: 0 auto;
+  margin: 0 auto 60px auto;
   flex-direction: column;
 
   @media (min-width: 768px) {
