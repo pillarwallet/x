@@ -60,7 +60,9 @@ const SendAsset = () => {
         );
 
         setMessage(
-          `The transaction has succesfully been sent to your external wallet with the transaction hash: ${txHash}. Please check your external wallet to follow the transaction status.`
+          txHash.length
+            ? `The transaction has succesfully been sent to your external wallet with the transaction hash: ${txHash}. Please check your external wallet to follow the transaction status.`
+            : 'The transaction has not been succesful. Please check your external wallet to check the transaction status.'
         );
 
         setTimeout(() => {
@@ -89,7 +91,9 @@ const SendAsset = () => {
         );
 
         setMessage(
-          `The transaction has succesfully been sent to your external wallet with the transaction hash: ${txHash}. Please check your external wallet to follow the transaction status.`
+          txHash.length
+            ? `The transaction has succesfully been sent to your external wallet with the transaction hash: ${txHash}. Please check your external wallet to follow the transaction status.`
+            : 'The transaction has not been succesful. Please check your external wallet to check the transaction status.'
         );
 
         setTimeout(() => {
