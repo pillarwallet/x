@@ -11,7 +11,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
       >
         <div
           class="flex flex-col w-full rounded-2xl bg-no-repeat bg-center desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-3"
-          style="background-image: url(pillarX-points-tile.jpeg); background-size: 200%;"
+          style="background-image: url(pillarX-points-tile.webp); background-size: 200%;"
         >
           <p
             class="text-base font-medium mb-4"
@@ -277,7 +277,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
     >
       <div
         class="flex flex-col w-full rounded-2xl bg-no-repeat bg-center desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-3"
-        style="background-image: url(pillarX-points-tile.jpeg); background-size: 200%;"
+        style="background-image: url(pillarX-points-tile.webp); background-size: 200%;"
       >
         <p
           class="text-base font-medium mb-4"
