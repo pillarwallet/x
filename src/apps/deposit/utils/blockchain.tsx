@@ -389,54 +389,112 @@ export const transferNft = async (
   accountAddress: string,
   pillarXAddress: string
 ): Promise<string> => {
+  const chain = getNetworkViem(chainId);
+  const chainUrl = chainMapping[chain.name.toLowerCase() as Network] || null;
+
+  if (!chainUrl) {
+    throw new Error(`Unsupported chain: ${chain.name}`);
+  }
+
   try {
     const walletClient = createWalletClient({
-      chain: getNetworkViem(Number(chainId)),
+      chain,
       transport: custom(walletProvider),
     });
 
-    const isNft =
-      selectedAsset.type === 'AddedAsset' && selectedAsset.assetType === 'nft';
+    const publicClient = createPublicClient({
+      chain,
+      transport: http(chainUrl),
+    });
 
-    if (!isNft) {
-      return ';';
-    }
+    const supportsInterfaceABI = [
+      {
+        name: 'supportsInterface',
+        type: 'function',
+        stateMutability: 'view',
+        inputs: [{ name: 'interfaceId', type: 'bytes4' }],
+        outputs: [{ name: '', type: 'bool' }],
+      },
+    ];
+
+    const isNft = !(
+      (selectedAsset && 'name' in selectedAsset) ||
+      selectedAsset?.assetType === 'token'
+    );
 
     if (isNft) {
-      // Encode the function data
-      const calldataERC721 = encodeFunctionData({
-        abi: ERC721_ABI,
-        functionName: 'safeTransferFrom',
-        args: [accountAddress, pillarXAddress, selectedAsset.tokenId],
-      });
+      const checkContractType = async () => {
+        const ERC721_INTERFACE_ID = '0x80ac58cd';
+        const ERC1155_INTERFACE_ID = '0xd9b67a26';
 
-      const calldataERC1155 = encodeFunctionData({
-        abi: ERC1155_ABI,
-        functionName: 'safeTransferFrom',
-        args: [
-          accountAddress,
-          pillarXAddress,
-          selectedAsset.tokenId,
-          '1',
-          '0x',
-        ],
-      });
-
-      // Try ERC721 transfer
-      try {
-        const txHash = await walletClient.sendTransaction({
-          account: accountAddress as `0x${string}`,
-          to: selectedAsset.tokenAddress as `0x${string}`,
-          value: BigInt('0'),
-          data: calldataERC721,
-        });
-
-        return txHash;
-      } catch (errorERC721) {
-        console.error(`ERC721 transfer failed: ${errorERC721}`);
-
-        // Fallback to ERC1155 transfer
         try {
+          const isERC721 = await publicClient.readContract({
+            address: selectedAsset.tokenAddress as `0x${string}`,
+            abi: supportsInterfaceABI,
+            functionName: 'supportsInterface',
+            args: [ERC721_INTERFACE_ID],
+          });
+
+          const isERC1155 = await publicClient.readContract({
+            address: selectedAsset.tokenAddress as `0x${string}`,
+            abi: supportsInterfaceABI,
+            functionName: 'supportsInterface',
+            args: [ERC1155_INTERFACE_ID],
+          });
+
+          if (isERC721) {
+            return 'ERC721';
+          }
+          if (isERC1155) {
+            return 'ERC1155';
+          }
+        } catch (error) {
+          console.error('Error checking the ERC type:', error);
+        }
+        return '0';
+      };
+
+      const contractType = await checkContractType();
+
+      if (contractType === 'ERC721') {
+        // Try ERC721 transfer
+        try {
+          // Encode the function data
+          const calldataERC721 = encodeFunctionData({
+            abi: ERC721_ABI,
+            functionName: 'safeTransferFrom',
+            args: [accountAddress, pillarXAddress, selectedAsset.tokenId],
+          });
+
+          const txHash = await walletClient.sendTransaction({
+            account: accountAddress as `0x${string}`,
+            to: selectedAsset.tokenAddress as `0x${string}`,
+            value: BigInt('0'),
+            data: calldataERC721,
+          });
+
+          return txHash;
+        } catch (errorERC721) {
+          console.warn(`ERC721 transfer failed: ${errorERC721}`);
+        }
+      }
+
+      if (contractType === 'ERC1155') {
+        // Try ERC1155 transfer
+        try {
+          // Encode the function data
+          const calldataERC1155 = encodeFunctionData({
+            abi: ERC1155_ABI,
+            functionName: 'safeTransferFrom',
+            args: [
+              accountAddress,
+              pillarXAddress,
+              selectedAsset.tokenId,
+              '1',
+              '0x',
+            ],
+          });
+
           const txHash = await walletClient.sendTransaction({
             account: accountAddress as `0x${string}`,
             to: selectedAsset.tokenAddress as `0x${string}`,

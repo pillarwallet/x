@@ -5,7 +5,7 @@ import {
   useAppKitNetworkCore,
   useAppKitProvider,
 } from '@reown/appkit/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoMdReturnLeft } from 'react-icons/io';
 
 // hooks
@@ -37,16 +37,20 @@ const SendAsset = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
+  const assetType =
+    (selectedAsset && 'name' in selectedAsset) ||
+    selectedAsset?.assetType === 'token'
+      ? 'token'
+      : 'nft';
+
+  useEffect(() => {
+    if (assetType === 'nft') {
+      setAmount('1');
+    }
+  }, [assetType]);
+
   if (!selectedAsset || !address || !walletAddress) return null;
 
-  const assetType =
-    selectedAsset.type === 'AddedAsset' && selectedAsset.assetType === 'nft'
-      ? 'nft'
-      : 'token';
-
-  if (assetType === 'nft') {
-    setAmount('1');
-  }
   const handleSendTx = async () => {
     if (assetType === 'token') {
       try {
