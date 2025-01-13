@@ -382,13 +382,10 @@ export const transferTokens = async (
   }
 };
 
-export const transferNft = async (
+export const checkContractType = async (
   chainId: number,
-  walletProvider: Provider,
-  selectedAsset: BalanceInfo | AddedAssets,
-  accountAddress: string,
-  pillarXAddress: string
-): Promise<string> => {
+  selectedAsset: AddedAssets
+) => {
   const chain = getNetworkViem(chainId);
   const chainUrl = chainMapping[chain.name.toLowerCase() as Network] || null;
 
@@ -396,26 +393,63 @@ export const transferNft = async (
     throw new Error(`Unsupported chain: ${chain.name}`);
   }
 
-  try {
-    const walletClient = createWalletClient({
-      chain,
-      transport: custom(walletProvider),
-    });
+  const ERC721_INTERFACE_ID = '0x80ac58cd';
+  const ERC1155_INTERFACE_ID = '0xd9b67a26';
 
+  const supportsInterfaceABI = [
+    {
+      name: 'supportsInterface',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [{ name: 'interfaceId', type: 'bytes4' }],
+      outputs: [{ name: '', type: 'bool' }],
+    },
+  ];
+
+  try {
     const publicClient = createPublicClient({
       chain,
       transport: http(chainUrl),
     });
 
-    const supportsInterfaceABI = [
-      {
-        name: 'supportsInterface',
-        type: 'function',
-        stateMutability: 'view',
-        inputs: [{ name: 'interfaceId', type: 'bytes4' }],
-        outputs: [{ name: '', type: 'bool' }],
-      },
-    ];
+    const isERC721 = await publicClient.readContract({
+      address: selectedAsset.tokenAddress as `0x${string}`,
+      abi: supportsInterfaceABI,
+      functionName: 'supportsInterface',
+      args: [ERC721_INTERFACE_ID],
+    });
+
+    const isERC1155 = await publicClient.readContract({
+      address: selectedAsset.tokenAddress as `0x${string}`,
+      abi: supportsInterfaceABI,
+      functionName: 'supportsInterface',
+      args: [ERC1155_INTERFACE_ID],
+    });
+
+    if (isERC721) {
+      return 'ERC721';
+    }
+    if (isERC1155) {
+      return 'ERC1155';
+    }
+  } catch (error) {
+    console.error('Error checking the ERC type:', error);
+  }
+  return '0';
+};
+
+export const transferNft = async (
+  chainId: number,
+  walletProvider: Provider,
+  selectedAsset: BalanceInfo | AddedAssets,
+  accountAddress: string,
+  pillarXAddress: string
+): Promise<string> => {
+  try {
+    const walletClient = createWalletClient({
+      chain: getNetworkViem(chainId),
+      transport: custom(walletProvider),
+    });
 
     const isNft = !(
       (selectedAsset && 'name' in selectedAsset) ||
@@ -423,38 +457,7 @@ export const transferNft = async (
     );
 
     if (isNft) {
-      const checkContractType = async () => {
-        const ERC721_INTERFACE_ID = '0x80ac58cd';
-        const ERC1155_INTERFACE_ID = '0xd9b67a26';
-
-        try {
-          const isERC721 = await publicClient.readContract({
-            address: selectedAsset.tokenAddress as `0x${string}`,
-            abi: supportsInterfaceABI,
-            functionName: 'supportsInterface',
-            args: [ERC721_INTERFACE_ID],
-          });
-
-          const isERC1155 = await publicClient.readContract({
-            address: selectedAsset.tokenAddress as `0x${string}`,
-            abi: supportsInterfaceABI,
-            functionName: 'supportsInterface',
-            args: [ERC1155_INTERFACE_ID],
-          });
-
-          if (isERC721) {
-            return 'ERC721';
-          }
-          if (isERC1155) {
-            return 'ERC1155';
-          }
-        } catch (error) {
-          console.error('Error checking the ERC type:', error);
-        }
-        return '0';
-      };
-
-      const contractType = await checkContractType();
+      const contractType = await checkContractType(chainId, selectedAsset);
 
       if (contractType === 'ERC721') {
         // Try ERC721 transfer
@@ -462,7 +465,7 @@ export const transferNft = async (
           // Encode the function data
           const calldataERC721 = encodeFunctionData({
             abi: ERC721_ABI,
-            functionName: 'safeTransferFrom',
+            functionName: 'transferFrom',
             args: [accountAddress, pillarXAddress, selectedAsset.tokenId],
           });
 
@@ -480,33 +483,35 @@ export const transferNft = async (
       }
 
       if (contractType === 'ERC1155') {
-        // Try ERC1155 transfer
-        try {
-          // Encode the function data
-          const calldataERC1155 = encodeFunctionData({
-            abi: ERC1155_ABI,
-            functionName: 'safeTransferFrom',
-            args: [
-              accountAddress,
-              pillarXAddress,
-              selectedAsset.tokenId,
-              '1',
-              '0x',
-            ],
-          });
+        return 'ERC1155 deposit not supported.';
+        // // TODO when ERC1155 is supported
+        // // Try ERC1155 transfer
+        // try {
+        //   // Encode the function data
+        //   const calldataERC1155 = encodeFunctionData({
+        //     abi: ERC1155_ABI,
+        //     functionName: 'safeTransferFrom',
+        //     args: [
+        //       accountAddress,
+        //       pillarXAddress,
+        //       selectedAsset.tokenId,
+        //       '1',
+        //       '0x',
+        //     ],
+        //   });
 
-          const txHash = await walletClient.sendTransaction({
-            account: accountAddress as `0x${string}`,
-            to: selectedAsset.tokenAddress as `0x${string}`,
-            value: BigInt('0'),
-            data: calldataERC1155,
-          });
+        //   const txHash = await walletClient.sendTransaction({
+        //     account: accountAddress as `0x${string}`,
+        //     to: selectedAsset.tokenAddress as `0x${string}`,
+        //     value: BigInt('0'),
+        //     data: calldataERC1155,
+        //   });
 
-          return txHash;
-        } catch (errorERC1155) {
-          console.error(`ERC1155 transfer also failed: ${errorERC1155}`);
-          return 'Error transferring NFT: both ERC721 and ERC1155 failed.';
-        }
+        //   return txHash;
+        // } catch (errorERC1155) {
+        //   console.error(`ERC1155 transfer also failed: ${errorERC1155}`);
+        //   return 'Error transferring NFT: both ERC721 and ERC1155 failed.';
+        // }
       }
     }
     return 'Selected asset is not an NFT. Transfer aborted.';

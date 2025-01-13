@@ -18,7 +18,11 @@ import { setDepositStep } from '../../reducer/depositSlice';
 import { AddedAssets, BalanceInfo } from '../../types/types';
 
 // utils
-import { transferNft, transferTokens } from '../../utils/blockchain';
+import {
+  checkContractType,
+  transferNft,
+  transferTokens,
+} from '../../utils/blockchain';
 
 // components
 import Asset from '../Asset/Asset';
@@ -27,7 +31,8 @@ const SendAsset = () => {
   const { address } = useAppKitAccount();
   const { chainId } = useAppKitNetworkCore();
   const { walletProvider } = useAppKitProvider<Provider>('eip155');
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState<string>('');
+  const [nftType, setNftType] = useState<string>('');
   const walletAddress = useWalletAddress();
   const dispatch = useAppDispatch();
   const selectedAsset = useAppSelector(
@@ -46,8 +51,17 @@ const SendAsset = () => {
   useEffect(() => {
     if (assetType === 'nft') {
       setAmount('1');
+      const checkNftType = async () => {
+        const type = await checkContractType(
+          Number(chainId),
+          selectedAsset as AddedAssets
+        );
+        setNftType(type);
+      };
+
+      checkNftType();
     }
-  }, [assetType]);
+  }, [assetType, chainId, selectedAsset]);
 
   if (!selectedAsset || !address || !walletAddress) return null;
 
@@ -145,9 +159,11 @@ const SendAsset = () => {
           />
           <div className="flex flex-col gap-2 items-center">
             <p className="text-base">
-              {assetType === 'token'
-                ? 'How much would you like to deposit in your PillarX Wallet?'
-                : 'Transfer the amount of 1 NFT'}
+              {assetType === 'token' &&
+                'How much would you like to deposit in your PillarX Wallet?'}
+              {assetType === 'nft' &&
+                nftType === 'ERC721' &&
+                'Transfer the amount of 1 NFT'}
             </p>
             {assetType === 'token' && (
               <input
@@ -160,7 +176,7 @@ const SendAsset = () => {
               />
             )}
           </div>
-          {Number(amount) > 0 && (
+          {Number(amount) > 0 && nftType !== 'ERC1155' ? (
             <button
               type="button"
               onClick={handleSendTx}
@@ -168,6 +184,10 @@ const SendAsset = () => {
             >
               Start transfer
             </button>
+          ) : (
+            <p className="text-base">
+              We do not currently support ERC1155 deposit.
+            </p>
           )}
         </div>
       )}
