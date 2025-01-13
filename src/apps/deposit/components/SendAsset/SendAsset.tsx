@@ -163,7 +163,7 @@ const SendAsset = () => {
                 'How much would you like to deposit in your PillarX Wallet?'}
               {assetType === 'nft' &&
                 nftType === 'ERC721' &&
-                'Transfer the amount of 1 NFT'}
+                'Transfer this NFT'}
             </p>
             {assetType === 'token' && (
               <input
@@ -186,7 +186,9 @@ const SendAsset = () => {
             </button>
           ) : (
             <p className="text-base">
-              We do not currently support ERC1155 deposit.
+              Sorry, we do not currently support ERC1155 transfers. You can
+              manually transfer this NFT to your PillarX wallet address:{' '}
+              {walletAddress}
             </p>
           )}
         </div>
