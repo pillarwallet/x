@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { setWalletAddresses } from '@hypelab/sdk-react';
-import { createRef, useEffect, useMemo, useState } from 'react';
+import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
@@ -17,6 +18,7 @@ import useRefDimensions from './hooks/useRefDimensions';
 import { componentMap } from './utils/configComponent';
 
 // components
+import AnimatedTile from './components/AnimatedTile/AnimatedTitle';
 import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
@@ -39,6 +41,7 @@ const App = () => {
   );
   const walletAddress = useWalletAddress();
 
+  const scrollPositionRef = useRef<number>(0);
   const divRef = createRef<HTMLDivElement>();
   const dimensions = useRefDimensions(divRef);
 
@@ -68,7 +71,10 @@ const App = () => {
     data: waitlistData,
     isLoading: isWaitlistLoading,
     isSuccess: isWaitlistSucess,
-  } = useGetWaitlistQuery(walletAddress || '');
+  } = useGetWaitlistQuery(
+    { address: walletAddress || '' },
+    { skip: !walletAddress }
+  );
 
   // This useEffect is to update the wallet data
   useEffect(() => {
@@ -112,6 +118,7 @@ const App = () => {
     const handleScrollOrWheel = () => {
       const { scrollTop, clientHeight, scrollHeight } =
         document.documentElement;
+      scrollPositionRef.current = scrollTop;
       if (
         (scrollTop + clientHeight >= scrollHeight - 300 ||
           dimensions.height <= window.innerHeight) &&
@@ -133,6 +140,10 @@ const App = () => {
     };
   }, [dimensions.height, isHomeFeedFetching, isLoadingNextPage, page]);
 
+  useEffect(() => {
+    window.scrollTo(0, scrollPositionRef.current);
+  }, [pageData]);
+
   // to track walletAddress and adverts
   useEffect(() => {
     if (walletAddress) {
@@ -152,11 +163,13 @@ const App = () => {
 
       if (TileComponent) {
         allTileComponents.push(
-          <TileComponent
-            key={index}
-            data={tileData}
-            isDataLoading={isHomeFeedLoading}
-          />
+          <AnimatedTile key={tileData.id} isDataLoading={isHomeFeedLoading}>
+            <TileComponent
+              key={index}
+              data={tileData}
+              isDataLoading={isHomeFeedLoading}
+            />
+          </AnimatedTile>
         );
       }
     }
@@ -186,11 +199,14 @@ const App = () => {
           isDataLoading={isWalletTileLoading || isWalletTileFetching}
         />
         {DisplayHomeFeedTiles}
-        {isHomeFeedFetching && (
+        {(isHomeFeedFetching || isHomeFeedLoading) && page === 1 && (
           <>
             <SkeletonTiles type="horizontal" />
             <SkeletonTiles type="vertical" />
           </>
+        )}
+        {(isHomeFeedFetching || isHomeFeedLoading) && page !== 1 && (
+          <Body className="text-center mb-12">Loading more...</Body>
         )}
         {page >= PAGE_LIMIT && (
           <Body className="text-center mb-12">That&apos;s all for now</Body>

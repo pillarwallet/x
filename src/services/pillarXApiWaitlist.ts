@@ -1,6 +1,9 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// utils
+import { CompatibleChains } from '../utils/blockchain';
+
 // Define a service using a base URL and expected endpoints
 export const pillarXApiWaitlist = createApi({
   reducerPath: 'pillarXApiWaitlistWaitlist',
@@ -12,8 +15,14 @@ export const pillarXApiWaitlist = createApi({
   }),
   endpoints: (builder) => ({
     getWaitlist: builder.query({
-      query: (address) =>
-        `?address=${address}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+      query: ({ address }) => {
+        const chainIds =
+          process.env.REACT_APP_USE_TESTNETS === 'true'
+            ? [11155111]
+            : CompatibleChains.map((chain) => chain.chainId);
+        const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+        return `?address=${address}&${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`;
+      },
     }),
   }),
 });

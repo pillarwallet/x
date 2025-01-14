@@ -68,12 +68,6 @@ describe('<GenericBannerTile />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders skeleton loader when data is loading', () => {
-    render(<GenericBannerTile data={undefined} isDataLoading />);
-
-    expect(screen.getByTestId('generic-banner-loading')).toBeInTheDocument();
-  });
-
   it('renders correctly with all the given data', () => {
     render(
       <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />

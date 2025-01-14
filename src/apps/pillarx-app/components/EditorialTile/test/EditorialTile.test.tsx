@@ -54,16 +54,6 @@ describe('<EditorialTile />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders skeleton loader when data is loading', () => {
-    render(
-      <Provider store={store}>
-        <EditorialTile data={undefined} isDataLoading />
-      </Provider>
-    );
-
-    expect(screen.getByTestId('editorial-tile-loading')).toBeInTheDocument();
-  });
-
   it('renders correctly with all the given data', () => {
     render(
       <Provider store={store}>

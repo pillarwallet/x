@@ -1,59 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading 1`] = `
-.c0 {
-  height: 24px;
-  width: 140px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.c1 {
-  height: 120px;
-  width: 80px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 0;
-}
-
-<div
-  className="flex bg-container_grey rounded-2xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
-  id="tokens-horizontal-tile-loader"
->
-  <div
-    className="c0"
-  />
-  <div
-    className="flex justify-between gap-2"
-  >
-    <div
-      className="c1"
-    />
-    <div
-      className="c1"
-    />
-    <div
-      className="c1"
-    />
-    <div
-      className="c1 tablet:hidden"
-    />
-    <div
-      className="c1 tablet:hidden"
-    />
-    <div
-      className="c1 tablet:hidden"
-    />
-    <div
-      className="c1 mobile:hidden"
-    />
-    <div
-      className="c1 mobile:hidden"
-    />
-  </div>
-</div>
-`;
+exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading 1`] = `null`;
 
 exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
 <div>

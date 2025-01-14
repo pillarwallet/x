@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.pillarx.staging.twa",
+      "sha256_cert_fingerprints": [
+        "F2:A3:40:A0:4A:F8:1A:39:C2:6C:10:12:76:9A:CA:58:22:14:6F:C0:BD:E8:A4:E9:63:BC:BC:36:23:57:24:34"
+      ]
+    }
+  }
+]

@@ -4,12 +4,21 @@ import {
   TokenListToken,
 } from '@etherspot/prime-sdk/dist/sdk/data';
 import { ethers } from 'ethers';
-import { avalanche, base, bsc, gnosis, polygon, sepolia } from 'viem/chains';
+import {
+  avalanche,
+  base,
+  bsc,
+  gnosis,
+  mainnet,
+  polygon,
+  sepolia,
+} from 'viem/chains';
 
 // images
 import logoAvalanche from '../assets/images/logo-avalanche.png';
 import logoBase from '../assets/images/logo-base.png';
 import logoBsc from '../assets/images/logo-bsc.png';
+import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
@@ -28,13 +37,13 @@ export const isValidEthereumAddress = (
   return false;
 };
 
-// WRAPPED MATIC & MATIC are interchangeably Polygon native assets
-export const WRAPPED_MATIC_TOKEN_ADDRESS =
+// WRAPPED POL & POL are interchangeably Polygon native assets
+export const WRAPPED_POL_TOKEN_ADDRESS =
   '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
 
 export const isPolygonAssetNative = (address: string, chainId: number) =>
   (address === ethers.constants.AddressZero ||
-    address === WRAPPED_MATIC_TOKEN_ADDRESS) &&
+    address === WRAPPED_POL_TOKEN_ADDRESS) &&
   chainId === 137;
 
 /**
@@ -43,19 +52,26 @@ export const isPolygonAssetNative = (address: string, chainId: number) =>
  * - https://docs.privy.io/guide/configuration/networks#default-configuration
  */
 export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
-  // return different native asset for chains where it's not Matic (MATIC), otherwise return Matic (MATIC)
+  // return different native asset for chains where it's not POL (POL), otherwise return POL (POL)
   // only mumbai testnet is supported on Prime SDK
   const nativeAsset = {
     chainId,
     address:
       ethers.constants.AddressZero ||
-      (chainId === 137 && WRAPPED_MATIC_TOKEN_ADDRESS),
-    name: 'Matic',
-    symbol: 'MATIC',
+      (chainId === 137 && WRAPPED_POL_TOKEN_ADDRESS),
+    name: 'POL',
+    symbol: 'POL',
     decimals: 18,
     logoURI:
       'https://public.etherspot.io/buidler/chain_logos/native_tokens/matic.png',
   };
+
+  if (chainId === mainnet.id) {
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
+    nativeAsset.logoURI =
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
 
   // gnosis testnet not supported on Prime SDK
   if (chainId === gnosis.id) {
@@ -99,7 +115,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   return nativeAsset;
 };
 
-export const supportedChains = [polygon, gnosis, base, sepolia];
+export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
 
 export const visibleChains = supportedChains.filter((chain) =>
   process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet
@@ -110,6 +126,10 @@ export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
 };
 
 export const getLogoForChainId = (chainId: number): string => {
+  if (chainId === mainnet.id) {
+    return logoEthereum;
+  }
+
   if (chainId === polygon.id) {
     return logoPolygon;
   }
@@ -156,3 +176,52 @@ export const isApproveTransaction = (callData: string) => {
   const approveMethodId = '0x095ea7b3';
   return methodId === approveMethodId;
 };
+
+export const getBlockScan = (chain: number) => {
+  switch (chain) {
+    case 1:
+      return 'https://etherscan.io/tx/';
+    case 137:
+      return 'https://polygonscan.com/tx/';
+    case 8453:
+      return 'https://basescan.org/tx/';
+    case 100:
+      return 'https://gnosisscan.io/tx/';
+    default:
+      return '';
+  }
+};
+
+export const getChainName = (chain: number) => {
+  switch (chain) {
+    case 1:
+      return 'Ethereum';
+    case 137:
+      return 'Polygon';
+    case 8453:
+      return 'Base';
+    case 100:
+      return 'Gnosis';
+    default:
+      return `${chain}`;
+  }
+};
+
+export const CompatibleChains = [
+  {
+    chainId: 1,
+    chainName: 'Ethereum',
+  },
+  {
+    chainId: 137,
+    chainName: 'Polygon',
+  },
+  {
+    chainId: 8453,
+    chainName: 'Base',
+  },
+  {
+    chainId: 100,
+    chainName: 'Gnosis',
+  },
+];

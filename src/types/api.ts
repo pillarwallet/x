@@ -5,6 +5,7 @@ export enum ApiLayout {
   EDITORIAL = 'EDITORIAL',
   AD = 'AD',
   MEDIA_GRID_HIGHLIGHTED = 'MEDIA_GRID_HIGHLIGHTED',
+  PXPOINTS = 'PXPOINTS',
 }
 
 export type Asset = {
@@ -101,11 +102,33 @@ export type Advertisement = {
   slug: string;
 };
 
+export type Points = {
+  address: {
+    points: {
+      total?: number;
+      lastWeek?: number;
+    };
+    ranking: {
+      global?: number;
+      leaderboardPosition?: number;
+    };
+  };
+  drops: {
+    upcoming: {
+      timestamp?: number;
+    };
+  };
+  referrals: {
+    code?: string;
+    href?: string;
+  };
+};
+
 export type Projection = {
   meta: {
     display?: GenericBannerDisplay | EditorialDisplay | TileTitle;
   };
-  data?: TokenData[] | Advertisement | MediaGridData;
+  data?: TokenData[] | Advertisement | MediaGridData | Points;
   layout: ApiLayout;
   id: string;
 };
@@ -317,4 +340,58 @@ export type MediaGridItem = {
 export type MediaGridContract = {
   address: string;
   chain: string;
+};
+
+export type TransactionHistory = {
+  results: TransactionHistoryItem;
+};
+
+export type TransactionHistoryItem = {
+  outgoing: FlairTransaction[];
+  incoming: { [chainId: string]: EtherscanTransaction[] };
+};
+
+export type FlairTransaction = {
+  entityId: string;
+  entityUpdatedAt: string;
+  chainId: string;
+  contractAddress: string;
+  horizon: string;
+  paymaster: string;
+  sender: string;
+  userOpHash: string;
+  actualGasUsed: string;
+  actualGasCost: string;
+  txHash: string;
+  success: boolean;
+  nonce: string;
+  blockNumber: string;
+  transactionIndex: string;
+  forkIndex: string;
+  logIndex: string;
+  localIndex: string;
+  namespace: string;
+};
+
+export type EtherscanTransaction = {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  transactionIndex: string;
+  from: string;
+  to: string;
+  value: string;
+  gas: string;
+  gasPrice: string;
+  isError: string;
+  txreceipt_status: string;
+  input: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  gasUsed: string;
+  confirmations: string;
+  methodId: string;
+  functionName: string;
 };

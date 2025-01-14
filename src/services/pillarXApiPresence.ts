@@ -1,6 +1,9 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// utils
+import { CompatibleChains } from '../utils/blockchain';
+
 export const pillarXApiPresence = createApi({
   reducerPath: 'pillarXApiPresence',
   baseQuery: fetchBaseQuery({
@@ -11,14 +14,19 @@ export const pillarXApiPresence = createApi({
   }),
   endpoints: (builder) => ({
     recordPresence: builder.mutation({
-      query: (payload = {}) => ({
-        url: '/',
-        method: 'POST',
-        params: {
-          testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
-        },
-        body: payload,
-      }),
+      query: (payload = {}) => {
+        const chainIds =
+          process.env.REACT_APP_USE_TESTNETS === 'true'
+            ? [11155111]
+            : CompatibleChains.map((chain) => chain.chainId);
+        const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+
+        return {
+          url: `?${chainIdsQuery}&testnets=${process.env.REACT_APP_USE_TESTNETS || 'true'}`,
+          method: 'POST',
+          body: payload,
+        };
+      },
     }),
   }),
 });

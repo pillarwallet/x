@@ -10,9 +10,11 @@ import {
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 // Services
+import depositSlice from './apps/deposit/reducer/depositSlice';
 import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
 import tokenAtlasSlice from './apps/token-atlas/reducer/tokenAtlasSlice';
 import { pillarXApiPresence } from './services/pillarXApiPresence';
+import { pillarXApiTransactionsHistory } from './services/pillarXApiTransactionsHistory';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
 
 // Initialisation
@@ -79,8 +81,10 @@ export const store = configureStore({
  */
 addMiddleware(pillarXApiWaitlist);
 addMiddleware(pillarXApiPresence);
+addMiddleware(pillarXApiTransactionsHistory);
 addReducer(swapSlice);
 addReducer(tokenAtlasSlice);
+addReducer(depositSlice);
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization

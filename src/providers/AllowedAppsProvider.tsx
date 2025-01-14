@@ -2,6 +2,9 @@
 import axios from 'axios';
 import React, { createContext, useEffect, useMemo } from 'react';
 
+// utils
+import { CompatibleChains } from '../utils/blockchain';
+
 export interface AllowedAppsContextProps {
   data: {
     isLoading: boolean;
@@ -26,6 +29,12 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
 
     (async () => {
       try {
+        const chainIds =
+          process.env.REACT_APP_USE_TESTNETS === 'true'
+            ? [11155111]
+            : CompatibleChains.map((chain) => chain.chainId);
+        const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
+
         const { data } = await axios.get(
           process.env.REACT_APP_USE_TESTNETS === 'true'
             ? 'https://apps-nubpgwxpiq-uc.a.run.app'
@@ -34,6 +43,7 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
             params: {
               testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
             },
+            paramsSerializer: () => `${chainIdsQuery}`,
           }
         );
         if (expired || !data?.length) {

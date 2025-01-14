@@ -97,6 +97,8 @@
     "!src/apps/the-exchange/**",
     "!src/apps/token-atlas/",
     "!src/apps/token-atlas/**",
+    "!src/apps/deposit/",
+    "!src/apps/deposit/**",
     "public/" // Ignore public folder
   ],
   "settings": {

@@ -44,7 +44,7 @@ exports[`<ExchangeAction /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-base font-medium text-black_grey font-normal"
         >
-          MATIC
+          POL
         </p>
       </div>
     </div>

@@ -2,10 +2,10 @@ import { gnosis, polygon } from 'viem/chains';
 import { getNativeAssetForChainId } from '../blockchain';
 
 describe('getNativeAssetForChainId', () => {
-  it('returns Matic for polygon', () => {
+  it('returns {POL} for polygon', () => {
     const asset = getNativeAssetForChainId(polygon.id);
-    expect(asset.name).toBe('Matic');
-    expect(asset.symbol).toBe('MATIC');
+    expect(asset.name).toBe('POL');
+    expect(asset.symbol).toBe('POL');
   });
 
   it('returns XDAI for Gnosis', () => {
