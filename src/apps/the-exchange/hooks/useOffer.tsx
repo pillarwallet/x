@@ -1,4 +1,4 @@
-import { Route } from '@lifi/sdk';
+import { Route } from '@lifi/types';
 import { parseUnits } from 'ethers/lib/utils';
 
 // hooks

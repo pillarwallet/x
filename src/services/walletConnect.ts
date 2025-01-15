@@ -1,35 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
+import {
+  formatJsonRpcError,
+  formatJsonRpcResult,
+} from '@walletconnect/jsonrpc-utils';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 
 // hooks
+import useBottomMenuModal from '../hooks/useBottomMenuModal';
+import useGlobalTransactionsBatch from '../hooks/useGlobalTransactionsBatch';
 import useWalletConnectToast from '../hooks/useWalletConnectToast';
 
 // constants
 import {
   ETH_SEND_TX,
-  ETH_SIGN,
-  ETH_SIGN_TX,
   ETH_SIGN_TYPED_DATA,
-  ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
   WALLETCONNECT_EVENT,
-  WALLET_SWITCH_CHAIN,
 } from '../utils/walletConnectConstants';
 
 export const useWalletConnect = () => {
   const wallet = useWalletAddress();
-  // const { getSdk } = useEtherspot();
+  const { getSdk } = useEtherspot();
   const [walletKit, setWalletKit] = useState<Client>();
   const [activeSessions, setActiveSessions] = useState<any>();
   const [isLoadingConnect, setIsLoadingConnect] = useState<boolean>(false);
-  // const { addToBatch } = useGlobalTransactionsBatch();
-  // const { showSend, setShowBatchSendModal } = useBottomMenuModal();
+  const { addToBatch } = useGlobalTransactionsBatch();
+  const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
   const [isLoadingDisconnectAll, setIsLoadingDisconnectAll] =
     useState<boolean>(false);
@@ -258,15 +261,15 @@ export const useWalletConnect = () => {
             proposal: params,
             supportedNamespaces: {
               eip155: {
-                chains: ['eip155:1', 'eip155:100', 'eip155:137'],
+                chains: ['eip155:1', 'eip155:100', 'eip155:137', 'eip155:8453'],
                 methods: [
                   PERSONAL_SIGN,
-                  ETH_SIGN,
+                  // ETH_SIGN,
                   ETH_SEND_TX,
-                  ETH_SIGN_TX,
+                  // ETH_SIGN_TX,
                   ETH_SIGN_TYPED_DATA,
-                  ETH_SIGN_TYPED_DATA_V4,
-                  WALLET_SWITCH_CHAIN,
+                  // ETH_SIGN_TYPED_DATA_V4,
+                  // WALLET_SWITCH_CHAIN,
                 ],
                 events: [
                   WALLETCONNECT_EVENT.AUTH_REQUEST,
@@ -279,11 +282,13 @@ export const useWalletConnect = () => {
                   WALLETCONNECT_EVENT.SESSION_UPDATE,
                   WALLETCONNECT_EVENT.TRANSPORT_ERROR,
                   WALLETCONNECT_EVENT.CHAIN_CHANGED,
+                  'accountsChanged',
                 ],
                 accounts: [
                   `eip155:1:${wallet}`,
                   `eip155:100:${wallet}`,
                   `eip155:137:${wallet}`,
+                  `eip155:8453:${wallet}`,
                 ],
               },
             },
@@ -351,205 +356,114 @@ export const useWalletConnect = () => {
     });
   }, [showToast, walletKit]);
 
-  // const onSessionRequest = useCallback(
-  //   async (requestEvent: WalletKitTypes.SessionRequest) => {
-  //     const { topic, params, id } = requestEvent;
-  //     const { request, chainId } = params;
+  const onSessionRequest = useCallback(
+    async (requestEvent: WalletKitTypes.SessionRequest) => {
+      const { topic, params, id } = requestEvent;
+      const { request, chainId } = params;
 
-  //     const chainIdNumber = Number(chainId.replace('eip155:', ''));
-  //     console.log('SEND TRANSACTION', params);
+      const chainIdNumber = Number(chainId.replace('eip155:', ''));
+      let requestResponse: string | undefined;
 
-  //     const eSdk = getSdk(chainIdNumber);
+      const eSdk = await getSdk();
 
-  //     const sendTransactionToBatch = async () => {
-  //       try {
-  //         addToBatch({
-  //           title: 'WalletConnect transaction',
-  //           description: '',
-  //           chainId: chainIdNumber,
-  //           to: (await eSdk).state.EOAAddress,
-  //           value: request.params.value,
-  //           data: request.params.data,
-  //         });
-  //         setShowBatchSendModal(true);
-  //         showSend();
-  //       } catch (error) {
-  //         showToast({
-  //           title: 'Transaction batch fail',
-  //           subtitle:
-  //             'The transaction was not able to be added this to the queue at the moment. Please try again.',
-  //         });
-  //       }
-  //     };
+      if (request.method === PERSONAL_SIGN) {
+        const requestParamsMessage = request.params[0];
 
-  //     try {
-  //       await sendTransactionToBatch();
+        const humanReadableMessage =
+          ethers.utils.toUtf8String(requestParamsMessage);
 
-  //       await walletKit?.respondSessionRequest({
-  //         topic,
-  //         response: formatJsonRpcResult(id, request),
-  //       });
-  //     } catch (e: any) {
-  //       console.log('ERROR', formatJsonRpcError(id, e));
-  //       await walletKit?.respondSessionRequest({
-  //         topic,
-  //         response: formatJsonRpcError(id, e),
-  //       });
-  //     }
-  //   },
-  //   [walletKit, getSdk]
-  // );
+        const message = request.params.filter(
+          (p: string) => !ethers.utils.isAddress(p)
+        )[0];
 
-  // // ETH_SIGNTYPEDATA_V4
-  // const onSessionRequest = useCallback(
-  //   async (requestEvent: WalletKitTypes.SessionRequest) => {
-  //     console.log(requestEvent);
-  //     const { topic, params, id } = requestEvent;
-  //     const { request: requestt } = params;
-  //     const requestParamsMessage = requestt.params[1];
-  //     console.log('requestParamsMessage:', JSON.parse(requestParamsMessage));
+        requestResponse = await eSdk.signMessage({
+          message,
+        });
+      }
 
-  //     const parseRequest = JSON.parse(requestParamsMessage);
+      if (request.method === ETH_SIGN_TYPED_DATA) {
+        const requestParamsMessage = await request.params[1];
 
-  //     const eSdk = await getSdk();
+        // Safe parsing
+        const parseRequest =
+          typeof requestParamsMessage === 'string'
+            ? JSON.parse(requestParamsMessage)
+            : requestParamsMessage;
 
-  //     type Field = { name: string; type: string };
-  //     type FlattenedField = { name: string; type: string };
+        const { domain } = parseRequest;
+        const { types } = parseRequest;
+        const { primaryType } = parseRequest;
+        const { message } = parseRequest;
 
-  //     function flattenObject(obj: Record<string, Field[]>): FlattenedField[] {
-  //       const flattened: FlattenedField[] = [];
+        requestResponse = await eSdk.signTypedData({
+          domain,
+          types,
+          primaryType,
+          message,
+        });
+      }
 
-  //       Object.keys(obj).forEach((key) => {
-  //         const fields = obj[key];
-  //         fields.forEach((field) => {
-  //           flattened.push({
-  //             name: `${key}.${field.name}`,
-  //             type: field.type,
-  //           });
-  //         });
-  //       });
+      if (request.method === ETH_SEND_TX) {
+        const sendTransactionToBatch = async () => {
+          try {
+            addToBatch({
+              title: 'WalletConnect transaction',
+              description: '',
+              chainId: chainIdNumber,
+              to: eSdk.getEOAAddress(),
+              value: request.params.value,
+              data: request.params.data,
+            });
+            setShowBatchSendModal(true);
+            showSend();
+          } catch (error) {
+            showToast({
+              title: 'Transaction batch fail',
+              subtitle:
+                'The transaction was not able to be added this to the queue at the moment. Please try again.',
+            });
+          }
+        };
 
-  //       return flattened;
-  //     }
+        await sendTransactionToBatch();
 
-  //     const flattenedOutput = flattenObject(parseRequest.types);
+        requestResponse = 'Transaction sent to PillarX wallet.';
+      }
 
-  //     console.log('FLAT', flattenedOutput);
-
-  //     const typedData = [
-  //       { name: 'from', type: 'Person' },
-  //       { name: 'to', type: 'Person' },
-  //       { name: 'contents', type: 'string' },
-  //     ];
-
-  //     const types = {
-  //       EIP712Domain: [
-  //         {
-  //           name: 'name',
-  //           type: 'string',
-  //         },
-  //         {
-  //           name: 'version',
-  //           type: 'string',
-  //         },
-  //         {
-  //           name: 'chainId',
-  //           type: 'uint256',
-  //         },
-  //         {
-  //           name: 'verifyingContract',
-  //           type: 'address',
-  //         },
-  //       ],
-  //       Person: [
-  //         {
-  //           name: 'name',
-  //           type: 'string',
-  //         },
-  //         {
-  //           name: 'wallet',
-  //           type: 'address',
-  //         },
-  //       ],
-  //       Mail: [
-  //         {
-  //           name: 'from',
-  //           type: 'Person',
-  //         },
-  //         {
-  //           name: 'to',
-  //           type: 'Person',
-  //         },
-  //         {
-  //           name: 'contents',
-  //           type: 'string',
-  //         },
-  //       ],
-  //     };
-
-  //     const message = {
-  //       from: {
-  //         name: 'Cow',
-  //         wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-  //       },
-  //       to: {
-  //         name: 'Bob',
-  //         wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-  //       },
-  //       contents: 'Hello, Bob!',
-  //     };
-
-  //     const spreaded = [
-  //       ...parseRequest.types.Mail, // Spread the Mail types
-  //       ...parseRequest.types.Person, // Spread the Person types
-  //     ];
-
-  //     console.log('SPREADED', spreaded);
-
-  //     const signedMessageEtherspotSdk = await eSdk.signTypedData(
-  //       [
-  //         ...types.Mail, // Spread the Mail types
-  //         ...types.Person, // Spread the Person types
-  //       ],
-  //       parseRequest.message
-  //     );
-
-  //     console.log('TYPED DATA', signedMessageEtherspotSdk);
-
-  //     try {
-  //       console.log(
-  //         'formatJsonRpcResult:',
-  //         formatJsonRpcResult(id, signedMessageEtherspotSdk)
-  //       );
-  //       await walletKit?.respondSessionRequest({
-  //         topic,
-  //         response: formatJsonRpcResult(id, signedMessageEtherspotSdk),
-  //       });
-  //     } catch (e: any) {
-  //       console.log('ERROR', formatJsonRpcError(id, e));
-  //       await walletKit?.respondSessionRequest({
-  //         topic,
-  //         response: formatJsonRpcError(id, e),
-  //       });
-  //     }
-  //   },
-  //   [walletKit, getSdk]
-  // );
+      try {
+        console.log(
+          'formatJsonRpcResult:',
+          formatJsonRpcResult(id, requestResponse)
+        );
+        await walletKit?.respondSessionRequest({
+          topic,
+          response: formatJsonRpcResult(id, requestResponse),
+        });
+      } catch (e: any) {
+        console.log('ERROR', formatJsonRpcError(id, e));
+        await walletKit?.respondSessionRequest({
+          topic,
+          response: formatJsonRpcError(id, e),
+        });
+      }
+    },
+    [walletKit, getSdk]
+  );
 
   useEffect(() => {
     if (!walletKit) return;
 
     walletKit.on('session_proposal', onSessionProposal);
     walletKit.on('session_delete', onSessionDelete);
-    // walletKit.on('session_request', onSessionRequest);
+    walletKit.on('session_request', onSessionRequest);
 
     // eslint-disable-next-line consistent-return
     return () => {
       walletKit.off('session_proposal', onSessionProposal);
       walletKit.off('session_delete', onSessionDelete);
-      // walletKit.off('session_request', onSessionRequest);
+      walletKit.off('session_request', onSessionRequest);
     };
-  }, [walletKit, onSessionProposal, onSessionDelete]);
+  }, [walletKit, onSessionProposal, onSessionDelete, onSessionRequest]);
 
   return {
     connect,

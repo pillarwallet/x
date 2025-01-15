@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import { WalletClient } from 'viem';
 
 // components
 import BottomMenu from '../components/BottomMenu';
@@ -27,7 +27,7 @@ export default function Authorized({
   provider,
   chainId,
 }: {
-  provider: WalletProviderLike;
+  provider: WalletClient;
   chainId: number;
 }) {
   return (

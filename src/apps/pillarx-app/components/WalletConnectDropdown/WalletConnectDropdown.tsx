@@ -247,7 +247,7 @@ const WalletConnectDropdown = () => {
                       />
                     ) : (
                       <div className="w-[50px] h-[50px] object-fill rounded mr-3.5 overflow-hidden">
-                        <RandomAvatar name={session.peer.data.name || ''} />
+                        <RandomAvatar name={session?.peer?.data?.name || ''} />
                       </div>
                     )}
                     <BodySmall className="line-clamp-1">
