@@ -24,24 +24,29 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [allowed, setAllowed] = React.useState<string[]>([]);
 
+  const isTestnet =
+    (localStorage.getItem('isTestnet') === 'true' &&
+      process.env.REACT_APP_USE_TESTNETS === 'true') ||
+    (localStorage.getItem('isTestnet') === 'true' &&
+      process.env.REACT_APP_USE_TESTNETS === 'false');
+
   useEffect(() => {
     let expired = false;
 
     (async () => {
       try {
-        const chainIds =
-          process.env.REACT_APP_USE_TESTNETS === 'true'
-            ? [11155111]
-            : CompatibleChains.map((chain) => chain.chainId);
+        const chainIds = isTestnet
+          ? [11155111]
+          : CompatibleChains.map((chain) => chain.chainId);
         const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
         const { data } = await axios.get(
-          process.env.REACT_APP_USE_TESTNETS === 'true'
+          isTestnet
             ? 'https://apps-nubpgwxpiq-uc.a.run.app'
             : 'https://apps-7eu4izffpa-uc.a.run.app',
           {
             params: {
-              testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
+              testnets: String(isTestnet),
             },
             paramsSerializer: () => `${chainIdsQuery}`,
           }
@@ -60,7 +65,7 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       expired = true;
     };
-  }, []);
+  }, [isTestnet]);
 
   const contextData = useMemo(
     () => ({

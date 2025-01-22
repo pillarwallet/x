@@ -258,7 +258,12 @@ const Main = () => {
           config={{
             appearance: { theme: 'dark' },
             defaultChain:
-              process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
+              (localStorage.getItem('isTestnet') === 'true' &&
+                process.env.REACT_APP_USE_TESTNETS === 'true') ||
+              (localStorage.getItem('isTestnet') === 'true' &&
+                process.env.REACT_APP_USE_TESTNETS === 'false')
+                ? sepolia
+                : polygon,
             embeddedWallets: {
               createOnLogin: 'users-without-wallets',
             },

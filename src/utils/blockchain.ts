@@ -118,7 +118,12 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
 export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
 
 export const visibleChains = supportedChains.filter((chain) =>
-  process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet
+  (localStorage.getItem('isTestnet') === 'true' &&
+    process.env.REACT_APP_USE_TESTNETS === 'true') ||
+  (localStorage.getItem('isTestnet') === 'true' &&
+    process.env.REACT_APP_USE_TESTNETS === 'false')
+    ? chain.testnet
+    : !chain.testnet
 );
 
 export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
