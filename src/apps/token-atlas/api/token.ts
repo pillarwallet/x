@@ -12,13 +12,7 @@ import {
 } from '../../../types/api';
 
 // utils
-import { CompatibleChains } from '../../../utils/blockchain';
-
-const isTestnet =
-  (localStorage.getItem('isTestnet') === 'true' &&
-    process.env.REACT_APP_USE_TESTNETS === 'true') ||
-  (localStorage.getItem('isTestnet') === 'true' &&
-    process.env.REACT_APP_USE_TESTNETS === 'false');
+import { CompatibleChains, isTestnet } from '../../../utils/blockchain';
 
 const chainIds = isTestnet
   ? [11155111]

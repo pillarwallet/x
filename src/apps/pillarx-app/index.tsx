@@ -180,6 +180,12 @@ const App = () => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     <Wrapper>
+      <button
+        type="button"
+        onClick={() => localStorage.removeItem('isTestnet')}
+      >
+        Hey
+      </button>
       <PillarXLogo
         src={pillarLogoLight}
         className="object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"

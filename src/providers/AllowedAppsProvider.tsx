@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { createContext, useEffect, useMemo } from 'react';
 
 // utils
-import { CompatibleChains } from '../utils/blockchain';
+import { CompatibleChains, isTestnet } from '../utils/blockchain';
 
 export interface AllowedAppsContextProps {
   data: {
@@ -23,12 +23,6 @@ interface ApiAllowedApp {
 const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [allowed, setAllowed] = React.useState<string[]>([]);
-
-  const isTestnet =
-    (localStorage.getItem('isTestnet') === 'true' &&
-      process.env.REACT_APP_USE_TESTNETS === 'true') ||
-    (localStorage.getItem('isTestnet') === 'true' &&
-      process.env.REACT_APP_USE_TESTNETS === 'false');
 
   useEffect(() => {
     let expired = false;
@@ -65,7 +59,7 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       expired = true;
     };
-  }, [isTestnet]);
+  }, []);
 
   const contextData = useMemo(
     () => ({

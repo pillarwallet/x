@@ -32,7 +32,7 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
-import { visibleChains } from '../utils/blockchain';
+import { isTestnet, visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
 
 /**
@@ -257,13 +257,7 @@ const Main = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{
             appearance: { theme: 'dark' },
-            defaultChain:
-              (localStorage.getItem('isTestnet') === 'true' &&
-                process.env.REACT_APP_USE_TESTNETS === 'true') ||
-              (localStorage.getItem('isTestnet') === 'true' &&
-                process.env.REACT_APP_USE_TESTNETS === 'false')
-                ? sepolia
-                : polygon,
+            defaultChain: isTestnet ? sepolia : polygon,
             embeddedWallets: {
               createOnLogin: 'users-without-wallets',
             },

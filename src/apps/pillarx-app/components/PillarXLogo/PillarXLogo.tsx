@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import CloseIcon from '../../images/add.png';
 
 // components
+import { isTestnet } from '../../../../utils/blockchain';
 import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
@@ -17,22 +18,21 @@ export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
   const [clickCount, setClickCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isTestnet, setIsTestnet] = useState<string>(() => {
-    const savedState = localStorage.getItem('isTestnet');
-    return savedState || process.env.REACT_APP_USE_TESTNETS || 'false';
-  });
+  const [isTestnetSwitch, setIsTestnetSwitch] = useState<string>(
+    String(isTestnet)
+  );
 
   const handleLogoClick = () => {
     if (clickCount === 0) {
       const newTimer = setTimeout(() => {
         setClickCount(0);
-      }, 1000);
+      }, 4000);
       setTimer(newTimer);
     }
 
     setClickCount((prevCount) => prevCount + 1);
 
-    if (clickCount + 1 === 3) {
+    if (clickCount + 1 === 7) {
       setIsModalOpen(true);
       setClickCount(0);
       if (timer) clearTimeout(timer);
@@ -44,11 +44,11 @@ export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
   };
 
   useEffect(() => {
-    localStorage.setItem('isTestnet', isTestnet);
-  }, [isTestnet]);
+    localStorage.setItem('isTestnet', isTestnetSwitch);
+  }, [isTestnetSwitch]);
 
   const handleToggle = () => {
-    setIsTestnet((prevState) => {
+    setIsTestnetSwitch((prevState) => {
       const newState = prevState === 'true' ? 'false' : 'true';
       setTimeout(() => {
         window.location.reload();
@@ -80,12 +80,16 @@ export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
               <div
                 onClick={handleToggle}
                 className={`relative inline-flex w-8 h-[18px] rounded-[20px] p-0.5 cursor-pointer transition-colors duration-300 ${
-                  isTestnet === 'true' ? 'bg-purple_medium' : 'bg-[#5F5C6E]'
+                  isTestnetSwitch === 'true'
+                    ? 'bg-purple_medium'
+                    : 'bg-[#5F5C6E]'
                 }`}
               >
                 <span
                   className={`absolute top-[2px] bottom-0 h-3.5 w-3.5 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
-                    isTestnet === 'true' ? 'translate-x-3.5' : 'translate-x-0'
+                    isTestnetSwitch === 'true'
+                      ? 'translate-x-3.5'
+                      : 'translate-x-0'
                   }`}
                 />
               </div>

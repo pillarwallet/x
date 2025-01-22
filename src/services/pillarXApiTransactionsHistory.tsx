@@ -2,13 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // utils
-import { CompatibleChains } from '../utils/blockchain';
-
-const isTestnet =
-  (localStorage.getItem('isTestnet') === 'true' &&
-    process.env.REACT_APP_USE_TESTNETS === 'true') ||
-  (localStorage.getItem('isTestnet') === 'true' &&
-    process.env.REACT_APP_USE_TESTNETS === 'false');
+import { CompatibleChains, isTestnet } from '../utils/blockchain';
 
 // Define a service using a base URL and expected endpoints
 export const pillarXApiTransactionsHistory = createApi({
