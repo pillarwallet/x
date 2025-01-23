@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // components
-import AnimatedShape from '../components/AnimatedShape';
 import Button from '../components/Button';
 import { PrimaryTitle } from '../components/Text/Title';
 
@@ -15,7 +14,6 @@ const Login = () => {
   return (
     <Wrapper>
       <HeroTitle>{t`content.welcomeToPillarX`}</HeroTitle>
-      <AnimatedShape />
       <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
     </Wrapper>
   );

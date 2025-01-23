@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 // components
 import BottomMenu from '../components/BottomMenu';
+import Loading from '../pages/Loading';
 
 // providers
 import AccountBalancesProvider from '../providers/AccountBalancesProvider';
@@ -29,6 +31,20 @@ export default function Authorized({
   provider: WalletProviderLike;
   chainId: number;
 }) {
+  const [showAnimation, setShowAnimation] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showAnimation) {
+    return <Loading type="enter" />;
+  }
+
   return (
     <EtherspotTransactionKit
       provider={provider}
