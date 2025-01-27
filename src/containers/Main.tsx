@@ -245,7 +245,7 @@ const AuthLayout = () => {
    * component until a re-render is triggered by the useEffect
    * above.
    */
-  return <Loading />;
+  return <Loading type="wait" />;
 };
 
 const Main = () => {
