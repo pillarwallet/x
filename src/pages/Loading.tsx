@@ -16,18 +16,17 @@ const Loading = ({ type }: LoadingProps) => {
   const [show, setShow] = useState(true);
 
   const logoTransitions = useTransition(show, {
-    from: { transform: 'scale(0)', opacity: 0 },
-    enter: { transform: 'scale(1)', opacity: 1 },
-    leave: { transform: 'scale(0)', opacity: 0 },
-    config: { duration: 750 },
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { duration: 500 },
   });
 
   const starsTransitions = useTransition(show, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
-    config: { duration: 750 },
-    delay: 750,
+    config: { duration: 500 },
   });
 
   useEffect(() => {
@@ -47,7 +46,7 @@ const Loading = ({ type }: LoadingProps) => {
               <animated.img
                 src={PillarXLogoLoading}
                 alt="pillar-x-logo"
-                className="w-[60%] h-auto"
+                className="max-w-[300px] h-auto"
                 style={styles}
               />
             )
