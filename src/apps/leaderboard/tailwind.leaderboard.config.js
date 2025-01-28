@@ -2,8 +2,8 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   content: [
-    './src/apps/deposit/**/**/*.{js,ts,jsx,tsx,html,mdx}',
-    './src/apps/deposit/**/*.{js,ts,jsx,tsx,html,mdx}',
+    './src/apps/leaderboard/**/**/*.{js,ts,jsx,tsx,html,mdx}',
+    './src/apps/leaderboard/**/*.{js,ts,jsx,tsx,html,mdx}',
   ],
   darkMode: 'class',
   theme: {
@@ -15,8 +15,13 @@ module.exports = {
     },
     extend: {
       colors: {
-        purple_medium: '#A55CD6',
-        purple_light: '#B578DD',
+        deep_purple: { A700: '#5e00ff' },
+        container_grey: '#27262F',
+        medium_grey: '#312F3A',
+        purple_light: '#E2DDFF',
+        purple_medium: '#8A77FF',
+        percentage_green: '#05FFDD',
+        percentage_red: '#FF366C',
       },
       fontFamily: {
         custom: ['Formular'],

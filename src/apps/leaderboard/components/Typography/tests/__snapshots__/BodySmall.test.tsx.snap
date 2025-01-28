@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<BodySmall /> renders correctly 1`] = `
+[
+  <p
+    className="text-sm font-medium undefined"
+  >
+    Some small text.
+  </p>,
+  <p
+    className="text-sm font-medium text-red-500"
+  >
+    Some red small text
+  </p>,
+  <p
+    className="text-sm font-medium text-[7px]"
+  >
+    Some small text with font size 7px
+  </p>,
+]
+`;
