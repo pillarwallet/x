@@ -13,7 +13,10 @@ const LeaderboardTabsButton = ({
   onTabClick,
 }: LeaderboardTabsButtonProps) => {
   return (
-    <div className="flex w-full bg-container_grey rounded-2xl p-4 gap-4 mb-5">
+    <div
+      id="leaderboard-button-tabs"
+      className="flex w-full bg-container_grey rounded-2xl p-4 gap-4 mb-5"
+    >
       {tabs.map((tab, index) => (
         <button
           type="button"

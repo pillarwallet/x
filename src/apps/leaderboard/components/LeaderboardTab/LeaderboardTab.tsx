@@ -28,7 +28,10 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
 
   return (
     <>
-      <div className="flex flex-col bg-container_grey rounded-2xl p-5 pr-10">
+      <div
+        id="leaderboard-list-data"
+        className="flex flex-col bg-container_grey rounded-2xl desktop:p-5 tablet:p-5 mobile:p-2 desktop:pr-10 tablet:pr-10 mobile:pr-4"
+      >
         <div className="flex justify-between">
           <Body className="text-purple_light">Rankings</Body>
           <Body className="text-purple_light">PX Points</Body>
@@ -50,9 +53,13 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
                     : LeaderboardRankChange.NO_CHANGE
                 }
               />
-              <div className="flex gap-3.5 items-center">
-                <p className="text-[22px]">{result.points}</p>
-                <BodySmall className="text-purple_light">PX</BodySmall>
+              <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
+                <p className="desktop:text-[22px] tablet:text-[22px] mobile:text-base">
+                  {result.points}
+                </p>
+                <BodySmall className="text-purple_light mobile:text-xs">
+                  PX
+                </BodySmall>
               </div>
             </div>
           ))}
@@ -60,6 +67,7 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
       </div>
       {!isEndOfData && (
         <button
+          id="leaderboard-load-more-button"
           type="button"
           onClick={handleLoadMore}
           className="border border-purple_light/[.20] py-3 px-7 rounded-3xl w-fit self-center my-9"

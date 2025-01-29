@@ -113,7 +113,7 @@ const App = () => {
   ]);
 
   return (
-    <Wrapper>
+    <Wrapper id="leaderboard-app">
       <img
         src={PillarXLogo}
         alt="pillar-x-logo"
