@@ -52,34 +52,35 @@ const Loading = ({ type }: LoadingProps) => {
             )
         )
       )}
-      {starsTransitions(
-        (styles, item) =>
-          item && (
-            <animated.div
-              style={{
-                ...styles,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <BigBangStarField
-                numStars={400}
-                maxStarSpeed={2}
-                scale={2}
-                size={{ width: 100, height: 100 }}
+      {type === 'enter' &&
+        starsTransitions(
+          (styles, item) =>
+            item && (
+              <animated.div
                 style={{
+                  ...styles,
                   position: 'absolute',
+                  top: 0,
+                  left: 0,
                   width: '100%',
                   height: '100%',
                 }}
-                starColor="255, 255, 255"
-              />
-            </animated.div>
-          )
-      )}
+              >
+                <BigBangStarField
+                  numStars={400}
+                  maxStarSpeed={2}
+                  scale={2}
+                  size={{ width: 100, height: 100 }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                  starColor="255, 255, 255"
+                />
+              </animated.div>
+            )
+        )}
     </Wrapper>
   );
 };
