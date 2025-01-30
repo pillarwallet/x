@@ -42,7 +42,8 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
             params: {
               testnets: String(isTestnet),
             },
-            paramsSerializer: () => `${chainIdsQuery}`,
+            paramsSerializer: () =>
+              `${chainIdsQuery}&testnets=${String(isTestnet)}`,
           }
         );
         if (expired || !data?.length) {
