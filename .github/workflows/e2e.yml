@@ -1,6 +1,7 @@
 name: X E2E Tests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - feat/e2e
