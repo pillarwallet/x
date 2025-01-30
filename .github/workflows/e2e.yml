@@ -37,7 +37,7 @@ jobs:
 
       - name: Run E2E Tests
         working-directory: x-e2e
-        run: npm run test
+        run: npm run test-all
 
       - name: Upload Test Results
         if: always()
