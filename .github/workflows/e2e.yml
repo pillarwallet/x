@@ -46,3 +46,80 @@ jobs:
           name: test-results
           path: x-e2e/mochawesome-report/
           retention-days: 30
+
+  process-results:
+    needs: e2e-tests
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          
+      - name: Process results and notify Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.E2E_SLACK_WEBHOOK_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MOCHAWESOME_JSON_FILE=mochawesome.json
+          FAILED_TESTS_FILE=failed-tests.txt
+          
+          if [ ! -f "$MOCHAWESOME_JSON_FILE" ]; then
+            echo "Error: Mochawesome report not found"
+            exit 1
+          fi
+          
+          TOTAL_SUITES=$(jq '.stats.suites' $MOCHAWESOME_JSON_FILE)
+          TOTAL_PASSES=$(jq '.stats.passes' $MOCHAWESOME_JSON_FILE)
+          TOTAL_PENDING=$(jq '.stats.pending' $MOCHAWESOME_JSON_FILE)
+          TOTAL_FAILURES=$(jq '.stats.failures' $MOCHAWESOME_JSON_FILE)
+          START_TIME=$(jq -r '.stats.start' $MOCHAWESOME_JSON_FILE)
+          END_TIME=$(jq -r '.stats.end' $MOCHAWESOME_JSON_FILE)
+          DURATION_MS=$(jq -r '.stats.duration' $MOCHAWESOME_JSON_FILE)
+          
+          START_TIME_FORMATTED=$(date -d "$START_TIME" "+%Y-%m-%d %H:%M:%S")
+          END_TIME_FORMATTED=$(date -d "$END_TIME" "+%Y-%m-%d %H:%M:%S")
+          DURATION_MIN=$(awk "BEGIN {printf \"%.2f\",${DURATION_MS}/60000}")
+          
+          jq -r '.results[] | .suites[] | select(.failures > 0) | {suite: .title, tests: [.tests[] | select(.fail) | .title]} | select(.tests | length > 0) |
+          "*Suite:* \(.suite)\n*Failing Tests:* \n\(.tests | map("- " + .) | join("\n"))\n"' $MOCHAWESOME_JSON_FILE > $FAILED_TESTS_FILE
+          
+          if [ -s $FAILED_TESTS_FILE ]; then
+            MESSAGE=$(cat $FAILED_TESTS_FILE)
+            SLACK_MESSAGE=":x: *E2E Tests Failed* :x:\n\
+          *Repository:* ${GITHUB_REPOSITORY}\n\
+          *Triggered by:* ${GITHUB_ACTOR}\n\
+          *Branch:* ${GITHUB_REF_NAME}\n\
+          *Commit:* <https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}|${GITHUB_SHA}>\n\n\
+          *Test Summary:*\n\
+          *Total Suites:* ${TOTAL_SUITES}\n\
+          *Passes:* ${TOTAL_PASSES}\n\
+          *Pending:* ${TOTAL_PENDING}\n\
+          *Failures:* ${TOTAL_FAILURES}\n\
+          *Start Time:* ${START_TIME_FORMATTED}\n\
+          *End Time:* ${END_TIME_FORMATTED}\n\
+          *Duration:* ${DURATION_MIN} minutes\n\n\
+          *Failed Tests:*\n${MESSAGE}\n\
+          *Report:* <https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}|View Run>\n\
+          cc: ${TAG_RESPONSIBLE_PEOPLE}"
+          else
+            SLACK_MESSAGE=":white_check_mark: *All E2E tests passed*\n\
+          *Repository:* ${GITHUB_REPOSITORY}\n\
+          *Triggered by:* ${GITHUB_ACTOR}\n\
+          *Branch:* ${GITHUB_REF_NAME}\n\
+          *Commit:* <https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}|${GITHUB_SHA}>\n\
+          *Report:* <https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}|View Run>\n\
+          \n*Test Summary:*\n\
+          *Total Suites:* ${TOTAL_SUITES}\n\
+          *Passes:* ${TOTAL_PASSES}\n\
+          *Pending:* ${TOTAL_PENDING}\n\
+          *Failures:* ${TOTAL_FAILURES}\n\
+          *Start Time:* ${START_TIME_FORMATTED}\n\
+          *End Time:* ${END_TIME_FORMATTED}\n\
+          *Duration:* ${DURATION_MIN} minutes"
+          fi
+          
+          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\"}" $SLACK_WEBHOOK_URL
