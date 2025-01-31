@@ -101,6 +101,8 @@
     "!src/apps/deposit/**",
     "!src/apps/leaderboard/",
     "!src/apps/leaderboard/**",
+    "!src/apps/blitz/",
+    "!src/apps/blitz/**",
     "public/" // Ignore public folder
   ],
   "settings": {
