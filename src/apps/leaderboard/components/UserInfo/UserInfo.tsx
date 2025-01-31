@@ -31,18 +31,21 @@ const UserInfo = ({
   rankChange,
 }: UserInfoProps) => {
   const [copied, setCopied] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [displayedWalletAddress, setDisplayWalletAddress] =
+    useState<string>('');
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 769);
+      if (window.innerWidth < 769) {
+        setDisplayWalletAddress(`${walletAddress.slice(0, 6)}...`);
+      } else setDisplayWalletAddress(truncateAddress(walletAddress, 18));
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [walletAddress]);
 
   const onCopyCodeClick = useCallback(() => {
     if (copied) {
@@ -67,13 +70,13 @@ const UserInfo = ({
     rankChange === LeaderboardRankChange.DECREASED ? (
       <TbTriangleFilled
         data-testid="leaderboard-rank-up"
-        color="#FF366C"
+        color="#05FFDD"
         size={9}
       />
     ) : (
       <TbTriangleInvertedFilled
         data-testid="leaderboard-rank-down"
-        color="#05FFDD"
+        color="#FF366C"
         size={9}
       />
     );
@@ -107,9 +110,7 @@ const UserInfo = ({
         {username ?? <Body className="text-white">{username}</Body>}
         <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-end">
           <BodySmall className="text-purple_light">
-            {isMobile
-              ? `${walletAddress.slice(0, 6)}...`
-              : truncateAddress(walletAddress, 18)}
+            {displayedWalletAddress}
           </BodySmall>
           <CopyToClipboard text={walletAddress} onCopy={onCopyCodeClick}>
             <div className="flex gap-2 items-center cursor-pointer self-end">

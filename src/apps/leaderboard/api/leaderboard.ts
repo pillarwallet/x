@@ -28,7 +28,7 @@ export const leaderboardApi = createApi({
       { address?: string; from?: number; until?: number }
     >({
       query: ({ address, from, until }) =>
-        `?${address && `address=${address}&`}${from && `from=${from}&`}${until && `until=${until}&`}${chainIdsQuery}&testnets=${String(isTestnet)}`,
+        `?${address ? `address=${address}&` : ''}${from ? `from=${from}&` : ''}${until ? `until=${until}&` : ''}${chainIdsQuery}&testnets=${String(isTestnet)}`,
     }),
   }),
 });
