@@ -25,10 +25,15 @@ export const leaderboardApi = createApi({
   endpoints: (builder) => ({
     getLeaderboard: builder.query<
       PointsResultsData,
-      { address?: string; from?: number; until?: number }
+      {
+        skipDefaultPoints?: boolean;
+        address?: string;
+        from?: number;
+        until?: number;
+      }
     >({
-      query: ({ address, from, until }) =>
-        `?${address ? `address=${address}&` : ''}${from ? `from=${from}&` : ''}${until ? `until=${until}&` : ''}${chainIdsQuery}&testnets=${String(isTestnet)}`,
+      query: ({ skipDefaultPoints, address, from, until }) =>
+        `?${skipDefaultPoints ? `skipDefaultPoints=${skipDefaultPoints}&` : ''}${address ? `address=${address}&` : ''}${from ? `from=${from}&` : ''}${until ? `until=${until}&` : ''}${chainIdsQuery}&testnets=${String(isTestnet)}`,
     }),
   }),
 });
