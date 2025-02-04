@@ -44,21 +44,29 @@ const App = () => {
     isSuccess: isSuccessAllTimeData,
     isLoading: isLoadingAllTimeData,
     refetch: refetchAllTime,
-  } = useGetLeaderboardQuery({});
+  } = useGetLeaderboardQuery({ skipDefaultPoints: true });
 
   const {
     data: weeklyData,
     isSuccess: isSuccessWeeklyData,
     isLoading: isLoadingWeeklyData,
     refetch: refetchWeekly,
-  } = useGetLeaderboardQuery({ from: currentMonday, until: currentSunday });
+  } = useGetLeaderboardQuery({
+    skipDefaultPoints: true,
+    from: currentMonday,
+    until: currentSunday,
+  });
 
   const {
     data: lastWeeklyData,
     isSuccess: isSuccessLastWeeklyData,
     isLoading: isLoadingLastWeeklyData,
     refetch: refetchLastWeekly,
-  } = useGetLeaderboardQuery({ from: lastMonday, until: lastSunday });
+  } = useGetLeaderboardQuery({
+    skipDefaultPoints: true,
+    from: lastMonday,
+    until: lastSunday,
+  });
 
   const compareIndexes = (currentIndex: number, previousIndex: number) => {
     if (currentIndex === previousIndex) return LeaderboardRankChange.NO_CHANGE;
