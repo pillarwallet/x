@@ -43,25 +43,30 @@ const App = () => {
     data: allTimeData,
     isSuccess: isSuccessAllTimeData,
     isLoading: isLoadingAllTimeData,
-  } = useGetLeaderboardQuery({}, { skip: activeTab !== 1 });
+    refetch: refetchAllTime,
+  } = useGetLeaderboardQuery({ skipDefaultPoints: true });
 
   const {
     data: weeklyData,
     isSuccess: isSuccessWeeklyData,
     isLoading: isLoadingWeeklyData,
-  } = useGetLeaderboardQuery(
-    { from: currentMonday, until: currentSunday },
-    { skip: activeTab !== 0 }
-  );
+    refetch: refetchWeekly,
+  } = useGetLeaderboardQuery({
+    skipDefaultPoints: true,
+    from: currentMonday,
+    until: currentSunday,
+  });
 
   const {
     data: lastWeeklyData,
     isSuccess: isSuccessLastWeeklyData,
     isLoading: isLoadingLastWeeklyData,
-  } = useGetLeaderboardQuery(
-    { from: lastMonday, until: lastSunday },
-    { skip: activeTab !== 0 }
-  );
+    refetch: refetchLastWeekly,
+  } = useGetLeaderboardQuery({
+    skipDefaultPoints: true,
+    from: lastMonday,
+    until: lastSunday,
+  });
 
   const compareIndexes = (currentIndex: number, previousIndex: number) => {
     if (currentIndex === previousIndex) return LeaderboardRankChange.NO_CHANGE;
@@ -111,6 +116,19 @@ const App = () => {
     isLoadingWeeklyData,
     isLoadingLastWeeklyData,
   ]);
+
+  useEffect(() => {
+    if (weeklyData && isSuccessWeeklyData) {
+      refetchWeekly();
+    }
+    if (lastWeeklyData && isSuccessLastWeeklyData) {
+      refetchLastWeekly();
+    }
+    if (allTimeData && isSuccessAllTimeData) {
+      refetchAllTime();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Wrapper id="leaderboard-app">
