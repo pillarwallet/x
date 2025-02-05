@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 type PointsFormattedTimestampProps = {
   timestamp: number;
 };
@@ -5,10 +7,26 @@ type PointsFormattedTimestampProps = {
 const PointsFormattedTimestamp = ({
   timestamp,
 }: PointsFormattedTimestampProps) => {
-  const totalSeconds = Math.floor(timestamp / 1000);
-  const days = Math.floor(totalSeconds / (24 * 3600));
-  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const getNextDrop = () => {
+    const timestampToDate = DateTime.fromSeconds(timestamp);
+    const currentDate = DateTime.now();
+
+    const nextDrop = timestampToDate.diff(currentDate, [
+      'days',
+      'hours',
+      'minutes',
+    ]);
+
+    const { days, hours, minutes } = nextDrop;
+
+    return {
+      days: Math.floor(days),
+      hours: Math.floor(hours),
+      minutes: Math.floor(minutes),
+    };
+  };
+
+  const { days, hours, minutes } = getNextDrop();
 
   return (
     <p
