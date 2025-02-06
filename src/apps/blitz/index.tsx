@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import styled from 'styled-components';
-import './styles/tailwindBlitz.css';
-
-import TimeClock from './components/TimeClock/TimeClock';
-import TokenPriceUpdate from './components/TokenPriceUpdate/TokenPriceUpdate';
+import TokenPriceTime from './components/TokenPriceTime/TokenPriceTime';
+import VoteInfoButton from './components/VoteInfoButton/VoteInfoButton';
+import VotersList from './components/VotersList/VotersList';
+import BlitzLogo from './images/Blitz_Logo.png';
 import PillarXLogo from './images/pillarX_full_white.png';
+import './styles/tailwindBlitz.css';
 
 const App = () => {
   return (
@@ -12,10 +13,19 @@ const App = () => {
       <img
         src={PillarXLogo}
         alt="pillar-x-logo"
-        className="w-min object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
+        className="w-min object-contain h-[20px] mb-10 mobile:h-[18px] mobile:mb-[58px] self-center"
       />
-      <TokenPriceUpdate />
-      <TimeClock />
+      <img
+        src={BlitzLogo}
+        alt="blitz-logo"
+        className="w-min object-contain h-[40px] mb-20 self-center"
+      />
+      <div className="flex w-full gap-6">
+        <VoteInfoButton type="up" />
+        <TokenPriceTime />
+        <VoteInfoButton type="down" />
+      </div>
+      <VotersList />
     </Wrapper>
   );
 };

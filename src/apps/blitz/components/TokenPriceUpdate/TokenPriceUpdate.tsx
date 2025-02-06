@@ -1,9 +1,13 @@
 import RandomToken from '../../images/randomToken.png';
 
-const TokenPriceUpdate = () => {
+type TokenPriceUpdateProps = { classname?: string };
+
+const TokenPriceUpdate = ({ classname }: TokenPriceUpdateProps) => {
   const DUMMY_TIME = '3:15pm';
   return (
-    <div className="flex w-fit bg-container_grey rounded-2xl py-4 px-7 justify-center items-center gap-2">
+    <div
+      className={`flex w-fit bg-container_grey rounded-2xl py-4 px-7 justify-center items-center gap-2 ${classname}`}
+    >
       <img src={RandomToken} alt="token-icon" className="h-8 w-8" />
       <h2 className="text-[32px]">
         Token price at{' '}
