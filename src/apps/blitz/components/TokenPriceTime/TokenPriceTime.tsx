@@ -11,10 +11,10 @@ const TokenPriceTime = () => {
 
   return (
     <div className="flex flex-col w-full items-center">
-      <div className="flex flex-col relative w-full items-center mb-10">
+      <div className="flex flex-col relative w-full items-center desktop:mb-10 tablet:mb-8">
         <TokenPriceUpdate classname="absolute top-0 -translate-y-1/2" />
-        <div className="w-full px-[44px] pt-[55px] pb-[88px] rounded-[20px] bg-gradient-to-t from-[#27262F4D] via-[#27262F] to-[#27262F4D]">
-          <h1 className="text-[80px] font-light text-center">
+        <div className="desktop:w-full tablet:w-fit desktop:px-[44px] tablet:px-8 desktop:pt-[55px] tablet:pt-[40px] desktop:pb-[88px] tablet:pb-[60px] rounded-[20px] bg-gradient-to-t from-[#27262F4D] via-[#27262F] to-[#27262F4D]">
+          <h1 className="desktop:text-[80px] tablet:text-5xl font-light text-center">
             ${DUMMY_TOKEN_PRICE}
           </h1>
         </div>

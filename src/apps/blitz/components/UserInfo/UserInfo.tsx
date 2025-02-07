@@ -38,17 +38,17 @@ const UserInfo = () => {
 
   return (
     <div className="flex w-full gap-2.5 items-center mb-3">
-      <div className="w-[50px] h-[50px] object-fill rounded overflow-hidden">
+      <div className="flex w-[50px] h-[50px] rounded">
         <RandomAvatar name={DUMMY_WALLET_ADDRESS} variant="beam" />
       </div>
       <div className="flex flex-col w-full">
         {DUMMY_USERNAME ?? <Body className="text-white">{DUMMY_USERNAME}</Body>}
-        <div className="flex gap-1.5 items-center w-full overflow-hidden">
-          <p className="text-sm text-white font-light truncate">
+        <div className="flex gap-1.5 items-center">
+          <p className="text-sm text-white font-light overflow-hidden truncate max-w-[360px]">
             {DUMMY_WALLET_ADDRESS}
           </p>
           <CopyToClipboard text={DUMMY_WALLET_ADDRESS} onCopy={onCopyCodeClick}>
-            <div className="cursor-pointer">
+            <div className="flex cursor-pointer">
               {copied ? (
                 <CopySuccessIcon size={14} color="white" />
               ) : (
