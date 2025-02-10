@@ -19,7 +19,7 @@ import LanguageProvider from '../providers/LanguageProvider';
 
 // utils
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
-import { visibleChains } from '../utils/blockchain';
+import { isTestnet, visibleChains } from '../utils/blockchain';
 
 // pages
 import App from '../pages/App';
@@ -254,7 +254,7 @@ const AuthLayout = () => {
    * component until a re-render is triggered by the useEffect
    * above.
    */
-  return <Loading />;
+  return <Loading type="wait" />;
 };
 
 const Main = () => {
@@ -266,8 +266,7 @@ const Main = () => {
           appId={process.env.REACT_APP_PRIVY_APP_ID as string}
           config={{
             appearance: { theme: 'dark' },
-            defaultChain:
-              process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
+            defaultChain: isTestnet ? sepolia : polygon,
             embeddedWallets: {
               createOnLogin: 'users-without-wallets',
             },

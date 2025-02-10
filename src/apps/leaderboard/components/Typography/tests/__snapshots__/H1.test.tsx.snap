@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<H1 /> renders correctly 1`] = `
+[
+  <h1
+    className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium undefined"
+  >
+    Some big heading text.
+  </h1>,
+  <h1
+    className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-red-500"
+  >
+    Some red heading red text
+  </h1>,
+  <h1
+    className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-[120px]"
+  >
+    Some heading with font size 120px
+  </h1>,
+]
+`;

@@ -99,6 +99,8 @@
     "!src/apps/token-atlas/**",
     "!src/apps/deposit/",
     "!src/apps/deposit/**",
+    "!src/apps/leaderboard/",
+    "!src/apps/leaderboard/**",
     "public/" // Ignore public folder
   ],
   "settings": {

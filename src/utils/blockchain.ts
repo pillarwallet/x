@@ -23,6 +23,14 @@ import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
 
+export const isTestnet = (() => {
+  const storedIsTestnet = localStorage.getItem('isTestnet');
+  if (storedIsTestnet === null || storedIsTestnet === undefined) {
+    return process.env.REACT_APP_USE_TESTNETS === 'true';
+  }
+  return storedIsTestnet === 'true';
+})();
+
 export const isValidEthereumAddress = (
   address: string | undefined
 ): boolean => {
@@ -118,7 +126,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
 export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
 
 export const visibleChains = supportedChains.filter((chain) =>
-  process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet
+  isTestnet ? chain.testnet : !chain.testnet
 );
 
 export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
