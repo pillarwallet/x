@@ -1,4 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { CircularProgress } from '@mui/material';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -15,8 +15,9 @@ import { SwapOffer } from '../../utils/types';
 // utils
 import {
   convertChainIdtoName,
-  formatTokenAmount,
-} from '../../utils/converters';
+  isApproveTransaction,
+} from '../../../../utils/blockchain';
+import { formatTokenAmount } from '../../utils/converters';
 
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
@@ -25,7 +26,6 @@ import BodySmall from '../Typography/BodySmall';
 import NumberText from '../Typography/NumberText';
 
 // images
-import { isApproveTransaction } from '../../../../utils/blockchain';
 import ArrowRight from '../../images/arrow-right.png';
 
 const ExchangeAction = () => {

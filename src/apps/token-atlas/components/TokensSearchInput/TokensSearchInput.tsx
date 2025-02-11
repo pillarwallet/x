@@ -1,4 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import Fuse from 'fuse.js';
 import _ from 'lodash';

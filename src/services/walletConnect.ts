@@ -369,6 +369,7 @@ export const useWalletConnect = () => {
       if (request.method === PERSONAL_SIGN) {
         const requestParamsMessage = request.params[0];
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const humanReadableMessage =
           ethers.utils.toUtf8String(requestParamsMessage);
 
@@ -431,22 +432,18 @@ export const useWalletConnect = () => {
       }
 
       try {
-        console.log(
-          'formatJsonRpcResult:',
-          formatJsonRpcResult(id, requestResponse)
-        );
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcResult(id, requestResponse),
         });
       } catch (e: any) {
-        console.log('ERROR', formatJsonRpcError(id, e));
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcError(id, e),
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [walletKit, getSdk]
   );
 

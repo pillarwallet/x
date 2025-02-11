@@ -365,6 +365,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setRecipient('');
   };
 
+  const transferFromAbi = {
+    inputs: [
+      { internalType: 'address', name: 'from', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  };
+
   if (payload) {
     return (
       <>
@@ -507,9 +519,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               <EtherspotContractTransaction
                 contractAddress={selectedAsset.collection.contractAddress}
                 methodName="transferFrom"
-                abi={[
-                  'function transferFrom(address from, address to, uint256 tokenId) external',
-                ]}
+                abi={[transferFromAbi]}
                 params={[
                   accountAddress as string,
                   recipient,

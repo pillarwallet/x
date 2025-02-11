@@ -1,7 +1,5 @@
-import {
-  BridgingProvider,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
+import { BridgingProvider } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
 
 // hooks

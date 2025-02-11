@@ -8,7 +8,7 @@ import SelectToken from '../SelectToken';
 import { CardPosition } from '../../../utils/types';
 
 // utils
-import { convertChainIdtoName } from '../../../utils/converters';
+import { convertChainIdtoName } from '../../../../../utils/blockchain';
 
 // Mock the convertChainIdtoName function
 jest.mock('../../../utils/converters', () => ({

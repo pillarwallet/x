@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  Nft,
-  NftCollection,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import {
   useEtherspotUtils,
   useWalletAddress,
@@ -92,7 +90,8 @@ const AssetSelect = ({
         setNftAssetsOptions(
           nfts[chainId][walletAddress].reduce(
             (acc: NftAssetSelectOption[], collection) => {
-              collection.items.forEach((nft) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              collection.items.forEach((nft: any) => {
                 const optionId = `${chainId}:${collection.contractAddress}:${nft.tokenId}`;
                 acc.push({
                   type: 'nft',

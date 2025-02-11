@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { createGlobalStyle } from 'styled-components';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import {
   useEtherspotUtils,
   useWalletAddress,
 } from '@etherspot/transaction-kit';
-import { polygonMumbai, sepolia } from 'viem/chains';
-import party from 'party-js';
-import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
 import { Card, Typography } from '@mui/joy';
 import { ethers } from 'ethers';
+import party from 'party-js';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled, { createGlobalStyle } from 'styled-components';
+import { polygonMumbai, sepolia } from 'viem/chains';
 
 // images
 import mintedNftImage from './nft-image.png';
 
 // components
-import useBottomMenuModal from '../../hooks/useBottomMenuModal';
-import TextInput from '../../components/Form/TextInput';
 import Button from '../../components/Button';
 import FormGroup from '../../components/Form/FormGroup';
 import Label from '../../components/Form/Label';
 import Select from '../../components/Form/Select';
+import TextInput from '../../components/Form/TextInput';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 const nftContractPerChain: { [chainID: number]: string } = {
   [sepolia.id]: '0x2A9bb3fB4FBF8e536b9a6cBEbA33C4CD18369EaF',

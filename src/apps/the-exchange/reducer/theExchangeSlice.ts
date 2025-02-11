@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChainType, SwapOffer } from '../utils/types';
 

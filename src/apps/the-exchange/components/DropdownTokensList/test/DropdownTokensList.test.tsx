@@ -130,7 +130,7 @@ describe('<DropdownTokenList />', () => {
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[0]);
     expect(store.getState().swap.swapChain).toEqual({
       chainId: 1,
-      chainName: '1',
+      chainName: 'Ethereum',
     });
     expect(store.getState().swap.isSwapOpen).toBe(false);
   });
@@ -163,7 +163,7 @@ describe('<DropdownTokenList />', () => {
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[1]);
     expect(store.getState().swap.receiveChain).toEqual({
       chainId: 137,
-      chainName: '137',
+      chainName: 'Polygon',
     });
     expect(store.getState().swap.isReceiveOpen).toBe(false);
   });

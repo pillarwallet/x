@@ -83,13 +83,6 @@ const AuthLayout = () => {
       if (walletProvider) {
         privyEthereumProvider = await walletProvider.getEthereumProvider();
 
-        console.log('privyEthereumProvider', privyEthereumProvider);
-        // const newProvider = new Web3eip1193WalletProvider(
-        //   privyEthereumProvider.walletProvider
-        // );
-
-        // await newProvider.refresh();
-
         const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
 
         const newProvider = createWalletClient({
@@ -97,8 +90,6 @@ const AuthLayout = () => {
           chain: getNetworkViem(walletChainId),
           transport: custom(privyEthereumProvider),
         });
-
-        console.log('newProvider', await newProvider.getAddresses());
 
         setProvider(newProvider);
       }

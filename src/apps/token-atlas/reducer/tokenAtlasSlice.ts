@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
 // types
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import {
   BlockchainData,
   TokenAtlasInfoData,

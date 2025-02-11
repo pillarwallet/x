@@ -13,6 +13,6 @@
     "@walletconnect/core": "<rootDir>/__mocks__/walletConnectMock.ts",
     "@walletconnect/utils": "<rootDir>/__mocks__/walletConnectMock.ts"
   },
-  "testEnvironment": "jsdom",
+  "testEnvironment": "jest-fixed-jsdom",
   "transformIgnorePatterns": ["node_modules/(?!(mime)/)"]
 }

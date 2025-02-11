@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable react/jsx-no-constructed-context-values */
-import { Nft, NftCollection } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { useEtherspotNfts, useWalletAddress } from '@etherspot/transaction-kit';
 import differenceWith from 'lodash/differenceWith';
 import isEqual from 'lodash/isEqual';

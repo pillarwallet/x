@@ -5,6 +5,8 @@ import renderer from 'react-test-renderer';
 import { WalletData } from '../../../../../types/api';
 
 // components
+import BottomMenuModalProvider from '../../../../../providers/BottomMenuModalProvider';
+import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTransactionsBatchProvider';
 import { WalletConnectToastProvider } from '../../../../../providers/WalletConnectToastProvider';
 import PortfolioOverview from '../PortfolioOverview';
 
@@ -40,9 +42,13 @@ describe('<PortfolioOverview />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <WalletConnectToastProvider>
-          <PortfolioOverview data={mockData} isDataLoading={mockLoading} />
-        </WalletConnectToastProvider>
+        <BottomMenuModalProvider>
+          <GlobalTransactionsBatchProvider>
+            <WalletConnectToastProvider>
+              <PortfolioOverview data={mockData} isDataLoading={mockLoading} />
+            </WalletConnectToastProvider>
+          </GlobalTransactionsBatchProvider>
+        </BottomMenuModalProvider>
       )
       .toJSON();
 
@@ -52,9 +58,13 @@ describe('<PortfolioOverview />', () => {
   it('displays loading skeleton when data is loading', () => {
     const tree = renderer
       .create(
-        <WalletConnectToastProvider>
-          <PortfolioOverview data={undefined} isDataLoading />
-        </WalletConnectToastProvider>
+        <BottomMenuModalProvider>
+          <GlobalTransactionsBatchProvider>
+            <WalletConnectToastProvider>
+              <PortfolioOverview data={undefined} isDataLoading />
+            </WalletConnectToastProvider>
+          </GlobalTransactionsBatchProvider>
+        </BottomMenuModalProvider>
       )
       .toJSON();
 
@@ -63,9 +73,13 @@ describe('<PortfolioOverview />', () => {
 
   it('renders data correctly when not loading', () => {
     render(
-      <WalletConnectToastProvider>
-        <PortfolioOverview data={mockData} isDataLoading={false} />
-      </WalletConnectToastProvider>
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <PortfolioOverview data={mockData} isDataLoading={false} />
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
     );
 
     expect(screen.getByText('$1000.00')).toBeInTheDocument();
@@ -77,9 +91,13 @@ describe('<PortfolioOverview />', () => {
 
   it('calculates percentage change correctly', () => {
     render(
-      <WalletConnectToastProvider>
-        <PortfolioOverview data={mockData} isDataLoading={false} />
-      </WalletConnectToastProvider>
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <PortfolioOverview data={mockData} isDataLoading={false} />
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
     );
 
     expect(
@@ -91,9 +109,13 @@ describe('<PortfolioOverview />', () => {
 
   it('handles no data state correctly', () => {
     render(
-      <WalletConnectToastProvider>
-        <PortfolioOverview data={mockNoData} isDataLoading={false} />
-      </WalletConnectToastProvider>
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <PortfolioOverview data={mockNoData} isDataLoading={false} />
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
     );
 
     expect(screen.getByText('$0')).toBeInTheDocument();

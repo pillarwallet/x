@@ -1,4 +1,4 @@
-import { ExchangeProviders } from '@etherspot/prime-sdk/dist/sdk/data';
+import { ExchangeProviders } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import renderer, { act } from 'react-test-renderer';

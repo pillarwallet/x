@@ -14,7 +14,7 @@ import {
 // components
 import SelectChainDropdown from '../SelectChainDropdown';
 
-const mockOptions = [1, 2, 3];
+const mockOptions = [1, 137, 100];
 
 describe('<SelectChainDropdown />', () => {
   beforeEach(() => {
@@ -64,10 +64,10 @@ describe('<SelectChainDropdown />', () => {
     fireEvent.click(screen.getByRole('button'));
 
     // Select the first chain option
-    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Ethereum'));
 
     // Check if the selected chain is displayed correctly
-    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('Ethereum')).toBeInTheDocument();
     expect(store.getState().tokenAtlas.selectedChain.chainId).toBe(1);
   });
 
@@ -83,7 +83,7 @@ describe('<SelectChainDropdown />', () => {
     expect(screen.getByRole('list')).toBeInTheDocument();
 
     // Select an option
-    fireEvent.click(screen.getByText('1'));
+    fireEvent.click(screen.getByText('Ethereum'));
 
     // Dropdown should be closed
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
@@ -103,6 +103,6 @@ describe('<SelectChainDropdown />', () => {
     const options = screen.getAllByRole('listitem');
     expect(options).toHaveLength(mockOptions.length + 1);
     expect(screen.getByText('all')).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('Ethereum')).toBeInTheDocument();
   });
 });

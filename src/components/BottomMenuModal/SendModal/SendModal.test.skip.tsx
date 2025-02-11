@@ -2,9 +2,11 @@
 import * as TransactionKit from '@etherspot/transaction-kit';
 import { RenderResult, act, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { ethers } from 'ethers';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { goerli } from 'viem/chains';
 
 // components
 import SendModal from '.';
@@ -18,11 +20,14 @@ import AccountTransactionHistoryProvider from '../../../providers/AccountTransac
 import BottomMenuModalProvider from '../../../providers/BottomMenuModalProvider';
 import LanguageProvider from '../../../providers/LanguageProvider';
 
-const ethersProvider = new ethers.providers.JsonRpcProvider(
-  'http://localhost:8545',
-  'goerli'
-); // replace with your node's RPC URL
-const provider = ethers.Wallet.createRandom().connect(ethersProvider);
+const randomWallet = privateKeyToAccount(
+  `0x${crypto.getRandomValues(new Uint8Array(32)).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')}`
+);
+const provider = createWalletClient({
+  account: randomWallet,
+  chain: goerli,
+  transport: http('http://localhost:8545'),
+});
 
 const getFormGroupLabel = (formGroup: Element) => {
   return formGroup?.children?.item(0) as Element;

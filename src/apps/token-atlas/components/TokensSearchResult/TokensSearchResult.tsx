@@ -1,4 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // hooks

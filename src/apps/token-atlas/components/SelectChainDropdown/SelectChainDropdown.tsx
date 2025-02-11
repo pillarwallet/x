@@ -17,7 +17,7 @@ import {
 import { ChainType } from '../../types/types';
 
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
