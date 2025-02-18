@@ -1,3 +1,4 @@
+import { animated, useSpring } from '@react-spring/web';
 import { ReactNode, useEffect, useState } from 'react';
 
 // images
@@ -31,13 +32,16 @@ const WalletConnectToast = ({ children, onClose }: WalletConnectToastProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const toastAnimation = useSpring({
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0px)' : 'translateY(20px)',
+    config: { tension: 200, friction: 20 },
+  });
+
   return (
-    <div
-      className={`flex fixed bottom-4 right-4 max-w-80 bg-white text-medium_grey p-4 rounded-xl
-                  transition-all duration-300 ease-in-out ml-4
-                  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
-                `}
-      style={{ zIndex: 500 }}
+    <animated.div
+      style={toastAnimation}
+      className="flex fixed bottom-4 right-4 max-w-80 bg-white text-medium_grey p-4 rounded-xl ml-4 shadow-lg z-[500]"
     >
       <div className="flex justify-between items-start">
         <div className="flex">{children}</div>
@@ -45,7 +49,7 @@ const WalletConnectToast = ({ children, onClose }: WalletConnectToastProps) => {
           <img src={CloseSquare} alt="close-toast" className="w-5 h-5" />
         </button>
       </div>
-    </div>
+    </animated.div>
   );
 };
 

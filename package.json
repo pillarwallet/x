@@ -44,6 +44,7 @@
     "@uniswap/v3-sdk": "^3.11.0",
     "@walletconnect/core": "^2.17.3",
     "@walletconnect/jsonrpc-utils": "^1.0.8",
+    "@walletconnect/types": "^2.18.0",
     "@walletconnect/utils": "^2.17.3",
     "axios": "^1.6.5",
     "boring-avatars": "^1.11.2",

@@ -17,6 +17,7 @@ import AssetsProvider from '../providers/AssetsProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
+import { WalletConnectModalProvider } from '../providers/WalletConnectModalProvider';
 import { WalletConnectToastProvider } from '../providers/WalletConnectToastProvider';
 
 /**
@@ -63,10 +64,12 @@ export default function Authorized({
                 <BottomMenuModalProvider>
                   <SelectedChainsHistoryProvider>
                     <WalletConnectToastProvider>
-                      <AuthContentWrapper>
-                        <Outlet />
-                      </AuthContentWrapper>
-                      <BottomMenu />
+                      <WalletConnectModalProvider>
+                        <AuthContentWrapper>
+                          <Outlet />
+                        </AuthContentWrapper>
+                        <BottomMenu />
+                      </WalletConnectModalProvider>
                     </WalletConnectToastProvider>
                   </SelectedChainsHistoryProvider>
                 </BottomMenuModalProvider>

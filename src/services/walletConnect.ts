@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
@@ -8,13 +8,16 @@ import {
   formatJsonRpcError,
   formatJsonRpcResult,
 } from '@walletconnect/jsonrpc-utils';
+import { SessionTypes } from '@walletconnect/types';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { hexToBigInt } from 'viem';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../hooks/useGlobalTransactionsBatch';
+import useWalletConnectModal from '../hooks/useWalletConnectModal';
 import useWalletConnectToast from '../hooks/useWalletConnectToast';
 
 // constants
@@ -29,11 +32,13 @@ export const useWalletConnect = () => {
   const wallet = useWalletAddress();
   const { getSdk } = useEtherspot();
   const [walletKit, setWalletKit] = useState<Client>();
-  const [activeSessions, setActiveSessions] = useState<any>();
+  const [activeSessions, setActiveSessions] =
+    useState<Record<string, SessionTypes.Struct>>();
   const [isLoadingConnect, setIsLoadingConnect] = useState<boolean>(false);
   const { addToBatch } = useGlobalTransactionsBatch();
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
+  const { showModal, hideModal } = useWalletConnectModal();
   const [isLoadingDisconnectAll, setIsLoadingDisconnectAll] =
     useState<boolean>(false);
   const [isLoadingDisconnect, setIsLoadingDisconnect] =
@@ -262,27 +267,13 @@ export const useWalletConnect = () => {
             supportedNamespaces: {
               eip155: {
                 chains: ['eip155:1', 'eip155:100', 'eip155:137', 'eip155:8453'],
-                methods: [
-                  PERSONAL_SIGN,
-                  // ETH_SIGN,
-                  ETH_SEND_TX,
-                  // ETH_SIGN_TX,
-                  ETH_SIGN_TYPED_DATA,
-                  // ETH_SIGN_TYPED_DATA_V4,
-                  // WALLET_SWITCH_CHAIN,
-                ],
+                methods: [PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TYPED_DATA],
                 events: [
-                  WALLETCONNECT_EVENT.AUTH_REQUEST,
-                  WALLETCONNECT_EVENT.CALL_REQUEST,
-                  WALLETCONNECT_EVENT.CONNECT,
-                  WALLETCONNECT_EVENT.DISCONNECT,
-                  WALLETCONNECT_EVENT.SESSION_DELETE,
                   WALLETCONNECT_EVENT.SESSION_PROPOSAL,
+                  WALLETCONNECT_EVENT.SESSION_DELETE,
                   WALLETCONNECT_EVENT.SESSION_REQUEST,
-                  WALLETCONNECT_EVENT.SESSION_UPDATE,
-                  WALLETCONNECT_EVENT.TRANSPORT_ERROR,
-                  WALLETCONNECT_EVENT.CHAIN_CHANGED,
-                  'accountsChanged',
+                  WALLETCONNECT_EVENT.PROPOSAL_EXPIRE,
+                  WALLETCONNECT_EVENT.SESSION_REQUEST_EXPIRE,
                 ],
                 accounts: [
                   `eip155:1:${wallet}`,
@@ -294,12 +285,22 @@ export const useWalletConnect = () => {
             },
           });
 
-          await walletKit?.approveSession({
-            id,
-            namespaces: approvedNamespaces,
-          });
+          const handleConfirmProposal = async () => {
+            await walletKit?.approveSession({
+              id,
+              namespaces: approvedNamespaces,
+            });
 
-          setActiveSessions(walletKit?.getActiveSessions());
+            setActiveSessions(walletKit?.getActiveSessions());
+          };
+
+          const handleRejectProposal = async () => {
+            await walletKit?.rejectSession({
+              id,
+              reason: getSdkError('USER_REJECTED'),
+            });
+          };
+          showModal(proposal, handleConfirmProposal, handleRejectProposal);
         } catch (e) {
           await walletKit?.rejectSession({
             id,
@@ -342,7 +343,7 @@ export const useWalletConnect = () => {
         });
       }
     },
-    [showToast, wallet, walletKit]
+    [showModal, showToast, wallet, walletKit]
   );
 
   const onSessionDelete = useCallback(() => {
@@ -385,7 +386,6 @@ export const useWalletConnect = () => {
       if (request.method === ETH_SIGN_TYPED_DATA) {
         const requestParamsMessage = await request.params[1];
 
-        // Safe parsing
         const parseRequest =
           typeof requestParamsMessage === 'string'
             ? JSON.parse(requestParamsMessage)
@@ -412,8 +412,8 @@ export const useWalletConnect = () => {
               description: '',
               chainId: chainIdNumber,
               to: eSdk.getEOAAddress(),
-              value: request.params.value,
-              data: request.params.data,
+              value: hexToBigInt(request.params[0].value).toString(),
+              data: request.params[0].data,
             });
             setShowBatchSendModal(true);
             showSend();
@@ -441,6 +441,54 @@ export const useWalletConnect = () => {
           topic,
           response: formatJsonRpcError(id, e),
         });
+        showToast({
+          title: 'Session request error',
+          subtitle: 'The request has failed. Please try again.',
+        });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletKit, getSdk]
+  );
+
+  const onSessionRequestExpires = useCallback(
+    async (requestEvent: WalletKitTypes.SessionRequestExpire) => {
+      const { id } = requestEvent;
+
+      const pendingSessions = walletKit?.getPendingSessionRequests() || [];
+
+      const matchingSession = pendingSessions.find(
+        (session) => session.id === id
+      );
+
+      if (!matchingSession) {
+        showToast({
+          title: 'Session request error',
+          subtitle: 'The request has failed. Please try again.',
+        });
+        return;
+      }
+
+      const { topic } = matchingSession;
+
+      try {
+        await walletKit?.respondSessionRequest({
+          topic,
+          response: formatJsonRpcError(id, 'Session request expired'),
+        });
+        showToast({
+          title: 'Session request expired',
+          subtitle: 'The session request has expired. Please try again.',
+        });
+      } catch (e: any) {
+        await walletKit?.respondSessionRequest({
+          topic,
+          response: formatJsonRpcError(id, e),
+        });
+        showToast({
+          title: 'Session request error',
+          subtitle: 'The request has failed. Please try again.',
+        });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -453,14 +501,25 @@ export const useWalletConnect = () => {
     walletKit.on('session_proposal', onSessionProposal);
     walletKit.on('session_delete', onSessionDelete);
     walletKit.on('session_request', onSessionRequest);
+    walletKit.on('proposal_expire', hideModal);
+    walletKit.on('session_request_expire', onSessionRequestExpires);
 
     // eslint-disable-next-line consistent-return
     return () => {
       walletKit.off('session_proposal', onSessionProposal);
       walletKit.off('session_delete', onSessionDelete);
       walletKit.off('session_request', onSessionRequest);
+      walletKit.on('proposal_expire', hideModal);
+      walletKit.off('session_request_expire', onSessionRequestExpires);
     };
-  }, [walletKit, onSessionProposal, onSessionDelete, onSessionRequest]);
+  }, [
+    walletKit,
+    onSessionProposal,
+    onSessionDelete,
+    onSessionRequest,
+    onSessionRequestExpires,
+    hideModal,
+  ]);
 
   return {
     connect,
