@@ -20,7 +20,7 @@ const WalletConnectModal = ({
 }: WalletConnectModalProps) => {
   const { params } = sessionData;
 
-  const appName = params?.proposer?.metadata?.name || 'Unknown app';
+  const appName = params?.proposer?.metadata?.name || 'Unnamed app';
   const appIcon = params?.proposer?.metadata?.icons[0];
   const appUrl = params?.proposer?.metadata?.url;
   const optionalMethods = params?.optionalNamespaces?.eip155?.methods || [];
@@ -37,7 +37,10 @@ const WalletConnectModal = ({
   );
 
   return (
-    <div className="z-[550] fixed inset-0 bg-container_grey bg-opacity-50 flex justify-center items-center">
+    <div
+      id="walletConnect-modal"
+      className="z-[550] fixed inset-0 bg-container_grey bg-opacity-50 flex justify-center items-center"
+    >
       <div className="flex flex-col bg-container_grey p-6 rounded-lg shadow-lg w-[90%] max-w-md relative gap-4">
         <div className="flex flex-col items-center justify-center gap-4">
           {appIcon ? (

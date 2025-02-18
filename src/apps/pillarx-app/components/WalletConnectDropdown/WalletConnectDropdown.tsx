@@ -320,6 +320,7 @@ const WalletConnectDropdown = () => {
 
   return (
     <div
+      id="walletConnect-dropdown"
       className="relative inline-block w-[254px] h-12 mb-4"
       ref={dropdownRef}
     >

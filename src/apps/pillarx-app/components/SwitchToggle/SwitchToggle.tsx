@@ -23,6 +23,7 @@ const SwitchToggle = ({
 
   return (
     <div
+      id="pillarx-switch-toggle"
       onClick={isClipboardSwitch ? onClick : handleToggle}
       className={`relative inline-flex w-8 h-[18px] rounded-[20px] p-0.5 cursor-pointer transition-colors duration-300 ${
         isChecked ? 'bg-purple_medium' : 'bg-[#5F5C6E]'

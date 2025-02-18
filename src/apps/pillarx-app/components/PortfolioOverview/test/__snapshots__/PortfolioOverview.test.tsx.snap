@@ -192,6 +192,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="relative inline-block w-[254px] h-12 mb-4"
+      id="walletConnect-dropdown"
     >
       <div
         className="flex w-full h-full items-center bg-medium_grey cursor-pointer rounded-md"

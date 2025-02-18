@@ -53,10 +53,10 @@ export const useWalletConnect = () => {
     const walletKitInit = await WalletKit.init({
       core,
       metadata: {
-        name: 'PillarX Wallet',
-        description: 'PillarX Wallet',
+        name: 'PillarX',
+        description: 'PillarX',
         url: 'https://pillarx.app/',
-        icons: [],
+        icons: ['/favicon.ico'],
       },
     });
 
@@ -68,7 +68,8 @@ export const useWalletConnect = () => {
     const initWallet = async () => {
       try {
         await initWalletKit();
-      } catch (e) {
+      } catch (e: any) {
+        console.error('Error initialising Wallet Kit:', e.message);
         showToast({
           title: 'WalletConnect error',
           subtitle:
@@ -104,7 +105,8 @@ export const useWalletConnect = () => {
       if (!walletKit) {
         try {
           await initWalletKit();
-        } catch (e) {
+        } catch (e: any) {
+          console.error('Error initialising Wallet Kit:', e.message);
           showToast({
             title: 'WalletConnect error',
             subtitle:
@@ -131,32 +133,34 @@ export const useWalletConnect = () => {
         const session = getSessionFromTopic(peerWalletConnect?.topic || '');
         if (session) {
           showToast({
-            title: `${session.peer.metadata.name}`,
-            subtitle: 'Connected via WalletConnect.',
-            image: `${session.peer.metadata.icons[0]}`,
+            title: `${session.peer?.metadata?.name || 'Unnamed App'}`,
+            subtitle: 'Connected via WalletConnect',
+            image: `${session.peer?.metadata?.icons[0]}`,
           });
         }
       } catch (e) {
         if (`${e}`.includes('Missing or invalid')) {
           showToast({
-            title: 'Missing or invalid connection',
-            subtitle: 'Missing or invalid WalletConnect connection.',
+            title: 'WalletConnect',
+            subtitle: 'Missing or invalid connection.',
           });
         } else if (`${e}`.includes('Pairing already exists')) {
           showToast({
-            title: 'Connection already exists',
-            subtitle: 'Please try again with a new WalletConnect connection.',
+            title: 'WalletConnect',
+            subtitle:
+              'Connection already exists. Please try again with a new connection.',
           });
         } else if (`${e}`.includes('URI has expired')) {
           showToast({
-            title: 'Connection has expired',
-            subtitle: 'Please try again with a new WalletConnect connection.',
+            title: 'WalletConnect',
+            subtitle:
+              'Connection has expired. Please try again with a new connection.',
           });
         } else {
           showToast({
-            title: 'Something went wrong.',
+            title: 'WalletConnect',
             subtitle:
-              'Please make sure you are using a valid WalletConnect connection.',
+              'Something went wrong. Please make sure you are using a valid connection.',
           });
         }
       }
@@ -170,7 +174,8 @@ export const useWalletConnect = () => {
       if (!walletKit) {
         try {
           await initWalletKit();
-        } catch (e) {
+        } catch (e: any) {
+          console.error('Error initialising Wallet Kit:', e.message);
           showToast({
             title: 'WalletConnect error',
             subtitle:
@@ -181,7 +186,7 @@ export const useWalletConnect = () => {
 
       const sessionData = getSessionFromTopic(topic);
 
-      const dAppName = sessionData?.peer.metadata.name ?? 'dApp';
+      const dAppName = sessionData?.peer?.metadata?.name ?? 'dApp';
 
       try {
         setIsLoadingDisconnect(true);
@@ -199,11 +204,12 @@ export const useWalletConnect = () => {
         // Update activeSessions after disconnecting
         const updatedSessions = walletKit?.getActiveSessions();
         setActiveSessions(updatedSessions);
-      } catch (error) {
+      } catch (error: any) {
+        console.error('Error disconnecting session:', error.message);
         showToast({
           title: dAppName,
           subtitle: 'Error while disconnecting session. Please try again.',
-          image: `${sessionData?.peer.metadata.icons[0]}`,
+          image: `${sessionData?.peer?.metadata?.icons[0]}`,
         });
       }
 
@@ -236,12 +242,12 @@ export const useWalletConnect = () => {
           reason: getSdkError('USER_DISCONNECTED'),
         });
         showToast({
-          title: 'All sessions disconnected',
+          title: 'WalletConnect',
           subtitle: 'All sessions disconnected successfully.',
         });
       } catch (error) {
         showToast({
-          title: 'Unsuccessful disconnection',
+          title: 'WalletConnect',
           subtitle:
             'Error while disconnecting one or several sessions. Please try again, or try disconnecting sessions individually.',
         });
@@ -266,7 +272,13 @@ export const useWalletConnect = () => {
             proposal: params,
             supportedNamespaces: {
               eip155: {
-                chains: ['eip155:1', 'eip155:100', 'eip155:137', 'eip155:8453'],
+                chains: [
+                  'eip155:11155111',
+                  'eip155:1',
+                  'eip155:100',
+                  'eip155:137',
+                  'eip155:8453',
+                ],
                 methods: [PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TYPED_DATA],
                 events: [
                   WALLETCONNECT_EVENT.SESSION_PROPOSAL,
@@ -276,6 +288,7 @@ export const useWalletConnect = () => {
                   WALLETCONNECT_EVENT.SESSION_REQUEST_EXPIRE,
                 ],
                 accounts: [
+                  `eip155:11155111:${wallet}`,
                   `eip155:1:${wallet}`,
                   `eip155:100:${wallet}`,
                   `eip155:137:${wallet}`,
@@ -307,39 +320,42 @@ export const useWalletConnect = () => {
             reason: getSdkError('USER_REJECTED'),
           });
 
+          const dAppName = params?.proposer?.metadata?.name || 'Unnamed App';
+
           if (`${e}`.includes('Non conforming namespaces')) {
             if (`${e}`.includes('approve() namespaces chains')) {
               showToast({
-                title: `${params.proposer.metadata.name} not compatible`,
-                subtitle: `PillarX wallet chains not compatible with ${params.proposer.metadata.name} chains.`,
+                title: 'WalletConnect',
+                subtitle: `PillarX chains not compatible with ${dAppName} chains.`,
               });
             } else if (`${e}`.includes('approve() namespaces events')) {
               showToast({
-                title: `${params.proposer.metadata.name} not compatible`,
-                subtitle: `PillarX wallet events not compatible with ${params.proposer.metadata.name} events.`,
+                title: 'WalletConnect',
+                subtitle: `PillarX events not compatible with ${dAppName} events.`,
               });
             } else if (`${e}`.includes('approve() namespaces methods')) {
               showToast({
-                title: `${params.proposer.metadata.name} not compatible`,
-                subtitle: `PillarX wallet methods not compatible with ${params.proposer.metadata.name} methods.`,
+                title: 'WalletConnect',
+                subtitle: `PillarX methods not compatible with ${dAppName} methods.`,
               });
             } else {
               showToast({
-                title: `${params.proposer.metadata.name} not compatible`,
-                subtitle: `PillarX wallet not compatible with ${params.proposer.metadata.name}.`,
+                title: 'WalletConnect',
+                subtitle: `PillarX not compatible with ${dAppName}.`,
               });
             }
           } else {
             showToast({
-              title: 'WalletConnect session rejected',
-              subtitle: 'Session approval rejected.',
+              title: 'WalletConnect',
+              subtitle: `Session approval rejected with ${dAppName}.`,
             });
           }
         }
       } else {
         showToast({
-          title: 'Connection already exists',
-          subtitle: 'Please try again with a new WalletConnect connection.',
+          title: 'WalletConnect',
+          subtitle:
+            'Connection already exists. Please try again with a new connection.',
         });
       }
     },
@@ -352,8 +368,8 @@ export const useWalletConnect = () => {
     setActiveSessions(updatedSessions);
 
     showToast({
-      title: 'Connection ended',
-      subtitle: 'A WalletConnect connection ended from the dApp.',
+      title: 'WalletConnect',
+      subtitle: 'A connection ended from the dApp.',
     });
   }, [showToast, walletKit]);
 
@@ -428,7 +444,7 @@ export const useWalletConnect = () => {
 
         await sendTransactionToBatch();
 
-        requestResponse = 'Transaction sent to PillarX wallet.';
+        requestResponse = 'Transaction sent to PillarX.';
       }
 
       try {
@@ -437,13 +453,15 @@ export const useWalletConnect = () => {
           response: formatJsonRpcResult(id, requestResponse),
         });
       } catch (e: any) {
+        console.error('WalletConnect session request error:', e.message);
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcError(id, e),
         });
         showToast({
-          title: 'Session request error',
-          subtitle: 'The request has failed. Please try again.',
+          title: 'WalletConnect',
+          subtitle:
+            'The request has failed - there was a session request error. Please try again.',
         });
       }
     },
@@ -463,8 +481,9 @@ export const useWalletConnect = () => {
 
       if (!matchingSession) {
         showToast({
-          title: 'Session request error',
-          subtitle: 'The request has failed. Please try again.',
+          title: 'WalletConnect',
+          subtitle:
+            'The request has failed - there was a session request error. Please try again.',
         });
         return;
       }
@@ -477,17 +496,19 @@ export const useWalletConnect = () => {
           response: formatJsonRpcError(id, 'Session request expired'),
         });
         showToast({
-          title: 'Session request expired',
+          title: 'WalletConnect',
           subtitle: 'The session request has expired. Please try again.',
         });
       } catch (e: any) {
+        console.error('WalletConnect session request error:', e.message);
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcError(id, e),
         });
         showToast({
-          title: 'Session request error',
-          subtitle: 'The request has failed. Please try again.',
+          title: 'WalletConnect',
+          subtitle:
+            'The request has failed - there was a session request error. Please try again.',
         });
       }
     },

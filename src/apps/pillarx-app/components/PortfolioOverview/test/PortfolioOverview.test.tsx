@@ -7,6 +7,7 @@ import { WalletData } from '../../../../../types/api';
 // components
 import BottomMenuModalProvider from '../../../../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTransactionsBatchProvider';
+import { WalletConnectModalProvider } from '../../../../../providers/WalletConnectModalProvider';
 import { WalletConnectToastProvider } from '../../../../../providers/WalletConnectToastProvider';
 import PortfolioOverview from '../PortfolioOverview';
 
@@ -45,7 +46,12 @@ describe('<PortfolioOverview />', () => {
         <BottomMenuModalProvider>
           <GlobalTransactionsBatchProvider>
             <WalletConnectToastProvider>
-              <PortfolioOverview data={mockData} isDataLoading={mockLoading} />
+              <WalletConnectModalProvider>
+                <PortfolioOverview
+                  data={mockData}
+                  isDataLoading={mockLoading}
+                />
+              </WalletConnectModalProvider>
             </WalletConnectToastProvider>
           </GlobalTransactionsBatchProvider>
         </BottomMenuModalProvider>
@@ -61,7 +67,9 @@ describe('<PortfolioOverview />', () => {
         <BottomMenuModalProvider>
           <GlobalTransactionsBatchProvider>
             <WalletConnectToastProvider>
-              <PortfolioOverview data={undefined} isDataLoading />
+              <WalletConnectModalProvider>
+                <PortfolioOverview data={undefined} isDataLoading />
+              </WalletConnectModalProvider>
             </WalletConnectToastProvider>
           </GlobalTransactionsBatchProvider>
         </BottomMenuModalProvider>
@@ -76,7 +84,9 @@ describe('<PortfolioOverview />', () => {
       <BottomMenuModalProvider>
         <GlobalTransactionsBatchProvider>
           <WalletConnectToastProvider>
-            <PortfolioOverview data={mockData} isDataLoading={false} />
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockData} isDataLoading={false} />
+            </WalletConnectModalProvider>
           </WalletConnectToastProvider>
         </GlobalTransactionsBatchProvider>
       </BottomMenuModalProvider>
@@ -94,7 +104,9 @@ describe('<PortfolioOverview />', () => {
       <BottomMenuModalProvider>
         <GlobalTransactionsBatchProvider>
           <WalletConnectToastProvider>
-            <PortfolioOverview data={mockData} isDataLoading={false} />
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockData} isDataLoading={false} />
+            </WalletConnectModalProvider>
           </WalletConnectToastProvider>
         </GlobalTransactionsBatchProvider>
       </BottomMenuModalProvider>
@@ -112,7 +124,9 @@ describe('<PortfolioOverview />', () => {
       <BottomMenuModalProvider>
         <GlobalTransactionsBatchProvider>
           <WalletConnectToastProvider>
-            <PortfolioOverview data={mockNoData} isDataLoading={false} />
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockNoData} isDataLoading={false} />
+            </WalletConnectModalProvider>
           </WalletConnectToastProvider>
         </GlobalTransactionsBatchProvider>
       </BottomMenuModalProvider>

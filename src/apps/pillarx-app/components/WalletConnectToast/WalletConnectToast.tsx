@@ -43,7 +43,10 @@ const WalletConnectToast = ({ children, onClose }: WalletConnectToastProps) => {
       style={toastAnimation}
       className="flex fixed bottom-4 right-4 max-w-80 bg-white text-medium_grey p-4 rounded-xl ml-4 shadow-lg z-[500]"
     >
-      <div className="flex justify-between items-start">
+      <div
+        id="walletConnect-toast"
+        className="flex justify-between items-start"
+      >
         <div className="flex">{children}</div>
         <button type="button" onClick={handleClose}>
           <img src={CloseSquare} alt="close-toast" className="w-5 h-5" />
