@@ -17,6 +17,13 @@ module.exports = function override(config) {
     path: false,
   });
   config.resolve.fallback = fallback;
+
+  // Force ESM version of noble-hashes
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    '@noble/hashes': '@noble/hashes/esm'
+  };
+
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
       process: 'process/browser',
