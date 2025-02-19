@@ -116,7 +116,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
           className="text-xs font-normal text-black_grey group-hover:opacity-60 capitalize"
         >
           On 
-          137
+          Polygon
         </p>
       </div>
     </div>

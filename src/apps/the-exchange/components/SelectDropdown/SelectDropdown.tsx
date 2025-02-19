@@ -10,7 +10,7 @@ import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';

@@ -1,4 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useState } from 'react';
 
@@ -23,7 +23,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { CardPosition, ChainType } from '../../utils/types';
 
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
 import SelectDropdown from '../SelectDropdown/SelectDropdown';

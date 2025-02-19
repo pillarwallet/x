@@ -17,7 +17,7 @@ exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-black_grey font-normal capitalize"
     >
-      On undefined
+      On Ethereum
     </p>
   </div>
   <div

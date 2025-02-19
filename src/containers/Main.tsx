@@ -1,8 +1,4 @@
 /* eslint-disable import/extensions */
-import {
-  WalletProviderLike,
-  Web3eip1193WalletProvider,
-} from '@etherspot/prime-sdk';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 import {
@@ -14,26 +10,30 @@ import { ThemeProvider } from 'styled-components';
 import { polygon, sepolia } from 'viem/chains';
 
 // theme
+import { createWalletClient, custom, WalletClient } from 'viem';
 import { defaultTheme, GlobalStyle } from '../theme';
 
 // providers
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 import LanguageProvider from '../providers/LanguageProvider';
 
-// pages
-import Loading from '../pages/Loading';
+// utils
+import { getNetworkViem } from '../apps/deposit/utils/blockchain';
+import { isTestnet, visibleChains } from '../utils/blockchain';
 
-// hooks
-import useAllowedApps from '../hooks/useAllowedApps';
+// pages
 import App from '../pages/App';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
+import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
-import { isTestnet, visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
+
+// hooks
+import useAllowedApps from '../hooks/useAllowedApps';
 
 /**
  * @name AuthLayout
@@ -53,9 +53,7 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
-  const [provider, setProvider] = useState<WalletProviderLike | undefined>(
-    undefined
-  );
+  const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { allowed: allowedApps, isLoading: isLoadingAllowedApps } =
     useAllowedApps();
@@ -83,13 +81,15 @@ const AuthLayout = () => {
       );
 
       if (walletProvider) {
-        privyEthereumProvider = await walletProvider.getWeb3jsProvider();
+        privyEthereumProvider = await walletProvider.getEthereumProvider();
 
-        const newProvider = new Web3eip1193WalletProvider(
-          privyEthereumProvider.walletProvider
-        );
+        const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
 
-        await newProvider.refresh();
+        const newProvider = createWalletClient({
+          account: walletProvider.address as `0x${string}`,
+          chain: getNetworkViem(walletChainId),
+          transport: custom(privyEthereumProvider),
+        });
 
         setProvider(newProvider);
       }

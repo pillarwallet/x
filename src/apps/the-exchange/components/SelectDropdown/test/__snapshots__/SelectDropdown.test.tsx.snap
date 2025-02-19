@@ -51,7 +51,7 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
           >
-            1
+            Ethereum
           </p>
         </button>
       </li>
@@ -64,7 +64,7 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
           >
-            137
+            Polygon
           </p>
         </button>
       </li>

@@ -1,4 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';

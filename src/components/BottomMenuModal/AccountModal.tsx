@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  Nft,
-  NftCollection,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import {
   useEtherspotUtils,
   useWalletAddress,
@@ -110,7 +108,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     >((all, chain) => {
       const nftCollectionsForChain = nfts[chain.id]?.[accountAddress] || [];
       nftCollectionsForChain.forEach((collection) => {
-        collection.items.forEach((nft) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        collection.items.forEach((nft: any) => {
           all.push({ nft, collection, chain });
         });
       });

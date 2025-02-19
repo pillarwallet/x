@@ -1,5 +1,5 @@
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';

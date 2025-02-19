@@ -22,5 +22,5 @@
     // This improves issue grouping in Sentry.
     "sourceRoot": "/"
   },
-  "include": ["src"]
+  "include": ["src", "__mocks__"]
 }

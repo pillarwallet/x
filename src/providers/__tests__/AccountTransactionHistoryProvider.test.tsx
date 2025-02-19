@@ -1,4 +1,4 @@
-import { TransactionStatuses } from '@etherspot/prime-sdk/dist/sdk/data/constants';
+import { TransactionStatuses } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import * as TransactionKit from '@etherspot/transaction-kit';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';

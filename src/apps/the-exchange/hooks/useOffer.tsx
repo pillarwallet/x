@@ -1,11 +1,11 @@
-import { Route } from '@lifi/sdk';
+import { ExchangeOffer } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/exchange-offer';
+import { Route } from '@lifi/types';
 import { parseUnits } from 'ethers/lib/utils';
 
 // hooks
 import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 
 // types
-import { ExchangeOffer } from '@etherspot/prime-sdk/dist/sdk/data';
 import { SwapOffer, SwapType } from '../utils/types';
 
 // utils

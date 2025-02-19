@@ -25,6 +25,7 @@ import {
 } from '../../../reducer/theExchangeSlice';
 
 // components
+import { convertChainIdtoName } from '../../../../../utils/blockchain';
 import SelectDropdown from '../SelectDropdown';
 
 const mockTokenAssets = [
@@ -122,12 +123,15 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setSwapChain(undefined));
       store.dispatch(setIsSwapOpen(true));
     });
 
     expect(screen.getByText('Select a chain')).toBeInTheDocument();
     options.forEach((option) => {
-      expect(screen.getByText(option)).toBeInTheDocument();
+      expect(
+        screen.getByText(convertChainIdtoName(option))
+      ).toBeInTheDocument();
     });
   });
 
@@ -165,16 +169,17 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setSwapChain(undefined));
       store.dispatch(setIsSwapOpen(true));
     });
 
-    const optionElement = screen.getByText('1');
+    const optionElement = screen.getByText('Ethereum');
     fireEvent.click(optionElement);
 
     expect(onSelectMock).toHaveBeenCalled();
     expect(store.getState().swap.swapChain).toEqual({
       chainId: 1,
-      chainName: '1',
+      chainName: 'Ethereum',
     });
   });
 
@@ -191,16 +196,17 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setReceiveChain(undefined));
       store.dispatch(setIsReceiveOpen(true));
     });
 
-    const optionElement = screen.getByText('137');
+    const optionElement = screen.getByText('Polygon');
     fireEvent.click(optionElement);
 
     expect(onSelectMock).toHaveBeenCalled();
     expect(store.getState().swap.receiveChain).toEqual({
       chainId: 137,
-      chainName: '137',
+      chainName: 'Polygon',
     });
   });
 });

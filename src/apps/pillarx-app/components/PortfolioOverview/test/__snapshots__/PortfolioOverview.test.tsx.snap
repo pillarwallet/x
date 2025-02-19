@@ -191,6 +191,55 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
+      className="relative inline-block w-[254px] h-12 mb-4"
+      id="walletConnect-dropdown"
+    >
+      <div
+        className="flex w-full h-full items-center bg-medium_grey cursor-pointer rounded-md"
+        onClick={[Function]}
+      >
+        <div
+          className="flex w-full gap-2 h-full items-center px-3 border-r-2 border-purple_light/[.1]"
+        >
+          <img
+            alt="wallet-connect-logo"
+            className="w-[24px]"
+            src={
+              {
+                "ReactComponent": {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "render": [Function],
+                },
+                "default": "wallet-connect-logo.svg",
+              }
+            }
+          />
+          <p
+            className="text-base font-medium text-white"
+          >
+            WalletConnect
+          </p>
+        </div>
+        <div
+          className="flex min-w-[46px] h-full items-center justify-center"
+        >
+          <img
+            alt="arrow-down"
+            className="w-3.5 transform "
+            src={
+              {
+                "ReactComponent": {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "render": [Function],
+                },
+                "default": "arrow-down.svg",
+              }
+            }
+          />
+        </div>
+      </div>
+    </div>
+    <div
       className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <p

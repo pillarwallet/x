@@ -5,6 +5,10 @@ import renderer from 'react-test-renderer';
 import { WalletData } from '../../../../../types/api';
 
 // components
+import BottomMenuModalProvider from '../../../../../providers/BottomMenuModalProvider';
+import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTransactionsBatchProvider';
+import { WalletConnectModalProvider } from '../../../../../providers/WalletConnectModalProvider';
+import { WalletConnectToastProvider } from '../../../../../providers/WalletConnectToastProvider';
 import PortfolioOverview from '../PortfolioOverview';
 
 const mockData: WalletData = {
@@ -38,7 +42,20 @@ const mockLoading = false;
 describe('<PortfolioOverview />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
-      .create(<PortfolioOverview data={mockData} isDataLoading={mockLoading} />)
+      .create(
+        <BottomMenuModalProvider>
+          <GlobalTransactionsBatchProvider>
+            <WalletConnectToastProvider>
+              <WalletConnectModalProvider>
+                <PortfolioOverview
+                  data={mockData}
+                  isDataLoading={mockLoading}
+                />
+              </WalletConnectModalProvider>
+            </WalletConnectToastProvider>
+          </GlobalTransactionsBatchProvider>
+        </BottomMenuModalProvider>
+      )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
@@ -46,14 +63,34 @@ describe('<PortfolioOverview />', () => {
 
   it('displays loading skeleton when data is loading', () => {
     const tree = renderer
-      .create(<PortfolioOverview data={undefined} isDataLoading />)
+      .create(
+        <BottomMenuModalProvider>
+          <GlobalTransactionsBatchProvider>
+            <WalletConnectToastProvider>
+              <WalletConnectModalProvider>
+                <PortfolioOverview data={undefined} isDataLoading />
+              </WalletConnectModalProvider>
+            </WalletConnectToastProvider>
+          </GlobalTransactionsBatchProvider>
+        </BottomMenuModalProvider>
+      )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
   it('renders data correctly when not loading', () => {
-    render(<PortfolioOverview data={mockData} isDataLoading={false} />);
+    render(
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockData} isDataLoading={false} />
+            </WalletConnectModalProvider>
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
+    );
 
     expect(screen.getByText('$1000.00')).toBeInTheDocument();
     expect(screen.getByText('1.00%')).toBeInTheDocument();
@@ -63,7 +100,17 @@ describe('<PortfolioOverview />', () => {
   });
 
   it('calculates percentage change correctly', () => {
-    render(<PortfolioOverview data={mockData} isDataLoading={false} />);
+    render(
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockData} isDataLoading={false} />
+            </WalletConnectModalProvider>
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
+    );
 
     expect(
       screen.getByText(
@@ -73,7 +120,17 @@ describe('<PortfolioOverview />', () => {
   });
 
   it('handles no data state correctly', () => {
-    render(<PortfolioOverview data={mockNoData} isDataLoading={false} />);
+    render(
+      <BottomMenuModalProvider>
+        <GlobalTransactionsBatchProvider>
+          <WalletConnectToastProvider>
+            <WalletConnectModalProvider>
+              <PortfolioOverview data={mockNoData} isDataLoading={false} />
+            </WalletConnectModalProvider>
+          </WalletConnectToastProvider>
+        </GlobalTransactionsBatchProvider>
+      </BottomMenuModalProvider>
+    );
 
     expect(screen.getByText('$0')).toBeInTheDocument();
     expect(screen.queryByText('tokens')).not.toBeInTheDocument();

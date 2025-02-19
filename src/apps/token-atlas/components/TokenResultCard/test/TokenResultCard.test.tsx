@@ -5,10 +5,10 @@ import renderer from 'react-test-renderer';
 import TokenResultCard from '../TokenResultCard';
 
 // utils
-import { convertChainIdtoName } from '../../../utils/converters';
+import { convertChainIdtoName } from '../../../../../utils/blockchain';
 
 // Mock of the convertChainIdtoName function
-jest.mock('../../../utils/converters', () => ({
+jest.mock('../../../../../utils/blockchain', () => ({
   convertChainIdtoName: jest.fn(),
 }));
 

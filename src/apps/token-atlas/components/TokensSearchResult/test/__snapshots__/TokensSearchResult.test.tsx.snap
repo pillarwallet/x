@@ -46,7 +46,7 @@ exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
         className="text-[13px] font-semibold text-base font-medium capitalize"
       >
         On 
-        1
+        Ethereum
       </p>
     </div>
     <div
@@ -82,7 +82,7 @@ exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
         className="text-[13px] font-semibold text-base font-medium capitalize"
       >
         On 
-        2
+        Expanse Network
       </p>
     </div>
   </div>

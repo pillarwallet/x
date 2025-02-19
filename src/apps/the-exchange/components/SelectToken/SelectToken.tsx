@@ -2,7 +2,7 @@
 import { CardPosition } from '../../utils/types';
 
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';

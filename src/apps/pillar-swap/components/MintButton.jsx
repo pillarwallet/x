@@ -1,6 +1,6 @@
 import {
-  EtherspotBatches,
   EtherspotBatch,
+  EtherspotBatches,
   EtherspotContractTransaction,
   useEtherspotTransactions,
 } from '@etherspot/transaction-kit';
@@ -16,13 +16,21 @@ const MintButton = () => {
     await send(['2']);
   };
 
+  const mintAbi = {
+    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  };
+
   return (
     <div className="my-2 buttonContainerTop">
       <EtherspotBatches id="2">
         <EtherspotBatch chainId={11155111}>
           <EtherspotContractTransaction
             contractAddress={'0x7010F7Ac55A64Ca6b48CDC7C680b1fb588dF439f'}
-            abi={['function mint(uint)']}
+            abi={[mintAbi]}
             methodName={'mint'}
             params={[utils.parseEther('100')]}
           >
