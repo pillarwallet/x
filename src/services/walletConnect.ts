@@ -12,7 +12,7 @@ import { SessionTypes } from '@walletconnect/types';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { hexToBigInt } from 'viem';
+import { checksumAddress, formatEther, hexToBigInt } from 'viem';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -427,8 +427,8 @@ export const useWalletConnect = () => {
               title: 'WalletConnect transaction',
               description: '',
               chainId: chainIdNumber,
-              to: eSdk.getEOAAddress(),
-              value: hexToBigInt(request.params[0].value).toString(),
+              to: checksumAddress(request.params[0].to),
+              value: formatEther(hexToBigInt(request.params[0].value)),
               data: request.params[0].data,
             });
             setShowBatchSendModal(true);
