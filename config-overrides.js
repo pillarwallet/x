@@ -5,7 +5,7 @@ const webpack = require('webpack');
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
   Object.assign(fallback, {
-    crypto: require.resolve('crypto-browserify'), // Enable crypto polyfill for noble-hashes
+    crypto: false, // noble-hashes doesn't require crypto polyfill
     stream: false, // require.resolve("stream-browserify") can be polyfilled here if needed
     assert: false, // require.resolve("assert") can be polyfilled here if needed
     http: false, // require.resolve("stream-http") can be polyfilled here if needed
@@ -31,6 +31,27 @@ module.exports = function override(config) {
     resolve: {
       fullySpecified: false,
     },
+  });
+  
+  // Add support for proper ESM handling
+  config.module.rules.push({
+    test: /\.m?js/,
+    resolve: {
+      fullySpecified: false,
+      fallback: {
+        crypto: false,
+      }
+    },
+  });
+
+  // Ensure noble-hashes is properly transpiled
+  config.module.rules.push({
+    test: /node_modules\/@noble\/hashes\/.*\.js$/,
+    loader: require.resolve('babel-loader'),
+    options: {
+      presets: ['@babel/preset-env'],
+      plugins: ['@babel/plugin-transform-runtime']
+    }
   });
   return config;
 };
