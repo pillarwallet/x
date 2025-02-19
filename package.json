@@ -95,7 +95,7 @@
     "styled-components": "^6.1.1",
     "use-mailchimp-form": "^3.1.0",
     "use-resize-observer": "^9.1.0",
-    "viem": "^2.6.1",
+    "viem": "2.21.53",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
