@@ -56,7 +56,7 @@ export const useWalletConnect = () => {
         name: 'PillarX',
         description: 'PillarX',
         url: 'https://pillarx.app/',
-        icons: ['/favicon.ico'],
+        icons: ['https://pillarx.app/favicon.ico'],
       },
     });
 
