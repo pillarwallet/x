@@ -18,10 +18,13 @@ module.exports = function override(config) {
   });
   config.resolve.fallback = fallback;
 
-  // Force ESM version of noble-hashes
+  // Configure noble-hashes to use ESM versions
   config.resolve.alias = {
     ...config.resolve.alias,
-    '@noble/hashes': '@noble/hashes/esm'
+    '@noble/hashes/sha3': require.resolve('@noble/hashes/esm/sha3'),
+    '@noble/hashes/sha256': require.resolve('@noble/hashes/esm/sha256'),
+    '@noble/hashes/utils': require.resolve('@noble/hashes/esm/utils'),
+    '@noble/hashes/_u64': require.resolve('@noble/hashes/esm/_u64')  // Important for SHA3
   };
 
   config.plugins = (config.plugins || []).concat([
@@ -53,7 +56,7 @@ module.exports = function override(config) {
 
   // Ensure noble-hashes is properly transpiled
   config.module.rules.push({
-    test: /node_modules\/@noble\/hashes\/.*\.js$/,
+    test: /node_modules\/@noble\/hashes\/esm\/.*\.js$/,
     loader: require.resolve('babel-loader'),
     options: {
       presets: ['@babel/preset-env'],
