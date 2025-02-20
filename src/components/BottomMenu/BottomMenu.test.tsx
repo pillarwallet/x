@@ -22,6 +22,7 @@ import AssetsProvider from '../../providers/AssetsProvider';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
+import { PrivateKeyLoginProvider } from '../../providers/PrivateKeyLoginProvider';
 import SelectedChainsHistoryProvider from '../../providers/SelectedChainsHistoryProvider';
 
 // services and store
@@ -63,11 +64,13 @@ describe('<BottomMenu />', () => {
                     <ThemeProvider theme={defaultTheme}>
                       <LanguageProvider>
                         <GlobalTransactionsBatchProvider>
-                          <BottomMenuModalProvider>
-                            <SelectedChainsHistoryProvider>
-                              <BottomMenu />
-                            </SelectedChainsHistoryProvider>
-                          </BottomMenuModalProvider>
+                          <PrivateKeyLoginProvider>
+                            <BottomMenuModalProvider>
+                              <SelectedChainsHistoryProvider>
+                                <BottomMenu />
+                              </SelectedChainsHistoryProvider>
+                            </BottomMenuModalProvider>
+                          </PrivateKeyLoginProvider>
                         </GlobalTransactionsBatchProvider>
                       </LanguageProvider>
                     </ThemeProvider>
@@ -106,11 +109,13 @@ describe('<BottomMenu />', () => {
           <ThemeProvider theme={defaultTheme}>
             <LanguageProvider>
               <GlobalTransactionsBatchProvider>
-                <BottomMenuModalProvider>
-                  <SelectedChainsHistoryProvider>
-                    <BottomMenu />
-                  </SelectedChainsHistoryProvider>
-                </BottomMenuModalProvider>
+                <PrivateKeyLoginProvider>
+                  <BottomMenuModalProvider>
+                    <SelectedChainsHistoryProvider>
+                      <BottomMenu />
+                    </SelectedChainsHistoryProvider>
+                  </BottomMenuModalProvider>
+                </PrivateKeyLoginProvider>
               </GlobalTransactionsBatchProvider>
             </LanguageProvider>
           </ThemeProvider>
