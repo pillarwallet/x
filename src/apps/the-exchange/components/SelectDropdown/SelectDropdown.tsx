@@ -97,7 +97,7 @@ const SelectDropdown = ({
 
   return (
     <div
-      id="select-chain-dropdown-list-exchange"
+      id={`select-chain-dropdown-list-exchange-${isSwapOpen ? 'send' : 'receive'}`}
       className={`${className} h-[34px] z-20`}
     >
       <button
@@ -115,7 +115,10 @@ const SelectDropdown = ({
         <div className="relative bg-white border border-t-black rounded-[3px] w-full max-h-[344px] overflow-y-auto capitalize">
           <ul>
             {allOptions.map((option) => (
-              <li key={option}>
+              <li
+                key={option}
+                id={`select-chain-dropdown-list-exchange-${isSwapOpen ? 'send' : 'receive'}-${option}`}
+              >
                 <button
                   type="button"
                   onClick={() => handleSelectChainId(option)}

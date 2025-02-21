@@ -9,6 +9,7 @@ type TokenListItemProps = {
   chainName: string;
   onClick: () => void;
   tokenLogo?: string;
+  testId?: string;
 };
 
 const TokenListItem = ({
@@ -17,10 +18,11 @@ const TokenListItem = ({
   chainName,
   onClick,
   tokenLogo,
+  testId,
 }: TokenListItemProps) => {
   return (
     <div
-      id="token-list-item-exchange"
+      id={testId}
       onClick={onClick}
       className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
       data-testid="token-list-item"
