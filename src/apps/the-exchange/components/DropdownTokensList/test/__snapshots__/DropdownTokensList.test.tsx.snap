@@ -28,7 +28,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
     >
       <div
         className="false h-[34px] z-20"
-        id="select-chain-dropdown-list-exchange"
+        id="select-chain-dropdown-list-exchange-receive"
       >
         <button
           className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"
@@ -74,7 +74,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
       <div
         className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
         data-testid="token-list-item"
-        id="token-list-item-exchange"
+        id="token-list-item-exchange-receive-137-POL"
         onClick={[Function]}
       >
         <div

@@ -49,6 +49,7 @@ exports[`<Select /> renders correctly with default option 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-2"
     >
       <div
         class="c1"
@@ -198,6 +199,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-1"
     >
       <div
         class="c1"
@@ -216,6 +218,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-2"
     >
       <div
         class="c1"
@@ -234,6 +237,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-3"
     >
       <div
         class="c4"
@@ -323,6 +327,7 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-3"
     >
       <div
         class="c1"
@@ -422,6 +427,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-1"
     >
       <div
         class="c1"
@@ -440,6 +446,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-2"
     >
       <div
         class="c1"
@@ -458,6 +465,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-3"
     >
       <div
         class="c4"
@@ -537,6 +545,7 @@ exports[`<Select /> responds once clicked 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-2"
     >
       <div
         class="c1"
@@ -634,6 +643,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 <div>
     <div
       class="c0"
+      id="action-bar-send-chain-1"
     >
       <div
         class="c1"
@@ -652,6 +662,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-2"
     >
       <div
         class="c1"
@@ -668,6 +679,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
     </div>
     <div
       class="c0"
+      id="action-bar-send-chain-3"
     >
       <div
         class="c5"
