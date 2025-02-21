@@ -175,6 +175,7 @@ const DropdownTokenList = ({
                 .map((token, index) => (
                   <TokenListItem
                     key={index}
+                    testId={`token-list-item-exchange-send-${token.chainId}-${token.name}`}
                     onClick={() => {
                       dispatch(setSwapToken(token));
                       dispatch(
@@ -211,6 +212,7 @@ const DropdownTokenList = ({
                 .map((token, index) => (
                   <TokenListItem
                     key={index}
+                    testId={`token-list-item-exchange-receive-${token.chainId}-${token.name}`}
                     onClick={() => {
                       dispatch(setReceiveToken(token));
                       dispatch(

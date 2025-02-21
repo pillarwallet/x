@@ -30,7 +30,10 @@ const ListItem = ({
   const [hideImage, setHideImage] = useState(false);
 
   return (
-    <ListItemWrapper onClick={() => onClick && onClick(option)}>
+    <ListItemWrapper
+      onClick={() => onClick && onClick(option)}
+      id={`action-bar-send-chain-${option.id}`}
+    >
       {option.imageSrc && !hideImage && (
         <ListItemLeft>
           <ListItemImage
