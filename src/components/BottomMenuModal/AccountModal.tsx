@@ -357,7 +357,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                           asset.decimals
                         );
                         return (
-                          <TokenItemChain key={`${tokenSymbol}-${chain.id}`}>
+                          <TokenItemChain
+                            key={`${tokenSymbol}-${chain.id}`}
+                            id={`action-bar-account-token-${tokenSymbol}-${chain.id}`}
+                          >
                             <ChainIcon src={getLogoForChainId(chain.id)} />
                             <p>{chain.name}</p>
                             <p>{formatAmountDisplay(assetBalanceValue)}</p>
