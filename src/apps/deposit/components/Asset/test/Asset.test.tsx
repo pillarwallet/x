@@ -8,8 +8,8 @@ import Asset from '../Asset';
 const mockToken: BalanceInfo = {
   type: 'BalanceInfo',
   name: 'TokenName',
-  chain: 'ethereum',
-  address: '0x123',
+  chain: 'polygon',
+  address: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
   decimals: 18,
   symbol: 'TNK',
   logoURI: 'https://example.com/logo.png',
@@ -50,7 +50,7 @@ describe('<Asset />', () => {
     expect(screen.getByText('TokenName (TNK)')).toBeInTheDocument();
     expect(tokenLogo).toHaveAttribute('src', 'https://example.com/logo.png');
     expect(screen.getByText('1000')).toBeInTheDocument();
-    expect(screen.getByText('ethereum')).toBeInTheDocument();
+    expect(screen.getByText('polygon')).toBeInTheDocument();
   });
 
   it('fires onSelectAsset function when clicked on token', () => {

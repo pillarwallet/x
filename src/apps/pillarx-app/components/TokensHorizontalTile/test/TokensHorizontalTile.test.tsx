@@ -19,8 +19,8 @@ describe('<TokensHorizontalTile />', () => {
         symbol: 'TBT',
         contracts: [
           {
-            address: '0x123',
-            blockchain: '111222',
+            address: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
+            blockchain: '137',
             decimals: 18,
           },
         ],
