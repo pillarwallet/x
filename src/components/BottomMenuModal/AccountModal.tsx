@@ -42,6 +42,7 @@ import { formatAmountDisplay } from '../../utils/number';
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useAccountNfts from '../../hooks/useAccountNfts';
+import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
@@ -57,6 +58,7 @@ interface AccountModalProps {
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const accountAddress = useWalletAddress();
+  const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
@@ -136,10 +138,21 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(() => {
-    logout();
+    if (account) {
+      localStorage.removeItem('ACCOUNT_VIA_PK');
+      setAccount(undefined);
+    } else {
+      logout();
+    }
+
     clearDappStorage();
     navigate('/');
-  }, [logout, navigate]);
+
+    // Time to logout and redirect route
+    setTimeout(() => window.location.reload(), 500);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {

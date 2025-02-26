@@ -38,7 +38,7 @@ exports[`<Asset /> renders correctly and matches snapshot 1`] = `
     <span
       className="capitalize"
     >
-      ethereum
+      polygon
     </span>
   </p>
 </div>
