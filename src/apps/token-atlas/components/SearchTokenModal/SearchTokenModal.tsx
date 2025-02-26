@@ -38,9 +38,10 @@ const SearchTokenModal = () => {
   );
 
   // select all chainsId of tokens available in the list for swap token
-  const allChains = tokenListData
-    ?.map((chain) => chain.blockchain)
-    .map((chain) => chainNameToChainIdTokensData(chain));
+  const allChains =
+    tokenListData
+      ?.map((chain) => chain.blockchain)
+      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
   const uniqueChains = allChains.filter((chain, index) => {
     return allChains.indexOf(chain) === index;
   });

@@ -11,7 +11,7 @@ import { SwapOffer, SwapType } from '../utils/types';
 // utils
 import { processEth } from '../utils/blockchain';
 
-const useOffer = (chainId: number) => {
+const useOffer = (chainId?: number) => {
   const { getOffers } = useEtherspotSwaps(chainId);
 
   const getBestOffer = async ({

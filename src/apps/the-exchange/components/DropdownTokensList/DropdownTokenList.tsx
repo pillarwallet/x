@@ -82,17 +82,19 @@ const DropdownTokenList = ({
     useState<boolean>(false);
 
   // select all chainsId of tokens available in the list for swap token
-  const allChainsSwap = swapTokenData
-    ?.map((chain) => chain.blockchain)
-    .map((chain) => chainNameToChainIdTokensData(chain));
+  const allChainsSwap =
+    swapTokenData
+      ?.map((chain) => chain.blockchain)
+      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
   const uniqueChainsSwap = allChainsSwap.filter((chain, index) => {
     return allChainsSwap.indexOf(chain) === index;
   });
 
   // select all chainsId of tokens available in the list for receive token
-  const allChainsReceive = receiveTokenData
-    ?.map((chain) => chain.blockchain)
-    .map((chain) => chainNameToChainIdTokensData(chain));
+  const allChainsReceive =
+    receiveTokenData
+      ?.map((chain) => chain.blockchain)
+      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
   const uniqueChainsReceive = allChainsReceive.filter((chain, index) => {
     return allChainsReceive.indexOf(chain) === index;
   });

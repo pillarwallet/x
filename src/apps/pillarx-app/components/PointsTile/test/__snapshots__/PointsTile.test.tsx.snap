@@ -166,14 +166,14 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                           d
                         </span>
                          
-                        -7
+                        -13
                         <span
                           class="text-base"
                         >
                           h
                         </span>
                          
-                        -15
+                        -58
                         <span
                           class="text-base"
                         >
@@ -432,14 +432,14 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                         d
                       </span>
                        
-                      -7
+                      -13
                       <span
                         class="text-base"
                       >
                         h
                       </span>
                        
-                      -15
+                      -58
                       <span
                         class="text-base"
                       >

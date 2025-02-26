@@ -57,7 +57,6 @@ const CardsSwap = () => {
 
   // handleOpenTokenList opens the list for selecting tokens
   const handleOpenTokenList = async (position: CardPosition) => {
-    // Error handled in usePillarSwapAssets hook
     const assets = queryTokenData({});
 
     dispatch(setSwapTokenData(assets));

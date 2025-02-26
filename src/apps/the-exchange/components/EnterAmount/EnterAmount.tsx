@@ -75,7 +75,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const balances = useAccountBalances();
   const { isZeroAddress, addressesEqual } = useEtherspotUtils();
   const { getBestOffer } = useOffer(
-    chainNameToChainIdTokensData(swapToken?.blockchain) || 0
+    chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
   );
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
 

@@ -62,7 +62,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
-  // const assets = useAssets();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
