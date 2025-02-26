@@ -16,6 +16,8 @@ const TokenRow = ({
   const token = data.tokenList[index];
   const onClick = data.handleClick;
 
+  if (!token) return null;
+
   return (
     <div style={style}>
       <TokenListItem

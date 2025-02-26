@@ -31,6 +31,48 @@ import CardsSwap from '../CardsSwap';
 import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
 import { Token } from '../../../../../services/tokensData';
 
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameToChainIdTokensData: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainIdMap = {
+        Ethereum: 1,
+        Polygon: 137,
+      } as const;
+
+      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
+    }),
+  queryTokenData: jest.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+    },
+  ]),
+  searchTokens: jest.fn().mockImplementation((query) => {
+    return [
+      { id: 1, name: 'Ether', symbol: 'ETH' },
+      { id: 2, name: 'Polygon', symbol: 'POL' },
+    ].filter(
+      (token) => token.name.includes(query) || token.symbol.includes(query)
+    );
+  }),
+}));
+
 const mockTokenAssets: Token[] = [
   {
     id: 1,
@@ -46,7 +88,7 @@ const mockTokenAssets: Token[] = [
     contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    blockchain: 'Ethereum',
+    blockchain: 'Polygon',
     decimals: 18,
     logo: 'iconMatic.png',
   },
@@ -205,10 +247,13 @@ describe('<CardsSwap />', () => {
     });
 
     const swapCard = screen.getAllByTestId('select-token-card');
+
     fireEvent.click(swapCard[0]);
 
-    expect(store.getState().swap.swapTokenData).toBe(mockTokenAssets);
-    expect(store.getState().swap.receiveTokenData).toBe(mockTokenAssets);
+    expect(store.getState().swap.swapTokenData).toStrictEqual(mockTokenAssets);
+    expect(store.getState().swap.receiveTokenData).toStrictEqual(
+      mockTokenAssets
+    );
 
     await waitFor(() => {
       expect(store.getState().swap.isSwapOpen).toBe(true);

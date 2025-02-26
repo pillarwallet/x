@@ -111,7 +111,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey font-normal capitalize"
           >
-            On Ethereum
+            On Polygon
           </p>
         </div>
         <div

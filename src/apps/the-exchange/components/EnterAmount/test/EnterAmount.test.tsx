@@ -47,7 +47,7 @@ const mockTokenAssets: Token[] = [
     contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    blockchain: 'Ethereum',
+    blockchain: 'Polygon',
     decimals: 18,
     logo: 'iconMatic.png',
   },

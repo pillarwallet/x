@@ -19,6 +19,8 @@ const TokenRow = ({
   const { tokenList, handleChooseToken } = data;
   const token = tokenList[index];
 
+  if (!token) return null;
+
   return (
     <div style={style}>
       <TokenResultCard

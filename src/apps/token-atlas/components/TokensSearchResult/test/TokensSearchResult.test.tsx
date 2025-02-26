@@ -139,7 +139,14 @@ describe('<TokensSearchResult />', () => {
 
     fireEvent.click(screen.getByText('TestToken'));
 
-    expect(store.getState().tokenAtlas.selectedToken).toEqual(mockToken);
+    expect(store.getState().tokenAtlas.selectedToken).toEqual({
+      name: 'TestToken',
+      symbol: 'TTK',
+      chainId: 1,
+      icon: 'testLogo.png',
+      decimals: 6,
+      address: '0x06',
+    });
     expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);
     expect(store.getState().tokenAtlas.selectedChain).toEqual({
       chainId: 0,
