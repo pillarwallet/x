@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
-import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import {
   useEtherspotUtils,
   useWalletAddress,
@@ -43,10 +42,14 @@ import { formatAmountDisplay } from '../../utils/number';
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useAccountNfts from '../../hooks/useAccountNfts';
-import useAssets from '../../hooks/useAssets';
 
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
+import {
+  Token,
+  chainIdToChainNameTokensData,
+  queryTokenData,
+} from '../../services/tokensData';
 
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -57,7 +60,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
-  const assets = useAssets();
+  // const assets = useAssets();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
@@ -72,18 +75,19 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     return visibleChains.reduce<
       Record<
         string,
-        Record<
-          string,
-          { asset: TokenListToken; balance: BigNumber; chain: Chain }
-        >
+        Record<string, { asset: Token; balance: BigNumber; chain: Chain }>
       >
     >((grouped, chain) => {
       const balancesForChain = balances[chain.id]?.[accountAddress] || [];
+      const assets = queryTokenData({
+        blockchain: chainIdToChainNameTokensData(chain.id),
+      });
+
       balancesForChain.forEach((balance) => {
-        const asset = assets[chain.id]?.find(
+        const asset = assets?.find(
           (a) =>
-            addressesEqual(a.address, balance.token) ||
-            (balance.token === null && isZeroAddress(a.address))
+            addressesEqual(a.contract, balance.token) ||
+            (balance.token === null && isZeroAddress(a.contract))
         );
 
         if (!asset) {
@@ -98,7 +102,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       });
       return grouped;
     }, {});
-  }, [accountAddress, balances, assets, addressesEqual, isZeroAddress]);
+  }, [accountAddress, balances, addressesEqual, isZeroAddress]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];
@@ -286,7 +290,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               const { decimals } = Object.values(groupedTokens[tokenSymbol])[0]
                 .asset;
               const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset
-                .logoURI;
+                .logo;
               const totalBalanceBN = Object.values(
                 groupedTokens[tokenSymbol]
               ).reduce(
@@ -338,10 +342,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                     $visible={expanded[tokenSymbol]}
                   >
                     {Object.values(groupedTokens[tokenSymbol]).map(
-                      ({ balance, asset, chain }) => {
+                      ({ balance, chain }) => {
                         const assetBalanceValue = ethers.utils.formatUnits(
                           balance,
-                          asset.decimals
+                          decimals
                         );
                         return (
                           <TokenItemChain

@@ -103,8 +103,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       accountAddress as string
     ]?.find(
       (b) =>
-        (b.token === null && isZeroAddress(selectedAsset.asset.address)) ||
-        addressesEqual(b.token, selectedAsset.asset.address)
+        (b.token === null && isZeroAddress(selectedAsset.asset.contract)) ||
+        addressesEqual(b.token, selectedAsset.asset.contract)
     )?.balance;
     return assetBalance
       ? +ethers.utils.formatUnits(assetBalance, selectedAsset.asset.decimals)
@@ -120,7 +120,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     (async () => {
       if (selectedAsset.type !== 'token') return;
       const [priceNative, priceSelected] = await getPrices(
-        [ethers.constants.AddressZero, selectedAsset.asset.address],
+        [ethers.constants.AddressZero, selectedAsset.asset.contract],
         selectedAsset.chainId
       );
       if (expired) return;
@@ -529,9 +529,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             )}
             {selectedAsset?.type === 'token' && (
               <>
-                {(isZeroAddress(selectedAsset.asset.address) ||
+                {(isZeroAddress(selectedAsset.asset.contract) ||
                   isPolygonAssetNative(
-                    selectedAsset.asset.address,
+                    selectedAsset.asset.contract,
                     selectedAsset.chainId
                   )) && (
                   <EtherspotTransaction
@@ -543,14 +543,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                     )}
                   />
                 )}
-                {!isZeroAddress(selectedAsset.asset.address) &&
+                {!isZeroAddress(selectedAsset.asset.contract) &&
                   !isPolygonAssetNative(
-                    selectedAsset.asset.address,
+                    selectedAsset.asset.contract,
                     selectedAsset.chainId
                   ) && (
                     <EtherspotTokenTransferTransaction
                       receiverAddress={recipient}
-                      tokenAddress={selectedAsset.asset.address}
+                      tokenAddress={selectedAsset.asset.contract}
                       value={formatAmountDisplay(
                         assetValueToSend,
                         0,

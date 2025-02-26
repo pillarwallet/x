@@ -1,5 +1,3 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
-
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -11,6 +9,12 @@ import {
   setSearchTokenResult,
   setSelectedChain,
 } from '../../reducer/tokenAtlasSlice';
+
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
 
 // images
 import CloseCircle from '../../images/close-circle.svg';
@@ -34,7 +38,9 @@ const SearchTokenModal = () => {
   );
 
   // select all chainsId of tokens available in the list for swap token
-  const allChains = tokenListData?.map((chain) => chain.chainId);
+  const allChains = tokenListData
+    ?.map((chain) => chain.blockchain)
+    .map((chain) => chainNameToChainIdTokensData(chain));
   const uniqueChains = allChains.filter((chain, index) => {
     return allChains.indexOf(chain) === index;
   });

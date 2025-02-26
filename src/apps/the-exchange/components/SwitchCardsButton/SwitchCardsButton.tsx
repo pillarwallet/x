@@ -1,5 +1,3 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
-
 // reducer
 import {
   setAmountReceive,
@@ -14,6 +12,9 @@ import {
 
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+
+// types
+import { Token } from '../../../../services/tokensData';
 
 // images
 import SwapIcon from '../../images/arrow-swap-horizontal.png';

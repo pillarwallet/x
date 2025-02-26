@@ -1,6 +1,4 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import Fuse from 'fuse.js';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
@@ -9,6 +7,13 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 
 // reducer
 import { setSearchTokenResult } from '../../reducer/theExchangeSlice';
+
+// services
+import {
+  chainNameToChainIdTokensData,
+  searchTokens,
+} from '../../../../services/tokensData';
+
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -41,12 +46,6 @@ const TokenSearchInput = ({
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
-  const swapTokenData = useAppSelector(
-    (state) => state.swap.swapTokenData as Token[]
-  );
-  const receiveTokenData = useAppSelector(
-    (state) => state.swap.receiveTokenData as Token[]
-  );
   const swapChain = useAppSelector(
     (state) => state.swap.swapChain as ChainType
   );
@@ -58,33 +57,24 @@ const TokenSearchInput = ({
   const [value, setValue] = useState<string>('');
 
   // The performSearch will look for tokens close to the name or chain id being typed on filtered or all supported chains
-  const searchTokens = (tokenSearch: string) => {
-    const options = {
-      includeScore: true,
-      // Search in `chainId` and in `name`
-      keys: ['chainId', 'name'],
-    };
-    const fuse = new Fuse(
-      isSwapOpen ? swapTokenData : receiveTokenData,
-      options
-    );
-    const result = fuse.search(tokenSearch);
+  const searchTokensData = (tokenSearch: string) => {
+    const result = searchTokens(tokenSearch);
 
     if (
       (isSwapOpen && swapChain.chainId === 0) ||
       (!isSwapOpen && receiveChain.chainId === 0)
     ) {
-      dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)));
+      dispatch(setSearchTokenResult(result.map((tokens) => tokens)));
     } else {
       dispatch(
         setSearchTokenResult(
           result
             .filter(
               (tokens) =>
-                tokens.item.chainId ===
+                chainNameToChainIdTokensData(tokens.blockchain) ===
                 (isSwapOpen ? swapChain.chainId : receiveChain.chainId)
             )
-            .map((tokens) => tokens.item)
+            .map((tokens) => tokens)
         )
       );
     }
@@ -108,7 +98,7 @@ const TokenSearchInput = ({
   };
 
   useEffect(() => {
-    searchTokens(value);
+    searchTokensData(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapChain, receiveChain]);
 
@@ -125,7 +115,7 @@ const TokenSearchInput = ({
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value;
     setValue(searchValue);
-    searchTokens(searchValue);
+    searchTokensData(searchValue);
   };
 
   return (

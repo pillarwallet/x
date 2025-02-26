@@ -25,27 +25,30 @@ import {
 } from '../../../reducer/theExchangeSlice';
 
 // types
+import { Token } from '../../../../../services/tokensData';
 import { CardPosition } from '../../../utils/types';
 
 // components
 import DropdownTokenList from '../DropdownTokenList';
 
-const mockTokenAssets = [
+const mockTokenAssets: Token[] = [
   {
-    address: '0x01',
+    id: 1,
+    contract: '0x01',
     name: 'Ether',
     symbol: 'ETH',
-    chainId: 1,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconEth.png',
+    logo: 'iconEth.png',
   },
   {
-    address: '0x02',
+    id: 2,
+    contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    chainId: 137,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconMatic.png',
+    logo: 'iconMatic.png',
   },
 ];
 
