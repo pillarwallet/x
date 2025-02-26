@@ -170,11 +170,18 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       }
 
       const assetAddress = swapToken.contract;
+
+      const POLYGON_NATIVE_TOKEN = '0x0000000000000000000000000000000000001010';
+
       const isNativeBalance =
-        balance.token === null || isZeroAddress(balance.token);
+        balance.token === null ||
+        isZeroAddress(balance.token) ||
+        balance.token === POLYGON_NATIVE_TOKEN;
 
       return (
-        (isNativeBalance && isZeroAddress(assetAddress)) ||
+        (isNativeBalance &&
+          (isZeroAddress(assetAddress) ||
+            assetAddress === POLYGON_NATIVE_TOKEN)) ||
         addressesEqual(balance.token, assetAddress)
       );
     });

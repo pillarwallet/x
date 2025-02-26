@@ -147,12 +147,20 @@ const AssetSelect = ({
         if (!assetOption.asset?.contract) return;
 
         const assetAddress = assetOption.asset.contract;
+
+        const POLYGON_NATIVE_TOKEN =
+          '0x0000000000000000000000000000000000001010';
+
         const isNativeBalance =
-          balance.token === null || isZeroAddress(balance.token);
+          balance.token === null ||
+          isZeroAddress(balance.token) ||
+          balance.token === POLYGON_NATIVE_TOKEN;
 
         // eslint-disable-next-line consistent-return
         return (
-          (isNativeBalance && isZeroAddress(assetAddress)) ||
+          (isNativeBalance &&
+            (isZeroAddress(assetAddress) ||
+              assetAddress === POLYGON_NATIVE_TOKEN)) ||
           addressesEqual(balance.token, assetAddress)
         );
       });

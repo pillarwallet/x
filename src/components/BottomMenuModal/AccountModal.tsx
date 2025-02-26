@@ -84,11 +84,20 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         blockchain: chainIdToChainNameTokensData(chain.id),
       });
 
+      const POLYGON_NATIVE_TOKEN = '0x0000000000000000000000000000000000001010';
+
       balancesForChain.forEach((balance) => {
+        const isNativeBalance =
+          balance.token === null ||
+          isZeroAddress(balance.token) ||
+          balance.token === POLYGON_NATIVE_TOKEN;
+
         const asset = assets?.find(
           (a) =>
             addressesEqual(a.contract, balance.token) ||
-            (balance.token === null && isZeroAddress(a.contract))
+            (isNativeBalance &&
+              (isZeroAddress(a.contract) ||
+                a.contract === POLYGON_NATIVE_TOKEN))
         );
 
         if (!asset) {
@@ -101,6 +110,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           [chain.id]: { asset, balance: balance.balance, chain },
         };
       });
+
       return grouped;
     }, {});
   }, [accountAddress, balances, addressesEqual, isZeroAddress]);
