@@ -1,7 +1,10 @@
 name: Download latest token list
 run-name: ${{ github.actor }} opened a pull request! Downloading the latest token list...
 
-on: [pull_request]
+on:
+  pull_request:
+    branches-ignore:
+      - 'main'
 
 jobs:
   download-tokenlist:
