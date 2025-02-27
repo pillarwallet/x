@@ -37,6 +37,7 @@ import { processEth } from '../../utils/blockchain';
 import BodySmall from '../Typography/BodySmall';
 
 // images
+import { nativeTokensByChain } from '../../../../utils/blockchain';
 import ReceiveArrow from '../../images/receive-arrow.png';
 import SendArrow from '../../images/send-arrow.png';
 import ExchangeOffer from './ExchangeOffer';
@@ -73,7 +74,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const { getPrice } = useEtherspotPrices();
   const balances = useAccountBalances();
-  const { isZeroAddress, addressesEqual } = useEtherspotUtils();
+  const { addressesEqual } = useEtherspotUtils();
   const { getBestOffer } = useOffer(
     chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
   );
@@ -170,19 +171,17 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       }
 
       const assetAddress = swapToken.contract;
-
-      const POLYGON_NATIVE_TOKEN = '0x0000000000000000000000000000000000001010';
+      const nativeTokens =
+        nativeTokensByChain[
+          chainNameToChainIdTokensData(swapToken.blockchain)
+        ] || []; // Get native tokens for the blockchain
 
       const isNativeBalance =
-        balance.token === null ||
-        isZeroAddress(balance.token) ||
-        balance.token === POLYGON_NATIVE_TOKEN;
+        balance.token === null || nativeTokens.includes(balance.token); // Check for native token
 
       return (
-        (isNativeBalance &&
-          (isZeroAddress(assetAddress) ||
-            assetAddress === POLYGON_NATIVE_TOKEN)) ||
-        addressesEqual(balance.token, assetAddress)
+        (isNativeBalance && nativeTokens.includes(assetAddress)) || // Match native balance to native token
+        addressesEqual(balance.token, assetAddress) // Match ERC-20 tokens by contract address
       );
     });
 

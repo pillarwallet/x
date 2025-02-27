@@ -22,7 +22,11 @@ import {
 import Select, { SelectOption } from '../Select';
 
 // utils
-import { parseNftTitle, visibleChains } from '../../../utils/blockchain';
+import {
+  nativeTokensByChain,
+  parseNftTitle,
+  visibleChains,
+} from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
 // hooks
@@ -54,7 +58,7 @@ const AssetSelect = ({
   onChange: (option: AssetSelectOption) => void;
   onClose: () => void;
 }) => {
-  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
+  const { addressesEqual } = useEtherspotUtils();
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<
     TokenAssetSelectOption[]
   >([]);
@@ -144,27 +148,18 @@ const AssetSelect = ({
     const assetBalance =
       chainId &&
       balances[chainId]?.[walletAddress as string]?.find((balance) => {
-        if (!assetOption.asset?.contract) return;
-
-        const assetAddress = assetOption.asset.contract;
-
-        const POLYGON_NATIVE_TOKEN =
-          '0x0000000000000000000000000000000000001010';
+        const nativeTokens = nativeTokensByChain[chainId] || [];
 
         const isNativeBalance =
-          balance.token === null ||
-          isZeroAddress(balance.token) ||
-          balance.token === POLYGON_NATIVE_TOKEN;
+          balance.token === null || nativeTokens.includes(balance.token);
+        const isNativeAsset =
+          assetOption.asset?.contract &&
+          nativeTokens.includes(assetOption.asset.contract);
 
-        // eslint-disable-next-line consistent-return
-        return (
-          (isNativeBalance &&
-            (isZeroAddress(assetAddress) ||
-              assetAddress === POLYGON_NATIVE_TOKEN)) ||
-          addressesEqual(balance.token, assetAddress)
-        );
+        if (isNativeBalance && isNativeAsset) return true;
+
+        return addressesEqual(balance.token, assetOption.asset?.contract);
       });
-
     const assetBalanceValue = assetBalance ? assetBalance.balance : '0';
     const balance = ethers.utils.formatUnits(
       assetBalanceValue,

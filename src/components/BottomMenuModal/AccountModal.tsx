@@ -34,6 +34,7 @@ import Alert from '../Text/Alert';
 // utils
 import {
   getLogoForChainId,
+  nativeTokensByChain,
   truncateAddress,
   visibleChains,
 } from '../../utils/blockchain';
@@ -64,7 +65,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const [t] = useTranslation();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
-  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
+  const { addressesEqual } = useEtherspotUtils();
   const [showNfts, setShowNfts] = React.useState(false);
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -84,20 +85,16 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         blockchain: chainIdToChainNameTokensData(chain.id),
       });
 
-      const POLYGON_NATIVE_TOKEN = '0x0000000000000000000000000000000000001010';
+      const nativeTokens = nativeTokensByChain[chain.id] || [];
 
       balancesForChain.forEach((balance) => {
         const isNativeBalance =
-          balance.token === null ||
-          isZeroAddress(balance.token) ||
-          balance.token === POLYGON_NATIVE_TOKEN;
+          balance.token === null || nativeTokens.includes(balance.token);
 
         const asset = assets?.find(
           (a) =>
-            addressesEqual(a.contract, balance.token) ||
-            (isNativeBalance &&
-              (isZeroAddress(a.contract) ||
-                a.contract === POLYGON_NATIVE_TOKEN))
+            (isNativeBalance && nativeTokens.includes(a.contract)) ||
+            addressesEqual(a.contract, balance.token)
         );
 
         if (!asset) {
@@ -113,7 +110,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
       return grouped;
     }, {});
-  }, [accountAddress, balances, addressesEqual, isZeroAddress]);
+  }, [accountAddress, balances, addressesEqual]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];

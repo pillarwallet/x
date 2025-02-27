@@ -45,6 +45,13 @@ export const isValidEthereumAddress = (
   return false;
 };
 
+export const nativeTokensByChain: Record<number, string[]> = {
+  1: ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'], // ETH on Ethereum
+  137: ['0x0000000000000000000000000000000000001010'], // MATIC on Polygon
+  100: ['0xe91d153e0b41518a2ce8dd3d7944fa863463a97d'], // XDAI on Gnosis
+  8453: ['0x142301666DC68C6902b49e2c2Ffa2228A2da21E5'], // ETH on Base
+};
+
 // WRAPPED POL & POL are interchangeably Polygon native assets
 export const WRAPPED_POL_TOKEN_ADDRESS =
   '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
