@@ -25,4 +25,3 @@ jobs:
           author_email: kieran@pillarproject.io
           message: 'KioBot downloaded the latest token list and updated tokens.json'
           add: 'src/data/tokens.json'
-        
