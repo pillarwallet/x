@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
       - name: Fetch latest token list
         run: |
           curl -H "Accept: application/json" -X GET "https://production-api.mobula.io/api/1/all?fields=id,decimals,logo,contracts,blockchains" --create-dirs -o src/data/tokens.json
