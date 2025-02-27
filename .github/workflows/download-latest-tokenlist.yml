@@ -1,0 +1,22 @@
+name: Download latest token list
+run-name: ${{ github.actor }} opened a pull request! Downloading the latest token list...
+
+on: [pull_request]
+
+jobs:
+  download-tokenlist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Fetch latest token list
+        run: |
+          curl -H "Accept: application/json" -X GET "https://production-api.mobula.io/api/1/all?fields=id,decimals,logo,contracts,blockchains" -o src/data/tokens.json
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: KioBot
+          author_email: kieran@pillarproject.io
+          message: 'KioBot downloaded the latest token list and updated tokens.json'
+          add: 'src/data/tokens.json'
+        
