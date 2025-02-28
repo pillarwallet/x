@@ -58,7 +58,7 @@ const AssetSelect = ({
   onChange: (option: AssetSelectOption) => void;
   onClose: () => void;
 }) => {
-  const { addressesEqual } = useEtherspotUtils();
+  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<
     TokenAssetSelectOption[]
   >([]);
@@ -151,15 +151,20 @@ const AssetSelect = ({
         const nativeTokens = nativeTokensByChain[chainId] || [];
 
         const isNativeBalance =
-          balance.token === null || nativeTokens.includes(balance.token);
+          balance.token === null ||
+          nativeTokens.includes(balance.token) ||
+          isZeroAddress(balance.token);
+
         const isNativeAsset =
           assetOption.asset?.contract &&
-          nativeTokens.includes(assetOption.asset.contract);
+          (nativeTokens.includes(assetOption.asset.contract) ||
+            isZeroAddress(assetOption.asset.contract));
 
         if (isNativeBalance && isNativeAsset) return true;
 
         return addressesEqual(balance.token, assetOption.asset?.contract);
       });
+
     const assetBalanceValue = assetBalance ? assetBalance.balance : '0';
     const balance = ethers.utils.formatUnits(
       assetBalanceValue,

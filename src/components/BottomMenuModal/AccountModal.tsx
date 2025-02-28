@@ -65,7 +65,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const [t] = useTranslation();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
-  const { addressesEqual } = useEtherspotUtils();
+  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [showNfts, setShowNfts] = React.useState(false);
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -89,11 +89,15 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
       balancesForChain.forEach((balance) => {
         const isNativeBalance =
-          balance.token === null || nativeTokens.includes(balance.token);
+          balance.token === null ||
+          nativeTokens.includes(balance.token) ||
+          isZeroAddress(balance.token);
 
         const asset = assets?.find(
           (a) =>
-            (isNativeBalance && nativeTokens.includes(a.contract)) ||
+            (isNativeBalance &&
+              (nativeTokens.includes(a.contract) ||
+                isZeroAddress(a.contract))) ||
             addressesEqual(a.contract, balance.token)
         );
 
@@ -110,7 +114,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
       return grouped;
     }, {});
-  }, [accountAddress, balances, addressesEqual]);
+  }, [accountAddress, balances, isZeroAddress, addressesEqual]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];

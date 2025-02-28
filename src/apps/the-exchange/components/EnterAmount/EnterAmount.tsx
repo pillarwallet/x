@@ -74,7 +74,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const { getPrice } = useEtherspotPrices();
   const balances = useAccountBalances();
-  const { addressesEqual } = useEtherspotUtils();
+  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const { getBestOffer } = useOffer(
     chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
   );
@@ -177,11 +177,15 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
         ] || []; // Get native tokens for the blockchain
 
       const isNativeBalance =
-        balance.token === null || nativeTokens.includes(balance.token); // Check for native token
+        balance.token === null ||
+        nativeTokens.includes(balance.token) ||
+        isZeroAddress(balance.token);
 
       return (
-        (isNativeBalance && nativeTokens.includes(assetAddress)) || // Match native balance to native token
-        addressesEqual(balance.token, assetAddress) // Match ERC-20 tokens by contract address
+        (isNativeBalance &&
+          (nativeTokens.includes(assetAddress) ||
+            isZeroAddress(assetAddress))) ||
+        addressesEqual(balance.token, assetAddress)
       );
     });
 
