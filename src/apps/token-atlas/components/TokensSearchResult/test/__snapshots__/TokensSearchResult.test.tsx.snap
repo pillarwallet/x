@@ -11,79 +11,126 @@ exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
     Search tokens
   </p>
   <div
-    className="flex flex-col gap-4 max-h-[250px] overflow-auto"
+    onScroll={[Function]}
+    style={
+      {
+        "WebkitOverflowScrolling": "touch",
+        "direction": "ltr",
+        "height": 250,
+        "overflow": "auto",
+        "position": "relative",
+        "width": "100%",
+        "willChange": "transform",
+      }
+    }
   >
     <div
-      className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
-      data-testid="token-result-card"
-      id="token-atlas-token-result-card-1-Token1"
-      onClick={[Function]}
+      style={
+        {
+          "height": 120,
+          "pointerEvents": undefined,
+          "width": "100%",
+        }
+      }
     >
       <div
-        className="flex items-center"
+        style={
+          {
+            "height": 60,
+            "left": 0,
+            "position": "absolute",
+            "right": undefined,
+            "top": 0,
+            "width": "100%",
+          }
+        }
       >
-        <img
-          alt="token-logo"
-          className="w-[30px] h-[30px] object-fill rounded-full mr-2"
-          src="logo1.png"
-        />
         <div
-          className="flex flex-col mr-2"
+          className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
+          data-testid="token-result-card"
+          id="token-atlas-token-result-card-1-Token1"
+          onClick={[Function]}
         >
-          <p
-            className="text-[13px] font-semibold text-base capitalize"
+          <div
+            className="flex items-center"
           >
-            Token1
-          </p>
+            <img
+              alt="token-logo"
+              className="w-[30px] h-[30px] object-fill rounded-full mr-2"
+              src="logo1.png"
+            />
+            <div
+              className="flex flex-col mr-2"
+            >
+              <p
+                className="text-[13px] font-semibold text-base capitalize"
+              >
+                Token1
+              </p>
+              <p
+                className="text-[13px] font-semibold text-white_grey"
+              >
+                TK1
+              </p>
+            </div>
+          </div>
           <p
-            className="text-[13px] font-semibold text-white_grey"
+            className="text-[13px] font-semibold text-base font-medium capitalize"
           >
-            TK1
+            On 
+            Ethereum
           </p>
         </div>
       </div>
-      <p
-        className="text-[13px] font-semibold text-base font-medium capitalize"
-      >
-        On 
-        Ethereum
-      </p>
-    </div>
-    <div
-      className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
-      data-testid="token-result-card"
-      id="token-atlas-token-result-card-2-Token2"
-      onClick={[Function]}
-    >
       <div
-        className="flex items-center"
+        style={
+          {
+            "height": 60,
+            "left": 0,
+            "position": "absolute",
+            "right": undefined,
+            "top": 60,
+            "width": "100%",
+          }
+        }
       >
-        <img
-          alt="token-logo"
-          className="w-[30px] h-[30px] object-fill rounded-full mr-2"
-          src="logo2.png"
-        />
         <div
-          className="flex flex-col mr-2"
+          className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
+          data-testid="token-result-card"
+          id="token-atlas-token-result-card-137-Token2"
+          onClick={[Function]}
         >
-          <p
-            className="text-[13px] font-semibold text-base capitalize"
+          <div
+            className="flex items-center"
           >
-            Token2
-          </p>
+            <img
+              alt="token-logo"
+              className="w-[30px] h-[30px] object-fill rounded-full mr-2"
+              src="logo2.png"
+            />
+            <div
+              className="flex flex-col mr-2"
+            >
+              <p
+                className="text-[13px] font-semibold text-base capitalize"
+              >
+                Token2
+              </p>
+              <p
+                className="text-[13px] font-semibold text-white_grey"
+              >
+                TK2
+              </p>
+            </div>
+          </div>
           <p
-            className="text-[13px] font-semibold text-white_grey"
+            className="text-[13px] font-semibold text-base font-medium capitalize"
           >
-            TK2
+            On 
+            Polygon
           </p>
         </div>
       </div>
-      <p
-        className="text-[13px] font-semibold text-base font-medium capitalize"
-      >
-        On 
-        Expanse Network
-      </p>
     </div>
   </div>
 </div>

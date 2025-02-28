@@ -1,4 +1,3 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import {
   useEtherspotPrices,
   useEtherspotUtils,
@@ -17,6 +16,12 @@ import {
   setUsdPriceSwapToken,
 } from '../../reducer/theExchangeSlice';
 
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+
 // hooks
 import useAccountBalances from '../../../../hooks/useAccountBalances';
 import useOffer from '../../hooks/useOffer';
@@ -32,6 +37,7 @@ import { processEth } from '../../utils/blockchain';
 import BodySmall from '../Typography/BodySmall';
 
 // images
+import { nativeTokensByChain } from '../../../../utils/blockchain';
 import ReceiveArrow from '../../images/receive-arrow.png';
 import SendArrow from '../../images/send-arrow.png';
 import ExchangeOffer from './ExchangeOffer';
@@ -68,14 +74,19 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const { getPrice } = useEtherspotPrices();
   const balances = useAccountBalances();
-  const { isZeroAddress, addressesEqual } = useEtherspotUtils();
-  const { getBestOffer } = useOffer(swapToken?.chainId || 0);
+  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
+  const { getBestOffer } = useOffer(
+    chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
+  );
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
 
   // get usd price only when swap token changes
   useEffect(() => {
     if (swapToken) {
-      getPrice(swapToken.address, swapToken.chainId)
+      getPrice(
+        swapToken.contract,
+        chainNameToChainIdTokensData(swapToken.blockchain)
+      )
         .then((rates) => {
           if (rates?.usd) {
             dispatch(setUsdPriceSwapToken(rates.usd));
@@ -92,7 +103,10 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // get usd price only when receive token changes
   useEffect(() => {
     if (receiveToken) {
-      getPrice(receiveToken.address, receiveToken.chainId)
+      getPrice(
+        receiveToken.contract,
+        chainNameToChainIdTokensData(receiveToken.blockchain)
+      )
         .then((rates) => {
           if (rates?.usd) {
             dispatch(setUsdPriceReceiveToken(rates.usd));
@@ -110,11 +124,11 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const getOffer = async () => {
     const params = {
       fromAmount: amountSwap ?? 0,
-      fromTokenAddress: swapToken?.address ?? '',
-      fromChainId: swapToken?.chainId ?? 0,
+      fromTokenAddress: swapToken?.contract ?? '',
+      fromChainId: chainNameToChainIdTokensData(swapToken?.blockchain) ?? 0,
       fromTokenDecimals: swapToken?.decimals ?? 0,
-      toTokenAddress: receiveToken?.address ?? '',
-      toChainId: receiveToken?.chainId ?? 0,
+      toTokenAddress: receiveToken?.contract ?? '',
+      toChainId: chainNameToChainIdTokensData(receiveToken?.blockchain) ?? 0,
       toTokenDecimals: receiveToken?.decimals ?? 0,
       slippage: 0.05,
     };
@@ -149,19 +163,28 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   const tokenBalanceLimit = (tokenAmount: number) => {
     if (!swapToken) return undefined;
 
-    const assetBalance = balances[swapToken.chainId]?.[
-      walletAddress as string
-    ]?.find((balance) => {
-      if (!swapToken.address) {
+    const assetBalance = balances[
+      chainNameToChainIdTokensData(swapToken.blockchain)
+    ]?.[walletAddress as string]?.find((balance) => {
+      if (!swapToken.contract) {
         return 'This token does not exist in your wallet';
       }
 
-      const assetAddress = swapToken.address;
+      const assetAddress = swapToken.contract;
+      const nativeTokens =
+        nativeTokensByChain[
+          chainNameToChainIdTokensData(swapToken.blockchain)
+        ] || []; // Get native tokens for the blockchain
+
       const isNativeBalance =
-        balance.token === null || isZeroAddress(balance.token);
+        balance.token === null ||
+        nativeTokens.includes(balance.token) ||
+        isZeroAddress(balance.token);
 
       return (
-        (isNativeBalance && isZeroAddress(assetAddress)) ||
+        (isNativeBalance &&
+          (nativeTokens.includes(assetAddress) ||
+            isZeroAddress(assetAddress))) ||
         addressesEqual(balance.token, assetAddress)
       );
     });

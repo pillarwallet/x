@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+// types
+import { Token } from '../../../services/tokensData';
 import { ChainType, SwapOffer } from '../utils/types';
 
 export type SwapState = {

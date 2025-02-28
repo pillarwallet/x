@@ -1,4 +1,8 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
 
 // hooks
 import { useAppSelector } from '../../hooks/useReducerHooks';
@@ -45,11 +49,11 @@ const SwapReceiveCard = ({
         }
         tokenChain={
           position === CardPosition.SWAP
-            ? swapToken?.chainId
-            : receiveToken?.chainId
+            ? chainNameToChainIdTokensData(swapToken?.blockchain)
+            : chainNameToChainIdTokensData(receiveToken?.blockchain)
         }
         tokenLogo={
-          position === CardPosition.SWAP ? swapToken?.icon : receiveToken?.icon
+          position === CardPosition.SWAP ? swapToken?.logo : receiveToken?.logo
         }
       />
       <EnterAmount

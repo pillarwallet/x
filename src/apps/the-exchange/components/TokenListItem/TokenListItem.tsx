@@ -35,13 +35,15 @@ const TokenListItem = ({
           showLogo={Boolean(tokenName)}
         />
         <div className="flex flex-col ml-[10px]">
-          <Body className="group-hover:opacity-60">{tokenName}</Body>
+          <Body className="group-hover:opacity-60 truncate max-w-[150px]">
+            {tokenName}
+          </Body>
           <BodySmall className="group-hover:opacity-60">
             {tokenSymbol}
           </BodySmall>
         </div>
       </div>
-      <BodySmall className="group-hover:opacity-60 capitalize">
+      <BodySmall className="group-hover:opacity-60 capitalize truncate xs:max-w-[150px]">
         On {chainName}
       </BodySmall>
     </div>

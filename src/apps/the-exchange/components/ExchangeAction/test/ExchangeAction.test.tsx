@@ -30,24 +30,27 @@ import {
 import ExchangeAction from '../ExchangeAction';
 
 // types
+import { Token } from '../../../../../services/tokensData';
 import { SwapOffer } from '../../../utils/types';
 
-const mockTokenAssets = [
+const mockTokenAssets: Token[] = [
   {
-    address: '0x01',
+    id: 1,
+    contract: '0x01',
     name: 'Ether',
     symbol: 'ETH',
-    chainId: 1,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconEth.png',
+    logo: 'iconEth.png',
   },
   {
-    address: '0x02',
+    id: 2,
+    contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    chainId: 137,
+    blockchain: 'Polygon',
     decimals: 18,
-    icon: 'iconMatic.png',
+    logo: 'iconMatic.png',
   },
 ];
 

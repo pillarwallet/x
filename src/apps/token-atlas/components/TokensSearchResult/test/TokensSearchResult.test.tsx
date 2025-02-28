@@ -1,4 +1,3 @@
-import { Token } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
@@ -18,41 +17,48 @@ import {
   setTokenListData,
 } from '../../../reducer/tokenAtlasSlice';
 
+// services
+import { Token } from '../../../../../services/tokensData';
+
 const mockTokens: Token[] = [
   {
+    id: 1,
     name: 'Token1',
     symbol: 'TK1',
-    chainId: 1,
-    icon: 'logo1.png',
+    blockchain: 'Ethereum',
+    logo: 'logo1.png',
     decimals: 18,
-    address: '0x01',
+    contract: '0x01',
   },
   {
+    id: 2,
     name: 'Token2',
     symbol: 'TK2',
-    chainId: 2,
-    icon: 'logo2.png',
+    blockchain: 'Polygon',
+    logo: 'logo2.png',
     decimals: 18,
-    address: '0x02',
+    contract: '0x02',
   },
 ];
 
 const mockTokenListData: Token[] = [
   {
+    id: 3,
     name: 'TokenList1',
     symbol: 'TL1',
-    chainId: 1,
-    icon: 'listLogo1.png',
+    blockchain: 'Ethereum',
+    logo: 'listLogo1.png',
     decimals: 18,
-    address: '0x01',
+    contract: '0x01',
   },
   {
+    id: 4,
     name: 'TokenList2',
     symbol: 'TL2',
-    chainId: 2,
-    icon: 'listLogo2.png',
+    blockchain: 'Polygon',
+    logo: 'listLogo2.png',
     decimals: 18,
-    address: '0x02',
+    contract: '0x02',
   },
 ];
 
@@ -110,12 +116,13 @@ describe('<TokensSearchResult />', () => {
 
   it('handles token selection', () => {
     const mockToken: Token = {
+      id: 5,
       name: 'TestToken',
       symbol: 'TTK',
-      chainId: 1,
-      icon: 'testLogo.png',
+      blockchain: 'Ethereum',
+      logo: 'testLogo.png',
       decimals: 6,
-      address: '0x06',
+      contract: '0x06',
     };
 
     store.dispatch(setSearchTokenResult([mockToken]));
@@ -132,7 +139,14 @@ describe('<TokensSearchResult />', () => {
 
     fireEvent.click(screen.getByText('TestToken'));
 
-    expect(store.getState().tokenAtlas.selectedToken).toEqual(mockToken);
+    expect(store.getState().tokenAtlas.selectedToken).toEqual({
+      name: 'TestToken',
+      symbol: 'TTK',
+      chainId: 1,
+      icon: 'testLogo.png',
+      decimals: 6,
+      address: '0x06',
+    });
     expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);
     expect(store.getState().tokenAtlas.selectedChain).toEqual({
       chainId: 0,
