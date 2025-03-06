@@ -19,7 +19,7 @@ module.exports = function override(config) {
   });
   config.resolve.fallback = fallback;
   config.optimization = config.optimization || {};
-  config.optimization.minimize = true; // Enable minification
+  config.optimization.minimize = true;
   config.optimization.minimizer = [
     new TerserPlugin({
       test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
