@@ -19,9 +19,10 @@ module.exports = function override(config) {
   });
   config.resolve.fallback = fallback;
   config.optimization = config.optimization || {};
+  config.optimization.minimize = true; // Enable minification
   config.optimization.minimizer = [
     new TerserPlugin({
-      test: /node_modules\/@etherspot\/transaction-kit/,
+      test: [/node_modules\/@noble\/hashes/],
     }),
   ];
   config.plugins = (config.plugins || []).concat([
