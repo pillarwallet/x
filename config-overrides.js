@@ -3,7 +3,6 @@
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
-
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
   Object.assign(fallback, {
