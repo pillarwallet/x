@@ -2,7 +2,6 @@
 /* eslint-disable no-undef */
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const CompressionPlugin = require("compression-webpack-plugin");
 
 
 module.exports = function override(config) {
@@ -45,7 +44,6 @@ module.exports = function override(config) {
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
     }),
-    // new CompressionPlugin(),
   ]);
   config.ignoreWarnings = [/Failed to parse source map/];
   config.module.rules.push({
