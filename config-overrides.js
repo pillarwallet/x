@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+
 
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
@@ -17,6 +19,26 @@ module.exports = function override(config) {
     path: false,
   });
   config.resolve.fallback = fallback;
+  config.optimization = config.optimization || {};
+  // Minimiser
+  config.optimization.minimize = true;
+  config.optimization.minimizer = [
+    new TerserPlugin({
+      test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
+    }),
+  ];
+
+  // Chunking
+  config.optimization.splitChunks = {
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        chunks: 'all',
+        maxSize: 50000,
+      },
+    },
+  };
+
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
       process: 'process/browser',
