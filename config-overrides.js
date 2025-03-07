@@ -2,6 +2,8 @@
 /* eslint-disable no-undef */
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
+
 
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
@@ -19,6 +21,7 @@ module.exports = function override(config) {
   });
   config.resolve.fallback = fallback;
   config.optimization = config.optimization || {};
+  // Minimiser
   config.optimization.minimize = true;
   config.optimization.minimizer = [
     new TerserPlugin({
@@ -26,11 +29,23 @@ module.exports = function override(config) {
     }),
   ];
 
+  // Chunking
+  config.optimization.splitChunks = {
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        chunks: 'all',
+        maxSize: 50000,
+      },
+    },
+  };
+
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
     }),
+    // new CompressionPlugin(),
   ]);
   config.ignoreWarnings = [/Failed to parse source map/];
   config.module.rules.push({
