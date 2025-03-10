@@ -4,18 +4,10 @@ import renderer from 'react-test-renderer';
 // components
 import TokenResultCard from '../TokenResultCard';
 
-// utils
-import { convertChainIdtoName } from '../../../../../utils/blockchain';
-
-// Mock of the convertChainIdtoName function
-jest.mock('../../../../../utils/blockchain', () => ({
-  convertChainIdtoName: jest.fn(),
-}));
-
 const mockOnClick = jest.fn();
 const mockTokenName = 'Ethereum';
 const mockTokenSymbol = 'ETH';
-const mockTokenChain = 1;
+const mockTokenChain = 'Ethereum';
 const mockTokenLogo = 'https://example.com/logo.png';
 
 describe('<TokenResultCard />', () => {
@@ -55,7 +47,6 @@ describe('<TokenResultCard />', () => {
   });
 
   it('displays the token chain name when provided', () => {
-    (convertChainIdtoName as jest.Mock).mockReturnValue('Ethereum');
     render(
       <TokenResultCard
         onClick={mockOnClick}
@@ -67,9 +58,6 @@ describe('<TokenResultCard />', () => {
     );
 
     expect(screen.getByText('On Ethereum')).toBeInTheDocument();
-    expect(convertChainIdtoName as jest.Mock).toHaveBeenCalledWith(
-      mockTokenChain
-    );
   });
 
   it('displays the token logo when provided', () => {

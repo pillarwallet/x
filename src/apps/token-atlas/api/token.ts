@@ -29,12 +29,10 @@ export const tokenInfoApi = createApi({
   endpoints: (builder) => ({
     getTokenInfo: builder.query<
       TokenAtlasInfoApiResponse,
-      { asset: string; blockchain: string; symbol: string }
+      { id: number; asset: string; symbol: string }
     >({
-      query: ({ asset, blockchain, symbol }) => {
-        const blockchainParam =
-          blockchain !== undefined ? `&blockchain=${blockchain}` : '';
-        return `?asset=${asset}&symbol=${symbol}${blockchainParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+      query: ({ id, asset, symbol }) => {
+        return `?id=${id}&asset=${asset}&symbol=${symbol}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),
@@ -50,14 +48,17 @@ export const tokenGraphApi = createApi({
   endpoints: (builder) => ({
     getTokenGraph: builder.query<
       TokenAtlasGraphApiResponse,
-      { blockchain?: string; asset: string; from: number; to?: number }
+      {
+        id: number;
+        asset: string;
+        from: number;
+        to?: number;
+      }
     >({
-      query: ({ blockchain, asset, from, to }) => {
+      query: ({ id, asset, from, to }) => {
         const toParam = to !== undefined ? `&to=${from * 1000}` : '';
-        const blockchainParam =
-          blockchain !== undefined ? `&blockchain=${blockchain}` : '';
         const assetParam = asset.split(' ')[0];
-        return `?asset=${assetParam}&from=${from * 1000}${toParam}${blockchainParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+        return `?id=${id}&asset=${assetParam}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),

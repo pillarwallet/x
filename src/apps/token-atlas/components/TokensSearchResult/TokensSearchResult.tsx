@@ -57,6 +57,7 @@ const TokensSearchResult = () => {
   const handleChooseToken = (token: Token) => {
     dispatch(
       setSelectedToken({
+        id: token.id,
         symbol: token.symbol,
         address: token.contract,
         decimals: token.decimals,

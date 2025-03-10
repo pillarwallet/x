@@ -4,11 +4,11 @@ exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
   data-testid="token-result-card"
-  id="token-atlas-token-result-card-1-Ethereum"
+  id="token-atlas-token-result-card-Ethereum-Ethereum"
   onClick={[MockFunction]}
 >
   <div
-    className="flex items-center"
+    className="flex items-center min-w-0 flex-1"
   >
     <img
       alt="token-logo"
@@ -16,10 +16,10 @@ exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
       src="https://example.com/logo.png"
     />
     <div
-      className="flex flex-col mr-2"
+      className="flex flex-col mr-2 min-w-0"
     >
       <p
-        className="text-[13px] font-semibold text-base capitalize"
+        className="text-[13px] font-semibold text-base capitalize truncate min-w-0"
       >
         Ethereum
       </p>
@@ -30,10 +30,15 @@ exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
       </p>
     </div>
   </div>
-  <p
-    className="text-[13px] font-semibold text-base font-medium capitalize"
+  <div
+    className="flex-1 min-w-0 text-right"
   >
-    On 
-  </p>
+    <p
+      className="text-[13px] font-semibold text-base font-medium capitalize truncate min-w-0"
+    >
+      On 
+      Ethereum
+    </p>
+  </div>
 </div>
 `;

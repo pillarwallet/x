@@ -31,6 +31,7 @@ import TokenGraphColumn from './components/TokenGraphColumn/TokenGraphColumn';
 import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
 
 const defaultToken = {
+  id: 102502677,
   symbol: 'PLR',
   address: '',
   decimals: 18,
@@ -63,7 +64,7 @@ export const App = () => {
     isFetching: isFetchingTokenDataInfo,
     isSuccess: isSuccessTokenDataInfo,
   } = useGetTokenInfoQuery({
-    blockchain: `${selectedToken.chainId}`,
+    id: selectedToken.id,
     asset: selectedToken.name || selectedToken.address,
     symbol: selectedToken.symbol,
   });
@@ -73,6 +74,7 @@ export const App = () => {
     isFetching: isFetchingTokenDataGraph,
     isSuccess: isSuccessTokenDataGraph,
   } = useGetTokenGraphQuery({
+    id: selectedToken.id,
     asset: selectedToken.name || selectedToken.address,
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
@@ -81,6 +83,7 @@ export const App = () => {
   // This is to query the API when tokens are being clicked from the home feed
   const query = new URLSearchParams(window.location.search);
 
+  const id = query.get('id');
   const asset = query.get('asset');
   const symbol = query.get('symbol');
 
@@ -89,6 +92,7 @@ export const App = () => {
     if (asset || symbol) {
       dispatch(
         setSelectedToken({
+          id: Number(id),
           symbol: symbol || '',
           address: '',
           decimals: undefined,

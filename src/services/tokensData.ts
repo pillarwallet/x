@@ -35,17 +35,21 @@ type TokenDataType = {
 let tokensData: Token[] = [];
 
 export const loadTokensData = (): Token[] => {
+  const allowedBlockchains = ['Ethereum', 'Polygon', 'Base', 'XDAI'];
+
   if (tokensData.length === 0) {
     tokensData = (tokens as TokenDataType).data.flatMap((item) =>
-      item.blockchains.map((blockchain, index) => ({
-        id: item.id,
-        name: item.name,
-        symbol: item.symbol,
-        logo: item.logo,
-        blockchain,
-        contract: item.contracts[index],
-        decimals: item.decimals[index],
-      }))
+      item.blockchains
+        .map((blockchain, index) => ({
+          id: item.id,
+          name: item.name,
+          symbol: item.symbol,
+          logo: item.logo,
+          blockchain,
+          contract: item.contracts[index],
+          decimals: item.decimals[index],
+        }))
+        .filter((token) => allowedBlockchains.includes(token.blockchain))
     );
   }
   return tokensData;
@@ -114,6 +118,6 @@ export const chainNameToChainIdTokensData = (chain: string | undefined) => {
     case undefined:
       return 0;
     default:
-      return 1;
+      return 0;
   }
 };

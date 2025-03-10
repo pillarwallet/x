@@ -140,6 +140,7 @@ describe('<TokensSearchResult />', () => {
     fireEvent.click(screen.getByText('TestToken'));
 
     expect(store.getState().tokenAtlas.selectedToken).toEqual({
+      id: 5,
       name: 'TestToken',
       symbol: 'TTK',
       chainId: 1,
