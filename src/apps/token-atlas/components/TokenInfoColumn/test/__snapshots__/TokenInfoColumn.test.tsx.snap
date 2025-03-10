@@ -369,7 +369,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         <p
           className="text-[13px] font-semibold undefined"
         >
-          3.3999999
+          3.4
           %
         </p>
       </div>

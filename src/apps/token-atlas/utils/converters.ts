@@ -4,6 +4,14 @@ export const hasThreeZerosAfterDecimal = (num: number): boolean => {
 };
 
 export const limitDigits = (num: number): number => {
+  // Check if the number is in scientific notation
+  const isScientific = num.toExponential().includes('e');
+
+  if (isScientific) {
+    // Convert number to scientific notation with 2 decimal max
+    return parseFloat(num.toExponential(2));
+  }
+
   // Convert number to string with a max of 18 decimals
   const numStr = num.toFixed(18);
   const [integerPart, fractionalPart] = numStr.split('.');
