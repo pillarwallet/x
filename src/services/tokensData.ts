@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import tokens from '../data/tokens.json';
+import { CompatibleChains } from '../utils/blockchain';
 
 export type Token = {
   id: number;
@@ -35,7 +36,9 @@ type TokenDataType = {
 let tokensData: Token[] = [];
 
 export const loadTokensData = (): Token[] => {
-  const allowedBlockchains = ['Ethereum', 'Polygon', 'Base', 'XDAI'];
+  const allowedBlockchains = CompatibleChains.map((chain) =>
+    chain.chainName === 'Gnosis' ? 'XDAI' : chain.chainName
+  );
 
   if (tokensData.length === 0) {
     tokensData = (tokens as TokenDataType).data.flatMap((item) =>

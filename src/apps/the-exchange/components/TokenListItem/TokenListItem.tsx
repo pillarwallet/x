@@ -44,7 +44,7 @@ const TokenListItem = ({
         </div>
       </div>
       <BodySmall className="group-hover:opacity-60 capitalize truncate xs:max-w-[150px]">
-        On {chainName}
+        On {chainName === 'XDAI' ? 'Gnosis' : chainName}
       </BodySmall>
     </div>
   );

@@ -53,7 +53,7 @@ const TokenResultCard = ({
       {tokenChain && (
         <div className="flex-1 min-w-0 text-right">
           <Body className="text-base font-medium capitalize truncate min-w-0">
-            On {tokenChain}
+            On {tokenChain === 'XDAI' ? 'Gnosis' : tokenChain}
           </Body>
         </div>
       )}
