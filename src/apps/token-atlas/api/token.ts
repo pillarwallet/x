@@ -50,15 +50,14 @@ export const tokenGraphApi = createApi({
       TokenAtlasGraphApiResponse,
       {
         id: number;
-        asset: string;
+        asset?: string;
         from: number;
         to?: number;
       }
     >({
       query: ({ id, asset, from, to }) => {
         const toParam = to !== undefined ? `&to=${from * 1000}` : '';
-        const assetParam = asset.split(' ')[0];
-        return `?id=${id}&asset=${assetParam}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+        return `?id=${id}&asset=${asset}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),
