@@ -1,8 +1,5 @@
 // services
-import {
-  Token,
-  chainNameToChainIdTokensData,
-} from '../../../../services/tokensData';
+import { Token } from '../../../../services/tokensData';
 
 // components
 import TokenResultCard from '../TokenResultCard/TokenResultCard';
@@ -28,7 +25,7 @@ const TokenRow = ({
         onClick={() => handleChooseToken(token)}
         tokenName={token.name}
         tokenSymbol={token.symbol}
-        tokenChain={chainNameToChainIdTokensData(token.blockchain)}
+        tokenChain={token.blockchain}
         tokenLogo={token.logo}
       />
     </div>

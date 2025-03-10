@@ -12,6 +12,7 @@ export enum PeriodFilter {
 }
 
 export type SelectedTokenType = {
+  id: number;
   symbol: string;
   address: string;
   decimals?: number;

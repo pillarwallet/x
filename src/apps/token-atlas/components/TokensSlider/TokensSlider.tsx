@@ -92,6 +92,7 @@ const TokensSlider = () => {
 
   const handleChooseToken = (token: TokenData) => {
     const tokenData: SelectedTokenType = {
+      id: token.id || 0,
       symbol: token.symbol || '',
       address: '',
       decimals: undefined,

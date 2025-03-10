@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import tokens from '../data/tokens.json';
+import { CompatibleChains } from '../utils/blockchain';
 
 export type Token = {
   id: number;
@@ -35,17 +36,23 @@ type TokenDataType = {
 let tokensData: Token[] = [];
 
 export const loadTokensData = (): Token[] => {
+  const allowedBlockchains = CompatibleChains.map((chain) =>
+    chain.chainName === 'Gnosis' ? 'XDAI' : chain.chainName
+  );
+
   if (tokensData.length === 0) {
     tokensData = (tokens as TokenDataType).data.flatMap((item) =>
-      item.blockchains.map((blockchain, index) => ({
-        id: item.id,
-        name: item.name,
-        symbol: item.symbol,
-        logo: item.logo,
-        blockchain,
-        contract: item.contracts[index],
-        decimals: item.decimals[index],
-      }))
+      item.blockchains
+        .map((blockchain, index) => ({
+          id: item.id,
+          name: item.name,
+          symbol: item.symbol,
+          logo: item.logo,
+          blockchain,
+          contract: item.contracts[index],
+          decimals: item.decimals[index],
+        }))
+        .filter((token) => allowedBlockchains.includes(token.blockchain))
     );
   }
   return tokensData;
@@ -114,6 +121,6 @@ export const chainNameToChainIdTokensData = (chain: string | undefined) => {
     case undefined:
       return 0;
     default:
-      return 1;
+      return 0;
   }
 };
