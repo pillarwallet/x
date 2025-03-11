@@ -128,6 +128,7 @@ const WalletConnectDropdown = () => {
   const DisplayContentWalletConnect = () => {
     if (
       localStorage.getItem('CLIPBOARD_MESSAGE') === 'true' ||
+      localStorage.getItem('CLIPBOARD_MESSAGE') === null ||
       isSettingsView
     ) {
       return (
