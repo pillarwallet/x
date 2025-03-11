@@ -159,21 +159,21 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                         class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
                         data-testid="points-fornatted-timestamp"
                       >
-                        -799
+                        -800
                         <span
                           class="text-base"
                         >
                           d
                         </span>
                          
-                        -11
+                        -10
                         <span
                           class="text-base"
                         >
                           h
                         </span>
                          
-                        -30
+                        -55
                         <span
                           class="text-base"
                         >
@@ -425,21 +425,21 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                       class="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
                       data-testid="points-fornatted-timestamp"
                     >
-                      -799
+                      -800
                       <span
                         class="text-base"
                       >
                         d
                       </span>
                        
-                      -11
+                      -10
                       <span
                         class="text-base"
                       >
                         h
                       </span>
                        
-                      -30
+                      -55
                       <span
                         class="text-base"
                       >

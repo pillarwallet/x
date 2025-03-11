@@ -98,7 +98,6 @@ const WalletConnectDropdown = () => {
 
   useEffect(() => {
     handleClipboardPermission();
-    localStorage.setItem('CLIPBOARD_MESSAGE', showPermission.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -129,6 +128,7 @@ const WalletConnectDropdown = () => {
   const DisplayContentWalletConnect = () => {
     if (
       localStorage.getItem('CLIPBOARD_MESSAGE') === 'true' ||
+      localStorage.getItem('CLIPBOARD_MESSAGE') === null ||
       isSettingsView
     ) {
       return (
