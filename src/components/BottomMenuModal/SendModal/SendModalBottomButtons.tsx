@@ -50,7 +50,7 @@ const SendModalBottomButtons = ({
           </Button>
         )}
         <Button
-          id="send-button-send-moda;"
+          id="send-button-send-modal"
           disabled={isSendDisabled}
           onClick={() => onSend(!!safetyWarningMessage)}
           $fullWidth

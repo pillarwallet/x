@@ -85,9 +85,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     React.useState<string>('');
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
-  const { addToBatch } = useGlobalTransactionsBatch();
+  const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
+  const { getTransactionHash } = useEtherspotTransactions();
   const { hide, showHistory, showBatchSendModal, setShowBatchSendModal } =
     useBottomMenuModal();
   /**
@@ -266,6 +267,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     }
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
+
+    if (newUserOpHash) {
+      if (payload?.title === 'WalletConnect transaction') {
+        const txHash = await getTransactionHash(newUserOpHash);
+        if (!txHash) {
+          setWalletConnectTxHash(undefined);
+        } else {
+          setWalletConnectTxHash(txHash);
+        }
+      }
+    }
+
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending(false);

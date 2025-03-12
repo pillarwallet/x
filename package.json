@@ -19,7 +19,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@etherspot/data-utils": "^1.1.1",
-    "@etherspot/transaction-kit": "^1.0.1",
+    "@etherspot/transaction-kit": "^1.0.4",
     "@hypelab/sdk-react": "^1.0.4",
     "@lifi/types": "^9.2.0",
     "@mui/icons-material": "^5.16.6",
@@ -97,7 +97,7 @@
     "terser-webpack-plugin": "^5.3.14",
     "use-mailchimp-form": "^3.1.0",
     "use-resize-observer": "^9.1.0",
-    "viem": "^2.6.1",
+    "viem": "2.21.53",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {

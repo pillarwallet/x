@@ -11,7 +11,7 @@ import {
 import { SessionTypes } from '@walletconnect/types';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { checksumAddress, formatEther, hexToBigInt } from 'viem';
 
 // hooks
@@ -35,14 +35,18 @@ export const useWalletConnect = () => {
   const [activeSessions, setActiveSessions] =
     useState<Record<string, SessionTypes.Struct>>();
   const [isLoadingConnect, setIsLoadingConnect] = useState<boolean>(false);
-  const { addToBatch } = useGlobalTransactionsBatch();
-  const { showSend, setShowBatchSendModal } = useBottomMenuModal();
+  const { showTransactionConfirmation, hide } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
   const { showModal, hideModal } = useWalletConnectModal();
+  const { walletConnectTxHash, setWalletConnectTxHash } =
+    useGlobalTransactionsBatch();
   const [isLoadingDisconnectAll, setIsLoadingDisconnectAll] =
     useState<boolean>(false);
   const [isLoadingDisconnect, setIsLoadingDisconnect] =
     useState<boolean>(false);
+  const walletConnectTxHashRef = useRef<string | undefined>(
+    walletConnectTxHash
+  );
 
   // WalletConnect initialisation
   const initWalletKit = useCallback(async () => {
@@ -88,6 +92,41 @@ export const useWalletConnect = () => {
       setActiveSessions(currentActiveSessions);
     }
   }, [walletKit]);
+
+  useEffect(() => {
+    walletConnectTxHashRef.current = walletConnectTxHash;
+  }, [walletConnectTxHash]);
+
+  const getTransactionHash = async (): Promise<string | undefined> => {
+    const timeout = Date.now() + 180 * 1000; // 3 min timeout to leave enough time for the user to send the transaction and receive the hash
+    while (!walletConnectTxHashRef.current && Date.now() < timeout) {
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 2000);
+      });
+
+      // Use the latest value from the ref
+      if (walletConnectTxHashRef.current) {
+        return walletConnectTxHashRef.current;
+      }
+    }
+
+    console.error('Transaction timeout: no transaction hash received.');
+
+    // close send modal
+    hide();
+
+    // reset txHash to undefined
+    setWalletConnectTxHash(undefined);
+
+    // sowing error to user
+    showToast({
+      title: 'WalletConnect',
+      subtitle:
+        'Oops, the transaction timed out. Please try again to send the transaction on the dApp.',
+    });
+
+    return undefined;
+  };
 
   const getSessionFromTopic = useCallback(
     (topic: string) => {
@@ -423,16 +462,16 @@ export const useWalletConnect = () => {
       if (request.method === ETH_SEND_TX) {
         const sendTransactionToBatch = async () => {
           try {
-            addToBatch({
+            showTransactionConfirmation({
               title: 'WalletConnect transaction',
-              description: '',
-              chainId: chainIdNumber,
-              to: checksumAddress(request.params[0].to),
-              value: formatEther(hexToBigInt(request.params[0].value)),
-              data: request.params[0].data,
+              description: 'This will execute a transaction coming from a dApp',
+              transaction: {
+                to: checksumAddress(request.params[0].to),
+                value: formatEther(hexToBigInt(request.params[0].value)),
+                data: request.params[0].data,
+                chainId: chainIdNumber,
+              },
             });
-            setShowBatchSendModal(true);
-            showSend();
           } catch (error) {
             showToast({
               title: 'Transaction batch fail',
@@ -444,7 +483,7 @@ export const useWalletConnect = () => {
 
         await sendTransactionToBatch();
 
-        requestResponse = 'Transaction sent to PillarX.';
+        requestResponse = await getTransactionHash();
       }
 
       try {
@@ -452,12 +491,14 @@ export const useWalletConnect = () => {
           topic,
           response: formatJsonRpcResult(id, requestResponse),
         });
+        setWalletConnectTxHash(undefined);
       } catch (e: any) {
         console.error('WalletConnect session request error:', e.message);
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcError(id, e),
         });
+        setWalletConnectTxHash(undefined);
         showToast({
           title: 'WalletConnect',
           subtitle:

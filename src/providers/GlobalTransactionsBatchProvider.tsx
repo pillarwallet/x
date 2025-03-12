@@ -18,6 +18,10 @@ export interface IGlobalTransactionsBatchContext {
     transactions: IGlobalBatchTransaction[];
     addToBatch: (transaction: IGlobalBatchTransaction) => void;
     removeFromBatch: (transactionId: string) => void;
+    walletConnectTxHash: string | undefined;
+    setWalletConnectTxHash: React.Dispatch<
+      React.SetStateAction<string | undefined>
+    >;
   };
 }
 
@@ -32,6 +36,9 @@ const GlobalTransactionsBatchProvider = ({
   const [transactions, setBatches] = React.useState<IGlobalBatchTransaction[]>(
     []
   );
+  const [walletConnectTxHash, setWalletConnectTxHash] = React.useState<
+    string | undefined
+  >(undefined);
 
   const addToBatch = (transaction: IGlobalBatchTransaction) => {
     setBatches((prev) =>
@@ -51,10 +58,12 @@ const GlobalTransactionsBatchProvider = ({
   const contextData = useMemo(
     () => ({
       transactions,
+      walletConnectTxHash,
+      setWalletConnectTxHash,
       addToBatch,
       removeFromBatch,
     }),
-    [transactions]
+    [transactions, walletConnectTxHash]
   );
 
   return (
