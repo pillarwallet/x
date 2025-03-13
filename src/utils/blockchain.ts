@@ -46,10 +46,16 @@ export const isValidEthereumAddress = (
 };
 
 export const nativeTokensByChain: Record<number, string[]> = {
-  1: ['0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'], // ETH on Ethereum
+  1: [
+    '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+    '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  ], // ETH and WETH on Ethereum
   137: ['0x0000000000000000000000000000000000001010'], // MATIC on Polygon
   100: ['0xe91d153e0b41518a2ce8dd3d7944fa863463a97d'], // XDAI on Gnosis
-  8453: ['0x142301666DC68C6902b49e2c2Ffa2228A2da21E5'], // ETH on Base
+  8453: [
+    '0x142301666DC68C6902b49e2c2Ffa2228A2da21E5',
+    '0x4200000000000000000000000000000000000006',
+  ], // ETH and WETH on Base
 };
 
 // WRAPPED POL & POL are interchangeably Polygon native assets
