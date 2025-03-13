@@ -182,6 +182,7 @@ describe('<SendModal />', () => {
       isSending: false,
       containsEstimatingError: false,
       containsSendingError: false,
+      getTransactionHash: async () => '',
     });
 
     const user = userEvent.setup();
