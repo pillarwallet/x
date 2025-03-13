@@ -469,7 +469,7 @@ export const useWalletConnect = () => {
           try {
             showTransactionConfirmation({
               title: 'WalletConnect transaction',
-              description: `${dAppName} wants to send a transaction.`,
+              description: `${dAppName} wants to send a transaction`,
               transaction: {
                 to: checksumAddress(request.params[0].to),
                 value: formatEther(hexToBigInt(request.params[0].value)),
