@@ -417,6 +417,11 @@ export const useWalletConnect = () => {
       const { topic, params, id } = requestEvent;
       const { request, chainId } = params;
 
+      // Retrieve session metadata
+      const sessions = walletKit?.getActiveSessions();
+      const session = sessions?.[topic];
+      const dAppName = session?.peer?.metadata?.name;
+
       const chainIdNumber = Number(chainId.replace('eip155:', ''));
       let requestResponse: string | undefined;
 
@@ -464,7 +469,7 @@ export const useWalletConnect = () => {
           try {
             showTransactionConfirmation({
               title: 'WalletConnect transaction',
-              description: 'This will execute a transaction coming from a dApp',
+              description: `${dAppName} wants to send a transaction.`,
               transaction: {
                 to: checksumAddress(request.params[0].to),
                 value: formatEther(hexToBigInt(request.params[0].value)),
