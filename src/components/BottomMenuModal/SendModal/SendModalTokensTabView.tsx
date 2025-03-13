@@ -89,8 +89,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
   const { getTransactionHash } = useEtherspotTransactions();
-  const { hide, showHistory, showBatchSendModal, setShowBatchSendModal } =
-    useBottomMenuModal();
+  const {
+    hide,
+    showHistory,
+    showBatchSendModal,
+    setShowBatchSendModal,
+    setWalletConnectPayload,
+  } = useBottomMenuModal();
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -269,7 +274,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
 
     if (newUserOpHash) {
-      if (payload?.title === 'WalletConnect transaction') {
+      if (
+        payload?.title === 'WalletConnect Approval Request' ||
+        payload?.title === 'WalletConnect Transaction Request'
+      ) {
         const txHash = await getTransactionHash(newUserOpHash);
         if (!txHash) {
           setWalletConnectTxHash(undefined);
@@ -342,6 +350,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     // hide modal if invoked from hook
     if (payload) hide();
+  };
+
+  const onCancel = () => {
+    setRecipient('');
+    setSelectedAsset(undefined);
+    setAmount('');
+    setSafetyWarningMessage('');
+    setErrorMessage('');
+    setIsSending(false);
+
+    if (payload) {
+      setWalletConnectPayload(undefined);
+      hide();
+    }
   };
 
   const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
@@ -437,6 +459,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           errorMessage={errorMessage}
           estimatedCostFormatted={estimatedCostFormatted}
           onAddToBatch={onAddToBatch}
+          allowBatching={!payload.title.includes('WalletConnect')}
+          onCancel={
+            !payload.title.includes('WalletConnect') ? undefined : onCancel
+          }
         />
       </>
     );

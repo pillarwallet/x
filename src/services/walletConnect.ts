@@ -21,6 +21,7 @@ import useWalletConnectModal from '../hooks/useWalletConnectModal';
 import useWalletConnectToast from '../hooks/useWalletConnectToast';
 
 // constants
+import { SendModalData } from '../types';
 import {
   ETH_SEND_TX,
   ETH_SIGN_TYPED_DATA,
@@ -35,7 +36,12 @@ export const useWalletConnect = () => {
   const [activeSessions, setActiveSessions] =
     useState<Record<string, SessionTypes.Struct>>();
   const [isLoadingConnect, setIsLoadingConnect] = useState<boolean>(false);
-  const { showTransactionConfirmation, hide } = useBottomMenuModal();
+  const {
+    showTransactionConfirmation,
+    hide,
+    setWalletConnectPayload,
+    walletConnectPayload,
+  } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
   const { showModal, hideModal } = useWalletConnectModal();
   const { walletConnectTxHash, setWalletConnectTxHash } =
@@ -46,6 +52,9 @@ export const useWalletConnect = () => {
     useState<boolean>(false);
   const walletConnectTxHashRef = useRef<string | undefined>(
     walletConnectTxHash
+  );
+  const walletConnectPayloadRef = useRef<SendModalData | undefined>(
+    walletConnectPayload
   );
 
   // WalletConnect initialisation
@@ -97,6 +106,10 @@ export const useWalletConnect = () => {
     walletConnectTxHashRef.current = walletConnectTxHash;
   }, [walletConnectTxHash]);
 
+  useEffect(() => {
+    walletConnectPayloadRef.current = walletConnectPayload;
+  }, [walletConnectPayload]);
+
   const getTransactionHash = async (): Promise<string | undefined> => {
     const timeout = Date.now() + 180 * 1000; // 3 min timeout to leave enough time for the user to send the transaction and receive the hash
     while (!walletConnectTxHashRef.current && Date.now() < timeout) {
@@ -107,6 +120,10 @@ export const useWalletConnect = () => {
       // Use the latest value from the ref
       if (walletConnectTxHashRef.current) {
         return walletConnectTxHashRef.current;
+      }
+
+      if (!walletConnectPayloadRef.current) {
+        return undefined;
       }
     }
 
@@ -122,7 +139,7 @@ export const useWalletConnect = () => {
     showToast({
       title: 'WalletConnect',
       subtitle:
-        'Oops, the transaction timed out. Please try again to send the transaction on the dApp.',
+        'Oops, the transaction timed out. Please check if the transaction has executed successfully before trying again.',
     });
 
     return undefined;
@@ -465,30 +482,45 @@ export const useWalletConnect = () => {
       }
 
       if (request.method === ETH_SEND_TX) {
-        const sendTransactionToBatch = async () => {
-          try {
-            showTransactionConfirmation({
-              title: 'WalletConnect transaction',
-              description: `${dAppName} wants to send a transaction`,
-              transaction: {
-                to: checksumAddress(request.params[0].to),
-                value: formatEther(hexToBigInt(request.params[0].value)),
-                data: request.params[0].data,
-                chainId: chainIdNumber,
-              },
-            });
-          } catch (error) {
-            showToast({
-              title: 'Transaction batch fail',
-              subtitle:
-                'The transaction was not able to be added this to the queue at the moment. Please try again.',
-            });
-          }
-        };
+        const transaction = request.params[0];
 
-        await sendTransactionToBatch();
+        const isApprovalTransaction =
+          !!transaction.data.startsWith('0x095ea7b3');
 
-        requestResponse = await getTransactionHash();
+        if (isApprovalTransaction) {
+          const approvalRequest = {
+            title: 'WalletConnect Approval Request',
+            description: `${dAppName} is requesting approval for a contract.`,
+            transaction: {
+              to: checksumAddress(transaction.to),
+              data: transaction.data,
+              chainId: chainIdNumber,
+            },
+          };
+
+          showTransactionConfirmation(approvalRequest);
+
+          setWalletConnectPayload(approvalRequest);
+
+          requestResponse = await getTransactionHash();
+        } else {
+          const transactionRequest = {
+            title: 'WalletConnect Transaction Request',
+            description: `${dAppName} wants to send a transaction`,
+            transaction: {
+              to: checksumAddress(transaction.to),
+              value: formatEther(hexToBigInt(transaction.value)),
+              data: transaction.data,
+              chainId: chainIdNumber,
+            },
+          };
+
+          showTransactionConfirmation(transactionRequest);
+
+          setWalletConnectPayload(transactionRequest);
+
+          requestResponse = await getTransactionHash();
+        }
       }
 
       try {
@@ -497,6 +529,7 @@ export const useWalletConnect = () => {
           response: formatJsonRpcResult(id, requestResponse),
         });
         setWalletConnectTxHash(undefined);
+        setWalletConnectPayload(undefined);
       } catch (e: any) {
         console.error('WalletConnect session request error:', e.message);
         await walletKit?.respondSessionRequest({
@@ -504,6 +537,7 @@ export const useWalletConnect = () => {
           response: formatJsonRpcError(id, e),
         });
         setWalletConnectTxHash(undefined);
+        setWalletConnectPayload(undefined);
         showToast({
           title: 'WalletConnect',
           subtitle:
