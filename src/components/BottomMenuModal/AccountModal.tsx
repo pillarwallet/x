@@ -34,7 +34,6 @@ import Alert from '../Text/Alert';
 // utils
 import {
   getLogoForChainId,
-  nativeTokensByChain,
   truncateAddress,
   visibleChains,
 } from '../../utils/blockchain';
@@ -85,20 +84,11 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         blockchain: chainIdToChainNameTokensData(chain.id),
       });
 
-      const nativeTokens = nativeTokensByChain[chain.id] || [];
-
       balancesForChain.forEach((balance) => {
-        const isNativeBalance =
-          balance.token === null ||
-          nativeTokens.includes(balance.token) ||
-          isZeroAddress(balance.token);
-
-        const asset = assets?.find(
+        const asset = assets.find(
           (a) =>
-            (isNativeBalance &&
-              (nativeTokens.includes(a.contract) ||
-                isZeroAddress(a.contract))) ||
-            addressesEqual(a.contract, balance.token)
+            addressesEqual(a.contract, balance.token) ||
+            (balance.token === null && isZeroAddress(a.contract))
         );
 
         if (!asset) {
@@ -114,7 +104,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
 
       return grouped;
     }, {});
-  }, [accountAddress, balances, isZeroAddress, addressesEqual]);
+  }, [accountAddress, balances, addressesEqual, isZeroAddress]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];

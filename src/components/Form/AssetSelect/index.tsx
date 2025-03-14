@@ -22,11 +22,7 @@ import {
 import Select, { SelectOption } from '../Select';
 
 // utils
-import {
-  nativeTokensByChain,
-  parseNftTitle,
-  visibleChains,
-} from '../../../utils/blockchain';
+import { parseNftTitle, visibleChains } from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
 // hooks
@@ -148,21 +144,19 @@ const AssetSelect = ({
     const assetBalance =
       chainId &&
       balances[chainId]?.[walletAddress as string]?.find((balance) => {
-        const nativeTokens = nativeTokensByChain[chainId] || [];
-
         const isNativeBalance =
-          balance.token === null ||
-          nativeTokens.includes(balance.token) ||
-          isZeroAddress(balance.token);
+          balance.token === null || isZeroAddress(balance.token);
 
         const isNativeAsset =
-          assetOption.asset?.contract &&
-          (nativeTokens.includes(assetOption.asset.contract) ||
-            isZeroAddress(assetOption.asset.contract));
+          !assetOption.asset?.contract ||
+          isZeroAddress(assetOption.asset?.contract);
 
-        if (isNativeBalance && isNativeAsset) return true;
-
-        return addressesEqual(balance.token, assetOption.asset?.contract);
+        return (
+          (isNativeBalance && isNativeAsset) ||
+          (balance.token &&
+            assetOption.asset?.contract &&
+            addressesEqual(balance.token, assetOption.asset?.contract))
+        );
       });
 
     const assetBalanceValue = assetBalance ? assetBalance.balance : '0';

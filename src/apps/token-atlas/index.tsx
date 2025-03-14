@@ -20,6 +20,9 @@ import {
 // hooks
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
+// utils
+import { getNativeAssetForChainId } from '../../utils/blockchain';
+
 // types
 import { TokenPriceGraphPeriod } from '../../types/api';
 import { SelectedTokenType } from './types/types';
@@ -58,14 +61,33 @@ export const App = () => {
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
   );
+
+  const formattedNativeToken = {
+    address: selectedToken.address,
+    chainId: selectedToken.chainId,
+    name: selectedToken.name,
+    symbol: selectedToken.symbol,
+    decimals: selectedToken.decimals,
+    logoURI: selectedToken.icon,
+  };
+
+  const nativeToken = getNativeAssetForChainId(selectedToken.chainId || 0);
+
+  const isNativeToken =
+    nativeToken.name === formattedNativeToken.name &&
+    nativeToken.symbol === formattedNativeToken.symbol &&
+    nativeToken.address === formattedNativeToken.address;
+
   const {
     data: tokenData,
     isLoading: isLoadingTokenDataInfo,
     isFetching: isFetchingTokenDataInfo,
     isSuccess: isSuccessTokenDataInfo,
   } = useGetTokenInfoQuery({
-    id: selectedToken.id,
-    asset: selectedToken.name || selectedToken.address,
+    id: isNativeToken ? undefined : selectedToken.id,
+    asset: isNativeToken
+      ? undefined
+      : selectedToken.name || selectedToken.address,
     symbol: selectedToken.symbol,
   });
   const {
@@ -74,8 +96,11 @@ export const App = () => {
     isFetching: isFetchingTokenDataGraph,
     isSuccess: isSuccessTokenDataGraph,
   } = useGetTokenGraphQuery({
-    id: selectedToken.id,
-    asset: selectedToken.name || selectedToken.address,
+    id: isNativeToken ? undefined : selectedToken.id,
+    asset: isNativeToken
+      ? undefined
+      : selectedToken.name || selectedToken.address,
+    symbol: selectedToken.symbol,
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
   });

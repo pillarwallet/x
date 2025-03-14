@@ -37,7 +37,6 @@ import { processEth } from '../../utils/blockchain';
 import BodySmall from '../Typography/BodySmall';
 
 // images
-import { nativeTokensByChain } from '../../../../utils/blockchain';
 import ReceiveArrow from '../../images/receive-arrow.png';
 import SendArrow from '../../images/send-arrow.png';
 import ExchangeOffer from './ExchangeOffer';
@@ -171,20 +170,12 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
       }
 
       const assetAddress = swapToken.contract;
-      const nativeTokens =
-        nativeTokensByChain[
-          chainNameToChainIdTokensData(swapToken.blockchain)
-        ] || []; // Get native tokens for the blockchain
 
       const isNativeBalance =
-        balance.token === null ||
-        nativeTokens.includes(balance.token) ||
-        isZeroAddress(balance.token);
+        balance.token === null || isZeroAddress(balance.token);
 
       return (
-        (isNativeBalance &&
-          (nativeTokens.includes(assetAddress) ||
-            isZeroAddress(assetAddress))) ||
+        (isNativeBalance && isZeroAddress(assetAddress)) ||
         addressesEqual(balance.token, assetAddress)
       );
     });
