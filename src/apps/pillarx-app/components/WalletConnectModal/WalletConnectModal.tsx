@@ -1,4 +1,6 @@
 import { WalletKitTypes } from '@reown/walletkit';
+import { useState } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
@@ -18,6 +20,7 @@ const WalletConnectModal = ({
   onReject,
   sessionData,
 }: WalletConnectModalProps) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { params } = sessionData;
 
   const appName = params?.proposer?.metadata?.name || 'Unnamed app';
@@ -32,7 +35,19 @@ const WalletConnectModal = ({
     eth_signTypedData: 'Send typed data requests',
   };
 
-  const allMethods = [...optionalMethods, ...requiredMethods].map(
+  // Sort methods to have compatible methods first
+  const sortMethods = (methods: string[]) => {
+    return methods.sort((a, b) => {
+      const aIsCompatible = a in compatibleMethods ? -1 : 1;
+      const bIsCompatible = b in compatibleMethods ? -1 : 1;
+      return aIsCompatible - bIsCompatible;
+    });
+  };
+
+  const formattedRequiredMethods = sortMethods(requiredMethods).map(
+    (method) => compatibleMethods[method] || method
+  );
+  const formattedOptionalMethods = sortMethods(optionalMethods).map(
     (method) => compatibleMethods[method] || method
   );
 
@@ -41,7 +56,7 @@ const WalletConnectModal = ({
       id="walletConnect-modal"
       className="z-[550] fixed inset-0 bg-container_grey bg-opacity-50 flex justify-center items-center"
     >
-      <div className="flex flex-col bg-container_grey p-6 rounded-lg shadow-lg w-[90%] max-w-md relative gap-4">
+      <div className="flex flex-col bg-container_grey p-6 rounded-lg shadow-lg w-[90%] max-w-md relative gap-4 max-h-[90vh] overflow-y-auto">
         <div className="flex flex-col items-center justify-center gap-4">
           {appIcon ? (
             <img
@@ -60,16 +75,54 @@ const WalletConnectModal = ({
           </div>
         </div>
         <div className="flex flex-col rounded-lg border border-purple_light p-4">
-          <BodySmall className="text-purple_light mb-2">
-            Requested permissions:
-          </BodySmall>
-          <ul className="list-disc pl-4">
-            {allMethods.map((method, index) => (
-              <li key={index}>
-                <p className="text-sm font-light">{method}</p>
-              </li>
-            ))}
-          </ul>
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="flex justify-between items-center w-full"
+          >
+            <BodySmall className="text-purple_light mb-2">
+              Requested permissions
+            </BodySmall>
+            {isCollapsed ? (
+              <FaChevronUp size={16} />
+            ) : (
+              <FaChevronDown size={16} />
+            )}
+          </button>
+
+          {isCollapsed && (
+            <div className="mt-2 max-h-[40vh] overflow-y-auto">
+              {formattedRequiredMethods.length > 0 && (
+                <div>
+                  <BodySmall className="text-purple_light mb-2">
+                    Required:
+                  </BodySmall>
+                  <ul className="list-disc pl-4">
+                    {formattedRequiredMethods.map((method, index) => (
+                      <li key={index}>
+                        <p className="text-sm font-light">{method}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {formattedOptionalMethods.length > 0 && (
+                <div className="mt-2">
+                  <BodySmall className="text-purple_light mb-2">
+                    Optional:
+                  </BodySmall>
+                  <ul className="list-disc pl-4">
+                    {formattedOptionalMethods.map((method, index) => (
+                      <li key={index}>
+                        <p className="text-sm font-light">{method}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="mt-4 flex justify-between space-x-4">
           <button
