@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import Fuse from 'fuse.js';
 import tokens from '../data/tokens.json';
-import { CompatibleChains } from '../utils/blockchain';
+import {
+  CompatibleChains,
+  getNativeAssetForChainId,
+} from '../utils/blockchain';
 
 export type Token = {
   id: number;
@@ -54,7 +58,23 @@ export const loadTokensData = (): Token[] => {
         }))
         .filter((token) => allowedBlockchains.includes(token.blockchain))
     );
+
+    // Add native/gas tokens
+    CompatibleChains.forEach((chain) => {
+      const nativeAsset = getNativeAssetForChainId(chain.chainId);
+      const nativeTokenOption: Token = {
+        id: chain.chainId,
+        name: nativeAsset.name,
+        symbol: nativeAsset.symbol,
+        logo: nativeAsset.logoURI,
+        blockchain: chainIdToChainNameTokensData(nativeAsset.chainId),
+        contract: nativeAsset.address,
+        decimals: nativeAsset.decimals,
+      };
+      tokensData.push(nativeTokenOption);
+    });
   }
+
   return tokensData;
 };
 

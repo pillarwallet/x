@@ -29,10 +29,10 @@ export const tokenInfoApi = createApi({
   endpoints: (builder) => ({
     getTokenInfo: builder.query<
       TokenAtlasInfoApiResponse,
-      { id: number; asset: string; symbol: string }
+      { id?: number; asset?: string; symbol: string }
     >({
       query: ({ id, asset, symbol }) => {
-        return `?id=${id}&asset=${asset}&symbol=${symbol}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+        return `?${id ? `id=${id}` : ''}${asset ? `&asset=${asset}` : ''}&symbol=${symbol}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),
@@ -49,15 +49,16 @@ export const tokenGraphApi = createApi({
     getTokenGraph: builder.query<
       TokenAtlasGraphApiResponse,
       {
-        id: number;
+        id?: number;
         asset?: string;
+        symbol: string;
         from: number;
         to?: number;
       }
     >({
-      query: ({ id, asset, from, to }) => {
+      query: ({ id, asset, symbol, from, to }) => {
         const toParam = to !== undefined ? `&to=${from * 1000}` : '';
-        return `?id=${id}&asset=${asset}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+        return `${id ? `id=${id}` : ''}${asset ? `&asset=${asset}` : ''}&symbol=${symbol}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),
