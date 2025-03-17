@@ -58,7 +58,7 @@ export const tokenGraphApi = createApi({
     >({
       query: ({ id, asset, symbol, from, to }) => {
         const toParam = to !== undefined ? `&to=${from * 1000}` : '';
-        return `${id ? `id=${id}` : ''}${asset ? `&asset=${asset}` : ''}&symbol=${symbol}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
+        return `?${id ? `id=${id}` : ''}${asset ? `&asset=${asset}` : ''}&symbol=${symbol}&from=${from * 1000}${toParam}&${chainIdsQuery}&testnets=${String(isTestnet)}`;
       },
     }),
   }),
