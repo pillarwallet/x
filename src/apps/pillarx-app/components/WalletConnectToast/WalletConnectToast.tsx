@@ -24,7 +24,7 @@ const WalletConnectToast = ({ children, onClose }: WalletConnectToastProps) => {
 
     const timer = setTimeout(() => {
       handleClose();
-    }, 5000);
+    }, 10000);
 
     return () => {
       clearTimeout(timer);

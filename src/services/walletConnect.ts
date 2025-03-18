@@ -135,13 +135,6 @@ export const useWalletConnect = () => {
     // reset txHash to undefined
     setWalletConnectTxHash(undefined);
 
-    // sowing error to user
-    showToast({
-      title: 'WalletConnect',
-      subtitle:
-        'Oops, the transaction timed out. Please check if the transaction has executed successfully before trying again.',
-    });
-
     return undefined;
   };
 
@@ -509,7 +502,9 @@ export const useWalletConnect = () => {
             description: `${dAppName} wants to send a transaction`,
             transaction: {
               to: checksumAddress(transaction.to),
-              value: formatEther(hexToBigInt(transaction.value)),
+              value: transaction.value
+                ? formatEther(hexToBigInt(transaction.value))
+                : '0',
               data: transaction.data,
               chainId: chainIdNumber,
             },
@@ -541,7 +536,7 @@ export const useWalletConnect = () => {
         showToast({
           title: 'WalletConnect',
           subtitle:
-            'The request has failed - there was a session request error. Please try again.',
+            'The request has failed or has timed out - there was a session request error. Please check if the transaction has executed successfully before trying again.',
         });
       }
     },

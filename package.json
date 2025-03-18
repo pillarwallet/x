@@ -19,7 +19,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@etherspot/data-utils": "^1.1.1",
-    "@etherspot/transaction-kit": "^1.0.4",
+    "@etherspot/transaction-kit": "^1.0.5",
     "@hypelab/sdk-react": "^1.0.4",
     "@lifi/types": "^9.2.0",
     "@mui/icons-material": "^5.16.6",
