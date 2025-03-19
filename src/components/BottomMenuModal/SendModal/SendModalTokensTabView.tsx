@@ -273,12 +273,22 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
 
+    const userOpChainId = sent?.[0]?.sentBatches[0]?.chainId;
+
+    const chainIdForTxHash =
+      (payload && 'transaction' in payload && payload.transaction.chainId) ||
+      userOpChainId ||
+      etherspotDefaultChainId;
+
     if (newUserOpHash) {
       if (
         payload?.title === 'WalletConnect Approval Request' ||
         payload?.title === 'WalletConnect Transaction Request'
       ) {
-        const txHash = await getTransactionHash(newUserOpHash);
+        const txHash = await getTransactionHash(
+          newUserOpHash,
+          chainIdForTxHash
+        );
         if (!txHash) {
           setWalletConnectTxHash(undefined);
         } else {
