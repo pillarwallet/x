@@ -25,6 +25,7 @@ import { SendModalData } from '../types';
 import {
   ETH_SEND_TX,
   ETH_SIGN_TYPED_DATA,
+  ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
   WALLETCONNECT_EVENT,
 } from '../utils/walletConnectConstants';
@@ -328,7 +329,12 @@ export const useWalletConnect = () => {
                   'eip155:137',
                   'eip155:8453',
                 ],
-                methods: [PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TYPED_DATA],
+                methods: [
+                  PERSONAL_SIGN,
+                  ETH_SEND_TX,
+                  ETH_SIGN_TYPED_DATA,
+                  ETH_SIGN_TYPED_DATA_V4,
+                ],
                 events: [
                   WALLETCONNECT_EVENT.SESSION_PROPOSAL,
                   WALLETCONNECT_EVENT.SESSION_DELETE,
@@ -453,7 +459,10 @@ export const useWalletConnect = () => {
         });
       }
 
-      if (request.method === ETH_SIGN_TYPED_DATA) {
+      if (
+        request.method === ETH_SIGN_TYPED_DATA ||
+        request.method === ETH_SIGN_TYPED_DATA_V4
+      ) {
         const requestParamsMessage = await request.params[1];
 
         const parseRequest =
