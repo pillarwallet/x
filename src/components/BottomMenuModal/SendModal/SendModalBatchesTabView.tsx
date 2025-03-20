@@ -11,7 +11,7 @@ import {
   Send2 as SendIcon,
   Trash as TrashIcon,
 } from 'iconsax-react';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -26,6 +26,8 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 
 // providers
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
 
 // utils
@@ -52,6 +54,8 @@ const SendModalBatchesTabView = () => {
   >({});
   const { send, estimate } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
+  const contextNfts = useContext(AccountNftsContext);
+  const contextBalances = useContext(AccountBalancesContext);
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -64,6 +68,20 @@ const SendModalBatchesTabView = () => {
     },
     {} as Record<number, IGlobalBatchTransaction[]>
   );
+
+  const anyChainSending = Object.values(isSending).some((s) => s);
+
+  useEffect(() => {
+    if (!anyChainSending) {
+      contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
+    }
+
+    if (anyChainSending) {
+      contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
+    }
+  }, [contextNfts?.data, contextBalances?.data, anyChainSending]);
 
   const onSend = async (chainId: number, batchId: string) => {
     if (isSending[chainId]) return;
@@ -123,8 +141,6 @@ const SendModalBatchesTabView = () => {
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
   };
-
-  const anyChainSending = Object.values(isSending).some((s) => s);
 
   return (
     <FormGroup>
