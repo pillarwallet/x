@@ -18,7 +18,7 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -29,6 +29,10 @@ import Label from '../../Form/Label';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
+
+// providers
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
@@ -74,7 +78,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const { isZeroAddress } = useEtherspotUtils();
   const { getPrices } = useEtherspotPrices();
   const { chainId: etherspotDefaultChainId } = useEtherspot();
-  const { send, estimate, batches } = useEtherspotTransactions();
+  const { send, batches } = useEtherspotTransactions();
   const [isAmountInputAsFiat, setIsAmountInputAsFiat] =
     React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
@@ -96,12 +100,27 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setShowBatchSendModal,
     setWalletConnectPayload,
   } = useBottomMenuModal();
+  const contextNfts = useContext(AccountNftsContext);
+  const contextBalances = useContext(AccountBalancesContext);
+
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
    * collect data on what apps are being opened
    */
   const [recordPresence] = useRecordPresenceMutation();
+
+  useEffect(() => {
+    if (!isSending) {
+      contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
+    }
+
+    if (isSending) {
+      contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
+    }
+  }, [contextNfts?.data, contextBalances?.data, isSending]);
 
   const selectedAssetBalance = React.useMemo(() => {
     if (!selectedAsset || selectedAsset.type !== 'token') return 0;
@@ -210,13 +229,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       return;
     }
 
-    const estimated = await estimate();
+    const sent = await send();
 
-    const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
+    const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
     if (estimatedCostBN) {
       const nativeAsset = getNativeAssetForChainId(
-        estimated[0].estimatedBatches[0].chainId as number
+        sent[0].estimatedBatches[0].chainId as number
       );
       const estimatedCost = ethers.utils.formatUnits(
         estimatedCostBN,
@@ -227,11 +246,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
       );
     } else {
-      console.warn('Unable to get estimated cost', estimated);
+      console.warn('Unable to get estimated cost', sent);
     }
 
     const estimationErrorMessage =
-      estimated?.[0]?.estimatedBatches?.[0]?.errorMessage;
+      sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
       setErrorMessage(estimationErrorMessage);
       setIsSending(false);
@@ -261,8 +280,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         ...selectedAsset,
       },
     });
-
-    const sent = await send();
 
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {

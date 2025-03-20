@@ -30,12 +30,14 @@ const BottomMenuModal = () => {
   }, [activeIndex]);
 
   useEffect(() => {
-    if (activeIndex === 0 || activeIndex === 2) {
+    // update nfts and token balances when Account tab is open
+    if (activeIndex === 2) {
       contextNfts?.data.setUpdateData(true);
       contextBalances?.data.setUpdateData(true);
     }
 
-    if (activeIndex !== 0 && activeIndex !== 2) {
+    // stop updating nfts and token balances when Account tab is closed, History or Apps Tabs are open, or no tab is open
+    if (activeIndex === 1 || activeIndex === 3 || activeIndex === null) {
       contextNfts?.data.setUpdateData(false);
       contextBalances?.data.setUpdateData(false);
     }
