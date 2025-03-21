@@ -1615,13 +1615,11 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
       </div>
     </div>
   </div>,
-  <button
+  <div
     className="border border-purple_light/[.20] py-3 px-7 rounded-3xl w-fit self-center my-9"
-    id="leaderboard-load-more-button"
     onClick={[Function]}
-    type="button"
   >
-    Load more
-  </button>,
+    Load more...
+  </div>,
 ]
 `;
