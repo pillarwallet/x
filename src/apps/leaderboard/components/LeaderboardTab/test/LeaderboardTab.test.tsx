@@ -62,10 +62,10 @@ describe('<LeaderboardTab />', () => {
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(10);
   });
 
-  it('loads more items when clicking "Load more" ', () => {
+  it('loads more items when clicking "Loading more" ', () => {
     render(<LeaderboardTab data={mockData} />);
 
-    const loadMoreDiv = screen.getByText(/Load more/i);
+    const loadMoreDiv = screen.getByText(/Loading more/i);
     fireEvent.click(loadMoreDiv);
 
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(20);
@@ -75,14 +75,14 @@ describe('<LeaderboardTab />', () => {
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(25);
   });
 
-  it('hides "Load more" when all items are displayed', () => {
+  it('hides "Loading more" when all items are displayed', () => {
     render(<LeaderboardTab data={mockData} />);
 
-    const loadMoreDiv = screen.getByText(/Load more/i);
-    fireEvent.click(loadMoreDiv); // Load more to 20
-    fireEvent.click(loadMoreDiv); // Load more to 25
+    const loadMoreDiv = screen.getByText(/Loading more/i);
+    fireEvent.click(loadMoreDiv); // Loading more to 20
+    fireEvent.click(loadMoreDiv); // Loading more to 25
 
-    expect(screen.queryByText(/Load more/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loading more/i)).not.toBeInTheDocument();
   });
 
   it('displays "My rank" section if wallet address is in the data', () => {
@@ -107,14 +107,14 @@ describe('<LeaderboardTab />', () => {
     expect(screen.queryByText('My rank')).not.toBeInTheDocument();
   });
 
-  it('hides the "Load more" when all items are visible and no more data is available', () => {
+  it('hides the "Loading more" when all items are visible and no more data is available', () => {
     render(<LeaderboardTab data={mockData} />);
 
-    const loadMoreDiv = screen.getByText(/Load more/i);
+    const loadMoreDiv = screen.getByText(/Loading more/i);
     fireEvent.click(loadMoreDiv);
     fireEvent.click(loadMoreDiv);
     fireEvent.click(loadMoreDiv);
 
-    expect(screen.queryByText(/Load more/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loading more/i)).not.toBeInTheDocument();
   });
 });

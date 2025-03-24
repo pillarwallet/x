@@ -1619,7 +1619,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
     className="border border-purple_light/[.20] py-3 px-7 rounded-3xl w-fit self-center my-9"
     onClick={[Function]}
   >
-    Load more...
+    Loading more...
   </div>,
 ]
 `;
