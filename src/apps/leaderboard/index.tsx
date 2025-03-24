@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
@@ -29,18 +30,7 @@ const App = () => {
   const [comparisonData, setComparisonData] = useState<WeeklyLeaderboardData[]>(
     []
   );
-  const [lastFetchedAllTime, setLastFetchedAllTime] = useState<
-    Date | undefined
-  >(undefined);
-  const [lastFetchedWeekly, setLastFetchedWeekly] = useState<Date | undefined>(
-    undefined
-  );
-  const [timeAgoAllTime, setTimeAgoAllTime] = useState<string | undefined>(
-    undefined
-  );
-  const [timeAgoWeekly, setTimeAgoWeekly] = useState<string | undefined>(
-    undefined
-  );
+  const walletAddress = useWalletAddress();
 
   const currentMonday = DateTime.now().startOf('week').toUnixInteger();
   const currentSunday = DateTime.now().endOf('week').toUnixInteger();
@@ -144,38 +134,13 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (isSuccessAllTimeData) {
-      setLastFetchedAllTime(new Date());
-    }
-  }, [isSuccessAllTimeData]);
+  const userWeeklyData = weeklyData?.results.find(
+    (result) => result.address === walletAddress
+  );
 
-  useEffect(() => {
-    if (isSuccessWeeklyData) {
-      setLastFetchedWeekly(new Date());
-    }
-  }, [isSuccessWeeklyData]);
-
-  // Update the time ago text every minute
-  useEffect(() => {
-    const updateTimes = () => {
-      if (lastFetchedAllTime) {
-        setTimeAgoAllTime(
-          formatDistanceToNowStrict(lastFetchedAllTime, { addSuffix: true })
-        );
-      }
-      if (lastFetchedWeekly) {
-        setTimeAgoWeekly(
-          formatDistanceToNowStrict(lastFetchedWeekly, { addSuffix: true })
-        );
-      }
-    };
-
-    updateTimes();
-    const interval = setInterval(updateTimes, 60000);
-
-    return () => clearInterval(interval);
-  }, [lastFetchedAllTime, lastFetchedWeekly]);
+  const userAllTimeData = allTimeData?.results.find(
+    (result) => result.address === walletAddress
+  );
 
   return (
     <Wrapper id="leaderboard-app">
@@ -186,10 +151,25 @@ const App = () => {
       />
       <div className="flex justify-between items-end">
         <H1 className="px-4 py-2.5 mb-1">Leaderboard</H1>
-        {(timeAgoAllTime || timeAgoWeekly) && (
+        {activeTab === 0 && userWeeklyData ? (
           <BodySmall className="text-purple_light text-[10px] px-4 py-2.5 mb-1 font-light">
-            Last updated: {activeTab === 0 ? timeAgoWeekly : timeAgoAllTime}
+            Last sync:{' '}
+            {formatDistanceToNowStrict(
+              DateTime.fromMillis(userWeeklyData.pointsUpdatedAt).toISO() || '',
+              { addSuffix: true }
+            )}
           </BodySmall>
+        ) : (
+          userAllTimeData && (
+            <BodySmall className="text-purple_light text-[10px] px-4 py-2.5 mb-1 font-light">
+              Last sync:{' '}
+              {formatDistanceToNowStrict(
+                DateTime.fromMillis(userAllTimeData.pointsUpdatedAt).toISO() ||
+                  '',
+                { addSuffix: true }
+              )}
+            </BodySmall>
+          )
         )}
       </div>
 

@@ -406,13 +406,19 @@ export type PointsChainData = {
   [chainId: string]: number; // Keys are chain IDs (as strings), values are numbers
 };
 
+export type PointsEligibilityData = {
+  [chainId: string]: boolean;
+};
+
 export type PointsResult = {
   points: number;
-  totalGasUsed: number;
+  totalTxFeesUsd: number;
   pointsPerChain: PointsChainData;
   transactionCount: PointsChainData;
-  gasCount: PointsChainData;
   address: string;
+  isDeployPointsEligible: PointsEligibilityData;
+  pointsUpdatedAt: number;
+  txFeesUsd: PointsChainData;
 };
 
 export type PointsResultsData = {

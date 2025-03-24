@@ -13,7 +13,7 @@ import {
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
 
 // utils
-import { convertDateToUnixTimestamp } from '../utils/converters';
+import { convertDateToUnixTimestamp } from '../../../utils/common';
 
 export type TokenAltasState = {
   isSearchTokenModalOpen: boolean;

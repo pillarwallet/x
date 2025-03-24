@@ -36,3 +36,6 @@ export const copyToClipboard = async (text: string, onSuccess?: () => void) => {
     //
   }
 };
+
+export const convertDateToUnixTimestamp = (date: Date): number =>
+  Math.floor(date.getTime() / 1000);
