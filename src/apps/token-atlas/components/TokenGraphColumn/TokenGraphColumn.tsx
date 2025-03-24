@@ -11,10 +11,8 @@ import {
 } from '../../reducer/tokenAtlasSlice';
 
 // utils
-import {
-  convertDateToUnixTimestamp,
-  limitDigits,
-} from '../../utils/converters';
+import { convertDateToUnixTimestamp } from '../../../../utils/common';
+import { limitDigits } from '../../utils/converters';
 
 // types
 import { TokenAtlasInfoData, TokenMarketHistory } from '../../../../types/api';

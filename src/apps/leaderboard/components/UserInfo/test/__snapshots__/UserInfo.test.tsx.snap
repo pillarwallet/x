@@ -131,13 +131,13 @@ exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
   >
     User1
     <div
-      className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-end"
+      className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
     >
       <p
         className="text-sm font-medium text-purple_light"
       />
       <div
-        className="flex gap-2 items-center cursor-pointer self-end"
+        className="flex gap-2 items-center cursor-pointer"
         onClick={[Function]}
       >
         <svg
