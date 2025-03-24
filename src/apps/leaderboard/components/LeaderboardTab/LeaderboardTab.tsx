@@ -128,7 +128,7 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
           onClick={handleLoadMore}
           className="border border-purple_light/[.20] py-3 px-7 rounded-3xl w-fit self-center my-9"
         >
-          Load more...
+          Loading more...
         </div>
       )}
     </>
