@@ -36,9 +36,15 @@ const UserInfo = ({
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 769) {
+      if (window.innerWidth >= 769) {
+        setDisplayWalletAddress(walletAddress);
+      } else if (window.innerWidth < 769 && window.innerWidth >= 530) {
+        setDisplayWalletAddress(truncateAddress(walletAddress, 32));
+      } else if (window.innerWidth < 530 && window.innerWidth >= 410) {
+        setDisplayWalletAddress(truncateAddress(walletAddress, 18));
+      } else if (window.innerWidth < 410) {
         setDisplayWalletAddress(`${walletAddress.slice(0, 6)}...`);
-      } else setDisplayWalletAddress(truncateAddress(walletAddress, 18));
+      }
     };
 
     handleResize();

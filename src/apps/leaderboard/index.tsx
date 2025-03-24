@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { formatDistanceToNowStrict } from 'date-fns';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 
@@ -14,6 +15,7 @@ import { useGetLeaderboardQuery } from './api/leaderboard';
 
 // components
 import SkeletonLoader from '../../components/SkeletonLoader';
+import BodySmall from '../pillarx-app/components/Typography/BodySmall';
 import LeaderboardTab from './components/LeaderboardTab/LeaderboardTab';
 import LeaderboardTabsButton from './components/LeaderboardTabsButton/LeaderboardTabsButton';
 import Body from './components/Typography/Body';
@@ -26,6 +28,18 @@ const App = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [comparisonData, setComparisonData] = useState<WeeklyLeaderboardData[]>(
     []
+  );
+  const [lastFetchedAllTime, setLastFetchedAllTime] = useState<
+    Date | undefined
+  >(undefined);
+  const [lastFetchedWeekly, setLastFetchedWeekly] = useState<Date | undefined>(
+    undefined
+  );
+  const [timeAgoAllTime, setTimeAgoAllTime] = useState<string | undefined>(
+    undefined
+  );
+  const [timeAgoWeekly, setTimeAgoWeekly] = useState<string | undefined>(
+    undefined
   );
 
   const currentMonday = DateTime.now().startOf('week').toUnixInteger();
@@ -130,6 +144,39 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (isSuccessAllTimeData) {
+      setLastFetchedAllTime(new Date());
+    }
+  }, [isSuccessAllTimeData]);
+
+  useEffect(() => {
+    if (isSuccessWeeklyData) {
+      setLastFetchedWeekly(new Date());
+    }
+  }, [isSuccessWeeklyData]);
+
+  // Update the time ago text every minute
+  useEffect(() => {
+    const updateTimes = () => {
+      if (lastFetchedAllTime) {
+        setTimeAgoAllTime(
+          formatDistanceToNowStrict(lastFetchedAllTime, { addSuffix: true })
+        );
+      }
+      if (lastFetchedWeekly) {
+        setTimeAgoWeekly(
+          formatDistanceToNowStrict(lastFetchedWeekly, { addSuffix: true })
+        );
+      }
+    };
+
+    updateTimes();
+    const interval = setInterval(updateTimes, 60000);
+
+    return () => clearInterval(interval);
+  }, [lastFetchedAllTime, lastFetchedWeekly]);
+
   return (
     <Wrapper id="leaderboard-app">
       <img
@@ -137,8 +184,15 @@ const App = () => {
         alt="pillar-x-logo"
         className="w-min object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
       />
+      <div className="flex justify-between items-end">
+        <H1 className="px-4 py-2.5 mb-1">Leaderboard</H1>
+        {(timeAgoAllTime || timeAgoWeekly) && (
+          <BodySmall className="text-purple_light text-[10px] px-4 py-2.5 mb-1 font-light">
+            Last updated: {activeTab === 0 ? timeAgoWeekly : timeAgoAllTime}
+          </BodySmall>
+        )}
+      </div>
 
-      <H1 className="px-4 py-2.5 mb-1">Leaderboard</H1>
       <LeaderboardTabsButton
         tabs={['Weekly', 'All time']}
         activeTab={activeTab}

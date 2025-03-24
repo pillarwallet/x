@@ -1,3 +1,4 @@
+import * as TransactionKit from '@etherspot/transaction-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 
@@ -36,7 +37,20 @@ const mockData: (WeeklyLeaderboardData | PointsResult)[] = Array.from(
   })
 );
 
+const mockWalletAddress = '0xAddress1';
+
 describe('<LeaderboardTab />', () => {
+  beforeEach(() => {
+    // IntersectionObserver isn't available in test environment
+    const mockIntersectionObserver = jest.fn();
+    mockIntersectionObserver.mockReturnValue({
+      observe: () => null,
+      unobserve: () => null,
+      disconnect: () => null,
+    });
+    window.IntersectionObserver = mockIntersectionObserver;
+  });
+
   it('renders correctly and matches snapshot', () => {
     const tree = renderer.create(<LeaderboardTab data={mockData} />).toJSON();
     expect(tree).toMatchSnapshot();
@@ -48,28 +62,59 @@ describe('<LeaderboardTab />', () => {
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(10);
   });
 
-  it('loads more items when clicking "Load more" button', () => {
+  it('loads more items when clicking "Loading more" ', () => {
     render(<LeaderboardTab data={mockData} />);
 
-    const loadMoreButton = screen.getByRole('button', { name: /Load more/i });
-    fireEvent.click(loadMoreButton);
+    const loadMoreDiv = screen.getByText(/Loading more/i);
+    fireEvent.click(loadMoreDiv);
 
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(20);
 
-    fireEvent.click(loadMoreButton);
+    fireEvent.click(loadMoreDiv);
 
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(25);
   });
 
-  it('hides "Load more" button when all items are displayed', () => {
+  it('hides "Loading more" when all items are displayed', () => {
     render(<LeaderboardTab data={mockData} />);
 
-    const loadMoreButton = screen.getByRole('button', { name: /Load more/i });
-    fireEvent.click(loadMoreButton);
-    fireEvent.click(loadMoreButton);
+    const loadMoreDiv = screen.getByText(/Loading more/i);
+    fireEvent.click(loadMoreDiv); // Loading more to 20
+    fireEvent.click(loadMoreDiv); // Loading more to 25
 
-    expect(
-      screen.queryByRole('button', { name: /Load more/i })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Loading more/i)).not.toBeInTheDocument();
+  });
+
+  it('displays "My rank" section if wallet address is in the data', () => {
+    jest
+      .spyOn(TransactionKit, 'useWalletAddress')
+      .mockReturnValue(mockWalletAddress);
+
+    render(<LeaderboardTab data={mockData} />);
+
+    expect(screen.getByText('My rank')).toBeInTheDocument();
+    expect(screen.getByText('PX Points')).toBeInTheDocument();
+    expect(screen.getAllByText('0xAddress1')).toHaveLength(2);
+  });
+
+  it('does not display "My rank" section if wallet address is not in the data', () => {
+    const mockDataWithoutWallet = mockData.filter(
+      (entry) => entry.address !== mockWalletAddress
+    );
+
+    render(<LeaderboardTab data={mockDataWithoutWallet} />);
+
+    expect(screen.queryByText('My rank')).not.toBeInTheDocument();
+  });
+
+  it('hides the "Loading more" when all items are visible and no more data is available', () => {
+    render(<LeaderboardTab data={mockData} />);
+
+    const loadMoreDiv = screen.getByText(/Loading more/i);
+    fireEvent.click(loadMoreDiv);
+    fireEvent.click(loadMoreDiv);
+    fireEvent.click(loadMoreDiv);
+
+    expect(screen.queryByText(/Loading more/i)).not.toBeInTheDocument();
   });
 });
