@@ -31,11 +31,21 @@ const PointsFormattedTimestamp = ({
   return (
     <p
       className="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
-      data-testid="points-fornatted-timestamp"
+      data-testid="points-formatted-timestamp"
     >
-      {days}
-      <span className="text-base">d</span> {hours}
-      <span className="text-base">h</span> {minutes}
+      {days > 0 && (
+        <>
+          {days}
+          <span className="text-base">d</span>{' '}
+        </>
+      )}
+      {hours > 0 && (
+        <>
+          {hours}
+          <span className="text-base">h</span>{' '}
+        </>
+      )}
+      {minutes}
       <span className="text-base">m</span>
     </p>
   );

@@ -61,7 +61,7 @@ describe('<PointsTile />', () => {
     expect(screen.getByText('Share with friends')).toBeInTheDocument();
     expect(screen.getByText('PILLARX123')).toBeInTheDocument();
     expect(
-      screen.getByTestId('points-fornatted-timestamp')
+      screen.getByTestId('points-formatted-timestamp')
     ).toBeInTheDocument();
   });
 
