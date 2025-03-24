@@ -1,10 +1,15 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+
 // hooks
-import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
 import { useAppSelector } from '../../hooks/useReducerHooks';
@@ -13,10 +18,8 @@ import { useAppSelector } from '../../hooks/useReducerHooks';
 import { SwapOffer } from '../../utils/types';
 
 // utils
-import {
-  convertChainIdtoName,
-  formatTokenAmount,
-} from '../../utils/converters';
+import { isApproveTransaction } from '../../../../utils/blockchain';
+import { formatTokenAmount } from '../../utils/converters';
 
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
@@ -25,7 +28,6 @@ import BodySmall from '../Typography/BodySmall';
 import NumberText from '../Typography/NumberText';
 
 // images
-import { isApproveTransaction } from '../../../../utils/blockchain';
 import ArrowRight from '../../images/arrow-right.png';
 
 const ExchangeAction = () => {
@@ -95,9 +97,9 @@ const ExchangeAction = () => {
               bestOffer.offer.transactions[i].data
             ),
             description:
-              `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` ||
+              `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
               '',
-            chainId: swapToken?.chainId || 0,
+            chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
             to: bestOffer.offer.transactions[i].to,
             value: bestOffer.offer.transactions[i].value,
             data: bestOffer.offer.transactions[i].data,
@@ -122,9 +124,9 @@ const ExchangeAction = () => {
                 stepTransactions[i].data?.toString() ?? ''
               ),
               description:
-                `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` ||
+                `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
                 '',
-              chainId: swapToken?.chainId || 0,
+              chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
               to: stepTransactions[i].to || '',
               value: ethers.BigNumber.from(stepTransactions[i].value),
               data: stepTransactions[i].data?.toString() ?? '',
@@ -164,7 +166,7 @@ const ExchangeAction = () => {
           <div className="flex gap-1 items-center">
             <TokenLogo
               tokenName={receiveToken?.name}
-              tokenLogo={receiveToken?.icon}
+              tokenLogo={receiveToken?.logo}
               showLogo={Boolean(receiveToken)}
             />
             <Body className="font-normal">{receiveToken?.symbol ?? ''}</Body>

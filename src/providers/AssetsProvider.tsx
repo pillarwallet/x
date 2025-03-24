@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable react/jsx-no-constructed-context-values */
-import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
 import isEqual from 'lodash/isEqual';
 import React, { createContext, useEffect, useMemo } from 'react';

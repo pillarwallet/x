@@ -1,6 +1,4 @@
-import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { usePrivy } from '@privy-io/react-auth';
-import { ethers } from 'ethers';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import renderer, {
@@ -24,17 +22,23 @@ import AssetsProvider from '../../providers/AssetsProvider';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
+import { PrivateKeyLoginProvider } from '../../providers/PrivateKeyLoginProvider';
 import SelectedChainsHistoryProvider from '../../providers/SelectedChainsHistoryProvider';
 
 // services and store
 import { pillarXApiTransactionsHistory } from '../../services/pillarXApiTransactionsHistory';
 import { addMiddleware, store } from '../../store';
 
-const ethersProvider = new ethers.providers.JsonRpcProvider(
-  'http://localhost:8545',
-  'goerli'
-); // replace with your node's RPC URL
-const provider = ethers.Wallet.createRandom().connect(ethersProvider);
+// TO DO - resolve issue with mock provider
+
+// const randomWallet = privateKeyToAccount(
+//   `0x${crypto.getRandomValues(new Uint8Array(32)).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')}`
+// );
+// const provider = createWalletClient({
+//   account: randomWallet,
+//   chain: goerli,
+//   transport: http('http://localhost:8545'),
+// });
 
 describe('<BottomMenu />', () => {
   let rendered: ReactTestRenderer | null = null;
@@ -52,27 +56,29 @@ describe('<BottomMenu />', () => {
       rendered = renderer.create(
         <Provider store={store}>
           <BrowserRouter>
-            <EtherspotTransactionKit provider={provider}>
-              <AccountTransactionHistoryProvider>
-                <AssetsProvider>
-                  <AccountBalancesProvider>
-                    <AccountNftsProvider>
-                      <ThemeProvider theme={defaultTheme}>
-                        <LanguageProvider>
-                          <GlobalTransactionsBatchProvider>
+            {/* <EtherspotTransactionKit provider={provider}> */}
+            <AccountTransactionHistoryProvider>
+              <AssetsProvider>
+                <AccountBalancesProvider>
+                  <AccountNftsProvider>
+                    <ThemeProvider theme={defaultTheme}>
+                      <LanguageProvider>
+                        <GlobalTransactionsBatchProvider>
+                          <PrivateKeyLoginProvider>
                             <BottomMenuModalProvider>
                               <SelectedChainsHistoryProvider>
                                 <BottomMenu />
                               </SelectedChainsHistoryProvider>
                             </BottomMenuModalProvider>
-                          </GlobalTransactionsBatchProvider>
-                        </LanguageProvider>
-                      </ThemeProvider>
-                    </AccountNftsProvider>
-                  </AccountBalancesProvider>
-                </AssetsProvider>
-              </AccountTransactionHistoryProvider>
-            </EtherspotTransactionKit>
+                          </PrivateKeyLoginProvider>
+                        </GlobalTransactionsBatchProvider>
+                      </LanguageProvider>
+                    </ThemeProvider>
+                  </AccountNftsProvider>
+                </AccountBalancesProvider>
+              </AssetsProvider>
+            </AccountTransactionHistoryProvider>
+            {/* </EtherspotTransactionKit> */}
           </BrowserRouter>
         </Provider>
       );
@@ -103,11 +109,13 @@ describe('<BottomMenu />', () => {
           <ThemeProvider theme={defaultTheme}>
             <LanguageProvider>
               <GlobalTransactionsBatchProvider>
-                <BottomMenuModalProvider>
-                  <SelectedChainsHistoryProvider>
-                    <BottomMenu />
-                  </SelectedChainsHistoryProvider>
-                </BottomMenuModalProvider>
+                <PrivateKeyLoginProvider>
+                  <BottomMenuModalProvider>
+                    <SelectedChainsHistoryProvider>
+                      <BottomMenu />
+                    </SelectedChainsHistoryProvider>
+                  </BottomMenuModalProvider>
+                </PrivateKeyLoginProvider>
               </GlobalTransactionsBatchProvider>
             </LanguageProvider>
           </ThemeProvider>

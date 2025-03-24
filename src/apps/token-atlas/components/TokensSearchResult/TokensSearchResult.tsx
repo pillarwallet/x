@@ -1,5 +1,5 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FixedSizeList as List } from 'react-window';
 
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
@@ -12,12 +12,18 @@ import {
   setSelectedToken,
 } from '../../reducer/tokenAtlasSlice';
 
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+
 // types
 import { ChainType } from '../../types/types';
 
 // components
-import TokenResultCard from '../TokenResultCard/TokenResultCard';
 import Body from '../Typography/Body';
+import TokenRow from './TokenRow';
 
 const TokensSearchResult = () => {
   const dispatch = useAppDispatch();
@@ -35,20 +41,31 @@ const TokensSearchResult = () => {
 
   // if there are no tokens being typed searched, we show the token list of tokens
   // which will filter if a chain has been chosen
-  let tokenList;
+  let tokenList: Token[];
 
   if (searchTokenResult.length) {
     tokenList = searchTokenResult;
   } else if (selectedChain.chainId !== 0) {
     tokenList = tokenListData.filter(
-      (token) => token.chainId === selectedChain.chainId
+      (token) =>
+        chainNameToChainIdTokensData(token.blockchain) === selectedChain.chainId
     );
   } else {
     tokenList = tokenListData;
   }
 
   const handleChooseToken = (token: Token) => {
-    dispatch(setSelectedToken(token));
+    dispatch(
+      setSelectedToken({
+        id: token.id,
+        symbol: token.symbol,
+        address: token.contract,
+        decimals: token.decimals,
+        chainId: chainNameToChainIdTokensData(token.blockchain),
+        name: token.name,
+        icon: token.logo,
+      })
+    );
     dispatch(setIsSearchTokenModalOpen(false));
     dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
     dispatch(setSearchTokenResult([]));
@@ -60,23 +77,20 @@ const TokensSearchResult = () => {
   return (
     <div id="token-atlas-token-search-result" className="flex flex-col w-full">
       <Body className="text-white_light_grey mb-4">Search tokens</Body>
-      <div className="flex flex-col gap-4 max-h-[250px] overflow-auto">
-        {!tokenList.length && (
-          <Body className="text-base">No tokens found.</Body>
-        )}
-        {tokenList.map((token, index) => (
-          <TokenResultCard
-            key={index}
-            onClick={() => handleChooseToken(token)}
-            tokenName={token.name}
-            tokenSymbol={token.symbol}
-            tokenChain={token.chainId}
-            tokenLogo={token.icon}
-          />
-        ))}
-      </div>
+      {tokenList.length === 0 ? (
+        <Body className="text-base">No tokens found.</Body>
+      ) : (
+        <List
+          height={250}
+          itemCount={tokenList.length}
+          itemSize={60}
+          width="100%"
+          itemData={{ tokenList, handleChooseToken }}
+        >
+          {TokenRow}
+        </List>
+      )}
     </div>
   );
 };
-
 export default TokensSearchResult;

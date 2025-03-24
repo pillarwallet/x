@@ -25,29 +25,74 @@ import {
 } from '../../../reducer/theExchangeSlice';
 
 // types
+import { Token } from '../../../../../services/tokensData';
 import { CardPosition } from '../../../utils/types';
 
 // components
 import DropdownTokenList from '../DropdownTokenList';
 
-const mockTokenAssets = [
+const mockTokenAssets: Token[] = [
   {
-    address: '0x01',
+    id: 1,
+    contract: '0x01',
     name: 'Ether',
     symbol: 'ETH',
-    chainId: 1,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconEth.png',
+    logo: 'iconEth.png',
   },
   {
-    address: '0x02',
+    id: 2,
+    contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    chainId: 137,
+    blockchain: 'Polygon',
     decimals: 18,
-    icon: 'iconMatic.png',
+    logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameToChainIdTokensData: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainIdMap = {
+        Ethereum: 1,
+        Polygon: 137,
+      } as const;
+
+      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
+    }),
+  queryTokenData: jest.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+    },
+  ]),
+  searchTokens: jest.fn().mockImplementation((query) => {
+    return [
+      { id: 1, name: 'Ether', symbol: 'ETH' },
+      { id: 2, name: 'Polygon', symbol: 'POL' },
+    ].filter(
+      (token) => token.name.includes(query) || token.symbol.includes(query)
+    );
+  }),
+}));
 
 describe('<DropdownTokenList />', () => {
   beforeEach(() => {
@@ -130,7 +175,7 @@ describe('<DropdownTokenList />', () => {
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[0]);
     expect(store.getState().swap.swapChain).toEqual({
       chainId: 1,
-      chainName: '1',
+      chainName: 'Ethereum',
     });
     expect(store.getState().swap.isSwapOpen).toBe(false);
   });
@@ -163,7 +208,7 @@ describe('<DropdownTokenList />', () => {
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[1]);
     expect(store.getState().swap.receiveChain).toEqual({
       chainId: 137,
-      chainName: '137',
+      chainName: 'Polygon',
     });
     expect(store.getState().swap.isReceiveOpen).toBe(false);
   });

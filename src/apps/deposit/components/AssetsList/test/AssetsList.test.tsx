@@ -5,8 +5,8 @@ import renderer from 'react-test-renderer';
 import { store } from '../../../../../store';
 import AssetsList from '../AssetsList';
 
-const mockAccountAddress = '0x123';
-const mockChainId = 1;
+const mockAccountAddress = '0xD6DF932A45C0f255f85145f286eA0b292B21C90B';
+const mockChainId = 137;
 
 describe('<AssetsList />', () => {
   it('renders correctly and matches snapshot', () => {

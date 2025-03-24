@@ -1,9 +1,8 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
-
 // hooks
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
+import { Token } from '../../../../services/tokensData';
 import { SwapOffer } from '../../utils/types';
 
 // utils

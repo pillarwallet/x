@@ -10,6 +10,7 @@ import './styles/tailwindPillarX.css';
 import { Projection, WalletData } from '../../types/api';
 
 // hooks
+import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
 import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
 import { useGetTilesInfoQuery, useGetWalletInfoQuery } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
@@ -44,6 +45,13 @@ const App = () => {
   const scrollPositionRef = useRef<number>(0);
   const divRef = createRef<HTMLDivElement>();
   const dimensions = useRefDimensions(divRef);
+
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on when the Home feed page is displaying
+   */
+  const [recordPresence] = useRecordPresenceMutation();
 
   // The API calls below will not fire if there is no walletAddress
   const {
@@ -108,6 +116,13 @@ const App = () => {
         });
         return newApiData;
       });
+      recordPresence({
+        address: walletAddress,
+        action: 'app:feed:navigate',
+        value: {
+          pageNumber: page,
+        },
+      });
       setIsLoadingNextPage(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,7 +178,12 @@ const App = () => {
 
       if (TileComponent) {
         allTileComponents.push(
-          <AnimatedTile key={tileData.id} isDataLoading={isHomeFeedLoading}>
+          <AnimatedTile
+            key={tileData.id}
+            isDataLoading={isHomeFeedLoading}
+            data={tileData}
+            accountAddress={walletAddress}
+          >
             <TileComponent
               key={index}
               data={tileData}
@@ -175,7 +195,7 @@ const App = () => {
     }
 
     return allTileComponents;
-  }, [pageData, isHomeFeedLoading]);
+  }, [pageData, isHomeFeedLoading, walletAddress]);
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define

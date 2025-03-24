@@ -1,9 +1,9 @@
-import {
-  Nft,
-  NftCollection,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+/* eslint-disable no-restricted-syntax */
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { ethers } from 'ethers';
+import * as all from 'viem/chains';
 import {
   avalanche,
   base,
@@ -22,6 +22,14 @@ import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
+
+export const isTestnet = (() => {
+  const storedIsTestnet = localStorage.getItem('isTestnet');
+  if (storedIsTestnet === null || storedIsTestnet === undefined) {
+    return process.env.REACT_APP_USE_TESTNETS === 'true';
+  }
+  return storedIsTestnet === 'true';
+})();
 
 export const isValidEthereumAddress = (
   address: string | undefined
@@ -118,7 +126,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
 export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
 
 export const visibleChains = supportedChains.filter((chain) =>
-  process.env.REACT_APP_USE_TESTNETS === 'true' ? chain.testnet : !chain.testnet
+  isTestnet ? chain.testnet : !chain.testnet
 );
 
 export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
@@ -225,3 +233,14 @@ export const CompatibleChains = [
     chainName: 'Gnosis',
   },
 ];
+
+export const convertChainIdtoName = (chainId: number) => {
+  const { ...chains } = all;
+  for (const chain of Object.values(chains)) {
+    if (chain.id === chainId) {
+      return chain.name;
+    }
+  }
+
+  return `${chainId}`;
+};

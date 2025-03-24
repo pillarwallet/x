@@ -20,6 +20,9 @@ import {
 // hooks
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
+// utils
+import { getNativeAssetForChainId } from '../../utils/blockchain';
+
 // types
 import { TokenPriceGraphPeriod } from '../../types/api';
 import { SelectedTokenType } from './types/types';
@@ -31,6 +34,7 @@ import TokenGraphColumn from './components/TokenGraphColumn/TokenGraphColumn';
 import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
 
 const defaultToken = {
+  id: 102502677,
   symbol: 'PLR',
   address: '',
   decimals: 18,
@@ -57,14 +61,33 @@ export const App = () => {
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
   );
+
+  const formattedNativeToken = {
+    address: selectedToken.address,
+    chainId: selectedToken.chainId,
+    name: selectedToken.name,
+    symbol: selectedToken.symbol,
+    decimals: selectedToken.decimals,
+    logoURI: selectedToken.icon,
+  };
+
+  const nativeToken = getNativeAssetForChainId(selectedToken.chainId || 0);
+
+  const isNativeToken =
+    nativeToken.name === formattedNativeToken.name &&
+    nativeToken.symbol === formattedNativeToken.symbol &&
+    nativeToken.address === formattedNativeToken.address;
+
   const {
     data: tokenData,
     isLoading: isLoadingTokenDataInfo,
     isFetching: isFetchingTokenDataInfo,
     isSuccess: isSuccessTokenDataInfo,
   } = useGetTokenInfoQuery({
-    blockchain: `${selectedToken.chainId}`,
-    asset: selectedToken.name || selectedToken.address,
+    id: isNativeToken ? undefined : selectedToken.id,
+    asset: isNativeToken
+      ? undefined
+      : selectedToken.name || selectedToken.address,
     symbol: selectedToken.symbol,
   });
   const {
@@ -73,7 +96,11 @@ export const App = () => {
     isFetching: isFetchingTokenDataGraph,
     isSuccess: isSuccessTokenDataGraph,
   } = useGetTokenGraphQuery({
-    asset: selectedToken.name || selectedToken.address,
+    id: isNativeToken ? undefined : selectedToken.id,
+    asset: isNativeToken
+      ? undefined
+      : selectedToken.name || selectedToken.address,
+    symbol: selectedToken.symbol,
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
   });
@@ -81,6 +108,7 @@ export const App = () => {
   // This is to query the API when tokens are being clicked from the home feed
   const query = new URLSearchParams(window.location.search);
 
+  const id = query.get('id');
   const asset = query.get('asset');
   const symbol = query.get('symbol');
 
@@ -89,6 +117,7 @@ export const App = () => {
     if (asset || symbol) {
       dispatch(
         setSelectedToken({
+          id: Number(id),
           symbol: symbol || '',
           address: '',
           decimals: undefined,

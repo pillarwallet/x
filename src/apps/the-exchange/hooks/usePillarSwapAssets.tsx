@@ -1,30 +1,25 @@
-import {
-  BridgingProvider,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { BridgingProvider } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import { useEtherspotAssets } from '@etherspot/transaction-kit';
+import {
+  Token,
+  chainIdToChainNameTokensData,
+  queryTokenData,
+} from '../../../services/tokensData';
 
 // hooks
-import useAssets from '../../../hooks/useAssets';
-
-type PillarSwapToken = {
-  address: string;
-  name: string;
-  symbol: string;
-  chainId: number;
-  decimals: number;
-  icon: string;
-};
 
 const usePillarSwapAssets = (chainId?: number) => {
   const { getSupportedAssets } = useEtherspotAssets(chainId);
-  const assets = useAssets();
+
+  const assets = queryTokenData({
+    blockchain: chainIdToChainNameTokensData(chainId),
+  });
 
   const getPillarSwapAssets = async (
     assetChainId?: number,
     bridgingProvider?: BridgingProvider
-  ): Promise<PillarSwapToken[]> => {
-    let pillarSwapAssets: PillarSwapToken[] = [];
+  ): Promise<Token[]> => {
+    let pillarSwapAssets: Token[] = [];
     try {
       // TO DO - add supported Assets when ready
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,15 +27,16 @@ const usePillarSwapAssets = (chainId?: number) => {
         assetChainId,
         bridgingProvider
       );
-      const nativeAssets = Object.values(assets).flat() as TokenListToken[];
+      const nativeAssets = Object.values(assets).flat();
 
       const mappedAssets = nativeAssets.map((asset) => ({
-        address: asset.address,
+        id: asset.id,
         name: asset.name,
         symbol: asset.symbol,
-        chainId: asset.chainId,
+        logo: asset.logo,
+        blockchain: asset.blockchain,
+        contract: asset.contract,
         decimals: asset.decimals,
-        icon: asset.logoURI,
       }));
 
       // TO DO - add supported Assets when ready

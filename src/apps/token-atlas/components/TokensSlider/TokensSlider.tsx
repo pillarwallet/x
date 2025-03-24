@@ -92,6 +92,7 @@ const TokensSlider = () => {
 
   const handleChooseToken = (token: TokenData) => {
     const tokenData: SelectedTokenType = {
+      id: token.id || 0,
       symbol: token.symbol || '',
       address: '',
       decimals: undefined,
@@ -142,7 +143,7 @@ const TokensSlider = () => {
               const blockchain = blockchainList.find(
                 (chain) =>
                   chain.name.toLowerCase() ===
-                  token.contracts?.[0].blockchain.toLowerCase()
+                  token.contracts?.[0]?.blockchain?.toLowerCase()
               );
               const blockchainLogo = blockchain ? blockchain.logo : undefined;
               return (

@@ -6,9 +6,12 @@ import { TextDecoder, TextEncoder } from 'util';
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import * as TransactionKit from '@etherspot/transaction-kit';
 import '@testing-library/jest-dom';
+import { BigNumber } from 'ethers';
 import 'jest-styled-components';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { goerli } from 'viem/chains';
 
 // mocking matchMedia for slick carousel
 Object.defineProperty(window, 'matchMedia', {
@@ -31,7 +34,8 @@ Object.assign(global, { TextDecoder, TextEncoder });
 jest.mock('@firebase/app');
 jest.mock('@firebase/analytics');
 jest.mock('axios');
-jest.mock('@etherspot/prime-sdk');
+jest.mock('@etherspot/data-utils');
+jest.mock('@etherspot/modular-sdk');
 
 jest.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -94,39 +98,72 @@ export const etherspotTestSupportedAssets = [
   },
 ];
 
-jest.spyOn(TransactionKit, 'useEtherspotAssets').mockReturnValue({
-  getAssets: async () => etherspotTestAssets,
-  getSupportedAssets: async () => etherspotTestSupportedAssets,
+const randomWallet = privateKeyToAccount(
+  `0x${crypto.getRandomValues(new Uint8Array(32)).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '')}`
+);
+const provider = createWalletClient({
+  account: randomWallet,
+  chain: goerli,
+  transport: http('http://localhost:8545'),
 });
 
-jest
-  .spyOn(TransactionKit, 'useWalletAddress')
-  .mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
+jest.mock('@etherspot/transaction-kit', () => ({
+  useEtherspotAssets: jest.fn().mockReturnValue({
+    getAssets: async () => etherspotTestAssets,
+    getSupportedAssets: async () => etherspotTestSupportedAssets,
+  }),
+  useWalletAddress: jest
+    .fn()
+    .mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347'),
+  useEtherspotTransactions: jest.fn().mockReturnValue({
+    chainId: 1,
+    batches: [],
+    estimate: async () => [],
+    send: async () => [
+      {
+        sentBatches: [{ userOpHash: '0x123' }],
+        estimatedBatches: [],
+        batches: [],
+      },
+    ],
+    isEstimating: false,
+    isSending: false,
+    containsEstimatingError: false,
+    containsSendingError: false,
+  }),
+  useEtherspotBalances: jest.fn().mockReturnValue({
+    getAccountBalances: async () => [],
+  }),
+  useEtherspotPrices: jest.fn().mockReturnValue({
+    getPrice: async () => undefined,
+    getPrices: async () => [],
+  }),
 
-jest.spyOn(TransactionKit, 'useEtherspotTransactions').mockReturnValue({
-  chainId: 1,
-  batches: [],
-  estimate: async () => [],
-  send: async () => [
-    {
-      sentBatches: [{ userOpHash: '0x123' }],
-      estimatedBatches: [],
-      batches: [],
-    },
-  ],
-  isEstimating: false,
-  isSending: false,
-  containsEstimatingError: false,
-  containsSendingError: false,
-});
+  useEtherspotHistory: jest.fn().mockReturnValue({
+    getAccountTransactions: async () => [],
+    getAccountTransaction: async () => undefined,
+    getAccountTransactionStatus: async () => undefined,
+  }),
 
-jest.spyOn(TransactionKit, 'useEtherspotBalances').mockReturnValue({
-  getAccountBalances: async () => [],
-});
+  useEtherspotNfts: jest.fn().mockReturnValue({
+    getAccountNfts: async () => [],
+  }),
 
-jest.spyOn(TransactionKit, 'useEtherspotPrices').mockReturnValue({
-  getPrice: async () => undefined,
-  getPrices: async () => [],
-});
+  useEtherspot: jest.fn().mockReturnValue({
+    getSdk: async () => {},
+    getDataService: () => {},
+    provider,
+    chainId: 1,
+  }),
+
+  useEtherspotUtils: jest.fn().mockReturnValue({
+    checksumAddress: () => '0x7F30B1960D5556929B03a0339814fE903c55a347',
+    verifyEip1271Message: async () => false,
+    toBigNumber: () => BigNumber.from('1'),
+    parseBigNumber: () => '0x123',
+    isZeroAddress: () => false,
+    addressesEqual: () => true,
+  }),
+}));
 
 process.env.REACT_APP_PRIVY_APP_ID = 'test';

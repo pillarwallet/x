@@ -1,6 +1,6 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useState } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
@@ -16,19 +16,22 @@ import {
   setSwapToken,
 } from '../../reducer/theExchangeSlice';
 
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
 import { CardPosition, ChainType } from '../../utils/types';
 
-// utils
-import { convertChainIdtoName } from '../../utils/converters';
-
 // components
 import SelectDropdown from '../SelectDropdown/SelectDropdown';
-import TokenListItem from '../TokenListItem/TokenListItem';
 import TokenSearchInput from '../TokenSearchInput/TokenSearchInput';
+import TokenRow from './TokenRow';
 
 // images
 import CloseIcon from '../../images/add.png';
@@ -79,13 +82,19 @@ const DropdownTokenList = ({
     useState<boolean>(false);
 
   // select all chainsId of tokens available in the list for swap token
-  const allChainsSwap = swapTokenData?.map((chain) => chain.chainId);
+  const allChainsSwap =
+    swapTokenData
+      ?.map((chain) => chain.blockchain)
+      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
   const uniqueChainsSwap = allChainsSwap.filter((chain, index) => {
     return allChainsSwap.indexOf(chain) === index;
   });
 
   // select all chainsId of tokens available in the list for receive token
-  const allChainsReceive = receiveTokenData?.map((chain) => chain.chainId);
+  const allChainsReceive =
+    receiveTokenData
+      ?.map((chain) => chain.blockchain)
+      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
   const uniqueChainsReceive = allChainsReceive.filter((chain, index) => {
     return allChainsReceive.indexOf(chain) === index;
   });
@@ -98,7 +107,8 @@ const DropdownTokenList = ({
     swapTokenList = searchTokenResult;
   } else if (swapChain?.chainId) {
     swapTokenList = swapTokenData.filter(
-      (token) => token.chainId === swapChain.chainId
+      (token) =>
+        chainNameToChainIdTokensData(token.blockchain) === swapChain.chainId
     );
   } else {
     swapTokenList = swapTokenData;
@@ -112,7 +122,8 @@ const DropdownTokenList = ({
     receiveTokenList = searchTokenResult;
   } else if (receiveChain?.chainId) {
     receiveTokenList = receiveTokenData.filter(
-      (token) => token.chainId === receiveChain.chainId
+      (token) =>
+        chainNameToChainIdTokensData(token.blockchain) === receiveChain.chainId
     );
   } else {
     receiveTokenList = receiveTokenData;
@@ -165,79 +176,72 @@ const DropdownTokenList = ({
           id="token-list-exchange"
           className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
-          {isSwapOpen
-            ? swapTokenList
-                .filter(
-                  (token) =>
-                    token.chainId !== receiveToken?.chainId ||
-                    token.address !== receiveToken?.address
-                )
-                .map((token, index) => (
-                  <TokenListItem
-                    key={index}
-                    onClick={() => {
-                      dispatch(setSwapToken(token));
-                      dispatch(
-                        setSwapChain({
-                          chainId: token.chainId,
-                          chainName: convertChainIdtoName(token.chainId),
-                        })
-                      );
-                      recordPresence({
-                        address: accountAddress,
-                        action: 'app:theExchange:sourceTokenSelect',
-                        value: {
-                          chainId: token.chainId,
-                          address: token.address,
-                          symbol: token.symbol,
-                          name: token.name,
-                        },
-                      });
-                      dispatch(setSearchTokenResult([]));
-                      dispatch(setIsSwapOpen(false));
-                    }}
-                    tokenName={token.name}
-                    tokenSymbol={token.symbol}
-                    chainName={convertChainIdtoName(token.chainId)}
-                    tokenLogo={token.icon}
-                  />
-                ))
-            : receiveTokenList
-                .filter(
-                  (token) =>
-                    token.chainId !== swapToken?.chainId ||
-                    token.address !== swapToken?.address
-                )
-                .map((token, index) => (
-                  <TokenListItem
-                    key={index}
-                    onClick={() => {
-                      dispatch(setReceiveToken(token));
-                      dispatch(
-                        setReceiveChain({
-                          chainId: token.chainId,
-                          chainName: convertChainIdtoName(token.chainId),
-                        })
-                      );
-                      recordPresence({
-                        address: accountAddress,
-                        action: 'app:theExchange:destinationTokenSelect',
-                        value: {
-                          chainId: token.chainId,
-                          address: token.address,
-                          symbol: token.symbol,
-                          name: token.name,
-                        },
-                      });
-                      dispatch(setSearchTokenResult([]));
-                      dispatch(setIsReceiveOpen(false));
-                    }}
-                    tokenName={token.name}
-                    tokenSymbol={token.symbol}
-                    chainName={convertChainIdtoName(token.chainId)}
-                    tokenLogo={token.icon}
-                  />
-                ))}
+          <List
+            height={272}
+            itemCount={
+              isSwapOpen ? swapTokenList.length : receiveTokenList.length
+            }
+            itemSize={73}
+            width="100%"
+            itemData={{
+              tokenList: isSwapOpen
+                ? swapTokenList.filter(
+                    (token) =>
+                      token.blockchain !== receiveToken?.blockchain ||
+                      token.contract !== receiveToken?.contract
+                  )
+                : receiveTokenList.filter(
+                    (token) =>
+                      token.blockchain !== swapToken?.blockchain ||
+                      token.contract !== swapToken?.contract
+                  ),
+              handleClick: (token: Token) => {
+                if (isSwapOpen) {
+                  dispatch(setSwapToken(token));
+                  dispatch(
+                    setSwapChain({
+                      chainId: chainNameToChainIdTokensData(token.blockchain),
+                      chainName: token.blockchain,
+                    })
+                  );
+                  recordPresence({
+                    address: accountAddress,
+                    action: 'app:theExchange:sourceTokenSelect',
+                    value: {
+                      chainId: chainNameToChainIdTokensData(token.blockchain),
+                      address: token.contract,
+                      symbol: token.symbol,
+                      name: token.name,
+                    },
+                  });
+                  dispatch(setSearchTokenResult([]));
+                  dispatch(setIsSwapOpen(false));
+                } else {
+                  dispatch(setReceiveToken(token));
+                  dispatch(
+                    setReceiveChain({
+                      chainId: chainNameToChainIdTokensData(token.blockchain),
+                      chainName: token.blockchain,
+                    })
+                  );
+                  recordPresence({
+                    address: accountAddress,
+                    action: 'app:theExchange:destinationTokenSelect',
+                    value: {
+                      chainId: chainNameToChainIdTokensData(token.blockchain),
+                      address: token.contract,
+                      symbol: token.symbol,
+                      name: token.name,
+                    },
+                  });
+                  dispatch(setSearchTokenResult([]));
+                  dispatch(setIsReceiveOpen(false));
+                }
+              },
+            }}
+          >
+            {TokenRow}
+          </List>
         </div>
       </div>
     </>

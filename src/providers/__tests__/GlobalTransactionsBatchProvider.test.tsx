@@ -10,9 +10,9 @@ import GlobalTransactionsBatchProvider, {
 import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
 
 const mockBlockTransaction: IGlobalBatchTransaction = {
-  to: '0x123',
+  to: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
   title: 'test',
-  chainId: 1,
+  chainId: 137,
 };
 
 describe('GlobalTransactionsBatchProvider', () => {

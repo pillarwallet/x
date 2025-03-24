@@ -18,7 +18,7 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -29,6 +29,10 @@ import Label from '../../Form/Label';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
+
+// providers
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
@@ -74,7 +78,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const { isZeroAddress } = useEtherspotUtils();
   const { getPrices } = useEtherspotPrices();
   const { chainId: etherspotDefaultChainId } = useEtherspot();
-  const { send, estimate, batches } = useEtherspotTransactions();
+  const { send, batches } = useEtherspotTransactions();
   const [isAmountInputAsFiat, setIsAmountInputAsFiat] =
     React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
@@ -85,11 +89,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     React.useState<string>('');
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
-  const { addToBatch } = useGlobalTransactionsBatch();
+  const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
   const accountBalances = useAccountBalances();
-  const { hide, showHistory, showBatchSendModal, setShowBatchSendModal } =
-    useBottomMenuModal();
+  const { getTransactionHash } = useEtherspotTransactions();
+  const {
+    hide,
+    showHistory,
+    showBatchSendModal,
+    setShowBatchSendModal,
+    setWalletConnectPayload,
+  } = useBottomMenuModal();
+  const contextNfts = useContext(AccountNftsContext);
+  const contextBalances = useContext(AccountBalancesContext);
+
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -97,14 +110,26 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
+  useEffect(() => {
+    if (!isSending) {
+      contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
+    }
+
+    if (isSending) {
+      contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
+    }
+  }, [contextNfts?.data, contextBalances?.data, isSending]);
+
   const selectedAssetBalance = React.useMemo(() => {
     if (!selectedAsset || selectedAsset.type !== 'token') return 0;
     const assetBalance = accountBalances?.[selectedAsset.chainId]?.[
       accountAddress as string
     ]?.find(
       (b) =>
-        (b.token === null && isZeroAddress(selectedAsset.asset.address)) ||
-        addressesEqual(b.token, selectedAsset.asset.address)
+        (b.token === null && isZeroAddress(selectedAsset.asset.contract)) ||
+        addressesEqual(b.token, selectedAsset.asset.contract)
     )?.balance;
     return assetBalance
       ? +ethers.utils.formatUnits(assetBalance, selectedAsset.asset.decimals)
@@ -120,7 +145,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     (async () => {
       if (selectedAsset.type !== 'token') return;
       const [priceNative, priceSelected] = await getPrices(
-        [ethers.constants.AddressZero, selectedAsset.asset.address],
+        [ethers.constants.AddressZero, selectedAsset.asset.contract],
         selectedAsset.chainId
       );
       if (expired) return;
@@ -204,13 +229,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       return;
     }
 
-    const estimated = await estimate();
+    const sent = await send();
 
-    const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
+    const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
     if (estimatedCostBN) {
       const nativeAsset = getNativeAssetForChainId(
-        estimated[0].estimatedBatches[0].chainId as number
+        sent[0].estimatedBatches[0].chainId as number
       );
       const estimatedCost = ethers.utils.formatUnits(
         estimatedCostBN,
@@ -221,11 +246,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
       );
     } else {
-      console.warn('Unable to get estimated cost', estimated);
+      console.warn('Unable to get estimated cost', sent);
     }
 
     const estimationErrorMessage =
-      estimated?.[0]?.estimatedBatches?.[0]?.errorMessage;
+      sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
       setErrorMessage(estimationErrorMessage);
       setIsSending(false);
@@ -256,8 +281,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       },
     });
 
-    const sent = await send();
-
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
       setErrorMessage(sendingErrorMessage);
@@ -266,6 +289,31 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     }
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
+
+    const userOpChainId = sent?.[0]?.sentBatches[0]?.chainId;
+
+    const chainIdForTxHash =
+      (payload && 'transaction' in payload && payload.transaction.chainId) ||
+      userOpChainId ||
+      etherspotDefaultChainId;
+
+    if (newUserOpHash) {
+      if (
+        payload?.title === 'WalletConnect Approval Request' ||
+        payload?.title === 'WalletConnect Transaction Request'
+      ) {
+        const txHash = await getTransactionHash(
+          newUserOpHash,
+          chainIdForTxHash
+        );
+        if (!txHash) {
+          setWalletConnectTxHash(undefined);
+        } else {
+          setWalletConnectTxHash(txHash);
+        }
+      }
+    }
+
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending(false);
@@ -331,6 +379,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (payload) hide();
   };
 
+  const onCancel = () => {
+    setRecipient('');
+    setSelectedAsset(undefined);
+    setAmount('');
+    setSafetyWarningMessage('');
+    setErrorMessage('');
+    setIsSending(false);
+
+    if (payload) {
+      setWalletConnectPayload(undefined);
+      hide();
+    }
+  };
+
   const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
 
   // throw error if both transaction and batches are present in send modal invoked outside menu
@@ -363,6 +425,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setSelectedAsset(undefined);
     setAmount('');
     setRecipient('');
+  };
+
+  const transferFromAbi = {
+    inputs: [
+      { internalType: 'address', name: 'from', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
+      { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   };
 
   if (payload) {
@@ -412,6 +486,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           errorMessage={errorMessage}
           estimatedCostFormatted={estimatedCostFormatted}
           onAddToBatch={onAddToBatch}
+          allowBatching={!payload.title.includes('WalletConnect')}
+          onCancel={
+            !payload.title.includes('WalletConnect') ? undefined : onCancel
+          }
         />
       </>
     );
@@ -507,9 +585,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               <EtherspotContractTransaction
                 contractAddress={selectedAsset.collection.contractAddress}
                 methodName="transferFrom"
-                abi={[
-                  'function transferFrom(address from, address to, uint256 tokenId) external',
-                ]}
+                abi={[transferFromAbi]}
                 params={[
                   accountAddress as string,
                   recipient,
@@ -519,9 +595,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             )}
             {selectedAsset?.type === 'token' && (
               <>
-                {(isZeroAddress(selectedAsset.asset.address) ||
+                {(isZeroAddress(selectedAsset.asset.contract) ||
                   isPolygonAssetNative(
-                    selectedAsset.asset.address,
+                    selectedAsset.asset.contract,
                     selectedAsset.chainId
                   )) && (
                   <EtherspotTransaction
@@ -533,14 +609,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                     )}
                   />
                 )}
-                {!isZeroAddress(selectedAsset.asset.address) &&
+                {!isZeroAddress(selectedAsset.asset.contract) &&
                   !isPolygonAssetNative(
-                    selectedAsset.asset.address,
+                    selectedAsset.asset.contract,
                     selectedAsset.chainId
                   ) && (
                     <EtherspotTokenTransferTransaction
                       receiverAddress={recipient}
-                      tokenAddress={selectedAsset.asset.address}
+                      tokenAddress={selectedAsset.asset.contract}
                       value={formatAmountDisplay(
                         assetValueToSend,
                         0,

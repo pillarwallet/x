@@ -1,6 +1,4 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import Fuse from 'fuse.js';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -12,6 +10,12 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
 import { setSearchTokenResult } from '../../reducer/tokenAtlasSlice';
+
+// services
+import {
+  chainNameToChainIdTokensData,
+  searchTokens,
+} from '../../../../services/tokensData';
 
 // types
 import { ChainType } from '../../types/types';
@@ -36,28 +40,23 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   const selectedChain = useAppSelector(
     (state) => state.tokenAtlas.selectedChain as ChainType
   );
-  const tokenListData = useAppSelector(
-    (state) => state.tokenAtlas.tokenListData as Token[]
-  );
 
   // The searchTokens will look for tokens close to the name or chain id being typed on filtered or all supported chains
-  const searchTokens = (tokenSearch: string) => {
-    const options = {
-      includeScore: true,
-      // Search in `chainId` and in `name`
-      keys: ['chainId', 'name'],
-    };
-    const fuse = new Fuse(tokenListData, options);
-    const result = fuse.search(tokenSearch);
+  const searchTokensData = (tokenSearch: string) => {
+    const result = searchTokens(tokenSearch);
 
     if (selectedChain.chainId === 0) {
-      dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)));
+      dispatch(setSearchTokenResult(result.map((tokens) => tokens)));
     } else {
       dispatch(
         setSearchTokenResult(
           result
-            .filter((tokens) => tokens.item.chainId === selectedChain.chainId)
-            .map((tokens) => tokens.item)
+            .filter(
+              (tokens) =>
+                chainNameToChainIdTokensData(tokens.blockchain) ===
+                selectedChain.chainId
+            )
+            .map((tokens) => tokens)
         )
       );
     }
@@ -75,7 +74,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   }, 1000);
 
   useEffect(() => {
-    searchTokens(value);
+    searchTokensData(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChain]);
 
@@ -92,7 +91,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value;
     setValue(searchValue);
-    searchTokens(searchValue);
+    searchTokensData(searchValue);
   };
 
   return (

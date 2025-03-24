@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { WalletProviderLike } from '@etherspot/prime-sdk';
 import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import { WalletClient } from 'viem';
 
 // components
 import BottomMenu from '../components/BottomMenu';
+import Loading from '../pages/Loading';
 
 // providers
 import AccountBalancesProvider from '../providers/AccountBalancesProvider';
@@ -15,6 +17,8 @@ import AssetsProvider from '../providers/AssetsProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
+import { WalletConnectModalProvider } from '../providers/WalletConnectModalProvider';
+import { WalletConnectToastProvider } from '../providers/WalletConnectToastProvider';
 
 /**
  * @name Authorized
@@ -26,9 +30,23 @@ export default function Authorized({
   provider,
   chainId,
 }: {
-  provider: WalletProviderLike;
+  provider: WalletClient;
   chainId: number;
 }) {
+  const [showAnimation, setShowAnimation] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showAnimation) {
+    return <Loading type="enter" />;
+  }
+
   return (
     <EtherspotTransactionKit
       provider={provider}
@@ -45,10 +63,14 @@ export default function Authorized({
               <GlobalTransactionBatchesProvider>
                 <BottomMenuModalProvider>
                   <SelectedChainsHistoryProvider>
-                    <AuthContentWrapper>
-                      <Outlet />
-                    </AuthContentWrapper>
-                    <BottomMenu />
+                    <WalletConnectToastProvider>
+                      <WalletConnectModalProvider>
+                        <AuthContentWrapper>
+                          <Outlet />
+                        </AuthContentWrapper>
+                        <BottomMenu />
+                      </WalletConnectModalProvider>
+                    </WalletConnectToastProvider>
                   </SelectedChainsHistoryProvider>
                 </BottomMenuModalProvider>
               </GlobalTransactionBatchesProvider>

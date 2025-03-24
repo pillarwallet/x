@@ -9,8 +9,10 @@ import {
   setSwapTokenData,
 } from '../../reducer/theExchangeSlice';
 
+// services
+import { queryTokenData } from '../../../../services/tokensData';
+
 // hooks
-import usePillarSwapAssets from '../../hooks/usePillarSwapAssets';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -37,8 +39,6 @@ const CardsSwap = () => {
     (state) => state.swap.isReceiveOpen as boolean
   );
 
-  const { getPillarSwapAssets } = usePillarSwapAssets();
-
   const initialPosition: CardPositionType = {
     swap: CardPosition.SWAP,
     receive: CardPosition.RECEIVE,
@@ -57,8 +57,7 @@ const CardsSwap = () => {
 
   // handleOpenTokenList opens the list for selecting tokens
   const handleOpenTokenList = async (position: CardPosition) => {
-    // Error handled in usePillarSwapAssets hook
-    const assets = await getPillarSwapAssets();
+    const assets = queryTokenData({});
 
     dispatch(setSwapTokenData(assets));
     dispatch(setReceiveTokenData(assets));

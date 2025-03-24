@@ -11,7 +11,7 @@ import {
   Send2 as SendIcon,
   Trash as TrashIcon,
 } from 'iconsax-react';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -26,6 +26,8 @@ import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 
 // providers
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
 
 // utils
@@ -50,8 +52,10 @@ const SendModalBatchesTabView = () => {
   const [errorMessage, setErrorMessage] = React.useState<
     Record<number, string>
   >({});
-  const { send, estimate } = useEtherspotTransactions();
+  const { send } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
+  const contextNfts = useContext(AccountNftsContext);
+  const contextBalances = useContext(AccountBalancesContext);
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -65,18 +69,32 @@ const SendModalBatchesTabView = () => {
     {} as Record<number, IGlobalBatchTransaction[]>
   );
 
+  const anyChainSending = Object.values(isSending).some((s) => s);
+
+  useEffect(() => {
+    if (!anyChainSending) {
+      contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
+    }
+
+    if (anyChainSending) {
+      contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
+    }
+  }, [contextNfts?.data, contextBalances?.data, anyChainSending]);
+
   const onSend = async (chainId: number, batchId: string) => {
     if (isSending[chainId]) return;
     setIsSending((prev) => ({ ...prev, [chainId]: true }));
     setEstimatedCostFormatted((prev) => ({ ...prev, [chainId]: '' }));
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
 
-    const estimated = await estimate([batchId]);
+    const sent = await send([batchId]);
 
-    const estimatedCostBN = estimated?.[0]?.estimatedBatches?.[0]?.cost;
+    const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     if (estimatedCostBN) {
       const nativeAsset = getNativeAssetForChainId(
-        estimated[0].estimatedBatches[0].chainId as number
+        sent[0].estimatedBatches[0].chainId as number
       );
       const estimatedCost = ethers.utils.formatUnits(
         estimatedCostBN,
@@ -87,11 +105,11 @@ const SendModalBatchesTabView = () => {
         [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`,
       }));
     } else {
-      console.warn('Unable to get estimated cost', estimated);
+      console.warn('Unable to get estimated cost', sent);
     }
 
     const estimationErrorMessage =
-      estimated?.[0]?.estimatedBatches?.[0]?.errorMessage;
+      sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
       setErrorMessage((prev) => ({
         ...prev,
@@ -100,8 +118,6 @@ const SendModalBatchesTabView = () => {
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
-
-    const sent = await send([batchId]);
 
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
@@ -123,8 +139,6 @@ const SendModalBatchesTabView = () => {
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
   };
-
-  const anyChainSending = Object.values(isSending).some((s) => s);
 
   return (
     <FormGroup>

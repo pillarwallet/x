@@ -28,7 +28,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
     >
       <div
         className="false h-[34px] z-20"
-        id="select-chain-dropdown-list-exchange"
+        id="select-chain-dropdown-list-exchange-receive"
       >
         <button
           className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"
@@ -72,52 +72,90 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
       id="token-list-exchange"
     >
       <div
-        className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
-        data-testid="token-list-item"
-        id="token-list-item-exchange"
-        onClick={[Function]}
+        onScroll={[Function]}
+        style={
+          {
+            "WebkitOverflowScrolling": "touch",
+            "direction": "ltr",
+            "height": 272,
+            "overflow": "auto",
+            "position": "relative",
+            "width": "100%",
+            "willChange": "transform",
+          }
+        }
       >
         <div
-          className="flex items-center"
+          style={
+            {
+              "height": 73,
+              "pointerEvents": undefined,
+              "width": "100%",
+            }
+          }
         >
           <div
-            className="flex min-w-fit items-end"
+            style={
+              {
+                "height": 73,
+                "left": 0,
+                "position": "absolute",
+                "right": undefined,
+                "top": 0,
+                "width": "100%",
+              }
+            }
           >
-            <img
-              alt="token-logo"
-              className="w-[30px] h-[30px] object-fill rounded-full grayscale"
-              src="iconMatic.png"
-            />
             <div
-              className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] hidden"
+              className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
+              data-testid="token-list-item"
+              id="token-list-item-exchange-Polygon-POL"
+              onClick={[Function]}
             >
-              <img
-                alt="chain-logo"
-                className="w-full h-full object-fill rounded-full grayscale hidden"
-              />
+              <div
+                className="flex items-center"
+              >
+                <div
+                  className="flex min-w-fit items-end"
+                >
+                  <img
+                    alt="token-logo"
+                    className="w-[30px] h-[30px] object-fill rounded-full grayscale"
+                    src="iconMatic.png"
+                  />
+                  <div
+                    className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] hidden"
+                  >
+                    <img
+                      alt="chain-logo"
+                      className="w-full h-full object-fill rounded-full grayscale hidden"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="flex flex-col ml-[10px]"
+                >
+                  <p
+                    className="text-base font-medium text-black_grey group-hover:opacity-60 truncate max-w-[150px]"
+                  >
+                    POL
+                  </p>
+                  <p
+                    className="text-xs font-normal text-black_grey group-hover:opacity-60"
+                  >
+                    POL
+                  </p>
+                </div>
+              </div>
+              <p
+                className="text-xs font-normal text-black_grey group-hover:opacity-60 capitalize truncate xs:max-w-[150px]"
+              >
+                On 
+                Polygon
+              </p>
             </div>
           </div>
-          <div
-            className="flex flex-col ml-[10px]"
-          >
-            <p
-              className="text-base font-medium text-black_grey group-hover:opacity-60"
-            >
-              POL
-            </p>
-            <p
-              className="text-xs font-normal text-black_grey group-hover:opacity-60"
-            >
-              POL
-            </p>
-          </div>
         </div>
-        <p
-          className="text-xs font-normal text-black_grey group-hover:opacity-60 capitalize"
-        >
-          On 
-          137
-        </p>
       </div>
     </div>
   </div>,

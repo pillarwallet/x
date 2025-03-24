@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
 // types
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '../../../services/tokensData';
 import {
   BlockchainData,
   TokenAtlasInfoData,
@@ -13,7 +13,7 @@ import {
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
 
 // utils
-import { convertDateToUnixTimestamp } from '../utils/converters';
+import { convertDateToUnixTimestamp } from '../../../utils/common';
 
 export type TokenAltasState = {
   isSearchTokenModalOpen: boolean;

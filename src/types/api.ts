@@ -8,6 +8,12 @@ export enum ApiLayout {
   PXPOINTS = 'PXPOINTS',
 }
 
+export enum LeaderboardRankChange {
+  INCREASED = 'INCREASED',
+  DECREASED = 'DECREASED',
+  NO_CHANGE = 'NO_CHANGE',
+}
+
 export type Asset = {
   name: string;
   symbol: string;
@@ -394,4 +400,31 @@ export type EtherscanTransaction = {
   confirmations: string;
   methodId: string;
   functionName: string;
+};
+
+export type PointsChainData = {
+  [chainId: string]: number; // Keys are chain IDs (as strings), values are numbers
+};
+
+export type PointsEligibilityData = {
+  [chainId: string]: boolean;
+};
+
+export type PointsResult = {
+  points: number;
+  totalTxFeesUsd: number;
+  pointsPerChain: PointsChainData;
+  transactionCount: PointsChainData;
+  address: string;
+  isDeployPointsEligible: PointsEligibilityData;
+  pointsUpdatedAt: number;
+  txFeesUsd: PointsChainData;
+};
+
+export type PointsResultsData = {
+  results: PointsResult[];
+};
+
+export type WeeklyLeaderboardData = PointsResult & {
+  rankChange?: LeaderboardRankChange;
 };

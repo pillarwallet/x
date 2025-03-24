@@ -1,4 +1,4 @@
-import { Nft } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { useContext } from 'react';
 
 // providers

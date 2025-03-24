@@ -1,8 +1,3 @@
-import { prepareNetworkName } from '@etherspot/prime-sdk';
-
-export const convertChainIdtoName = (chainId: number) =>
-  prepareNetworkName(chainId) ?? chainId.toString();
-
 export const hasThreeZerosAfterDecimal = (num: number): boolean => {
   const decimalPart = num.toString().split('.')[1] || '';
   return decimalPart.startsWith('000');
@@ -24,12 +19,6 @@ export const limitDigits = (num: number): number => {
   const limitedFractionalPart = fractionalPart.substring(0, maxDecimalPlaces);
   return parseFloat(`${integerPart}.${limitedFractionalPart}`);
 };
-
-export const convertDateToUnixTimestamp = (date: Date): number =>
-  Math.floor(date.getTime() / 1000);
-
-export const convertUnixTimestampToDate = (timestamp: number): Date =>
-  new Date(timestamp * 1000);
 
 export const lowerRemoveSpaceString = (str: string) =>
   str.toLowerCase().replace(/[\s.-]/g, '');

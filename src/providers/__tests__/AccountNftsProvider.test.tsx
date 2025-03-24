@@ -1,8 +1,6 @@
-import {
-  Nft,
-  NftCollection,
-  TokenTypes,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
+import { TokenTypes } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import * as TransactionKit from '@etherspot/transaction-kit';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';

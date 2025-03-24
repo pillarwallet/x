@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable react/jsx-no-constructed-context-values */
-import { AccountBalance } from '@etherspot/prime-sdk/dist/sdk/data';
+import { AccountBalance } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/account-balance';
 import {
   useEtherspotBalances,
   useWalletAddress,

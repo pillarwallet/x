@@ -3,7 +3,7 @@
 exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
 <div
   className="undefined h-[34px] z-20"
-  id="select-chain-dropdown-list-exchange"
+  id="select-chain-dropdown-list-exchange-receive"
 >
   <button
     className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"
@@ -29,7 +29,9 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
     className="relative bg-white border border-t-black rounded-[3px] w-full max-h-[344px] overflow-y-auto capitalize"
   >
     <ul>
-      <li>
+      <li
+        id="select-chain-dropdown-list-exchange-receive-0"
+      >
         <button
           className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
           onClick={[Function]}
@@ -42,7 +44,9 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
           </p>
         </button>
       </li>
-      <li>
+      <li
+        id="select-chain-dropdown-list-exchange-receive-1"
+      >
         <button
           className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
           onClick={[Function]}
@@ -51,11 +55,13 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
           >
-            1
+            Ethereum
           </p>
         </button>
       </li>
-      <li>
+      <li
+        id="select-chain-dropdown-list-exchange-receive-137"
+      >
         <button
           className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
           onClick={[Function]}
@@ -64,7 +70,7 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey border-b-[#8C8C8C]/[.1] capitalize"
           >
-            137
+            Polygon
           </p>
         </button>
       </li>

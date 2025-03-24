@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 type PointsFormattedTimestampProps = {
   timestamp: number;
 };
@@ -5,19 +7,45 @@ type PointsFormattedTimestampProps = {
 const PointsFormattedTimestamp = ({
   timestamp,
 }: PointsFormattedTimestampProps) => {
-  const totalSeconds = Math.floor(timestamp / 1000);
-  const days = Math.floor(totalSeconds / (24 * 3600));
-  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const getNextDrop = () => {
+    const timestampToDate = DateTime.fromSeconds(timestamp);
+    const currentDate = DateTime.now();
+
+    const nextDrop = timestampToDate.diff(currentDate, [
+      'days',
+      'hours',
+      'minutes',
+    ]);
+
+    const { days, hours, minutes } = nextDrop;
+
+    return {
+      days: Math.floor(days),
+      hours: Math.floor(hours),
+      minutes: Math.floor(minutes),
+    };
+  };
+
+  const { days, hours, minutes } = getNextDrop();
 
   return (
     <p
       className="desktop:text-[22px] tablet:text-lg mobile:text-lg text-white"
-      data-testid="points-fornatted-timestamp"
+      data-testid="points-formatted-timestamp"
     >
-      {days}
-      <span className="text-base">d</span> {hours}
-      <span className="text-base">h</span> {minutes}
+      {days > 0 && (
+        <>
+          {days}
+          <span className="text-base">d</span>{' '}
+        </>
+      )}
+      {hours > 0 && (
+        <>
+          {hours}
+          <span className="text-base">h</span>{' '}
+        </>
+      )}
+      {minutes}
       <span className="text-base">m</span>
     </p>
   );

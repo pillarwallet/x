@@ -4,7 +4,6 @@ import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // hooks
-import usePillarSwapAssets from '../../../the-exchange/hooks/usePillarSwapAssets';
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -12,6 +11,9 @@ import {
   setIsSearchTokenModalOpen,
   setTokenListData,
 } from '../../reducer/tokenAtlasSlice';
+
+// services
+import { queryTokenData } from '../../../../services/tokensData';
 
 // images
 import SearchLogo from '../../images/circle-search.svg';
@@ -31,7 +33,6 @@ const HeaderSearch = () => {
   const accountAddress = useWalletAddress();
 
   const dispatch = useAppDispatch();
-  const { getPillarSwapAssets } = usePillarSwapAssets();
 
   const handleSearchOpen = async () => {
     dispatch(setIsSearchTokenModalOpen(true));
@@ -41,7 +42,8 @@ const HeaderSearch = () => {
       value: 'SEARCH_OPEN',
     });
 
-    const assets = await getPillarSwapAssets();
+    const assets = queryTokenData({});
+
     dispatch(setTokenListData(assets));
   };
 
