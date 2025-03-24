@@ -1,3 +1,6 @@
+// utils
+import { chainNameDataCompatibility } from '../../../../services/tokensData';
+
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
@@ -53,7 +56,7 @@ const TokenResultCard = ({
       {tokenChain && (
         <div className="flex-1 min-w-0 text-right">
           <Body className="text-base font-medium capitalize truncate min-w-0">
-            On {tokenChain === 'XDAI' ? 'Gnosis' : tokenChain}
+            On {chainNameDataCompatibility(tokenChain)}
           </Body>
         </div>
       )}

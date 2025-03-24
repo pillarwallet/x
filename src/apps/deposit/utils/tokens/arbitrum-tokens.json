@@ -1,0 +1,292 @@
+{
+  "name": "EtherspotPopularTokens",
+  "timestamp": "2023-01-17T00:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "keywords": ["etherspot", "popular", "tokens"],
+  "tokens": [
+    {
+      "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Wrapped Ethereum",
+      "symbol": "WETH",
+      "logoURI": "https://arbiscan.io/token/images/weth_28.png"
+    },
+    {
+      "address": "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+      "chainId": 42161,
+      "decimals": "6",
+      "name": "USDC",
+      "symbol": "USDC",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/usdc/USDC-CD2.png"
+    },
+    {
+      "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      "chainId": 42161,
+      "decimals": "6",
+      "name": "USDT",
+      "symbol": "USDT",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/usdt/usdt.png"
+    },
+    {
+      "address": "0xeD5932eBb289F5C22AcAde951B6a01A49FC99210",
+      "chainId": 42161,
+      "decimals": "6",
+      "name": "Factor DAO",
+      "symbol": "FCTR",
+      "logoURI": "https://arbiscan.io/images/main/empty-token.png?v=1"
+    },
+    {
+      "address": "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "GMX",
+      "symbol": "GMX",
+      "logoURI": "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GMX_LOGO%20ONLY.png"
+    },
+    {
+      "address": "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      "chainId": 42161,
+      "decimals": "8",
+      "name": "Bitcoin",
+      "symbol": "WBTC",
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png"
+    },
+    {
+      "address": "0x539bdE0d7Dbd336b79148AA742883198BBF60342",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "MAGIC",
+      "symbol": "MAGIC",
+      "logoURI": "https://arbiscan.io/token/images/magicv2_32.png"
+    },
+    {
+      "address": "0x602eb0d99a5e3e76d1510372c4d2020e12eaea8a",
+      "chainId": 42161,
+      "decimals": "9",
+      "name": "Trident",
+      "symbol": "PSI",
+      "logoURI": "https://assets-stage.dex.guru/icons/0x602eb0d99a5e3e76d1510372c4d2020e12eaea8a-arbitrum.jpg"
+    },
+    {
+      "address": "0x7F465507f058e17Ad21623927a120ac05CA32741",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Arcadeum",
+      "symbol": "ARC",
+      "logoURI": "https://arbiscan.io/images/main/empty-token.png?v=1"
+    },
+    {
+      "address": "0x088cd8f5ef3652623c22d48b1605dcfe860cd704",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Vela",
+      "symbol": "VELA",
+      "logoURI": "https://arbiscan.io/token/images/velaexchange_32.png"
+    },
+    {
+      "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "DAI",
+      "symbol": "DAI",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/dai/DAI-D75.png"
+    },
+    {
+      "address": "0x0c4681e6c0235179ec3d4f4fc4df3d14fdd96017",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Radiant",
+      "symbol": "RDNT",
+      "logoURI": "https://arbiscan.io/token/images/radiantcapital_32.png"
+    },
+    {
+      "address": "0x18c11FD286C5EC11c3b683Caa813B77f5163A122",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Gains",
+      "symbol": "GNS",
+      "logoURI": "https://arbiscan.io/token/images/gainsnetwork_32.png"
+    },
+    {
+      "address": "0x1a5b0aaf478bf1fda7b934c76e7692d722982a6d",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Buffer",
+      "symbol": "BFR",
+      "logoURI": "https://arbiscan.io/token/images/bufferfinance2_32.png"
+    },
+    {
+      "address": "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "ChainLink",
+      "symbol": "LINK",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/link/LINK-AAD.png"
+    },
+    {
+      "address": "0x4945970efeec98d393b4b979b9be265a3ae28a8b",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "GMD",
+      "symbol": "GMD",
+      "logoURI": "https://arbiscan.io/token/images/gmdprotocol_32.png"
+    },
+    {
+      "address": "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Curve",
+      "symbol": "CRV",
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xD533a949740bb3306d119CC777fa900bA034cd52/logo.png"
+    },
+    {
+      "address": "0x32eb7902d4134bf98a28b963d26de779af92a212",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Dopex Rebate",
+      "symbol": "RDPX",
+      "logoURI": "https://arbiscan.io/token/images/dopex-rdpx_32.png"
+    },
+    {
+      "address": "0xb99d1c4bb87266fb13a423f8df96812ac6b99520",
+      "chainId": 42161,
+      "decimals": "9",
+      "name": "Nitro Cartel",
+      "symbol": "TROVE",
+      "logoURI": "https://arbiscan.io/images/main/empty-token.png?v=1"
+    },
+    {
+      "address": "0x431402e8b9de9aa016c743880e04e517074d8cec",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "HEGIC",
+      "symbol": "HEGIC",
+      "logoURI": "https://arbiscan.io/token/images/hegic_32.png"
+    },
+    {
+      "address": "0x5575552988A3A80504bBaeB1311674fCFd40aD4B",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Sperax",
+      "symbol": "SPA",
+      "logoURI": "https://arbiscan.io/token/images/speraxtoken_32.png"
+    },
+    {
+      "address": "0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Lido",
+      "symbol": "LDO",
+      "logoURI": "https://arbiscan.io/token/images/lidodao_32.png"
+    },
+    {
+      "address": "0x5979d7b546e38e414f7e9822514be443a4800529",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Wrapped liquid staked Ether 2.0",
+      "symbol": "wstETH",
+      "logoURI": "https://arbiscan.io/token/images/lido_32.png"
+    },
+    {
+      "address": "0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Dopex",
+      "symbol": "DPX",
+      "logoURI": "https://arbiscan.io/token/images/dopex-dpx_32.png"
+    },
+    {
+      "address": "0xa684cd057951541187f288294a1e1c2646aa2d24",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Vesta",
+      "symbol": "VSTA",
+      "logoURI": "https://arbiscan.io/token/images/vestafinance_32.png"
+    },
+    {
+      "address": "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Uniswap",
+      "symbol": "UNI",
+      "logoURI": "https://raw.githubusercontent.com/bnb-chain/tokens-info-v2/master/tokens/uni/UNI-DD8.png"
+    },
+    {
+      "address": "0xfc77b86f3ade71793e1eec1e7944db074922856e",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Mugen",
+      "symbol": "MGN",
+      "logoURI": "https://arbiscan.io/token/images/mugenfinance_32.png"
+    },
+    {
+      "address": "0x51318b7d00db7acc4026c88c3952b66278b6a67f",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Plutus",
+      "symbol": "PLS",
+      "logoURI": "https://arbiscan.io/token/images/plutusdao2_32.png"
+    },
+    {
+      "address": "0x954ac1c73e16c77198e83c088ade88f6223f3d44",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "LeverageInu",
+      "symbol": "LEVI",
+      "logoURI": "https://arbiscan.io/token/images/levi_32.png"
+    },
+    {
+      "address": "0x51fc0f6660482ea73330e414efd7808811a57fa2",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Premia",
+      "symbol": "PREMIA",
+      "logoURI": "https://arbiscan.io/token/images/premia2_32.png"
+    },
+    {
+      "address": "0x4e352cf164e64adcbad318c3a1e222e9eba4ce42",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "MCDEX",
+      "symbol": "MCB",
+      "logoURI": "https://arbiscan.io/token/images/mcdextoken_32.png"
+    },
+    {
+      "address": "0x031d35296154279dc1984dcd93e392b1f946737b",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Cap",
+      "symbol": "CAP",
+      "logoURI": "https://arbiscan.io/token/images/cap_32.png"
+    },
+    {
+      "address": "0x2CaB3abfC1670D1a452dF502e216a66883cDf079",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Layer2DAO",
+      "symbol": "L2DAO",
+      "logoURI": "https://arbiscan.io/token/images/layer2dao_32.png"
+    },
+    {
+      "address": "0x4d15a3a2286d883af0aa1b3f21367843fac63e07",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "TUSD",
+      "symbol": "TUSD",
+      "logoURI": "https://arbiscan.io/token/images/trueusd_32.png"
+    },
+    {
+      "address": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      "chainId": 42161,
+      "decimals": "18",
+      "name": "Arbitrum",
+      "symbol": "ARB",
+      "logoURI": "https://arbitrum.foundation/logo.png"
+    }
+  ]
+}

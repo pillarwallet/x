@@ -26,9 +26,12 @@ import {
   getNetworkViem,
   getNftBalance,
 } from '../../utils/blockchain';
+import ArbitrumList from '../../utils/tokens/arbitrum-tokens.json';
 import BaseList from '../../utils/tokens/base-tokens.json';
+import BNBList from '../../utils/tokens/bnb-tokens.json';
 import EthereumList from '../../utils/tokens/ethereum-tokens.json';
 import GnosisList from '../../utils/tokens/gnosis-tokens.json';
+import OptimismList from '../../utils/tokens/optimism-tokens.json';
 import PolygonList from '../../utils/tokens/polygon-tokens.json';
 
 // components
@@ -40,6 +43,9 @@ const tokenLists = {
   137: PolygonList,
   100: GnosisList,
   8453: BaseList,
+  56: BNBList,
+  10: OptimismList,
+  42161: ArbitrumList,
 };
 
 type AssetsListProps = {

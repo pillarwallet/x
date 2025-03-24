@@ -16,7 +16,15 @@ import {
   parseEther,
   parseUnits,
 } from 'viem';
-import { base, gnosis, mainnet, polygon } from 'viem/chains';
+import {
+  arbitrum,
+  base,
+  bsc,
+  gnosis,
+  mainnet,
+  optimism,
+  polygon,
+} from 'viem/chains';
 
 // types
 import { AddedAssets, BalanceInfo, Network } from '../types/types';
@@ -31,6 +39,9 @@ const chainMapping = {
   ethereum: 'https://ethereum-rpc.publicnode.com',
   gnosis: 'https://rpc.gnosischain.com',
   base: 'https://base-rpc.publicnode.com',
+  'bnb smart chain': 'https://bsc.drpc.org',
+  'op mainnet': 'https://optimism-rpc.publicnode.com',
+  'arbitrum one': 'https://arbitrum.drpc.org',
 };
 
 export const allNativeTokens: Record<
@@ -41,6 +52,9 @@ export const allNativeTokens: Record<
   polygon: { name: 'MATIC', symbol: 'MATIC' },
   gnosis: { name: 'xDai', symbol: 'XDAI' },
   base: { name: 'Ether', symbol: 'ETH' },
+  'bnb smart chain': { name: 'BNB', symbol: 'BNB' },
+  'op mainnet': { name: 'Optimism', symbol: 'OP' },
+  'arbitrum one': { name: 'Arbitrum', symbol: 'ARB' },
 };
 
 export const getNetworkViem = (chainId: number): Chain => {
@@ -53,6 +67,12 @@ export const getNetworkViem = (chainId: number): Chain => {
       return gnosis;
     case 8453:
       return base;
+    case 56:
+      return bsc;
+    case 10:
+      return optimism;
+    case 42161:
+      return arbitrum;
     default:
       return mainnet;
   }
@@ -68,6 +88,12 @@ export const getChainId = (chain: string): number => {
       return 100;
     case 'base':
       return 8453;
+    case 'bnb smart chain':
+      return 56;
+    case 'op mainnet':
+      return 10;
+    case 'arbitrum one':
+      return 42161;
     default:
       return 1;
   }
@@ -83,6 +109,12 @@ export const getChainName = (chain: number): Network | string => {
       return 'base';
     case 100:
       return 'gnosis';
+    case 56:
+      return 'bnb smart chain';
+    case 10:
+      return 'op mainnet';
+    case 42161:
+      return 'arbitrum one';
     default:
       return `${chain}`;
   }

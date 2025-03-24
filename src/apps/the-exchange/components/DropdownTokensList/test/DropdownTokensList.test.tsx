@@ -92,6 +92,18 @@ jest.mock('../../../../../services/tokensData', () => ({
       (token) => token.name.includes(query) || token.symbol.includes(query)
     );
   }),
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'OP Mainnet',
+        Arbitrum: 'Arbitrum One',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
 }));
 
 describe('<DropdownTokenList />', () => {
