@@ -70,7 +70,12 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
     }
   };
 
-  if (!data || isDataLoading) {
+  if (
+    !data ||
+    !editorialDisplay ||
+    Object.keys(editorialDisplay).length < 2 ||
+    isDataLoading
+  ) {
     return null;
   }
 

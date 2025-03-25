@@ -22,7 +22,7 @@ const TokensVerticalTile = ({
   const dataLeft = dataTokensVertical?.slice(0, 3) || [];
   const dataRight = dataTokensVertical?.slice(3, 6) || [];
 
-  if (!data || isDataLoading) {
+  if (!data || !dataTokensVertical?.length || isDataLoading) {
     return null;
   }
 

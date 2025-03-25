@@ -54,7 +54,7 @@ const TokensHorizontalTile = ({
   const numberTokensHorizontal =
     Math.floor(dimensions.width / tokenHorizontalWidth) ?? 0;
 
-  if (!data || isDataLoading) {
+  if (!data || !dataTokensHorizontal?.length || isDataLoading) {
     return null;
   }
 

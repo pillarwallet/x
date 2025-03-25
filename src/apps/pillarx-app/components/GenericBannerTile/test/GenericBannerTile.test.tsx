@@ -111,4 +111,52 @@ describe('<GenericBannerTile />', () => {
 
     expect(screen.queryByRole('button')).toBeNull();
   });
+
+  it('returns null if data is undefined', () => {
+    render(<GenericBannerTile data={undefined} isDataLoading={false} />);
+    expect(screen.queryByTestId('generic-banner-tile')).not.toBeInTheDocument();
+  });
+
+  it('returns null if meta is an empty object', () => {
+    const mockDataWithEmptyMeta = {
+      ...mockDataGenericBanner,
+      meta: {},
+    };
+    render(
+      <GenericBannerTile data={mockDataWithEmptyMeta} isDataLoading={false} />
+    );
+    expect(screen.queryByTestId('generic-banner-tile')).not.toBeInTheDocument();
+  });
+
+  it('returns null if bannerDisplay is undefined', () => {
+    const mockDataWithNoBannerDisplay = {
+      ...mockDataGenericBanner,
+      meta: {
+        display: undefined,
+      },
+    };
+    render(
+      <GenericBannerTile
+        data={mockDataWithNoBannerDisplay}
+        isDataLoading={false}
+      />
+    );
+    expect(screen.queryByTestId('generic-banner-tile')).not.toBeInTheDocument();
+  });
+
+  it('returns null if bannerDisplay is an empty object', () => {
+    const mockDataWithEmptyBannerDisplay = {
+      ...mockDataGenericBanner,
+      meta: {
+        display: {},
+      },
+    };
+    render(
+      <GenericBannerTile
+        data={mockDataWithEmptyBannerDisplay}
+        isDataLoading={false}
+      />
+    );
+    expect(screen.queryByTestId('generic-banner-tile')).not.toBeInTheDocument();
+  });
 });
