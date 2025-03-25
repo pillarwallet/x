@@ -1,7 +1,8 @@
 import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { formatEther } from 'viem';
 
 // services
 import {
@@ -90,6 +91,10 @@ const ExchangeAction = () => {
       if ('receiveAmount' in bestOffer.offer) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < bestOffer.offer.transactions.length; ++i) {
+          const { value } = bestOffer.offer.transactions[i];
+          const bigIntValue = BigNumber.from(value).toBigInt();
+          const integerValue = formatEther(bigIntValue);
+
           addToBatch({
             title: getTransactionTitle(
               i,
@@ -101,7 +106,7 @@ const ExchangeAction = () => {
               '',
             chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
             to: bestOffer.offer.transactions[i].to,
-            value: bestOffer.offer.transactions[i].value,
+            value: integerValue,
             data: bestOffer.offer.transactions[i].data,
           });
         }
@@ -117,6 +122,9 @@ const ExchangeAction = () => {
         if (stepTransactions) {
           // eslint-disable-next-line no-plusplus
           for (let i = 0; i < stepTransactions.length; ++i) {
+            const { value } = stepTransactions[i];
+            const bigIntValue = BigNumber.from(value).toBigInt();
+            const integerValue = formatEther(bigIntValue);
             addToBatch({
               title: getTransactionTitle(
                 i,
@@ -128,7 +136,7 @@ const ExchangeAction = () => {
                 '',
               chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
               to: stepTransactions[i].to || '',
-              value: ethers.BigNumber.from(stepTransactions[i].value),
+              value: integerValue,
               data: stepTransactions[i].data?.toString() ?? '',
             });
           }
