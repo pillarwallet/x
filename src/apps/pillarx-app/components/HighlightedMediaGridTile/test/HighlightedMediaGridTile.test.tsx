@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
-import { ApiLayout, Projection } from '../../../../../types/api';
+import { ApiLayout, MediaGridData, Projection } from '../../../../../types/api';
 import HighlightedMediaGridTile from '../HighlightedMediaGridTile';
 
 // Mock useRefDimensions
@@ -62,5 +62,20 @@ describe('<HighlightedMediaGridTile />', () => {
     render(<HighlightedMediaGridTile data={undefined} isDataLoading={false} />);
     expect(screen.queryByText('Title')).not.toBeInTheDocument();
     expect(screen.queryAllByTestId('media-grid-collection')).toHaveLength(0);
+  });
+
+  it('does not render when dataMediaGrid is an empty object', () => {
+    const mockDataEmpty: Projection = {
+      ...mockData,
+      data: {} as MediaGridData,
+    };
+
+    render(
+      <HighlightedMediaGridTile data={mockDataEmpty} isDataLoading={false} />
+    );
+
+    expect(
+      screen.queryByTestId('pillarx-feed-highlighted-media-grid-tile')
+    ).not.toBeInTheDocument();
   });
 });

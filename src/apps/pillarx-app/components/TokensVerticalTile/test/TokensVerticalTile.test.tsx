@@ -53,4 +53,27 @@ describe('<TokensVerticalTile />', () => {
 
     expect(tree).toMatchSnapshot();
   });
+
+  it('returns null when dataTokens is empty', () => {
+    const emptyMockData: Projection = {
+      meta: {
+        display: {
+          title: 'vertical',
+        },
+      },
+      data: [],
+      layout: ApiLayout.TOKENS_VERTICAL,
+      id: 'vertical',
+    };
+
+    const tree = renderer
+      .create(
+        <MemoryRouter>
+          <TokensVerticalTile data={emptyMockData} isDataLoading={false} />
+        </MemoryRouter>
+      )
+      .toJSON();
+
+    expect(tree).toBeNull();
+  });
 });
