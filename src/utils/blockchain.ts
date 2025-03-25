@@ -227,11 +227,11 @@ export const getBlockScan = (chain: number) => {
     case 100:
       return 'https://gnosisscan.io/tx/';
     case 56:
-      return 'https://bscscan.com/';
+      return 'https://bscscan.com/tx/';
     case 10:
-      return 'https://optimistic.etherscan.io/';
+      return 'https://optimistic.etherscan.io/tx/';
     case 42161:
-      return 'http://arbiscan.io/';
+      return 'http://arbiscan.io/tx/';
     default:
       return '';
   }
