@@ -28,11 +28,18 @@ const mockData: (WeeklyLeaderboardData | PointsResult)[] = Array.from(
       '137': i + 8,
       '8453': i + 2,
     },
-    gasCount: {
+    txFeesUsd: {
       '100': i + 1863679,
       '137': i + 1816553,
       '8453': i + 415853,
     },
+    totalTxFeesUsd: i + 2,
+    isDeployPointsEligible: {
+      '100': true,
+      '137': true,
+      '8453': true,
+    },
+    pointsUpdatedAt: 1742747128583,
     rankChange: LeaderboardRankChange.NO_CHANGE,
   })
 );

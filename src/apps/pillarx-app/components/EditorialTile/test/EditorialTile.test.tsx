@@ -221,4 +221,62 @@ describe('<EditorialTile />', () => {
     expect(video).not.toBeInTheDocument();
     expect(audio).not.toBeInTheDocument();
   });
+
+  it('renders nothing when data is undefined', () => {
+    render(
+      <Provider store={store}>
+        <EditorialTile data={undefined} isDataLoading={false} />
+      </Provider>
+    );
+
+    expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
+  });
+
+  it('renders nothing when editorialDisplay is undefined', () => {
+    const mockDataWithoutDisplay = {
+      ...mockDataEditorial,
+      meta: {
+        ...mockDataEditorial.meta,
+        display: undefined,
+      },
+    };
+
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataWithoutDisplay} isDataLoading={false} />
+      </Provider>
+    );
+
+    expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
+  });
+
+  it('renders nothing when editorialDisplay has less than 2 keys', () => {
+    const mockDataWithEmptyDisplay = {
+      ...mockDataEditorial,
+      meta: {
+        ...mockDataEditorial.meta,
+        display: {
+          title: 'Editorial title',
+        },
+      },
+    };
+
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataWithEmptyDisplay} isDataLoading={false} />
+      </Provider>
+    );
+
+    expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
+  });
+
+  it('renders nothing when isDataLoading is true', () => {
+    render(
+      <Provider store={store}>
+        <EditorialTile data={mockDataEditorial} isDataLoading />
+      </Provider>
+    );
+
+    expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
+  });
 });

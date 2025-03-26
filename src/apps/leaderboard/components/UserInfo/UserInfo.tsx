@@ -114,15 +114,15 @@ const UserInfo = ({
       </div>
       <div className="flex flex-col w-[60%]">
         {username ?? <Body className="text-white">{username}</Body>}
-        <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-end">
+        <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
           <BodySmall className="text-purple_light">
             {displayedWalletAddress}
           </BodySmall>
           <CopyToClipboard text={walletAddress} onCopy={onCopyCodeClick}>
-            <div className="flex gap-2 items-center cursor-pointer self-end">
+            <div className="flex gap-2 items-center cursor-pointer">
               {copied ? (
                 <CopySuccessIcon
-                  size={16}
+                  size={15}
                   color="#E2DDFF"
                   data-testid="copy-success-icon"
                 />

@@ -66,4 +66,30 @@ describe('<TokensHorizontalTile />', () => {
 
     expect(tree).toMatchSnapshot();
   });
+
+  it('returns null when dataTokens is empty', () => {
+    const emptyMockData: Projection = {
+      meta: {
+        display: {
+          title: 'horizontal title',
+        },
+      },
+      data: [],
+      layout: ApiLayout.TOKENS_HORIZONTAL,
+      id: 'horizontal',
+    };
+
+    const tree = renderer
+      .create(
+        <MemoryRouter>
+          <TokensHorizontalTile
+            data={emptyMockData}
+            isDataLoading={mockLoading}
+          />
+        </MemoryRouter>
+      )
+      .toJSON();
+
+    expect(tree).toBeNull();
+  });
 });

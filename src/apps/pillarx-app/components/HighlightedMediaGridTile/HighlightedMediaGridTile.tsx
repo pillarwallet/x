@@ -56,7 +56,8 @@ const HighlightedMediaGridTile = ({
     return null;
   }
 
-  if (!dataMediaGrid?.grids) return null;
+  if (!dataMediaGrid?.grids?.length || Object.keys(dataMediaGrid).length === 0)
+    return null;
 
   return (
     <div ref={divRef}>

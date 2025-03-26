@@ -89,18 +89,42 @@ export const loadTokensData = (): Token[] => {
   if (tokensData.length === 0) {
     tokensData = (tokens as TokenDataType).data.flatMap((item) =>
       item.blockchains
-        .map((blockchain, index) => ({
-          id: item.id,
-          name: item.name,
-          symbol: item.symbol,
-          logo: item.logo,
-          blockchain,
-          contract: item.contracts[index],
-          decimals: item.decimals[index],
-        }))
-        .filter((token) => allowedBlockchains.includes(token.blockchain))
-    );
+        .map((blockchain, index) => {
+          let { name } = item;
+          let { symbol } = item;
+          const contract = item.contracts[index];
 
+          if (name === 'XDAI' && symbol === 'XDAI') {
+            name = 'Wrapped XDAI';
+            symbol = 'WXDAI';
+          }
+
+          if (
+            name === 'Ethereum' &&
+            symbol === 'ETH' &&
+            contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          ) {
+            name = 'Wrapped Ether';
+            symbol = 'WETH';
+          }
+
+          return contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            ? {
+                id: item.id,
+                name,
+                symbol,
+                logo: item.logo,
+                blockchain,
+                contract,
+                decimals: item.decimals[index],
+              }
+            : null;
+        })
+        .filter(
+          (token): token is Token =>
+            token !== null && allowedBlockchains.includes(token.blockchain)
+        )
+    );
     // Add native/gas tokens
     CompatibleChains.forEach((chain) => {
       const nativeAsset = getNativeAssetForChainId(chain.chainId);
