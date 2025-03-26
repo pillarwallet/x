@@ -78,6 +78,12 @@ export const App = () => {
     nativeToken.symbol === formattedNativeToken.symbol &&
     nativeToken.address === formattedNativeToken.address;
 
+  const isWrappedOrNativeToken =
+    (selectedToken.name === 'POL' && selectedToken.symbol === 'POL') ||
+    (selectedToken.name === 'Wrapped Ether' &&
+      selectedToken.symbol === 'WETH') ||
+    (selectedToken.name === 'Wrapped XDAI' && selectedToken.symbol === 'WXDAI');
+
   const {
     data: tokenData,
     isLoading: isLoadingTokenDataInfo,
@@ -96,10 +102,11 @@ export const App = () => {
     isFetching: isFetchingTokenDataGraph,
     isSuccess: isSuccessTokenDataGraph,
   } = useGetTokenGraphQuery({
-    id: isNativeToken ? undefined : selectedToken.id,
-    asset: isNativeToken
-      ? undefined
-      : selectedToken.name || selectedToken.address,
+    id: isNativeToken || isWrappedOrNativeToken ? undefined : selectedToken.id,
+    asset:
+      isNativeToken || isWrappedOrNativeToken
+        ? undefined
+        : selectedToken.name || selectedToken.address,
     symbol: selectedToken.symbol,
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,

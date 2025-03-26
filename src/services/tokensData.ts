@@ -66,7 +66,16 @@ export const loadTokensData = (): Token[] => {
             symbol = 'WETH';
           }
 
-          return contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
+            name = 'POL';
+            symbol = 'POL';
+          }
+
+          return contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
+            !(
+              name === 'POL' &&
+              contract === '0x0000000000000000000000000000000000001010'
+            )
             ? {
                 id: item.id,
                 name,
