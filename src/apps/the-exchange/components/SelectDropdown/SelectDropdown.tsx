@@ -10,6 +10,7 @@ import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
+import { chainNameDataCompatibility } from '../../../../services/tokensData';
 import { convertChainIdtoName } from '../../../../utils/blockchain';
 
 // components
@@ -107,7 +108,9 @@ const SelectDropdown = ({
       >
         {isOpen && <Body className="text-[#717171]">Select a chain</Body>}
         <Body className="text-black capitalize">
-          {isSwapOpen ? swapChain?.chainName : receiveChain?.chainName}
+          {isSwapOpen
+            ? chainNameDataCompatibility(swapChain?.chainName)
+            : chainNameDataCompatibility(receiveChain?.chainName)}
         </Body>
         <img src={ArrowDown} alt="arrow-down" />
       </button>

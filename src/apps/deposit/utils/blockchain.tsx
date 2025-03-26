@@ -53,8 +53,8 @@ export const allNativeTokens: Record<
   gnosis: { name: 'xDai', symbol: 'XDAI' },
   base: { name: 'Ether', symbol: 'ETH' },
   'bnb smart chain': { name: 'BNB', symbol: 'BNB' },
-  'op mainnet': { name: 'Optimism', symbol: 'OP' },
-  'arbitrum one': { name: 'Arbitrum', symbol: 'ARB' },
+  'op mainnet': { name: 'Ether', symbol: 'ETH' },
+  'arbitrum one': { name: 'Ether', symbol: 'ETH' },
 };
 
 export const getNetworkViem = (chainId: number): Chain => {

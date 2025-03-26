@@ -107,17 +107,17 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   }
 
   if (chainId === optimism.id) {
-    nativeAsset.name = 'Optimism';
-    nativeAsset.symbol = 'OP';
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
     nativeAsset.logoURI =
-      'https://public.etherspot.io/buidler/chain_logos/optimism.png';
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
   if (chainId === arbitrum.id) {
-    nativeAsset.name = 'Arbitrum';
-    nativeAsset.symbol = 'ARB';
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
     nativeAsset.logoURI =
-      'https://public.etherspot.io/buidler/chain_logos/arbitrum.svg';
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
   if (chainId === base.id) {
