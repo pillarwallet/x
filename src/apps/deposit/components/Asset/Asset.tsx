@@ -1,5 +1,8 @@
 import Avatar from 'boring-avatars';
 
+// utils
+import { chainNameDataCompatibility } from '../../../../services/tokensData';
+
 // hooks
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -59,7 +62,7 @@ const Asset = ({ onSelectAsset, type, asset }: AssetProps) => {
       <p className="text-sm text-left">
         on{' '}
         <span className="capitalize">
-          {asset.chain === 'xdai' ? 'gnosis' : asset.chain}
+          {chainNameDataCompatibility(asset.chain)}
         </span>
       </p>
     </div>

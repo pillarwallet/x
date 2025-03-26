@@ -1,3 +1,6 @@
+// utils
+import { chainNameDataCompatibility } from '../../../../services/tokensData';
+
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
 import Body from '../Typography/Body';
@@ -44,7 +47,7 @@ const TokenListItem = ({
         </div>
       </div>
       <BodySmall className="group-hover:opacity-60 capitalize truncate xs:max-w-[150px]">
-        On {chainName === 'XDAI' ? 'Gnosis' : chainName}
+        On {chainNameDataCompatibility(chainName)}
       </BodySmall>
     </div>
   );

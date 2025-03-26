@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5';
-import { base, gnosis, mainnet, polygon } from '@reown/appkit/networks';
+import {
+  arbitrum,
+  base,
+  bsc,
+  gnosis,
+  mainnet,
+  optimism,
+  polygon,
+} from '@reown/appkit/networks';
 import {
   createAppKit,
   useAppKit,
@@ -41,7 +49,7 @@ const metadataReownAppKit = {
 createAppKit({
   adapters: [new Ethers5Adapter()],
   metadata: metadataReownAppKit,
-  networks: [mainnet, polygon, base, gnosis],
+  networks: [mainnet, polygon, base, gnosis, bsc, optimism, arbitrum],
   projectId: process.env.REACT_APP_REOWN_PROJECT_ID || '',
   features: {
     swaps: false,

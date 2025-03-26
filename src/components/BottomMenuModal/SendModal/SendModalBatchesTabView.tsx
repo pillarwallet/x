@@ -32,9 +32,9 @@ import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBa
 
 // utils
 import {
+  getChainName,
   getLogoForChainId,
   getNativeAssetForChainId,
-  visibleChains,
 } from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
@@ -157,7 +157,7 @@ const SendModalBatchesTabView = () => {
                 alt={`chain ${chainId} logo`}
               />
               <ChainTitle id="chain-title-batch-send-modal">
-                {visibleChains.find((c) => c.id === +chainId)?.name ??
+                {getChainName(Number(chainId)) ??
                   t('helper.unknownNetwork', { chainId })}
               </ChainTitle>
             </ChainDetails>

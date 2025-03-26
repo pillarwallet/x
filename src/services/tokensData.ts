@@ -39,6 +39,48 @@ type TokenDataType = {
 
 let tokensData: Token[] = [];
 
+export const chainNameDataCompatibility = (chainName: string) => {
+  const chain = chainName.toLowerCase();
+
+  if (chain === 'xdai') {
+    return 'Gnosis';
+  }
+
+  if (chain === 'bnb smart chain (bep20)') {
+    return 'BNB Smart Chain';
+  }
+
+  if (chain === 'optimistic') {
+    return 'Optimism';
+  }
+
+  if (chain === 'arbitrum') {
+    return 'Arbitrum';
+  }
+
+  return chainName;
+};
+
+export const chainNameFromViemToMobula = (chainName: string) => {
+  if (chainName === 'Gnosis') {
+    return 'XDAI';
+  }
+
+  if (chainName === 'BNB Smart Chain') {
+    return 'BNB Smart Chain (BEP20)';
+  }
+
+  if (chainName === 'OP Mainnet' || chainName === 'Optimism') {
+    return 'Optimistic';
+  }
+
+  if (chainName === 'Arbitrum One' || chainName === 'Arbitrum') {
+    return 'Arbitrum';
+  }
+
+  return chainName;
+};
+
 /**
  * Loads the locally saved Mobula tokens list, rename the chain name,
  * adds the gas token for each compatible chains and rename tokens
@@ -50,7 +92,7 @@ export const loadTokensData = (): Token[] => {
    * some chains that have a different name on Mobula
    */
   const allowedBlockchains = CompatibleChains.map((chain) =>
-    chain.chainName === 'Gnosis' ? 'XDAI' : chain.chainName
+    chainNameFromViemToMobula(chain.chainName)
   );
 
   /**
@@ -179,6 +221,12 @@ export const chainIdToChainNameTokensData = (chainId: number | undefined) => {
       return 'Base';
     case 100:
       return 'XDAI';
+    case 56:
+      return 'BNB Smart Chain (BEP20)';
+    case 10:
+      return 'Optimistic';
+    case 42161:
+      return 'Arbitrum';
     case undefined:
       return '';
     default:
@@ -197,6 +245,12 @@ export const chainNameToChainIdTokensData = (chain: string | undefined) => {
       return 8453;
     case 'XDAI':
       return 100;
+    case 'BNB Smart Chain (BEP20)':
+      return 56;
+    case 'Optimistic':
+      return 10;
+    case 'Arbitrum':
+      return 42161;
     case undefined:
       return 0;
     default:

@@ -22,7 +22,11 @@ import {
 import Select, { SelectOption } from '../Select';
 
 // utils
-import { parseNftTitle, visibleChains } from '../../../utils/blockchain';
+import {
+  getChainName,
+  parseNftTitle,
+  visibleChains,
+} from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
 // hooks
@@ -130,7 +134,7 @@ const AssetSelect = ({
 
   const chainIdOptions = visibleChains.map((chain) => ({
     id: `${chain.id}`,
-    title: chain.name,
+    title: getChainName(chain.id),
     value: chain.id,
   }));
 

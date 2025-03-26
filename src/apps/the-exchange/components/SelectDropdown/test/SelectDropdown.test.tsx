@@ -24,11 +24,13 @@ import {
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
 
+// utils
+import { getChainName } from '../../../../../utils/blockchain';
+
 // types
 import { Token } from '../../../../../services/tokensData';
 
 // components
-import { convertChainIdtoName } from '../../../../../utils/blockchain';
 import SelectDropdown from '../SelectDropdown';
 
 const mockTokenAssets: Token[] = [
@@ -51,6 +53,22 @@ const mockTokenAssets: Token[] = [
     logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'Optimism',
+        Arbitrum: 'Arbitrum',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
+}));
 
 describe('<SelectDropdown />', () => {
   beforeEach(() => {
@@ -134,9 +152,7 @@ describe('<SelectDropdown />', () => {
 
     expect(screen.getByText('Select a chain')).toBeInTheDocument();
     options.forEach((option) => {
-      expect(
-        screen.getByText(convertChainIdtoName(option))
-      ).toBeInTheDocument();
+      expect(screen.getByText(getChainName(option))).toBeInTheDocument();
     });
   });
 

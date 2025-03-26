@@ -33,6 +33,7 @@ import Alert from '../Text/Alert';
 
 // utils
 import {
+  getChainName,
   getLogoForChainId,
   truncateAddress,
   visibleChains,
@@ -366,7 +367,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                             id={`action-bar-account-token-${tokenSymbol}-${chain.id}`}
                           >
                             <ChainIcon src={getLogoForChainId(chain.id)} />
-                            <p>{chain.name}</p>
+                            <p>{getChainName(Number(chain.id))}</p>
                             <p>{formatAmountDisplay(assetBalanceValue)}</p>
                           </TokenItemChain>
                         );
