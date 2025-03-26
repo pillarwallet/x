@@ -113,4 +113,15 @@ describe('<PointsTile />', () => {
     expect(screen.queryByText('My Points Tile')).not.toBeInTheDocument();
     expect(screen.queryByText('500')).not.toBeInTheDocument();
   });
+
+  it('does not render when data.data is an empty object', () => {
+    const mockPointsDataEmpty: Projection = {
+      ...mockPointsData,
+      data: {} as Points,
+    };
+
+    render(<PointsTile data={mockPointsDataEmpty} isDataLoading={false} />);
+
+    expect(screen.queryByTestId('points-tile')).not.toBeInTheDocument();
+  });
 });

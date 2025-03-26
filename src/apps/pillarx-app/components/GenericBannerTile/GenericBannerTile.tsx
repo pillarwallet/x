@@ -17,7 +17,14 @@ const GenericBannerTile = ({ data, isDataLoading }: GenericBannerTileProps) => {
     window.open(bannerDisplay?.cta?.href, '_blank');
   };
 
-  if (!data || isDataLoading) {
+  if (
+    !data ||
+    !meta ||
+    Object.keys(meta).length === 0 ||
+    !bannerDisplay ||
+    Object.keys(bannerDisplay).length === 0 ||
+    isDataLoading
+  ) {
     return null;
   }
 

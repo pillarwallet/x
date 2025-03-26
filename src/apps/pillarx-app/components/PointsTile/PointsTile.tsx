@@ -78,7 +78,7 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
     };
   }, [copied]);
 
-  if (!data || isDataLoading) {
+  if (!data || Object.keys(pointsData).length === 0 || isDataLoading) {
     return null;
   }
 

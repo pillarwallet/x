@@ -32,7 +32,6 @@ const AnimatedTile = ({
   const tileDisplay = meta?.display;
 
   const [ref, inView] = useInView({
-    threshold: 0.1,
     rootMargin: '100px 0px 0px 0px',
   });
 
@@ -53,7 +52,7 @@ const AnimatedTile = ({
 
   const animationProps = useSpring({
     transform:
-      inView && !isDataLoading ? 'translateY(0px)' : 'translateY(100px)',
+      inView && !isDataLoading ? 'translateY(0px)' : 'translateY(75px)',
     config: { tension: 170, friction: 26 },
     onRest: () => {
       if (inView) {
