@@ -40,7 +40,7 @@ const chainMapping = {
   gnosis: 'https://rpc.gnosischain.com',
   base: 'https://base-rpc.publicnode.com',
   'bnb smart chain': 'https://bsc.drpc.org',
-  'op mainnet': 'https://optimism-rpc.publicnode.com',
+  optimism: 'https://optimism-rpc.publicnode.com',
   'arbitrum one': 'https://arbitrum.drpc.org',
 };
 
@@ -53,7 +53,7 @@ export const allNativeTokens: Record<
   gnosis: { name: 'xDai', symbol: 'XDAI' },
   base: { name: 'Ether', symbol: 'ETH' },
   'bnb smart chain': { name: 'BNB', symbol: 'BNB' },
-  'op mainnet': { name: 'Ether', symbol: 'ETH' },
+  optimism: { name: 'Ether', symbol: 'ETH' },
   'arbitrum one': { name: 'Ether', symbol: 'ETH' },
 };
 
@@ -75,48 +75,6 @@ export const getNetworkViem = (chainId: number): Chain => {
       return arbitrum;
     default:
       return mainnet;
-  }
-};
-
-export const getChainId = (chain: string): number => {
-  switch (chain) {
-    case 'ethereum':
-      return 1;
-    case 'polygon':
-      return 137;
-    case 'gnosis':
-      return 100;
-    case 'base':
-      return 8453;
-    case 'bnb smart chain':
-      return 56;
-    case 'op mainnet':
-      return 10;
-    case 'arbitrum one':
-      return 42161;
-    default:
-      return 1;
-  }
-};
-
-export const getChainName = (chain: number): Network | string => {
-  switch (chain) {
-    case 1:
-      return 'ethereum';
-    case 137:
-      return 'polygon';
-    case 8453:
-      return 'base';
-    case 100:
-      return 'gnosis';
-    case 56:
-      return 'bnb smart chain';
-    case 10:
-      return 'op mainnet';
-    case 42161:
-      return 'arbitrum one';
-    default:
-      return `${chain}`;
   }
 };
 

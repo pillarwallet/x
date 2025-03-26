@@ -51,7 +51,7 @@ export const chainNameDataCompatibility = (chainName: string) => {
   }
 
   if (chain === 'optimistic') {
-    return 'OP Mainnet';
+    return 'Optimism';
   }
 
   if (chain === 'arbitrum') {
@@ -70,7 +70,7 @@ export const chainNameFromViemToMobula = (chainName: string) => {
     return 'BNB Smart Chain (BEP20)';
   }
 
-  if (chainName === 'OP Mainnet') {
+  if (chainName === 'OP Mainnet' || chainName === 'Optimism') {
     return 'Optimistic';
   }
 

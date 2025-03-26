@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
 import { chainNameDataCompatibility } from '../../../../services/tokensData';
-import { convertChainIdtoName } from '../../../../utils/blockchain';
+import { getChainName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
@@ -71,7 +71,7 @@ const SelectDropdown = ({
       dispatch(
         setSwapChain({
           chainId: Number(option),
-          chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+          chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
       recordPresence({
@@ -84,7 +84,7 @@ const SelectDropdown = ({
       dispatch(
         setReceiveChain({
           chainId: Number(option),
-          chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+          chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
       recordPresence({
@@ -128,7 +128,7 @@ const SelectDropdown = ({
                   className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
                 >
                   <Body className="border-b-[#8C8C8C]/[.1] capitalize">
-                    {option === 0 ? 'all' : convertChainIdtoName(option)}
+                    {option === 0 ? 'all' : getChainName(option)}
                   </Body>
                 </button>
               </li>

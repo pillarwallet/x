@@ -3,7 +3,6 @@ import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { ethers } from 'ethers';
-import * as all from 'viem/chains';
 import {
   arbitrum,
   avalanche,
@@ -250,7 +249,7 @@ export const getChainName = (chain: number) => {
     case 56:
       return 'BNB Smart Chain';
     case 10:
-      return 'OP Mainnet';
+      return 'Optimism';
     case 42161:
       return 'Arbitrum One';
     default:
@@ -281,21 +280,10 @@ export const CompatibleChains = [
   },
   {
     chainId: 10,
-    chainName: 'OP Mainnet',
+    chainName: 'Optimism',
   },
   {
     chainId: 42161,
     chainName: 'Arbitrum One',
   },
 ];
-
-export const convertChainIdtoName = (chainId: number) => {
-  const { ...chains } = all;
-  for (const chain of Object.values(chains)) {
-    if (chain.id === chainId) {
-      return chain.name;
-    }
-  }
-
-  return `${chainId}`;
-};

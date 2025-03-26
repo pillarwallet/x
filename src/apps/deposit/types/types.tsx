@@ -24,7 +24,7 @@ export type Network =
   | 'gnosis'
   | 'base'
   | 'bnb smart chain'
-  | 'op mainnet'
+  | 'optimism'
   | 'arbitrum one';
 
 export type TokenList = {

@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // components
-import useBottomMenuModal from '../../hooks/useBottomMenuModal';
-import TextInput from '../../components/Form/TextInput';
 import Button from '../../components/Button';
 import FormGroup from '../../components/Form/FormGroup';
 import Label from '../../components/Form/Label';
 import Select from '../../components/Form/Select';
+import TextInput from '../../components/Form/TextInput';
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 // utils
-import { visibleChains } from '../../utils/blockchain';
+import { getChainName, visibleChains } from '../../utils/blockchain';
 
 const App = () => {
   const [t] = useTranslation();
@@ -22,7 +22,7 @@ const App = () => {
 
   const chainOptions = visibleChains.map((chain) => ({
     id: `${chain.id}`,
-    title: chain.name,
+    title: getChainName(chain.id),
     value: chain.id,
   }));
 

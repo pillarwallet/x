@@ -24,11 +24,13 @@ import {
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
 
+// utils
+import { getChainName } from '../../../../../utils/blockchain';
+
 // types
 import { Token } from '../../../../../services/tokensData';
 
 // components
-import { convertChainIdtoName } from '../../../../../utils/blockchain';
 import SelectDropdown from '../SelectDropdown';
 
 const mockTokenAssets: Token[] = [
@@ -60,7 +62,7 @@ jest.mock('../../../../../services/tokensData', () => ({
       const mockChainMap = {
         XDAI: 'Gnosis',
         'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
-        Optimistic: 'OP Mainnet',
+        Optimistic: 'Optimism',
         Arbitrum: 'Arbitrum One',
       } as const;
 
@@ -150,9 +152,7 @@ describe('<SelectDropdown />', () => {
 
     expect(screen.getByText('Select a chain')).toBeInTheDocument();
     options.forEach((option) => {
-      expect(
-        screen.getByText(convertChainIdtoName(option))
-      ).toBeInTheDocument();
+      expect(screen.getByText(getChainName(option))).toBeInTheDocument();
     });
   });
 

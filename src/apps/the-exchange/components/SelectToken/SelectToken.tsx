@@ -2,7 +2,7 @@
 import { CardPosition } from '../../utils/types';
 
 // utils
-import { convertChainIdtoName } from '../../../../utils/blockchain';
+import { getChainName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
@@ -36,9 +36,7 @@ const SelectToken = ({
           {tokenName ?? type}
         </Body>
         <Body className="font-normal capitalize">
-          {tokenChain
-            ? `On ${convertChainIdtoName(tokenChain)}`
-            : 'Select Token'}
+          {tokenChain ? `On ${getChainName(tokenChain)}` : 'Select Token'}
         </Body>
       </div>
       <TokenLogo

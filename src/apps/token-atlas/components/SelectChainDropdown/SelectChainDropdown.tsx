@@ -17,7 +17,7 @@ import {
 import { ChainType } from '../../types/types';
 
 // utils
-import { convertChainIdtoName } from '../../../../utils/blockchain';
+import { getChainName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
@@ -67,7 +67,7 @@ const SelectChainDropdown = ({
     dispatch(
       setSelectedChain({
         chainId: Number(option),
-        chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+        chainName: option === 0 ? 'all' : getChainName(option),
       })
     );
     recordPresence({
@@ -120,7 +120,7 @@ const SelectChainDropdown = ({
                 onClick={() => handleSelectChainId(option)}
               >
                 <Body className="text-base mobile:text-sm font-medium">
-                  {option === 0 ? 'all' : convertChainIdtoName(option)}
+                  {option === 0 ? 'all' : getChainName(option)}
                 </Body>
               </li>
             ))}
