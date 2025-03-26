@@ -39,11 +39,25 @@ type TokenDataType = {
 
 let tokensData: Token[] = [];
 
+/**
+ * Loads the locally saved Mobula tokens list, rename the chain name,
+ * adds the gas token for each compatible chains and rename tokens
+ * that are in reality Wrapped tokens
+ */
 export const loadTokensData = (): Token[] => {
+  /**
+   * List all compatible blockchains with PillarX and rename
+   * some chains that have a different name on Mobula
+   */
   const allowedBlockchains = CompatibleChains.map((chain) =>
     chain.chainName === 'Gnosis' ? 'XDAI' : chain.chainName
   );
 
+  /**
+   * Check if the tokens list has not been loaded yet and
+   * list all tokens one by one with their respective chain
+   * and contract address
+   */
   if (tokensData.length === 0) {
     tokensData = (tokens as TokenDataType).data.flatMap((item) =>
       item.blockchains
@@ -52,6 +66,11 @@ export const loadTokensData = (): Token[] => {
           let { symbol } = item;
           const contract = item.contracts[index];
 
+          /**
+           * Changes token name and symbole to its Wrapped token
+           * since on Mobula the tokens below are actually the
+           * Wrapped tokens according to their contract address
+           */
           if (name === 'XDAI' && symbol === 'XDAI') {
             name = 'Wrapped XDAI';
             symbol = 'WXDAI';
@@ -71,6 +90,12 @@ export const loadTokensData = (): Token[] => {
             symbol = 'POL';
           }
 
+          /**
+           * Some contract addresses are the gas tokens on Mobula,
+           * so we are removing them from the Mobula tokens list
+           * since we are counting them already as native that we pushed
+           * to that list earlier in this function
+           */
           return contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
             !(
               name === 'POL' &&
@@ -143,7 +168,7 @@ export const searchTokens = (query: string): Token[] => {
   return results.map((result) => result.item);
 };
 
-// Mapping of chain id to Mobula blockchain name
+// Converts chain id to Mobula blockchain name
 export const chainIdToChainNameTokensData = (chainId: number | undefined) => {
   switch (chainId) {
     case 1:
@@ -161,6 +186,7 @@ export const chainIdToChainNameTokensData = (chainId: number | undefined) => {
   }
 };
 
+// Converts Mobula blockchain name to chain id
 export const chainNameToChainIdTokensData = (chain: string | undefined) => {
   switch (chain) {
     case 'Ethereum':

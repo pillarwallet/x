@@ -62,6 +62,10 @@ export const App = () => {
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
   );
 
+  /**
+   * Formats the native/gas token object, since nativeToken below
+   * and selectedToken object types are slightly different.
+   */
   const formattedNativeToken = {
     address: selectedToken.address,
     chainId: selectedToken.chainId,
@@ -71,13 +75,20 @@ export const App = () => {
     logoURI: selectedToken.icon,
   };
 
+  // Checks what is the native/gas token of the selected token chain id
   const nativeToken = getNativeAssetForChainId(selectedToken.chainId || 0);
 
+  // Checks if the selected token is one of the native/gas tokens
   const isNativeToken =
     nativeToken.name === formattedNativeToken.name &&
     nativeToken.symbol === formattedNativeToken.symbol &&
     nativeToken.address === formattedNativeToken.address;
 
+  /**
+   * Checks if the selected token is actually a native/gas token.
+   * Mobula's token list includes wrapped tokens but not native/gas
+   * tokens, therefore we check here if a wrapped token is selected.
+   */
   const isWrappedOrNativeToken =
     isNativeToken ||
     (selectedToken.name === 'POL' && selectedToken.symbol === 'POL') ||
@@ -85,6 +96,13 @@ export const App = () => {
       selectedToken.symbol === 'WETH') ||
     (selectedToken.name === 'Wrapped XDAI' && selectedToken.symbol === 'WXDAI');
 
+  /**
+   * If the user selected a wrapped token it will get its
+   * native/gas token because Mobula's token list does not
+   * recognise wrapped tokens and treat them as native/gas.
+   * For data querying purpose, we consider wrapped tokens here
+   * as their native/gas token.
+   */
   const getSymbol = (symbol: string) => {
     if (isWrappedOrNativeToken && symbol === 'WETH') {
       return 'ETH';
