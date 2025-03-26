@@ -67,7 +67,7 @@ export const loadTokensData = (): Token[] => {
           const contract = item.contracts[index];
 
           /**
-           * Changes token name and symbole to its Wrapped token
+           * Changes token name and symbol to its Wrapped token
            * since on Mobula the tokens below are actually the
            * Wrapped tokens according to their contract address
            */
