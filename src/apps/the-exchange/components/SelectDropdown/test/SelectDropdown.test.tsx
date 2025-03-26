@@ -63,7 +63,7 @@ jest.mock('../../../../../services/tokensData', () => ({
         XDAI: 'Gnosis',
         'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
         Optimistic: 'Optimism',
-        Arbitrum: 'Arbitrum One',
+        Arbitrum: 'Arbitrum',
       } as const;
 
       return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;

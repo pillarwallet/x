@@ -41,7 +41,7 @@ const chainMapping = {
   base: 'https://base-rpc.publicnode.com',
   'bnb smart chain': 'https://bsc.drpc.org',
   optimism: 'https://optimism-rpc.publicnode.com',
-  'arbitrum one': 'https://arbitrum.drpc.org',
+  arbitrum: 'https://arbitrum.drpc.org',
 };
 
 export const allNativeTokens: Record<
@@ -54,7 +54,7 @@ export const allNativeTokens: Record<
   base: { name: 'Ether', symbol: 'ETH' },
   'bnb smart chain': { name: 'BNB', symbol: 'BNB' },
   optimism: { name: 'Ether', symbol: 'ETH' },
-  'arbitrum one': { name: 'Ether', symbol: 'ETH' },
+  arbitrum: { name: 'Ether', symbol: 'ETH' },
 };
 
 export const getNetworkViem = (chainId: number): Chain => {

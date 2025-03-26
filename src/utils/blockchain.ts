@@ -251,7 +251,7 @@ export const getChainName = (chain: number) => {
     case 10:
       return 'Optimism';
     case 42161:
-      return 'Arbitrum One';
+      return 'Arbitrum';
     default:
       return `${chain}`;
   }
@@ -284,6 +284,6 @@ export const CompatibleChains = [
   },
   {
     chainId: 42161,
-    chainName: 'Arbitrum One',
+    chainName: 'Arbitrum',
   },
 ];

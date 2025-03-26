@@ -55,7 +55,7 @@ export const chainNameDataCompatibility = (chainName: string) => {
   }
 
   if (chain === 'arbitrum') {
-    return 'Arbitrum One';
+    return 'Arbitrum';
   }
 
   return chainName;
@@ -74,7 +74,7 @@ export const chainNameFromViemToMobula = (chainName: string) => {
     return 'Optimistic';
   }
 
-  if (chainName === 'Arbitrum One') {
+  if (chainName === 'Arbitrum One' || chainName === 'Arbitrum') {
     return 'Arbitrum';
   }
 
