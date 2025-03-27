@@ -127,6 +127,15 @@ export const loadTokensData = (): Token[] => {
             symbol = 'WETH';
           }
 
+          if (
+            name === 'BNB' &&
+            symbol === 'BNB' &&
+            contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
+          ) {
+            name = 'Wrapped BNB';
+            symbol = 'WBNB';
+          }
+
           if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
             name = 'POL';
             symbol = 'POL';
