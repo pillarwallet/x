@@ -9,7 +9,10 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
-import { setSearchTokenResult } from '../../reducer/tokenAtlasSlice';
+import {
+  setSearchToken,
+  setSearchTokenResult,
+} from '../../reducer/tokenAtlasSlice';
 
 // services
 import {
@@ -44,6 +47,8 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   // The searchTokens will look for tokens close to the name or chain id being typed on filtered or all supported chains
   const searchTokensData = (tokenSearch: string) => {
     const result = searchTokens(tokenSearch);
+
+    dispatch(setSearchToken(tokenSearch));
 
     if (selectedChain.chainId === 0) {
       dispatch(setSearchTokenResult(result.map((tokens) => tokens)));

@@ -29,6 +29,7 @@ export type TokenAltasState = {
   periodFilter: PeriodFilter;
   isGraphLoading: boolean;
   blockchainList: BlockchainData[] | undefined;
+  searchToken: string;
 };
 
 const initialState: TokenAltasState = {
@@ -48,6 +49,7 @@ const initialState: TokenAltasState = {
   periodFilter: PeriodFilter.DAY,
   isGraphLoading: false,
   blockchainList: [],
+  searchToken: '',
 };
 
 const tokenAtlasSlice = createSlice({
@@ -105,6 +107,9 @@ const tokenAtlasSlice = createSlice({
     ) {
       state.blockchainList = action.payload;
     },
+    setSearchToken(state, action: PayloadAction<string>) {
+      state.searchToken = action.payload;
+    },
   },
 });
 
@@ -122,6 +127,7 @@ export const {
   setPeriodFilter,
   setIsGraphLoading,
   setBlockchainList,
+  setSearchToken,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;
