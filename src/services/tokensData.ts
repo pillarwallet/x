@@ -210,11 +210,16 @@ export const searchTokens = (query: string): Token[] => {
   const loadedTokens = loadTokensData();
 
   const fuse = new Fuse(loadedTokens, {
-    keys: ['name', 'symbol', 'blockchain', 'contract'], // Fields to search in
-    threshold: 0.3, // Adjust fuzziness
+    keys: ['name', 'symbol', 'contract'], // Fields to search in
+    threshold: 0.2, // Allow some fuzziness for queries that are not contract like
+    minMatchCharLength: 3,
+    useExtendedSearch: true, // Enables exact match using '='
   });
 
-  const results = fuse.search(query);
+  // Check if query length is above 20 characters have an exact match
+  const searchQuery = query.length > 40 ? `="${query}"` : query;
+
+  const results = fuse.search(searchQuery);
 
   return results.map((result) => result.item);
 };
