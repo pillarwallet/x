@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
 
@@ -38,6 +40,9 @@ const TokensSearchResult = () => {
   const tokenListData = useAppSelector(
     (state) => state.tokenAtlas.tokenListData as Token[]
   );
+  const searchToken = useAppSelector(
+    (state) => state.tokenAtlas.searchToken as string
+  );
 
   // if there are no tokens being typed searched, we show the token list of tokens
   // which will filter if a chain has been chosen
@@ -73,6 +78,14 @@ const TokensSearchResult = () => {
       navigate('/token-atlas');
     }
   };
+
+  // Auto-select token if there is exactly one token in the list
+  // and the search was done with a contract address
+  useEffect(() => {
+    if (tokenList.length === 1 && tokenList[0].contract === searchToken) {
+      handleChooseToken(tokenList[0]);
+    }
+  }, [tokenList]);
 
   return (
     <div id="token-atlas-token-search-result" className="flex flex-col w-full">

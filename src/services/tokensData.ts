@@ -210,7 +210,7 @@ export const searchTokens = (query: string): Token[] => {
   const loadedTokens = loadTokensData();
 
   const fuse = new Fuse(loadedTokens, {
-    keys: ['name', 'symbol', 'blockchain'], // Fields to search in
+    keys: ['name', 'symbol', 'blockchain', 'contract'], // Fields to search in
     threshold: 0.3, // Adjust fuzziness
   });
 
