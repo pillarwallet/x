@@ -132,18 +132,28 @@ const TokenGraphColumn = ({
             <SkeletonLoader $height="29px" $radius="6px" $marginBottom="10px" />
           ) : (
             <>
-              {tokenDataInfo?.logo ? (
-                <img
-                  src={tokenDataInfo.logo}
-                  alt="token-logo"
-                  className="w-[30px] h-[30px] object-fill rounded-full"
-                  data-testid="token-logo-graph-column"
-                />
-              ) : (
-                <div className="w-[30px] h-[30px] object-fill rounded-full overflow-hidden">
-                  <RandomAvatar name={tokenDataInfo?.name || ''} />
-                </div>
-              )}
+              <div className="relative w-[30px] h-[30px] rounded-full">
+                {tokenDataInfo?.logo ? (
+                  <img
+                    src={tokenDataInfo.logo}
+                    alt="token-logo"
+                    className="w-full h-full object-fill rounded-full"
+                    data-testid="token-logo-graph-column"
+                  />
+                ) : (
+                  <div className="w-full h-full overflow-hidden rounded-full">
+                    <RandomAvatar name={tokenDataInfo?.name || ''} />
+                  </div>
+                )}
+
+                {/* Overlay text when no token logo available */}
+                {!tokenDataInfo?.logo && (
+                  <span className="absolute inset-0 flex items-center justify-center text-lg text-xs font-bold">
+                    {tokenDataInfo?.name?.slice(0, 2)}
+                  </span>
+                )}
+              </div>
+
               <Body className="font-medium text-[27px] mobile:text-[25px]">
                 {tokenDataInfo ? tokenDataInfo.name : 'Token not found'}
               </Body>

@@ -32,6 +32,7 @@ const TokensVerticalList = ({ position, data }: TokensVerticalListProps) => {
           percentage={undefined}
           isLast={index === data.length - 1}
           tokenLogo={token.logo}
+          tokenChains={token.contracts}
         />
       ))}
     </div>

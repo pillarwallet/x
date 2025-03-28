@@ -75,6 +75,7 @@ const TokensHorizontalTile = ({
                 tokenName={token.name}
                 tokenValue={undefined}
                 percentage={undefined}
+                tokenChains={token.contracts}
                 onClick={() =>
                   navigate(
                     `/token-atlas?asset=${token.name}&symbol=${token.symbol}`

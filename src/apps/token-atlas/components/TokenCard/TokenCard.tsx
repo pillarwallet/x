@@ -24,30 +24,37 @@ const TokenCard = ({
       onClick={onClick}
       data-testid="token-card"
     >
-      {blockchainLogo ? (
+      {blockchainLogo && (
         <img
           src={blockchainLogo}
           alt="chain-logo"
           className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full"
           data-testid="token-card-chain-logo"
         />
-      ) : (
-        <div className="absolute top-2 right-2 w-4 h-4 object-fill rounded-full overflow-hidden">
-          <RandomAvatar name={tokenName || ''} />
-        </div>
       )}
-      {tokenLogo ? (
-        <img
-          src={tokenLogo}
-          alt="token-logo"
-          className="w-[40px] h-[40px] object-fill rounded-full"
-          data-testid="token-card-token-logo"
-        />
-      ) : (
-        <div className="w-[40px] h-[40px] object-fill rounded-full overflow-hidden">
-          <RandomAvatar name={`${tokenName}-chain` || ''} />
-        </div>
-      )}
+
+      <div className="relative w-[40px] h-[40px] rounded-full">
+        {tokenLogo ? (
+          <img
+            src={tokenLogo}
+            alt="token-logo"
+            className="w-full h-full object-fill rounded-full"
+            data-testid="token-card-token-logo"
+          />
+        ) : (
+          <div className="w-full h-full overflow-hidden rounded-full">
+            <RandomAvatar name={`${tokenName}-chain` || ''} />
+          </div>
+        )}
+
+        {/* Overlay text when no token logo available */}
+        {!tokenLogo && (
+          <span className="absolute inset-0 flex items-center justify-center text-white text-base font-bold">
+            {tokenName?.slice(0, 2)}
+          </span>
+        )}
+      </div>
+
       <Body className="text-base capitalize w-full truncate text-center">
         {tokenName}
       </Body>

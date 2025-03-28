@@ -1,4 +1,9 @@
+import { render, screen } from '@testing-library/react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
 
 // components
 import HorizontalToken from '../HorizontalToken';
@@ -20,24 +25,26 @@ describe('<HorizontalToken />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <HorizontalToken
-          tokenIndex={tokenIndex}
-          tokenLogo={logo}
-          tokenSymbol={tokenSymbol}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-          isLast={isLast}
-        />
+        <Provider store={store}>
+          <HorizontalToken
+            tokenIndex={tokenIndex}
+            tokenLogo={logo}
+            tokenSymbol={tokenSymbol}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+            isLast={isLast}
+          />
+        </Provider>
       )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders the logo with the correct src', () => {
-    const tree = renderer
-      .create(
+  it('renders the logo', () => {
+    render(
+      <Provider store={store}>
         <HorizontalToken
           tokenIndex={tokenIndex}
           tokenLogo={logo}
@@ -47,25 +54,16 @@ describe('<HorizontalToken />', () => {
           percentage={percentage}
           isLast={isLast}
         />
-      )
-      .toJSON() as ReactTestRendererJSON;
+      </Provider>
+    );
 
-    const divElement = tree.children?.find(
-      (child) => typeof child === 'object'
-    ) as ReactTestRendererJSON;
-
-    const imgProp = divElement.children?.find(
-      (child) => typeof child === 'object' && child.type === 'img'
-    ) as ReactTestRendererJSON;
-
-    expect(imgProp).not.toBeNull();
-    expect(imgProp.type).toBe('img');
-    expect(imgProp.props.src).toBe(logo);
+    expect(screen.getByTestId('horizontal-token-logo')).toBeInTheDocument();
+    expect(screen.queryByTestId('random-avatar')).not.toBeInTheDocument();
   });
 
   it('renders the default logo (random avatar) when logo is not provided', () => {
-    const tree = renderer
-      .create(
+    render(
+      <Provider store={store}>
         <HorizontalToken
           tokenIndex={tokenIndex}
           tokenSymbol={tokenSymbol}
@@ -74,25 +72,18 @@ describe('<HorizontalToken />', () => {
           percentage={percentage}
           isLast={isLast}
         />
-      )
-      .toJSON() as ReactTestRendererJSON;
+      </Provider>
+    );
 
-    const divElement = tree.children?.find(
-      (child) => typeof child === 'object'
-    ) as ReactTestRendererJSON;
-
-    const imgProp = divElement.children?.find(
-      (child) => typeof child === 'object' && child.type === 'div'
-    ) as ReactTestRendererJSON;
-
-    expect(imgProp).not.toBeNull();
-    expect(imgProp.type).toBe('div');
-    expect(imgProp.props.className).toContain('overflow-hidden');
+    expect(
+      screen.queryByTestId('horizontal-token-logo')
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('random-avatar')).toBeInTheDocument();
   });
 
-  it('renders the token symbol and name correctly', () => {
-    const tree = renderer
-      .create(
+  it('renders the name correctly', () => {
+    render(
+      <Provider store={store}>
         <HorizontalToken
           tokenIndex={tokenIndex}
           tokenLogo={logo}
@@ -102,44 +93,26 @@ describe('<HorizontalToken />', () => {
           percentage={percentage}
           isLast={isLast}
         />
-      )
-      .toJSON() as ReactTestRendererJSON;
+      </Provider>
+    );
 
-    const divElement = tree.children?.find(
-      (child) => typeof child === 'object'
-    ) as ReactTestRendererJSON;
-
-    const divElementSecond = divElement.children?.find(
-      (child) => typeof child === 'object' && child.type === 'div'
-    ) as ReactTestRendererJSON;
-
-    const tokenSymbolProp = divElementSecond.children?.find(
-      (child) => typeof child === 'object' && child.type === 'Body'
-    ) as ReactTestRendererJSON;
-
-    const tokenNameProp = divElementSecond.children?.find(
-      (child) => typeof child === 'object' && child.type === 'BodySmall'
-    ) as ReactTestRendererJSON;
-
-    expect(tokenSymbolProp).not.toBeNull();
-    expect(tokenSymbolProp?.children).toContain(tokenSymbol);
-
-    expect(tokenNameProp).not.toBeNull();
-    expect(tokenNameProp?.children).toContain(tokenName);
+    expect(screen.getByText('Token Name')).toBeInTheDocument();
   });
 
   it('renders the token value correctly', () => {
     const tree = renderer
       .create(
-        <HorizontalToken
-          tokenIndex={tokenIndex}
-          tokenLogo={logo}
-          tokenSymbol={tokenSymbol}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-          isLast={isLast}
-        />
+        <Provider store={store}>
+          <HorizontalToken
+            tokenIndex={tokenIndex}
+            tokenLogo={logo}
+            tokenSymbol={tokenSymbol}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+            isLast={isLast}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
 
@@ -158,15 +131,17 @@ describe('<HorizontalToken />', () => {
   it('applies the correct styles', () => {
     const tree = renderer
       .create(
-        <HorizontalToken
-          tokenIndex={tokenIndex}
-          tokenLogo={logo}
-          tokenSymbol={tokenSymbol}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-          isLast={isLast}
-        />
+        <Provider store={store}>
+          <HorizontalToken
+            tokenIndex={tokenIndex}
+            tokenLogo={logo}
+            tokenSymbol={tokenSymbol}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+            isLast={isLast}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
 
@@ -185,15 +160,17 @@ describe('<HorizontalToken />', () => {
   it('applies correct mobile border style for the last token when tokenIndex is 3', () => {
     const tree = renderer
       .create(
-        <HorizontalToken
-          tokenIndex={3}
-          tokenLogo={logo}
-          tokenSymbol={tokenSymbol}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-          isLast
-        />
+        <Provider store={store}>
+          <HorizontalToken
+            tokenIndex={3}
+            tokenLogo={logo}
+            tokenSymbol={tokenSymbol}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+            isLast
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
 

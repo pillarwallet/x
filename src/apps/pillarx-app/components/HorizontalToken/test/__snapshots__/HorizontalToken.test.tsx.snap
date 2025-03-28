@@ -13,11 +13,16 @@ exports[`<HorizontalToken /> renders correctly and matches snapshot 1`] = `
       0
       1
     </BodySmall>
-    <img
-      alt="token-logo"
-      className="w-[50px] h-[50px] object-fill rounded mr-3.5"
-      src="https://example.com/logo.png"
-    />
+    <div
+      className="relative w-[50px] h-[50px] rounded-full mr-3.5"
+    >
+      <img
+        alt="token-logo"
+        className="w-full h-full object-fill rounded-full"
+        data-testid="horizontal-token-logo"
+        src="https://example.com/logo.png"
+      />
+    </div>
     <div
       className="flex flex-col"
     >

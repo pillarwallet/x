@@ -27,11 +27,15 @@ exports[`<ExchangeAction /> renders correctly and matches snapshot 1`] = `
         <div
           className="flex min-w-fit items-end"
         >
-          <img
-            alt="token-logo"
-            className="w-5 h-5 object-fill rounded-full grayscale"
-            src="iconMatic.png"
-          />
+          <div
+            className="w-5 h-5 relative rounded-full grayscale"
+          >
+            <img
+              alt="token-logo"
+              className="w-full h-full object-fill rounded-full"
+              src="iconMatic.png"
+            />
+          </div>
           <div
             className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
           >
