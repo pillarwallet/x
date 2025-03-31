@@ -1,5 +1,5 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 // api
@@ -77,6 +77,9 @@ const DropdownTokenList = ({
   const receiveToken = useAppSelector(
     (state) => state.swap.receiveToken as Token
   );
+  const searchToken = useAppSelector(
+    (state) => state.swap.searchToken as string
+  );
 
   const [isChainSelectionOpen, setIsChainSelectionOpen] =
     useState<boolean>(false);
@@ -128,6 +131,68 @@ const DropdownTokenList = ({
   } else {
     receiveTokenList = receiveTokenData;
   }
+
+  const handleClick = (token: Token) => {
+    if (isSwapOpen) {
+      dispatch(setSwapToken(token));
+      dispatch(
+        setSwapChain({
+          chainId: chainNameToChainIdTokensData(token.blockchain),
+          chainName: token.blockchain,
+        })
+      );
+      recordPresence({
+        address: accountAddress,
+        action: 'app:theExchange:sourceTokenSelect',
+        value: {
+          chainId: chainNameToChainIdTokensData(token.blockchain),
+          address: token.contract,
+          symbol: token.symbol,
+          name: token.name,
+        },
+      });
+      dispatch(setSearchTokenResult([]));
+      dispatch(setIsSwapOpen(false));
+    } else {
+      dispatch(setReceiveToken(token));
+      dispatch(
+        setReceiveChain({
+          chainId: chainNameToChainIdTokensData(token.blockchain),
+          chainName: token.blockchain,
+        })
+      );
+      recordPresence({
+        address: accountAddress,
+        action: 'app:theExchange:destinationTokenSelect',
+        value: {
+          chainId: chainNameToChainIdTokensData(token.blockchain),
+          address: token.contract,
+          symbol: token.symbol,
+          name: token.name,
+        },
+      });
+      dispatch(setSearchTokenResult([]));
+      dispatch(setIsReceiveOpen(false));
+    }
+  };
+
+  // Automatically select a token if there is only one available
+  useEffect(() => {
+    if (
+      isSwapOpen &&
+      swapTokenList.length === 1 &&
+      swapTokenList[0].contract === searchToken
+    ) {
+      handleClick(swapTokenList[0]);
+    } else if (
+      !isSwapOpen &&
+      receiveTokenList.length === 1 &&
+      receiveTokenList[0].contract === searchToken
+    ) {
+      handleClick(receiveTokenList[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swapTokenList, receiveTokenList, isSwapOpen]);
 
   return (
     <>
@@ -195,49 +260,7 @@ const DropdownTokenList = ({
                       token.blockchain !== swapToken?.blockchain ||
                       token.contract !== swapToken?.contract
                   ),
-              handleClick: (token: Token) => {
-                if (isSwapOpen) {
-                  dispatch(setSwapToken(token));
-                  dispatch(
-                    setSwapChain({
-                      chainId: chainNameToChainIdTokensData(token.blockchain),
-                      chainName: token.blockchain,
-                    })
-                  );
-                  recordPresence({
-                    address: accountAddress,
-                    action: 'app:theExchange:sourceTokenSelect',
-                    value: {
-                      chainId: chainNameToChainIdTokensData(token.blockchain),
-                      address: token.contract,
-                      symbol: token.symbol,
-                      name: token.name,
-                    },
-                  });
-                  dispatch(setSearchTokenResult([]));
-                  dispatch(setIsSwapOpen(false));
-                } else {
-                  dispatch(setReceiveToken(token));
-                  dispatch(
-                    setReceiveChain({
-                      chainId: chainNameToChainIdTokensData(token.blockchain),
-                      chainName: token.blockchain,
-                    })
-                  );
-                  recordPresence({
-                    address: accountAddress,
-                    action: 'app:theExchange:destinationTokenSelect',
-                    value: {
-                      chainId: chainNameToChainIdTokensData(token.blockchain),
-                      address: token.contract,
-                      symbol: token.symbol,
-                      name: token.name,
-                    },
-                  });
-                  dispatch(setSearchTokenResult([]));
-                  dispatch(setIsReceiveOpen(false));
-                }
-              },
+              handleClick,
             }}
           >
             {TokenRow}
