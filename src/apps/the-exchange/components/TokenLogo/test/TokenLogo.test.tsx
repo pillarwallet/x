@@ -47,7 +47,7 @@ describe('<TokenLogo />', () => {
     render(<TokenLogo tokenLogo="token-logo.png" isBigger showLogo />);
     const tokenLogo = screen.getByAltText('token-logo');
     const tokenChainLogo = screen.getByAltText('chain-logo');
-    expect(tokenLogo).toHaveClass('w-[30px] h-[30px]');
+    expect(tokenLogo).toHaveClass('w-full h-full object-fill rounded-full');
     expect(tokenChainLogo.parentElement).toHaveClass('w-3.5 h-3.5');
   });
 
@@ -55,7 +55,7 @@ describe('<TokenLogo />', () => {
     render(<TokenLogo tokenLogo="token-logo.png" isBigger={false} showLogo />);
     const tokenLogo = screen.getByAltText('token-logo');
     const tokenChainLogo = screen.getByAltText('chain-logo');
-    expect(tokenLogo).toHaveClass('w-5 h-5');
+    expect(tokenLogo).toHaveClass('w-full h-full object-fill rounded-full');
     expect(tokenChainLogo.parentElement).toHaveClass('w-3 h-3');
   });
 });

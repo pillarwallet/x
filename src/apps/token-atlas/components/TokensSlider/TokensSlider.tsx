@@ -140,12 +140,12 @@ const TokensSlider = () => {
         <div className="flex gap-4 mb-4">
           {trendingTokens &&
             trendingTokens.map((token, index) => {
-              const blockchain = blockchainList.find(
-                (chain) =>
-                  chain.name.toLowerCase() ===
-                  token.contracts?.[0]?.blockchain?.toLowerCase()
-              );
-              const blockchainLogo = blockchain ? blockchain.logo : undefined;
+              const blockchainLogo =
+                token.contracts?.length === 1
+                  ? blockchainList.find(
+                      (chain) => chain.name === token.contracts?.[0]?.blockchain
+                    )?.logo
+                  : undefined;
               return (
                 <TokenCard
                   key={index}

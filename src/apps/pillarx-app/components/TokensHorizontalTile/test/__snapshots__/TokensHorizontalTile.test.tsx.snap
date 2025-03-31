@@ -20,11 +20,24 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
         className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
         onClick={[Function]}
       >
-        <img
-          alt="token-logo"
-          className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
-          src="https://www.logo.com/example/"
-        />
+        <div
+          className="relative w-[70px] h-[70px] rounded-full mb-3.5"
+        >
+          <img
+            alt="token-logo"
+            className="w-full h-full object-fill rounded-full"
+            data-testid="token-info-horizontal-logo"
+            src="https://www.logo.com/example/"
+          />
+          <div
+            className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+          >
+            <img
+              alt="logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
         <p
           className="text-base font-medium text-center"
         >

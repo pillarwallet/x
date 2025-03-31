@@ -1,6 +1,10 @@
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
 // components
 import { ApiLayout, Projection } from '../../../../../types/api';
 import TokensHorizontalTile from '../TokensHorizontalTile';
@@ -46,9 +50,11 @@ describe('<TokensHorizontalTile />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensHorizontalTile data={mockData} isDataLoading={mockLoading} />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensHorizontalTile data={mockData} isDataLoading={mockLoading} />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 
@@ -58,9 +64,11 @@ describe('<TokensHorizontalTile />', () => {
   it('displays loading skeleton when data is loading', () => {
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensHorizontalTile data={undefined} isDataLoading />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensHorizontalTile data={undefined} isDataLoading />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 
@@ -81,12 +89,14 @@ describe('<TokensHorizontalTile />', () => {
 
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensHorizontalTile
-            data={emptyMockData}
-            isDataLoading={mockLoading}
-          />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensHorizontalTile
+              data={emptyMockData}
+              isDataLoading={mockLoading}
+            />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 

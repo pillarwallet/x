@@ -52,11 +52,20 @@ const HighlightedMediaGridTile = ({
   const numberOfMediGridCollections =
     dimensions.width > mediaGridTileWidth ? 3 : 4;
 
+  // Filter out grids with no valid items
+  const validGridsItems = dataMediaGrid?.grids?.filter(
+    (collection) => collection?.items?.length
+  );
+
   if (!data && isDataLoading) {
     return null;
   }
 
-  if (!dataMediaGrid?.grids?.length || Object.keys(dataMediaGrid).length === 0)
+  if (
+    !dataMediaGrid?.grids?.length ||
+    validGridsItems?.length === 0 ||
+    Object.keys(dataMediaGrid).length === 0
+  )
     return null;
 
   return (

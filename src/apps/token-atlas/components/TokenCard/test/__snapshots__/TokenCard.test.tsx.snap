@@ -13,12 +13,16 @@ exports[`<TokenCard /> renders correctly and matches snapshot 1`] = `
     data-testid="token-card-chain-logo"
     src="blockchain-logo.png"
   />
-  <img
-    alt="token-logo"
-    className="w-[40px] h-[40px] object-fill rounded-full"
-    data-testid="token-card-token-logo"
-    src="token-logo.png"
-  />
+  <div
+    className="relative w-[40px] h-[40px] rounded-full"
+  >
+    <img
+      alt="token-logo"
+      className="w-full h-full object-fill rounded-full"
+      data-testid="token-card-token-logo"
+      src="token-logo.png"
+    />
+  </div>
   <p
     className="text-[13px] font-semibold text-base capitalize w-full truncate text-center"
   >
