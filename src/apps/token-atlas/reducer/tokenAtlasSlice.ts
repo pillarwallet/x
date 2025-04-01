@@ -30,6 +30,7 @@ export type TokenAltasState = {
   isGraphLoading: boolean;
   blockchainList: BlockchainData[] | undefined;
   searchToken: string;
+  isTokenSearchLoading: boolean;
 };
 
 const initialState: TokenAltasState = {
@@ -50,6 +51,7 @@ const initialState: TokenAltasState = {
   isGraphLoading: false,
   blockchainList: [],
   searchToken: '',
+  isTokenSearchLoading: false,
 };
 
 const tokenAtlasSlice = createSlice({
@@ -110,6 +112,9 @@ const tokenAtlasSlice = createSlice({
     setSearchToken(state, action: PayloadAction<string>) {
       state.searchToken = action.payload;
     },
+    setIsTokenSearchLoading(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchLoading = action.payload;
+    },
   },
 });
 
@@ -128,6 +133,7 @@ export const {
   setIsGraphLoading,
   setBlockchainList,
   setSearchToken,
+  setIsTokenSearchLoading,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

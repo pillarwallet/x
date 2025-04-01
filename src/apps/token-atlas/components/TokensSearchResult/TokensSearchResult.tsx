@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { CircularProgress } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
@@ -42,6 +43,9 @@ const TokensSearchResult = () => {
   );
   const searchToken = useAppSelector(
     (state) => state.tokenAtlas.searchToken as string
+  );
+  const isTokenSearchLoading = useAppSelector(
+    (state) => state.tokenAtlas.isTokenSearchLoading as boolean
   );
 
   // if there are no tokens being typed searched, we show the token list of tokens
@@ -90,9 +94,13 @@ const TokensSearchResult = () => {
   return (
     <div id="token-atlas-token-search-result" className="flex flex-col w-full">
       <Body className="text-white_light_grey mb-4">Search tokens</Body>
-      {tokenList.length === 0 ? (
+      {isTokenSearchLoading && (
+        <CircularProgress size={24} sx={{ color: '#979797' }} />
+      )}
+      {!isTokenSearchLoading && tokenList.length === 0 && (
         <Body className="text-base">No tokens found.</Body>
-      ) : (
+      )}
+      {!isTokenSearchLoading && tokenList.length !== 0 && (
         <List
           height={250}
           itemCount={tokenList.length}

@@ -1,4 +1,5 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import { CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -79,6 +80,9 @@ const DropdownTokenList = ({
   );
   const searchToken = useAppSelector(
     (state) => state.swap.searchToken as string
+  );
+  const isTokenSearchLoading = useAppSelector(
+    (state) => state.swap.isTokenSearchLoading as boolean
   );
 
   const [isChainSelectionOpen, setIsChainSelectionOpen] =
@@ -241,30 +245,35 @@ const DropdownTokenList = ({
           id="token-list-exchange"
           className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
-          <List
-            height={272}
-            itemCount={
-              isSwapOpen ? swapTokenList.length : receiveTokenList.length
-            }
-            itemSize={73}
-            width="100%"
-            itemData={{
-              tokenList: isSwapOpen
-                ? swapTokenList.filter(
-                    (token) =>
-                      token.blockchain !== receiveToken?.blockchain ||
-                      token.contract !== receiveToken?.contract
-                  )
-                : receiveTokenList.filter(
-                    (token) =>
-                      token.blockchain !== swapToken?.blockchain ||
-                      token.contract !== swapToken?.contract
-                  ),
-              handleClick,
-            }}
-          >
-            {TokenRow}
-          </List>
+          {isTokenSearchLoading && (
+            <CircularProgress size={24} sx={{ color: '#312F3A' }} />
+          )}
+          {!isTokenSearchLoading && (
+            <List
+              height={272}
+              itemCount={
+                isSwapOpen ? swapTokenList.length : receiveTokenList.length
+              }
+              itemSize={73}
+              width="100%"
+              itemData={{
+                tokenList: isSwapOpen
+                  ? swapTokenList.filter(
+                      (token) =>
+                        token.blockchain !== receiveToken?.blockchain ||
+                        token.contract !== receiveToken?.contract
+                    )
+                  : receiveTokenList.filter(
+                      (token) =>
+                        token.blockchain !== swapToken?.blockchain ||
+                        token.contract !== swapToken?.contract
+                    ),
+                handleClick,
+              }}
+            >
+              {TokenRow}
+            </List>
+          )}
         </div>
       </div>
     </>
