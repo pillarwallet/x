@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 
@@ -16,6 +18,8 @@ const TokenLogo = ({
   isBigger,
   showLogo,
 }: TokenLogoProps) => {
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+
   if (!showLogo) return null;
 
   return (
@@ -23,11 +27,12 @@ const TokenLogo = ({
       <div
         className={`${isBigger ? 'w-[30px] h-[30px]' : 'w-5 h-5'} relative rounded-full grayscale`}
       >
-        {tokenLogo ? (
+        {tokenLogo && !isBrokenImage ? (
           <img
             src={tokenLogo}
             alt="token-logo"
             className="w-full h-full object-fill rounded-full"
+            onError={() => setIsBrokenImage(true)}
           />
         ) : (
           <div className="w-full h-full overflow-hidden rounded-full">
@@ -36,7 +41,7 @@ const TokenLogo = ({
         )}
 
         {/* Overlay text when no token logo available */}
-        {!tokenLogo && (
+        {(!tokenLogo || isBrokenImage) && (
           <span
             className={`absolute inset-0 flex items-center justify-center text-white ${isBigger ? 'text-xs' : 'text-[8px]'} font-bold`}
           >

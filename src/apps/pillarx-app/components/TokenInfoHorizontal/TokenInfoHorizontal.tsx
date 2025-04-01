@@ -32,6 +32,8 @@ const TokenInfoHorizontal = ({
   const [blockchainLogo, setBlockchainLogo] = useState<string | undefined>(
     undefined
   );
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+
   const { data: blockchainListData, isSuccess } = useGetBlockchainsListQuery();
 
   useEffect(() => {
@@ -49,12 +51,13 @@ const TokenInfoHorizontal = ({
       onClick={onClick}
     >
       <div className="relative w-[70px] h-[70px] rounded-full mb-3.5">
-        {logo ? (
+        {logo && !isBrokenImage ? (
           <img
             src={logo}
             alt="token-logo"
             className="w-full h-full object-fill rounded-full"
             data-testid="token-info-horizontal-logo"
+            onError={() => setIsBrokenImage(true)}
           />
         ) : (
           <div className="w-full h-full overflow-hidden rounded-full">
@@ -63,7 +66,7 @@ const TokenInfoHorizontal = ({
         )}
 
         {/* Overlay text when no logo available */}
-        {!logo && (
+        {(!logo || isBrokenImage) && (
           <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
             {tokenName?.slice(0, 2)}
           </span>

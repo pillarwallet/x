@@ -124,6 +124,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
                     <img
                       alt="token-logo"
                       className="w-full h-full object-fill rounded-full"
+                      onError={[Function]}
                       src="iconMatic.png"
                     />
                   </div>
