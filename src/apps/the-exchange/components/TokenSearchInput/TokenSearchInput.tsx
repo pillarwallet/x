@@ -6,7 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // reducer
-import { setSearchTokenResult } from '../../reducer/theExchangeSlice';
+import {
+  setSearchToken,
+  setSearchTokenResult,
+} from '../../reducer/theExchangeSlice';
 
 // services
 import {
@@ -59,6 +62,8 @@ const TokenSearchInput = ({
   // The performSearch will look for tokens close to the name or chain id being typed on filtered or all supported chains
   const searchTokensData = (tokenSearch: string) => {
     const result = searchTokens(tokenSearch);
+
+    dispatch(setSearchToken(tokenSearch));
 
     if (
       (isSwapOpen && swapChain.chainId === 0) ||

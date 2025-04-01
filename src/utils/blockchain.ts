@@ -3,24 +3,27 @@ import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { ethers } from 'ethers';
-import * as all from 'viem/chains';
 import {
+  arbitrum,
   avalanche,
   base,
   bsc,
   gnosis,
   mainnet,
+  optimism,
   polygon,
   sepolia,
 } from 'viem/chains';
 
 // images
+import logoArbitrum from '../assets/images/logo-arbitrum.png';
 import logoAvalanche from '../assets/images/logo-avalanche.png';
 import logoBase from '../assets/images/logo-base.png';
 import logoBsc from '../assets/images/logo-bsc.png';
 import logoEthereum from '../assets/images/logo-ethereum.png';
 import logoEvm from '../assets/images/logo-evm.png';
 import logoGnosis from '../assets/images/logo-gnosis.png';
+import logoOptimism from '../assets/images/logo-optimism.png';
 import logoPolygon from '../assets/images/logo-polygon.png';
 
 export const isTestnet = (() => {
@@ -81,7 +84,6 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
-  // gnosis testnet not supported on Prime SDK
   if (chainId === gnosis.id) {
     nativeAsset.name = 'XDAI';
     nativeAsset.symbol = 'XDAI';
@@ -89,7 +91,6 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/native_tokens/xdai.png';
   }
 
-  // avalanche testnet not supported on Prime SDK
   if (chainId === avalanche.id) {
     nativeAsset.name = 'AVAX';
     nativeAsset.symbol = 'AVAX';
@@ -97,7 +98,6 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/avalanche.svg';
   }
 
-  // bsc testnet not supported on Prime SDK
   if (chainId === bsc.id) {
     nativeAsset.name = 'BNB';
     nativeAsset.symbol = 'BNB';
@@ -105,7 +105,20 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/binance.svg';
   }
 
-  // base testnet not supported on Prime SDK
+  if (chainId === optimism.id) {
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
+    nativeAsset.logoURI =
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
+
+  if (chainId === arbitrum.id) {
+    nativeAsset.name = 'Ether';
+    nativeAsset.symbol = 'ETH';
+    nativeAsset.logoURI =
+      'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
+  }
+
   if (chainId === base.id) {
     nativeAsset.name = 'Ether';
     nativeAsset.symbol = 'ETH';
@@ -123,7 +136,16 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   return nativeAsset;
 };
 
-export const supportedChains = [mainnet, polygon, gnosis, base, sepolia];
+export const supportedChains = [
+  mainnet,
+  polygon,
+  gnosis,
+  base,
+  bsc,
+  optimism,
+  arbitrum,
+  sepolia,
+];
 
 export const visibleChains = supportedChains.filter((chain) =>
   isTestnet ? chain.testnet : !chain.testnet
@@ -152,6 +174,14 @@ export const getLogoForChainId = (chainId: number): string => {
 
   if (chainId === bsc.id) {
     return logoBsc;
+  }
+
+  if (chainId === optimism.id) {
+    return logoOptimism;
+  }
+
+  if (chainId === arbitrum.id) {
+    return logoArbitrum;
   }
 
   if (chainId === base.id) {
@@ -195,6 +225,12 @@ export const getBlockScan = (chain: number) => {
       return 'https://basescan.org/tx/';
     case 100:
       return 'https://gnosisscan.io/tx/';
+    case 56:
+      return 'https://bscscan.com/tx/';
+    case 10:
+      return 'https://optimistic.etherscan.io/tx/';
+    case 42161:
+      return 'http://arbiscan.io/tx/';
     default:
       return '';
   }
@@ -210,6 +246,12 @@ export const getChainName = (chain: number) => {
       return 'Base';
     case 100:
       return 'Gnosis';
+    case 56:
+      return 'BNB Smart Chain';
+    case 10:
+      return 'Optimism';
+    case 42161:
+      return 'Arbitrum';
     default:
       return `${chain}`;
   }
@@ -232,15 +274,16 @@ export const CompatibleChains = [
     chainId: 100,
     chainName: 'Gnosis',
   },
+  {
+    chainId: 56,
+    chainName: 'BNB Smart Chain',
+  },
+  {
+    chainId: 10,
+    chainName: 'Optimism',
+  },
+  {
+    chainId: 42161,
+    chainName: 'Arbitrum',
+  },
 ];
-
-export const convertChainIdtoName = (chainId: number) => {
-  const { ...chains } = all;
-  for (const chain of Object.values(chains)) {
-    if (chain.id === chainId) {
-      return chain.name;
-    }
-  }
-
-  return `${chainId}`;
-};

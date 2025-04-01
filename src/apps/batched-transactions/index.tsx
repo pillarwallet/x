@@ -1,21 +1,21 @@
+import { Box, Card, CssVarsProvider } from '@mui/joy';
+import JoyButton from '@mui/joy/Button';
+import Chip from '@mui/joy/Chip';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { Box, Card, CssVarsProvider } from '@mui/joy';
-import Chip from '@mui/joy/Chip';
 import { MdDelete } from 'react-icons/md';
-import JoyButton from '@mui/joy/Button';
+import styled from 'styled-components';
 
 // components
-import useBottomMenuModal from '../../hooks/useBottomMenuModal';
-import TextInput from '../../components/Form/TextInput';
 import Button from '../../components/Button';
 import FormGroup from '../../components/Form/FormGroup';
 import Label from '../../components/Form/Label';
 import Select from '../../components/Form/Select';
+import TextInput from '../../components/Form/TextInput';
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 // utils
-import { visibleChains } from '../../utils/blockchain';
+import { getChainName, visibleChains } from '../../utils/blockchain';
 
 interface Transaction {
   to: string;
@@ -33,7 +33,7 @@ const App = () => {
 
   const chainOptions = visibleChains.map((chain) => ({
     id: `${chain.id}`,
-    title: chain.name,
+    title: getChainName(chain.id),
     value: chain.id,
   }));
 

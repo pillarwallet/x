@@ -1,6 +1,10 @@
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
 // components
 import TokensVerticalTile from '../TokensVerticalTile';
 
@@ -45,9 +49,11 @@ describe('<TokensVerticalTile />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensVerticalTile data={mockData} isDataLoading={false} />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensVerticalTile data={mockData} isDataLoading={false} />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 
@@ -68,9 +74,11 @@ describe('<TokensVerticalTile />', () => {
 
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensVerticalTile data={emptyMockData} isDataLoading={false} />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensVerticalTile data={emptyMockData} isDataLoading={false} />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 

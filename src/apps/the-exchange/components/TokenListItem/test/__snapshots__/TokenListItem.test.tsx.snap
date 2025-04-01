@@ -12,11 +12,15 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
     <div
       className="flex min-w-fit items-end"
     >
-      <img
-        alt="token-logo"
-        className="w-[30px] h-[30px] object-fill rounded-full grayscale"
-        src="https://example.com/token-logo.png"
-      />
+      <div
+        className="w-[30px] h-[30px] relative rounded-full grayscale"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          src="https://example.com/token-logo.png"
+        />
+      </div>
       <div
         className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] hidden"
       >

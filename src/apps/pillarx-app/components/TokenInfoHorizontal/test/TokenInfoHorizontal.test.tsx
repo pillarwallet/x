@@ -1,4 +1,9 @@
+import { render, screen } from '@testing-library/react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
 
 // components
 import TokenInfoHorizontal from '../TokenInfoHorizontal';
@@ -12,68 +17,66 @@ describe('<TokenInfoHorizontal />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders the logo with the correct src', () => {
-    const tree = renderer
-      .create(
+  it('renders the logo', () => {
+    render(
+      <Provider store={store}>
         <TokenInfoHorizontal
           logo={logo}
           tokenName={tokenName}
           tokenValue={tokenValue}
           percentage={percentage}
         />
-      )
-      .toJSON() as ReactTestRendererJSON;
-    const logoProp =
-      (tree.children?.find(
-        (child) => typeof child === 'object' && child.type === 'img'
-      ) as ReactTestRendererJSON) || null;
+      </Provider>
+    );
 
-    expect(logoProp).not.toBeNull();
-    expect(logoProp.type).toBe('img');
-    expect(logoProp.props.src).toBe(logo);
+    expect(
+      screen.getByTestId('token-info-horizontal-logo')
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('random-avatar')).not.toBeInTheDocument();
   });
 
   it('renders the default logo (random avatar) when logo is not provided', () => {
-    const tree = renderer
-      .create(
+    render(
+      <Provider store={store}>
         <TokenInfoHorizontal
           tokenName={tokenName}
           tokenValue={tokenValue}
           percentage={percentage}
         />
-      )
-      .toJSON() as ReactTestRendererJSON;
-    const logoProp =
-      (tree.children?.find(
-        (child) => typeof child === 'object' && child.type === 'div'
-      ) as ReactTestRendererJSON) || null;
+      </Provider>
+    );
 
-    expect(logoProp).not.toBeNull();
-    expect(logoProp.type).toBe('div');
-    expect(logoProp.props.className).toContain('overflow-hidden');
+    expect(screen.getByTestId('random-avatar')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('token-info-horizontal-logo')
+    ).not.toBeInTheDocument();
   });
 
   it('renders the token name correctly', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
     const tokenNameProp = tree.children?.find(
@@ -88,11 +91,13 @@ describe('<TokenInfoHorizontal />', () => {
   it('does not render the token name', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenValue={tokenValue}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenValue={tokenValue}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
     const tokenNameProp = tree.children?.find(
@@ -105,12 +110,14 @@ describe('<TokenInfoHorizontal />', () => {
   it('renders the token value correctly', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
 
@@ -126,11 +133,13 @@ describe('<TokenInfoHorizontal />', () => {
   it('does not render the token value', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenName={tokenName}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenName={tokenName}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
 
@@ -144,12 +153,14 @@ describe('<TokenInfoHorizontal />', () => {
   it('applies the correct style', () => {
     const tree = renderer
       .create(
-        <TokenInfoHorizontal
-          logo={logo}
-          tokenName={tokenName}
-          tokenValue={tokenValue}
-          percentage={percentage}
-        />
+        <Provider store={store}>
+          <TokenInfoHorizontal
+            logo={logo}
+            tokenName={tokenName}
+            tokenValue={tokenValue}
+            percentage={percentage}
+          />
+        </Provider>
       )
       .toJSON() as ReactTestRendererJSON;
     expect(tree.type).toBe('div');

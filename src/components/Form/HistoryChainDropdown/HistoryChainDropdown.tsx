@@ -6,7 +6,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { useSelectedChains } from '../../../hooks/useSelectedChainsHistory';
 
 // utils
-import { CompatibleChains, getChainName } from '../../../utils/blockchain';
+import { CompatibleChains } from '../../../utils/blockchain';
 
 const HistoryChainDropdown = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -63,7 +63,7 @@ const HistoryChainDropdown = () => {
                       : 'text-medium_grey'
                   }`}
                 >
-                  {getChainName(option.chainId)}
+                  {option.chainName}
                 </p>
                 <BiCheckboxChecked
                   size={20}

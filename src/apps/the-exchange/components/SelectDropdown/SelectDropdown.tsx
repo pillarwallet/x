@@ -10,7 +10,8 @@ import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
-import { convertChainIdtoName } from '../../../../utils/blockchain';
+import { chainNameDataCompatibility } from '../../../../services/tokensData';
+import { getChainName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
@@ -70,7 +71,7 @@ const SelectDropdown = ({
       dispatch(
         setSwapChain({
           chainId: Number(option),
-          chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+          chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
       recordPresence({
@@ -83,7 +84,7 @@ const SelectDropdown = ({
       dispatch(
         setReceiveChain({
           chainId: Number(option),
-          chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+          chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
       recordPresence({
@@ -107,7 +108,9 @@ const SelectDropdown = ({
       >
         {isOpen && <Body className="text-[#717171]">Select a chain</Body>}
         <Body className="text-black capitalize">
-          {isSwapOpen ? swapChain?.chainName : receiveChain?.chainName}
+          {isSwapOpen
+            ? chainNameDataCompatibility(swapChain?.chainName)
+            : chainNameDataCompatibility(receiveChain?.chainName)}
         </Body>
         <img src={ArrowDown} alt="arrow-down" />
       </button>
@@ -125,7 +128,7 @@ const SelectDropdown = ({
                   className="px-4 py-2 cursor-pointer hover:bg-gray-100 hover:text-blue-600 border-b last:border-none"
                 >
                   <Body className="border-b-[#8C8C8C]/[.1] capitalize">
-                    {option === 0 ? 'all' : convertChainIdtoName(option)}
+                    {option === 0 ? 'all' : getChainName(option)}
                   </Body>
                 </button>
               </li>
