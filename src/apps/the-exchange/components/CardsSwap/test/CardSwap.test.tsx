@@ -31,60 +31,6 @@ import CardsSwap from '../CardsSwap';
 import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
 import { Token } from '../../../../../services/tokensData';
 
-jest.mock('../../../../../services/tokensData', () => ({
-  __esModule: true,
-  chainNameToChainIdTokensData: jest
-    .fn()
-    .mockImplementation((chainName: string) => {
-      const mockChainIdMap = {
-        Ethereum: 1,
-        Polygon: 137,
-      } as const;
-
-      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
-    }),
-  queryTokenData: jest.fn().mockReturnValue([
-    {
-      id: 1,
-      contract: '0x01',
-      name: 'Ether',
-      symbol: 'ETH',
-      blockchain: 'Ethereum',
-      decimals: 18,
-      logo: 'iconEth.png',
-    },
-    {
-      id: 2,
-      contract: '0x02',
-      name: 'POL',
-      symbol: 'POL',
-      blockchain: 'Polygon',
-      decimals: 18,
-      logo: 'iconMatic.png',
-    },
-  ]),
-  searchTokens: jest.fn().mockImplementation((query) => {
-    return [
-      { id: 1, name: 'Ether', symbol: 'ETH' },
-      { id: 2, name: 'Polygon', symbol: 'POL' },
-    ].filter(
-      (token) => token.name.includes(query) || token.symbol.includes(query)
-    );
-  }),
-  chainNameDataCompatibility: jest
-    .fn()
-    .mockImplementation((chainName: string) => {
-      const mockChainMap = {
-        XDAI: 'Gnosis',
-        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
-        Optimistic: 'Optimism',
-        Arbitrum: 'Arbitrum',
-      } as const;
-
-      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
-    }),
-}));
-
 const mockTokenAssets: Token[] = [
   {
     id: 1,
@@ -105,6 +51,72 @@ const mockTokenAssets: Token[] = [
     logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/pillarXApiSearchTokens', () => ({
+  __esModule: true,
+  useGetSearchTokensQuery: jest.fn().mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    isFetching: false,
+  }),
+}));
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameToChainIdTokensData: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainIdMap = {
+        Ethereum: 1,
+        Polygon: 137,
+      } as const;
+
+      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || '';
+    }),
+  chainIdToChainNameTokensData: jest
+    .fn()
+    .mockImplementation((chainId: number) => {
+      const mockChainNameMap = {
+        1: 'Ethereum',
+        137: 'Polygon',
+      } as const;
+
+      return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
+    }),
+  convertAPIResponseToTokens: jest.fn().mockReturnValue(mockTokenAssets),
+  queryTokenData: jest.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+    },
+  ]),
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'Optimism',
+        Arbitrum: 'Arbitrum',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
+}));
 
 // Mock transaction-kit hooks being used
 jest.mock('@etherspot/transaction-kit', () => ({
@@ -246,6 +258,11 @@ describe('<CardsSwap />', () => {
   });
 
   it('opens token list when a card is clicked and no token on swap card', async () => {
+    // (useGetSearchTokensQuery as jest.Mock).mockReturnValue({
+    //   data: undefined,
+    //   isLoading: false,
+    //   isFetching: false,
+    // });
     render(
       <Provider store={store}>
         <CardsSwap />

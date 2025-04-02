@@ -64,6 +64,16 @@ jest.mock('../../../../../services/tokensData', () => ({
 
       return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
     }),
+  chainIdToChainNameTokensData: jest
+    .fn()
+    .mockImplementation((chainId: number) => {
+      const mockChainNameMap = {
+        1: 'Ethereum',
+        137: 'Polygon',
+      } as const;
+
+      return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
+    }),
   queryTokenData: jest.fn().mockReturnValue([
     {
       id: 1,
@@ -84,14 +94,6 @@ jest.mock('../../../../../services/tokensData', () => ({
       logo: 'iconMatic.png',
     },
   ]),
-  searchTokens: jest.fn().mockImplementation((query) => {
-    return [
-      { id: 1, name: 'Ether', symbol: 'ETH' },
-      { id: 2, name: 'Polygon', symbol: 'POL' },
-    ].filter(
-      (token) => token.name.includes(query) || token.symbol.includes(query)
-    );
-  }),
   chainNameDataCompatibility: jest
     .fn()
     .mockImplementation((chainName: string) => {

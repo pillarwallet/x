@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
 import Fuse from 'fuse.js';
 import tokens from '../data/tokens.json';
+import { TokenAssetResponse } from '../types/api';
 import {
   CompatibleChains,
   getNativeAssetForChainId,
@@ -205,25 +207,6 @@ export const queryTokenData = ({
   });
 };
 
-// Fuzzy search of tokens by name, symbol, and blockchain
-export const searchTokens = (query: string): Token[] => {
-  const loadedTokens = loadTokensData();
-
-  const fuse = new Fuse(loadedTokens, {
-    keys: ['name', 'symbol', 'contract'], // Fields to search in
-    threshold: 0.2, // Allow some fuzziness for queries that are not contract like
-    minMatchCharLength: 3,
-    useExtendedSearch: true, // Enables exact match using '='
-  });
-
-  // Check if query length is above 20 characters have an exact match
-  const searchQuery = query.length > 40 ? `="${query}"` : query;
-
-  const results = fuse.search(searchQuery);
-
-  return results.map((result) => result.item);
-};
-
 // Converts chain id to Mobula blockchain name
 export const chainIdToChainNameTokensData = (chainId: number | undefined) => {
   switch (chainId) {
@@ -270,4 +253,135 @@ export const chainNameToChainIdTokensData = (chain: string | undefined) => {
     default:
       return 0;
   }
+};
+
+/**
+ * This function is used to convert the Mobula API response
+ * into a simplified Token type that is being used accross PillarX.
+ * Without a search input, it will add the native/gas token to the
+ * list, since they are not part of the Mobula list.
+ * Without a search input, it will look for native/gas token search,
+ * and will also search for an exact match if the search input is
+ * longer than 40 characters, which is likely a contract address.
+ */
+export const convertAPIResponseToTokens = (
+  result: TokenAssetResponse[],
+  searchInput?: string
+): Token[] => {
+  if (!result || result.length === 0) return [];
+
+  // Gets the compatible chains with PillarX
+  const allowedBlockchains = CompatibleChains.map((chain) =>
+    chainNameFromViemToMobula(chain.chainName)
+  );
+
+  // Show the Mobula's API result, but also check for exceptions on the native/gas token
+  const tokenData = result.flatMap((item) =>
+    item.blockchains
+      .map((blockchain, index) => {
+        let { name, symbol } = item;
+        const contract = item.contracts[index];
+
+        // Rename Wrapped tokens
+        if (name === 'XDAI' && symbol === 'XDAI') {
+          name = 'Wrapped XDAI';
+          symbol = 'WXDAI';
+        }
+
+        if (
+          name === 'Ethereum' &&
+          symbol === 'ETH' &&
+          contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+        ) {
+          name = 'Wrapped Ether';
+          symbol = 'WETH';
+        }
+
+        if (
+          name === 'BNB' &&
+          symbol === 'BNB' &&
+          contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
+        ) {
+          name = 'Wrapped BNB';
+          symbol = 'WBNB';
+        }
+
+        if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
+          name = 'POL';
+          symbol = 'POL';
+        }
+
+        // Remove gas/native token contracts that are already included separately
+        if (
+          contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ||
+          (name === 'POL' &&
+            contract === '0x0000000000000000000000000000000000001010')
+        ) {
+          return null;
+        }
+
+        return {
+          id: item.id,
+          name,
+          symbol,
+          logo: item.logo,
+          blockchain,
+          contract,
+          decimals: item.decimals[index],
+        };
+      })
+      .filter(
+        (token): token is Token =>
+          token !== null && allowedBlockchains.includes(token.blockchain)
+      )
+  );
+
+  // Use Fuse.js to match native tokens that are not included in Mobula's token list
+  // as well as look for an exact match of contract address
+  if (searchInput) {
+    const nativeTokens = CompatibleChains.map((chain) => {
+      const nativeAsset = getNativeAssetForChainId(chain.chainId);
+      return {
+        id: chain.chainId,
+        name: nativeAsset.name,
+        symbol: nativeAsset.symbol,
+        logo: nativeAsset.logoURI,
+        blockchain: chainIdToChainNameTokensData(nativeAsset.chainId),
+        contract: nativeAsset.address,
+        decimals: nativeAsset.decimals,
+      };
+    });
+
+    const fuse = new Fuse([...nativeTokens, ...tokenData], {
+      keys: ['name', 'symbol', 'contract'], // Fields to search in
+      threshold: 0.2, // Allow some fuzziness for queries that are not contract like
+      minMatchCharLength: 3,
+      useExtendedSearch: true, // Enables exact match using '='
+    });
+
+    // Check if query length is above 40 characters have an exact match (likely a contract address)
+    const searchQuery =
+      searchInput.length > 40 ? `="${searchInput}"` : searchInput;
+
+    const results = fuse.search(searchQuery);
+
+    return results.map((r) => r.item);
+  }
+
+  // Adds nativeTokens to the list if no search input
+  CompatibleChains.forEach((chain) => {
+    const nativeAsset = getNativeAssetForChainId(chain.chainId);
+    const nativeTokenOption: Token = {
+      id: chain.chainId,
+      name: nativeAsset.name,
+      symbol: nativeAsset.symbol,
+      logo: nativeAsset.logoURI,
+      blockchain: chainIdToChainNameTokensData(nativeAsset.chainId),
+      contract: nativeAsset.address,
+      decimals: nativeAsset.decimals,
+    };
+    tokenData.push(nativeTokenOption);
+  });
+
+  return tokenData;
 };

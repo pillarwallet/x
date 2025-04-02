@@ -22,6 +22,8 @@ export type SwapState = {
   usdPriceReceiveToken: number;
   isOfferLoading: boolean;
   searchToken: string;
+  isTokenSearchLoading: boolean;
+  isTokenSearchErroring: boolean;
 };
 
 const initialState: SwapState = {
@@ -47,6 +49,8 @@ const initialState: SwapState = {
   usdPriceReceiveToken: 0,
   isOfferLoading: false,
   searchToken: '',
+  isTokenSearchLoading: false,
+  isTokenSearchErroring: false,
 };
 
 const swapSlice = createSlice({
@@ -101,6 +105,12 @@ const swapSlice = createSlice({
     setSearchToken(state, action: PayloadAction<string>) {
       state.searchToken = action.payload;
     },
+    setIsTokenSearchLoading(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchLoading = action.payload;
+    },
+    setIsTokenSearchErroring(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchErroring = action.payload;
+    },
   },
 });
 
@@ -121,6 +131,8 @@ export const {
   setUsdPriceReceiveToken,
   setIsOfferLoading,
   setSearchToken,
+  setIsTokenSearchLoading,
+  setIsTokenSearchErroring,
 } = swapSlice.actions;
 
 export default swapSlice;
