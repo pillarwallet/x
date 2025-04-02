@@ -6,6 +6,7 @@ import { addMiddleware } from '../../../store';
 // types
 import {
   BlockchainList,
+  MarketHistoryPairData,
   TokenAtlasGraphApiResponse,
   TokenAtlasInfoApiResponse,
   TrendingTokens,
@@ -92,6 +93,42 @@ export const blockchainsListApi = createApi({
   }),
 });
 
+export const tokenMarketHistoryPair = createApi({
+  reducerPath: 'tokenMarketHistoryPair',
+  baseQuery: fetchBaseQuery({
+    baseUrl: isTestnet
+      ? 'https://hifidata-nubpgwxpiq-uc.a.run.app'
+      : 'https://hifidata-7eu4izffpa-uc.a.run.app',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }),
+  endpoints: (builder) => ({
+    getSearchTokens: builder.query<
+      MarketHistoryPairData,
+      { asset: string; symbol: string; from: number; to?: number }
+    >({
+      query: ({ asset, symbol, from, to }) => {
+        return {
+          url: '',
+          method: 'POST',
+          body: {
+            path: 'market/history/pair',
+            params: {
+              asset,
+              symbol,
+              from,
+              to,
+              chainIds,
+              testnets: isTestnet,
+            },
+          },
+        };
+      },
+    }),
+  }),
+});
+
 /**
  * Add this to the store
  */
@@ -99,6 +136,7 @@ addMiddleware(tokenInfoApi);
 addMiddleware(tokenGraphApi);
 addMiddleware(trendingTokensApi);
 addMiddleware(blockchainsListApi);
+addMiddleware(tokenMarketHistoryPair);
 
 export const { useGetTokenInfoQuery } = tokenInfoApi;
 export const { useGetTokenGraphQuery } = tokenGraphApi;

@@ -428,3 +428,14 @@ export type PointsResultsData = {
 export type WeeklyLeaderboardData = PointsResult & {
   rankChange?: LeaderboardRankChange;
 };
+
+export type MarketHistoryPairData = {
+  data: {
+    volume: number;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    time: number;
+  }[];
+};
