@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import Body from '../Typography/Body';
@@ -17,6 +19,8 @@ const TokenCard = ({
   blockchainLogo,
   onClick,
 }: TokenCardProps) => {
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+
   return (
     <div
       id="token-atlas-token-card"
@@ -34,12 +38,13 @@ const TokenCard = ({
       )}
 
       <div className="relative w-[40px] h-[40px] rounded-full">
-        {tokenLogo ? (
+        {tokenLogo && !isBrokenImage ? (
           <img
             src={tokenLogo}
             alt="token-logo"
             className="w-full h-full object-fill rounded-full"
             data-testid="token-card-token-logo"
+            onError={() => setIsBrokenImage(true)}
           />
         ) : (
           <div className="w-full h-full overflow-hidden rounded-full">
@@ -48,7 +53,7 @@ const TokenCard = ({
         )}
 
         {/* Overlay text when no token logo available */}
-        {!tokenLogo && (
+        {(!tokenLogo || isBrokenImage) && (
           <span className="absolute inset-0 flex items-center justify-center text-white text-base font-bold">
             {tokenName?.slice(0, 2)}
           </span>

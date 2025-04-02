@@ -19,6 +19,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
           alt="token-logo"
           className="w-full h-full object-fill rounded-full"
           data-testid="token-logo-graph-column"
+          onError={[Function]}
           src="tokenLogo.png"
         />
       </div>

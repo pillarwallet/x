@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 // utils
 import { chainNameDataCompatibility } from '../../../../services/tokensData';
 
@@ -22,6 +24,8 @@ const TokenResultCard = ({
   tokenChain,
   tokenLogo,
 }: TokenResultCardProps) => {
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+
   return (
     <div
       id={`token-atlas-token-result-card-${tokenChain}-${tokenName}`}
@@ -31,11 +35,12 @@ const TokenResultCard = ({
     >
       <div className="flex items-center min-w-0 flex-1">
         <div className="relative w-[30px] h-[30px] rounded-full mr-2">
-          {tokenLogo ? (
+          {tokenLogo && !isBrokenImage ? (
             <img
               src={tokenLogo}
               alt="token-logo"
               className="w-full h-full object-fill rounded-full"
+              onError={() => setIsBrokenImage(true)}
             />
           ) : (
             <div className="w-full h-full overflow-hidden rounded-full">
@@ -44,7 +49,7 @@ const TokenResultCard = ({
           )}
 
           {/* Overlay text when no token logo available */}
-          {!tokenLogo && (
+          {(!tokenLogo || isBrokenImage) && (
             <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
               {tokenName?.slice(0, 2)}
             </span>

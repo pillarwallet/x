@@ -50,6 +50,7 @@ const TokenGraphColumn = ({
     (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
 
   // The resize handle and listener are to check the viewport size, and change the arrows SVG accordingly
   const handleResize = () => {
@@ -133,12 +134,13 @@ const TokenGraphColumn = ({
           ) : (
             <>
               <div className="relative w-[30px] h-[30px] rounded-full">
-                {tokenDataInfo?.logo ? (
+                {tokenDataInfo?.logo && !isBrokenImage ? (
                   <img
                     src={tokenDataInfo.logo}
                     alt="token-logo"
                     className="w-full h-full object-fill rounded-full"
                     data-testid="token-logo-graph-column"
+                    onError={() => setIsBrokenImage(true)}
                   />
                 ) : (
                   <div className="w-full h-full overflow-hidden rounded-full">
@@ -147,7 +149,7 @@ const TokenGraphColumn = ({
                 )}
 
                 {/* Overlay text when no token logo available */}
-                {!tokenDataInfo?.logo && (
+                {(!tokenDataInfo?.logo || isBrokenImage) && (
                   <span className="absolute inset-0 flex items-center justify-center text-lg text-xs font-bold">
                     {tokenDataInfo?.name?.slice(0, 2)}
                   </span>
