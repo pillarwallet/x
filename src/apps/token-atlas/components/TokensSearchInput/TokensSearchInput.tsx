@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
 import {
+  setIsTokenSearchErroring,
   setIsTokenSearchLoading,
   setSearchToken,
   setSearchTokenResult,
@@ -60,7 +61,11 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   }, [searchText]);
 
   // API call to search tokens and assets
-  const { data: searchData, isLoading } = useGetSearchTokensQuery(
+  const {
+    data: searchData,
+    isLoading,
+    error,
+  } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
       filterBlockchains: chainIdToChainNameTokensData(selectedChain.chainId),
@@ -70,6 +75,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
 
   useEffect(() => {
     dispatch(setIsTokenSearchLoading(isLoading));
+    dispatch(setIsTokenSearchErroring(Boolean(error)));
 
     if (!searchData) return;
 

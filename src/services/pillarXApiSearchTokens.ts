@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 // types
 import { MobulaApiResponse } from '../types/api';
@@ -7,10 +7,8 @@ import { MobulaApiResponse } from '../types/api';
 import { addMiddleware } from '../store';
 import { CompatibleChains, isTestnet } from '../utils/blockchain';
 
-// Define a service using a base path and params
-export const pillarXApiSearchTokens = createApi({
-  reducerPath: 'pillarXApiSearchTokens',
-  baseQuery: fetchBaseQuery({
+const fetchBaseQueryWithRetry = retry(
+  fetchBaseQuery({
     baseUrl: isTestnet
       ? 'https://hifidata-nubpgwxpiq-uc.a.run.app'
       : 'https://hifidata-7eu4izffpa-uc.a.run.app',
@@ -18,6 +16,13 @@ export const pillarXApiSearchTokens = createApi({
       'Content-Type': 'application/json',
     },
   }),
+  { maxRetries: 10 }
+);
+
+// Define a service using a base path and params
+export const pillarXApiSearchTokens = createApi({
+  reducerPath: 'pillarXApiSearchTokens',
+  baseQuery: fetchBaseQueryWithRetry,
   endpoints: (builder) => ({
     getSearchTokens: builder.query<
       MobulaApiResponse,

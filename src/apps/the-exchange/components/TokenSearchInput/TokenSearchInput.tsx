@@ -6,6 +6,7 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 
 // reducer
 import {
+  setIsTokenSearchErroring,
   setIsTokenSearchLoading,
   setSearchToken,
   setSearchTokenResult,
@@ -73,7 +74,11 @@ const TokenSearchInput = ({
   }, [searchText]);
 
   // API call to search tokens and assets
-  const { data: searchData, isLoading } = useGetSearchTokensQuery(
+  const {
+    data: searchData,
+    isLoading,
+    error,
+  } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
       filterBlockchains: chainIdToChainNameTokensData(
@@ -85,6 +90,7 @@ const TokenSearchInput = ({
 
   useEffect(() => {
     dispatch(setIsTokenSearchLoading(isLoading));
+    dispatch(setIsTokenSearchErroring(Boolean(error)));
 
     if (!searchData) return;
 

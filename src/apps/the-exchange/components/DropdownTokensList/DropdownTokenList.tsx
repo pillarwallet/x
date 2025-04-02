@@ -36,6 +36,7 @@ import TokenRow from './TokenRow';
 
 // images
 import CloseIcon from '../../images/add.png';
+import Body from '../Typography/Body';
 
 type DropdownTokenListProps = {
   type: CardPosition;
@@ -83,6 +84,9 @@ const DropdownTokenList = ({
   );
   const isTokenSearchLoading = useAppSelector(
     (state) => state.swap.isTokenSearchLoading as boolean
+  );
+  const isTokenSearchErroring = useAppSelector(
+    (state) => state.swap.isTokenSearchErroring as boolean
   );
 
   const [isChainSelectionOpen, setIsChainSelectionOpen] =
@@ -245,6 +249,11 @@ const DropdownTokenList = ({
           id="token-list-exchange"
           className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
+          {isTokenSearchErroring && (
+            <Body className="text-base">
+              Oops something went wrong! Please try searching for tokens again.
+            </Body>
+          )}
           {isTokenSearchLoading && (
             <CircularProgress size={24} sx={{ color: '#312F3A' }} />
           )}

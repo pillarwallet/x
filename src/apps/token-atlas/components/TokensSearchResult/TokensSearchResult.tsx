@@ -47,6 +47,9 @@ const TokensSearchResult = () => {
   const isTokenSearchLoading = useAppSelector(
     (state) => state.tokenAtlas.isTokenSearchLoading as boolean
   );
+  const isTokenSearchErroring = useAppSelector(
+    (state) => state.tokenAtlas.isTokenSearchErroring as boolean
+  );
 
   // if there are no tokens being typed searched, we show the token list of tokens
   // which will filter if a chain has been chosen
@@ -94,6 +97,11 @@ const TokensSearchResult = () => {
   return (
     <div id="token-atlas-token-search-result" className="flex flex-col w-full">
       <Body className="text-white_light_grey mb-4">Search tokens</Body>
+      {isTokenSearchErroring && (
+        <Body className="text-base">
+          Oops something went wrong! Please try searching for tokens again.
+        </Body>
+      )}
       {isTokenSearchLoading && (
         <CircularProgress size={24} sx={{ color: '#979797' }} />
       )}
