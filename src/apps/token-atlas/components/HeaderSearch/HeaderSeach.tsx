@@ -7,13 +7,7 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 
 // reducer
-import {
-  setIsSearchTokenModalOpen,
-  setTokenListData,
-} from '../../reducer/tokenAtlasSlice';
-
-// services
-import { queryTokenData } from '../../../../services/tokensData';
+import { setIsSearchTokenModalOpen } from '../../reducer/tokenAtlasSlice';
 
 // images
 import SearchLogo from '../../images/circle-search.svg';
@@ -41,10 +35,6 @@ const HeaderSearch = () => {
       action: 'app:tokenAtlas:searchOpen',
       value: 'SEARCH_OPEN',
     });
-
-    const assets = queryTokenData({});
-
-    dispatch(setTokenListData(assets));
   };
 
   return (

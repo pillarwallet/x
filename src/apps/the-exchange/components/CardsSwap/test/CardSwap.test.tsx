@@ -15,11 +15,9 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
-  setReceiveTokenData,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
@@ -190,8 +188,6 @@ describe('<CardsSwap />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     act(() => {
-      store.dispatch(setSwapTokenData(mockTokenAssets));
-      store.dispatch(setReceiveTokenData(mockTokenAssets));
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
       store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
@@ -201,7 +197,7 @@ describe('<CardsSwap />', () => {
       store.dispatch(setAmountSwap(0.1));
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
-      store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setUsdPriceSwapToken(1200));
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
@@ -258,11 +254,6 @@ describe('<CardsSwap />', () => {
   });
 
   it('opens token list when a card is clicked and no token on swap card', async () => {
-    // (useGetSearchTokensQuery as jest.Mock).mockReturnValue({
-    //   data: undefined,
-    //   isLoading: false,
-    //   isFetching: false,
-    // });
     render(
       <Provider store={store}>
         <CardsSwap />
@@ -279,10 +270,7 @@ describe('<CardsSwap />', () => {
 
     fireEvent.click(swapCard[0]);
 
-    expect(store.getState().swap.swapTokenData).toStrictEqual(mockTokenAssets);
-    expect(store.getState().swap.receiveTokenData).toStrictEqual(
-      mockTokenAssets
-    );
+    expect(screen.getByText('Start searching for tokens.')).toBeInTheDocument();
 
     await waitFor(() => {
       expect(store.getState().swap.isSwapOpen).toBe(true);

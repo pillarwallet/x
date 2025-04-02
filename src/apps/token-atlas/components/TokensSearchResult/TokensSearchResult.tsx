@@ -22,7 +22,6 @@ import {
 } from '../../../../services/tokensData';
 
 // types
-import { ChainType } from '../../types/types';
 
 // components
 import Body from '../Typography/Body';
@@ -33,13 +32,7 @@ const TokensSearchResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const searchTokenResult = useAppSelector(
-    (state) => state.tokenAtlas.searchTokenResult as Token[]
-  );
-  const selectedChain = useAppSelector(
-    (state) => state.tokenAtlas.selectedChain as ChainType
-  );
-  const tokenListData = useAppSelector(
-    (state) => state.tokenAtlas.tokenListData as Token[]
+    (state) => state.tokenAtlas.searchTokenResult as Token[] | undefined
   );
   const searchToken = useAppSelector(
     (state) => state.tokenAtlas.searchToken as string
@@ -50,21 +43,6 @@ const TokensSearchResult = () => {
   const isTokenSearchErroring = useAppSelector(
     (state) => state.tokenAtlas.isTokenSearchErroring as boolean
   );
-
-  // if there are no tokens being typed searched, we show the token list of tokens
-  // which will filter if a chain has been chosen
-  let tokenList: Token[];
-
-  if (searchTokenResult.length) {
-    tokenList = searchTokenResult;
-  } else if (selectedChain.chainId !== 0) {
-    tokenList = tokenListData.filter(
-      (token) =>
-        chainNameToChainIdTokensData(token.blockchain) === selectedChain.chainId
-    );
-  } else {
-    tokenList = tokenListData;
-  }
 
   const handleChooseToken = (token: Token) => {
     dispatch(
@@ -80,7 +58,7 @@ const TokensSearchResult = () => {
     );
     dispatch(setIsSearchTokenModalOpen(false));
     dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
-    dispatch(setSearchTokenResult([]));
+    dispatch(setSearchTokenResult(undefined));
     if (location.search !== '') {
       navigate('/token-atlas');
     }
@@ -89,10 +67,14 @@ const TokensSearchResult = () => {
   // Auto-select token if there is exactly one token in the list
   // and the search was done with a contract address
   useEffect(() => {
-    if (tokenList.length === 1 && tokenList[0].contract === searchToken) {
-      handleChooseToken(tokenList[0]);
+    if (
+      searchTokenResult &&
+      searchTokenResult.length === 1 &&
+      searchTokenResult[0].contract === searchToken
+    ) {
+      handleChooseToken(searchTokenResult[0]);
     }
-  }, [tokenList]);
+  }, [searchTokenResult]);
 
   return (
     <div id="token-atlas-token-search-result" className="flex flex-col w-full">
@@ -102,23 +84,30 @@ const TokensSearchResult = () => {
           Oops something went wrong! Please try searching for tokens again.
         </Body>
       )}
+      {!searchTokenResult && !isTokenSearchLoading && (
+        <Body className="text-base">Start searching for tokens.</Body>
+      )}
       {isTokenSearchLoading && (
         <CircularProgress size={24} sx={{ color: '#979797' }} />
       )}
-      {!isTokenSearchLoading && tokenList.length === 0 && (
-        <Body className="text-base">No tokens found.</Body>
-      )}
-      {!isTokenSearchLoading && tokenList.length !== 0 && (
-        <List
-          height={250}
-          itemCount={tokenList.length}
-          itemSize={60}
-          width="100%"
-          itemData={{ tokenList, handleChooseToken }}
-        >
-          {TokenRow}
-        </List>
-      )}
+      {!isTokenSearchLoading &&
+        searchTokenResult &&
+        searchTokenResult.length === 0 && (
+          <Body className="text-base">No tokens found.</Body>
+        )}
+      {!isTokenSearchLoading &&
+        searchTokenResult &&
+        searchTokenResult.length !== 0 && (
+          <List
+            height={250}
+            itemCount={searchTokenResult.length}
+            itemSize={60}
+            width="100%"
+            itemData={{ tokenList: searchTokenResult, handleChooseToken }}
+          >
+            {TokenRow}
+          </List>
+        )}
     </div>
   );
 };

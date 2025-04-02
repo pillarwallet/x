@@ -18,9 +18,8 @@ import { convertDateToUnixTimestamp } from '../../../utils/common';
 export type TokenAltasState = {
   isSearchTokenModalOpen: boolean;
   isSelectChainDropdownOpen: boolean;
-  tokenListData: Token[];
   selectedChain: ChainType;
-  searchTokenResult: Token[];
+  searchTokenResult: Token[] | undefined;
   selectedToken: SelectedTokenType | undefined;
   tokenDataInfo: TokenAtlasInfoData | undefined;
   tokenDataGraph: TokenMarketHistory | undefined;
@@ -37,9 +36,8 @@ export type TokenAltasState = {
 const initialState: TokenAltasState = {
   isSearchTokenModalOpen: false,
   isSelectChainDropdownOpen: false,
-  tokenListData: [],
   selectedChain: { chainId: 0, chainName: 'all' },
-  searchTokenResult: [],
+  searchTokenResult: undefined,
   selectedToken: undefined,
   tokenDataInfo: undefined,
   tokenDataGraph: undefined,
@@ -66,13 +64,10 @@ const tokenAtlasSlice = createSlice({
     setIsSelectChainDropdownOpen(state, action: PayloadAction<boolean>) {
       state.isSelectChainDropdownOpen = action.payload;
     },
-    setTokenListData(state, action: PayloadAction<Token[]>) {
-      state.tokenListData = action.payload;
-    },
     setSelectedChain(state, action: PayloadAction<ChainType>) {
       state.selectedChain = action.payload;
     },
-    setSearchTokenResult(state, action: PayloadAction<Token[]>) {
+    setSearchTokenResult(state, action: PayloadAction<Token[] | undefined>) {
       state.searchTokenResult = action.payload;
     },
     setSelectedToken(
@@ -126,7 +121,6 @@ const tokenAtlasSlice = createSlice({
 export const {
   setIsSearchTokenModalOpen,
   setIsSelectChainDropdownOpen,
-  setTokenListData,
   setSelectedChain,
   setSearchTokenResult,
   setSelectedToken,

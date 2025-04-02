@@ -18,15 +18,9 @@ import {
 // components
 import SearchTokenModal from '../SearchTokenModal';
 
-const mockTokenListData = [
-  { chainId: 1, name: 'Ethereum' },
-  { chainId: 137, name: 'Polygon' },
-  { chainId: 100, name: 'Gnosis' },
-];
-
 describe('<SearchTokenModal />', () => {
   beforeEach(() => {
-    store.dispatch(setSearchTokenResult([]));
+    store.dispatch(setSearchTokenResult(undefined));
     store.dispatch(setIsAllChainsVisible(false));
     store.dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
   });
@@ -47,10 +41,6 @@ describe('<SearchTokenModal />', () => {
 
   it('renders correctly when modal is open', () => {
     store.dispatch(setIsSearchTokenModalOpen(true));
-    store.dispatch({
-      type: 'tokenAtlas/setTokenListData',
-      payload: mockTokenListData,
-    });
 
     render(
       <Provider store={store}>
@@ -60,9 +50,7 @@ describe('<SearchTokenModal />', () => {
       </Provider>
     );
 
-    expect(screen.getByText('Ethereum')).toBeInTheDocument();
-    expect(screen.getByText('Polygon')).toBeInTheDocument();
-    expect(screen.getByText('Gnosis')).toBeInTheDocument();
+    expect(screen.getByText('Start searching for tokens.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument();
   });
 
@@ -77,7 +65,9 @@ describe('<SearchTokenModal />', () => {
       </Provider>
     );
 
-    expect(screen.queryByText('Ethereum')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Start searching for tokens.')
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /close/i })
     ).not.toBeInTheDocument();
@@ -100,7 +90,7 @@ describe('<SearchTokenModal />', () => {
       chainId: 0,
       chainName: 'all',
     });
-    expect(store.getState().tokenAtlas.searchTokenResult).toEqual([]);
+    expect(store.getState().tokenAtlas.searchTokenResult).toEqual(undefined);
     expect(store.getState().tokenAtlas.isAllChainsVisible).toBe(false);
   });
 

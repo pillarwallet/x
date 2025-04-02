@@ -3,9 +3,12 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 // types
 import { MobulaApiResponse } from '../types/api';
 
-// utils
+// store
 import { addMiddleware } from '../store';
+
+// utils
 import { CompatibleChains, isTestnet } from '../utils/blockchain';
+import { chainIdToChainNameTokensData } from './tokensData';
 
 const fetchBaseQueryWithRetry = retry(
   fetchBaseQuery({
@@ -32,19 +35,26 @@ export const pillarXApiSearchTokens = createApi({
         const chainIds = isTestnet
           ? [11155111]
           : CompatibleChains.map((chain) => chain.chainId);
+        const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
         return {
-          url: '',
+          url: `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
           method: 'POST',
           body: {
             path: 'search',
             params: {
               input: searchInput,
-              chainIds,
-              testnets: isTestnet,
-              ...(filterBlockchains && {
-                filters: JSON.stringify({ blockchains: filterBlockchains }),
-              }),
+              ...(filterBlockchains
+                ? {
+                    filters: JSON.stringify({ blockchains: filterBlockchains }),
+                  }
+                : {
+                    filters: JSON.stringify({
+                      blockchains: CompatibleChains.map((chain) =>
+                        chainIdToChainNameTokensData(chain.chainId)
+                      ).join(', '),
+                    }),
+                  }),
             },
           },
         };
