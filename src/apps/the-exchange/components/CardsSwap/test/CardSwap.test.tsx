@@ -15,11 +15,9 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
-  setReceiveTokenData,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
@@ -30,60 +28,6 @@ import CardsSwap from '../CardsSwap';
 // types
 import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
 import { Token } from '../../../../../services/tokensData';
-
-jest.mock('../../../../../services/tokensData', () => ({
-  __esModule: true,
-  chainNameToChainIdTokensData: jest
-    .fn()
-    .mockImplementation((chainName: string) => {
-      const mockChainIdMap = {
-        Ethereum: 1,
-        Polygon: 137,
-      } as const;
-
-      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
-    }),
-  queryTokenData: jest.fn().mockReturnValue([
-    {
-      id: 1,
-      contract: '0x01',
-      name: 'Ether',
-      symbol: 'ETH',
-      blockchain: 'Ethereum',
-      decimals: 18,
-      logo: 'iconEth.png',
-    },
-    {
-      id: 2,
-      contract: '0x02',
-      name: 'POL',
-      symbol: 'POL',
-      blockchain: 'Polygon',
-      decimals: 18,
-      logo: 'iconMatic.png',
-    },
-  ]),
-  searchTokens: jest.fn().mockImplementation((query) => {
-    return [
-      { id: 1, name: 'Ether', symbol: 'ETH' },
-      { id: 2, name: 'Polygon', symbol: 'POL' },
-    ].filter(
-      (token) => token.name.includes(query) || token.symbol.includes(query)
-    );
-  }),
-  chainNameDataCompatibility: jest
-    .fn()
-    .mockImplementation((chainName: string) => {
-      const mockChainMap = {
-        XDAI: 'Gnosis',
-        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
-        Optimistic: 'Optimism',
-        Arbitrum: 'Arbitrum',
-      } as const;
-
-      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
-    }),
-}));
 
 const mockTokenAssets: Token[] = [
   {
@@ -105,6 +49,72 @@ const mockTokenAssets: Token[] = [
     logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/pillarXApiSearchTokens', () => ({
+  __esModule: true,
+  useGetSearchTokensQuery: jest.fn().mockReturnValue({
+    data: undefined,
+    isLoading: false,
+    isFetching: false,
+  }),
+}));
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameToChainIdTokensData: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainIdMap = {
+        Ethereum: 1,
+        Polygon: 137,
+      } as const;
+
+      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || '';
+    }),
+  chainIdToChainNameTokensData: jest
+    .fn()
+    .mockImplementation((chainId: number) => {
+      const mockChainNameMap = {
+        1: 'Ethereum',
+        137: 'Polygon',
+      } as const;
+
+      return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
+    }),
+  convertAPIResponseToTokens: jest.fn().mockReturnValue(mockTokenAssets),
+  queryTokenData: jest.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+    },
+  ]),
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'Optimism',
+        Arbitrum: 'Arbitrum',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
+}));
 
 // Mock transaction-kit hooks being used
 jest.mock('@etherspot/transaction-kit', () => ({
@@ -178,8 +188,6 @@ describe('<CardsSwap />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     act(() => {
-      store.dispatch(setSwapTokenData(mockTokenAssets));
-      store.dispatch(setReceiveTokenData(mockTokenAssets));
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
       store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
@@ -189,7 +197,7 @@ describe('<CardsSwap />', () => {
       store.dispatch(setAmountSwap(0.1));
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
-      store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setUsdPriceSwapToken(1200));
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
@@ -262,10 +270,7 @@ describe('<CardsSwap />', () => {
 
     fireEvent.click(swapCard[0]);
 
-    expect(store.getState().swap.swapTokenData).toStrictEqual(mockTokenAssets);
-    expect(store.getState().swap.receiveTokenData).toStrictEqual(
-      mockTokenAssets
-    );
+    expect(screen.getByText('Start searching for tokens.')).toBeInTheDocument();
 
     await waitFor(() => {
       expect(store.getState().swap.isSwapOpen).toBe(true);

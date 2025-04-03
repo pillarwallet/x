@@ -439,3 +439,160 @@ export type MarketHistoryPairData = {
     time: number;
   }[];
 };
+
+export type MobulaToken = {
+  address: string;
+  price: number | null;
+  priceToken: number;
+  priceTokenString: string;
+  approximateReserveUSD: number;
+  approximateReserveTokenRaw: string;
+  approximateReserveToken: number;
+  symbol: string;
+  name: string;
+  id: number;
+  decimals: number;
+  totalSupply: number;
+  circulatingSupply: number;
+  chainId: string;
+  logo?: string | null;
+};
+
+export type Exchange = {
+  name: string;
+  logo: string;
+};
+
+export type Pair = {
+  token0: MobulaToken;
+  token1: MobulaToken;
+  volume24h: number;
+  liquidity: number;
+  blockchain: string;
+  address: string;
+  createdAt: string | null;
+  type: string;
+  baseToken: string;
+  exchange: Exchange;
+  factory: string | null;
+  quoteToken: string;
+  price: number | null;
+  priceToken: number;
+  priceTokenString: string;
+};
+
+// This type is merging both Token and Asset types from
+// the Mobula's search API
+export type TokenAssetResponse = {
+  name: string;
+  symbol: string;
+  contracts: string[];
+  blockchains: string[];
+  decimals: number[];
+  logo: string | null;
+  price: number | null;
+  pairs: Pair[];
+  type: 'token' | 'asset';
+  volume_24h?: number;
+  total_supply?: string; // Token-specific
+  id?: number; // Asset-specific
+  market_cap?: number; // Asset-specific
+  liquidity?: number; // Asset-specific
+  volume?: number; // Asset-specific
+  twitter?: string | null; // Asset-specific
+  website?: string | null; // Asset-specific
+};
+
+export type PairResponse = {
+  token0: MobulaToken;
+  token1: MobulaToken;
+  volume24h: number;
+  liquidity: number;
+  blockchain: string;
+  address: string;
+  type: string;
+  baseToken: string;
+  exchange: Exchange;
+  quoteToken: string;
+  price: number;
+  priceToken: number;
+  priceTokenString: string;
+  createdAt: string | null;
+  factory: string | null;
+  pool_addr: number;
+  price_change_1min?: number;
+  price_change_5min?: number;
+  price_change_1h?: number;
+  price_change_4h?: number;
+  price_change_12h?: number;
+  price_change_24h?: number;
+  trades_1min?: number;
+  buys_1min?: number;
+  sells_1min?: number;
+  volume_1min?: number;
+  buy_volume_1min?: number;
+  sell_volume_1min?: number;
+  sellers_1min?: number;
+  buyers_1min?: number;
+  traders_1min?: number;
+  trades_5min?: number;
+  buys_5min?: number;
+  sells_5min?: number;
+  volume_5min?: number;
+  buy_volume_5min?: number;
+  sell_volume_5min?: number;
+  sellers_5min?: number;
+  buyers_5min?: number;
+  traders_5min?: number;
+  trades_15min?: number;
+  buys_15min?: number;
+  sells_15min?: number;
+  volume_15min?: number;
+  buy_volume_15min?: number;
+  sell_volume_15min?: number;
+  sellers_15min?: number;
+  buyers_15min?: number;
+  traders_15min?: number;
+  trades_1h?: number;
+  buys_1h?: number;
+  sells_1h?: number;
+  volume_1h?: number;
+  buy_volume_1h?: number;
+  sell_volume_1h?: number;
+  sellers_1h?: number;
+  buyers_1h?: number;
+  traders_1h?: number;
+  trades_4h?: number;
+  buys_4h?: number;
+  sells_4h?: number;
+  volume_4h?: number;
+  buy_volume_4h?: number;
+  sell_volume_4h?: number;
+  sellers_4h?: number;
+  buyers_4h?: number;
+  traders_4h?: number;
+  trades_12h?: number;
+  buys_12h?: number;
+  sells_12h?: number;
+  volume_12h?: number;
+  buy_volume_12h?: number;
+  sell_volume_12h?: number;
+  sellers_12h?: number;
+  buyers_12h?: number;
+  traders_12h?: number;
+  trades_24h?: number;
+  buys_24h?: number;
+  sells_24h?: number;
+  volume_24h?: number;
+  buy_volume_24h?: number;
+  sell_volume_24h?: number;
+  sellers_24h?: number;
+  buyers_24h?: number;
+  traders_24h?: number;
+};
+
+export type MobulaApiResponse = {
+  result: {
+    data: TokenAssetResponse[] | PairResponse[];
+  };
+};

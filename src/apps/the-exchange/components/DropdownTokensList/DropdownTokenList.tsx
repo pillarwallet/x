@@ -1,4 +1,5 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import { CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -22,11 +23,14 @@ import {
   chainNameToChainIdTokensData,
 } from '../../../../services/tokensData';
 
+// utils
+import { CompatibleChains } from '../../../../utils/blockchain';
+
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { CardPosition, ChainType } from '../../utils/types';
+import { CardPosition } from '../../utils/types';
 
 // components
 import SelectDropdown from '../SelectDropdown/SelectDropdown';
@@ -35,6 +39,7 @@ import TokenRow from './TokenRow';
 
 // images
 import CloseIcon from '../../images/add.png';
+import Body from '../Typography/Body';
 
 type DropdownTokenListProps = {
   type: CardPosition;
@@ -58,20 +63,8 @@ const DropdownTokenList = ({
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
-  const swapTokenData = useAppSelector(
-    (state) => state.swap.swapTokenData as Token[]
-  );
-  const receiveTokenData = useAppSelector(
-    (state) => state.swap.receiveTokenData as Token[]
-  );
   const searchTokenResult = useAppSelector(
-    (state) => state.swap.searchTokenResult as Token[]
-  );
-  const swapChain = useAppSelector(
-    (state) => state.swap.swapChain as ChainType
-  );
-  const receiveChain = useAppSelector(
-    (state) => state.swap.receiveChain as ChainType
+    (state) => state.swap.searchTokenResult as Token[] | undefined
   );
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(
@@ -80,57 +73,18 @@ const DropdownTokenList = ({
   const searchToken = useAppSelector(
     (state) => state.swap.searchToken as string
   );
+  const isTokenSearchLoading = useAppSelector(
+    (state) => state.swap.isTokenSearchLoading as boolean
+  );
+  const isTokenSearchErroring = useAppSelector(
+    (state) => state.swap.isTokenSearchErroring as boolean
+  );
 
   const [isChainSelectionOpen, setIsChainSelectionOpen] =
     useState<boolean>(false);
 
   // select all chainsId of tokens available in the list for swap token
-  const allChainsSwap =
-    swapTokenData
-      ?.map((chain) => chain.blockchain)
-      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
-  const uniqueChainsSwap = allChainsSwap.filter((chain, index) => {
-    return allChainsSwap.indexOf(chain) === index;
-  });
-
-  // select all chainsId of tokens available in the list for receive token
-  const allChainsReceive =
-    receiveTokenData
-      ?.map((chain) => chain.blockchain)
-      .map((chain) => chainNameToChainIdTokensData(chain)) || [];
-  const uniqueChainsReceive = allChainsReceive.filter((chain, index) => {
-    return allChainsReceive.indexOf(chain) === index;
-  });
-
-  // if there are no tokens being typed searched, we show the swapTokenData list of tokens
-  // which will filter if a chain has been chosen
-  let swapTokenList;
-
-  if (searchTokenResult?.length) {
-    swapTokenList = searchTokenResult;
-  } else if (swapChain?.chainId) {
-    swapTokenList = swapTokenData.filter(
-      (token) =>
-        chainNameToChainIdTokensData(token.blockchain) === swapChain.chainId
-    );
-  } else {
-    swapTokenList = swapTokenData;
-  }
-
-  // if there are no tokens being typed searched, we show the receiveTokenData list of tokens
-  // which will filter if a chain has been chosen
-  let receiveTokenList;
-
-  if (searchTokenResult?.length) {
-    receiveTokenList = searchTokenResult;
-  } else if (receiveChain?.chainId) {
-    receiveTokenList = receiveTokenData.filter(
-      (token) =>
-        chainNameToChainIdTokensData(token.blockchain) === receiveChain.chainId
-    );
-  } else {
-    receiveTokenList = receiveTokenData;
-  }
+  const uniqueChains = CompatibleChains.map((chain) => chain.chainId);
 
   const handleClick = (token: Token) => {
     if (isSwapOpen) {
@@ -151,7 +105,7 @@ const DropdownTokenList = ({
           name: token.name,
         },
       });
-      dispatch(setSearchTokenResult([]));
+      dispatch(setSearchTokenResult(undefined));
       dispatch(setIsSwapOpen(false));
     } else {
       dispatch(setReceiveToken(token));
@@ -171,7 +125,7 @@ const DropdownTokenList = ({
           name: token.name,
         },
       });
-      dispatch(setSearchTokenResult([]));
+      dispatch(setSearchTokenResult(undefined));
       dispatch(setIsReceiveOpen(false));
     }
   };
@@ -180,19 +134,21 @@ const DropdownTokenList = ({
   useEffect(() => {
     if (
       isSwapOpen &&
-      swapTokenList.length === 1 &&
-      swapTokenList[0].contract === searchToken
+      searchTokenResult &&
+      searchTokenResult.length === 1 &&
+      searchTokenResult[0].contract === searchToken
     ) {
-      handleClick(swapTokenList[0]);
+      handleClick(searchTokenResult[0]);
     } else if (
       !isSwapOpen &&
-      receiveTokenList.length === 1 &&
-      receiveTokenList[0].contract === searchToken
+      searchTokenResult &&
+      searchTokenResult.length === 1 &&
+      searchTokenResult[0].contract === searchToken
     ) {
-      handleClick(receiveTokenList[0]);
+      handleClick(searchTokenResult[0]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapTokenList, receiveTokenList, isSwapOpen]);
+  }, [searchTokenResult, isSwapOpen]);
 
   return (
     <>
@@ -209,7 +165,7 @@ const DropdownTokenList = ({
             } else {
               dispatch(setIsReceiveOpen(false));
             }
-            dispatch(setSearchTokenResult([]));
+            dispatch(setSearchTokenResult(undefined));
           }}
           className="fixed top-0 right-0 w-[50px] h-[50px] mt-6 mr-4 mb-20 desktop:mr-14 desktop:mb-28 bg-black"
           data-testid="close-card-button"
@@ -226,7 +182,7 @@ const DropdownTokenList = ({
           className={`flex flex-row gap-[10px] p-4 w-full rounded-t-[3px] border-b border-b-black_grey ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
           <SelectDropdown
-            options={isSwapOpen ? uniqueChainsSwap : uniqueChainsReceive}
+            options={uniqueChains}
             isOpen={isChainSelectionOpen}
             onClick={() => setIsChainSelectionOpen(!isChainSelectionOpen)}
             className={`${isChainSelectionOpen && 'w-full'}`}
@@ -241,30 +197,41 @@ const DropdownTokenList = ({
           id="token-list-exchange"
           className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
-          <List
-            height={272}
-            itemCount={
-              isSwapOpen ? swapTokenList.length : receiveTokenList.length
-            }
-            itemSize={73}
-            width="100%"
-            itemData={{
-              tokenList: isSwapOpen
-                ? swapTokenList.filter(
-                    (token) =>
-                      token.blockchain !== receiveToken?.blockchain ||
-                      token.contract !== receiveToken?.contract
-                  )
-                : receiveTokenList.filter(
-                    (token) =>
-                      token.blockchain !== swapToken?.blockchain ||
-                      token.contract !== swapToken?.contract
-                  ),
-              handleClick,
-            }}
-          >
-            {TokenRow}
-          </List>
+          {isTokenSearchErroring && (
+            <Body className="text-base">
+              Oops something went wrong! Please try searching for tokens again.
+            </Body>
+          )}
+          {!searchTokenResult && !isTokenSearchLoading && (
+            <Body className="text-base">Start searching for tokens.</Body>
+          )}
+          {isTokenSearchLoading && (
+            <CircularProgress size={24} sx={{ color: '#312F3A' }} />
+          )}
+          {!isTokenSearchLoading && searchTokenResult && (
+            <List
+              height={272}
+              itemCount={searchTokenResult.length}
+              itemSize={73}
+              width="100%"
+              itemData={{
+                tokenList: isSwapOpen
+                  ? searchTokenResult.filter(
+                      (token) =>
+                        token.blockchain !== receiveToken?.blockchain ||
+                        token.contract !== receiveToken?.contract
+                    )
+                  : searchTokenResult.filter(
+                      (token) =>
+                        token.blockchain !== swapToken?.blockchain ||
+                        token.contract !== swapToken?.contract
+                    ),
+                handleClick,
+              }}
+            >
+              {TokenRow}
+            </List>
+          )}
         </div>
       </div>
     </>

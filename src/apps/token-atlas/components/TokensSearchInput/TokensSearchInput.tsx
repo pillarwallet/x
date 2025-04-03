@@ -1,5 +1,4 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 // api
@@ -10,17 +9,22 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
 import {
+  setIsTokenSearchErroring,
+  setIsTokenSearchLoading,
   setSearchToken,
   setSearchTokenResult,
 } from '../../reducer/tokenAtlasSlice';
 
 // services
+import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
+  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
-  searchTokens,
+  convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
 
 // types
+import { TokenAssetResponse } from '../../../../types/api';
 import { ChainType } from '../../types/types';
 
 type TokensSearchInputProps = {
@@ -39,64 +43,80 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   const accountAddress = useWalletAddress();
 
   const dispatch = useAppDispatch();
-  const [value, setValue] = useState<string>('');
+
+  const [searchText, setSearchText] = useState<string>('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
+
   const selectedChain = useAppSelector(
     (state) => state.tokenAtlas.selectedChain as ChainType
   );
 
-  // The searchTokens will look for tokens close to the name or chain id being typed on filtered or all supported chains
-  const searchTokensData = (tokenSearch: string) => {
-    const result = searchTokens(tokenSearch);
+  // Debounce searchText every 1-sec
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+    }, 1000);
 
-    dispatch(setSearchToken(tokenSearch));
+    return () => clearTimeout(handler);
+  }, [searchText]);
 
-    if (selectedChain.chainId === 0) {
-      dispatch(setSearchTokenResult(result.map((tokens) => tokens)));
-    } else {
-      dispatch(
-        setSearchTokenResult(
-          result
-            .filter(
-              (tokens) =>
-                chainNameToChainIdTokensData(tokens.blockchain) ===
+  // API call to search tokens and assets
+  const {
+    data: searchData,
+    isLoading,
+    isFetching,
+    error,
+  } = useGetSearchTokensQuery(
+    {
+      searchInput: debouncedSearchText,
+      filterBlockchains: chainIdToChainNameTokensData(selectedChain.chainId),
+    },
+    { skip: !debouncedSearchText }
+  );
+
+  useEffect(() => {
+    dispatch(setIsTokenSearchLoading(isLoading || isFetching));
+    dispatch(setIsTokenSearchErroring(Boolean(error)));
+
+    if (!searchData) return;
+
+    const result = convertAPIResponseToTokens(
+      searchData?.result?.data as TokenAssetResponse[],
+      debouncedSearchText
+    );
+
+    // This is to check what has been the searched token, for other components to action
+    dispatch(setSearchToken(debouncedSearchText));
+
+    // This sets the token results list that will be displayed in the UI
+    dispatch(
+      setSearchTokenResult(
+        selectedChain.chainId === 0
+          ? result
+          : result.filter(
+              (token) =>
+                chainNameToChainIdTokensData(token.blockchain) ===
                 selectedChain.chainId
             )
-            .map((tokens) => tokens)
-        )
-      );
-    }
-  };
+      )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchData, debouncedSearchText, selectedChain.chainName]);
 
-  // Debounced recordPresence function with 1-second delay
-  const debouncedSearchToken = _.debounce((searchText: string) => {
-    if (value !== '') {
+  // Record presence of the debouncedSearchText when it changes
+  useEffect(() => {
+    if (debouncedSearchText !== '') {
       recordPresence({
         address: accountAddress,
         action: 'app:tokenAtlas:search',
-        value: { searchText },
+        value: { debouncedSearchText },
       });
     }
-  }, 1000);
-
-  useEffect(() => {
-    searchTokensData(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChain]);
-
-  useEffect(() => {
-    debouncedSearchToken(value);
-
-    // Clean-up debounce on component unmount
-    return () => {
-      debouncedSearchToken.cancel();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [debouncedSearchText, accountAddress]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
-    setValue(searchValue);
-    searchTokensData(searchValue);
+    setSearchText(event.target.value);
   };
 
   return (
