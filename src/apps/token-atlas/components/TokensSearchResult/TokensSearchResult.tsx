@@ -70,7 +70,8 @@ const TokensSearchResult = () => {
     if (
       searchTokenResult &&
       searchTokenResult.length === 1 &&
-      searchTokenResult[0].contract === searchToken
+      searchTokenResult[0].contract.toLocaleLowerCase() ===
+        searchToken.toLocaleLowerCase()
     ) {
       handleChooseToken(searchTokenResult[0]);
     }

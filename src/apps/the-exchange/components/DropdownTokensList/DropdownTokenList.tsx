@@ -136,14 +136,16 @@ const DropdownTokenList = ({
       isSwapOpen &&
       searchTokenResult &&
       searchTokenResult.length === 1 &&
-      searchTokenResult[0].contract === searchToken
+      searchTokenResult[0].contract.toLocaleLowerCase() ===
+        searchToken.toLocaleLowerCase()
     ) {
       handleClick(searchTokenResult[0]);
     } else if (
       !isSwapOpen &&
       searchTokenResult &&
       searchTokenResult.length === 1 &&
-      searchTokenResult[0].contract === searchToken
+      searchTokenResult[0].contract.toLocaleLowerCase() ===
+        searchToken.toLocaleLowerCase()
     ) {
       handleClick(searchTokenResult[0]);
     }
