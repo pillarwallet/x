@@ -64,6 +64,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   const {
     data: searchData,
     isLoading,
+    isFetching,
     error,
   } = useGetSearchTokensQuery(
     {
@@ -74,7 +75,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   );
 
   useEffect(() => {
-    dispatch(setIsTokenSearchLoading(isLoading));
+    dispatch(setIsTokenSearchLoading(isLoading || isFetching));
     dispatch(setIsTokenSearchErroring(Boolean(error)));
 
     if (!searchData) return;
@@ -100,7 +101,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchData, debouncedSearchText, selectedChain]);
+  }, [searchData, debouncedSearchText, selectedChain.chainName]);
 
   // Record presence of the debouncedSearchText when it changes
   useEffect(() => {

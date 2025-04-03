@@ -77,6 +77,7 @@ const TokenSearchInput = ({
   const {
     data: searchData,
     isLoading,
+    isFetching,
     error,
   } = useGetSearchTokensQuery(
     {
@@ -89,7 +90,7 @@ const TokenSearchInput = ({
   );
 
   useEffect(() => {
-    dispatch(setIsTokenSearchLoading(isLoading));
+    dispatch(setIsTokenSearchLoading(isLoading || isFetching));
     dispatch(setIsTokenSearchErroring(Boolean(error)));
 
     if (!searchData) return;

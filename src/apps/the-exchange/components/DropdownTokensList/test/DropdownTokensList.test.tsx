@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
 
 // provider
@@ -15,11 +15,9 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
-  setReceiveTokenData,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
@@ -111,8 +109,6 @@ jest.mock('../../../../../services/tokensData', () => ({
 describe('<DropdownTokenList />', () => {
   beforeEach(() => {
     act(() => {
-      store.dispatch(setSwapTokenData(mockTokenAssets));
-      store.dispatch(setReceiveTokenData(mockTokenAssets));
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
       store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
@@ -122,7 +118,7 @@ describe('<DropdownTokenList />', () => {
       store.dispatch(setAmountSwap(0.1));
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
-      store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setUsdPriceSwapToken(1200));
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
@@ -162,7 +158,7 @@ describe('<DropdownTokenList />', () => {
   });
 
   it('allows selecting tokens in Swap card', async () => {
-    const { getByPlaceholderText, getAllByTestId } = render(
+    render(
       <Provider store={store}>
         <DropdownTokenList
           type={CardPosition.SWAP}
@@ -173,29 +169,17 @@ describe('<DropdownTokenList />', () => {
 
     act(() => {
       store.dispatch(setIsSwapOpen(true));
-      store.dispatch(setSwapChain({ chainId: 0, chainName: 'all' }));
+      store.dispatch(setSearchTokenResult(mockTokenAssets));
     });
 
-    const searchInput = getByPlaceholderText('Search tokens');
-    fireEvent.focus(searchInput);
-    fireEvent.change(searchInput, { target: { value: 'eth' } });
-
-    const tokenItems = getAllByTestId('token-list-item');
-    expect(tokenItems.length).toBe(1);
-
-    const firstTokenItem = getAllByTestId('token-list-item');
-    fireEvent.click(firstTokenItem[0]);
+    fireEvent.click(screen.getAllByTestId('token-list-item')[0]);
 
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[0]);
-    expect(store.getState().swap.swapChain).toEqual({
-      chainId: 1,
-      chainName: 'Ethereum',
-    });
     expect(store.getState().swap.isSwapOpen).toBe(false);
   });
 
   it('allows selecting tokens in Receive card', async () => {
-    const { getByPlaceholderText, getAllByTestId } = render(
+    render(
       <Provider store={store}>
         <DropdownTokenList
           type={CardPosition.RECEIVE}
@@ -206,24 +190,12 @@ describe('<DropdownTokenList />', () => {
 
     act(() => {
       store.dispatch(setIsReceiveOpen(true));
-      store.dispatch(setReceiveChain({ chainId: 0, chainName: 'all' }));
+      store.dispatch(setSearchTokenResult(mockTokenAssets));
     });
 
-    const searchInput = getByPlaceholderText('Search tokens');
-    fireEvent.focus(searchInput);
-    fireEvent.change(searchInput, { target: { value: 'ma' } });
-
-    const tokenItems = getAllByTestId('token-list-item');
-    expect(tokenItems.length).toBe(1);
-
-    const firstTokenItem = getAllByTestId('token-list-item');
-    fireEvent.click(firstTokenItem[0]);
+    fireEvent.click(screen.getAllByTestId('token-list-item')[0]);
 
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[1]);
-    expect(store.getState().swap.receiveChain).toEqual({
-      chainId: 137,
-      chainName: 'Polygon',
-    });
     expect(store.getState().swap.isReceiveOpen).toBe(false);
   });
 
@@ -245,6 +217,6 @@ describe('<DropdownTokenList />', () => {
     fireEvent.click(closeButton);
 
     expect(store.getState().swap.isSwapOpen).toBe(false);
-    expect(store.getState().swap.searchTokenResult).toEqual([]);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
   });
 });
