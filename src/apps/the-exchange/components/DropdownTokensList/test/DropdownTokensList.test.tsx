@@ -182,8 +182,8 @@ describe('<DropdownTokenList />', () => {
     render(
       <Provider store={store}>
         <DropdownTokenList
-          type={CardPosition.SWAP}
-          initialCardPosition={CardPosition.SWAP}
+          type={CardPosition.RECEIVE}
+          initialCardPosition={CardPosition.RECEIVE}
         />
       </Provider>
     );
