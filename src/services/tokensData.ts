@@ -352,20 +352,37 @@ export const convertAPIResponseToTokens = (
       };
     });
 
-    const fuse = new Fuse([...nativeTokens, ...tokenData], {
+    // If the search input is longer than 40 characters which is likely to be a
+    // contract address, then we look into an exact match in native/gas token and
+    // in Mobula's token data
+    if (searchInput.length > 40) {
+      const fuse = new Fuse([...nativeTokens, ...tokenData], {
+        keys: ['name', 'symbol', 'contract'], // Fields to search in
+        threshold: 0.2, // Allow some fuzziness for queries that are not contract like
+        minMatchCharLength: 3,
+        useExtendedSearch: true, // Enables exact match using '='
+      });
+
+      // Check if query length is above 40 characters have an exact match (likely a contract address)
+      const searchQuery =
+        searchInput.length > 40 ? `="${searchInput}"` : searchInput;
+
+      const results = fuse.search(searchQuery);
+
+      return results.map((r) => r.item);
+    }
+
+    // If the search input is not longer than 40 characters, then we only do
+    // an approx match with native that we add to the Mobula's token data
+    // since Mobula's token data does not include native/gas token
+    const fuse = new Fuse(nativeTokens, {
       keys: ['name', 'symbol', 'contract'], // Fields to search in
-      threshold: 0.2, // Allow some fuzziness for queries that are not contract like
-      minMatchCharLength: 3,
-      useExtendedSearch: true, // Enables exact match using '='
+      threshold: 0.3, // Allow some fuzziness for queries that are not contract like
     });
 
-    // Check if query length is above 40 characters have an exact match (likely a contract address)
-    const searchQuery =
-      searchInput.length > 40 ? `="${searchInput}"` : searchInput;
+    const results = fuse.search(searchInput).map((token) => token.item);
 
-    const results = fuse.search(searchQuery);
-
-    return results.map((r) => r.item);
+    return [...tokenData, ...results];
   }
 
   // Adds nativeTokens to the list if no search input
