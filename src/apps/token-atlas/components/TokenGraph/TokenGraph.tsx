@@ -63,6 +63,9 @@ const TokenGraph = () => {
   const isGraphLoading = useAppSelector(
     (state) => state.tokenAtlas.isGraphLoading as boolean
   );
+  const isGraphErroring = useAppSelector(
+    (state) => state.tokenAtlas.isGraphErroring as boolean
+  );
 
   // This gets the right color depending on the price value threshold, a callback is used
   // to make sure this only gets called if tokenDataInfo.price changes, otherwise the graph crashes
@@ -132,8 +135,17 @@ const TokenGraph = () => {
     return <SkeletonLoader $height="300px" $radius="6px" />;
   }
 
-  if (!tokenDataGraph?.result.data.length) {
+  if (!tokenDataGraph?.result.data.length && !isGraphErroring) {
     return <Body className="my-4">Price history not found.</Body>;
+  }
+
+  if (!tokenDataGraph?.result.data.length && isGraphErroring) {
+    return (
+      <Body className="my-4">
+        Oops something went wrong! Please try a different timeframe or reload
+        the page.
+      </Body>
+    );
   }
 
   const createGradient = (
@@ -149,13 +161,13 @@ const TokenGraph = () => {
 
   // This gives us the right dataset for the graph
   const data: ChartData<'line'> = {
-    labels: tokenDataGraph.result.data.map((x) => x.time),
+    labels: tokenDataGraph?.result.data.map((x) => x.time),
     datasets: [
       {
         label: `${
           tokenDataInfo?.symbol ? tokenDataInfo?.symbol : 'Token'
         } price`,
-        data: tokenDataGraph.result.data.map((price) => price.close),
+        data: tokenDataGraph?.result.data.map((price) => price.close) || [],
         borderColor: (ctx: ScriptableContext<'line'>) => createGradient(ctx),
         tension: 0.4,
         pointRadius: 0,

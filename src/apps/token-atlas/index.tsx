@@ -14,6 +14,7 @@ import {
 
 // reducer
 import {
+  setIsGraphErroring,
   setIsGraphLoading,
   setSelectedToken,
   setTokenDataGraph,
@@ -139,6 +140,7 @@ export const App = () => {
     isLoading: isMarketHistoryPairLoading,
     isFetching: isMarketHistoryPairFetching,
     isSuccess: isMarketHistoryPairSuccess,
+    error: marketHistoryPairError,
   } = useGetTokenMarketHistoryPairQuery({
     asset: isWrappedOrNativeToken ? undefined : selectedToken.address,
     symbol: isWrappedOrNativeToken ? selectedToken.symbol : undefined,
@@ -188,12 +190,17 @@ export const App = () => {
   useEffect(() => {
     if (marketHistoryPair && isMarketHistoryPairSuccess) {
       dispatch(setTokenDataGraph(marketHistoryPair));
+      dispatch(setIsGraphErroring(false));
     }
     if (!isMarketHistoryPairSuccess) {
       dispatch(setTokenDataGraph(undefined));
+      dispatch(setIsGraphErroring(true));
+    }
+    if (marketHistoryPairError) {
+      dispatch(setIsGraphErroring(true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marketHistoryPair, isMarketHistoryPairSuccess]);
+  }, [marketHistoryPair, isMarketHistoryPairSuccess, marketHistoryPairError]);
 
   // This useEffect is to update the graph loading status when the API requests are in progress
   useEffect(() => {
