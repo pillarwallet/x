@@ -6,8 +6,8 @@ import { sub } from 'date-fns';
 import { Token } from '../../../services/tokensData';
 import {
   BlockchainData,
+  MarketHistoryPairData,
   TokenAtlasInfoData,
-  TokenMarketHistory,
   TokenPriceGraphPeriod,
 } from '../../../types/api';
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
@@ -22,7 +22,7 @@ export type TokenAltasState = {
   searchTokenResult: Token[] | undefined;
   selectedToken: SelectedTokenType | undefined;
   tokenDataInfo: TokenAtlasInfoData | undefined;
-  tokenDataGraph: TokenMarketHistory | undefined;
+  tokenDataGraph: MarketHistoryPairData | undefined;
   isAllChainsVisible: boolean;
   priceGraphPeriod: TokenPriceGraphPeriod;
   periodFilter: PeriodFilter;
@@ -84,7 +84,7 @@ const tokenAtlasSlice = createSlice({
     },
     setTokenDataGraph(
       state,
-      action: PayloadAction<TokenMarketHistory | undefined>
+      action: PayloadAction<MarketHistoryPairData | undefined>
     ) {
       state.tokenDataGraph = action.payload;
     },

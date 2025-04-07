@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 // store
 import { addMiddleware } from '../../../store';
@@ -93,9 +93,8 @@ export const blockchainsListApi = createApi({
   }),
 });
 
-export const tokenMarketHistoryPair = createApi({
-  reducerPath: 'tokenMarketHistoryPair',
-  baseQuery: fetchBaseQuery({
+const fetchBaseTokenMarketHistoryPairWithRetry = retry(
+  fetchBaseQuery({
     baseUrl: isTestnet
       ? 'https://hifidata-nubpgwxpiq-uc.a.run.app'
       : 'https://hifidata-7eu4izffpa-uc.a.run.app',
@@ -103,24 +102,39 @@ export const tokenMarketHistoryPair = createApi({
       'Content-Type': 'application/json',
     },
   }),
+  { maxRetries: 5 }
+);
+
+export const tokenMarketHistoryPair = createApi({
+  reducerPath: 'tokenMarketHistoryPair',
+  baseQuery: fetchBaseTokenMarketHistoryPairWithRetry,
   endpoints: (builder) => ({
-    getSearchTokens: builder.query<
+    getTokenMarketHistoryPair: builder.query<
       MarketHistoryPairData,
-      { asset: string; symbol: string; from: number; to?: number }
+      {
+        asset?: string;
+        symbol?: string;
+        blockchain: string;
+        period: string;
+        from: number;
+        to?: number;
+        amount?: number;
+      }
     >({
-      query: ({ asset, symbol, from, to }) => {
+      query: ({ asset, symbol, blockchain, period, from, to, amount }) => {
         return {
-          url: '',
+          url: `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
           method: 'POST',
           body: {
             path: 'market/history/pair',
             params: {
               asset,
               symbol,
-              from,
-              to,
-              chainIds,
-              testnets: isTestnet,
+              blockchain,
+              period,
+              from: from * 1000,
+              to: to ? to * 1000 : undefined,
+              amount: amount || undefined,
             },
           },
         };
@@ -142,3 +156,4 @@ export const { useGetTokenInfoQuery } = tokenInfoApi;
 export const { useGetTokenGraphQuery } = tokenGraphApi;
 export const { useGetTrendingTokensQuery } = trendingTokensApi;
 export const { useGetBlockchainsListQuery } = blockchainsListApi;
+export const { useGetTokenMarketHistoryPairQuery } = tokenMarketHistoryPair;

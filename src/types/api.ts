@@ -430,14 +430,16 @@ export type WeeklyLeaderboardData = PointsResult & {
 };
 
 export type MarketHistoryPairData = {
-  data: {
-    volume: number;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    time: number;
-  }[];
+  result: {
+    data: {
+      volume: number;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+      time: number;
+    }[];
+  };
 };
 
 export type MobulaToken = {
