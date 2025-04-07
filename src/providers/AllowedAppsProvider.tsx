@@ -9,6 +9,8 @@ export interface AllowedAppsContextProps {
   data: {
     isLoading: boolean;
     allowed: string[];
+    isAnimated: boolean;
+    setIsAnimated: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }
 
@@ -22,6 +24,7 @@ interface ApiAllowedApp {
 
 const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isAnimated, setIsAnimated] = React.useState<boolean>(false);
   const [allowed, setAllowed] = React.useState<string[]>([]);
 
   useEffect(() => {
@@ -66,8 +69,10 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       isLoading,
       allowed,
+      isAnimated,
+      setIsAnimated,
     }),
-    [isLoading, allowed]
+    [isLoading, allowed, isAnimated]
   );
 
   return (

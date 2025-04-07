@@ -36,7 +36,7 @@ import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
 const defaultToken = {
   id: 102502677,
   symbol: 'PLR',
-  address: '',
+  address: '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774',
   decimals: 18,
   chainId: 137,
   name: 'pillar',
@@ -56,7 +56,7 @@ export const App = () => {
   const dispatch = useAppDispatch();
   const selectedToken =
     useAppSelector(
-      (state) => state.tokenAtlas.selectedToken as SelectedTokenType
+      (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
     ) || defaultToken;
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
@@ -164,6 +164,14 @@ export const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, symbol]);
+
+  // This useEffect is to make sure that the default token is PLR token
+  useEffect(() => {
+    if (selectedToken === defaultToken) {
+      dispatch(setSelectedToken(defaultToken));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedToken]);
 
   // This useEffect is to update the token data when the selected token changes
   useEffect(() => {
