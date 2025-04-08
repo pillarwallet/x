@@ -112,6 +112,7 @@ const BottomMenu = () => {
             return (
               <MenuItem
                 key={item.label + index}
+                id={`menu-item-${item.label}`}
                 onClick={() => {
                   if (item.type === 'home') {
                     hide();
