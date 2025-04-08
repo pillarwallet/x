@@ -62,7 +62,7 @@ export const App = () => {
   const dispatch = useAppDispatch();
   const selectedToken =
     useAppSelector(
-      (state) => state.tokenAtlas.selectedToken as SelectedTokenType
+      (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
     ) || defaultToken;
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
@@ -174,6 +174,14 @@ export const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, symbol]);
+
+  // This useEffect is to make sure that the default token is PLR token
+  useEffect(() => {
+    if (selectedToken === defaultToken) {
+      dispatch(setSelectedToken(defaultToken));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedToken]);
 
   // This useEffect is to update the token data when the selected token changes
   useEffect(() => {

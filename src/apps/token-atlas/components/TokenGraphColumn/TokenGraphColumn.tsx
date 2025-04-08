@@ -1,7 +1,9 @@
 import { sub } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // hooks
+import useAllowedApps from '../../../../hooks/useAllowedApps';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -19,7 +21,7 @@ import {
   MarketHistoryPairData,
   TokenAtlasInfoData,
 } from '../../../../types/api';
-import { PeriodFilter } from '../../types/types';
+import { PeriodFilter, SelectedTokenType } from '../../types/types';
 
 // images
 import ArrowGreenSmall from '../../images/arrow-circle-green-small.svg';
@@ -42,6 +44,8 @@ const TokenGraphColumn = ({
   className,
   isLoadingTokenDataInfo,
 }: TokenGraphColumnProps) => {
+  const navigate = useNavigate();
+  const { setIsAnimated } = useAllowedApps();
   const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
@@ -53,6 +57,10 @@ const TokenGraphColumn = ({
   const periodFilter = useAppSelector(
     (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
+  const selectedToken = useAppSelector(
+    (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
+  );
+
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
   const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
 
@@ -166,6 +174,20 @@ const TokenGraphColumn = ({
               <Body className="text-[15px] mobile:text-[13px] text-white_light_grey pt-2">
                 {tokenDataInfo?.symbol}
               </Body>
+              {tokenDataInfo && (
+                <button
+                  type="button"
+                  className="flex w-fit ml-2 py-3 px-6 text-sm font-semibold uppercase truncate rounded bg-green hover:bg-[#5DE000] text-dark_grey"
+                  onClick={() => {
+                    setIsAnimated(false);
+                    navigate(
+                      `/the-exchange?asset=${selectedToken?.name}&blockchain=${selectedToken?.chainId}&address=${selectedToken?.address}`
+                    );
+                  }}
+                >
+                  Buy {tokenDataInfo?.symbol}
+                </button>
+              )}
             </>
           )}
         </div>

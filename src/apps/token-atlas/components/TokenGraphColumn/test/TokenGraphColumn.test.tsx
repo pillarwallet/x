@@ -1,9 +1,13 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 
 // redux store
 import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
+
+// provider
+import AllowedAppsProvider from '../../../../../providers/AllowedAppsProvider';
 
 // components
 import TokenGraphColumn from '../TokenGraphColumn';
@@ -91,7 +95,11 @@ describe('<TokenGraphColumn />', () => {
     const tree = renderer
       .create(
         <Provider store={store}>
-          <TokenGraphColumn isLoadingTokenDataInfo={false} />
+          <MemoryRouter>
+            <AllowedAppsProvider>
+              <TokenGraphColumn isLoadingTokenDataInfo={false} />
+            </AllowedAppsProvider>
+          </MemoryRouter>
         </Provider>
       )
       .toJSON();
@@ -102,7 +110,11 @@ describe('<TokenGraphColumn />', () => {
   it('displays token information correctly', () => {
     render(
       <Provider store={store}>
-        <TokenGraphColumn isLoadingTokenDataInfo={false} />
+        <MemoryRouter>
+          <AllowedAppsProvider>
+            <TokenGraphColumn isLoadingTokenDataInfo={false} />
+          </AllowedAppsProvider>
+        </MemoryRouter>
       </Provider>
     );
     expect(screen.getByTestId('token-logo-graph-column')).toBeInTheDocument();
