@@ -249,6 +249,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </p>
       <div
         className="flex gap-4 items-end"
+        id="wallet-portfolio-balance"
       >
         <h1
           className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-[50px]"

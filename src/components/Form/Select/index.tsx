@@ -32,7 +32,7 @@ const ListItem = ({
   return (
     <ListItemWrapper
       onClick={() => onClick && onClick(option)}
-      id={`action-bar-send-chain-${option.id}`}
+      id={`action-bar-send-${option.title}`}
     >
       {option.imageSrc && !hideImage && (
         <ListItemLeft>

@@ -48,6 +48,7 @@ const FormTabSelect = ({
             key={index}
             onClick={() => onTabItemClick(index)}
             selected={selected === index}
+            id={`tab-select-${item.title}`}
           >
             <span>{item.icon} </span>
             {item.title}

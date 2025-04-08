@@ -104,7 +104,10 @@ const PointsTile = ({ data, isDataLoading }: PointsTileProps) => {
                     className="flex w-[52px] h-[52px] items-center justify-center p-2.5 rounded-md bg-container_grey mb-8"
                   />
                   <div className="flex items-end mb-6">
-                    <p className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light">
+                    <p
+                      className="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                      id="points-tile-points-number"
+                    >
                       {pointsData.address.points.total || '0'}
                     </p>
                     <p className="desktop:text-2xl tablet:text-lg mobile:text-lg text-purple_light leading-none desktop:mb-2.5 font-normal">
