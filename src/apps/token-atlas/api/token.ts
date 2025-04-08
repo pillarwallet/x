@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 // store
 import { addMiddleware } from '../../../store';
@@ -6,6 +6,7 @@ import { addMiddleware } from '../../../store';
 // types
 import {
   BlockchainList,
+  MarketHistoryPairData,
   TokenAtlasGraphApiResponse,
   TokenAtlasInfoApiResponse,
   TrendingTokens,
@@ -92,6 +93,56 @@ export const blockchainsListApi = createApi({
   }),
 });
 
+const fetchBaseTokenMarketHistoryPairWithRetry = retry(
+  fetchBaseQuery({
+    baseUrl: isTestnet
+      ? 'https://hifidata-nubpgwxpiq-uc.a.run.app'
+      : 'https://hifidata-7eu4izffpa-uc.a.run.app',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }),
+  { maxRetries: 5 }
+);
+
+export const tokenMarketHistoryPair = createApi({
+  reducerPath: 'tokenMarketHistoryPair',
+  baseQuery: fetchBaseTokenMarketHistoryPairWithRetry,
+  endpoints: (builder) => ({
+    getTokenMarketHistoryPair: builder.query<
+      MarketHistoryPairData,
+      {
+        asset?: string;
+        symbol?: string;
+        blockchain: string;
+        period: string;
+        from: number;
+        to?: number;
+        amount?: number;
+      }
+    >({
+      query: ({ asset, symbol, blockchain, period, from, to, amount }) => {
+        return {
+          url: `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
+          method: 'POST',
+          body: {
+            path: 'market/history/pair',
+            params: {
+              asset,
+              symbol,
+              blockchain,
+              period,
+              from: from * 1000,
+              to: to ? to * 1000 : undefined,
+              amount: amount || undefined,
+            },
+          },
+        };
+      },
+    }),
+  }),
+});
+
 /**
  * Add this to the store
  */
@@ -99,8 +150,10 @@ addMiddleware(tokenInfoApi);
 addMiddleware(tokenGraphApi);
 addMiddleware(trendingTokensApi);
 addMiddleware(blockchainsListApi);
+addMiddleware(tokenMarketHistoryPair);
 
 export const { useGetTokenInfoQuery } = tokenInfoApi;
 export const { useGetTokenGraphQuery } = tokenGraphApi;
 export const { useGetTrendingTokensQuery } = trendingTokensApi;
 export const { useGetBlockchainsListQuery } = blockchainsListApi;
+export const { useGetTokenMarketHistoryPairQuery } = tokenMarketHistoryPair;

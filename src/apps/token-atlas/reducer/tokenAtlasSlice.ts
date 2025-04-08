@@ -6,8 +6,8 @@ import { sub } from 'date-fns';
 import { Token } from '../../../services/tokensData';
 import {
   BlockchainData,
+  MarketHistoryPairData,
   TokenAtlasInfoData,
-  TokenMarketHistory,
   TokenPriceGraphPeriod,
 } from '../../../types/api';
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
@@ -22,7 +22,7 @@ export type TokenAltasState = {
   searchTokenResult: Token[] | undefined;
   selectedToken: SelectedTokenType | undefined;
   tokenDataInfo: TokenAtlasInfoData | undefined;
-  tokenDataGraph: TokenMarketHistory | undefined;
+  tokenDataGraph: MarketHistoryPairData | undefined;
   isAllChainsVisible: boolean;
   priceGraphPeriod: TokenPriceGraphPeriod;
   periodFilter: PeriodFilter;
@@ -31,6 +31,7 @@ export type TokenAltasState = {
   searchToken: string;
   isTokenSearchLoading: boolean;
   isTokenSearchErroring: boolean;
+  isGraphErroring: boolean;
 };
 
 const initialState: TokenAltasState = {
@@ -52,6 +53,7 @@ const initialState: TokenAltasState = {
   searchToken: '',
   isTokenSearchLoading: false,
   isTokenSearchErroring: false,
+  isGraphErroring: false,
 };
 
 const tokenAtlasSlice = createSlice({
@@ -84,7 +86,7 @@ const tokenAtlasSlice = createSlice({
     },
     setTokenDataGraph(
       state,
-      action: PayloadAction<TokenMarketHistory | undefined>
+      action: PayloadAction<MarketHistoryPairData | undefined>
     ) {
       state.tokenDataGraph = action.payload;
     },
@@ -115,6 +117,9 @@ const tokenAtlasSlice = createSlice({
     setIsTokenSearchErroring(state, action: PayloadAction<boolean>) {
       state.isTokenSearchErroring = action.payload;
     },
+    setIsGraphErroring(state, action: PayloadAction<boolean>) {
+      state.isGraphErroring = action.payload;
+    },
   },
 });
 
@@ -134,6 +139,7 @@ export const {
   setSearchToken,
   setIsTokenSearchLoading,
   setIsTokenSearchErroring,
+  setIsGraphErroring,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

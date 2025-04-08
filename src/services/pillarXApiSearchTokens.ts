@@ -19,7 +19,7 @@ const fetchBaseQueryWithRetry = retry(
       'Content-Type': 'application/json',
     },
   }),
-  { maxRetries: 10 }
+  { maxRetries: 5 }
 );
 
 // Define a service using a base path and params
