@@ -429,6 +429,19 @@ export type WeeklyLeaderboardData = PointsResult & {
   rankChange?: LeaderboardRankChange;
 };
 
+export type MarketHistoryPairData = {
+  result: {
+    data: {
+      volume: number;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+      time: number;
+    }[];
+  };
+};
+
 export type MobulaToken = {
   address: string;
   price: number | null;

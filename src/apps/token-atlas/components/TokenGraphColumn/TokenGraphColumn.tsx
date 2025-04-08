@@ -15,7 +15,10 @@ import { convertDateToUnixTimestamp } from '../../../../utils/common';
 import { limitDigits } from '../../utils/converters';
 
 // types
-import { TokenAtlasInfoData, TokenMarketHistory } from '../../../../types/api';
+import {
+  MarketHistoryPairData,
+  TokenAtlasInfoData,
+} from '../../../../types/api';
 import { PeriodFilter } from '../../types/types';
 
 // images
@@ -44,7 +47,8 @@ const TokenGraphColumn = ({
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
   );
   const tokenDataGraph = useAppSelector(
-    (state) => state.tokenAtlas.tokenDataGraph as TokenMarketHistory | undefined
+    (state) =>
+      state.tokenAtlas.tokenDataGraph as MarketHistoryPairData | undefined
   );
   const periodFilter = useAppSelector(
     (state) => state.tokenAtlas.periodFilter as PeriodFilter
@@ -216,10 +220,10 @@ const TokenGraphColumn = ({
               type="button"
               key={index}
               className={`flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded ${
-                tokenDataGraph?.price_history
+                tokenDataGraph?.result.data.length
                   ? 'hover:bg-green hover:text-dark_grey'
                   : ''
-              } ${periodFilter === filter && tokenDataGraph?.price_history ? 'bg-green text-dark_grey' : 'text-white_grey bg-medium_grey'}`}
+              } ${periodFilter === filter && tokenDataGraph?.result.data.length ? 'bg-green text-dark_grey' : 'text-white_grey bg-medium_grey'}`}
               onClick={() => handleClickTimePeriod(filter)}
             >
               {filter}

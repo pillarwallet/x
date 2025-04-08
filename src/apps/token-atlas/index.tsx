@@ -7,10 +7,14 @@ import './styles/tailwindTokenAtlas.css';
 
 // api
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
-import { useGetTokenGraphQuery, useGetTokenInfoQuery } from './api/token';
+import {
+  useGetTokenInfoQuery,
+  useGetTokenMarketHistoryPairQuery,
+} from './api/token';
 
 // reducer
 import {
+  setIsGraphErroring,
   setIsGraphLoading,
   setSelectedToken,
   setTokenDataGraph,
@@ -21,11 +25,13 @@ import {
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
 // utils
+import { chainIdToChainNameTokensData } from '../../services/tokensData';
 import { getNativeAssetForChainId } from '../../utils/blockchain';
+import { getGraphResolution } from './utils/converters';
 
 // types
 import { TokenPriceGraphPeriod } from '../../types/api';
-import { SelectedTokenType } from './types/types';
+import { PeriodFilter, SelectedTokenType } from './types/types';
 
 // components
 import HeaderSearch from './components/HeaderSearch/HeaderSeach';
@@ -36,7 +42,7 @@ import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
 const defaultToken = {
   id: 102502677,
   symbol: 'PLR',
-  address: '',
+  address: '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774',
   decimals: 18,
   chainId: 137,
   name: 'pillar',
@@ -60,6 +66,9 @@ export const App = () => {
     ) || defaultToken;
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
+  );
+  const periodFilter = useAppSelector(
+    (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
 
   /**
@@ -125,17 +134,18 @@ export const App = () => {
       : selectedToken.name || selectedToken.address,
     symbol: getSymbol(selectedToken.symbol),
   });
+
   const {
-    data: tokenGraph,
-    isLoading: isLoadingTokenDataGraph,
-    isFetching: isFetchingTokenDataGraph,
-    isSuccess: isSuccessTokenDataGraph,
-  } = useGetTokenGraphQuery({
-    id: isWrappedOrNativeToken ? undefined : selectedToken.id,
-    asset: isWrappedOrNativeToken
-      ? undefined
-      : selectedToken.name || selectedToken.address,
-    symbol: getSymbol(selectedToken.symbol),
+    data: marketHistoryPair,
+    isLoading: isMarketHistoryPairLoading,
+    isFetching: isMarketHistoryPairFetching,
+    isSuccess: isMarketHistoryPairSuccess,
+    error: marketHistoryPairError,
+  } = useGetTokenMarketHistoryPairQuery({
+    asset: isWrappedOrNativeToken ? undefined : selectedToken.address,
+    symbol: isWrappedOrNativeToken ? selectedToken.symbol : undefined,
+    blockchain: chainIdToChainNameTokensData(selectedToken.chainId),
+    period: getGraphResolution(periodFilter),
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
   });
@@ -178,25 +188,30 @@ export const App = () => {
 
   // This useEffect is to update the token graph data when the selected token and the graph period changes
   useEffect(() => {
-    if (tokenGraph && isSuccessTokenDataGraph) {
-      dispatch(setTokenDataGraph(tokenGraph.data));
+    if (marketHistoryPair && isMarketHistoryPairSuccess) {
+      dispatch(setTokenDataGraph(marketHistoryPair));
+      dispatch(setIsGraphErroring(false));
     }
-    if (!isSuccessTokenDataGraph) {
+    if (!isMarketHistoryPairSuccess) {
       dispatch(setTokenDataGraph(undefined));
+      dispatch(setIsGraphErroring(true));
+    }
+    if (marketHistoryPairError) {
+      dispatch(setIsGraphErroring(true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenGraph, isSuccessTokenDataGraph]);
+  }, [marketHistoryPair, isMarketHistoryPairSuccess, marketHistoryPairError]);
 
   // This useEffect is to update the graph loading status when the API requests are in progress
   useEffect(() => {
-    if (isLoadingTokenDataGraph || isFetchingTokenDataGraph) {
+    if (isMarketHistoryPairLoading || isMarketHistoryPairFetching) {
       dispatch(setIsGraphLoading(true));
     }
-    if (!isLoadingTokenDataGraph && !isFetchingTokenDataGraph) {
+    if (!isMarketHistoryPairLoading && !isMarketHistoryPairFetching) {
       dispatch(setIsGraphLoading(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingTokenDataGraph, isFetchingTokenDataGraph]);
+  }, [isMarketHistoryPairLoading, isMarketHistoryPairFetching]);
 
   // This useEffect is to update the user activity when they select or load a different token
   useEffect(() => {

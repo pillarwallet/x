@@ -24,7 +24,10 @@ import { Line } from 'react-chartjs-2';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { TokenAtlasInfoData, TokenMarketHistory } from '../../../../types/api';
+import {
+  MarketHistoryPairData,
+  TokenAtlasInfoData,
+} from '../../../../types/api';
 import { PeriodFilter } from '../../types/types';
 
 // components
@@ -48,7 +51,8 @@ ChartJS.register(
 
 const TokenGraph = () => {
   const tokenDataGraph = useAppSelector(
-    (state) => state.tokenAtlas.tokenDataGraph as TokenMarketHistory | undefined
+    (state) =>
+      state.tokenAtlas.tokenDataGraph as MarketHistoryPairData | undefined
   );
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
@@ -58,6 +62,9 @@ const TokenGraph = () => {
   );
   const isGraphLoading = useAppSelector(
     (state) => state.tokenAtlas.isGraphLoading as boolean
+  );
+  const isGraphErroring = useAppSelector(
+    (state) => state.tokenAtlas.isGraphErroring as boolean
   );
 
   // This gets the right color depending on the price value threshold, a callback is used
@@ -92,10 +99,10 @@ const TokenGraph = () => {
   );
 
   // This gets the right graph time scale (x) depending on the periodFilter selected. A callback is used
-  // to make sure this only gets called if tokenDataGraph?.price_history changes, otherwise the graph crashes
+  // to make sure this only gets called if tokenDataGraph?.result.data changes, otherwise the graph crashes
   const graphXScale = useCallback(
     () => {
-      if (tokenDataGraph?.price_history) {
+      if (tokenDataGraph?.result.data.length) {
         if (periodFilter === PeriodFilter.HOUR) {
           return 'minute';
         }
@@ -121,15 +128,24 @@ const TokenGraph = () => {
 
       return 'day';
     },
-    [tokenDataGraph?.price_history] // eslint-disable-line react-hooks/exhaustive-deps
+    [tokenDataGraph?.result.data.length] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   if (isGraphLoading) {
     return <SkeletonLoader $height="300px" $radius="6px" />;
   }
 
-  if (!tokenDataGraph?.price_history || !tokenDataGraph.price_history.length) {
+  if (!tokenDataGraph?.result.data.length && !isGraphErroring) {
     return <Body className="my-4">Price history not found.</Body>;
+  }
+
+  if (!tokenDataGraph?.result.data.length && isGraphErroring) {
+    return (
+      <Body className="my-4">
+        Oops something went wrong! Please try a different timeframe or reload
+        the page.
+      </Body>
+    );
   }
 
   const createGradient = (
@@ -145,13 +161,13 @@ const TokenGraph = () => {
 
   // This gives us the right dataset for the graph
   const data: ChartData<'line'> = {
-    labels: tokenDataGraph.price_history.map((x) => x.timestamp),
+    labels: tokenDataGraph?.result.data.map((x) => x.time),
     datasets: [
       {
         label: `${
           tokenDataInfo?.symbol ? tokenDataInfo?.symbol : 'Token'
         } price`,
-        data: tokenDataGraph.price_history.map((price) => price.priceUSD),
+        data: tokenDataGraph?.result.data.map((price) => price.close) || [],
         borderColor: (ctx: ScriptableContext<'line'>) => createGradient(ctx),
         tension: 0.4,
         pointRadius: 0,

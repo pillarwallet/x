@@ -1,3 +1,5 @@
+import { PeriodFilter } from '../types/types';
+
 export const hasThreeZerosAfterDecimal = (num: number): boolean => {
   const decimalPart = num.toString().split('.')[1] || '';
   return decimalPart.startsWith('000');
@@ -22,3 +24,25 @@ export const limitDigits = (num: number): number => {
 
 export const lowerRemoveSpaceString = (str: string) =>
   str.toLowerCase().replace(/[\s.-]/g, '');
+
+export const getGraphResolution = (filter: PeriodFilter): string => {
+  switch (filter) {
+    case PeriodFilter.HOUR:
+      // every minute
+      return '1min';
+    case PeriodFilter.DAY:
+      // every 15 min
+      return '15min';
+    case PeriodFilter.WEEK:
+      // every hour
+      return '1h';
+    case PeriodFilter.MONTH:
+      // every day
+      return '1d';
+    case PeriodFilter.YEAR:
+      // every day
+      return '1d';
+    default:
+      return '1h';
+  }
+};
