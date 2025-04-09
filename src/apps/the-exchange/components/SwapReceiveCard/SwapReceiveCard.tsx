@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
   Token,
-  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
@@ -45,20 +44,19 @@ const SwapReceiveCard = ({
     (position === CardPosition.SWAP && !swapToken) ||
     (position === CardPosition.RECEIVE && !receiveToken);
 
-  // This is to query the API when tokens are being clicked from the home feed
+  // This is to query the API when tokens are being clicked from the Token Atlas app
   const query = new URLSearchParams(window.location.search);
 
   const asset = query.get('asset');
-  const contractAddress = query.get('address');
-  const chainId = query.get('blockchain');
+  const chain = query.get('blockchain');
 
   // API call to search tokens and assets
   const { data: searchData } = useGetSearchTokensQuery(
     {
-      searchInput: contractAddress || asset || '',
-      filterBlockchains: chainIdToChainNameTokensData(Number(chainId)),
+      searchInput: asset || '',
+      filterBlockchains: chain || undefined,
     },
-    { skip: (!contractAddress || !asset) && !chainId }
+    { skip: !asset && !chain }
   );
 
   useEffect(() => {
@@ -66,13 +64,22 @@ const SwapReceiveCard = ({
 
     const result = convertAPIResponseToTokens(
       searchData?.result?.data as TokenAssetResponse[],
-      contractAddress || asset || ''
+      asset || ''
     );
 
-    // This sets the token results list that will be displayed in the UI
-    dispatch(setReceiveToken(result[0]));
+    // if it is considered a native token, Token Atlas would have handled the request
+    // with showing the asset as a symbol rather than an contract address
+    const nativeToken = result.filter(
+      (token) => token.blockchain === chain && token.symbol === asset
+    );
+
+    if (nativeToken.length > 0) {
+      dispatch(setReceiveToken(nativeToken[0]));
+    } else {
+      dispatch(setReceiveToken(result[0]));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asset, contractAddress, searchData]);
+  }, [asset, searchData]);
 
   return (
     <div

@@ -32,6 +32,7 @@ export type TokenAltasState = {
   isTokenSearchLoading: boolean;
   isTokenSearchErroring: boolean;
   isGraphErroring: boolean;
+  isTokenDataErroring: boolean;
 };
 
 const initialState: TokenAltasState = {
@@ -54,6 +55,7 @@ const initialState: TokenAltasState = {
   isTokenSearchLoading: false,
   isTokenSearchErroring: false,
   isGraphErroring: false,
+  isTokenDataErroring: false,
 };
 
 const tokenAtlasSlice = createSlice({
@@ -120,6 +122,9 @@ const tokenAtlasSlice = createSlice({
     setIsGraphErroring(state, action: PayloadAction<boolean>) {
       state.isGraphErroring = action.payload;
     },
+    setIsTokenDataErroring(state, action: PayloadAction<boolean>) {
+      state.isTokenDataErroring = action.payload;
+    },
   },
 });
 
@@ -140,6 +145,7 @@ export const {
   setIsTokenSearchLoading,
   setIsTokenSearchErroring,
   setIsGraphErroring,
+  setIsTokenDataErroring,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

@@ -1,3 +1,4 @@
+import { useEtherspotUtils } from '@etherspot/transaction-kit';
 import { sub } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
 } from '../../reducer/tokenAtlasSlice';
 
 // utils
+import { chainIdToChainNameTokensData } from '../../../../services/tokensData';
 import { convertDateToUnixTimestamp } from '../../../../utils/common';
 import { limitDigits } from '../../utils/converters';
 
@@ -46,6 +48,7 @@ const TokenGraphColumn = ({
 }: TokenGraphColumnProps) => {
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
+  const { isZeroAddress } = useEtherspotUtils();
   const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
@@ -59,6 +62,9 @@ const TokenGraphColumn = ({
   );
   const selectedToken = useAppSelector(
     (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
+  );
+  const isTokenDataErroring = useAppSelector(
+    (state) => state.tokenAtlas.isTokenDataErroring as boolean
   );
 
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
@@ -181,7 +187,7 @@ const TokenGraphColumn = ({
                   onClick={() => {
                     setIsAnimated(false);
                     navigate(
-                      `/the-exchange?asset=${selectedToken?.name}&blockchain=${selectedToken?.chainId}&address=${selectedToken?.address}`
+                      `/the-exchange?${!isZeroAddress(selectedToken?.address || '') ? `&asset=${selectedToken?.address}` : `&asset=${selectedToken?.symbol}`}&blockchain=${chainIdToChainNameTokensData(selectedToken?.chainId)}`
                     );
                   }}
                 >
@@ -191,6 +197,12 @@ const TokenGraphColumn = ({
             </>
           )}
         </div>
+        {!isLoadingTokenDataInfo && isTokenDataErroring && (
+          <Body>
+            Oops something went wrong! Please try to search for this token
+            again.
+          </Body>
+        )}
         <div
           id="token-atlas-graph-column-price-change"
           className="flex justify-between items-center desktop:items-end"

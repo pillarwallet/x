@@ -23,6 +23,11 @@ import { SelectedTokenType } from '../../types/types';
 
 // components
 import SkeletonLoader from '../../../../components/SkeletonLoader';
+import {
+  chainNameFromViemToMobula,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+import { CompatibleChains } from '../../../../utils/blockchain';
 import TokenCard from '../TokenCard/TokenCard';
 import Body from '../Typography/Body';
 
@@ -44,12 +49,23 @@ const TokensSlider = () => {
     isLoading,
     isFetching,
   } = useGetTrendingTokensQuery();
+
   const blockchainList = useAppSelector(
     (state) => state.tokenAtlas.blockchainList as BlockchainData[]
   );
 
-  // reduce the list the 20 first trending tokens
-  const trendingTokens = trendingTokensData?.data.slice(0, 20) || [];
+  // look for trending tokens with compatible chains and reduce the list the 20 first trending tokens
+  const trendingTokens =
+    trendingTokensData?.result
+      ?.filter((token) =>
+        token.contracts?.some((contract) =>
+          CompatibleChains.some(
+            (chain) =>
+              chainNameFromViemToMobula(chain.chainName) === contract.blockchain
+          )
+        )
+      )
+      .slice(0, 20) || [];
 
   // Ref to track the slider container
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -91,12 +107,20 @@ const TokensSlider = () => {
   }, [sliderRef]);
 
   const handleChooseToken = (token: TokenData) => {
+    const compatibleTokenContract = token.contracts?.find((contract) =>
+      CompatibleChains.some(
+        (chain) =>
+          chainNameFromViemToMobula(chain.chainName) === contract.blockchain
+      )
+    );
     const tokenData: SelectedTokenType = {
       id: token.id || 0,
       symbol: token.symbol || '',
-      address: '',
+      address: compatibleTokenContract?.address || '',
       decimals: undefined,
-      chainId: undefined,
+      chainId: chainNameToChainIdTokensData(
+        compatibleTokenContract?.blockchain
+      ),
       name: token.name || '',
       icon: token.logo,
     };
