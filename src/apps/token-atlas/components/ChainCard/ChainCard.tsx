@@ -23,7 +23,7 @@ const ChainCard = ({ chainName }: ChainCardProps) => {
 
   useEffect(() => {
     if (blockchainListData && isSuccess) {
-      dispatch(setBlockchainList(blockchainListData.data));
+      dispatch(setBlockchainList(blockchainListData?.result?.data));
     }
     if (!isSuccess) {
       dispatch(setBlockchainList([]));
@@ -31,7 +31,7 @@ const ChainCard = ({ chainName }: ChainCardProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockchainListData, isSuccess]);
 
-  const blockchain = blockchainListData?.data.find(
+  const blockchain = blockchainListData?.result?.data.find(
     (chain) => chain.name.toLowerCase() === chainName.toLowerCase()
   );
 

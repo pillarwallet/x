@@ -21,6 +21,7 @@ describe('<TokensHorizontalTile />', () => {
         id: 1,
         name: 'The best token',
         symbol: 'TBT',
+        price: 0.123,
         contracts: [
           {
             address: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',

@@ -29,6 +29,7 @@ describe('<TokensVerticalTile />', () => {
         platforms: [{ name: 'Platform A', rank: 1, weight: 0.5 }],
         price_change_24h: 5,
         pair: 'TKA/USD',
+        price: 0.123,
       },
       {
         id: 2,
@@ -40,6 +41,7 @@ describe('<TokensVerticalTile />', () => {
         platforms: [{ name: 'Platform B', rank: 2, weight: 0.4 }],
         price_change_24h: -3,
         pair: 'TKB/USD',
+        price: 0.456,
       },
     ],
     layout: ApiLayout.TOKENS_VERTICAL,

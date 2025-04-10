@@ -38,7 +38,7 @@ const TokenInfoHorizontal = ({
 
   useEffect(() => {
     if (tokenChains?.length === 1 && blockchainListData && isSuccess) {
-      const chainData = blockchainListData.data.find(
+      const chainData = blockchainListData?.result?.data.find(
         (chain) => chain.name === tokenChains[0].blockchain
       );
       setBlockchainLogo(chainData?.logo);

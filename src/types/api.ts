@@ -169,6 +169,7 @@ export type TokenData = {
   trending_score?: number;
   platforms?: TokenPlatform[];
   price_change_24h?: number;
+  price: number;
   pair?: string;
 };
 
@@ -211,7 +212,9 @@ export type TokenAtlasInfoData = {
 };
 
 export type TokenAtlasInfoApiResponse = {
-  data?: TokenAtlasInfoData;
+  result: {
+    data: TokenAtlasInfoData;
+  };
 };
 
 type HistoryPoint = {
@@ -238,7 +241,7 @@ export type TokenPriceGraphPeriod = {
 };
 
 export type TrendingTokens = {
-  data: TokenData[];
+  result: TokenData[];
 };
 
 export type TokenBlockchainList = {
@@ -300,7 +303,7 @@ export type BlockchainData = {
 };
 
 export type BlockchainList = {
-  data: BlockchainData[];
+  result: { data: BlockchainData[] };
 };
 
 export type TileTitle = {
