@@ -29,6 +29,7 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
     <mask
       height={80}
       id=":r0:"
+      mask-type="alpha"
       maskUnits="userSpaceOnUse"
       width={80}
       x={0}
@@ -44,9 +45,21 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
       mask="url(#:r0:)"
     >
       <rect
-        fill="#F0AB3D"
-        height={80}
-        width={80}
+        fill="#92A1C6"
+        height={10}
+        width={10}
+      />
+      <rect
+        fill="#146A7C"
+        height={10}
+        width={10}
+        x={20}
+      />
+      <rect
+        fill="#146A7C"
+        height={10}
+        width={10}
+        x={40}
       />
       <path
         d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"

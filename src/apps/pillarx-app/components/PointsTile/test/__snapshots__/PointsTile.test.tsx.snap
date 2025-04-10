@@ -37,6 +37,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
                 >
                   <p
                     class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                    id="points-tile-points-number"
                   >
                     500
                   </p>
@@ -289,6 +290,7 @@ exports[`<PointsTile /> renders correctly and matches snapshot 1`] = `
               >
                 <p
                   class="desktop:text-[80px] tablet:text-6xl mobile:text-6xl text-white leading-none font-light"
+                  id="points-tile-points-number"
                 >
                   500
                 </p>

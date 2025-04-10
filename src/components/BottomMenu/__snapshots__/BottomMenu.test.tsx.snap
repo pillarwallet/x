@@ -278,6 +278,7 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
     >
       <div
         className="c11 c12 active"
+        id="menu-item-Home"
         onClick={[Function]}
       >
         <svg
@@ -303,6 +304,7 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
       </div>
       <div
         className="c11 c12"
+        id="menu-item-Send"
         onClick={[Function]}
       >
         <div
@@ -331,6 +333,7 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
       </div>
       <div
         className="c11 c12"
+        id="menu-item-History"
         onClick={[Function]}
       >
         <div
@@ -359,6 +362,7 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
       </div>
       <div
         className="c11 c12"
+        id="menu-item-Account"
         onClick={[Function]}
       >
         <div
@@ -394,6 +398,7 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
       </div>
       <div
         className="c11 c12"
+        id="menu-item-Apps"
         onClick={[Function]}
       >
         <div

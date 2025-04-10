@@ -323,7 +323,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               if (Number(totalBalance) === 0) return undefined;
 
               return (
-                <TokenItem id="token-item-account-modal" key={tokenSymbol}>
+                <TokenItem
+                  id={`token-item-${tokenSymbol}-account-modal`}
+                  key={tokenSymbol}
+                >
                   <TokenTotals id="token-totals-account-modal">
                     <img src={logoUrl} alt={tokenSymbol} />
                     <p>
