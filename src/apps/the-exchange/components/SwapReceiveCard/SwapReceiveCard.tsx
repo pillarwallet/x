@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
   Token,
+  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
@@ -16,10 +17,11 @@ import { setReceiveToken } from '../../reducer/theExchangeSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { TokenAssetResponse } from '../../../../types/api';
 import { CardPosition } from '../../utils/types';
 
 // components
+import { TokenAssetResponse } from '../../../../types/api';
+import { SelectedTokenType } from '../../../token-atlas/types/types';
 import EnterAmount from '../EnterAmount/EnterAmount';
 import SelectToken from '../SelectToken/SelectToken';
 
@@ -38,6 +40,9 @@ const SwapReceiveCard = ({
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(
     (state) => state.swap.receiveToken as Token
+  );
+  const selectedToken = useAppSelector(
+    (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
   );
 
   const isClickable =
@@ -60,23 +65,38 @@ const SwapReceiveCard = ({
   );
 
   useEffect(() => {
-    if (!searchData) return;
-
-    const result = convertAPIResponseToTokens(
-      searchData?.result?.data as TokenAssetResponse[],
-      asset || ''
-    );
-
-    // if it is considered a native token, Token Atlas would have handled the request
-    // with showing the asset as a symbol rather than an contract address
-    const nativeToken = result.filter(
-      (token) => token.blockchain === chain && token.symbol === asset
-    );
-
-    if (nativeToken.length > 0) {
-      dispatch(setReceiveToken(nativeToken[0]));
+    if (asset && chain && selectedToken) {
+      dispatch(
+        setReceiveToken({
+          id: selectedToken?.id || 0,
+          name: selectedToken?.name || '',
+          symbol: selectedToken?.symbol || '',
+          logo: selectedToken?.icon || '',
+          blockchain:
+            chainIdToChainNameTokensData(selectedToken?.chainId) || '',
+          contract: selectedToken?.address || '',
+          decimals: selectedToken?.decimals || 18,
+        })
+      );
     } else {
-      dispatch(setReceiveToken(result[0]));
+      if (!searchData) return;
+
+      const result = convertAPIResponseToTokens(
+        searchData?.result?.data as TokenAssetResponse[],
+        asset || ''
+      );
+
+      // if it is considered a native token, Token Atlas would have handled the request
+      // with showing the asset as a symbol rather than an contract address
+      const nativeToken = result.filter(
+        (token) => token.blockchain === chain && token.symbol === asset
+      );
+
+      if (nativeToken.length > 0) {
+        dispatch(setReceiveToken(nativeToken[0]));
+      } else {
+        dispatch(setReceiveToken(result[0]));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, searchData]);
