@@ -591,6 +591,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c6 {
@@ -718,6 +719,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 50%;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c4 {
@@ -726,6 +728,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c5 {
@@ -734,6 +737,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c1 {

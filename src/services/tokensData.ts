@@ -382,7 +382,7 @@ export const convertAPIResponseToTokens = (
 
     const results = fuse.search(searchInput).map((token) => token.item);
 
-    return [...tokenData, ...results];
+    return [...results, ...tokenData];
   }
 
   // Adds nativeTokens to the list if no search input
