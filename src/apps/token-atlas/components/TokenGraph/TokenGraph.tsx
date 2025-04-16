@@ -142,8 +142,9 @@ const TokenGraph = () => {
   if (!tokenDataGraph?.result.data.length && isGraphErroring) {
     return (
       <Body className="my-4">
-        Oops something went wrong! Please try a different timeframe or reload
-        the page.
+        Oops something went wrong! The data for this timeframe may not be
+        available. Please try selecting a different timeframe or reload the
+        page.
       </Body>
     );
   }

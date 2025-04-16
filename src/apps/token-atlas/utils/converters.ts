@@ -31,8 +31,8 @@ export const getGraphResolution = (filter: PeriodFilter): string => {
       // every minute
       return '1min';
     case PeriodFilter.DAY:
-      // every 15 min
-      return '15min';
+      // every 1 min
+      return '1min';
     case PeriodFilter.WEEK:
       // every hour
       return '1h';

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-interactive-element-to-noninteractive-role */
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
@@ -14,6 +15,7 @@ import TokenGraphColumn from '../TokenGraphColumn';
 
 // reducer
 import {
+  setIsGraphLoading,
   setPeriodFilter,
   setTokenDataGraph,
   setTokenDataInfo,
@@ -84,11 +86,19 @@ const mockTokenDataInfo: TokenAtlasInfoData = {
   circulating_supply: '170',
 };
 
+// Mock the chart
+jest.mock('react-chartjs-2', () => ({
+  Line: () => (
+    <canvas data-testid="price-graph" height={150} role="img" width={300} />
+  ),
+}));
+
 describe('<TokenGraphColumn />', () => {
   beforeEach(() => {
     store.dispatch(setTokenDataInfo(mockTokenDataInfo));
     store.dispatch(setTokenDataGraph(mockTokenDataGraph));
     store.dispatch(setPeriodFilter(PeriodFilter.DAY));
+    store.dispatch(setIsGraphLoading(false));
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -120,7 +130,7 @@ describe('<TokenGraphColumn />', () => {
     expect(screen.getByTestId('token-logo-graph-column')).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.name)).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.symbol)).toBeInTheDocument();
-    expect(screen.getByText(`${mockTokenDataInfo.price}`)).toBeInTheDocument();
+    expect(screen.getByText('46050.5')).toBeInTheDocument();
     expect(
       screen.getByText(`${mockTokenDataInfo.price_change_24h.toFixed(3)}`)
     ).toBeInTheDocument();

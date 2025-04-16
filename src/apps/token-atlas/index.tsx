@@ -233,7 +233,7 @@ export const App = () => {
       dispatch(setTokenDataInfo(tokenData?.result?.data));
       dispatch(setIsTokenDataErroring(false));
     }
-    if (!isSuccessTokenDataInfo) {
+    if (!isSuccessTokenDataInfo || asset === 'undefined') {
       dispatch(setTokenDataInfo(undefined));
       dispatch(setIsTokenDataErroring(true));
     }
@@ -249,7 +249,7 @@ export const App = () => {
       dispatch(setTokenDataGraph(marketHistoryPair));
       dispatch(setIsGraphErroring(false));
     }
-    if (!isMarketHistoryPairSuccess) {
+    if (!isMarketHistoryPairSuccess || asset === 'undefined') {
       dispatch(setTokenDataGraph(undefined));
       dispatch(setIsGraphErroring(true));
     }

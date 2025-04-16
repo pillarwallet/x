@@ -7,6 +7,7 @@ exports[`<TokensSlider /> renders correctly and matches snapshot when loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 9px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 <div

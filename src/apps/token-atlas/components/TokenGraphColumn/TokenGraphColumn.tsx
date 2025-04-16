@@ -66,9 +66,13 @@ const TokenGraphColumn = ({
   const isTokenDataErroring = useAppSelector(
     (state) => state.tokenAtlas.isTokenDataErroring as boolean
   );
+  const isGraphLoading = useAppSelector(
+    (state) => state.tokenAtlas.isGraphLoading as boolean
+  );
 
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
   const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+  const [latestPrice, setLatestPrice] = useState<number | undefined>();
 
   // The resize handle and listener are to check the viewport size, and change the arrows SVG accordingly
   const handleResize = () => {
@@ -137,6 +141,25 @@ const TokenGraphColumn = ({
     );
   };
 
+  useEffect(() => {
+    handleClickTimePeriod(PeriodFilter.DAY);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenDataInfo]);
+
+  useEffect(() => {
+    if (
+      periodFilter === PeriodFilter.DAY &&
+      tokenDataGraph?.result?.data.length &&
+      !isGraphLoading
+    ) {
+      const tokenDataGraphPrices = tokenDataGraph.result.data;
+      const latestClosePrice =
+        tokenDataGraphPrices?.[tokenDataGraphPrices.length - 1].close;
+
+      setLatestPrice(latestClosePrice);
+    }
+  }, [isGraphLoading, periodFilter, tokenDataGraph]);
+
   return (
     <div
       id="token-atlas-token-graph-column"
@@ -199,8 +222,9 @@ const TokenGraphColumn = ({
         </div>
         {!isLoadingTokenDataInfo && isTokenDataErroring && (
           <Body>
-            Oops something went wrong! Please try to search for this token
-            again.
+            Oops something went wrong! This token may not have enough data
+            available, or the data source could not be reached. Please try
+            searching for this token again later.
           </Body>
         )}
         <div
@@ -211,13 +235,24 @@ const TokenGraphColumn = ({
             <SkeletonLoader $height="50px" $radius="6px" $marginBottom="10px" />
           ) : (
             <>
-              <h1
-                id="token-atlas-graph-column-price-today"
-                className="text-[60px] mobile:text-[40px] mr-4"
-              >
-                <span className="text-white_light_grey">$</span>
-                {tokenDataInfo?.price && limitDigits(tokenDataInfo.price)}
-              </h1>
+              {isGraphLoading && periodFilter === PeriodFilter.DAY ? (
+                <SkeletonLoader
+                  $height="50px"
+                  $radius="6px"
+                  $marginBottom="20px"
+                  $marginTop="20px"
+                />
+              ) : (
+                <h1
+                  id="token-atlas-graph-column-price-today"
+                  className="text-[60px] mobile:text-[40px] mr-4"
+                >
+                  <span className="text-white_light_grey">$</span>
+                  {latestPrice
+                    ? limitDigits(latestPrice)
+                    : limitDigits(tokenDataInfo?.price || 0)}
+                </h1>
+              )}
               <div
                 id="token-atlas-graph-column-price-change-percentage"
                 className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0"
