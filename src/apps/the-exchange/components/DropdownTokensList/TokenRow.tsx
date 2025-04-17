@@ -23,10 +23,7 @@ const TokenRow = ({
       <TokenListItem
         testId={`token-list-item-exchange-${token.blockchain}-${token.name}`}
         onClick={() => onClick(token)}
-        tokenName={token.name}
-        tokenSymbol={token.symbol}
-        chainName={token.blockchain}
-        tokenLogo={token.logo}
+        token={token}
       />
     </div>
   );

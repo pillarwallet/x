@@ -12,12 +12,18 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
+  setSearchToken,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
+  setWalletPortfolio,
 } from '../../reducer/theExchangeSlice';
 
 // services
+import {
+  convertPortfolioAPIResponseToToken,
+  useGetWalletPortfolioQuery,
+} from '../../../../services/pillarXApiWalletPortfolio';
 import {
   Token,
   chainNameToChainIdTokensData,
@@ -30,7 +36,8 @@ import { CompatibleChains } from '../../../../utils/blockchain';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { CardPosition } from '../../utils/types';
+import { PortfolioData } from '../../../../types/api';
+import { CardPosition, ChainType } from '../../utils/types';
 
 // components
 import SelectDropdown from '../SelectDropdown/SelectDropdown';
@@ -63,6 +70,9 @@ const DropdownTokenList = ({
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
+  const isReceiveOpen = useAppSelector(
+    (state) => state.swap.isReceiveOpen as boolean
+  );
   const searchTokenResult = useAppSelector(
     (state) => state.swap.searchTokenResult as Token[] | undefined
   );
@@ -79,9 +89,41 @@ const DropdownTokenList = ({
   const isTokenSearchErroring = useAppSelector(
     (state) => state.swap.isTokenSearchErroring as boolean
   );
+  const swapChain = useAppSelector(
+    (state) => state.swap.swapChain as ChainType
+  );
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
+  );
 
   const [isChainSelectionOpen, setIsChainSelectionOpen] =
     useState<boolean>(false);
+
+  const {
+    data: walletPortfolioData,
+    isLoading: isWalletPortfolioDataLoading,
+    isFetching: isWalletPortfolioDataFetching,
+    isSuccess: isWalletPortfolioDataSuccess,
+    error: walletPortfolioDataError,
+  } = useGetWalletPortfolioQuery(
+    { wallet: accountAddress || '' },
+    { skip: !accountAddress }
+  );
+
+  // This useEffect is to update the wallet portfolio data when the dropdown is opened
+  useEffect(() => {
+    if (walletPortfolioData && isWalletPortfolioDataSuccess) {
+      dispatch(setWalletPortfolio(walletPortfolioData?.result?.data));
+    }
+    if (!isWalletPortfolioDataSuccess || walletPortfolioDataError) {
+      dispatch(setWalletPortfolio(undefined));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    walletPortfolioData,
+    isWalletPortfolioDataSuccess,
+    walletPortfolioDataError,
+  ]);
 
   // select all chainsId of tokens available in the list for swap token
   const uniqueChains = CompatibleChains.map((chain) => chain.chainId);
@@ -152,6 +194,30 @@ const DropdownTokenList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTokenResult, isSwapOpen]);
 
+  const itemsListNumber = () => {
+    if (isSwapOpen && !searchToken && walletPortfolio) {
+      return convertPortfolioAPIResponseToToken(walletPortfolio).length;
+    }
+    return searchTokenResult?.length || 0;
+  };
+
+  const itemsList = () => {
+    if (isSwapOpen && !searchToken && walletPortfolio) {
+      const tokensWithBalances =
+        convertPortfolioAPIResponseToToken(walletPortfolio);
+      return swapChain.chainId === 0
+        ? tokensWithBalances
+        : tokensWithBalances
+            .filter(
+              (tokens) =>
+                chainNameToChainIdTokensData(tokens.blockchain) ===
+                swapChain.chainId
+            )
+            .map((tokens) => tokens);
+    }
+    return searchTokenResult || [];
+  };
+
   return (
     <>
       <div
@@ -164,10 +230,13 @@ const DropdownTokenList = ({
           onClick={() => {
             if (type === CardPosition.SWAP) {
               dispatch(setIsSwapOpen(false));
+              dispatch(setSwapChain({ chainId: 0, chainName: 'all' }));
             } else {
               dispatch(setIsReceiveOpen(false));
+              dispatch(setReceiveChain({ chainId: 0, chainName: 'all' }));
             }
             dispatch(setSearchTokenResult(undefined));
+            dispatch(setSearchToken(undefined));
           }}
           className="fixed top-0 right-0 w-[50px] h-[50px] mt-6 mr-4 mb-20 desktop:mr-14 desktop:mb-28 bg-black"
           data-testid="close-card-button"
@@ -191,7 +260,7 @@ const DropdownTokenList = ({
             onSelect={() => setIsChainSelectionOpen(false)}
           />
           <TokenSearchInput
-            placeholder="Search tokens"
+            placeholder="Search name / contract"
             isShrinked={isChainSelectionOpen}
           />
         </div>
@@ -199,41 +268,48 @@ const DropdownTokenList = ({
           id="token-list-exchange"
           className={`flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto ${initialCardPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
         >
-          {isTokenSearchErroring && (
+          {(isTokenSearchErroring || walletPortfolioDataError) && (
             <Body className="text-base">
               Oops something went wrong! Please try searching for tokens again.
             </Body>
           )}
-          {!searchTokenResult && !isTokenSearchLoading && (
+          {walletPortfolioData &&
+            convertPortfolioAPIResponseToToken(walletPortfolioData.result.data)
+              .length === 0 &&
+            !isTokenSearchLoading &&
+            isWalletPortfolioDataSuccess && (
+              <Body className="text-base">No tokens found in your wallet.</Body>
+            )}
+          {!searchTokenResult && !isTokenSearchLoading && isReceiveOpen && (
             <Body className="text-base">Start searching for tokens.</Body>
           )}
-          {isTokenSearchLoading && (
+          {(isTokenSearchLoading ||
+            ((isWalletPortfolioDataLoading || isWalletPortfolioDataFetching) &&
+              isSwapOpen)) && (
             <CircularProgress size={24} sx={{ color: '#312F3A' }} />
           )}
-          {!isTokenSearchLoading && searchTokenResult && (
-            <List
-              height={272}
-              itemCount={searchTokenResult.length}
-              itemSize={73}
-              width="100%"
-              itemData={{
-                tokenList: isSwapOpen
-                  ? searchTokenResult.filter(
-                      (token) =>
-                        token.blockchain !== receiveToken?.blockchain ||
-                        token.contract !== receiveToken?.contract
-                    )
-                  : searchTokenResult.filter(
-                      (token) =>
-                        token.blockchain !== swapToken?.blockchain ||
-                        token.contract !== swapToken?.contract
-                    ),
-                handleClick,
-              }}
-            >
-              {TokenRow}
-            </List>
-          )}
+          <List
+            height={272}
+            itemCount={itemsListNumber()}
+            itemSize={73}
+            width="100%"
+            itemData={{
+              tokenList: isSwapOpen
+                ? itemsList()?.filter(
+                    (token) =>
+                      token.blockchain !== receiveToken?.blockchain ||
+                      token.contract !== receiveToken?.contract
+                  )
+                : itemsList()?.filter(
+                    (token) =>
+                      token.blockchain !== swapToken?.blockchain ||
+                      token.contract !== swapToken?.contract
+                  ),
+              handleClick,
+            }}
+          >
+            {TokenRow}
+          </List>
         </div>
       </div>
     </>

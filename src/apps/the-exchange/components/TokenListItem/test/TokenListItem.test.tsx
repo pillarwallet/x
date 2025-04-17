@@ -1,54 +1,59 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 
+// utils
+import { limitDigits } from '../../../../token-atlas/utils/converters';
+
 // components
 import TokenListItem from '../TokenListItem';
 
 describe('<TokenListItem />', () => {
-  const tokenName = 'Token Example';
-  const tokenSymbol = 'TE';
-  const chainName = 'Chain Example';
-  const tokenLogo = 'https://example.com/token-logo.png';
+  const tokenExample = {
+    id: 1,
+    name: 'Token Example',
+    symbol: 'TE',
+    logo: 'https://example.com/token-logo.png',
+    blockchain: 'Ethereum',
+    contract: '0x124',
+    decimals: 18,
+    balance: 23.456729,
+    price: 1.15,
+  };
+
   const onClickMock = jest.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
-      .create(
-        <TokenListItem
-          tokenName={tokenName}
-          tokenSymbol={tokenSymbol}
-          chainName={chainName}
-          onClick={onClickMock}
-          tokenLogo={tokenLogo}
-        />
-      )
+      .create(<TokenListItem token={tokenExample} onClick={onClickMock} />)
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('renders TokenListItem correctly with all the given arguments', () => {
-    render(
-      <TokenListItem
-        tokenName={tokenName}
-        tokenSymbol={tokenSymbol}
-        chainName={chainName}
-        onClick={onClickMock}
-        tokenLogo={tokenLogo}
-      />
-    );
+    render(<TokenListItem token={tokenExample} onClick={onClickMock} />);
 
-    expect(screen.getByText(tokenName)).toBeInTheDocument();
-    expect(screen.getByText(tokenSymbol)).toBeInTheDocument();
-    expect(screen.getByText(`On ${chainName}`)).toBeInTheDocument();
-    expect(screen.getByAltText('token-logo')).toHaveAttribute('src', tokenLogo);
+    expect(screen.getByText(tokenExample.name)).toBeInTheDocument();
+    expect(screen.getByText(tokenExample.symbol)).toBeInTheDocument();
+    expect(
+      screen.getByText(`${limitDigits(tokenExample.balance)}`)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        `$${(tokenExample.price * tokenExample.balance).toFixed(4)}`
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByAltText('token-logo')).toHaveAttribute(
+      'src',
+      tokenExample.logo
+    );
   });
 
   it('renders TokenListItem with default logo (random avatar) when no tokenLogo is provided', () => {
     render(
       <TokenListItem
-        tokenName={tokenName}
-        tokenSymbol={tokenSymbol}
-        chainName={chainName}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        token={{ ...tokenExample, logo: undefined }}
         onClick={onClickMock}
       />
     );
@@ -58,18 +63,10 @@ describe('<TokenListItem />', () => {
   });
 
   it('calls onClick when TokenListItem is clicked', () => {
-    render(
-      <TokenListItem
-        tokenName={tokenName}
-        tokenSymbol={tokenSymbol}
-        chainName={chainName}
-        onClick={onClickMock}
-        tokenLogo={tokenLogo}
-      />
-    );
+    render(<TokenListItem token={tokenExample} onClick={onClickMock} />);
 
     const listItem = screen
-      .getByText(tokenName)
+      .getByText(tokenExample.name)
       .closest('div') as HTMLDivElement;
     fireEvent.click(listItem);
 
@@ -77,18 +74,10 @@ describe('<TokenListItem />', () => {
   });
 
   it('applies correct styles on hover', () => {
-    render(
-      <TokenListItem
-        tokenName={tokenName}
-        tokenSymbol={tokenSymbol}
-        chainName={chainName}
-        onClick={onClickMock}
-        tokenLogo={tokenLogo}
-      />
-    );
+    render(<TokenListItem token={tokenExample} onClick={onClickMock} />);
 
     const listItem = screen
-      .getByText(tokenName)
+      .getByText(tokenExample.name)
       .closest('div') as HTMLDivElement;
     fireEvent.mouseOver(listItem);
 

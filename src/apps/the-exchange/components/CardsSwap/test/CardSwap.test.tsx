@@ -202,6 +202,7 @@ describe('<CardsSwap />', () => {
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
     });
+    process.env.REACT_APP_SWAP_BUTTON_SWITCH = 'true';
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -269,8 +270,6 @@ describe('<CardsSwap />', () => {
     const swapCard = screen.getAllByTestId('select-token-card');
 
     fireEvent.click(swapCard[0]);
-
-    expect(screen.getByText('Start searching for tokens.')).toBeInTheDocument();
 
     await waitFor(() => {
       expect(store.getState().swap.isSwapOpen).toBe(true);

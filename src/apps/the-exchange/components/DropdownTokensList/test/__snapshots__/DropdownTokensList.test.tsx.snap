@@ -53,7 +53,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
         <input
           className="w-full h-full rounded-[3px] p-2 pr-9 bg-white focus:outline-none focus:ring-0 font-normal text-black text-md placeholder-[#717171] undefined"
           onChange={[Function]}
-          placeholder="Search tokens"
+          placeholder="Search name / contract"
           value=""
         />
         <span
@@ -71,11 +71,30 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
       className="flex flex-col p-4 w-full rounded-b-[3px] max-h-[272px] mr-4 overflow-y-auto bg-light_green"
       id="token-list-exchange"
     >
-      <p
-        className="text-base font-medium text-black_grey text-base"
+      <div
+        onScroll={[Function]}
+        style={
+          {
+            "WebkitOverflowScrolling": "touch",
+            "direction": "ltr",
+            "height": 272,
+            "overflow": "auto",
+            "position": "relative",
+            "width": "100%",
+            "willChange": "transform",
+          }
+        }
       >
-        Start searching for tokens.
-      </p>
+        <div
+          style={
+            {
+              "height": 0,
+              "pointerEvents": undefined,
+              "width": "100%",
+            }
+          }
+        />
+      </div>
     </div>
   </div>,
 ]

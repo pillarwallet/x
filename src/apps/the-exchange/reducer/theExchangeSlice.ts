@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // types
 import { Token } from '../../../services/tokensData';
+import { PortfolioData } from '../../../types/api';
 import { ChainType, SwapOffer } from '../utils/types';
 
 export type SwapState = {
@@ -19,9 +20,10 @@ export type SwapState = {
   usdPriceSwapToken: number;
   usdPriceReceiveToken: number;
   isOfferLoading: boolean;
-  searchToken: string;
+  searchToken: string | undefined;
   isTokenSearchLoading: boolean;
   isTokenSearchErroring: boolean;
+  walletPortfolio: PortfolioData | undefined;
 };
 
 const initialState: SwapState = {
@@ -44,9 +46,10 @@ const initialState: SwapState = {
   usdPriceSwapToken: 0,
   usdPriceReceiveToken: 0,
   isOfferLoading: false,
-  searchToken: '',
+  searchToken: undefined,
   isTokenSearchLoading: false,
   isTokenSearchErroring: false,
+  walletPortfolio: undefined,
 };
 
 const swapSlice = createSlice({
@@ -92,7 +95,7 @@ const swapSlice = createSlice({
     setIsOfferLoading(state, action: PayloadAction<boolean>) {
       state.isOfferLoading = action.payload;
     },
-    setSearchToken(state, action: PayloadAction<string>) {
+    setSearchToken(state, action: PayloadAction<string | undefined>) {
       state.searchToken = action.payload;
     },
     setIsTokenSearchLoading(state, action: PayloadAction<boolean>) {
@@ -100,6 +103,12 @@ const swapSlice = createSlice({
     },
     setIsTokenSearchErroring(state, action: PayloadAction<boolean>) {
       state.isTokenSearchErroring = action.payload;
+    },
+    setWalletPortfolio(
+      state,
+      action: PayloadAction<PortfolioData | undefined>
+    ) {
+      state.walletPortfolio = action.payload;
     },
   },
 });
@@ -121,6 +130,7 @@ export const {
   setSearchToken,
   setIsTokenSearchLoading,
   setIsTokenSearchErroring,
+  setWalletPortfolio,
 } = swapSlice.actions;
 
 export default swapSlice;
