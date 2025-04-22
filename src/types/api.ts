@@ -618,7 +618,7 @@ export type CrossChainBalanceMobula = {
 };
 
 export type CrossChainBalances = {
-  [chainName: string]: CrossChainBalance;
+  [chainName: string]: CrossChainBalanceMobula;
 };
 
 export type AssetMobula = {

@@ -92,7 +92,7 @@ const TokenSearchInput = ({
       searchInput: debouncedSearchText,
       filterBlockchains: chainIdToChainNameTokensData(receiveChain.chainId),
     },
-    { skip: !debouncedSearchText && isSwapOpen }
+    { skip: !debouncedSearchText }
   );
 
   useEffect(() => {
