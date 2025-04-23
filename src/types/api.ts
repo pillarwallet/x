@@ -601,3 +601,95 @@ export type MobulaApiResponse = {
     data: TokenAssetResponse[] | PairResponse[];
   };
 };
+
+export type ContractsBalanceMobula = {
+  address: string;
+  balance: number;
+  balanceRaw: string;
+  chainId: string;
+  decimals: number;
+};
+
+export type CrossChainBalanceMobula = {
+  balance: number;
+  balanceRaw: string;
+  chainId: string;
+  address: string;
+};
+
+export type CrossChainBalances = {
+  [chainName: string]: CrossChainBalanceMobula;
+};
+
+export type AssetMobula = {
+  id: number;
+  name: string;
+  symbol: string;
+  logo: string;
+  decimals: string[];
+  contracts: string[];
+  blockchains: string[];
+};
+
+export type AssetDataMobula = {
+  contracts_balances: ContractsBalanceMobula[];
+  cross_chain_balances: CrossChainBalances;
+  price_change_24h: number;
+  estimated_balance: number;
+  price: number;
+  token_balance: number;
+  allocation: number;
+  asset: AssetMobula;
+  wallets: string[];
+  realized_pnl?: number;
+  unrealized_pnl?: number;
+  price_bought?: number;
+  total_invested?: number;
+  min_buy_price?: number;
+  max_buy_price?: number;
+};
+
+export type PnLHistory = {
+  '24h': string[][];
+  '7d': string[][];
+  '30d': string[][];
+  '1y': string[][];
+};
+
+export type TotalPnLHistory = {
+  '24h': {
+    realized: number;
+    unrealized: number;
+  };
+  '7d': {
+    realized: number;
+    unrealized: number;
+  };
+  '30d': {
+    realized: number;
+    unrealized: number;
+  };
+  '1y': {
+    realized: number;
+    unrealized: number;
+  };
+};
+
+export type PortfolioData = {
+  total_wallet_balance: number;
+  wallets: string[];
+  assets: AssetDataMobula[];
+  pnl_history?: PnLHistory;
+  total_realized_pnl?: number;
+  total_unrealized_pnl?: number;
+  total_pnl_history?: TotalPnLHistory;
+  balances_length: number;
+};
+
+export type WalletPortfolioMobulaResponse = {
+  result: { data: PortfolioData };
+};
+
+// export type WalletBalances = {
+//   tokenName: string;
+// };

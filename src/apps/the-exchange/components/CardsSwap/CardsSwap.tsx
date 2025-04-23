@@ -110,9 +110,9 @@ const CardsSwap = () => {
           }
         />
       )}
-      {!isSwapOpen && !isReceiveOpen && (
-        <SwitchCardsButton onSwap={swapCardsAction} />
-      )}
+      {process.env.REACT_APP_SWAP_BUTTON_SWITCH === 'true' &&
+        !isSwapOpen &&
+        !isReceiveOpen && <SwitchCardsButton onSwap={swapCardsAction} />}
     </div>
   );
 };

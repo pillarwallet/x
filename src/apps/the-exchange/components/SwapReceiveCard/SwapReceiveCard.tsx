@@ -105,7 +105,7 @@ const SwapReceiveCard = ({
     <div
       id="swap-receive-card-exchange"
       onClick={isClickable ? onClick : undefined}
-      className={`flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] ${initialPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
+      className={`flex flex-col w-full cursor-pointer min-h-[200px] h-full justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] ${initialPosition === CardPosition.SWAP ? 'bg-light_green' : 'bg-purple'}`}
       data-testid="select-token-card"
     >
       <SelectToken
@@ -122,6 +122,12 @@ const SwapReceiveCard = ({
         tokenLogo={
           position === CardPosition.SWAP ? swapToken?.logo : receiveToken?.logo
         }
+        tokenBalance={
+          position === CardPosition.SWAP ? swapToken?.balance : undefined
+        }
+        tokenPrice={
+          position === CardPosition.SWAP ? swapToken?.price : undefined
+        }
       />
       <EnterAmount
         type={position}
@@ -129,6 +135,9 @@ const SwapReceiveCard = ({
           position === CardPosition.SWAP
             ? swapToken?.symbol
             : receiveToken?.symbol
+        }
+        tokenBalance={
+          position === CardPosition.SWAP ? swapToken?.balance : undefined
         }
       />
     </div>
