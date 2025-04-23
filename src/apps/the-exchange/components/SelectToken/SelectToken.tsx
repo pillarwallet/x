@@ -3,6 +3,7 @@ import { CardPosition } from '../../utils/types';
 
 // utils
 import { getChainName } from '../../../../utils/blockchain';
+import { limitDigits } from '../../../token-atlas/utils/converters';
 
 // components
 import Body from '../Typography/Body';
@@ -15,6 +16,8 @@ type SelectTokenProps = {
   tokenName?: string;
   tokenChain?: number;
   tokenLogo?: string;
+  tokenBalance?: number;
+  tokenPrice?: number;
   onClick?: () => void;
 };
 
@@ -23,13 +26,15 @@ const SelectToken = ({
   tokenName,
   tokenChain,
   tokenLogo,
+  tokenBalance,
+  tokenPrice,
   onClick,
 }: SelectTokenProps) => {
   return (
     <div
       id="select-token-info-exchange"
       onClick={onClick}
-      className="flex justify-between items-start"
+      className="flex justify-between items-start mb-4"
     >
       <div className="flex w-full flex-col">
         <Body className="capitalize line-clamp-2 text-ellipsis break-all">
@@ -38,6 +43,16 @@ const SelectToken = ({
         <Body className="font-normal capitalize">
           {tokenChain ? `On ${getChainName(tokenChain)}` : 'Select Token'}
         </Body>
+        {tokenBalance && (
+          <Body className="font-normal">
+            {limitDigits(tokenBalance)}{' '}
+            {tokenPrice && (
+              <span className="text-black_grey/[.4]">
+                ${(tokenPrice * tokenBalance).toFixed(4)}
+              </span>
+            )}
+          </Body>
+        )}
       </div>
       <TokenLogo
         tokenName={tokenName}

@@ -16,6 +16,8 @@ export type Token = {
   blockchain: string;
   contract: string;
   decimals: number;
+  balance?: number;
+  price?: number;
 };
 
 export type TokenRawDataItem = {

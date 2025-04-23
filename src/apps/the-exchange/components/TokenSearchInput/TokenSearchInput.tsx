@@ -1,4 +1,5 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import Fuse from 'fuse.js';
 import { useEffect, useRef, useState } from 'react';
 
 // api
@@ -14,6 +15,7 @@ import {
 
 // services
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
+import { convertPortfolioAPIResponseToToken } from '../../../../services/pillarXApiWalletPortfolio';
 import {
   chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
@@ -24,7 +26,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
-import { TokenAssetResponse } from '../../../../types/api';
+import { PortfolioData, TokenAssetResponse } from '../../../../types/api';
 import { ChainType } from '../../utils/types';
 
 // images
@@ -53,11 +55,17 @@ const TokenSearchInput = ({
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
+  const isReceiveOpen = useAppSelector(
+    (state) => state.swap.isReceiveOpen as boolean
+  );
   const swapChain = useAppSelector(
     (state) => state.swap.swapChain as ChainType
   );
   const receiveChain = useAppSelector(
     (state) => state.swap.receiveChain as ChainType
+  );
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -82,9 +90,7 @@ const TokenSearchInput = ({
   } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
-      filterBlockchains: chainIdToChainNameTokensData(
-        isSwapOpen ? swapChain.chainId : receiveChain.chainId
-      ),
+      filterBlockchains: chainIdToChainNameTokensData(receiveChain.chainId),
     },
     { skip: !debouncedSearchText }
   );
@@ -93,31 +99,81 @@ const TokenSearchInput = ({
     dispatch(setIsTokenSearchLoading(isLoading || isFetching));
     dispatch(setIsTokenSearchErroring(Boolean(error)));
 
-    if (!searchData) return;
-
-    const result = convertAPIResponseToTokens(
-      searchData?.result?.data as TokenAssetResponse[],
-      debouncedSearchText
-    );
-
     // This is to check what has been the searched token, for other components to action
     dispatch(setSearchToken(debouncedSearchText));
 
-    // This sets the token results list that will be displayed in the UI
-    dispatch(
-      setSearchTokenResult(
-        (isSwapOpen && swapChain.chainId === 0) ||
-          (!isSwapOpen && receiveChain.chainId === 0)
-          ? result
-          : result
-              .filter(
-                (tokens) =>
-                  chainNameToChainIdTokensData(tokens.blockchain) ===
-                  (isSwapOpen ? swapChain.chainId : receiveChain.chainId)
-              )
-              .map((tokens) => tokens)
-      )
-    );
+    if (isReceiveOpen) {
+      if (!searchData) return;
+
+      const result = convertAPIResponseToTokens(
+        searchData?.result?.data as TokenAssetResponse[],
+        debouncedSearchText
+      );
+
+      dispatch(
+        setSearchTokenResult(
+          receiveChain.chainId === 0
+            ? result
+            : result
+                .filter(
+                  (tokens) =>
+                    chainNameToChainIdTokensData(tokens.blockchain) ===
+                    receiveChain.chainId
+                )
+                .map((tokens) => tokens)
+        )
+      );
+    }
+
+    if (isSwapOpen && walletPortfolio) {
+      // This sets the token results list that will be displayed in the UI
+      const tokensWithBalances =
+        convertPortfolioAPIResponseToToken(walletPortfolio);
+
+      // Since the list of available tokens with balance is loaded, we just need
+      // here a simpler search with Fuse.js with auto select when the contract
+      // address is entered
+      if (debouncedSearchText.length > 40) {
+        const fuse = new Fuse(tokensWithBalances, {
+          keys: ['name', 'symbol', 'contract'], // Fields to search in
+          threshold: 0.2, // Allow some fuzziness for queries that are not contract like
+          minMatchCharLength: 3,
+          useExtendedSearch: true, // Enables exact match using '='
+        });
+
+        // Check if query length is above 40 characters have an exact match (likely a contract address)
+        const searchQuery =
+          debouncedSearchText.length > 40
+            ? `="${debouncedSearchText}"`
+            : debouncedSearchText;
+
+        const results = fuse.search(searchQuery).map((r) => r.item);
+        dispatch(setSearchTokenResult(results));
+      }
+
+      const fuse = new Fuse(tokensWithBalances, {
+        keys: ['name', 'symbol', 'contract'], // Fields to search in
+        threshold: 0.3, // Allow some fuzziness for queries that are not contract like
+      });
+
+      const results = fuse
+        .search(debouncedSearchText)
+        .map((token) => token.item);
+
+      dispatch(
+        setSearchTokenResult(
+          swapChain.chainId === 0
+            ? results
+            : results
+                .filter(
+                  (tokens) =>
+                    chainNameToChainIdTokensData(tokens.blockchain) ===
+                    swapChain.chainId
+                )
+                .map((tokens) => tokens)
+        )
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     searchData,
@@ -125,6 +181,8 @@ const TokenSearchInput = ({
     isSwapOpen,
     swapChain.chainId,
     receiveChain.chainId,
+    isReceiveOpen,
+    walletPortfolio,
   ]);
 
   // Record presence of the debouncedSearchText when it changes
