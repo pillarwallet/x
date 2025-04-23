@@ -6,6 +6,7 @@ export enum ApiLayout {
   AD = 'AD',
   MEDIA_GRID_HIGHLIGHTED = 'MEDIA_GRID_HIGHLIGHTED',
   PXPOINTS = 'PXPOINTS',
+  TOKENS_WITH_MARKET_DATA = 'TOKENS_WITH_MARKET_DATA',
 }
 
 export enum LeaderboardRankChange {
@@ -130,11 +131,55 @@ export type Points = {
   };
 };
 
+export type TokensMarketDataRow = {
+  link?: string;
+  leftColumn?: {
+    token?: {
+      primaryImage?: string;
+      secondaryImage?: string;
+    };
+    line1?: {
+      text1?: string;
+      text2?: string;
+      copyLink?: string;
+    };
+    line2?: {
+      timestamp?: number;
+      volume?: string;
+      liquidity?: string;
+    };
+  };
+  rightColumn?: {
+    line1?: {
+      price?: string;
+      direction?: string;
+      percentage?: string;
+    };
+    line2?: {
+      transactionCount?: string;
+    };
+  };
+};
+
+export type TokensMarketData = {
+  title?: {
+    text?: string;
+    leftDecorator?: string;
+    rightDecorator?: string;
+  };
+  rows?: TokensMarketDataRow[];
+};
+
 export type Projection = {
   meta: {
     display?: GenericBannerDisplay | EditorialDisplay | TileTitle;
   };
-  data?: TokenData[] | Advertisement | MediaGridData | Points;
+  data?:
+    | TokenData[]
+    | Advertisement
+    | MediaGridData
+    | Points
+    | TokensMarketData;
   layout: ApiLayout;
   id: string;
 };
