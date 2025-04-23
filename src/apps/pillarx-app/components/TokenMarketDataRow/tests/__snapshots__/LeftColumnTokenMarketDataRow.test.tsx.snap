@@ -33,7 +33,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           <p
             class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
           >
-            23h ago
+            1d ago
           </p>
           <p
             class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
@@ -90,7 +90,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         <p
           class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
         >
-          23h ago
+          1d ago
         </p>
         <p
           class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"

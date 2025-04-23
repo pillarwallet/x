@@ -44,7 +44,7 @@ const TokensWithMarketDataTile = ({
 
       <div className="grid grid-cols-1 desktop:grid-cols-2 desktop:gap-x-4 w-full">
         {Array.from({ length: 4 }).map((_, i) => (
-          <>
+          <div key={`row-${i}`} className="contents">
             {leftColumn[i] && (
               <TokenMarketDataRow
                 key={`l-${i}`}
@@ -59,7 +59,7 @@ const TokensWithMarketDataTile = ({
                 listNumber={i + 5}
               />
             )}
-          </>
+          </div>
         ))}
       </div>
     </TileContainer>
