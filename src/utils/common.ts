@@ -39,3 +39,19 @@ export const copyToClipboard = async (text: string, onSuccess?: () => void) => {
 
 export const convertDateToUnixTimestamp = (date: Date): number =>
   Math.floor(date.getTime() / 1000);
+
+export const getShorterTimeUnits = (formattedDistanceToNowDate: string) => {
+  // Replace long units with shorter units and delete white space before the units
+  return formattedDistanceToNowDate
+    .replace('seconds', 's')
+    .replace('second', 's')
+    .replace('minutes', 'min')
+    .replace('minute', 'min')
+    .replace('hours', 'h')
+    .replace('hour', 'h')
+    .replace('days', 'd')
+    .replace('day', 'd')
+    .replace('months', 'mo')
+    .replace('month', 'mo')
+    .replace(/(\d+)\s+(?=[a-zA-Z])/g, '$1');
+};

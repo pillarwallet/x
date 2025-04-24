@@ -12,20 +12,27 @@ import TokenLogoMarketDataRow from './TokenLogoMarketDataRow';
 type TokenMarketDataRowProps = {
   data: TokensMarketDataRow;
   listNumber: number;
+  isLastNumber: boolean;
+  isMiddleNumber: boolean;
 };
-const TokenMarketDataRow = ({ data, listNumber }: TokenMarketDataRowProps) => {
+const TokenMarketDataRow = ({
+  data,
+  listNumber,
+  isLastNumber,
+  isMiddleNumber,
+}: TokenMarketDataRowProps) => {
   const navigate = useNavigate();
   return (
     <div
       className={`flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
-    ${listNumber === 8 && 'desktop:border-b-0 tablet:border-b-0 mobile:border-b-0'} 
-    ${listNumber === 4 && 'desktop:border-b-0'}
+    ${isLastNumber && 'desktop:border-b-0 tablet:border-b-0 mobile:border-b-0'} 
+    ${isMiddleNumber && 'desktop:border-b-0'}
     ${data.link && 'cursor-pointer'}`}
       onClick={() => (data.link ? navigate(`${data.link}`) : undefined)}
     >
       <div className="flex items-center flex-1 min-w-0">
         <Body className="desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5">
-          0{listNumber}
+          {listNumber > 0 && listNumber < 10 ? `0${listNumber}` : listNumber}
         </Body>
         <TokenLogoMarketDataRow
           tokenLogo={data.leftColumn?.token?.primaryImage}

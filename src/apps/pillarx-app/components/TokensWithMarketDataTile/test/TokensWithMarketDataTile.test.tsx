@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 // components
@@ -113,8 +113,8 @@ describe('<TokensWithMarketDataTile />', () => {
     expect(screen.getByAltText('right-decorator-image')).toBeInTheDocument();
   });
 
-  it('renders token rows with expected data', () => {
-    render(
+  it('renders token rows with expected data (mobile layout)', () => {
+    const { container } = render(
       <MemoryRouter>
         <TokensWithMarketDataTile
           data={mockTokensMarketData}
@@ -123,20 +123,28 @@ describe('<TokensWithMarketDataTile />', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Ethereum')).toBeInTheDocument();
-    expect(screen.getByText('ETH')).toBeInTheDocument();
-    expect(screen.getByText('1.2m')).toBeInTheDocument();
-    expect(screen.getByText('$30,123')).toBeInTheDocument();
-    expect(screen.getByText('$0.042188')).toBeInTheDocument();
-    expect(screen.getByText('20.1%')).toBeInTheDocument();
-    expect(screen.getByText('1823')).toBeInTheDocument();
+    // Target the mobile layout otherwise it would not consider the hidden elements when in mobile or desktop
+    const mobileContainer = container.querySelector(
+      '.flex-col.desktop\\:hidden'
+    ) as HTMLElement;
+    expect(mobileContainer).toBeInTheDocument();
 
-    expect(screen.getAllByText('XDAI')).toHaveLength(2);
-    expect(screen.getByText('1.4m')).toBeInTheDocument();
-    expect(screen.getByText('$3,123')).toBeInTheDocument();
-    expect(screen.getByText('$1.062188')).toBeInTheDocument();
-    expect(screen.getByText('3.1%')).toBeInTheDocument();
-    expect(screen.getByText('1423')).toBeInTheDocument();
+    const mobileScreen = within(mobileContainer!);
+
+    expect(mobileScreen.getByText('Ethereum')).toBeInTheDocument();
+    expect(mobileScreen.getByText('ETH')).toBeInTheDocument();
+    expect(mobileScreen.getByText('1.2m')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$30,123')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$0.042188')).toBeInTheDocument();
+    expect(mobileScreen.getByText('20.1%')).toBeInTheDocument();
+    expect(mobileScreen.getByText('1823')).toBeInTheDocument();
+
+    expect(mobileScreen.getAllByText('XDAI')).toHaveLength(2);
+    expect(mobileScreen.getByText('1.4m')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$3,123')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$1.062188')).toBeInTheDocument();
+    expect(mobileScreen.getByText('3.1%')).toBeInTheDocument();
+    expect(mobileScreen.getByText('1423')).toBeInTheDocument();
   });
 
   it('does not render anything while loading', () => {
@@ -168,7 +176,7 @@ describe('<TokensWithMarketDataTile />', () => {
     expect(screen.queryByText('Top Tokens')).not.toBeInTheDocument();
   });
 
-  it('renders only up to 8 rows even if more are provided', () => {
+  it('renders the right number of rowsd', () => {
     const overfilledData: Projection = {
       ...mockTokensMarketData,
       data: {
@@ -179,13 +187,21 @@ describe('<TokensWithMarketDataTile />', () => {
       },
     };
 
-    render(
+    const { container } = render(
       <MemoryRouter>
         <TokensWithMarketDataTile data={overfilledData} isDataLoading={false} />
       </MemoryRouter>
     );
 
-    const ethItems = screen.getAllByText('Ethereum');
-    expect(ethItems.length).toBeLessThanOrEqual(8);
+    // Target the mobile layout otherwise it would not consider the hidden elements when in mobile or desktop
+    const mobileContainer = container.querySelector(
+      '.flex-col.desktop\\:hidden'
+    ) as HTMLElement;
+    expect(mobileContainer).toBeInTheDocument();
+
+    const mobileScreen = within(mobileContainer!);
+
+    const ethItems = mobileScreen.getAllByText('Ethereum');
+    expect(ethItems.length).toBeLessThanOrEqual(10);
   });
 });

@@ -19,16 +19,12 @@ const TokensWithMarketDataTile = ({
 
   const dataTokens = tokensWithMarketData as TokensMarketData | undefined;
 
-  // Limit the rows to the first 8 items
-  const limitedRows = dataTokens?.rows?.slice(0, 8) || [];
-
-  // Divide the rows into two separate columns
-  const leftColumn = limitedRows.slice(0, 4);
-  const rightColumn = limitedRows.slice(4, 8);
-
   if (!data || !dataTokens?.rows?.length || isDataLoading) {
     return null;
   }
+
+  const dataLength = dataTokens.rows.length;
+  const midLength = Math.ceil(dataLength / 2);
 
   return (
     // TO DO - replace the background with container background color once this has changed on Design
@@ -41,26 +37,51 @@ const TokensWithMarketDataTile = ({
         leftDecorator={dataTokens?.title?.leftDecorator}
         rightDecorator={dataTokens?.title?.rightDecorator}
       />
+      <div className="w-full">
+        {/* Mobile: 1 column */}
+        <div className="flex flex-col gap-4 desktop:hidden">
+          {dataTokens.rows.map((row, index) => (
+            <TokenMarketDataRow
+              key={`mobile-${index}`}
+              data={row}
+              listNumber={index + 1}
+              isMiddleNumber={index + 1 === midLength}
+              isLastNumber={index + 1 === dataLength}
+            />
+          ))}
+        </div>
 
-      <div className="grid grid-cols-1 desktop:grid-cols-2 desktop:gap-x-4 w-full">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={`row-${i}`} className="contents">
-            {leftColumn[i] && (
-              <TokenMarketDataRow
-                key={`l-${i}`}
-                data={leftColumn[i]}
-                listNumber={i + 1}
-              />
-            )}
-            {rightColumn[i] && (
-              <TokenMarketDataRow
-                key={`r-${i}`}
-                data={rightColumn[i]}
-                listNumber={i + 5}
-              />
-            )}
-          </div>
-        ))}
+        {/* Desktop: 2 columns */}
+        <div className="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 desktop:gap-y-4 w-full">
+          {Array.from({ length: midLength }).map((_, i) => (
+            <div key={`row-${i}`} className="contents">
+              {dataTokens?.rows?.slice(0, midLength)[i] && (
+                <TokenMarketDataRow
+                  key={`l-${i}`}
+                  data={dataTokens?.rows?.slice(0, midLength)[i]}
+                  listNumber={i + 1}
+                  isMiddleNumber={i + 1 === midLength}
+                  isLastNumber={i + 1 === dataLength}
+                />
+              )}
+              {dataTokens?.rows?.slice(midLength, dataTokens.rows.length)[
+                i
+              ] && (
+                <TokenMarketDataRow
+                  key={`r-${i}`}
+                  data={
+                    dataTokens?.rows?.slice(midLength, dataTokens.rows.length)[
+                      i
+                    ]
+                  }
+                  listNumber={i + 1 + midLength}
+                  isMiddleNumber={i + 1 === midLength}
+                  isLastNumber={i + 1 + midLength === dataLength}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </TileContainer>
   );

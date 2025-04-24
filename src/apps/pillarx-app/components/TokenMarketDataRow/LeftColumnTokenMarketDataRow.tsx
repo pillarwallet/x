@@ -1,10 +1,13 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { DateTime } from 'luxon';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 // types
 import { TokensMarketDataRow } from '../../../../types/api';
+
+// utils
+import { getShorterTimeUnits } from '../../../../utils/common';
 
 // components
 import Body from '../Typography/Body';
@@ -22,24 +25,20 @@ const LeftColumnTokenMarketDataRow = ({
 }: LeftColumnTokenMarketDataRowProps) => {
   const { leftColumn } = data;
 
-  let timestamp = formatDistanceToNowStrict(
-    DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '',
-    { addSuffix: true }
-  );
+  const timestampToISO =
+    DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '';
+
+  const ISOToDate = parseISO(timestampToISO);
+
+  let timestamp = isValid(ISOToDate)
+    ? formatDistanceToNowStrict(
+        DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '',
+        { addSuffix: true }
+      )
+    : undefined;
 
   // Replace long units with shorter units and delete white space before the units
-  timestamp = timestamp
-    .replace('seconds', 's')
-    .replace('second', 's')
-    .replace('minutes', 'min')
-    .replace('minute', 'min')
-    .replace('hours', 'h')
-    .replace('hour', 'h')
-    .replace('days', 'd')
-    .replace('day', 'd')
-    .replace('months', 'mo')
-    .replace('month', 'mo')
-    .replace(/(\d+)\s+(?=[a-zA-Z])/g, '$1');
+  timestamp = timestamp && getShorterTimeUnits(timestamp);
 
   return (
     <div className="flex flex-col ml-1.5 h-full justify-between">
