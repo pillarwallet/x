@@ -16,19 +16,21 @@ export const convertPortfolioAPIResponseToToken = (
   if (!portfolioData) return [];
 
   return portfolioData.assets.flatMap((asset) =>
-    asset.contracts_balances.map((contract) => ({
-      id: asset.asset.id,
-      name: asset.asset.name,
-      symbol: asset.asset.symbol,
-      logo: asset.asset.logo,
-      blockchain: chainIdToChainNameTokensData(
-        Number(contract.chainId.split(':')[1])
-      ),
-      contract: contract.address,
-      decimals: contract.decimals,
-      balance: contract.balance,
-      price: asset.price,
-    }))
+    asset.contracts_balances
+      .filter((contract) => contract.balance > 0)
+      .map((contract) => ({
+        id: asset.asset.id,
+        name: asset.asset.name,
+        symbol: asset.asset.symbol,
+        logo: asset.asset.logo,
+        blockchain: chainIdToChainNameTokensData(
+          Number(contract.chainId.split(':')[1])
+        ),
+        contract: contract.address,
+        decimals: contract.decimals,
+        balance: contract.balance,
+        price: asset.price,
+      }))
   );
 };
 

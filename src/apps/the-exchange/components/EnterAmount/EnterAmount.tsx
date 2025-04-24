@@ -1,4 +1,3 @@
-import { useEtherspotPrices } from '@etherspot/transaction-kit';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -63,7 +62,6 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   );
 
   const [inputValue, setInputValue] = useState<string>('');
-  const { getPrice } = useEtherspotPrices();
   const { getBestOffer } = useOffer(
     chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
   );
@@ -72,19 +70,16 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   // get usd price only when swap token changes
   useEffect(() => {
     if (swapToken) {
-      getPrice(
-        swapToken.contract,
-        chainNameToChainIdTokensData(swapToken.blockchain)
-      )
-        .then((rates) => {
-          if (rates?.usd) {
-            dispatch(setUsdPriceSwapToken(rates.usd));
-          }
-        })
-        .catch((e) => {
-          console.error('Failed to fetch USD price of token:', e);
-          dispatch(setUsdPriceSwapToken(0));
-        });
+      if (!swapToken.price) {
+        console.error(
+          `Failed to fetch USD price of token: ${swapToken.symbol} ${swapToken.name} on ${swapToken.blockchain}`
+        );
+        dispatch(setUsdPriceSwapToken(0));
+      }
+
+      if (swapToken.price) {
+        dispatch(setUsdPriceSwapToken(swapToken.price));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapToken]);
@@ -92,19 +87,16 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   // get usd price only when receive token changes
   useEffect(() => {
     if (receiveToken) {
-      getPrice(
-        receiveToken.contract,
-        chainNameToChainIdTokensData(receiveToken.blockchain)
-      )
-        .then((rates) => {
-          if (rates?.usd) {
-            dispatch(setUsdPriceReceiveToken(rates.usd));
-          }
-        })
-        .catch((e) => {
-          console.error('Failed to fetch USD price of token:', e);
-          dispatch(setUsdPriceReceiveToken(0));
-        });
+      if (!receiveToken.price) {
+        console.error(
+          `Failed to fetch USD price of token: ${receiveToken.symbol} ${receiveToken.name} on ${receiveToken.blockchain}`
+        );
+        dispatch(setUsdPriceReceiveToken(0));
+      }
+
+      if (receiveToken.price) {
+        dispatch(setUsdPriceReceiveToken(receiveToken.price));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receiveToken]);
