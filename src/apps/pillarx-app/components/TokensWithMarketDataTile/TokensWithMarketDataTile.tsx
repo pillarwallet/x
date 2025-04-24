@@ -3,7 +3,7 @@ import { Projection, TokensMarketData } from '../../../../types/api';
 
 // components
 import TileContainer from '../TileContainer/TileContainer';
-import TileTitle from '../TileTitle/TitleTitle';
+import TileTitle from '../TileTitle/TileTitle';
 import TokenMarketDataRow from '../TokenMarketDataRow/TokenMarketDataRow';
 
 type TokensWithMarketDataTileProps = {
