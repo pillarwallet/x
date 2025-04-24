@@ -5,7 +5,9 @@ import { useState } from 'react';
 import {
   setIsReceiveOpen,
   setIsSwapOpen,
+  setReceiveChain,
   setSearchTokenResult,
+  setSwapChain,
 } from '../../reducer/theExchangeSlice';
 
 // hooks
@@ -57,8 +59,10 @@ const CardsSwap = () => {
 
     if (position === CardPosition.SWAP) {
       dispatch(setIsSwapOpen(true));
+      dispatch(setSwapChain({ chainId: 0, chainName: 'all' }));
     } else {
       dispatch(setIsReceiveOpen(true));
+      dispatch(setReceiveChain({ chainId: 0, chainName: 'all' }));
     }
   };
 

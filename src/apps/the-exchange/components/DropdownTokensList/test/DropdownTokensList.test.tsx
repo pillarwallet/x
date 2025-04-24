@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
 
 // provider
@@ -218,5 +218,71 @@ describe('<DropdownTokenList />', () => {
 
     expect(store.getState().swap.isSwapOpen).toBe(false);
     expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+  });
+
+  it('sets Swap Chain back to all when close and reopen the dropdown', async () => {
+    const { getByTestId } = render(
+      <Provider store={store}>
+        <DropdownTokenList
+          type={CardPosition.SWAP}
+          initialCardPosition={CardPosition.SWAP}
+        />
+      </Provider>
+    );
+
+    act(() => {
+      store.dispatch(setIsSwapOpen(true));
+      store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+    });
+
+    await waitFor(() => {
+      expect(store.getState().swap.swapChain).toStrictEqual({
+        chainId: 1,
+        chainName: 'Ethereum',
+      });
+    });
+
+    const closeButton = getByTestId('close-card-button');
+    fireEvent.click(closeButton);
+
+    expect(store.getState().swap.isSwapOpen).toBe(false);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+    expect(store.getState().swap.swapChain).toStrictEqual({
+      chainId: 0,
+      chainName: 'all',
+    });
+  });
+
+  it('sets Receive Chain back to all when close and reopen the dropdown', async () => {
+    const { getByTestId } = render(
+      <Provider store={store}>
+        <DropdownTokenList
+          type={CardPosition.RECEIVE}
+          initialCardPosition={CardPosition.RECEIVE}
+        />
+      </Provider>
+    );
+
+    act(() => {
+      store.dispatch(setIsReceiveOpen(true));
+      store.dispatch(setReceiveChain({ chainId: 1, chainName: 'Ethereum' }));
+    });
+
+    await waitFor(() => {
+      expect(store.getState().swap.receiveChain).toStrictEqual({
+        chainId: 1,
+        chainName: 'Ethereum',
+      });
+    });
+
+    const closeButton = getByTestId('close-card-button');
+    fireEvent.click(closeButton);
+
+    expect(store.getState().swap.isReceiveOpen).toBe(false);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+    expect(store.getState().swap.receiveChain).toStrictEqual({
+      chainId: 0,
+      chainName: 'all',
+    });
   });
 });

@@ -18,15 +18,12 @@ import {
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setUsdPriceReceiveToken,
-  setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
 
 // components
 import CardsSwap from '../CardsSwap';
 
 // types
-import { AccountBalancesListenerRef } from '../../../../../providers/AccountBalancesProvider';
 import { Token } from '../../../../../services/tokensData';
 
 const mockTokenAssets: Token[] = [
@@ -38,6 +35,8 @@ const mockTokenAssets: Token[] = [
     blockchain: 'Ethereum',
     decimals: 18,
     logo: 'iconEth.png',
+    balance: 4,
+    price: 0.1,
   },
   {
     id: 2,
@@ -47,6 +46,8 @@ const mockTokenAssets: Token[] = [
     blockchain: 'Polygon',
     decimals: 18,
     logo: 'iconMatic.png',
+    balance: 12,
+    price: 100,
   },
 ];
 
@@ -124,63 +125,12 @@ jest.mock('@etherspot/transaction-kit', () => ({
     prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue({}),
     getQuotes: jest.fn().mockResolvedValue({}),
   }),
-  useEtherspotPrices: jest.fn().mockReturnValue({
-    getPrice: jest.fn().mockResolvedValue({ usd: 1200 }),
-    getPrices: jest.fn(),
-  }),
   useWalletAddress: jest.fn().mockReturnValue({
     walletAddress: jest.fn(),
   }),
   useEtherspotUtils: jest.fn().mockReturnValue({
     isZeroAddress: jest.fn(),
     addressesEqual: jest.fn(),
-  }),
-  useEtherspotAssets: jest.fn().mockReturnValue({
-    getAssets: jest.fn(),
-    getSupportedAssets: jest.fn(),
-  }),
-}));
-
-// Mock useAssets hook
-jest.mock('../../../../../hooks/useAssets', () => ({
-  __esModule: true,
-  default: jest.fn().mockReturnValue({
-    1: [
-      {
-        address: '0x01',
-        chainId: 1,
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
-        logoURI: 'iconEth.png',
-      },
-    ],
-    137: [
-      {
-        address: '0x02',
-        chainId: 137,
-        name: 'POL',
-        symbol: 'POL',
-        decimals: 18,
-        logoURI: 'iconMatic.png',
-      },
-    ],
-  }),
-}));
-
-// Mock useAccountBalances hook
-jest.mock('../../../../../hooks/useAccountBalances', () => ({
-  __esModule: true,
-  default: jest.fn().mockReturnValue({
-    listenerRef: { current: {} as AccountBalancesListenerRef },
-    data: {
-      balances: {
-        '0x01': { balance: '0.2', usdValue: '6000' },
-        '0x02': { balance: '20', usdValue: '6000' },
-      },
-      updateData: false,
-      setUpdateData: jest.fn(),
-    },
   }),
 }));
 
@@ -198,8 +148,6 @@ describe('<CardsSwap />', () => {
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
       store.dispatch(setSearchTokenResult(undefined));
-      store.dispatch(setUsdPriceSwapToken(1200));
-      store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
     });
     process.env.REACT_APP_SWAP_BUTTON_SWITCH = 'true';
@@ -250,8 +198,8 @@ describe('<CardsSwap />', () => {
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[0]);
     expect(store.getState().swap.amountSwap).toEqual(10);
     expect(store.getState().swap.amountReceive).toEqual(0);
-    expect(store.getState().swap.usdPriceSwapToken).toEqual(0.4);
-    expect(store.getState().swap.usdPriceReceiveToken).toEqual(1200);
+    expect(store.getState().swap.usdPriceSwapToken).toEqual(100);
+    expect(store.getState().swap.usdPriceReceiveToken).toEqual(0.1);
   });
 
   it('opens token list when a card is clicked and no token on swap card', async () => {
