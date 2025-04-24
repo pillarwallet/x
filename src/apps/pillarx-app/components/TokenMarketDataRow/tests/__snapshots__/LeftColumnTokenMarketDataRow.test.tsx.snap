@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches snapshot 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="flex flex-col ml-1.5 h-full justify-between"
+      >
+        <div
+          class="flex gap-1 items-center"
+        >
+          <p
+            class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+          >
+            ETH
+          </p>
+          <p
+            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
+          >
+            Ethereum
+          </p>
+          <img
+            alt="copy-token-address"
+            class="w-2.5 h-3"
+            src="token-market-data-copy.png"
+          />
+        </div>
+        <div
+          class="flex flex-wrap gap-2 mobile:gap-1.5"
+        >
+          <p
+            class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          >
+            2d ago
+          </p>
+          <p
+            class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          >
+            <span
+              class="text-white/[.5]"
+            >
+              Vol:
+            </span>
+             
+            1.2m
+          </p>
+          <p
+            class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          >
+            <span
+              class="text-white/[.5]"
+            >
+              Liq:
+            </span>
+             
+            $30,123
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="flex flex-col ml-1.5 h-full justify-between"
+    >
+      <div
+        class="flex gap-1 items-center"
+      >
+        <p
+          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+        >
+          ETH
+        </p>
+        <p
+          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
+        >
+          Ethereum
+        </p>
+        <img
+          alt="copy-token-address"
+          class="w-2.5 h-3"
+          src="token-market-data-copy.png"
+        />
+      </div>
+      <div
+        class="flex flex-wrap gap-2 mobile:gap-1.5"
+      >
+        <p
+          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+        >
+          2d ago
+        </p>
+        <p
+          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+        >
+          <span
+            class="text-white/[.5]"
+          >
+            Vol:
+          </span>
+           
+          1.2m
+        </p>
+        <p
+          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+        >
+          <span
+            class="text-white/[.5]"
+          >
+            Liq:
+          </span>
+           
+          $30,123
+        </p>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
