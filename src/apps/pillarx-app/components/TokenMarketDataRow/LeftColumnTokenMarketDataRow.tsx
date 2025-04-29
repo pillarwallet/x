@@ -43,17 +43,17 @@ const LeftColumnTokenMarketDataRow = ({
   return (
     <div className="flex flex-col ml-1.5 h-full justify-between">
       <div className="flex gap-1 items-center">
-        {leftColumn?.line1?.text1 && (
+        {leftColumn?.line1?.text1 ? (
           <Body className="font-normal text-white desktop:text-base tablet:text-base mobile:text-sm">
             {leftColumn?.line1?.text1}
           </Body>
-        )}
-        {leftColumn?.line1?.text2 && (
-          <Body className="font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm">
+        ) : null}
+        {leftColumn?.line1?.text2 ? (
+          <Body className="font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full">
             {leftColumn?.line1?.text2}
           </Body>
-        )}
-        {leftColumn?.line1?.copyLink && (
+        ) : null}
+        {leftColumn?.line1?.copyLink ? (
           <CopyToClipboard text={leftColumn.line1.copyLink}>
             <img
               src={CopyIcon}
@@ -62,26 +62,26 @@ const LeftColumnTokenMarketDataRow = ({
               onClick={(e) => e.stopPropagation()}
             />
           </CopyToClipboard>
-        )}
+        ) : null}
       </div>
       <div className="flex flex-wrap gap-2 mobile:gap-1.5">
-        {timestamp && (
+        {timestamp ? (
           <BodySmall className="mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs">
             {timestamp}
           </BodySmall>
-        )}
-        {leftColumn?.line2?.volume && (
+        ) : null}
+        {leftColumn?.line2?.volume ? (
           <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
-            <span className="text-white/[.5]">Vol:</span>{' '}
+            <span className="text-white/[.5]">Vol:</span> $
             {leftColumn?.line2?.volume}
           </BodySmall>
-        )}
-        {leftColumn?.line2?.liquidity && (
+        ) : null}
+        {leftColumn?.line2?.liquidity ? (
           <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
-            <span className="text-white/[.5]">Liq:</span>{' '}
+            <span className="text-white/[.5]">Liq:</span> $
             {leftColumn?.line2?.liquidity}
           </BodySmall>
-        )}
+        ) : null}
       </div>
     </div>
   );

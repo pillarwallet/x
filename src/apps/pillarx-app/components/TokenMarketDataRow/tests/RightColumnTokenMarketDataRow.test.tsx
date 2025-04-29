@@ -17,12 +17,12 @@ const ethTokenRow = {
     line2: {
       timestamp: 1745331519,
       volume: '1.2m',
-      liquidity: '$30,123',
+      liquidity: '30,123',
     },
   },
   rightColumn: {
     line1: {
-      price: '$0.042188',
+      price: '0.042188',
       direction: 'UP',
       percentage: '20.1%',
     },
@@ -52,7 +52,7 @@ describe('<RightColumnTokenMarketDataRow /> - ETH token row', () => {
       ...ethTokenRow,
       rightColumn: {
         line1: {
-          price: '$0.999',
+          price: '0.999',
           direction: 'UP',
         },
       },

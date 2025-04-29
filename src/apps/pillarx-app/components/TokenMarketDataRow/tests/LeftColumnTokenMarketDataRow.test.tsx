@@ -17,12 +17,12 @@ const ethTokenRow = {
     line2: {
       timestamp: 1745331519,
       volume: '1.2m',
-      liquidity: '$30,123',
+      liquidity: '30,123',
     },
   },
   rightColumn: {
     line1: {
-      price: '$0.042188',
+      price: '0.042188',
       direction: 'UP',
       percentage: '20.1%',
     },
@@ -47,7 +47,7 @@ describe('<LeftColumnTokenMarketDataRow /> - ETH token row', () => {
   it('renders volume and liquidity', () => {
     render(<LeftColumnTokenMarketDataRow data={ethTokenRow} />);
     expect(screen.getByText(/Vol:/)).toBeInTheDocument();
-    expect(screen.getByText('1.2m')).toBeInTheDocument();
+    expect(screen.getByText('$1.2m')).toBeInTheDocument();
     expect(screen.getByText(/Liq:/)).toBeInTheDocument();
     expect(screen.getByText('$30,123')).toBeInTheDocument();
   });

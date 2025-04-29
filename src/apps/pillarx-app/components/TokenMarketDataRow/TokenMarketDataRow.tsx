@@ -30,7 +30,7 @@ const TokenMarketDataRow = ({
     ${data.link && 'cursor-pointer'}`}
       onClick={() => (data.link ? navigate(`${data.link}`) : undefined)}
     >
-      <div className="flex items-center flex-1 min-w-0">
+      <div className="flex items-center flex-1 min-w-0 overflow-hidden">
         <Body className="desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5">
           {listNumber > 0 && listNumber < 10 ? `0${listNumber}` : listNumber}
         </Body>
@@ -39,9 +39,11 @@ const TokenMarketDataRow = ({
           chainLogo={data.leftColumn?.token?.secondaryImage}
           tokenName={data.leftColumn?.line1?.text2}
         />
-        <LeftColumnTokenMarketDataRow data={data} />
+        <div className="min-w-0 overflow-hidden">
+          <LeftColumnTokenMarketDataRow data={data} />
+        </div>
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 flex items-end justify-end">
         <RightColumnTokenMarketDataRow data={data} />
       </div>
     </div>
