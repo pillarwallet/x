@@ -12,7 +12,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
           class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
         >
           <p
-            class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+            class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
           >
             $
             0.042188
@@ -45,14 +45,14 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
               />
             </svg>
             <p
-              class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+              class="text-sm font-medium font-normal"
             >
               20.1%
             </p>
           </div>
         </div>
         <p
-          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          class="text-sm font-medium font-normal mobile:hidden text-white"
         >
           <span
             class="text-white/[.5]"
@@ -73,7 +73,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
         class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
       >
         <p
-          class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+          class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
         >
           $
           0.042188
@@ -106,14 +106,14 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
             />
           </svg>
           <p
-            class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+            class="text-sm font-medium font-normal"
           >
             20.1%
           </p>
         </div>
       </div>
       <p
-        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+        class="text-sm font-medium font-normal mobile:hidden text-white"
       >
         <span
           class="text-white/[.5]"

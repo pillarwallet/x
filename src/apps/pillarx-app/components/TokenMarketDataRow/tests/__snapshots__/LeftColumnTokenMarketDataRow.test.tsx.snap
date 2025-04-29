@@ -28,15 +28,15 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           />
         </div>
         <div
-          class="flex flex-wrap gap-2 mobile:gap-1.5"
+          class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
         >
           <p
-            class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+            class="text-sm font-medium font-normal text-white"
           >
             7d ago
           </p>
           <p
-            class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+            class="text-sm font-medium font-normal mobile:hidden text-white"
           >
             <span
               class="text-white/[.5]"
@@ -47,7 +47,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
             1.2m
           </p>
           <p
-            class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+            class="text-sm font-medium font-normal text-white"
           >
             <span
               class="text-white/[.5]"
@@ -85,15 +85,15 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         />
       </div>
       <div
-        class="flex flex-wrap gap-2 mobile:gap-1.5"
+        class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
       >
         <p
-          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          class="text-sm font-medium font-normal text-white"
         >
           7d ago
         </p>
         <p
-          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          class="text-sm font-medium font-normal mobile:hidden text-white"
         >
           <span
             class="text-white/[.5]"
@@ -104,7 +104,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           1.2m
         </p>
         <p
-          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+          class="text-sm font-medium font-normal text-white"
         >
           <span
             class="text-white/[.5]"

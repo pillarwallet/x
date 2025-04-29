@@ -18,7 +18,7 @@ const TokenLogoMarketDataRow = ({
   const [isBrokenImageChain, setIsBrokenImageChain] = useState<boolean>(false);
 
   return (
-    <div className="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0">
+    <div className="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2">
       {tokenLogo && !isBrokenImage ? (
         <img
           src={tokenLogo}
@@ -42,7 +42,7 @@ const TokenLogoMarketDataRow = ({
 
       {/* Blockchain logo overlapping when only one blockchain for this token */}
       {chainLogo && !isBrokenImageChain ? (
-        <div className="absolute bottom-0 right-0 w-4 h-4 mobile:w-3 mobile:h-3 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5">
+        <div className="absolute bottom-0 right-0 w-[18px] h-[18px] mobile:w-[14px] mobile:h-[14px] rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-[30%]">
           <img
             src={chainLogo}
             alt="logo"

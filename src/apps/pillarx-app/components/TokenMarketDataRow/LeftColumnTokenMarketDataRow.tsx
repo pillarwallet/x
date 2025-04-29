@@ -64,20 +64,18 @@ const LeftColumnTokenMarketDataRow = ({
           </CopyToClipboard>
         ) : null}
       </div>
-      <div className="flex flex-wrap gap-2 mobile:gap-1.5">
+      <div className="flex flex-wrap gap-x-2 mobile:gap-x-1.5">
         {timestamp ? (
-          <BodySmall className="mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs">
-            {timestamp}
-          </BodySmall>
+          <BodySmall className="font-normal text-white">{timestamp}</BodySmall>
         ) : null}
         {leftColumn?.line2?.volume ? (
-          <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
+          <BodySmall className="font-normal mobile:hidden text-white">
             <span className="text-white/[.5]">Vol:</span> $
             {leftColumn?.line2?.volume}
           </BodySmall>
         ) : null}
         {leftColumn?.line2?.liquidity ? (
-          <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
+          <BodySmall className="font-normal text-white">
             <span className="text-white/[.5]">Liq:</span> $
             {leftColumn?.line2?.liquidity}
           </BodySmall>

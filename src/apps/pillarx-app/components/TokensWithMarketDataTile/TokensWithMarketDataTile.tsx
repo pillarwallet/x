@@ -39,7 +39,7 @@ const TokensWithMarketDataTile = ({
       />
       <div className="w-full">
         {/* Mobile: 1 column */}
-        <div className="flex flex-col gap-4 desktop:hidden">
+        <div className="flex flex-col desktop:hidden">
           {dataTokens.rows.map((row, index) => (
             <TokenMarketDataRow
               key={`mobile-${index}`}
@@ -52,7 +52,7 @@ const TokensWithMarketDataTile = ({
         </div>
 
         {/* Desktop: 2 columns */}
-        <div className="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 desktop:gap-y-4 w-full">
+        <div className="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full">
           {Array.from({ length: midLength }).map((_, i) => (
             <div key={`row-${i}`} className="contents">
               {dataTokens?.rows?.slice(0, midLength)[i] && (
