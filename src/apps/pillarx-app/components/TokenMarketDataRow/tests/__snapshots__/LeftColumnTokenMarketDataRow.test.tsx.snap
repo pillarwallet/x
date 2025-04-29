@@ -21,11 +21,15 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           >
             Ethereum
           </p>
-          <img
-            alt="copy-token-address"
-            class="w-2.5 h-3"
-            src="token-market-data-copy.png"
-          />
+          <div
+            class="flex flex-shrink-0"
+          >
+            <img
+              alt="copy-token-address"
+              class="w-2.5 h-3"
+              src="token-market-data-copy.png"
+            />
+          </div>
         </div>
         <div
           class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
@@ -78,11 +82,15 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         >
           Ethereum
         </p>
-        <img
-          alt="copy-token-address"
-          class="w-2.5 h-3"
-          src="token-market-data-copy.png"
-        />
+        <div
+          class="flex flex-shrink-0"
+        >
+          <img
+            alt="copy-token-address"
+            class="w-2.5 h-3"
+            src="token-market-data-copy.png"
+          />
+        </div>
       </div>
       <div
         class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
