@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { DateTime } from 'luxon';
+import { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { MdCheck } from 'react-icons/md';
 
 // types
 import { TokensMarketDataRow } from '../../../../types/api';
@@ -24,6 +26,17 @@ const LeftColumnTokenMarketDataRow = ({
   data,
 }: LeftColumnTokenMarketDataRowProps) => {
   const { leftColumn } = data;
+
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 3000);
+      return () => clearTimeout(timer);
+    }
+
+    return undefined;
+  }, [copied]);
 
   const timestampToISO =
     DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '';
@@ -54,30 +67,44 @@ const LeftColumnTokenMarketDataRow = ({
           </Body>
         ) : null}
         {leftColumn?.line1?.copyLink ? (
-          <CopyToClipboard text={leftColumn.line1.copyLink}>
-            <img
-              src={CopyIcon}
-              alt="copy-token-address"
-              className="w-2.5 h-3"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </CopyToClipboard>
+          <div className="flex flex-shrink-0">
+            {copied ? (
+              <MdCheck
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  color: 'white',
+                  opacity: 0.5,
+                }}
+              />
+            ) : (
+              <CopyToClipboard
+                text={leftColumn.line1.copyLink}
+                onCopy={() => setCopied(true)}
+              >
+                <img
+                  src={CopyIcon}
+                  alt="copy-token-address"
+                  className="w-2.5 h-3"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </CopyToClipboard>
+            )}
+          </div>
         ) : null}
       </div>
-      <div className="flex flex-wrap gap-2 mobile:gap-1.5">
+      <div className="flex flex-wrap gap-x-2 mobile:gap-x-1.5">
         {timestamp ? (
-          <BodySmall className="mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs">
-            {timestamp}
-          </BodySmall>
+          <BodySmall className="font-normal text-white">{timestamp}</BodySmall>
         ) : null}
         {leftColumn?.line2?.volume ? (
-          <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
+          <BodySmall className="font-normal mobile:hidden text-white">
             <span className="text-white/[.5]">Vol:</span> $
             {leftColumn?.line2?.volume}
           </BodySmall>
         ) : null}
         {leftColumn?.line2?.liquidity ? (
-          <BodySmall className="text-white desktop:text-sm tablet:text-sm mobile:text-xs">
+          <BodySmall className="font-normal text-white">
             <span className="text-white/[.5]">Liq:</span> $
             {leftColumn?.line2?.liquidity}
           </BodySmall>

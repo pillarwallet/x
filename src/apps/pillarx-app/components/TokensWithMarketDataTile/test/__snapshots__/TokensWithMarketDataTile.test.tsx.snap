@@ -18,7 +18,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
             src="🔥"
           />
           <p
-            class="text-base font-medium font-normal"
+            class="text-base font-medium undefined"
           >
             Top Tokens
           </p>
@@ -32,7 +32,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           class="w-full"
         >
           <div
-            class="flex flex-col gap-4 desktop:hidden"
+            class="flex flex-col desktop:hidden"
           >
             <div
               class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
@@ -49,7 +49,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   01
                 </p>
                 <div
-                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                 >
                   <img
                     alt="token-logo"
@@ -77,22 +77,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       >
                         Ethereum
                       </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
+                      <div
+                        class="flex flex-shrink-0"
+                      >
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                     >
                       <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         7d ago
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal mobile:hidden text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -103,7 +107,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         1.2m
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -127,7 +131,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                   >
                     <p
-                      class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
                       0.042188
@@ -160,14 +164,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         />
                       </svg>
                       <p
-                        class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal"
                       >
                         20.1%
                       </p>
                     </div>
                   </div>
                   <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    class="text-sm font-medium font-normal mobile:hidden text-white"
                   >
                     <span
                       class="text-white/[.5]"
@@ -195,7 +199,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   02
                 </p>
                 <div
-                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                 >
                   <img
                     alt="token-logo"
@@ -204,7 +208,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=040"
                   />
                   <div
-                    class="absolute bottom-0 right-0 w-4 h-4 mobile:w-3 mobile:h-3 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+                    class="absolute bottom-0 right-0 w-[18px] h-[18px] mobile:w-[14px] mobile:h-[14px] rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-[30%]"
                   >
                     <img
                       alt="logo"
@@ -232,22 +236,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       >
                         XDAI
                       </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
+                      <div
+                        class="flex flex-shrink-0"
+                      >
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                     >
                       <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         7d ago
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal mobile:hidden text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -258,7 +266,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         1.4m
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -282,7 +290,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                   >
                     <p
-                      class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
                       1.062188
@@ -315,14 +323,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         />
                       </svg>
                       <p
-                        class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal"
                       >
                         3.1%
                       </p>
                     </div>
                   </div>
                   <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    class="text-sm font-medium font-normal mobile:hidden text-white"
                   >
                     <span
                       class="text-white/[.5]"
@@ -337,7 +345,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 desktop:gap-y-4 w-full"
+            class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
           >
             <div
               class="contents"
@@ -357,7 +365,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     01
                   </p>
                   <div
-                    class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                    class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                   >
                     <img
                       alt="token-logo"
@@ -385,22 +393,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         >
                           Ethereum
                         </p>
-                        <img
-                          alt="copy-token-address"
-                          class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
-                        />
+                        <div
+                          class="flex flex-shrink-0"
+                        >
+                          <img
+                            alt="copy-token-address"
+                            class="w-2.5 h-3"
+                            src="token-market-data-copy.png"
+                          />
+                        </div>
                       </div>
                       <div
-                        class="flex flex-wrap gap-2 mobile:gap-1.5"
+                        class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                       >
                         <p
-                          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal text-white"
                         >
                           7d ago
                         </p>
                         <p
-                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal mobile:hidden text-white"
                         >
                           <span
                             class="text-white/[.5]"
@@ -411,7 +423,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           1.2m
                         </p>
                         <p
-                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal text-white"
                         >
                           <span
                             class="text-white/[.5]"
@@ -435,7 +447,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                     >
                       <p
-                        class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
                         $
                         0.042188
@@ -468,14 +480,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           />
                         </svg>
                         <p
-                          class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal"
                         >
                           20.1%
                         </p>
                       </div>
                     </div>
                     <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal mobile:hidden text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -503,7 +515,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     02
                   </p>
                   <div
-                    class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                    class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                   >
                     <img
                       alt="token-logo"
@@ -512,7 +524,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=040"
                     />
                     <div
-                      class="absolute bottom-0 right-0 w-4 h-4 mobile:w-3 mobile:h-3 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+                      class="absolute bottom-0 right-0 w-[18px] h-[18px] mobile:w-[14px] mobile:h-[14px] rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-[30%]"
                     >
                       <img
                         alt="logo"
@@ -540,22 +552,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         >
                           XDAI
                         </p>
-                        <img
-                          alt="copy-token-address"
-                          class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
-                        />
+                        <div
+                          class="flex flex-shrink-0"
+                        >
+                          <img
+                            alt="copy-token-address"
+                            class="w-2.5 h-3"
+                            src="token-market-data-copy.png"
+                          />
+                        </div>
                       </div>
                       <div
-                        class="flex flex-wrap gap-2 mobile:gap-1.5"
+                        class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                       >
                         <p
-                          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal text-white"
                         >
                           7d ago
                         </p>
                         <p
-                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal mobile:hidden text-white"
                         >
                           <span
                             class="text-white/[.5]"
@@ -566,7 +582,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           1.4m
                         </p>
                         <p
-                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal text-white"
                         >
                           <span
                             class="text-white/[.5]"
@@ -590,7 +606,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                     >
                       <p
-                        class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
                         $
                         1.062188
@@ -623,14 +639,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           />
                         </svg>
                         <p
-                          class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                          class="text-sm font-medium font-normal"
                         >
                           3.1%
                         </p>
                       </div>
                     </div>
                     <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal mobile:hidden text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -663,7 +679,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           src="🔥"
         />
         <p
-          class="text-base font-medium font-normal"
+          class="text-base font-medium undefined"
         >
           Top Tokens
         </p>
@@ -677,7 +693,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
         class="w-full"
       >
         <div
-          class="flex flex-col gap-4 desktop:hidden"
+          class="flex flex-col desktop:hidden"
         >
           <div
             class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
@@ -694,7 +710,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 01
               </p>
               <div
-                class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
               >
                 <img
                   alt="token-logo"
@@ -722,22 +738,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     >
                       Ethereum
                     </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
+                    <div
+                      class="flex flex-shrink-0"
+                    >
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
                   </div>
                   <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                   >
                     <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal text-white"
                     >
                       7d ago
                     </p>
                     <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal mobile:hidden text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -748,7 +768,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       1.2m
                     </p>
                     <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -772,7 +792,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                 >
                   <p
-                    class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
                     $
                     0.042188
@@ -805,14 +825,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       />
                     </svg>
                     <p
-                      class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal"
                     >
                       20.1%
                     </p>
                   </div>
                 </div>
                 <p
-                  class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                  class="text-sm font-medium font-normal mobile:hidden text-white"
                 >
                   <span
                     class="text-white/[.5]"
@@ -840,7 +860,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 02
               </p>
               <div
-                class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
               >
                 <img
                   alt="token-logo"
@@ -849,7 +869,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=040"
                 />
                 <div
-                  class="absolute bottom-0 right-0 w-4 h-4 mobile:w-3 mobile:h-3 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+                  class="absolute bottom-0 right-0 w-[18px] h-[18px] mobile:w-[14px] mobile:h-[14px] rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-[30%]"
                 >
                   <img
                     alt="logo"
@@ -877,22 +897,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     >
                       XDAI
                     </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
+                    <div
+                      class="flex flex-shrink-0"
+                    >
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
                   </div>
                   <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                   >
                     <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal text-white"
                     >
                       7d ago
                     </p>
                     <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal mobile:hidden text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -903,7 +927,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       1.4m
                     </p>
                     <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal text-white"
                     >
                       <span
                         class="text-white/[.5]"
@@ -927,7 +951,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                 >
                   <p
-                    class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
                     $
                     1.062188
@@ -960,14 +984,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       />
                     </svg>
                     <p
-                      class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                      class="text-sm font-medium font-normal"
                     >
                       3.1%
                     </p>
                   </div>
                 </div>
                 <p
-                  class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                  class="text-sm font-medium font-normal mobile:hidden text-white"
                 >
                   <span
                     class="text-white/[.5]"
@@ -982,7 +1006,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 desktop:gap-y-4 w-full"
+          class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
         >
           <div
             class="contents"
@@ -1002,7 +1026,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   01
                 </p>
                 <div
-                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                 >
                   <img
                     alt="token-logo"
@@ -1030,22 +1054,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       >
                         Ethereum
                       </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
+                      <div
+                        class="flex flex-shrink-0"
+                      >
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                     >
                       <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         7d ago
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal mobile:hidden text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -1056,7 +1084,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         1.2m
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -1080,7 +1108,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                   >
                     <p
-                      class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
                       0.042188
@@ -1113,14 +1141,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         />
                       </svg>
                       <p
-                        class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal"
                       >
                         20.1%
                       </p>
                     </div>
                   </div>
                   <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    class="text-sm font-medium font-normal mobile:hidden text-white"
                   >
                     <span
                       class="text-white/[.5]"
@@ -1148,7 +1176,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   02
                 </p>
                 <div
-                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0"
+                  class="relative w-10 h-10 mobile:w-9 mobile:h-9 rounded-full flex-shrink-0 mr-2"
                 >
                   <img
                     alt="token-logo"
@@ -1157,7 +1185,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=040"
                   />
                   <div
-                    class="absolute bottom-0 right-0 w-4 h-4 mobile:w-3 mobile:h-3 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+                    class="absolute bottom-0 right-0 w-[18px] h-[18px] mobile:w-[14px] mobile:h-[14px] rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-[30%]"
                   >
                     <img
                       alt="logo"
@@ -1185,22 +1213,26 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       >
                         XDAI
                       </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
+                      <div
+                        class="flex flex-shrink-0"
+                      >
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
                     </div>
                     <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      class="flex flex-wrap gap-x-2 mobile:gap-x-1.5"
                     >
                       <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         7d ago
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal mobile:hidden text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -1211,7 +1243,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         1.4m
                       </p>
                       <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal text-white"
                       >
                         <span
                           class="text-white/[.5]"
@@ -1235,7 +1267,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
                   >
                     <p
-                      class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
                       1.062188
@@ -1268,14 +1300,14 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         />
                       </svg>
                       <p
-                        class="text-sm font-medium desktop:text-sm tablet:text-sm mobile:text-xs"
+                        class="text-sm font-medium font-normal"
                       >
                         3.1%
                       </p>
                     </div>
                   </div>
                   <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    class="text-sm font-medium font-normal mobile:hidden text-white"
                   >
                     <span
                       class="text-white/[.5]"

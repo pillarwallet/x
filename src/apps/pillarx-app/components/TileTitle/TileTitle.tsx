@@ -26,7 +26,7 @@ const TileTitle = ({
           onError={() => setIsBrokenImageLeft(true)}
         />
       )}
-      {title && <Body className="font-normal">{title}</Body>}
+      {title && <Body>{title}</Body>}
       {rightDecorator && !isBrokenImageRight && (
         <img
           src={rightDecorator}
