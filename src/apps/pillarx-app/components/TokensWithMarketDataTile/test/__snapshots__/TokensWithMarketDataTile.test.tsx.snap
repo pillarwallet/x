@@ -41,7 +41,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
             >
               <div
-                class="flex items-center flex-1 min-w-0"
+                class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
                   class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -59,65 +59,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   />
                 </div>
                 <div
-                  class="flex flex-col ml-1.5 h-full justify-between"
+                  class="min-w-0 overflow-hidden"
                 >
                   <div
-                    class="flex gap-1 items-center"
+                    class="flex flex-col ml-1.5 h-full justify-between"
                   >
-                    <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    <div
+                      class="flex gap-1 items-center"
                     >
-                      ETH
-                    </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                    >
-                      Ethereum
-                    </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
-                  </div>
-                  <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
-                  >
-                    <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      2d ago
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                      <p
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        Vol:
-                      </span>
-                       
-                      1.2m
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                        ETH
+                      </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Liq:
-                      </span>
-                       
-                      $30,123
-                    </p>
+                        Ethereum
+                      </p>
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
+                    <div
+                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    >
+                      <p
+                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        7d ago
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Vol:
+                        </span>
+                         $
+                        1.2m
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Liq:
+                        </span>
+                         $
+                        30,123
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               <div
-                class="flex-shrink-0"
+                class="flex-shrink-0 flex items-end justify-end"
               >
                 <div
-                  class="flex flex-col h-full items-end justify-between"
+                  class="flex flex-col h-full items-end justify-between flex-shrink-0"
                 >
                   <div
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -125,7 +129,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      $0.042188
+                      $
+                      0.042188
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -138,7 +143,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        style="color: rgb(92, 255, 147);"
+                        style="color: rgb(92, 255, 147); transform: none;"
                         viewBox="0 0 24 24"
                         width="6"
                         xmlns="http://www.w3.org/2000/svg"
@@ -182,7 +187,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
             >
               <div
-                class="flex items-center flex-1 min-w-0"
+                class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
                   class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -209,65 +214,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex flex-col ml-1.5 h-full justify-between"
+                  class="min-w-0 overflow-hidden"
                 >
                   <div
-                    class="flex gap-1 items-center"
+                    class="flex flex-col ml-1.5 h-full justify-between"
                   >
-                    <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    <div
+                      class="flex gap-1 items-center"
                     >
-                      XDAI
-                    </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                    >
-                      XDAI
-                    </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
-                  </div>
-                  <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
-                  >
-                    <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      2d ago
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                      <p
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        Vol:
-                      </span>
-                       
-                      1.4m
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                        XDAI
+                      </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Liq:
-                      </span>
-                       
-                      $3,123
-                    </p>
+                        XDAI
+                      </p>
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
+                    <div
+                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    >
+                      <p
+                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        7d ago
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Vol:
+                        </span>
+                         $
+                        1.4m
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Liq:
+                        </span>
+                         $
+                        3,123
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               <div
-                class="flex-shrink-0"
+                class="flex-shrink-0 flex items-end justify-end"
               >
                 <div
-                  class="flex flex-col h-full items-end justify-between"
+                  class="flex flex-col h-full items-end justify-between flex-shrink-0"
                 >
                   <div
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -275,7 +284,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      $1.062188
+                      $
+                      1.062188
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -288,7 +298,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        style="color: rgb(255, 54, 108);"
+                        style="color: rgb(255, 54, 108); transform: rotate(180deg);"
                         viewBox="0 0 24 24"
                         width="6"
                         xmlns="http://www.w3.org/2000/svg"
@@ -339,7 +349,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
               >
                 <div
-                  class="flex items-center flex-1 min-w-0"
+                  class="flex items-center flex-1 min-w-0 overflow-hidden"
                 >
                   <p
                     class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -357,65 +367,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     />
                   </div>
                   <div
-                    class="flex flex-col ml-1.5 h-full justify-between"
+                    class="min-w-0 overflow-hidden"
                   >
                     <div
-                      class="flex gap-1 items-center"
+                      class="flex flex-col ml-1.5 h-full justify-between"
                     >
-                      <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      <div
+                        class="flex gap-1 items-center"
                       >
-                        ETH
-                      </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                      >
-                        Ethereum
-                      </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
-                    </div>
-                    <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
-                    >
-                      <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        2d ago
-                      </p>
-                      <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        <span
-                          class="text-white/[.5]"
+                        <p
+                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                         >
-                          Vol:
-                        </span>
-                         
-                        1.2m
-                      </p>
-                      <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        <span
-                          class="text-white/[.5]"
+                          ETH
+                        </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                         >
-                          Liq:
-                        </span>
-                         
-                        $30,123
-                      </p>
+                          Ethereum
+                        </p>
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
+                      <div
+                        class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      >
+                        <p
+                          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          7d ago
+                        </p>
+                        <p
+                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          <span
+                            class="text-white/[.5]"
+                          >
+                            Vol:
+                          </span>
+                           $
+                          1.2m
+                        </p>
+                        <p
+                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          <span
+                            class="text-white/[.5]"
+                          >
+                            Liq:
+                          </span>
+                           $
+                          30,123
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="flex-shrink-0"
+                  class="flex-shrink-0 flex items-end justify-end"
                 >
                   <div
-                    class="flex flex-col h-full items-end justify-between"
+                    class="flex flex-col h-full items-end justify-between flex-shrink-0"
                   >
                     <div
                       class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -423,7 +437,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        $0.042188
+                        $
+                        0.042188
                       </p>
                       <div
                         class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -436,7 +451,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
-                          style="color: rgb(92, 255, 147);"
+                          style="color: rgb(92, 255, 147); transform: none;"
                           viewBox="0 0 24 24"
                           width="6"
                           xmlns="http://www.w3.org/2000/svg"
@@ -480,7 +495,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
               >
                 <div
-                  class="flex items-center flex-1 min-w-0"
+                  class="flex items-center flex-1 min-w-0 overflow-hidden"
                 >
                   <p
                     class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -507,65 +522,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     </div>
                   </div>
                   <div
-                    class="flex flex-col ml-1.5 h-full justify-between"
+                    class="min-w-0 overflow-hidden"
                   >
                     <div
-                      class="flex gap-1 items-center"
+                      class="flex flex-col ml-1.5 h-full justify-between"
                     >
-                      <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      <div
+                        class="flex gap-1 items-center"
                       >
-                        XDAI
-                      </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                      >
-                        XDAI
-                      </p>
-                      <img
-                        alt="copy-token-address"
-                        class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
-                      />
-                    </div>
-                    <div
-                      class="flex flex-wrap gap-2 mobile:gap-1.5"
-                    >
-                      <p
-                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        2d ago
-                      </p>
-                      <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        <span
-                          class="text-white/[.5]"
+                        <p
+                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                         >
-                          Vol:
-                        </span>
-                         
-                        1.4m
-                      </p>
-                      <p
-                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                      >
-                        <span
-                          class="text-white/[.5]"
+                          XDAI
+                        </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                         >
-                          Liq:
-                        </span>
-                         
-                        $3,123
-                      </p>
+                          XDAI
+                        </p>
+                        <img
+                          alt="copy-token-address"
+                          class="w-2.5 h-3"
+                          src="token-market-data-copy.png"
+                        />
+                      </div>
+                      <div
+                        class="flex flex-wrap gap-2 mobile:gap-1.5"
+                      >
+                        <p
+                          class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          7d ago
+                        </p>
+                        <p
+                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          <span
+                            class="text-white/[.5]"
+                          >
+                            Vol:
+                          </span>
+                           $
+                          1.4m
+                        </p>
+                        <p
+                          class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                        >
+                          <span
+                            class="text-white/[.5]"
+                          >
+                            Liq:
+                          </span>
+                           $
+                          3,123
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="flex-shrink-0"
+                  class="flex-shrink-0 flex items-end justify-end"
                 >
                   <div
-                    class="flex flex-col h-full items-end justify-between"
+                    class="flex flex-col h-full items-end justify-between flex-shrink-0"
                   >
                     <div
                       class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -573,7 +592,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        $1.062188
+                        $
+                        1.062188
                       </p>
                       <div
                         class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -586,7 +606,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
-                          style="color: rgb(255, 54, 108);"
+                          style="color: rgb(255, 54, 108); transform: rotate(180deg);"
                           viewBox="0 0 24 24"
                           width="6"
                           xmlns="http://www.w3.org/2000/svg"
@@ -666,7 +686,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
           >
             <div
-              class="flex items-center flex-1 min-w-0"
+              class="flex items-center flex-1 min-w-0 overflow-hidden"
             >
               <p
                 class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -684,65 +704,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 />
               </div>
               <div
-                class="flex flex-col ml-1.5 h-full justify-between"
+                class="min-w-0 overflow-hidden"
               >
                 <div
-                  class="flex gap-1 items-center"
+                  class="flex flex-col ml-1.5 h-full justify-between"
                 >
-                  <p
-                    class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                  <div
+                    class="flex gap-1 items-center"
                   >
-                    ETH
-                  </p>
-                  <p
-                    class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                  >
-                    Ethereum
-                  </p>
-                  <img
-                    alt="copy-token-address"
-                    class="w-2.5 h-3"
-                    src="token-market-data-copy.png"
-                  />
-                </div>
-                <div
-                  class="flex flex-wrap gap-2 mobile:gap-1.5"
-                >
-                  <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    2d ago
-                  </p>
-                  <p
-                    class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    <span
-                      class="text-white/[.5]"
+                    <p
+                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      Vol:
-                    </span>
-                     
-                    1.2m
-                  </p>
-                  <p
-                    class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    <span
-                      class="text-white/[.5]"
+                      ETH
+                    </p>
+                    <p
+                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                     >
-                      Liq:
-                    </span>
-                     
-                    $30,123
-                  </p>
+                      Ethereum
+                    </p>
+                    <img
+                      alt="copy-token-address"
+                      class="w-2.5 h-3"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                  <div
+                    class="flex flex-wrap gap-2 mobile:gap-1.5"
+                  >
+                    <p
+                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      7d ago
+                    </p>
+                    <p
+                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      <span
+                        class="text-white/[.5]"
+                      >
+                        Vol:
+                      </span>
+                       $
+                      1.2m
+                    </p>
+                    <p
+                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      <span
+                        class="text-white/[.5]"
+                      >
+                        Liq:
+                      </span>
+                       $
+                      30,123
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
             <div
-              class="flex-shrink-0"
+              class="flex-shrink-0 flex items-end justify-end"
             >
               <div
-                class="flex flex-col h-full items-end justify-between"
+                class="flex flex-col h-full items-end justify-between flex-shrink-0"
               >
                 <div
                   class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -750,7 +774,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   <p
                     class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
-                    $0.042188
+                    $
+                    0.042188
                   </p>
                   <div
                     class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -763,7 +788,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      style="color: rgb(92, 255, 147);"
+                      style="color: rgb(92, 255, 147); transform: none;"
                       viewBox="0 0 24 24"
                       width="6"
                       xmlns="http://www.w3.org/2000/svg"
@@ -807,7 +832,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
           >
             <div
-              class="flex items-center flex-1 min-w-0"
+              class="flex items-center flex-1 min-w-0 overflow-hidden"
             >
               <p
                 class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -834,65 +859,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 </div>
               </div>
               <div
-                class="flex flex-col ml-1.5 h-full justify-between"
+                class="min-w-0 overflow-hidden"
               >
                 <div
-                  class="flex gap-1 items-center"
+                  class="flex flex-col ml-1.5 h-full justify-between"
                 >
-                  <p
-                    class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                  <div
+                    class="flex gap-1 items-center"
                   >
-                    XDAI
-                  </p>
-                  <p
-                    class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                  >
-                    XDAI
-                  </p>
-                  <img
-                    alt="copy-token-address"
-                    class="w-2.5 h-3"
-                    src="token-market-data-copy.png"
-                  />
-                </div>
-                <div
-                  class="flex flex-wrap gap-2 mobile:gap-1.5"
-                >
-                  <p
-                    class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    2d ago
-                  </p>
-                  <p
-                    class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    <span
-                      class="text-white/[.5]"
+                    <p
+                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      Vol:
-                    </span>
-                     
-                    1.4m
-                  </p>
-                  <p
-                    class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                  >
-                    <span
-                      class="text-white/[.5]"
+                      XDAI
+                    </p>
+                    <p
+                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                     >
-                      Liq:
-                    </span>
-                     
-                    $3,123
-                  </p>
+                      XDAI
+                    </p>
+                    <img
+                      alt="copy-token-address"
+                      class="w-2.5 h-3"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                  <div
+                    class="flex flex-wrap gap-2 mobile:gap-1.5"
+                  >
+                    <p
+                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      7d ago
+                    </p>
+                    <p
+                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      <span
+                        class="text-white/[.5]"
+                      >
+                        Vol:
+                      </span>
+                       $
+                      1.4m
+                    </p>
+                    <p
+                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                    >
+                      <span
+                        class="text-white/[.5]"
+                      >
+                        Liq:
+                      </span>
+                       $
+                      3,123
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
             <div
-              class="flex-shrink-0"
+              class="flex-shrink-0 flex items-end justify-end"
             >
               <div
-                class="flex flex-col h-full items-end justify-between"
+                class="flex flex-col h-full items-end justify-between flex-shrink-0"
               >
                 <div
                   class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -900,7 +929,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   <p
                     class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
-                    $1.062188
+                    $
+                    1.062188
                   </p>
                   <div
                     class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -913,7 +943,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      style="color: rgb(255, 54, 108);"
+                      style="color: rgb(255, 54, 108); transform: rotate(180deg);"
                       viewBox="0 0 24 24"
                       width="6"
                       xmlns="http://www.w3.org/2000/svg"
@@ -964,7 +994,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
             >
               <div
-                class="flex items-center flex-1 min-w-0"
+                class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
                   class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -982,65 +1012,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   />
                 </div>
                 <div
-                  class="flex flex-col ml-1.5 h-full justify-between"
+                  class="min-w-0 overflow-hidden"
                 >
                   <div
-                    class="flex gap-1 items-center"
+                    class="flex flex-col ml-1.5 h-full justify-between"
                   >
-                    <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    <div
+                      class="flex gap-1 items-center"
                     >
-                      ETH
-                    </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                    >
-                      Ethereum
-                    </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
-                  </div>
-                  <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
-                  >
-                    <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      2d ago
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                      <p
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        Vol:
-                      </span>
-                       
-                      1.2m
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                        ETH
+                      </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Liq:
-                      </span>
-                       
-                      $30,123
-                    </p>
+                        Ethereum
+                      </p>
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
+                    <div
+                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    >
+                      <p
+                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        7d ago
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Vol:
+                        </span>
+                         $
+                        1.2m
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Liq:
+                        </span>
+                         $
+                        30,123
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               <div
-                class="flex-shrink-0"
+                class="flex-shrink-0 flex items-end justify-end"
               >
                 <div
-                  class="flex flex-col h-full items-end justify-between"
+                  class="flex flex-col h-full items-end justify-between flex-shrink-0"
                 >
                   <div
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -1048,7 +1082,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      $0.042188
+                      $
+                      0.042188
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -1061,7 +1096,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        style="color: rgb(92, 255, 147);"
+                        style="color: rgb(92, 255, 147); transform: none;"
                         viewBox="0 0 24 24"
                         width="6"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1105,7 +1140,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
     cursor-pointer"
             >
               <div
-                class="flex items-center flex-1 min-w-0"
+                class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
                   class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
@@ -1132,65 +1167,69 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class="flex flex-col ml-1.5 h-full justify-between"
+                  class="min-w-0 overflow-hidden"
                 >
                   <div
-                    class="flex gap-1 items-center"
+                    class="flex flex-col ml-1.5 h-full justify-between"
                   >
-                    <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                    <div
+                      class="flex gap-1 items-center"
                     >
-                      XDAI
-                    </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
-                    >
-                      XDAI
-                    </p>
-                    <img
-                      alt="copy-token-address"
-                      class="w-2.5 h-3"
-                      src="token-market-data-copy.png"
-                    />
-                  </div>
-                  <div
-                    class="flex flex-wrap gap-2 mobile:gap-1.5"
-                  >
-                    <p
-                      class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      2d ago
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                      <p
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
-                        Vol:
-                      </span>
-                       
-                      1.4m
-                    </p>
-                    <p
-                      class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
-                    >
-                      <span
-                        class="text-white/[.5]"
+                        XDAI
+                      </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Liq:
-                      </span>
-                       
-                      $3,123
-                    </p>
+                        XDAI
+                      </p>
+                      <img
+                        alt="copy-token-address"
+                        class="w-2.5 h-3"
+                        src="token-market-data-copy.png"
+                      />
+                    </div>
+                    <div
+                      class="flex flex-wrap gap-2 mobile:gap-1.5"
+                    >
+                      <p
+                        class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        7d ago
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Vol:
+                        </span>
+                         $
+                        1.4m
+                      </p>
+                      <p
+                        class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
+                      >
+                        <span
+                          class="text-white/[.5]"
+                        >
+                          Liq:
+                        </span>
+                         $
+                        3,123
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               <div
-                class="flex-shrink-0"
+                class="flex-shrink-0 flex items-end justify-end"
               >
                 <div
-                  class="flex flex-col h-full items-end justify-between"
+                  class="flex flex-col h-full items-end justify-between flex-shrink-0"
                 >
                   <div
                     class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -1198,7 +1237,8 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-base font-medium font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
-                      $1.062188
+                      $
+                      1.062188
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -1211,7 +1251,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        style="color: rgb(255, 54, 108);"
+                        style="color: rgb(255, 54, 108); transform: rotate(180deg);"
                         viewBox="0 0 24 24"
                         width="6"
                         xmlns="http://www.w3.org/2000/svg"

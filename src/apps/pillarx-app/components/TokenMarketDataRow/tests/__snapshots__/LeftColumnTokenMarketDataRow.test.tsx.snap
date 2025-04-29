@@ -17,7 +17,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
             ETH
           </p>
           <p
-            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
+            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
           >
             Ethereum
           </p>
@@ -33,7 +33,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           <p
             class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
           >
-            2d ago
+            7d ago
           </p>
           <p
             class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
@@ -43,7 +43,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
             >
               Vol:
             </span>
-             
+             $
             1.2m
           </p>
           <p
@@ -54,8 +54,8 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
             >
               Liq:
             </span>
-             
-            $30,123
+             $
+            30,123
           </p>
         </div>
       </div>
@@ -74,7 +74,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           ETH
         </p>
         <p
-          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm"
+          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
         >
           Ethereum
         </p>
@@ -90,7 +90,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         <p
           class="text-sm font-medium mobile:hidden text-white desktop:text-sm tablet:text-sm mobile:text-xs"
         >
-          2d ago
+          7d ago
         </p>
         <p
           class="text-sm font-medium text-white desktop:text-sm tablet:text-sm mobile:text-xs"
@@ -100,7 +100,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           >
             Vol:
           </span>
-           
+           $
           1.2m
         </p>
         <p
@@ -111,8 +111,8 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           >
             Liq:
           </span>
-           
-          $30,123
+           $
+          30,123
         </p>
       </div>
     </div>

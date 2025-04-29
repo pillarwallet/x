@@ -6,7 +6,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
   "baseElement": <body>
     <div>
       <div
-        class="flex flex-col h-full items-end justify-between"
+        class="flex flex-col h-full items-end justify-between flex-shrink-0"
       >
         <div
           class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -14,7 +14,8 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
           <p
             class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
           >
-            $0.042188
+            $
+            0.042188
           </p>
           <div
             class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -27,7 +28,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              style="color: rgb(92, 255, 147);"
+              style="color: rgb(92, 255, 147); transform: none;"
               viewBox="0 0 24 24"
               width="6"
               xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +67,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
   </body>,
   "container": <div>
     <div
-      class="flex flex-col h-full items-end justify-between"
+      class="flex flex-col h-full items-end justify-between flex-shrink-0"
     >
       <div
         class="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end"
@@ -74,7 +75,8 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
         <p
           class="text-base font-medium font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
         >
-          $0.042188
+          $
+          0.042188
         </p>
         <div
           class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -87,7 +89,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            style="color: rgb(92, 255, 147);"
+            style="color: rgb(92, 255, 147); transform: none;"
             viewBox="0 0 24 24"
             width="6"
             xmlns="http://www.w3.org/2000/svg"

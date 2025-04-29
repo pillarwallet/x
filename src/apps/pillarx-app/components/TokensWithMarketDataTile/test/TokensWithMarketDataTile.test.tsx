@@ -36,12 +36,12 @@ const mockTokensMarketData: Projection = {
           line2: {
             timestamp: 1745331519,
             volume: '1.2m',
-            liquidity: '$30,123',
+            liquidity: '30,123',
           },
         },
         rightColumn: {
           line1: {
-            price: '$0.042188',
+            price: '0.042188',
             direction: 'UP',
             percentage: '20.1%',
           },
@@ -67,12 +67,12 @@ const mockTokensMarketData: Projection = {
           line2: {
             timestamp: 1745334519,
             volume: '1.4m',
-            liquidity: '$3,123',
+            liquidity: '3,123',
           },
         },
         rightColumn: {
           line1: {
-            price: '$1.062188',
+            price: '1.062188',
             direction: 'DOWN',
             percentage: '3.1%',
           },
@@ -133,14 +133,14 @@ describe('<TokensWithMarketDataTile />', () => {
 
     expect(mobileScreen.getByText('Ethereum')).toBeInTheDocument();
     expect(mobileScreen.getByText('ETH')).toBeInTheDocument();
-    expect(mobileScreen.getByText('1.2m')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$1.2m')).toBeInTheDocument();
     expect(mobileScreen.getByText('$30,123')).toBeInTheDocument();
     expect(mobileScreen.getByText('$0.042188')).toBeInTheDocument();
     expect(mobileScreen.getByText('20.1%')).toBeInTheDocument();
     expect(mobileScreen.getByText('1823')).toBeInTheDocument();
 
     expect(mobileScreen.getAllByText('XDAI')).toHaveLength(2);
-    expect(mobileScreen.getByText('1.4m')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$1.4m')).toBeInTheDocument();
     expect(mobileScreen.getByText('$3,123')).toBeInTheDocument();
     expect(mobileScreen.getByText('$1.062188')).toBeInTheDocument();
     expect(mobileScreen.getByText('3.1%')).toBeInTheDocument();
