@@ -93,7 +93,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        7d ago
+                        9d ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -252,7 +252,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        7d ago
+                        9d ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -409,7 +409,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          7d ago
+                          9d ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -568,7 +568,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          7d ago
+                          9d ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -754,7 +754,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      7d ago
+                      9d ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -913,7 +913,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      7d ago
+                      9d ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1070,7 +1070,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        7d ago
+                        9d ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1229,7 +1229,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        7d ago
+                        9d ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
