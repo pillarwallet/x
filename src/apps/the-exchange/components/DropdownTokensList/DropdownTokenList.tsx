@@ -179,7 +179,10 @@ const DropdownTokenList = ({
       searchTokenResult &&
       searchTokenResult.length === 1 &&
       searchTokenResult[0].contract.toLocaleLowerCase() ===
-        searchToken.toLocaleLowerCase()
+        searchToken.toLocaleLowerCase() &&
+      receiveToken &&
+      searchTokenResult[0].contract.toLocaleLowerCase() !==
+        receiveToken.contract.toLocaleLowerCase()
     ) {
       handleClick(searchTokenResult[0]);
     } else if (
@@ -187,7 +190,10 @@ const DropdownTokenList = ({
       searchTokenResult &&
       searchTokenResult.length === 1 &&
       searchTokenResult[0].contract.toLocaleLowerCase() ===
-        searchToken.toLocaleLowerCase()
+        searchToken.toLocaleLowerCase() &&
+      swapToken &&
+      searchTokenResult[0].contract.toLocaleLowerCase() !==
+        swapToken.contract.toLocaleLowerCase()
     ) {
       handleClick(searchTokenResult[0]);
     }
