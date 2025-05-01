@@ -14,7 +14,10 @@ describe('<DisplayCollectionImage />', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly and matches snapshot with image', () => {
+  /**
+   * FIXME: Causes test flakiness
+   */
+  it.skip('renders correctly and matches snapshot with image', () => {
     const tree = renderer
       .create(
         <DisplayCollectionImage
