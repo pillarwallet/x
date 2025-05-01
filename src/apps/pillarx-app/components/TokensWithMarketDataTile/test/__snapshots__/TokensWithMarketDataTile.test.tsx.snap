@@ -6,7 +6,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="flex bg-container_grey rounded-2xl bg-[#1E1D24] flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
+        class="flex bg-container_grey rounded-2xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
         id="tokens-with-market-data-tile"
       >
         <div
@@ -44,7 +44,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
-                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                 >
                   01
                 </p>
@@ -68,15 +68,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex gap-1 items-center"
                     >
                       <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                       >
                         ETH
                       </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                      <div
+                        class="whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Ethereum
-                      </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                        >
+                          Ethereum
+                        </p>
+                      </div>
                       <div
                         class="flex flex-shrink-0"
                       >
@@ -194,7 +198,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
-                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                 >
                   02
                 </p>
@@ -227,15 +231,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex gap-1 items-center"
                     >
                       <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                       >
                         XDAI
                       </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                      <div
+                        class="whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        XDAI
-                      </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                        >
+                          XDAI
+                        </p>
+                      </div>
                       <div
                         class="flex flex-shrink-0"
                       >
@@ -360,7 +368,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   class="flex items-center flex-1 min-w-0 overflow-hidden"
                 >
                   <p
-                    class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                    class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                   >
                     01
                   </p>
@@ -384,15 +392,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         class="flex gap-1 items-center"
                       >
                         <p
-                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                         >
                           ETH
                         </p>
-                        <p
-                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                        <div
+                          class="whitespace-nowrap overflow-hidden max-w-full"
                         >
-                          Ethereum
-                        </p>
+                          <p
+                            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                          >
+                            Ethereum
+                          </p>
+                        </div>
                         <div
                           class="flex flex-shrink-0"
                         >
@@ -510,7 +522,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                   class="flex items-center flex-1 min-w-0 overflow-hidden"
                 >
                   <p
-                    class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                    class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                   >
                     02
                   </p>
@@ -543,15 +555,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         class="flex gap-1 items-center"
                       >
                         <p
-                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                         >
                           XDAI
                         </p>
-                        <p
-                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                        <div
+                          class="whitespace-nowrap overflow-hidden max-w-full"
                         >
-                          XDAI
-                        </p>
+                          <p
+                            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                          >
+                            XDAI
+                          </p>
+                        </div>
                         <div
                           class="flex flex-shrink-0"
                         >
@@ -667,7 +683,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
   </body>,
   "container": <div>
     <div
-      class="flex bg-container_grey rounded-2xl bg-[#1E1D24] flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
+      class="flex bg-container_grey rounded-2xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
       id="tokens-with-market-data-tile"
     >
       <div
@@ -705,7 +721,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
               class="flex items-center flex-1 min-w-0 overflow-hidden"
             >
               <p
-                class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
               >
                 01
               </p>
@@ -729,15 +745,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex gap-1 items-center"
                   >
                     <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                     >
                       ETH
                     </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                    <div
+                      class="whitespace-nowrap overflow-hidden max-w-full"
                     >
-                      Ethereum
-                    </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                      >
+                        Ethereum
+                      </p>
+                    </div>
                     <div
                       class="flex flex-shrink-0"
                     >
@@ -855,7 +875,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
               class="flex items-center flex-1 min-w-0 overflow-hidden"
             >
               <p
-                class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
               >
                 02
               </p>
@@ -888,15 +908,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="flex gap-1 items-center"
                   >
                     <p
-                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                      class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                     >
                       XDAI
                     </p>
-                    <p
-                      class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                    <div
+                      class="whitespace-nowrap overflow-hidden max-w-full"
                     >
-                      XDAI
-                    </p>
+                      <p
+                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                      >
+                        XDAI
+                      </p>
+                    </div>
                     <div
                       class="flex flex-shrink-0"
                     >
@@ -1021,7 +1045,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
-                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                 >
                   01
                 </p>
@@ -1045,15 +1069,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex gap-1 items-center"
                     >
                       <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                       >
                         ETH
                       </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                      <div
+                        class="whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        Ethereum
-                      </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                        >
+                          Ethereum
+                        </p>
+                      </div>
                       <div
                         class="flex flex-shrink-0"
                       >
@@ -1171,7 +1199,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 class="flex items-center flex-1 min-w-0 overflow-hidden"
               >
                 <p
-                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5"
+                  class="text-base font-medium desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]"
                 >
                   02
                 </p>
@@ -1204,15 +1232,19 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="flex gap-1 items-center"
                     >
                       <p
-                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+                        class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
                       >
                         XDAI
                       </p>
-                      <p
-                        class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+                      <div
+                        class="whitespace-nowrap overflow-hidden max-w-full"
                       >
-                        XDAI
-                      </p>
+                        <p
+                          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+                        >
+                          XDAI
+                        </p>
+                      </div>
                       <div
                         class="flex flex-shrink-0"
                       >

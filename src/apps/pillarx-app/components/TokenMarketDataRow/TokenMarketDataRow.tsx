@@ -31,7 +31,7 @@ const TokenMarketDataRow = ({
       onClick={() => (data.link ? navigate(`${data.link}`) : undefined)}
     >
       <div className="flex items-center flex-1 min-w-0 overflow-hidden">
-        <Body className="desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5">
+        <Body className="desktop:text-base tablet:text-base mobile:text-sm font-normal text-white/[0.5] mr-4 mobile:mr-2.5 desktop:w-[21px] tablet:w-[21px] mobile:w-[18px]">
           {listNumber > 0 && listNumber < 10 ? `0${listNumber}` : listNumber}
         </Body>
         <TokenLogoMarketDataRow
