@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
@@ -26,8 +26,9 @@ const LeftColumnTokenMarketDataRow = ({
   data,
 }: LeftColumnTokenMarketDataRowProps) => {
   const { leftColumn } = data;
-
   const [copied, setCopied] = useState(false);
+  const [width, setWidth] = useState<number | null>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (copied) {
@@ -53,18 +54,40 @@ const LeftColumnTokenMarketDataRow = ({
   // Replace long units with shorter units and delete white space before the units
   timestamp = timestamp && getShorterTimeUnits(timestamp);
 
+  useEffect(() => {
+    const updateWidth = () => {
+      if (divRef.current) {
+        setWidth(divRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    window.addEventListener('resize', updateWidth);
+    updateWidth();
+
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col ml-1.5 h-full justify-between">
       <div className="flex gap-1 items-center">
         {leftColumn?.line1?.text1 ? (
-          <Body className="font-normal text-white desktop:text-base tablet:text-base mobile:text-sm">
+          <Body
+            className={`font-normal text-white desktop:text-base tablet:text-base mobile:text-sm ${width !== null && width < 50 && 'truncate whitespace-nowrap overflow-hidden min-w-[30px]'}`}
+          >
             {leftColumn?.line1?.text1}
           </Body>
         ) : null}
         {leftColumn?.line1?.text2 ? (
-          <Body className="font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full">
-            {leftColumn?.line1?.text2}
-          </Body>
+          <div
+            ref={divRef}
+            className="whitespace-nowrap overflow-hidden max-w-full"
+          >
+            <Body className="font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate">
+              {leftColumn?.line1?.text2}
+            </Body>
+          </div>
         ) : null}
         {leftColumn?.line1?.copyLink ? (
           <div className="flex flex-shrink-0">
