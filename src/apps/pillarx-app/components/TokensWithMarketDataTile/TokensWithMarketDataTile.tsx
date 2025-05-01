@@ -30,7 +30,7 @@ const TokensWithMarketDataTile = ({
     // TO DO - replace the background with container background color once this has changed on Design
     <TileContainer
       id="tokens-with-market-data-tile"
-      className="bg-[#1E1D24] flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
+      className="mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
     >
       <TileTitle
         title={dataTokens?.title?.text}

@@ -12,15 +12,19 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           class="flex gap-1 items-center"
         >
           <p
-            class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+            class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
           >
             ETH
           </p>
-          <p
-            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+          <div
+            class="whitespace-nowrap overflow-hidden max-w-full"
           >
-            Ethereum
-          </p>
+            <p
+              class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+            >
+              Ethereum
+            </p>
+          </div>
           <div
             class="flex flex-shrink-0"
           >
@@ -37,7 +41,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           <p
             class="text-sm font-medium font-normal text-white"
           >
-            7d ago
+            9d ago
           </p>
           <p
             class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -73,15 +77,19 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         class="flex gap-1 items-center"
       >
         <p
-          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm"
+          class="text-base font-medium font-normal text-white desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden min-w-[30px]"
         >
           ETH
         </p>
-        <p
-          class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate whitespace-nowrap overflow-hidden max-w-full"
+        <div
+          class="whitespace-nowrap overflow-hidden max-w-full"
         >
-          Ethereum
-        </p>
+          <p
+            class="text-base font-medium font-normal text-white/[.5] desktop:text-base tablet:text-base mobile:text-sm truncate"
+          >
+            Ethereum
+          </p>
+        </div>
         <div
           class="flex flex-shrink-0"
         >
@@ -98,7 +106,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         <p
           class="text-sm font-medium font-normal text-white"
         >
-          7d ago
+          9d ago
         </p>
         <p
           class="text-sm font-medium font-normal mobile:hidden text-white"
