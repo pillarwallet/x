@@ -1,4 +1,5 @@
-import { useEtherspotSwaps } from '@etherspot/transaction-kit';
+/* eslint-disable no-await-in-loop */
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -13,6 +14,7 @@ import {
 // hooks
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
+import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -48,7 +50,8 @@ const ExchangeAction = () => {
   const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
   const { addToBatch } = useGlobalTransactionsBatch();
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
-  const { prepareCrossChainOfferTransactions } = useEtherspotSwaps();
+  const { getStepTransactions } = useOffer();
+  const walletAddress = useWalletAddress();
 
   useEffect(() => {
     setErrorMessage('');
@@ -87,62 +90,34 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
-      // receiveAmount param is unique to the ExchangeOffer type - same chain, different tokens
-      if ('receiveAmount' in bestOffer.offer) {
+      const stepTransactions = await getStepTransactions(
+        bestOffer.offer,
+        walletAddress as `0x${string}`
+      );
+
+      if (stepTransactions) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < bestOffer.offer.transactions.length; ++i) {
-          const { value } = bestOffer.offer.transactions[i];
+        for (let i = 0; i < stepTransactions.length; ++i) {
+          const { value } = stepTransactions[i];
           const bigIntValue = BigNumber.from(value).toBigInt();
           const integerValue = formatEther(bigIntValue);
-
           addToBatch({
             title: getTransactionTitle(
               i,
-              bestOffer.offer.transactions.length,
-              bestOffer.offer.transactions[i].data
+              stepTransactions.length,
+              stepTransactions[i].data?.toString() ?? ''
             ),
             description:
               `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
               '',
             chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
-            to: bestOffer.offer.transactions[i].to,
+            to: stepTransactions[i].to || '',
             value: integerValue,
-            data: bestOffer.offer.transactions[i].data,
+            data: stepTransactions[i].data?.toString() ?? '',
           });
         }
         setShowBatchSendModal(true);
         showSend();
-      }
-
-      // insurance param is unique to the Route type - different chains, different tokens
-      if ('id' in bestOffer.offer) {
-        const stepTransactions = await prepareCrossChainOfferTransactions(
-          bestOffer.offer
-        );
-        if (stepTransactions) {
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < stepTransactions.length; ++i) {
-            const { value } = stepTransactions[i];
-            const bigIntValue = BigNumber.from(value).toBigInt();
-            const integerValue = formatEther(bigIntValue);
-            addToBatch({
-              title: getTransactionTitle(
-                i,
-                stepTransactions.length,
-                stepTransactions[i].data?.toString() ?? ''
-              ),
-              description:
-                `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
-                '',
-              chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
-              to: stepTransactions[i].to || '',
-              value: integerValue,
-              data: stepTransactions[i].data?.toString() ?? '',
-            });
-          }
-          setShowBatchSendModal(true);
-          showSend();
-        }
       }
       setIsAddingToBatch(false);
     } catch (error) {
