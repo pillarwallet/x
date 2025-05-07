@@ -7,7 +7,13 @@ import {
   getStepTransaction,
 } from '@lifi/sdk';
 import { parseUnits } from 'ethers/lib/utils';
-import { createPublicClient, encodeFunctionData, erc20Abi, http } from 'viem';
+import {
+  createPublicClient,
+  encodeFunctionData,
+  erc20Abi,
+  formatUnits,
+  http,
+} from 'viem';
 
 // types
 import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
@@ -81,6 +87,7 @@ const useOffer = () => {
     tokenAddress: string;
     chainId: number;
   }) => {
+    if (isZeroAddress(tokenAddress)) return undefined;
     try {
       const publicClient = createPublicClient({
         chain: getNetworkViem(chainId),
@@ -118,9 +125,20 @@ const useOffer = () => {
           chainId: step.action.fromChainId,
         });
 
+        const isEnoughAllowance = isAllowance
+          ? formatUnits(isAllowance, step.action.fromToken.decimals) >=
+            formatUnits(
+              BigInt(step.action.fromAmount),
+              step.action.fromToken.decimals
+            )
+          : undefined;
+
         // Here we are checking if this is not a native/gas token and if the allowance
         // is not set, then we manually add an approve transaction
-        if (!isZeroAddress(step.action.fromToken.address) && !isAllowance) {
+        if (
+          !isZeroAddress(step.action.fromToken.address) &&
+          !isEnoughAllowance
+        ) {
           // We endode the callData for the approve transaction
           const calldata = encodeFunctionData({
             abi: [

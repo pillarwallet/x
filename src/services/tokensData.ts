@@ -278,65 +278,69 @@ export const convertAPIResponseToTokens = (
   );
 
   // Show the Mobula's API result, but also check for exceptions on the native/gas token
-  const tokenData = result.flatMap((item) =>
-    item.blockchains
-      .map((blockchain, index) => {
-        let { name, symbol } = item;
-        const contract = item.contracts[index];
+  const tokenData = result
+    .filter((item) => item.type === 'token' || item.type === 'asset')
+    .flatMap(
+      (item) =>
+        item.blockchains
+          .map((blockchain, index) => {
+            let { name, symbol } = item;
+            const contract = item.contracts[index];
 
-        // Rename Wrapped tokens
-        if (name === 'XDAI' && symbol === 'XDAI') {
-          name = 'Wrapped XDAI';
-          symbol = 'WXDAI';
-        }
+            // Rename Wrapped tokens
+            if (name === 'XDAI' && symbol === 'XDAI') {
+              name = 'Wrapped XDAI';
+              symbol = 'WXDAI';
+            }
 
-        if (
-          name === 'Ethereum' &&
-          symbol === 'ETH' &&
-          contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-        ) {
-          name = 'Wrapped Ether';
-          symbol = 'WETH';
-        }
+            if (
+              name === 'Ethereum' &&
+              symbol === 'ETH' &&
+              contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            ) {
+              name = 'Wrapped Ether';
+              symbol = 'WETH';
+            }
 
-        if (
-          name === 'BNB' &&
-          symbol === 'BNB' &&
-          contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
-        ) {
-          name = 'Wrapped BNB';
-          symbol = 'WBNB';
-        }
+            if (
+              name === 'BNB' &&
+              symbol === 'BNB' &&
+              contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
+            ) {
+              name = 'Wrapped BNB';
+              symbol = 'WBNB';
+            }
 
-        if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
-          name = 'POL';
-          symbol = 'POL';
-        }
+            if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
+              name = 'POL';
+              symbol = 'POL';
+            }
 
-        // Remove gas/native token contracts that are already included separately
-        if (
-          contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ||
-          (name === 'POL' &&
-            contract === '0x0000000000000000000000000000000000001010')
-        ) {
-          return null;
-        }
+            // Remove gas/native token contracts that are already included separately
+            if (
+              contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ||
+              (name === 'POL' &&
+                contract === '0x0000000000000000000000000000000000001010')
+            ) {
+              return null;
+            }
 
-        return {
-          id: item.id,
-          name,
-          symbol,
-          logo: item.logo,
-          blockchain,
-          contract,
-          decimals: item.decimals[index],
-        };
-      })
-      .filter(
-        (token): token is Token =>
-          token !== null && allowedBlockchains.includes(token.blockchain)
-      )
-  );
+            return {
+              id: item.id,
+              name,
+              symbol,
+              logo: item.logo,
+              blockchain,
+              contract,
+              decimals: item.decimals[index],
+              price: item.price,
+            };
+          })
+          .filter(
+            (token) =>
+              token !== null && allowedBlockchains.includes(token.blockchain)
+          ) as Token[]
+    );
 
   // Use Fuse.js to match native tokens that are not included in Mobula's token list
   // as well as look for an exact match of contract address
