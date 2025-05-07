@@ -71,9 +71,7 @@ const Header = () => {
                 </NavLink>
               </li>
               <li>
-                <a href="https://blog.pillarx.app/">
-                  Blog
-                </a>
+                <a href="https://blog.pillarx.app/">Blog</a>
               </li>
             </ul>
 
