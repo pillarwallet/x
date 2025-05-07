@@ -23,22 +23,22 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
     data-testid="random-avatar"
     fill="none"
     role="img"
-    viewBox="0 0 80 80"
+    viewBox="0 0 36 36"
     xmlns="http://www.w3.org/2000/svg"
   >
     <mask
-      height={80}
+      height={36}
       id=":r0:"
       mask-type="alpha"
       maskUnits="userSpaceOnUse"
-      width={80}
+      width={36}
       x={0}
       y={0}
     >
       <rect
         fill="#FFFFFF"
-        height={80}
-        width={80}
+        height={36}
+        width={36}
       />
     </mask>
     <g
@@ -476,6 +476,32 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
         x={70}
         y={70}
       />
+      <g
+        transform="translate(-3 3.5) rotate(-7 18 18)"
+      >
+        <path
+          d="M13,20 a1,0.75 0 0,0 10,0"
+          fill="#000000"
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={12}
+          y={14}
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={22}
+          y={14}
+        />
+      </g>
     </g>
   </svg>
 </div>
