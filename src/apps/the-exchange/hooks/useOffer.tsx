@@ -44,6 +44,11 @@ const useOffer = () => {
         fromTokenAddress,
         toTokenAddress,
         fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
+        options: {
+          bridges: {
+            deny: ['across', 'multichain', 'hyphen', 'hop'],
+          },
+        },
       };
 
       const result = await getRoutes(routesRequest);

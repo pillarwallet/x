@@ -95,7 +95,15 @@ const ExchangeAction = () => {
         walletAddress as `0x${string}`
       );
 
-      if (stepTransactions) {
+      if (!stepTransactions.length) {
+        setErrorMessage(
+          'We were not able to add this to the queue at the moment. Please try again.'
+        );
+        setIsAddingToBatch(false);
+        return;
+      }
+
+      if (stepTransactions.length) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < stepTransactions.length; ++i) {
           const { value } = stepTransactions[i];
