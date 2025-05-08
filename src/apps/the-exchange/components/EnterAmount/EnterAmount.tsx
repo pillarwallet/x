@@ -62,9 +62,7 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   );
 
   const [inputValue, setInputValue] = useState<string>('');
-  const { getBestOffer } = useOffer(
-    chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
-  );
+  const { getBestOffer } = useOffer();
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
 
   // get usd price only when swap token changes

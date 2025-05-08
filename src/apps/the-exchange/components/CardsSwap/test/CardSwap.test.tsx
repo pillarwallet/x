@@ -134,6 +134,13 @@ jest.mock('@etherspot/transaction-kit', () => ({
   }),
 }));
 
+jest.mock('@lifi/sdk', () => ({
+  LiFi: jest.fn().mockImplementation(() => ({
+    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: jest.fn().mockResolvedValue({}),
+  })),
+}));
+
 describe('<CardsSwap />', () => {
   beforeEach(() => {
     jest.clearAllMocks();

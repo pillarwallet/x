@@ -39,8 +39,11 @@ import {
 import { formatAmountDisplay } from '../../../utils/number';
 
 const SendModalBatchesTabView = () => {
-  const { transactions: globalTransactionsBatch, removeFromBatch } =
-    useGlobalTransactionsBatch();
+  const {
+    transactions: globalTransactionsBatch,
+    removeFromBatch,
+    addToBatch,
+  } = useGlobalTransactionsBatch();
   const [t] = useTranslation();
   const [expanded, setExpanded] = React.useState<
     Record<number, boolean | undefined>
@@ -140,6 +143,30 @@ const SendModalBatchesTabView = () => {
     showHistory();
   };
 
+  // To remove one transaction the entire batch needs to be rebuilt by
+  // removing all transactions then re-adding all transactions minus
+  // the one that has been deleted
+  const removeOneTransaction = (transactionId: string, chainId: number) => {
+    // All transactions for this chain
+    const chainTransactions = globalTransactionsBatch.filter(
+      (tx) => tx.chainId === chainId
+    );
+    // Remove all transactions from UI state
+    chainTransactions.forEach((tx) => {
+      removeFromBatch(tx.id as string);
+    });
+
+    // Wait for state update
+    setTimeout(() => {
+      // Adding back all transactions except the one we wanted to remove
+      chainTransactions.forEach((tx) => {
+        if (tx.id !== transactionId) {
+          addToBatch(tx);
+        }
+      });
+    }, 0);
+  };
+
   return (
     <FormGroup>
       {!Object.keys(groupedTransactionsByChainId).length && (
@@ -196,7 +223,10 @@ const SendModalBatchesTabView = () => {
                       >
                         <RemoveButton
                           onClick={() =>
-                            removeFromBatch(transaction.id as string)
+                            removeOneTransaction(
+                              transaction.id as string,
+                              +chainId
+                            )
                           }
                         >
                           <TrashIcon size={15} />

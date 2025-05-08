@@ -1,6 +1,4 @@
-import { ExchangeProviders } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { BigNumber } from 'ethers';
 import renderer, { act } from 'react-test-renderer';
 
 // provider
@@ -52,21 +50,41 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-const mockBestOffer: SwapOffer = {
+export const mockBestOffer: SwapOffer = {
   tokenAmountToReceive: 10,
   offer: {
-    provider: ExchangeProviders.Uniswap,
-    receiveAmount: BigNumber.from(10),
-    exchangeRate: 1.2,
-    transactions: [
-      {
-        to: 'y',
-        data: '0x000000001',
-        value: BigNumber.from(30),
-      },
-    ],
+    id: 'mock-offer-1',
+    fromChainId: 1,
+    fromAmountUSD: '12',
+    fromAmount: '100000000000000000', // 0.1 ETH
+    fromToken: {
+      chainId: 1,
+      address: '0x01',
+      symbol: 'ETH',
+      decimals: 18,
+      name: 'Ether',
+      priceUSD: '1200',
+    },
+    toChainId: 137,
+    toAmountUSD: '4',
+    toAmount: '10000000000000000000', // 10 POL
+    toAmountMin: '9900000000000000000',
+    toToken: {
+      chainId: 137,
+      address: '0x02',
+      symbol: 'POL',
+      decimals: 18,
+      name: 'POL',
+      priceUSD: '0.4',
+    },
+    insurance: {
+      state: 'INSURED',
+      feeAmountUsd: '0.1',
+    },
+    steps: [],
   },
 };
+
 // Mock hooks and utils
 jest.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
   addToBatch: jest.fn(),
@@ -78,6 +96,12 @@ jest.mock('@etherspot/transaction-kit', () => ({
   useEtherspotSwaps: () => ({
     prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue([]),
   }),
+  useEtherspotUtils: jest.fn().mockReturnValue({
+    isZeroAddress: jest.fn(),
+  }),
+  useWalletAddress: jest.fn().mockReturnValue({
+    walletAddress: jest.fn(),
+  }),
 }));
 jest.mock('../../../utils/converters', () => ({
   hasThreeZerosAfterDecimal: jest.fn((num) => num % 1 === 0),
@@ -85,6 +109,13 @@ jest.mock('../../../utils/converters', () => ({
     if (amount === undefined) return '0.00000000';
     return Number(amount).toFixed(8);
   }),
+}));
+
+jest.mock('@lifi/sdk', () => ({
+  LiFi: jest.fn().mockImplementation(() => ({
+    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: jest.fn().mockResolvedValue({}),
+  })),
 }));
 
 describe('<ExchangeAction />', () => {

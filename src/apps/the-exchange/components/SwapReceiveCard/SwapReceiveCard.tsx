@@ -76,8 +76,15 @@ const SwapReceiveCard = ({
             chainIdToChainNameTokensData(selectedToken?.chainId) || '',
           contract: selectedToken?.address || '',
           decimals: selectedToken?.decimals || 18,
+          price: selectedToken?.price || 0,
         })
       );
+
+      // clean the URL after the token has been set
+      const url = new URL(window.location.href);
+      url.searchParams.delete('asset');
+      url.searchParams.delete('blockchain');
+      window.history.replaceState({}, '', url.toString());
     } else {
       if (!searchData) return;
 
