@@ -24,17 +24,14 @@ jobs:
                 cd ~
                 git clone https://github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                 cd x-e2e
-                sed -i.bak "s/test_mail_email_value/$TESTMAIL_EMAIL/g" .env
-                sed -i.bak "s/test_mail_username_value/$TESTMAIL_USERNAME/g" .env
-                sed -i.bak "s/test_mail_apikey_value/$TESTMAIL_API_KEY/g" .env
                 npm install  # Installing dependencies
-                npm run test-all-chrome-headless  # Running the tests
+                npm run test-mainnet-combined  # Running the tests
           - run:
               name: Move test report
               command: |
-                mv /home/circleci/e2e-sdk-prime/mochawesome-report /tmp/
+                mv /home/circleci/x-e2e/mochawesome-report /tmp/
                 chmod 777 -R /tmp/mochawesome-report
-              when: always 
+              when: always
           - store_artifacts:
               path: /tmp/mochawesome-report
               when: always
@@ -57,7 +54,6 @@ jobs:
                 START_TIME_FORMATTED=$(date -d "$START_TIME" "+%Y-%m-%d %H:%M:%S")
                 END_TIME_FORMATTED=$(date -d "$END_TIME" "+%Y-%m-%d %H:%M:%S")
                 DURATION_MIN=$(awk "BEGIN {printf \"%.2f\",${DURATION_MS}/60000}")
-
 
                 jq -r '.results[] | .suites[] | select(.failures > 0) | {suite: .title, tests: [.tests[] | select(.fail) | .title]} | select(.tests | length > 0) |
                 "*Suite:* \(.suite)\n*Failing Tests:* \n\(.tests | map("- " + .) | join("\n"))\n"' $MOCHAWESOME_JSON_FILE > $FAILED_TESTS_FILE
@@ -85,4 +81,31 @@ jobs:
                   SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
                 *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
                 *Triggered by:* ${CIRCLE_USERNAME}\n\
-                *Branch
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+                \n*Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes"
+                fi
+
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+
+workflows:
+  version: 2.1
+  scheduled_e2e_tests:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"  # Cron job that runs at midnight every day.
+          filters:
+            branches:
+              only:
+                - e2e  # Run only on the e2e branch
+    jobs:
+      - e2e-tests:
+          context: general-vars
