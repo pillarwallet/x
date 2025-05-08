@@ -107,5 +107,5 @@ workflows:
               only:
                 - e2e  # Run only on the e2e branch
     jobs:
-      - e2e-tests:
+      - e2e-tests:  # Explicitly reference the job here
           context: general-vars
