@@ -1,0 +1,88 @@
+version: 2.1
+parameters:
+  run_e2e_tests:
+    type: boolean
+    default: true
+
+orbs:
+  slack: circleci/slack@3.4.2
+
+jobs:
+  e2e-tests:
+    working_directory: ~/x  # Updated working directory to ~/x
+    docker:
+      - image: cimg/node:20.18.3  # Using Node.js image
+    steps:
+      - checkout
+      - when:
+          condition: <<pipeline.parameters.run_e2e_tests>>
+          steps:
+          - run:
+              name: Checkout x-e2e repo and run tests
+              no_output_timeout: 60m
+              command: |
+                cd ~
+                git clone https://github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
+                cd x-e2e
+                sed -i.bak "s/test_mail_email_value/$TESTMAIL_EMAIL/g" .env
+                sed -i.bak "s/test_mail_username_value/$TESTMAIL_USERNAME/g" .env
+                sed -i.bak "s/test_mail_apikey_value/$TESTMAIL_API_KEY/g" .env
+                npm install  # Installing dependencies
+                npm run test-all-chrome-headless  # Running the tests
+          - run:
+              name: Move test report
+              command: |
+                mv /home/circleci/e2e-sdk-prime/mochawesome-report /tmp/
+                chmod 777 -R /tmp/mochawesome-report
+              when: always 
+          - store_artifacts:
+              path: /tmp/mochawesome-report
+              when: always
+          - run:
+              name: Parse and send test results to Slack
+              when: always
+              command: |
+                wget https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.json
+
+                MOCHAWESOME_JSON_FILE=./mochawesome.json
+                FAILED_TESTS_FILE=failed-tests.txt
+                TOTAL_SUITES=$(jq '.stats.suites' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PASSES=$(jq '.stats.passes' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PENDING=$(jq '.stats.pending' $MOCHAWESOME_JSON_FILE)
+                TOTAL_FAILURES=$(jq '.stats.failures' $MOCHAWESOME_JSON_FILE)
+                START_TIME=$(jq -r '.stats.start' $MOCHAWESOME_JSON_FILE)
+                END_TIME=$(jq -r '.stats.end' $MOCHAWESOME_JSON_FILE)
+                DURATION_MS=$(jq -r '.stats.duration' $MOCHAWESOME_JSON_FILE)
+
+                START_TIME_FORMATTED=$(date -d "$START_TIME" "+%Y-%m-%d %H:%M:%S")
+                END_TIME_FORMATTED=$(date -d "$END_TIME" "+%Y-%m-%d %H:%M:%S")
+                DURATION_MIN=$(awk "BEGIN {printf \"%.2f\",${DURATION_MS}/60000}")
+
+
+                jq -r '.results[] | .suites[] | select(.failures > 0) | {suite: .title, tests: [.tests[] | select(.fail) | .title]} | select(.tests | length > 0) |
+                "*Suite:* \(.suite)\n*Failing Tests:* \n\(.tests | map("- " + .) | join("\n"))\n"' $MOCHAWESOME_JSON_FILE > $FAILED_TESTS_FILE
+
+                if [ -s $FAILED_TESTS_FILE ]; then
+                  MESSAGE=$(cat $FAILED_TESTS_FILE)
+                  SLACK_MESSAGE=":x: *E2E Tests Failed :x: *\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
+                *Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes\n\n\
+                *Failed Tests:*\n${MESSAGE}\n\
+                *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+                cc: ${TAG_RESPONSIBLE_PEOPLE}"
+                else
+                  SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch
