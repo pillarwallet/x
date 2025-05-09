@@ -59,7 +59,7 @@ const SwapReceiveCard = ({
   const { data: searchData } = useGetSearchTokensQuery(
     {
       searchInput: asset || '',
-      filterBlockchains: chain || undefined,
+      filterBlockchains: `${chain || ''}`,
     },
     { skip: !asset && !chain }
   );
