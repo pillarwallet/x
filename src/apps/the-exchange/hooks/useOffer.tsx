@@ -46,8 +46,9 @@ const useOffer = () => {
         fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
         options: {
           bridges: {
-            deny: ['across', 'multichain', 'hyphen', 'hop'],
+            allow: ['relay'],
           },
+          exchanges: { allow: ['openocean', 'kyberswap'] },
         },
       };
 
