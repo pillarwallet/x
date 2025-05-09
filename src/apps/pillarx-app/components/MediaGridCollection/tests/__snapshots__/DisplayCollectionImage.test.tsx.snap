@@ -23,66 +23,55 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
     data-testid="random-avatar"
     fill="none"
     role="img"
-    viewBox="0 0 36 36"
+    viewBox="0 0 80 80"
     xmlns="http://www.w3.org/2000/svg"
   >
     <mask
-      height={36}
+      height={80}
       id=":r0:"
       maskUnits="userSpaceOnUse"
-      width={36}
+      width={80}
       x={0}
       y={0}
     >
       <rect
         fill="#FFFFFF"
-        height={36}
-        width={36}
+        height={80}
+        width={80}
       />
     </mask>
     <g
       mask="url(#:r0:)"
     >
       <rect
-        fill="#92A1C6"
-        height={36}
-        width={36}
+        fill="#F0AB3D"
+        height={80}
+        width={80}
       />
       <rect
-        fill="#F0AB3D"
-        height={36}
-        rx={36}
-        transform="translate(-3 7) rotate(307 18 18) scale(1.1)"
-        width={36}
-        x="0"
-        y="0"
+        fill="#C271B4"
+        height={10}
+        transform="translate(6 -6) rotate(254 40 40)"
+        width={80}
+        x={10}
+        y={30}
       />
-      <g
-        transform="translate(-3 3.5) rotate(-7 18 18)"
-      >
-        <path
-          d="M13,20 a1,0.75 0 0,0 10,0"
-          fill="#000000"
-        />
-        <rect
-          fill="#000000"
-          height={2}
-          rx={1}
-          stroke="none"
-          width={1.5}
-          x={12}
-          y={14}
-        />
-        <rect
-          fill="#000000"
-          height={2}
-          rx={1}
-          stroke="none"
-          width={1.5}
-          x={22}
-          y={14}
-        />
-      </g>
+      <circle
+        cx={40}
+        cy={40}
+        fill="#C20D90"
+        r={16}
+        transform="translate(-6 6)"
+      />
+      <line
+        stroke="#92A1C6"
+        strokeWidth={2}
+        transform="translate(-8 -8) rotate(148 40 40)"
+        x1={0}
+        x2={80}
+        y1={40}
+        y2={40}
+      />
     </g>
   </svg>
 </div>
