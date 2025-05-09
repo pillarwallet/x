@@ -68,9 +68,9 @@ export const pillarXApiWalletPortfolio = createApi({
             path: 'wallet/portfolio',
             params: {
               wallet,
-              blockchains: CompatibleChains.map((chain) =>
-                chainIdToChainNameTokensData(chain.chainId)
-              ).join(', '),
+              blockchains: CompatibleChains.map((chain) => chain.chainId).join(
+                ','
+              ),
               unlistedAssets: 'true',
               filterSpam: 'true',
               pnl: 'true',
