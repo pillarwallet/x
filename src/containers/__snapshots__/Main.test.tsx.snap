@@ -43,6 +43,13 @@ exports[`<Main /> renders correctly 1`] = `
               Testing Campaign
             </a>
           </li>
+          <li>
+            <a
+              href="https://blog.pillarx.app/"
+            >
+              Blog
+            </a>
+          </li>
         </ul>
         <a
           className="header__social"
