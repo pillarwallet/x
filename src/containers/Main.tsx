@@ -15,16 +15,7 @@ import {
   WalletClient,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import {
-  arbitrum,
-  base,
-  bsc,
-  gnosis,
-  mainnet,
-  optimism,
-  polygon,
-  sepolia,
-} from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -339,16 +330,6 @@ const Main = () => {
             config={{
               appearance: { theme: 'dark' },
               defaultChain: isTestnet ? sepolia : mainnet,
-              supportedChains: [
-                mainnet,
-                polygon,
-                gnosis,
-                arbitrum,
-                optimism,
-                base,
-                bsc,
-                sepolia,
-              ],
               embeddedWallets: {
                 createOnLogin: 'users-without-wallets',
               },

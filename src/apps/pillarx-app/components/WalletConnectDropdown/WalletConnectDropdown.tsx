@@ -2,10 +2,14 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable react/no-unstable-nested-components */
 import { CircularProgress } from '@mui/material';
+import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useRef, useState } from 'react';
 
 // services
 import { useWalletConnect } from '../../../../services/walletConnect';
+
+// utils
+import { isAddressInSessionViaPrivy } from '../../../../utils/walletConnect';
 
 // images
 import ArrowDown from '../../images/arrow-down.svg';
@@ -35,6 +39,7 @@ const WalletConnectDropdown = () => {
     isLoadingDisconnect,
     isLoadingDisconnectAll,
   } = useWalletConnect();
+  const { user } = usePrivy();
 
   const getClipboardText = async (prompt: boolean) => {
     try {
@@ -122,8 +127,16 @@ const WalletConnectDropdown = () => {
     setIsDropdownOpen(false);
   };
 
+  const filteredSessions = Object.fromEntries(
+    Object.entries(activeSessions || {}).filter(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_, session]) =>
+        !isAddressInSessionViaPrivy(session, user?.wallet?.address || '')
+    )
+  );
+
   const numberActiveSessions =
-    !!activeSessions && Object.entries(activeSessions).length;
+    !!filteredSessions && Object.entries(filteredSessions).length;
 
   const DisplayContentWalletConnect = () => {
     if (
@@ -236,7 +249,7 @@ const WalletConnectDropdown = () => {
           )}
 
           <ul className="flex flex-col gap-4">
-            {Object.values(activeSessions ?? {}).map((session: any) => (
+            {Object.values(filteredSessions ?? {}).map((session: any) => (
               <li key={session.topic}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">

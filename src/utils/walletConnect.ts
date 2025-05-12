@@ -1,3 +1,6 @@
+import { SessionTypes } from '@walletconnect/types';
+import { isAddressEqual } from 'viem';
+
 export const PERSONAL_SIGN = 'personal_sign';
 export const ETH_SIGN = 'eth_sign';
 export const ETH_SEND_TX = 'eth_sendTransaction';
@@ -14,4 +17,21 @@ export const WALLETCONNECT_EVENT = {
   SESSION_REQUEST: 'session_request',
   PROPOSAL_EXPIRE: 'proposal_expire',
   SESSION_REQUEST_EXPIRE: 'session_request_expire',
+};
+
+export const getWalletAddressesFromSession = (
+  session: SessionTypes.Struct
+): string[] => {
+  const accounts: string[] = session.namespaces?.eip155?.accounts || [];
+  return accounts.map((acc) => acc.split(':')[2]);
+};
+
+export const isAddressInSessionViaPrivy = (
+  session: SessionTypes.Struct,
+  EOAAddress: string
+): boolean => {
+  const addresses = getWalletAddressesFromSession(session);
+  return addresses.some((addr) =>
+    isAddressEqual(addr as `0x${string}`, EOAAddress as `0x${string}`)
+  );
 };
