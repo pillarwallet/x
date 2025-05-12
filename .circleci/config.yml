@@ -23,7 +23,7 @@ jobs:
                 no_output_timeout: 60m
                 command: |
                   cd ~
-                  git clone https://github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
+                  git clone https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                   cd x-e2e
                   npm install  # Installing dependencies
                   npm run test-mainnet-combined  # Running the tests
