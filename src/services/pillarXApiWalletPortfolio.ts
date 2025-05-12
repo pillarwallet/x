@@ -73,7 +73,6 @@ export const pillarXApiWalletPortfolio = createApi({
               ),
               unlistedAssets: 'true',
               filterSpam: 'true',
-              pnl: 'true',
             },
           },
         };
