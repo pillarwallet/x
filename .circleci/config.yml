@@ -101,9 +101,8 @@ workflows:
   version: 2.1
   scheduled_e2e_tests:
     jobs:
-      - e2e_tests
-    triggers:
-      - type: push
-        branches:
-          only:
-            - e2e
+      - e2e_tests:
+          filters:
+            branches:
+              only:
+                - e2e
