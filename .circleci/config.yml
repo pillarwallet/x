@@ -25,6 +25,9 @@ jobs:
                   cd ~
                   git clone https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                   cd x-e2e
+                  sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
+                  sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
+                  sed -i "s|test_mail_apikey_value|$TESTMAIL_API_KEY|g" .env
                   npm install  # Installing dependencies
                   npm run test-all-chrome-headless  # Running the tests
             - run:
