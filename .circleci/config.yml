@@ -34,7 +34,7 @@ jobs:
             - run:
                 name: Move test report
                 command: |
-                  mv /home/circleci/x-e2e/mochawesome-report /tmp/
+                  mv /root/x-e2e/mochawesome-report /tmp/
                   chmod 777 -R /tmp/mochawesome-report
                 when: always
             - store_artifacts:
