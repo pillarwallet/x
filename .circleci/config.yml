@@ -12,7 +12,7 @@ jobs:
   e2e-tests:
     working_directory: ~/x  # Updated working directory to ~/x
     docker:
-      - image: cimg/node:20.18.3  # Using Node.js image
+      - image: cypress/included:cypress-14.3.3-node-22.15.0-chrome-136.0.7103.92-1-ff-138.0.1-edge-136.0.3240.50-1  # Using Node.js image
     steps:
       - checkout
       - when:
