@@ -100,12 +100,10 @@ jobs:
 workflows:
   version: 2.1
   scheduled_e2e_tests:
-    triggers:
-      - type: push  # Trigger job on a push to the `e2e` branch
-        filters:
-          branches:
-            only:
-              - e2e  # Run only on the `e2e` branch
     jobs:
-      - e2e-tests:
-          context: general-vars
+      - e2e_tests
+    triggers:
+      - type: push
+        branches:
+          only:
+            - e2e
