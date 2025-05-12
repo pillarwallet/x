@@ -26,7 +26,7 @@ jobs:
                   git clone https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                   cd x-e2e
                   npm install  # Installing dependencies
-                  npm run test-mainnet-combined  # Running the tests
+                  npm run test-all-chrome-headless  # Running the tests
             - run:
                 name: Move test report
                 command: |
