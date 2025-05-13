@@ -27,7 +27,7 @@ jobs:
                 no_output_timeout: 60m
                 command: |
                   cd ~
-                  git clone --branch deploy https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
+                  git clone https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                   cd x-e2e
                   sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
                   sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
