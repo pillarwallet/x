@@ -106,11 +106,23 @@ jobs:
                   curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
 
 workflows:
-  version: 2.1
+  version: 2
   scheduled_e2e_tests:
     jobs:
       - e2e-tests:
           filters:
             branches:
               only:
-                - e2e
+                - e2e   # Run on commits to the `e2e` branch
+          triggers:
+            - schedule:
+                cron: "0 0 * * *"  # Run at midnight every day
+                filters:
+                  branches:
+                    only:
+                      - e2e  # Ensure it only runs for the `e2e` branch
+            - github-pr:
+                filters:
+                  branches:
+                    only:
+                      - develop  # Run when a PR is merged into the `develop` branch
