@@ -106,6 +106,7 @@ jobs:
 
 workflows:
   version: 2
+
   scheduled_e2e_tests:
     jobs:
       - e2e-tests:
@@ -120,7 +121,10 @@ workflows:
             branches:
               only:
                 - e2e  # Ensure it only runs for the `e2e` branch
-      - github-pr:
+
+  pr_triggered_e2e_tests:
+    jobs:
+      - e2e-tests:
           filters:
             branches:
               only:
