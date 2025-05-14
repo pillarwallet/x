@@ -113,15 +113,15 @@ workflows:
             branches:
               only:
                 - e2e   # Run on commits to the `e2e` branch
-          triggers:
-            - schedule:
-                cron: "0 0 * * *"  # Run at midnight every day
-                filters:
-                  branches:
-                    only:
-                      - e2e  # Ensure it only runs for the `e2e` branch
-            - github-pr:
-                filters:
-                  branches:
-                    only:
-                      - develop  # Run when a PR is merged into the `develop` branch
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"  # Run at midnight every day
+          filters:
+            branches:
+              only:
+                - e2e  # Ensure it only runs for the `e2e` branch
+      - github-pr:
+          filters:
+            branches:
+              only:
+                - develop  # Run when a PR is merged into the `develop` branch
