@@ -68,7 +68,7 @@ jobs:
 
                   if [ -s $FAILED_TESTS_FILE ]; then
                     MESSAGE=$(cat $FAILED_TESTS_FILE)
-                    SLACK_MESSAGE=":x: *E2E Tests Failed :x: *\n\
+                    SLACK_MESSAGE=":x: *PillarX UI Tests Failed :x: *\n\
                   *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
                   *Triggered by:* ${CIRCLE_USERNAME}\n\
                   *Branch:* ${CIRCLE_BRANCH}\n\
@@ -86,7 +86,7 @@ jobs:
                   *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
                   cc: ${TAG_RESPONSIBLE_PEOPLE}"
                   else
-                    SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
+                    SLACK_MESSAGE=":white_check_mark: All PillarX UI tests passed\n\
                   *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
                   *Triggered by:* ${CIRCLE_USERNAME}\n\
                   *Branch:* ${CIRCLE_BRANCH}\n\
