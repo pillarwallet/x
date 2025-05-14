@@ -24,10 +24,10 @@ jobs:
                   apt-get update && apt-get install -y curl jq
             - run:
                 name: Checkout x-e2e repo and run tests
-                no_output_timeout: 60m
+                no_output_timeout: 90m
                 command: |
                   cd ~
-                  git clone https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
+                  git clone -b main --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git  # Cloning the correct repo
                   cd x-e2e
                   sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
                   sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
