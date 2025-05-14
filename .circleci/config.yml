@@ -32,8 +32,7 @@ jobs:
                   sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
                   sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
                   sed -i "s|test_mail_apikey_value|$TESTMAIL_API_KEY|g" .env
-                  cat .env
-                  npm install  # Installing dependencies
+                  npm install
                   npm run test-all-chrome-headless  # Running the tests
             - run:
                 name: Move test report
