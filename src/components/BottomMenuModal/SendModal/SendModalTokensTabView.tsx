@@ -238,7 +238,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     transactionDebugLog('Preparing to send transaction');
 
+    const startTime = performance.now();
+
     const sent = await send();
+
+    const endTime = performance.now();
+    const elapsedMs = endTime - startTime;
+
+    transactionDebugLog(
+      `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
+    );
 
     transactionDebugLog('Transaction send details:', sent);
 

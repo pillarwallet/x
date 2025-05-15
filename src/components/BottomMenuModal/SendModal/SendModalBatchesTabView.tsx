@@ -102,7 +102,16 @@ const SendModalBatchesTabView = () => {
 
     transactionDebugLog('Preparing to send batch:', batchId);
 
+    const startTime = performance.now();
+
     const sent = await send([batchId]);
+
+    const endTime = performance.now();
+    const elapsedMs = endTime - startTime;
+
+    transactionDebugLog(
+      `Time taken to send batch (ms): ${elapsedMs.toFixed(2)}`
+    );
 
     transactionDebugLog('Transaction send batch details:', sent);
 
