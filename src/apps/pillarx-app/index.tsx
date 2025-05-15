@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { setWalletAddresses } from '@hypelab/sdk-react';
+import { useWallets } from '@privy-io/react-auth';
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -12,7 +13,11 @@ import { Projection, WalletData } from '../../types/api';
 // hooks
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
 import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
-import { useGetTilesInfoQuery, useGetWalletInfoQuery } from './api/homeFeed';
+import {
+  useGetTilesInfoQuery,
+  useGetWalletInfoQuery,
+  useRecordProfileMutation,
+} from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
 // utils
@@ -40,7 +45,10 @@ const App = () => {
   const [walletData, setWalletData] = useState<WalletData | undefined>(
     undefined
   );
+
+  // Import wallets
   const walletAddress = useWalletAddress();
+  const { wallets: privyWallets } = useWallets();
 
   const scrollPositionRef = useRef<number>(0);
   const divRef = createRef<HTMLDivElement>();
@@ -52,6 +60,13 @@ const App = () => {
    * collect data on when the Home feed page is displaying
    */
   const [recordPresence] = useRecordPresenceMutation();
+
+  /**
+   * Import the recordProfile mutation from the
+   * homefeed hook to let the PillarX API know
+   * the EOA to Smart Wallet address mapping
+   */
+  const [recordProfile] = useRecordProfileMutation();
 
   // The API calls below will not fire if there is no walletAddress
   const {
@@ -83,6 +98,22 @@ const App = () => {
     { address: walletAddress || '' },
     { skip: !walletAddress }
   );
+
+  useEffect(() => {
+    // This is a "fire and forget" call to the profile API
+
+    // Did we have a truthy wallet address and truthy privyWallets?
+    if (walletAddress && privyWallets) {
+      // If we have a privyWallets array, we want to record the profile
+      if (privyWallets.length > 0) {
+        // We want to record the profile with the first wallet in the array
+        recordProfile({
+          owner: privyWallets[0]?.address,
+          account: walletAddress,
+        });
+      }
+    }
+  }, [walletAddress, privyWallets, recordProfile]);
 
   // This useEffect is to update the wallet data
   useEffect(() => {
