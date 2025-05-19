@@ -778,11 +778,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               id="batch-1"
             >
               <EtherspotBatch chainId={payload.transaction.chainId}>
-                <EtherspotTransaction
-                  to={payload.transaction.to}
-                  value={payload.transaction.value || '0'}
-                  data={payload.transaction.data || undefined}
-                />
                 {isPaymaster &&
                   selectedPaymasterAddress &&
                   selectedFeeAsset && (
@@ -791,6 +786,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                       data={approveData}
                     />
                   )}
+                <EtherspotTransaction
+                  to={payload.transaction.to}
+                  value={payload.transaction.value || '0'}
+                  data={payload.transaction.data || undefined}
+                />
               </EtherspotBatch>
             </EtherspotBatches>
             {feeType.length > 0 && (
@@ -835,14 +835,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 key={`${batch.chainId}-${index}`}
                 chainId={batch.chainId}
               >
-                {batch.transactions.map((transaction, idx) => (
-                  <EtherspotTransaction
-                    key={`${transaction.to}-${idx}`}
-                    to={transaction.to}
-                    value={transaction.value || '0'}
-                    data={transaction.data || undefined}
-                  />
-                ))}
                 {isPaymaster &&
                   selectedPaymasterAddress &&
                   approveData &&
@@ -852,6 +844,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                       data={approveData}
                     />
                   )}
+                {batch.transactions.map((transaction, idx) => (
+                  <EtherspotTransaction
+                    key={`${transaction.to}-${idx}`}
+                    to={transaction.to}
+                    value={transaction.value || '0'}
+                    data={transaction.data || undefined}
+                  />
+                ))}
               </EtherspotBatch>
             ))}
           </EtherspotBatches>
@@ -988,6 +988,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           id="batch-1"
         >
           <EtherspotBatch chainId={selectedAsset.chainId}>
+            {isPaymaster &&
+              selectedPaymasterAddress &&
+              selectedFeeAsset &&
+              approveData && (
+                <EtherspotTransaction
+                  to={selectedFeeAsset.token}
+                  data={approveData}
+                />
+              )}
             {selectedAsset?.type === 'nft' && (
               <EtherspotContractTransaction
                 contractAddress={selectedAsset.collection.contractAddress}
@@ -1000,15 +1009,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 ]}
               />
             )}
-            {isPaymaster &&
-              selectedPaymasterAddress &&
-              selectedFeeAsset &&
-              approveData && (
-                <EtherspotTransaction
-                  to={selectedFeeAsset.token}
-                  data={approveData}
-                />
-              )}
             {selectedAsset?.type === 'token' && (
               <>
                 {(isZeroAddress(selectedAsset.asset.contract) ||
