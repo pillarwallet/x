@@ -23,6 +23,7 @@
   },
   "action": {
     "getStarted": "Get Started",
+    "connectPillarWallet": "Connect with Pillar Wallet",
     "next": "Next",
     "send": "Send",
     "logout": "Logout",
