@@ -186,7 +186,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const getGasPrice = async (chainId: number) => {
     const gasRes = await fetch(
-      `https://rpc.etherspot.io/v2/${chainId}?api-key=${process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY}`,
+      `${process.env.REACT_APP_GAS_URL}/${chainId}?api-key=${process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -333,16 +333,34 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
      * though it can be even lower for deployed wallet to save rpc call for checking
      * deployed wallet or not, we can use the same gas cost for both deployed and undeployed wallet
      */
-    if (selectedAsset.type === 'token') {
-      if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
-        gasCost = 470000; // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
-      } else {
-        gasCost = 510000; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+    if (selectedAsset.chainId === 42161) {
+      if (selectedAsset.type === 'token') {
+        if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
+          gasCost = Number(
+            process.env.REACT_APP_NATIVE_GAS_CONSUMPTION_ARBITRUM
+          ); // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
+        } else {
+          gasCost = Number(
+            process.env.REACT_APP_TOKEN_GAS_CONSUMPTION_ARBITRUM
+          ); // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+        }
+      } else if (selectedAsset.type === 'nft') {
+        gasCost = Number(process.env.REACT_APP_NFT_GAS_CONSUMPTION_ARBITRUM); // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
       }
-    } else if (selectedAsset.type === 'nft') {
-      gasCost = 630000; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (selectedAsset.type === 'token') {
+        if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
+          gasCost = Number(process.env.REACT_APP_NATIVE_GAS_CONSUMPTION); // estimated gas consumption for native asset transfer for deployed wallet + 15% markup
+        } else {
+          gasCost = Number(process.env.REACT_APP_TOKEN_GAS_CONSUMPTION); // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+        }
+      } else if (selectedAsset.type === 'nft') {
+        gasCost = Number(process.env.REACT_APP_NFT_GAS_CONSUMPTION); // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+      }
     }
     setApprovalData(gasCost);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gasPrice, selectedFeeAsset]);
 
