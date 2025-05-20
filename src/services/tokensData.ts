@@ -20,6 +20,11 @@ export type Token = {
   price?: number;
 };
 
+export type PortfolioToken = Token & {
+  price_change_24h?: number;
+  cross_chain_balance?: number;
+};
+
 export type TokenRawDataItem = {
   id: number;
   name: string;
