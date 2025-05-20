@@ -38,6 +38,7 @@ import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 import useAccountBalances from '../../../hooks/useAccountBalances';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
+import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
@@ -102,6 +103,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   } = useBottomMenuModal();
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   /**
    * Import the recordPresence mutation from the
@@ -209,7 +211,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     isSending || (isRegularSendModal && !isTransactionReady);
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
-    if (isSendDisabled) return;
+    if (isSendDisabled) {
+      transactionDebugLog(
+        'Another single transaction is being sent, cannot process the sending of this transaction'
+      );
+      return;
+    }
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
@@ -229,7 +236,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       return;
     }
 
+    transactionDebugLog('Preparing to send transaction');
+
+    const startTime = performance.now();
+
     const sent = await send();
+
+    const endTime = performance.now();
+    const elapsedMs = endTime - startTime;
+
+    transactionDebugLog(
+      `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
+    );
+
+    transactionDebugLog('Transaction send details:', sent);
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
@@ -242,6 +262,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         nativeAsset.decimals
       );
       costAsFiat = +estimatedCost * nativeAssetPrice;
+
+      transactionDebugLog('Transaction estimated cost:', estimatedCost);
+
       setEstimatedCostFormatted(
         `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
       );
@@ -289,6 +312,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     }
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
+
+    transactionDebugLog('Transaction new userOpHash:', newUserOpHash);
 
     const userOpChainId = sent?.[0]?.sentBatches[0]?.chainId;
 
@@ -365,6 +390,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
       return payload?.description;
     };
+
+    transactionDebugLog('Adding transaction to batch:', transactionToBatch);
 
     addToBatch({
       title: payload?.title || t`action.sendAsset`,

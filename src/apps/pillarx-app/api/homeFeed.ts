@@ -45,6 +45,17 @@ const staggeredBaseQuery = retry(
   }
 );
 
+const profileBaseQuery = retry(
+  fetchBaseQuery({
+    baseUrl: isTestnet
+      ? 'https://profiles-nubpgwxpiq-uc.a.run.app'
+      : 'https://profiles-7eu4izffpa-uc.a.run.app',
+  }),
+  {
+    maxRetries: 5,
+  }
+);
+
 export const walletPortfolioTileApi = createApi({
   reducerPath: 'walletPortfolioTileApi',
   baseQuery: staggeredBaseQuery,
@@ -57,10 +68,31 @@ export const walletPortfolioTileApi = createApi({
 });
 
 /**
+ * This API is used to send Profile data
+ */
+export const profileApi = createApi({
+  reducerPath: 'profileApi',
+  baseQuery: profileBaseQuery,
+  endpoints: (builder) => ({
+    recordProfile: builder.mutation({
+      query: (payload = {}) => {
+        return {
+          url: 'ingest',
+          method: 'POST',
+          body: payload,
+        };
+      },
+    }),
+  }),
+});
+
+/**
  * Add this to the store
  */
 addMiddleware(homeFeedApi);
 addMiddleware(walletPortfolioTileApi);
+addMiddleware(profileApi);
 
 export const { useGetTilesInfoQuery } = homeFeedApi;
 export const { useGetWalletInfoQuery } = walletPortfolioTileApi;
+export const { useRecordProfileMutation } = profileApi;
