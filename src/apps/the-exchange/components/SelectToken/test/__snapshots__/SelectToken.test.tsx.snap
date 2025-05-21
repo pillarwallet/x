@@ -2,7 +2,7 @@
 
 exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
 <div
-  className="flex justify-between items-start"
+  className="flex justify-between items-start mb-4"
   id="select-token-info-exchange"
   onClick={[MockFunction]}
 >
@@ -29,6 +29,7 @@ exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
       <img
         alt="token-logo"
         className="w-full h-full object-fill rounded-full"
+        onError={[Function]}
         src="https://example.com/token-logo.png"
       />
     </div>

@@ -1,7 +1,10 @@
+import { useEtherspotUtils } from '@etherspot/transaction-kit';
 import { sub } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // hooks
+import useAllowedApps from '../../../../hooks/useAllowedApps';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -11,12 +14,16 @@ import {
 } from '../../reducer/tokenAtlasSlice';
 
 // utils
+import { chainIdToChainNameTokensData } from '../../../../services/tokensData';
 import { convertDateToUnixTimestamp } from '../../../../utils/common';
 import { limitDigits } from '../../utils/converters';
 
 // types
-import { TokenAtlasInfoData, TokenMarketHistory } from '../../../../types/api';
-import { PeriodFilter } from '../../types/types';
+import {
+  MarketHistoryPairData,
+  TokenAtlasInfoData,
+} from '../../../../types/api';
+import { PeriodFilter, SelectedTokenType } from '../../types/types';
 
 // images
 import ArrowGreenSmall from '../../images/arrow-circle-green-small.svg';
@@ -39,17 +46,33 @@ const TokenGraphColumn = ({
   className,
   isLoadingTokenDataInfo,
 }: TokenGraphColumnProps) => {
+  const navigate = useNavigate();
+  const { setIsAnimated } = useAllowedApps();
+  const { isZeroAddress } = useEtherspotUtils();
   const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
   );
   const tokenDataGraph = useAppSelector(
-    (state) => state.tokenAtlas.tokenDataGraph as TokenMarketHistory | undefined
+    (state) =>
+      state.tokenAtlas.tokenDataGraph as MarketHistoryPairData | undefined
   );
   const periodFilter = useAppSelector(
     (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
+  const selectedToken = useAppSelector(
+    (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
+  );
+  const isTokenDataErroring = useAppSelector(
+    (state) => state.tokenAtlas.isTokenDataErroring as boolean
+  );
+  const isGraphLoading = useAppSelector(
+    (state) => state.tokenAtlas.isGraphLoading as boolean
+  );
+
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
+  const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
+  const [latestPrice, setLatestPrice] = useState<number | undefined>();
 
   // The resize handle and listener are to check the viewport size, and change the arrows SVG accordingly
   const handleResize = () => {
@@ -118,6 +141,25 @@ const TokenGraphColumn = ({
     );
   };
 
+  useEffect(() => {
+    handleClickTimePeriod(PeriodFilter.DAY);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenDataInfo]);
+
+  useEffect(() => {
+    if (
+      periodFilter === PeriodFilter.DAY &&
+      tokenDataGraph?.result?.data.length &&
+      !isGraphLoading
+    ) {
+      const tokenDataGraphPrices = tokenDataGraph.result.data;
+      const latestClosePrice =
+        tokenDataGraphPrices?.[tokenDataGraphPrices.length - 1].close;
+
+      setLatestPrice(latestClosePrice);
+    }
+  }, [isGraphLoading, periodFilter, tokenDataGraph]);
+
   return (
     <div
       id="token-atlas-token-graph-column"
@@ -133,12 +175,13 @@ const TokenGraphColumn = ({
           ) : (
             <>
               <div className="relative w-[30px] h-[30px] rounded-full">
-                {tokenDataInfo?.logo ? (
+                {tokenDataInfo?.logo && !isBrokenImage ? (
                   <img
                     src={tokenDataInfo.logo}
                     alt="token-logo"
                     className="w-full h-full object-fill rounded-full"
                     data-testid="token-logo-graph-column"
+                    onError={() => setIsBrokenImage(true)}
                   />
                 ) : (
                   <div className="w-full h-full overflow-hidden rounded-full">
@@ -147,7 +190,7 @@ const TokenGraphColumn = ({
                 )}
 
                 {/* Overlay text when no token logo available */}
-                {!tokenDataInfo?.logo && (
+                {(!tokenDataInfo?.logo || isBrokenImage) && (
                   <span className="absolute inset-0 flex items-center justify-center text-lg text-xs font-bold">
                     {tokenDataInfo?.name?.slice(0, 2)}
                   </span>
@@ -160,9 +203,30 @@ const TokenGraphColumn = ({
               <Body className="text-[15px] mobile:text-[13px] text-white_light_grey pt-2">
                 {tokenDataInfo?.symbol}
               </Body>
+              {tokenDataInfo && (
+                <button
+                  type="button"
+                  className="flex w-fit ml-2 py-3 px-6 text-sm font-semibold uppercase truncate rounded bg-green hover:bg-[#5DE000] text-dark_grey"
+                  onClick={() => {
+                    setIsAnimated(false);
+                    navigate(
+                      `/the-exchange?${!isZeroAddress(selectedToken?.address || '') ? `&asset=${selectedToken?.address}` : `&asset=${selectedToken?.symbol}`}&blockchain=${chainIdToChainNameTokensData(selectedToken?.chainId)}`
+                    );
+                  }}
+                >
+                  Buy {tokenDataInfo?.symbol}
+                </button>
+              )}
             </>
           )}
         </div>
+        {!isLoadingTokenDataInfo && isTokenDataErroring && (
+          <Body>
+            Oops something went wrong! This token may not have enough data
+            available, or the data source could not be reached. Please try
+            searching for this token again later.
+          </Body>
+        )}
         <div
           id="token-atlas-graph-column-price-change"
           className="flex justify-between items-center desktop:items-end"
@@ -171,13 +235,24 @@ const TokenGraphColumn = ({
             <SkeletonLoader $height="50px" $radius="6px" $marginBottom="10px" />
           ) : (
             <>
-              <h1
-                id="token-atlas-graph-column-price-today"
-                className="text-[60px] mobile:text-[40px] mr-4"
-              >
-                <span className="text-white_light_grey">$</span>
-                {tokenDataInfo?.price && limitDigits(tokenDataInfo.price)}
-              </h1>
+              {isGraphLoading && periodFilter === PeriodFilter.DAY ? (
+                <SkeletonLoader
+                  $height="50px"
+                  $radius="6px"
+                  $marginBottom="20px"
+                  $marginTop="20px"
+                />
+              ) : (
+                <h1
+                  id="token-atlas-graph-column-price-today"
+                  className="text-[60px] mobile:text-[40px] mr-4"
+                >
+                  <span className="text-white_light_grey">$</span>
+                  {latestPrice
+                    ? limitDigits(latestPrice)
+                    : limitDigits(tokenDataInfo?.price || 0)}
+                </h1>
+              )}
               <div
                 id="token-atlas-graph-column-price-change-percentage"
                 className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0"
@@ -214,10 +289,10 @@ const TokenGraphColumn = ({
               type="button"
               key={index}
               className={`flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded ${
-                tokenDataGraph?.price_history
+                tokenDataGraph?.result.data.length
                   ? 'hover:bg-green hover:text-dark_grey'
                   : ''
-              } ${periodFilter === filter && tokenDataGraph?.price_history ? 'bg-green text-dark_grey' : 'text-white_grey bg-medium_grey'}`}
+              } ${periodFilter === filter && tokenDataGraph?.result.data.length ? 'bg-green text-dark_grey' : 'text-white_grey bg-medium_grey'}`}
               onClick={() => handleClickTimePeriod(filter)}
             >
               {filter}

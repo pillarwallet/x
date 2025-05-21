@@ -24,6 +24,7 @@ import Card from '../../Text/Card';
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
+import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // providers
 import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
@@ -39,8 +40,11 @@ import {
 import { formatAmountDisplay } from '../../../utils/number';
 
 const SendModalBatchesTabView = () => {
-  const { transactions: globalTransactionsBatch, removeFromBatch } =
-    useGlobalTransactionsBatch();
+  const {
+    transactions: globalTransactionsBatch,
+    removeFromBatch,
+    addToBatch,
+  } = useGlobalTransactionsBatch();
   const [t] = useTranslation();
   const [expanded, setExpanded] = React.useState<
     Record<number, boolean | undefined>
@@ -56,6 +60,7 @@ const SendModalBatchesTabView = () => {
   const { showHistory } = useBottomMenuModal();
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -84,12 +89,31 @@ const SendModalBatchesTabView = () => {
   }, [contextNfts?.data, contextBalances?.data, anyChainSending]);
 
   const onSend = async (chainId: number, batchId: string) => {
-    if (isSending[chainId]) return;
+    if (isSending[chainId]) {
+      transactionDebugLog(
+        'Another batch is being sent, cannot process the sending of this batch:',
+        batchId
+      );
+      return;
+    }
     setIsSending((prev) => ({ ...prev, [chainId]: true }));
     setEstimatedCostFormatted((prev) => ({ ...prev, [chainId]: '' }));
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
 
+    transactionDebugLog('Preparing to send batch:', batchId);
+
+    const startTime = performance.now();
+
     const sent = await send([batchId]);
+
+    const endTime = performance.now();
+    const elapsedMs = endTime - startTime;
+
+    transactionDebugLog(
+      `Time taken to send batch (ms): ${elapsedMs.toFixed(2)}`
+    );
+
+    transactionDebugLog('Transaction send batch details:', sent);
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     if (estimatedCostBN) {
@@ -100,6 +124,9 @@ const SendModalBatchesTabView = () => {
         estimatedCostBN,
         nativeAsset.decimals
       );
+
+      transactionDebugLog('Transaction batch estimated cost:', estimatedCost);
+
       setEstimatedCostFormatted((prev) => ({
         ...prev,
         [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`,
@@ -127,6 +154,9 @@ const SendModalBatchesTabView = () => {
     }
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
+
+    transactionDebugLog('Transaction batch new userOpHash:', newUserOpHash);
+
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
@@ -138,6 +168,30 @@ const SendModalBatchesTabView = () => {
     );
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
+  };
+
+  // To remove one transaction the entire batch needs to be rebuilt by
+  // removing all transactions then re-adding all transactions minus
+  // the one that has been deleted
+  const removeOneTransaction = (transactionId: string, chainId: number) => {
+    // All transactions for this chain
+    const chainTransactions = globalTransactionsBatch.filter(
+      (tx) => tx.chainId === chainId
+    );
+    // Remove all transactions from UI state
+    chainTransactions.forEach((tx) => {
+      removeFromBatch(tx.id as string);
+    });
+
+    // Wait for state update
+    setTimeout(() => {
+      // Adding back all transactions except the one we wanted to remove
+      chainTransactions.forEach((tx) => {
+        if (tx.id !== transactionId) {
+          addToBatch(tx);
+        }
+      });
+    }, 0);
   };
 
   return (
@@ -196,7 +250,10 @@ const SendModalBatchesTabView = () => {
                       >
                         <RemoveButton
                           onClick={() =>
-                            removeFromBatch(transaction.id as string)
+                            removeOneTransaction(
+                              transaction.id as string,
+                              +chainId
+                            )
                           }
                         >
                           <TrashIcon size={15} />

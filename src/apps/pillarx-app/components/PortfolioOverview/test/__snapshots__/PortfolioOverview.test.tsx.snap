@@ -7,6 +7,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c1 {
@@ -15,6 +16,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c2 {
@@ -23,6 +25,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c3 {
@@ -31,6 +34,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 <div
@@ -249,6 +253,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </p>
       <div
         className="flex gap-4 items-end"
+        id="wallet-portfolio-balance"
       >
         <h1
           className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-[50px]"

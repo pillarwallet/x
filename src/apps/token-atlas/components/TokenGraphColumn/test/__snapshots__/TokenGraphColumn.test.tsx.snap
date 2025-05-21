@@ -19,6 +19,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
           alt="token-logo"
           className="w-full h-full object-fill rounded-full"
           data-testid="token-logo-graph-column"
+          onError={[Function]}
           src="tokenLogo.png"
         />
       </div>
@@ -32,6 +33,14 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       >
         TKN
       </p>
+      <button
+        className="flex w-fit ml-2 py-3 px-6 text-sm font-semibold uppercase truncate rounded bg-green hover:bg-[#5DE000] text-dark_grey"
+        onClick={[Function]}
+        type="button"
+      >
+        Buy 
+        TKN
+      </button>
     </div>
     <div
       className="flex justify-between items-center desktop:items-end"

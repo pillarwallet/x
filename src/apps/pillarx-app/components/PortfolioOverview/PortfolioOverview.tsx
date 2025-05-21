@@ -83,7 +83,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
         <WalletConnectDropdown />
         <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
           <Body className="text-purple_light mb-2">{t`title.totalBalance`}</Body>
-          <div className="flex gap-4 items-end">
+          <div className="flex gap-4 items-end" id="wallet-portfolio-balance">
             <H1 className="text-[50px]">
               ${dataWallet?.total_wallet_balance?.toFixed(2) || 0}
             </H1>

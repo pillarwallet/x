@@ -4,6 +4,9 @@ import i18n from 'i18next';
 import React, { Suspense, useEffect, useState } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 
+// hooks
+import useAllowedApps from '../../hooks/useAllowedApps';
+
 // components
 import Alert from '../../components/Text/Alert';
 
@@ -57,6 +60,7 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
 
 const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
+  const { isAnimated } = useAllowedApps();
   const [app, setApp] = useState<AppManifest | null>();
 
   const [springs, api] = useSpring(() => ({
@@ -73,7 +77,7 @@ const App = ({ id }: { id: string }) => {
       from: { opacity: 0 },
       to: { opacity: 1 },
       config: { duration: 500 },
-      delay: 1500, // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
+      delay: isAnimated ? 1500 : 0, // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
       reset: true,
     });
 
@@ -82,7 +86,7 @@ const App = ({ id }: { id: string }) => {
 
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => {
-      setTimeout(resolve, 1500); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
+      setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
     try {
       return await import(`../../apps/${id}`);
@@ -93,7 +97,9 @@ const App = ({ id }: { id: string }) => {
 
   return (
     <Suspense
-      fallback={<AnimatedAppTitle text={app?.title || 'App loading...'} />}
+      fallback={
+        isAnimated && <AnimatedAppTitle text={app?.title || 'App loading...'} />
+      }
     >
       <I18nextProvider i18n={i18n} defaultNS={`app:${id}`}>
         <animated.div

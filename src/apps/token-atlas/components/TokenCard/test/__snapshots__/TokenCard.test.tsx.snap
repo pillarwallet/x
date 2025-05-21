@@ -20,6 +20,7 @@ exports[`<TokenCard /> renders correctly and matches snapshot 1`] = `
       alt="token-logo"
       className="w-full h-full object-fill rounded-full"
       data-testid="token-card-token-logo"
+      onError={[Function]}
       src="token-logo.png"
     />
   </div>

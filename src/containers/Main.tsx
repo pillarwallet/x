@@ -15,7 +15,7 @@ import {
   WalletClient,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { polygon, sepolia } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -329,7 +329,7 @@ const Main = () => {
             appId={process.env.REACT_APP_PRIVY_APP_ID as string}
             config={{
               appearance: { theme: 'dark' },
-              defaultChain: isTestnet ? sepolia : polygon,
+              defaultChain: isTestnet ? sepolia : mainnet,
               embeddedWallets: {
                 createOnLogin: 'users-without-wallets',
               },

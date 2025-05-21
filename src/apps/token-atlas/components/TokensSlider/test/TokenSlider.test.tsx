@@ -24,20 +24,20 @@ jest.mock('../../../api/token', () => ({
 }));
 
 const mockTrendingTokens = {
-  data: [
+  result: [
     {
       id: 1,
       name: 'Token1',
       symbol: 'T1',
       logo: 'logo1.png',
-      contracts: [{ blockchain: 'blockchain1' }],
+      contracts: [{ blockchain: 'Ethereum' }],
     },
     {
       id: 2,
       name: 'Token2',
       symbol: 'T2',
       logo: 'logo2.png',
-      contracts: [{ blockchain: 'blockchain2' }],
+      contracts: [{ blockchain: 'Polygon' }],
     },
   ],
 };
@@ -131,9 +131,10 @@ describe('<TokensSlider />', () => {
       symbol: 'T1',
       address: '',
       decimals: undefined,
-      chainId: undefined,
+      chainId: 1,
       name: 'Token1',
       icon: 'logo1.png',
+      price: 0,
     });
 
     expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);

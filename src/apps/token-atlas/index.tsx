@@ -7,11 +7,17 @@ import './styles/tailwindTokenAtlas.css';
 
 // api
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
-import { useGetTokenGraphQuery, useGetTokenInfoQuery } from './api/token';
+import { useGetSearchTokensQuery } from '../../services/pillarXApiSearchTokens';
+import {
+  useGetTokenMarketDataQuery,
+  useGetTokenMarketHistoryPairQuery,
+} from './api/token';
 
 // reducer
 import {
+  setIsGraphErroring,
   setIsGraphLoading,
+  setIsTokenDataErroring,
   setSelectedToken,
   setTokenDataGraph,
   setTokenDataInfo,
@@ -21,11 +27,16 @@ import {
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
 // utils
+import {
+  chainNameToChainIdTokensData,
+  convertAPIResponseToTokens,
+} from '../../services/tokensData';
 import { getNativeAssetForChainId } from '../../utils/blockchain';
+import { getGraphResolution } from './utils/converters';
 
 // types
-import { TokenPriceGraphPeriod } from '../../types/api';
-import { SelectedTokenType } from './types/types';
+import { TokenAssetResponse, TokenPriceGraphPeriod } from '../../types/api';
+import { PeriodFilter, SelectedTokenType } from './types/types';
 
 // components
 import HeaderSearch from './components/HeaderSearch/HeaderSeach';
@@ -36,7 +47,7 @@ import TokenInfoColumn from './components/TokenInfoColumn/TokenInfoColumn';
 const defaultToken = {
   id: 102502677,
   symbol: 'PLR',
-  address: '',
+  address: '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774',
   decimals: 18,
   chainId: 137,
   name: 'pillar',
@@ -56,10 +67,13 @@ export const App = () => {
   const dispatch = useAppDispatch();
   const selectedToken =
     useAppSelector(
-      (state) => state.tokenAtlas.selectedToken as SelectedTokenType
+      (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
     ) || defaultToken;
   const priceGraphPeriod = useAppSelector(
     (state) => state.tokenAtlas.priceGraphPeriod as TokenPriceGraphPeriod
+  );
+  const periodFilter = useAppSelector(
+    (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
 
   /**
@@ -118,24 +132,28 @@ export const App = () => {
     isLoading: isLoadingTokenDataInfo,
     isFetching: isFetchingTokenDataInfo,
     isSuccess: isSuccessTokenDataInfo,
-  } = useGetTokenInfoQuery({
-    id: isWrappedOrNativeToken ? undefined : selectedToken.id,
-    asset: isWrappedOrNativeToken
-      ? undefined
-      : selectedToken.name || selectedToken.address,
-    symbol: getSymbol(selectedToken.symbol),
+    error: tokenDataError,
+  } = useGetTokenMarketDataQuery({
+    asset: isWrappedOrNativeToken ? undefined : selectedToken.address,
+    symbol: isWrappedOrNativeToken
+      ? getSymbol(selectedToken.symbol)
+      : undefined,
+    blockchain: `${selectedToken.chainId}`,
   });
+
   const {
-    data: tokenGraph,
-    isLoading: isLoadingTokenDataGraph,
-    isFetching: isFetchingTokenDataGraph,
-    isSuccess: isSuccessTokenDataGraph,
-  } = useGetTokenGraphQuery({
-    id: isWrappedOrNativeToken ? undefined : selectedToken.id,
-    asset: isWrappedOrNativeToken
-      ? undefined
-      : selectedToken.name || selectedToken.address,
-    symbol: getSymbol(selectedToken.symbol),
+    data: marketHistoryPair,
+    isLoading: isMarketHistoryPairLoading,
+    isFetching: isMarketHistoryPairFetching,
+    isSuccess: isMarketHistoryPairSuccess,
+    error: marketHistoryPairError,
+  } = useGetTokenMarketHistoryPairQuery({
+    asset: isWrappedOrNativeToken ? undefined : selectedToken.address,
+    symbol: isWrappedOrNativeToken
+      ? getSymbol(selectedToken.symbol)
+      : undefined,
+    blockchain: `${selectedToken.chainId}`,
+    period: getGraphResolution(periodFilter),
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
   });
@@ -143,60 +161,113 @@ export const App = () => {
   // This is to query the API when tokens are being clicked from the home feed
   const query = new URLSearchParams(window.location.search);
 
-  const id = query.get('id');
   const asset = query.get('asset');
-  const symbol = query.get('symbol');
+  const chain = query.get('blockchain');
+
+  // API call to search tokens and assets
+  const { data: searchData } = useGetSearchTokensQuery(
+    {
+      searchInput: asset || '',
+      filterBlockchains: `${chain || ''}`,
+    },
+    { skip: !asset && !chain }
+  );
 
   // This useEffect is to check if some url query params have been specified
   useEffect(() => {
-    if (asset || symbol) {
+    if (!searchData) return;
+
+    const result = convertAPIResponseToTokens(
+      searchData?.result?.data as TokenAssetResponse[],
+      asset || ''
+    );
+
+    // if it is considered a native token, Token Atlas would have handled the request
+    // with showing the asset as a symbol rather than an contract address
+    const nativeOrGasToken = result.filter(
+      (token) => token.blockchain === chain && token.symbol === asset
+    );
+
+    if (nativeOrGasToken.length > 0) {
+      const clickedNativeToken = nativeOrGasToken[0];
       dispatch(
         setSelectedToken({
-          id: Number(id),
-          symbol: symbol || '',
-          address: '',
-          decimals: undefined,
-          chainId: undefined,
-          name: asset || '',
-          icon: '',
+          id: clickedNativeToken?.id,
+          symbol: clickedNativeToken?.symbol,
+          address: clickedNativeToken?.contract,
+          decimals: clickedNativeToken?.decimals,
+          chainId: chainNameToChainIdTokensData(clickedNativeToken?.blockchain),
+          name: clickedNativeToken?.name,
+          icon: clickedNativeToken?.logo,
+        })
+      );
+    } else {
+      const clickedToken = result[0];
+      dispatch(
+        setSelectedToken({
+          id: clickedToken?.id,
+          symbol: clickedToken?.symbol,
+          address: clickedToken?.contract,
+          decimals: clickedToken?.decimals,
+          chainId: chainNameToChainIdTokensData(clickedToken?.blockchain),
+          name: clickedToken?.name,
+          icon: clickedToken?.logo,
         })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asset, symbol]);
+  }, [asset, searchData]);
+
+  // This useEffect is to make sure that the default token is PLR token
+  useEffect(() => {
+    if (selectedToken === defaultToken) {
+      dispatch(setSelectedToken(defaultToken));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedToken]);
 
   // This useEffect is to update the token data when the selected token changes
   useEffect(() => {
     if (tokenData && isSuccessTokenDataInfo) {
-      dispatch(setTokenDataInfo(tokenData.data));
+      dispatch(setTokenDataInfo(tokenData?.result?.data));
+      dispatch(setIsTokenDataErroring(false));
     }
-    if (!isSuccessTokenDataInfo) {
+    if (!isSuccessTokenDataInfo || asset === 'undefined') {
       dispatch(setTokenDataInfo(undefined));
+      dispatch(setIsTokenDataErroring(true));
+    }
+    if (tokenDataError) {
+      dispatch(setIsTokenDataErroring(true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenData, isSuccessTokenDataInfo]);
+  }, [tokenData, isSuccessTokenDataInfo, tokenDataError]);
 
   // This useEffect is to update the token graph data when the selected token and the graph period changes
   useEffect(() => {
-    if (tokenGraph && isSuccessTokenDataGraph) {
-      dispatch(setTokenDataGraph(tokenGraph.data));
+    if (marketHistoryPair && isMarketHistoryPairSuccess) {
+      dispatch(setTokenDataGraph(marketHistoryPair));
+      dispatch(setIsGraphErroring(false));
     }
-    if (!isSuccessTokenDataGraph) {
+    if (!isMarketHistoryPairSuccess || asset === 'undefined') {
       dispatch(setTokenDataGraph(undefined));
+      dispatch(setIsGraphErroring(true));
+    }
+    if (marketHistoryPairError) {
+      dispatch(setIsGraphErroring(true));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenGraph, isSuccessTokenDataGraph]);
+  }, [marketHistoryPair, isMarketHistoryPairSuccess, marketHistoryPairError]);
 
   // This useEffect is to update the graph loading status when the API requests are in progress
   useEffect(() => {
-    if (isLoadingTokenDataGraph || isFetchingTokenDataGraph) {
+    if (isMarketHistoryPairLoading || isMarketHistoryPairFetching) {
       dispatch(setIsGraphLoading(true));
     }
-    if (!isLoadingTokenDataGraph && !isFetchingTokenDataGraph) {
+    if (!isMarketHistoryPairLoading && !isMarketHistoryPairFetching) {
       dispatch(setIsGraphLoading(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoadingTokenDataGraph, isFetchingTokenDataGraph]);
+  }, [isMarketHistoryPairLoading, isMarketHistoryPairFetching]);
 
   // This useEffect is to update the user activity when they select or load a different token
   useEffect(() => {

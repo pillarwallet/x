@@ -22,6 +22,7 @@ module.exports = {
         purple_medium: '#8A77FF',
         percentage_green: '#05FFDD',
         percentage_red: '#FF366C',
+        market_row_green: '#5CFF93',
       },
       fontFamily: {
         custom: ['Formular'],

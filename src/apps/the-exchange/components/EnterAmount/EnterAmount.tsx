@@ -1,8 +1,3 @@
-import {
-  useEtherspotPrices,
-  useEtherspotUtils,
-  useWalletAddress,
-} from '@etherspot/transaction-kit';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -23,15 +18,11 @@ import {
 } from '../../../../services/tokensData';
 
 // hooks
-import useAccountBalances from '../../../../hooks/useAccountBalances';
 import useOffer from '../../hooks/useOffer';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
 import { CardPosition, SwapOffer } from '../../utils/types';
-
-// utils
-import { processEth } from '../../utils/blockchain';
 
 // components
 import BodySmall from '../Typography/BodySmall';
@@ -44,9 +35,10 @@ import ExchangeOffer from './ExchangeOffer';
 type EnterAmountProps = {
   type: CardPosition;
   tokenSymbol?: string;
+  tokenBalance?: number;
 };
 
-const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
+const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
   const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
   const amountReceive = useAppSelector(
@@ -69,32 +61,23 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
     (state) => state.swap.isOfferLoading as boolean
   );
 
-  const walletAddress = useWalletAddress();
   const [inputValue, setInputValue] = useState<string>('');
-  const { getPrice } = useEtherspotPrices();
-  const balances = useAccountBalances();
-  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
-  const { getBestOffer } = useOffer(
-    chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
-  );
+  const { getBestOffer } = useOffer();
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
 
   // get usd price only when swap token changes
   useEffect(() => {
     if (swapToken) {
-      getPrice(
-        swapToken.contract,
-        chainNameToChainIdTokensData(swapToken.blockchain)
-      )
-        .then((rates) => {
-          if (rates?.usd) {
-            dispatch(setUsdPriceSwapToken(rates.usd));
-          }
-        })
-        .catch((e) => {
-          console.error('Failed to fetch USD price of token:', e);
-          dispatch(setUsdPriceSwapToken(0));
-        });
+      if (!swapToken.price) {
+        console.error(
+          `Failed to fetch USD price of token: ${swapToken.symbol} ${swapToken.name} on ${swapToken.blockchain}`
+        );
+        dispatch(setUsdPriceSwapToken(0));
+      }
+
+      if (swapToken.price) {
+        dispatch(setUsdPriceSwapToken(swapToken.price));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapToken]);
@@ -102,19 +85,16 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // get usd price only when receive token changes
   useEffect(() => {
     if (receiveToken) {
-      getPrice(
-        receiveToken.contract,
-        chainNameToChainIdTokensData(receiveToken.blockchain)
-      )
-        .then((rates) => {
-          if (rates?.usd) {
-            dispatch(setUsdPriceReceiveToken(rates.usd));
-          }
-        })
-        .catch((e) => {
-          console.error('Failed to fetch USD price of token:', e);
-          dispatch(setUsdPriceReceiveToken(0));
-        });
+      if (!receiveToken.price) {
+        console.error(
+          `Failed to fetch USD price of token: ${receiveToken.symbol} ${receiveToken.name} on ${receiveToken.blockchain}`
+        );
+        dispatch(setUsdPriceReceiveToken(0));
+      }
+
+      if (receiveToken.price) {
+        dispatch(setUsdPriceReceiveToken(receiveToken.price));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receiveToken]);
@@ -159,33 +139,12 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   }, 2000);
 
   // Similar function being used for the SendModal and AccountModal to check tokens balances
-  const tokenBalanceLimit = (tokenAmount: number) => {
-    if (!swapToken) return undefined;
-
-    const assetBalance = balances[
-      chainNameToChainIdTokensData(swapToken.blockchain)
-    ]?.[walletAddress as string]?.find((balance) => {
-      if (!swapToken.contract) {
-        return 'This token does not exist in your wallet';
-      }
-
-      const assetAddress = swapToken.contract;
-
-      const isNativeBalance =
-        balance.token === null || isZeroAddress(balance.token);
-
-      return (
-        (isNativeBalance && isZeroAddress(assetAddress)) ||
-        addressesEqual(balance.token, assetAddress)
-      );
-    });
-
-    const assetBalanceValue = assetBalance ? assetBalance.balance : '0';
-    const balance = processEth(assetBalanceValue, swapToken.decimals ?? 18);
+  const tokenBalanceLimit = (tokenAmount: number, balance: number) => {
+    if (!swapToken && !balance) return undefined;
 
     // Check if the value exceeds the max token amount limit
     if (tokenAmount > balance) {
-      return `The maximum amount of ${swapToken?.symbol} in your wallet is ${balance.toFixed(4)} ${swapToken?.symbol} - please change the amount and try again`;
+      return `The maximum amount of ${swapToken?.symbol} in your wallet is ${balance.toFixed(6)} ${swapToken?.symbol} - please change the amount and try again`;
     }
 
     return undefined;
@@ -201,7 +160,7 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
     dispatch(setBestOffer(undefined));
-    if (amountSwap) {
+    if (amountSwap && swapToken && receiveToken) {
       dispatch(setIsOfferLoading(true));
       debouncedGetOffer();
     }
@@ -240,12 +199,12 @@ const EnterAmount = ({ type, tokenSymbol }: EnterAmountProps) => {
             className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
             data-testid="enter-amount-input"
           />
-          {tokenBalanceLimit(Number(inputValue)) && (
+          {tokenBalanceLimit(Number(inputValue), tokenBalance || 0) && (
             <BodySmall
               id="token-balance-limit-exchange"
               data-testid="error-max-limit"
             >
-              {tokenBalanceLimit(Number(inputValue))}
+              {tokenBalanceLimit(Number(inputValue), tokenBalance || 0)}
             </BodySmall>
           )}
         </>

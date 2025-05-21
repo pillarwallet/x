@@ -27,6 +27,7 @@ exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
             alt="token-logo"
             className="w-full h-full object-fill rounded-full"
             data-testid="token-info-horizontal-logo"
+            onError={[Function]}
             src="https://www.logo.com/example/"
           />
           <div

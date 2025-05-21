@@ -3,11 +3,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // types
 import { Token } from '../../../services/tokensData';
+import { PortfolioData } from '../../../types/api';
 import { ChainType, SwapOffer } from '../utils/types';
 
 export type SwapState = {
-  swapTokenData: Token[];
-  receiveTokenData: Token[];
   isSwapOpen: boolean;
   isReceiveOpen: boolean;
   swapChain?: ChainType;
@@ -17,16 +16,17 @@ export type SwapState = {
   amountSwap: number;
   amountReceive: number;
   bestOffer?: SwapOffer;
-  searchTokenResult: Token[];
+  searchTokenResult: Token[] | undefined;
   usdPriceSwapToken: number;
   usdPriceReceiveToken: number;
   isOfferLoading: boolean;
-  searchToken: string;
+  searchToken: string | undefined;
+  isTokenSearchLoading: boolean;
+  isTokenSearchErroring: boolean;
+  walletPortfolio: PortfolioData | undefined;
 };
 
 const initialState: SwapState = {
-  swapTokenData: [],
-  receiveTokenData: [],
   isSwapOpen: false,
   isReceiveOpen: false,
   swapChain: {
@@ -42,23 +42,20 @@ const initialState: SwapState = {
   amountSwap: 0,
   amountReceive: 0,
   bestOffer: undefined,
-  searchTokenResult: [],
+  searchTokenResult: undefined,
   usdPriceSwapToken: 0,
   usdPriceReceiveToken: 0,
   isOfferLoading: false,
-  searchToken: '',
+  searchToken: undefined,
+  isTokenSearchLoading: false,
+  isTokenSearchErroring: false,
+  walletPortfolio: undefined,
 };
 
 const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: {
-    setSwapTokenData(state, action: PayloadAction<Token[]>) {
-      state.swapTokenData = action.payload;
-    },
-    setReceiveTokenData(state, action: PayloadAction<Token[]>) {
-      state.receiveTokenData = action.payload;
-    },
     setIsSwapOpen(state, action: PayloadAction<boolean>) {
       state.isSwapOpen = action.payload;
     },
@@ -86,7 +83,7 @@ const swapSlice = createSlice({
     setBestOffer(state, action: PayloadAction<SwapOffer | undefined>) {
       state.bestOffer = action.payload;
     },
-    setSearchTokenResult(state, action: PayloadAction<Token[]>) {
+    setSearchTokenResult(state, action: PayloadAction<Token[] | undefined>) {
       state.searchTokenResult = action.payload;
     },
     setUsdPriceSwapToken(state, action: PayloadAction<number>) {
@@ -98,15 +95,25 @@ const swapSlice = createSlice({
     setIsOfferLoading(state, action: PayloadAction<boolean>) {
       state.isOfferLoading = action.payload;
     },
-    setSearchToken(state, action: PayloadAction<string>) {
+    setSearchToken(state, action: PayloadAction<string | undefined>) {
       state.searchToken = action.payload;
+    },
+    setIsTokenSearchLoading(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchLoading = action.payload;
+    },
+    setIsTokenSearchErroring(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchErroring = action.payload;
+    },
+    setWalletPortfolio(
+      state,
+      action: PayloadAction<PortfolioData | undefined>
+    ) {
+      state.walletPortfolio = action.payload;
     },
   },
 });
 
 export const {
-  setSwapTokenData,
-  setReceiveTokenData,
   setIsSwapOpen,
   setIsReceiveOpen,
   setSwapChain,
@@ -121,6 +128,9 @@ export const {
   setUsdPriceReceiveToken,
   setIsOfferLoading,
   setSearchToken,
+  setIsTokenSearchLoading,
+  setIsTokenSearchErroring,
+  setWalletPortfolio,
 } = swapSlice.actions;
 
 export default swapSlice;
