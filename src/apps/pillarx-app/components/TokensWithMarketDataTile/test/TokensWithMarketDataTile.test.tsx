@@ -135,14 +135,14 @@ describe('<TokensWithMarketDataTile />', () => {
     expect(mobileScreen.getByText('ETH')).toBeInTheDocument();
     expect(mobileScreen.getByText('$1.2m')).toBeInTheDocument();
     expect(mobileScreen.getByText('$30,123')).toBeInTheDocument();
-    expect(mobileScreen.getByText('$0.042188')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$0.04219')).toBeInTheDocument(); // rounded up with limitDigitsNumber helper function
     expect(mobileScreen.getByText('20.1%')).toBeInTheDocument();
     expect(mobileScreen.getByText('1823')).toBeInTheDocument();
 
     expect(mobileScreen.getAllByText('XDAI')).toHaveLength(2);
     expect(mobileScreen.getByText('$1.4m')).toBeInTheDocument();
     expect(mobileScreen.getByText('$3,123')).toBeInTheDocument();
-    expect(mobileScreen.getByText('$1.062188')).toBeInTheDocument();
+    expect(mobileScreen.getByText('$1.0622')).toBeInTheDocument(); // rounded up with limitDigitsNumber helper function
     expect(mobileScreen.getByText('3.1%')).toBeInTheDocument();
     expect(mobileScreen.getByText('1423')).toBeInTheDocument();
   });

@@ -94,8 +94,8 @@ const BalancePnlGraph = () => {
     (state) =>
       state.walletPortfolio.walletPortfolioWithPnl as PortfolioData | undefined
   );
-  const isWalletPorfolioWithPnlLoading = useAppSelector(
-    (state) => state.walletPortfolio.isWalletPorfolioWithPnlLoading as boolean
+  const isWalletPortfolioWithPnlLoading = useAppSelector(
+    (state) => state.walletPortfolio.isWalletPortfolioWithPnlLoading as boolean
   );
   const isWalletPortfolioWithPnlErroring = useAppSelector(
     (state) => state.walletPortfolio.isWalletPortfolioWithPnlErroring as boolean
@@ -194,7 +194,7 @@ const BalancePnlGraph = () => {
     isBalanceGraph,
     periodFilter,
     periodFilterPnl,
-    walletHistoryGraph?.balance_history.length,
+    walletHistoryGraph?.balance_history?.length,
     walletPortfolioWithPnl?.total_pnl_history,
   ]);
 
@@ -425,8 +425,10 @@ const BalancePnlGraph = () => {
     );
   }
 
-  if (selectedBalanceOrPnl === 'pnl' && isWalletPorfolioWithPnlLoading) {
-    <div className="flex w-full rounded-[10px] animate-pulse desktop:h-full tablet:h-[150px] mobile:h-[150px] bg-white/[.5]" />;
+  if (selectedBalanceOrPnl === 'pnl' && isWalletPortfolioWithPnlLoading) {
+    return (
+      <div className="flex w-full rounded-[10px] animate-pulse desktop:h-full tablet:h-[150px] mobile:h-[150px] bg-white/[.5]" />
+    );
   }
 
   if (selectedBalanceOrPnl === 'balance' && isWalletHistoryGraphErroring) {

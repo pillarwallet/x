@@ -100,7 +100,7 @@ export const getTopNonPrimeAssetsAcrossChains = (
     .flatMap((assetData) =>
       assetData.contracts_balances.map((contract) => {
         const usdBalance = contract.balance * assetData.price;
-        const priceChangePercent = assetData.price_change_24h;
+        const priceChangePercent = assetData.price_change_24h ?? 0;
 
         const previousBalance =
           priceChangePercent === -100

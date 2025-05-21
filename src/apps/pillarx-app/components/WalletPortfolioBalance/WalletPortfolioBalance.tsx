@@ -30,11 +30,11 @@ const WalletPortfolioBalance = () => {
     (state) =>
       state.walletPortfolio.topTokenUnrealizedPnL as WalletHistory | undefined
   );
-  const isWalletPorfolioLoading = useAppSelector(
-    (state) => state.walletPortfolio.isWalletPorfolioLoading as boolean
+  const isWalletPortfolioLoading = useAppSelector(
+    (state) => state.walletPortfolio.isWalletPortfolioLoading as boolean
   );
-  const isWalletPorfolioWithPnlLoading = useAppSelector(
-    (state) => state.walletPortfolio.isWalletPorfolioWithPnlLoading as boolean
+  const isWalletPortfolioWithPnlLoading = useAppSelector(
+    (state) => state.walletPortfolio.isWalletPortfolioWithPnlLoading as boolean
   );
   const isWalletHistoryGraphLoading = useAppSelector(
     (state) => state.walletPortfolio.isWalletHistoryGraphLoading as boolean
@@ -44,8 +44,8 @@ const WalletPortfolioBalance = () => {
   );
 
   const isAnyDataFetching =
-    isWalletPorfolioLoading ||
-    isWalletPorfolioWithPnlLoading ||
+    isWalletPortfolioLoading ||
+    isWalletPortfolioWithPnlLoading ||
     isWalletHistoryGraphLoading ||
     isTopTokenUnrealizedPnLLoading;
 
@@ -88,7 +88,7 @@ const WalletPortfolioBalance = () => {
           />
           <Body>My portfolio</Body>
         </div>
-        {isWalletPorfolioLoading || !walletPortfolio ? (
+        {isWalletPortfolioLoading || !walletPortfolio ? (
           <SkeletonLoader $height="45px" $width="150px" $radius="10px" />
         ) : (
           <div className="flex flex-wrap gap-1.5 items-baseline">
@@ -101,14 +101,14 @@ const WalletPortfolioBalance = () => {
                 : '0.00'}
             </p>
             <div className="flex tablet:flex-wrap mobile:flex-wrap gap-1.5 items-baseline">
-              {!balanceChange || !balanceChange?.usdValue ? null : (
+              {!balanceChange ? null : (
                 <Body
                   className={`text-base font-normal ${balanceChange.usdValue > 0 && 'text-market_row_green'} ${balanceChange.usdValue < 0 && 'text-percentage_red'} ${getUsdChangeText() === '$0.00' && 'text-white text-opacity-50'} ${balanceChange.usdValue === 0 && 'text-white text-opacity-50 bg-white/[.1]'}`}
                 >
                   {getUsdChangeText()}
                 </Body>
               )}
-              {!balanceChange || !balanceChange?.percentageValue ? null : (
+              {!balanceChange ? null : (
                 <div
                   className={`flex gap-1 items-center px-1 rounded ${balanceChange.percentageValue > 0 && 'text-market_row_green bg-market_row_green/[.1]'} ${balanceChange.percentageValue < 0 && 'text-percentage_red bg-percentage_red/[.1]'} ${balanceChange.percentageValue === 0 && 'text-white text-opacity-50 bg-white/[.1]'}`}
                 >
@@ -137,7 +137,7 @@ const WalletPortfolioBalance = () => {
                   </BodySmall>
                 </div>
               )}
-              {!balanceChange || !balanceChange.percentageValue ? null : (
+              {!balanceChange ? null : (
                 <BodySmall
                   className={`font-normal px-1 rounded ${balanceChange.percentageValue === 0 ? 'text-white text-opacity-50 bg-white/[.1]' : 'text-purple_medium bg-purple_medium/[.1]'} `}
                 >

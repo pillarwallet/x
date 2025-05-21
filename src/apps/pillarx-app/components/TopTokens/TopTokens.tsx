@@ -25,8 +25,8 @@ const TopTokens = () => {
     (state) =>
       state.walletPortfolio.walletPortfolio as PortfolioData | undefined
   );
-  const isWalletPorfolioLoading = useAppSelector(
-    (state) => state.walletPortfolio.isWalletPorfolioLoading as boolean
+  const isWalletPortfolioLoading = useAppSelector(
+    (state) => state.walletPortfolio.isWalletPortfolioLoading as boolean
   );
   const isWalletPortfolioErroring = useAppSelector(
     (state) => state.walletPortfolio.isWalletPortfolioErroring as boolean
@@ -56,7 +56,7 @@ const TopTokens = () => {
       <div className="desktop:hidden text-base font-medium text-white">
         Top Tokens
       </div>
-      {topTokens ? (
+      {!isTopTokensEmpty ? (
         <div className="grid desktop:grid-cols-[2fr_1fr_1fr] grid-cols-2 gap-3">
           {/* Header Row */}
           <div className="tablet:hidden mobile:hidden text-base font-medium text-white">
@@ -83,7 +83,7 @@ const TopTokens = () => {
                   chainLogo={getLogoForChainId(
                     parseInt(token.contract.chainId.split(':')[1], 10)
                   )}
-                  tokenName="Token Name"
+                  tokenName={token.asset.name || token.asset.symbol}
                   size="w-9 h-9"
                   chainLogoSize="w-[14px] h-[14px]"
                 />
@@ -157,12 +157,12 @@ const TopTokens = () => {
         </div>
       ) : (
         <div className="flex flex-col">
-          {isWalletPorfolioLoading || isTopTokenUnrealizedPnLLoading ? null : (
+          {isWalletPortfolioLoading || isTopTokenUnrealizedPnLLoading ? null : (
             <div className="text-base font-medium text-white">Top Tokens</div>
           )}
           <div className="flex items-center justify-center w-full h-[200px]">
             {(isWalletPortfolioErroring || isTopTokenUnrealizedPnLErroring) &&
-            (!isWalletPorfolioLoading || !isTopTokenUnrealizedPnLLoading) ? (
+            (!isWalletPortfolioLoading || !isTopTokenUnrealizedPnLLoading) ? (
               <div className="flex flex-col items-center justify-center gap-2">
                 {isWalletPortfolioErroring && (
                   <Body className="italic text-percentage_red font-normal">
@@ -181,7 +181,7 @@ const TopTokens = () => {
             ) : null}
 
             {/* No tokens fallback */}
-            {!isWalletPorfolioLoading &&
+            {!isWalletPortfolioLoading &&
               !isTopTokenUnrealizedPnLLoading &&
               !isWalletPortfolioErroring &&
               !isTopTokenUnrealizedPnLErroring &&

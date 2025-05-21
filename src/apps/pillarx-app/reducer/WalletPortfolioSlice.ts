@@ -15,10 +15,10 @@ import { PeriodFilterBalance, PeriodFilterPnl } from '../utils/portfolio';
 
 export type WalletPortfolioState = {
   walletPortfolio: PortfolioData | undefined;
-  isWalletPorfolioLoading: boolean;
+  isWalletPortfolioLoading: boolean;
   isWalletPortfolioErroring: boolean;
   walletPortfolioWithPnl: PortfolioData | undefined;
-  isWalletPorfolioWithPnlLoading: boolean;
+  isWalletPortfolioWithPnlLoading: boolean;
   isWalletPortfolioWithPnlErroring: boolean;
   priceGraphPeriod: TokenPriceGraphPeriod;
   periodFilter: PeriodFilterBalance;
@@ -36,10 +36,10 @@ export type WalletPortfolioState = {
 
 const initialState: WalletPortfolioState = {
   walletPortfolio: undefined,
-  isWalletPorfolioLoading: false,
+  isWalletPortfolioLoading: false,
   isWalletPortfolioErroring: false,
   walletPortfolioWithPnl: undefined,
-  isWalletPorfolioWithPnlLoading: false,
+  isWalletPortfolioWithPnlLoading: false,
   isWalletPortfolioWithPnlErroring: false,
   priceGraphPeriod: {
     from: convertDateToUnixTimestamp(sub(new Date(), { days: 1 })),
@@ -68,8 +68,8 @@ const walletPortfolioSlice = createSlice({
     ) {
       state.walletPortfolio = action.payload;
     },
-    setIsWalletPorfolioLoading(state, action: PayloadAction<boolean>) {
-      state.isWalletPorfolioLoading = action.payload;
+    setIsWalletPortfolioLoading(state, action: PayloadAction<boolean>) {
+      state.isWalletPortfolioLoading = action.payload;
     },
     setIsWalletPortfolioErroring(state, action: PayloadAction<boolean>) {
       state.isWalletPortfolioErroring = action.payload;
@@ -81,7 +81,7 @@ const walletPortfolioSlice = createSlice({
       state.walletPortfolioWithPnl = action.payload;
     },
     setIsWalletPortfolioWithPnlLoading(state, action: PayloadAction<boolean>) {
-      state.isWalletPorfolioWithPnlLoading = action.payload;
+      state.isWalletPortfolioWithPnlLoading = action.payload;
     },
     setIsWalletPortfolioWithPnlErroring(state, action: PayloadAction<boolean>) {
       state.isWalletPortfolioWithPnlErroring = action.payload;
@@ -133,7 +133,7 @@ const walletPortfolioSlice = createSlice({
 
 export const {
   setWalletPortfolio,
-  setIsWalletPorfolioLoading,
+  setIsWalletPortfolioLoading,
   setIsWalletPortfolioErroring,
   setWalletPortfolioWithPnl,
   setIsWalletPortfolioWithPnlLoading,

@@ -27,8 +27,8 @@ import {
   setIsTopTokenUnrealizedPnLLoading,
   setIsWalletHistoryGraphErroring,
   setIsWalletHistoryGraphLoading,
-  setIsWalletPorfolioLoading,
   setIsWalletPortfolioErroring,
+  setIsWalletPortfolioLoading,
   setIsWalletPortfolioWithPnlErroring,
   setIsWalletPortfolioWithPnlLoading,
   setTopTokenUnrealizedPnL,
@@ -145,7 +145,7 @@ const WalletPortfolioTile = () => {
     isWalletPortfolioDataSuccess,
     walletPortfolioDataError,
     setWalletPortfolio,
-    setIsWalletPorfolioLoading,
+    setIsWalletPortfolioLoading,
     setIsWalletPortfolioErroring
   );
 

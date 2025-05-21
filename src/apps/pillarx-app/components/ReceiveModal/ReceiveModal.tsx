@@ -5,19 +5,22 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
 // utils
-import { CompatibleChains, getLogoForChainId } from '../../../utils/blockchain';
+import {
+  CompatibleChains,
+  getLogoForChainId,
+} from '../../../../utils/blockchain';
 
 // reducer
-import { useAppDispatch, useAppSelector } from '../hooks/useReducerHooks';
-import { setIsReceiveModalOpen } from '../reducer/WalletPortfolioSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
 // images
-import CopyIcon from '../images/token-market-data-copy.png';
+import CopyIcon from '../../images/copy-icon.svg';
 
 // components
-import TokenLogoMarketDataRow from './TokenMarketDataRow/TokenLogoMarketDataRow';
-import Body from './Typography/Body';
-import BodySmall from './Typography/BodySmall';
+import TokenLogoMarketDataRow from '../TokenMarketDataRow/TokenLogoMarketDataRow';
+import Body from '../Typography/Body';
+import BodySmall from '../Typography/BodySmall';
 
 const ReceiveModal = () => {
   const accountAddress = useWalletAddress();

@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
 // components
-import ReceiveModal from '../ReceiveModal';
+import ReceiveModal from '../ReceiveModal/ReceiveModal';
 import BodySmall from '../Typography/BodySmall';
 import WalletConnectDropdown from '../WalletConnectDropdown/WalletConnectDropdown';
 
@@ -14,7 +14,8 @@ const WalletPortfolioButtons = () => {
   return (
     <div className="flex w-full desktop:gap-x-2.5 tablet:gap-x-2.5">
       <ReceiveModal />
-      <div
+      <button
+        type="button"
         className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
         onClick={() => dispatch(setIsReceiveModalOpen(true))}
       >
@@ -22,7 +23,7 @@ const WalletPortfolioButtons = () => {
           <BodySmall>Receive</BodySmall>
           <RiArrowDownLine size={16} color="white" />
         </div>
-      </div>
+      </button>
       <WalletConnectDropdown />
     </div>
   );

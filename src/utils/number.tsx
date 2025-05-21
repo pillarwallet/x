@@ -1,4 +1,4 @@
-import { parseInt } from 'lodash';
+import { parseInt as parseIntLodash } from 'lodash';
 
 export const formatAmountDisplay = (
   amountRaw: string | number,
@@ -48,8 +48,8 @@ export const limitDigitsNumber = (num: number): number => {
   const [integerPart, fractionalPart] = numStr.split('.');
 
   // If integer part is greater than 0 it will show between 2 and 4 decimals
-  if (parseInt(integerPart) > 0) {
-    if (parseInt(integerPart) >= 1000) {
+  if (parseIntLodash(integerPart) > 0) {
+    if (parseIntLodash(integerPart) >= 1000) {
       return Number(num.toFixed(2));
     }
     return Number(num.toFixed(4));
