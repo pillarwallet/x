@@ -41,7 +41,7 @@ describe('<RightColumnTokenMarketDataRow /> - ETH token row', () => {
   it('renders percentage, price and transaction count ', () => {
     render(<RightColumnTokenMarketDataRow data={ethTokenRow} />);
 
-    expect(screen.getByText('$0.042188')).toBeInTheDocument();
+    expect(screen.getByText('$0.04219')).toBeInTheDocument(); // rounded up with limitDigitsNumber helper function
     expect(screen.getByText('20.1%')).toBeInTheDocument();
     expect(screen.getByText(/Txs:/)).toBeInTheDocument();
     expect(screen.getByText('1823')).toBeInTheDocument();

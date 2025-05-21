@@ -694,11 +694,13 @@ export type AssetDataMobula = {
   max_buy_price?: number;
 };
 
+export type PnLEntry = [string, { realized: number; unrealized: number }];
+
 export type PnLHistory = {
-  '24h': string[][];
-  '7d': string[][];
-  '30d': string[][];
-  '1y': string[][];
+  '24h': PnLEntry[];
+  '7d': PnLEntry[];
+  '30d': PnLEntry[];
+  '1y': PnLEntry[];
 };
 
 export type TotalPnLHistory = {
@@ -735,6 +737,16 @@ export type WalletPortfolioMobulaResponse = {
   result: { data: PortfolioData };
 };
 
-// export type WalletBalances = {
-//   tokenName: string;
-// };
+export type BalanceHistoryEntry = [timestamp: number, balance: number];
+
+export type WalletHistory = {
+  wallets: string[];
+  balance_usd: number;
+  balance_history: BalanceHistoryEntry[];
+};
+
+export type WalletHistoryMobulaResponse = {
+  result: { data: WalletHistory };
+};
+
+export type PrimeAssetType = { name: string; symbol: string };
