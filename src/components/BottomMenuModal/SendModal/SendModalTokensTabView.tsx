@@ -47,6 +47,7 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
+import { getAllGaslessPaymasters } from '../../../services/gasless';
 
 // utils
 import {
@@ -196,59 +197,50 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setQueryString(
       `?apiKey=${process.env.REACT_APP_PAYMASTER_API_KEY}&chainId=${selectedAsset.chainId}&useVp=true`
     );
-    fetch(
-      `${paymasterUrl}/getAllCommonERC20PaymasterAddress?apiKey=${process.env.REACT_APP_PAYMASTER_API_KEY}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({}),
-      }
-    ).then((res) => {
-      res.json().then(async (data) => {
-        if (data.message) {
-          let paymasterObject = JSON.parse(data.message);
-          paymasterObject = paymasterObject.filter(
-            (item: { epVersion: string; chainId: number; gasToken: string }) =>
-              item.epVersion === 'EPV_07' &&
-              item.chainId === selectedAsset?.chainId &&
-              tokens.find(
-                (token: Token) =>
-                  token.contract === item.gasToken.toLowerCase() ||
-                  (isPolygonAssetNative(item.gasToken, item.chainId) &&
-                    token.contract === ethers.constants.AddressZero)
-              )
-          );
-          const feeOptions = paymasterObject.map(
-            (item: {
-              gasToken: string;
-              chainId: number;
-              epVersion: string;
-              paymasterAddress: string;
-              // eslint-disable-next-line consistent-return, array-callback-return
-            }) => {
-              const tokenData = tokens.find(
-                (token: Token) => token.contract === item.gasToken.toLowerCase()
-              );
-              if (tokenData)
-                return {
-                  id: `${item.gasToken}-${item.chainId}-${item.paymasterAddress}-${tokenData.decimals}`,
-                  type: 'token',
-                  title: tokenData.name,
-                  imageSrc: tokenData.logo,
-                  chainId: chainNameToChainIdTokensData(tokenData.blockchain),
-                  value: tokenData.balance,
-                  price: tokenData.price,
-                  asset: {
-                    ...tokenData,
-                    contract: item.gasToken,
-                    decimals: tokenData.decimals,
-                  },
-                };
-            }
-          );
-          setFeeAssetOptions(feeOptions);
-          if (feeOptions.length > 0) {
+    getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
+      (paymasterObject) => {
+        // eslint-disable-next-line no-console
+        console.log(paymasterObject);
+        if (paymasterObject) {
+          const feeOptions = paymasterObject
+            .map(
+              (item: {
+                gasToken: string;
+                chainId: number;
+                epVersion: string;
+                paymasterAddress: string;
+                // eslint-disable-next-line consistent-return, array-callback-return
+              }) => {
+                const tokenData = tokens.find(
+                  (token: Token) =>
+                    token.contract === item.gasToken.toLowerCase()
+                );
+                if (tokenData)
+                  return {
+                    id: `${item.gasToken}-${item.chainId}-${item.paymasterAddress}-${tokenData.decimals}`,
+                    type: 'token',
+                    title: tokenData.name,
+                    imageSrc: tokenData.logo,
+                    chainId: chainNameToChainIdTokensData(tokenData.blockchain),
+                    value: tokenData.balance,
+                    price: tokenData.price,
+                    asset: {
+                      ...tokenData,
+                      contract: item.gasToken,
+                      decimals: tokenData.decimals,
+                    },
+                  } as TokenAssetSelectOption;
+              }
+            )
+            .filter(
+              (value): value is TokenAssetSelectOption => value !== undefined
+            );
+          if (feeOptions && feeOptions.length > 0 && feeOptions[0]) {
+            setFeeAssetOptions(feeOptions);
             // get Skandha gas price
-            setGasPrice(await getGasPrice(selectedAsset.chainId));
+            getGasPrice(selectedAsset.chainId).then((res) => {
+              setGasPrice(res);
+            });
             setSelectedFeeAsset({
               token: feeOptions[0].asset.contract,
               decimals: feeOptions[0].asset.decimals,
@@ -267,8 +259,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           setIsPaymaster(false);
           setFeeType([]);
         }
-      });
-    });
+      }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAsset, walletPortfolio]);
 
