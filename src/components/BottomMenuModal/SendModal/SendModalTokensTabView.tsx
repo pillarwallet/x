@@ -47,12 +47,14 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
-import { getAllGaslessPaymasters } from '../../../services/gasless';
+import {
+  getAllGaslessPaymasters,
+  getGasPrice,
+} from '../../../services/gasless';
 
 // utils
 import {
   decodeSendTokenCallData,
-  getGasPrice,
   getNativeAssetForChainId,
   isPolygonAssetNative,
   isValidEthereumAddress,
