@@ -51,6 +51,7 @@ import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence'
 // utils
 import {
   decodeSendTokenCallData,
+  getGasPrice,
   getNativeAssetForChainId,
   isPolygonAssetNative,
   isValidEthereumAddress,
@@ -68,7 +69,7 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
-} from '../../../apps/deposit/hooks/useReducerHooks';
+} from '../../../apps/the-exchange/hooks/useReducerHooks';
 import {
   convertPortfolioAPIResponseToToken,
   useGetWalletPortfolioQuery,
@@ -160,6 +161,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       dispatch(setWalletPortfolio(walletPortfolioData?.result?.data));
     }
     if (!isWalletPortfolioDataSuccess || walletPortfolioDataError) {
+      if (walletPortfolioDataError) {
+        console.error(walletPortfolioDataError);
+        setErrorMessage(t`error.failedWalletPortfolio`);
+      }
       dispatch(setWalletPortfolio(undefined));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,31 +189,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     },
   ]);
 
-  const getGasPrice = async (chainId: number) => {
-    const gasRes = await fetch(
-      `${process.env.REACT_APP_GAS_URL}/${chainId}?api-key=${process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'skandha_getGasPrice',
-        }),
-      }
-    );
-    gasRes.json().then((response) => {
-      if (response.result) {
-        const totalGasPrice = BigNumber.from(response.result.maxFeePerGas)
-          .add(response.result.maxPriorityFeePerGas)
-          .toString();
-        setGasPrice(totalGasPrice);
-      }
-    });
-  };
-
   useEffect(() => {
     if (!walletPortfolio) return;
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
@@ -223,7 +203,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         body: JSON.stringify({}),
       }
     ).then((res) => {
-      res.json().then((data) => {
+      res.json().then(async (data) => {
         if (data.message) {
           let paymasterObject = JSON.parse(data.message);
           paymasterObject = paymasterObject.filter(
@@ -268,7 +248,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           setFeeAssetOptions(feeOptions);
           if (feeOptions.length > 0) {
             // get Skandha gas price
-            getGasPrice(selectedAsset.chainId);
+            setGasPrice(await getGasPrice(selectedAsset.chainId));
             setSelectedFeeAsset({
               token: feeOptions[0].asset.contract,
               decimals: feeOptions[0].asset.decimals,

@@ -2,7 +2,7 @@
 import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   arbitrum,
   avalanche,
@@ -287,3 +287,29 @@ export const CompatibleChains = [
     chainName: 'Arbitrum',
   },
 ];
+
+export const getGasPrice = async (chainId: number) => {
+  let gasPrice = '0';
+  const gasRes = await fetch(
+    `${process.env.REACT_APP_GAS_URL}/${chainId}?api-key=${process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'skandha_getGasPrice',
+      }),
+    }
+  );
+  gasRes.json().then((response) => {
+    if (response.result) {
+      gasPrice = BigNumber.from(response.result.maxFeePerGas)
+        .add(response.result.maxPriorityFeePerGas)
+        .toString();
+    }
+  });
+  return gasPrice;
+};

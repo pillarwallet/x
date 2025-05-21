@@ -48,7 +48,8 @@
     "failedToGetTransactionDataForBatching": "Failed to get transaction data for batching",
     "cannotBatchBatchedTransactions": "Cannot batch batched transactions",
     "insufficientBalanceForGasless": "Insufficient balance for gasless transaction",
-    "paymasterNotSupported": "Gasless action for add to batch is not available at the moment"
+    "paymasterNotSupported": "Gasless action for add to batch is not available at the moment",
+    "failedWalletPortfolio": "Failed to get wallet balances"
   },
   "warning": {
     "transactionSafety": {
