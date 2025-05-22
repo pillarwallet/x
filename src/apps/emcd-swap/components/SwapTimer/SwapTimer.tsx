@@ -6,11 +6,10 @@ interface SwapTimerProps {
 }
 
 const SwapTimer:React.FC<SwapTimerProps> = ({ duration, onComplete }) => {
-  const [remaining, setRemaining] = useState(duration); // в секундах
+  const [remaining, setRemaining] = useState(duration); // in seconds
 
   useEffect(() => {
     if (remaining <= 0) {
-      onComplete?.();
       return;
     }
 
