@@ -11,11 +11,13 @@ const SelectDropdown: React.FC<{
   itemText: string;
   withIcon?: boolean;
   itemIcon?: string;
+  id: string;
   handleOptionClick: (option: Option) => void;
   highlightedIndex: number;
-}> = ({ options, itemValue, itemText, handleOptionClick, withIcon, itemIcon, highlightedIndex }) => {
+}> = ({ options, itemValue, itemText, handleOptionClick, withIcon, itemIcon, highlightedIndex, id }) => {
   return (
     <ul
+      id={id}
       role="listbox"
       tabIndex={-1}
       className="absolute left-0 right-0 mt-1 rounded-sm bg-bg-2 border border-color-7 shadow-md z-10 max-h-61.25 overflow-y-auto"

@@ -7,6 +7,7 @@ export interface Option {
    [key: string]: any;
    id?: string | number;
    name?: string;
+   icon_url?: string;
 }
 interface CustomSelectProps {
   options: Option[];
@@ -16,7 +17,8 @@ interface CustomSelectProps {
   itemText?: string; // Field for displaying text (default is "name")
   withIcon?: boolean;
   itemIcon?: string;
-  onChange?: (value: any) => void; // Callback при выборе
+  className?: string; // Allow additional classes for styling
+  onChange?: (value: Option) => void; // Callback when an option is selected
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -27,6 +29,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   itemText = "name",
   onChange,
   withIcon,
+  className,
   itemIcon,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +44,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         (opt) => opt[itemValue] === currentValue[itemValue]
       );
       if (currentIndex !== -1) setHighlightedIndex(currentIndex);
+    } else {
+      setSelected(null)
+      setHighlightedIndex(0);
     }
   }, [currentValue, options, itemValue]);
 
@@ -68,17 +74,24 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Escape" && isOpen) {
       setIsOpen(false);
-    } else if (e.key === "Enter") {
+    } else if (e.key === "Enter" || e.key === " ") {
       if (isOpen) {
-        handleOptionClick(options[highlightedIndex]);
+        if (options.length > 0) {
+          handleOptionClick(options[highlightedIndex]);
+        }
       } else {
         setIsOpen(true);
       }
+      e.preventDefault(); // Prevent page scroll for Space key
     } else if (e.key === "ArrowDown" && isOpen) {
-      setHighlightedIndex((prev) => (prev + 1) % options.length);
+      if (options.length > 0) {
+        setHighlightedIndex((prev) => (prev + 1) % options.length);
+      }
       e.preventDefault();
     } else if (e.key === "ArrowUp" && isOpen) {
-      setHighlightedIndex((prev) => (prev - 1 + options.length) % options.length);
+      if (options.length > 0) {
+        setHighlightedIndex((prev) => (prev - 1 + options.length) % options.length);
+      }
       e.preventDefault();
     }
   };
@@ -86,7 +99,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   return (
     <div
       ref={dropdownRef}
-      className="relative w-36"
+      className={`relative w-36 ${className || ''}`}
       tabIndex={0} // to allow div to receive focus
       onKeyDown={handleKeyDown}
       role="combobox"
@@ -94,7 +107,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       aria-expanded={isOpen}
       aria-controls="select-listbox"
       aria-activedescendant={
-        isOpen && options[highlightedIndex]
+        isOpen && options.length > 0 && options[highlightedIndex]
           ? `option-${options[highlightedIndex][itemValue]}`
           : undefined
       }
@@ -106,14 +119,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         itemText={itemText}
         itemIcon={itemIcon}
         withIcon={withIcon}
-        role="button"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
         toggleDropdown={toggleDropdown}
       />
 
       {isOpen && (
         <SelectDropdown
+          id="select-listbox"
           options={options}
           itemValue={itemValue}
           itemText={itemText}
