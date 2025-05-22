@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Типы состояния для уведомлений
-export type ToastType = 'success' | 'error' | null
+export type ToastType = 'success' | 'error' | 'info' | 'warning' | null
 
 export interface ToastState {
   message: string | null

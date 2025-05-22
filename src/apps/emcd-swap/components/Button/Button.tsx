@@ -1,10 +1,5 @@
 import React, { ReactNode } from 'react';
 
-enum BUTTON_ENUM {
-  SHADE = 'shade',
-  MAIN = 'main',
-}
-
 interface ButtonProps {
   children: ReactNode;
   type?: 'shade' | 'main' | 'monochrome';
@@ -12,9 +7,10 @@ interface ButtonProps {
   className?: string;
   onClick?: () => void;
   disabled?: boolean | null;
+  buttonType?: 'button' | 'submit' | 'reset';
 }
 
-const Button = ({ children, type, className, onClick, size = 'sm', disabled }: ButtonProps) => {
+const Button = ({ children, type, className, onClick, size = 'sm', disabled, buttonType = 'button' }: ButtonProps) => {
 
   const getSize = () => {
     const classes = []
@@ -31,6 +27,14 @@ const Button = ({ children, type, className, onClick, size = 'sm', disabled }: B
       classes.push('p-4')
     }
 
+    if (size === 'lg') {
+      classes.push('px-6 py-3')
+    }
+
+    if (size === 'xl') {
+      classes.push('px-8 py-4')
+    }
+
     return classes.join(' ')
   }
 
@@ -41,18 +45,22 @@ const Button = ({ children, type, className, onClick, size = 'sm', disabled }: B
       return ''
     }
 
-    if (type === BUTTON_ENUM.SHADE) {
+    if (type === 'shade') {
       classes.push('bg-bg-5')
     }
 
-    if (type === BUTTON_ENUM.MAIN) {
+    if (type === 'main') {
       classes.push('bg-brand')
+    }
+
+    if (type === 'monochrome') {
+      classes.push('bg-transparent text-color-2 border border-color-3')
     }
 
     return classes.join(' ')
   }
   return (
-    <button onClick={onClick} className={`w-full text-color-1 rounded-sm text-sm outline-none border font-medium border-transparent ${getSize()} ${getType()} ${className}`}>
+    <button onClick={onClick} type={buttonType} className={`w-full text-color-1 rounded-sm text-sm outline-none border font-medium border-transparent ${getSize()} ${getType()} ${className}`}>
       {children}
     </button>
   );

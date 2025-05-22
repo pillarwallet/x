@@ -51,7 +51,7 @@ const RecipientView = () => {
             />
 
             <div className="text-lg text-color-1">
-              {formData.amount_from} {formData.coin_from}
+              {formData.amount_from || ''} {formData.coin_from || ''}
             </div>
           </div>
         </div>

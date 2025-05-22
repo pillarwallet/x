@@ -15,6 +15,8 @@ import Header from '../../components/Header/Header';
 
 import { STATUS_ENUM } from '../../enums/status.enum';
 import { VIEW_TYPE } from '../../constants/views';
+import { showToast, ToastType } from '../../reducer/emcdSwapToastSlice';
+import { copyToClipboard } from '../../helpers/copy.helper';
 
 const ConfirmView = () => {
   const dispatch = useDispatch()
@@ -37,7 +39,7 @@ const ConfirmView = () => {
   }
 
   useEffect(() => {
-    const eventSource = new EventSource(`https://b2b-endpoint.dev-b2b.mytstnv.site/swap/status/${swapID}`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_API_BASE_URL}/swap/status/${swapID}`);
 
     eventSource.onmessage = (event) => {
       dispatch(setDetailSwapStatus(+event.data));
@@ -55,15 +57,24 @@ const ConfirmView = () => {
       }
     };
 
+    const setToast = ({ message, type }: { message: string; type: ToastType }) => {
+      dispatch(showToast({ message, type }))
+    }
+
     eventSource.onerror = (error) => {
       console.error('EventSource error:', error);
+      setToast({ message: 'Connection to status updates lost. Please refresh.', type: 'error' });
       eventSource.close();
     };
 
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [swapID, dispatch]);
+
+  const setToast = ({ message, type }: { message: string; type: ToastType }) => {
+    dispatch(showToast({ message, type }))
+  }
 
   return (
     <div>
@@ -82,7 +93,10 @@ const ConfirmView = () => {
           <div>{ formatUUID() }</div>
         </div>
 
-        <div className='cursor-pointer'>
+        <div
+          className='cursor-pointer'
+          onClick={() => copyToClipboard(swapID || '', setToast)}
+        >
           <CopyIcon />
         </div>
       </div>

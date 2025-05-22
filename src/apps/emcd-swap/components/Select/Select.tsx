@@ -4,11 +4,12 @@ import SelectActivator from './components/SelectActivator';
 import SelectDropdown from './components/SelectDropdown';
 
 export interface Option {
-   [key: string]: any;
-   id?: string | number;
-   name?: string;
-   icon_url?: string;
+  id?: string | number;
+  name?: string;
+  icon_url?: string;
+  [key: string]: any;
 }
+
 interface CustomSelectProps {
   options: Option[];
   currentValue: Record<string, any> | null;
@@ -65,10 +66,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+    return undefined;
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

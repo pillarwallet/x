@@ -2,20 +2,30 @@ import React, { useEffect, useState } from 'react';
 
 interface SwapTimerProps {
   duration: number;
+  onComplete?: () => void;
 }
 
-const SwapTimer:React.FC<SwapTimerProps> = ({ duration }) => {
+const SwapTimer:React.FC<SwapTimerProps> = ({ duration, onComplete }) => {
   const [remaining, setRemaining] = useState(duration); // в секундах
 
   useEffect(() => {
-    if (remaining <= 0) return;
+    if (remaining <= 0) {
+      onComplete?.();
+      return;
+    }
 
     const interval = setInterval(() => {
-      setRemaining(prev => prev - 1);
+      setRemaining(prev => {
+        const newValue = prev - 1;
+        if (newValue <= 0 && onComplete) {
+          onComplete();
+        }
+        return newValue;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remaining]);
+  }, [remaining, onComplete]);
 
   const formatTime = (seconds: number) => {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
@@ -23,6 +33,10 @@ const SwapTimer:React.FC<SwapTimerProps> = ({ duration }) => {
     const secs = String(seconds % 60).padStart(2, '0');
     return `${hrs}:${mins}:${secs}`;
   };
+
+  useEffect(() => {
+    setRemaining(duration);
+  }, [duration]);
 
   return (
     <div className="text-color-1 font-medium">

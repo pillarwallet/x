@@ -21,8 +21,10 @@ const FormInput: React.FC<FormInputProps> = ({
   const [stateValue, setStateValue] = useState('');
 
   useEffect(() => {
-    if (value) {
+    if (value !== null) {
       setStateValue(value);
+    } else {
+    setStateValue('');
     }
   }, [value]);
 
@@ -36,6 +38,9 @@ const FormInput: React.FC<FormInputProps> = ({
       <input
         value={stateValue}
         onChange={handleChange}
+        aria-label="Form input"
+        aria-invalid={valid === false}
+        aria-describedby={!valid ? "error-message" : undefined}
         className="w-full text-xl text-medium py-1 outline-none focus:outline-none"
       />
 
@@ -46,7 +51,7 @@ const FormInput: React.FC<FormInputProps> = ({
       ) : (
         <div className="h-1" />
       )}
-      {!valid && <div className='text-sm text-error'> {error} </div>}
+      {!valid && <div id="error-message" className='text-sm text-error'> {error} </div>}
     </div>
   );
 };

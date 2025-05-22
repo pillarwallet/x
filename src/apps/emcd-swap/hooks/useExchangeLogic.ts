@@ -22,6 +22,7 @@ import { VIEW_TYPE } from '../constants/views'
 import { showToast, ToastType } from '../reducer/emcdSwapToastSlice';
 
 export const useExchangeLogic = () => {
+
   const dispatch = useDispatch()
   const coins = useSelector(selectCoins)
 

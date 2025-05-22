@@ -42,8 +42,8 @@ select {
 [multiple]:focus,
 textarea:focus,
 select:focus {
-  --tw-ring-color: '#5e00ff';
-  border-color: '#5e00ff';
+  --tw-ring-color: #5e00ff;
+  border-color: #5e00ff;
 }
 
 @keyframes fade {

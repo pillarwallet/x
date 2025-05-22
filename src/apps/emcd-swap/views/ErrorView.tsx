@@ -14,7 +14,11 @@ import Header from '../components/Header/Header';
 import { copyToClipboard } from '../helpers/copy.helper';
 import { VIEW_TYPE } from '../constants/views';
 
-const ErrorView = () => {
+interface ErrorViewProps {
+  errorMessage?: string;
+}
+
+const ErrorView: React.FC<ErrorViewProps> = ({ errorMessage }) => {
   const dispatch = useDispatch();
 
   const [supportModal, setSupportModal] = useState(false);
@@ -28,6 +32,12 @@ const ErrorView = () => {
   const formatUUID = () => {
     if (!swapID) {
       return '';
+    }
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(swapID)) {
+      return swapID;
     }
 
     const clean = swapID.replace(/-/g, '');
@@ -56,7 +66,9 @@ const ErrorView = () => {
         <img src={ErrorImg} alt="" />
 
         <div className="flex flex-col gap-y-5">
-          <div className="text-color-1 font-semibold text-7">Что-то пошло не так</div>
+          <div className="text-color-1 font-semibold text-7">
+            {errorMessage ?? 'Что-то пошло не так'}
+          </div>
 
           <div className='text-color-6 font-medium'>
             Попробуйте еще раз <br/> или напишите в поддержку
@@ -68,7 +80,7 @@ const ErrorView = () => {
             </div>
 
             <div
-              onClick={() => copyToClipboard(swapID, setToast)}
+              onClick={() => copyToClipboard(swapID || '', setToast)}
               className="w-4 h-4 cursor-pointer"
             >
               <CopyIcon />

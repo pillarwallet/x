@@ -5,6 +5,9 @@ import { DetailSwapFormData } from '../../../../reducer/emcdSwapSlice';
 import Step from '../../../../components/Step/Step';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import ConfirmIcon from '../../../../components/icons/ConfirmIcon';
+import { showToast, ToastType } from '../../../../reducer/emcdSwapToastSlice';
+import { useDispatch } from 'react-redux';
+import { copyToClipboard } from '../../../../helpers/copy.helper';
 
 interface SendToWalletFormProps {
   confirm?: boolean | null;
@@ -14,6 +17,7 @@ interface SendToWalletFormProps {
 }
 
 const SendToWalletForm:React.FC<SendToWalletFormProps> = ({ active, confirm, needLine, formData }) => {
+  const dispatch = useDispatch()
   const getStyleTitle = () => {
     if (active) {
       return 'text-color-1'
@@ -24,6 +28,10 @@ const SendToWalletForm:React.FC<SendToWalletFormProps> = ({ active, confirm, nee
     }
 
     return 'text-color-3'
+  }
+
+  const setToast = ({ message, type }: { message: string; type: ToastType }) => {
+    dispatch(showToast({ message, type }))
   }
 
   return (
@@ -86,7 +94,7 @@ const SendToWalletForm:React.FC<SendToWalletFormProps> = ({ active, confirm, nee
               </div>
             </div>
 
-            <div>
+            <div onClick={() => copyToClipboard(formData.tag_to || '', setToast)}>
               <CopyIcon />
             </div>
           </div>}

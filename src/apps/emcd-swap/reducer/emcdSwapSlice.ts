@@ -2,6 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { VIEW_TYPE } from '../constants/views';
 
+interface ICoin {
+  title: string;
+  icon_url: string;
+  networks: Array<Record<string, string>>
+}
+
 export type SwapFormData = {
   address_to?: string | null
   tag_to?: string | null
@@ -36,7 +42,7 @@ export type EmcdSwapState = {
   depositAddress: string | null,
   currentView: VIEW_TYPE,
   backView: VIEW_TYPE,
-  coins: Array<Record<string, any>>,
+  coins: ICoin[],
   formData: SwapFormData,
   detailSwapFormData: DetailSwapFormData,
 }
@@ -79,7 +85,7 @@ const emcdSwapSlice = createSlice({
       state.currentView = state.backView
     },
 
-    setCoins(state, action: PayloadAction<Array<Record<string, any>>>) {
+    setCoins(state, action: PayloadAction<ICoin[]>) {
       state.coins = action.payload;
     },
 

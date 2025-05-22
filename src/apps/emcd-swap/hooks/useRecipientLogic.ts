@@ -19,8 +19,9 @@ import { showToast } from '../reducer/emcdSwapToastSlice'
 import { isValidEmail } from '../helpers/email-validator.helper';
 
 import { VIEW_TYPE } from '../constants/views'
+import { isValidCryptoAddress } from '../helpers/crypto-address-validator';
 
-type ToastType = 'success' | 'error' | null
+type ToastType = 'success' | 'error' | 'warning' | 'info' | null
 
 export const useRecipientLogic = () => {
   const dispatch = useDispatch()
@@ -49,41 +50,24 @@ export const useRecipientLogic = () => {
     dispatch(showToast({ message, type }))
   }
 
-  const pasteAddressTo = async () => {
+  const pasteFromClipboard = async (
+    setter: (value: string | null) => void,
+    setToast: (toast: { message: string; type: 'error' | 'success' | 'info' | 'warning' }) => void
+  ) => {
     try {
-      const text = await navigator.clipboard.readText()
-      setAddressTo(text)
+      const text = await navigator.clipboard.readText();
+      setter(text);
     } catch {
       setToast({
         message: 'Разреши вставлять текст в настройках браузера или смартфона',
         type: 'error',
-      })
+      });
     }
-  }
+  };
 
-  const pasteEmail = async () => {
-    try {
-      const text = await navigator.clipboard.readText()
-      setEmail(text)
-    } catch {
-      setToast({
-        message: 'Разреши вставлять текст в настройках браузера или смартфона',
-        type: 'error',
-      })
-    }
-  }
-
-  const pasteTagTo = async () => {
-    try {
-      const text = await navigator.clipboard.readText()
-      setTagTo(text)
-    } catch {
-      setToast({
-        message: 'Разреши вставлять текст в настройках браузера или смартфона',
-        type: 'error',
-      })
-    }
-  }
+  const pasteAddressTo = () => pasteFromClipboard(setAddressTo, setToast);
+  const pasteEmail = () => pasteFromClipboard(setEmail, setToast);
+  const pasteTagTo = () => pasteFromClipboard(setTagTo, setToast);
 
   const handleButtonClick = () => {
     dispatch(setCurrentView(VIEW_TYPE.EXCHANGE))
@@ -98,12 +82,18 @@ export const useRecipientLogic = () => {
   }
 
   const onChangeEmail = (email: string | null) => {
-    console.log('email', email);
     setEmail(email)
   }
 
   const submitForm = async () => {
-    if (!addressTo || !isValidEmail(email) || isFetchSwap || isLoading || isLoadingUser) {
+    if (
+      !addressTo ||
+      !isValidCryptoAddress(addressTo) ||
+      !isValidEmail(email) ||
+      isFetchSwap ||
+      isLoading ||
+      isLoadingUser
+    ) {
       return
     }
 
@@ -124,6 +114,7 @@ export const useRecipientLogic = () => {
       await triggerGetSwap({ swapID: result.id })
 
     } catch (err: any) {
+      console.error('Swap creation error:', err);
       setToast({ message: 'Не удалось отправить заявку на обмен', type: 'error' })
     }
   }

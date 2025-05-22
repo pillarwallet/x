@@ -19,13 +19,24 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
         className="flex justify-between items-center cursor-pointer"
       >
         <div className='text-sm text-color-1'>
-          { question }
+          {question}
+        </div>
+
+        <div className="ml-2">
+          <svg
+            className={`w-4 h-4 transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
 
       </button>
 
-      <div className={ `text-xs text-color-3 transition-all overflow-hidden ${isOpen ? 'h-auto' : 'h-0 opacity-0'}` }>
-        { answer }
+      <div className={`text-xs text-color-3 transition-all overflow-hidden ${isOpen ? 'h-auto' : 'h-0 opacity-0'}`}>
+        {answer}
       </div>
     </div>
   );

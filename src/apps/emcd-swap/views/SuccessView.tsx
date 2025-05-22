@@ -67,7 +67,7 @@ const SuccessView = () => {
             </div>
 
             <div
-              onClick={() => copyToClipboard(swapID, setToast)}
+              onClick={() => copyToClipboard(swapID || '', setToast)}
               className="w-4 h-4 cursor-pointer"
             >
               <CopyIcon />

@@ -1,10 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DetailSwapFormData, selectDepositAddress } from '../../../../reducer/emcdSwapSlice';
 
 import Step from '../../../../components/Step/Step';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import ConfirmIcon from '../../../../components/icons/ConfirmIcon';
+import { showToast, ToastType } from '../../../../reducer/emcdSwapToastSlice';
+import { copyToClipboard } from '../../../../helpers/copy.helper';
 
 interface ExchangeDepositProps {
   confirm?: boolean | null;
@@ -15,6 +17,9 @@ interface ExchangeDepositProps {
 
 const ExchangeDepositForm:React.FC<ExchangeDepositProps> = ({ active, confirm, formData, needLine }) => {
   const depositAddress = useSelector(selectDepositAddress)
+  const formattedAddress = depositAddress || 'Загрузка адреса...';
+
+  const dispatch = useDispatch();
 
   const getStyleTitle = () => {
     if (active) {
@@ -26,6 +31,10 @@ const ExchangeDepositForm:React.FC<ExchangeDepositProps> = ({ active, confirm, f
     }
 
     return 'text-color-3'
+  }
+
+  const setToast = ({ message, type }: { message: string; type: ToastType }) => {
+    dispatch(showToast({ message, type }))
   }
 
   return (
@@ -75,7 +84,7 @@ const ExchangeDepositForm:React.FC<ExchangeDepositProps> = ({ active, confirm, f
               <div className="text-sm text-color-3">По адресу</div>
 
               <div className="text-color-1 break-words pr-2">
-                {depositAddress}
+                {formattedAddress}
               </div>
             </div>
           </div>
@@ -89,7 +98,7 @@ const ExchangeDepositForm:React.FC<ExchangeDepositProps> = ({ active, confirm, f
               </div>
             </div>
 
-            <div>
+            <div onClick={() => copyToClipboard(formData.tag_to || '', setToast)}>
               <CopyIcon />
             </div>
           </div>

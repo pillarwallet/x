@@ -5,11 +5,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addMiddleware } from '../../../store';
 
 // Define types for the API responses and requests
-interface SwapCoin {
+interface ICoin {
   title: string;
   icon_url: string;
-  networks: string[];
-  // Add other properties as needed
+  networks: Array<Record<string, string>>
 }
 
 interface ErrorData {
@@ -41,7 +40,7 @@ export const emcdSwapApi = createApi({
      },
   }),
   endpoints: (builder) => ({
-    getSwapCoins: builder.query<SwapCoin[], void>({
+    getSwapCoins: builder.query<ICoin[], void>({
       query: () => 'v2/swap/coins',
       transformErrorResponse: (response: { status: number; data: ErrorData }) => {
         console.error('API Error:', response);

@@ -14,13 +14,24 @@ const ToastNotification = () => {
 
   useEffect(() => {
     if (message && type) {
-      if (type === 'success') {
-        toast.success(message)
-      } else if (type === 'error') {
-        toast.error(message)
-      }
 
-      // Очистить сообщение после того, как оно будет показано
+      switch (type) {
+        case 'success':
+          toast.success(message);
+          break;
+        case 'error':
+          toast.error(message);
+          break;
+        case 'info':
+          toast.info(message);
+          break;
+        case 'warning':
+          toast.warning(message);
+          break;
+        default:
+          toast.info(message);
+      }
+      // Clear the message after it's shown
       dispatch(clearToast())
     }
   }, [message, type, dispatch])

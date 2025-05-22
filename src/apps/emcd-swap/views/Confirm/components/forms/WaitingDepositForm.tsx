@@ -89,12 +89,12 @@ const WaitingDepositForm:React.FC<WaitingDepositFormProps> = ({ active, confirm,
                 />
 
                 <div className="text-color-1">
-                  {formData.amount_from} {formData.coin_from}
+                  {formData.amount_from || ''} {formData.coin_from || ''}
                 </div>
               </div>
             </div>
 
-            <div className='cursor-pointer' onClick={() => copyToClipboard(formData.amount_from, setToast)}>
+            <div className='cursor-pointer' onClick={() => copyToClipboard(formData.amount_from || '', setToast)}>
               <CopyIcon />
             </div>
           </div>
@@ -108,7 +108,7 @@ const WaitingDepositForm:React.FC<WaitingDepositFormProps> = ({ active, confirm,
               </div>
             </div>
 
-            <div className='cursor-pointer' onClick={() => copyToClipboard(depositAddress, setToast)}>
+            <div className='cursor-pointer' onClick={() => copyToClipboard(depositAddress || '', setToast)}>
               <CopyIcon />
             </div>
           </div>
@@ -126,7 +126,13 @@ const WaitingDepositForm:React.FC<WaitingDepositFormProps> = ({ active, confirm,
             </div>
 
             <div className="mt-7">
-              <QRCode size={150} value={depositAddress || ''} />
+              {depositAddress ? (
+                <QRCode size={150} value={depositAddress} />
+              ) : (
+                <div className="flex items-center justify-center w-[150px] h-[150px] bg-bg-5 rounded">
+                  <span className="text-color-3">Waiting for address...</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
