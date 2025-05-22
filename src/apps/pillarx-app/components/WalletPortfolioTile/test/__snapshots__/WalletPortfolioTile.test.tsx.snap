@@ -16,7 +16,7 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
             WalletPortfolioBalance
           </div>
           <div
-            class="tablet:hidden mobile:hidden flex w-full"
+            class="tablet:hidden mobile:hidden desktop:flex w-full"
           >
             <div>
               WalletPortfolioButtons
@@ -26,14 +26,14 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
             PrimeTokensBalance
           </div>
           <div
-            class="desktop:hidden flex rounded-xl w-full"
+            class="desktop:hidden mobile:flex tablet:flex rounded-xl w-full"
           >
             <div>
               WalletPortfolioGraph
             </div>
           </div>
           <div
-            class="desktop:hidden flex w-full"
+            class="desktop:hidden mobile:flex tablet:flex w-full"
           >
             <div>
               WalletPortfolioButtons
@@ -44,7 +44,7 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          class="tablet:hidden mobile:hidden flex rounded-xl border-[1px] border-lighter_container_grey w-full"
+          class="tablet:hidden mobile:hidden desktop:flex rounded-xl border-[1px] border-lighter_container_grey w-full"
         >
           <div>
             WalletPortfolioGraph
@@ -65,7 +65,7 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
           WalletPortfolioBalance
         </div>
         <div
-          class="tablet:hidden mobile:hidden flex w-full"
+          class="tablet:hidden mobile:hidden desktop:flex w-full"
         >
           <div>
             WalletPortfolioButtons
@@ -75,14 +75,14 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
           PrimeTokensBalance
         </div>
         <div
-          class="desktop:hidden flex rounded-xl w-full"
+          class="desktop:hidden mobile:flex tablet:flex rounded-xl w-full"
         >
           <div>
             WalletPortfolioGraph
           </div>
         </div>
         <div
-          class="desktop:hidden flex w-full"
+          class="desktop:hidden mobile:flex tablet:flex w-full"
         >
           <div>
             WalletPortfolioButtons
@@ -93,7 +93,7 @@ exports[`<WalletPortfolioTile /> renders correctly and matches snapshot 1`] = `
         </div>
       </div>
       <div
-        class="tablet:hidden mobile:hidden flex rounded-xl border-[1px] border-lighter_container_grey w-full"
+        class="tablet:hidden mobile:hidden desktop:flex rounded-xl border-[1px] border-lighter_container_grey w-full"
       >
         <div>
           WalletPortfolioGraph

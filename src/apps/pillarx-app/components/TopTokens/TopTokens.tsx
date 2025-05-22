@@ -70,7 +70,7 @@ const TopTokens = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto">
-        <div className="desktop:hidden text-base font-medium text-white">
+        <div className="desktop:hidden tablet:flex mobile:flex text-base font-medium text-white">
           Top Tokens
         </div>
         <div className="flex w-full h-[180px] rounded-[10px] animate-pulse bg-white/[.5]" />
@@ -82,18 +82,18 @@ const TopTokens = () => {
     <div className="container mx-auto">
       {!isTopTokensEmpty ? (
         <>
-          <div className="desktop:hidden text-base font-medium text-white">
+          <div className="desktop:hidden tablet:flex mobile:flex text-base font-medium text-white">
             Top Tokens
           </div>
           <div className="grid desktop:grid-cols-[2fr_1fr_1fr] grid-cols-2 gap-3">
             {/* Header Row */}
-            <div className="tablet:hidden mobile:hidden text-base font-medium text-white">
+            <div className="tablet:hidden mobile:hidden desktop:flex text-base font-medium text-white">
               Top Tokens
             </div>
-            <div className="tablet:hidden mobile:hidden text-[13px] font-normal text-white/[.5] text-end">
+            <div className="tablet:hidden mobile:hidden desktop:flextext-[13px] font-normal text-white/[.5] text-end">
               Balance
             </div>
-            <div className="desktop:hidden text-[13px] font-normal text-white/[.5]">
+            <div className="desktop:hidden tablet:flex mobile:flex text-[13px] font-normal text-white/[.5]">
               Token / $ / Balance
             </div>
             <div className="text-[13px] font-normal text-white/[.5] text-end">
@@ -132,20 +132,20 @@ const TopTokens = () => {
                       </div>
                     </div>
                     <div className="flex w-full gap-2">
-                      <p className="tablet:hidden mobile:hidden font-normal text-white text-[13px]">
+                      <p className="tablet:hidden mobile:hidden desktop:flex font-normal text-white text-[13px]">
                         ${limitDigitsNumber(token.price)}
                       </p>
-                      <p className="desktop:hidden font-normal text-white text-[13px]">
+                      <p className="desktop:hidden tablet:flex mobile:flex font-normal text-white text-[13px]">
                         ${limitDigitsNumber(token.usdBalance)}
                       </p>
-                      <p className="desktop:hidden font-normal text-white/[.5] text-[13px]">
+                      <p className="desktop:hidden tablet:flex mobile:flex font-normal text-white/[.5] text-[13px]">
                         {limitDigitsNumber(token.tokenBalance)}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="tablet:hidden mobile:hidden flex flex-col items-end">
+                <div className="tablet:hidden mobile:hidden desktop:flex flex-col items-end">
                   <p className="font-normal text-white text-[13px]">
                     ${limitDigitsNumber(token.usdBalance)}
                   </p>

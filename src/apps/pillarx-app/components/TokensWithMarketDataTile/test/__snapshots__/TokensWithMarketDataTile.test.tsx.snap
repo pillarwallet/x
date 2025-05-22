@@ -32,7 +32,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           class="w-full"
         >
           <div
-            class="flex flex-col desktop:hidden"
+            class="tablet:flex mobile:flex flex-col desktop:hidden"
           >
             <div
               class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
@@ -260,7 +260,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        30d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -353,7 +353,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
+            class="tablet:hidden mobile:hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
           >
             <div
               class="contents"
@@ -584,7 +584,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          30d ago
+                          1mo ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -709,7 +709,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
         class="w-full"
       >
         <div
-          class="flex flex-col desktop:hidden"
+          class="tablet:flex mobile:flex flex-col desktop:hidden"
         >
           <div
             class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
@@ -937,7 +937,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      30d ago
+                      1mo ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1030,7 +1030,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
+          class="tablet:hidden mobile:hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
         >
           <div
             class="contents"
@@ -1261,7 +1261,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        30d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
