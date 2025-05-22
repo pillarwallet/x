@@ -3,29 +3,32 @@ import React, { useState, useRef, useEffect } from "react";
 import SelectActivator from './components/SelectActivator';
 import SelectDropdown from './components/SelectDropdown';
 
-export type Option = Record<string, any>;
-
+export interface Option {
+   [key: string]: any;
+   id?: string | number;
+   name?: string;
+}
 interface CustomSelectProps {
   options: Option[];
   currentValue: Record<string, any> | null;
   placeholder: string;
   itemValue?: string;
-  itemText?: string; // Поле для отображения текста (по умолчанию "name")
+  itemText?: string; // Field for displaying text (default is "name")
   withIcon?: boolean;
   itemIcon?: string;
   onChange?: (value: any) => void; // Callback при выборе
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
-                                                     options,
-                                                     placeholder,
-                                                     currentValue,
-                                                     itemValue = "id",
-                                                     itemText = "name",
-                                                     onChange,
-                                                     withIcon,
-                                                     itemIcon,
-                                                   }) => {
+  options,
+  placeholder,
+  currentValue,
+  itemValue = "id",
+  itemText = "name",
+  onChange,
+  withIcon,
+  itemIcon,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Option | null>(null);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -45,7 +48,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   const handleOptionClick = (option: Option) => {
     setSelected(option);
-    onChange && onChange(option);
+    onChange?.(option);
     setIsOpen(false);
   };
 
@@ -84,7 +87,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     <div
       ref={dropdownRef}
       className="relative w-36"
-      tabIndex={0} // чтобы фокус был на div
+      tabIndex={0} // to allow div to receive focus
       onKeyDown={handleKeyDown}
       role="combobox"
       aria-haspopup="listbox"
