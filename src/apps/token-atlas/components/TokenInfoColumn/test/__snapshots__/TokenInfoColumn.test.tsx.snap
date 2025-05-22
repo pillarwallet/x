@@ -17,7 +17,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         src="token-audit-icon.png"
       />
       <p
-        className="text-sm font-medium font-normal"
+        className="text-[9px] font-semibold font-normal"
       >
         Token Audit
       </p>
@@ -37,17 +37,17 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         target="_blank"
       >
         <img
-          alt="token-sniffer-logo"
+          alt="token sniffer-logo"
           className="w-[18px] h-[18px]"
           src="token-sniffer-logo.png"
         />
         <p
-          className="text-sm font-medium font-normal"
+          className="text-[9px] font-semibold font-normal"
         >
           Token Sniffer
         </p>
         <img
-          alt="link-logo-to-token-sniffer"
+          alt="external-link-icon"
           className="w-3 h-3"
           src={
             {
@@ -62,22 +62,22 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       </a>
       <a
         className="flex gap-1.5 items-center no-underline"
-        href=" https://gopluslabs.io/token-security/1/undefined"
+        href="https://gopluslabs.io/token-security/1/undefined"
         rel="noopener noreferrer"
         target="_blank"
       >
         <img
-          alt="token-sniffer-logo"
+          alt="go plus-logo"
           className="w-[18px] h-[18px]"
           src="go-plus-logo.png"
         />
         <p
-          className="text-sm font-medium font-normal"
+          className="text-[9px] font-semibold font-normal"
         >
           Go Plus
         </p>
         <img
-          alt="link-logo-to-token-sniffer"
+          alt="external-link-icon"
           className="w-3 h-3"
           src={
             {

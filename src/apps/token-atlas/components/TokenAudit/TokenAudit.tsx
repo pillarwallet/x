@@ -46,7 +46,7 @@ const TokenAudit = () => {
   const honeypotSupportedChains = [1, 56, 8453];
 
   const tokenSnifferUrl = `https://tokensniffer.com/token/${formattedChainNameTokenSniffer()}/${selectedToken?.address}`;
-  const goPlusUrl = ` https://gopluslabs.io/token-security/${selectedToken?.chainId ?? 1}/${selectedToken?.address}`;
+  const goPlusUrl = `https://gopluslabs.io/token-security/${selectedToken?.chainId ?? 1}/${selectedToken?.address}`;
   const honeypotUrl = `https://honeypot.is/${selectedToken?.chainId === 56 ? '' : (chainIdToChainNameTokensData(selectedToken?.chainId).toLowerCase() ?? 1)}?address=${selectedToken?.address}`;
 
   const tokenAuditList = [
@@ -98,13 +98,13 @@ const TokenAudit = () => {
             <img
               className="w-[18px] h-[18px]"
               src={audit.logo}
-              alt="token-sniffer-logo"
+              alt={`${audit.name.toLowerCase()}-logo`}
             />
             <BodySmall className="font-normal">{audit.name}</BodySmall>
             <img
               className="w-3 h-3"
               src={ExternalLinkLogo}
-              alt="link-logo-to-token-sniffer"
+              alt="external-link-icon"
             />
           </a>
         ))}
