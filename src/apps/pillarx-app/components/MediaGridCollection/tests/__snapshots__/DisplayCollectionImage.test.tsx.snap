@@ -81,6 +81,32 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
         fill="#146A7C"
         r={23}
       />
+      <g
+        transform="translate(-3 3.5) rotate(-7 18 18)"
+      >
+        <path
+          d="M13,20 a1,0.75 0 0,0 10,0"
+          fill="#000000"
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={12}
+          y={14}
+        />
+        <rect
+          fill="#000000"
+          height={2}
+          rx={1}
+          stroke="none"
+          width={1.5}
+          x={22}
+          y={14}
+        />
+      </g>
     </g>
   </svg>
 </div>
