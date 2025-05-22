@@ -73,8 +73,8 @@ const WalletPortfolioBalance = () => {
     const absValue = Math.abs(balanceChange.usdValue);
 
     return balanceChange.usdValue > 0
-      ? `+$${limitDigitsNumber(absValue)}`
-      : `-$${limitDigitsNumber(absValue)}`;
+      ? `+$${limitDigitsNumber(absValue).toFixed(2)}`
+      : `-$${limitDigitsNumber(absValue).toFixed(2)}`;
   }, [balanceChange]);
 
   return (
@@ -100,7 +100,7 @@ const WalletPortfolioBalance = () => {
                 ? limitDigitsNumber(walletPortfolio?.total_wallet_balance)
                 : '0.00'}
             </p>
-            <div className="flex tablet:flex-wrap mobile:flex-wrap gap-1.5 items-baseline">
+            <div className="flex tablet:flex-wrap mobile:flex-wrap gap-1.5 items-center">
               {!balanceChange ? null : (
                 <Body
                   className={`text-base font-normal ${balanceChange.usdValue > 0 && 'text-market_row_green'} ${balanceChange.usdValue < 0 && 'text-percentage_red'} ${getUsdChangeText() === '$0.00' && 'text-white text-opacity-50'} ${balanceChange.usdValue === 0 && 'text-white text-opacity-50 bg-white/[.1]'}`}

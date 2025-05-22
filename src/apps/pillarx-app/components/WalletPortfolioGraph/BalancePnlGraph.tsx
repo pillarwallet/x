@@ -16,7 +16,7 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { format, parseISO } from 'date-fns';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 // types
@@ -85,6 +85,7 @@ ChartJS.register(
 
 const BalancePnlGraph = () => {
   const [hoverValue, setHoverValue] = useState<number | undefined>();
+  const [latestValue, setLatestValue] = useState<number | undefined>();
 
   const walletHistoryGraph = useAppSelector(
     (state) =>
@@ -337,6 +338,25 @@ const BalancePnlGraph = () => {
         }
       : flatLineData;
 
+  useEffect(() => {
+    setHoverValue(undefined);
+
+    const graphValues = isBalanceGraph
+      ? walletHistoryGraph?.balance_history.map((price) => price[1]) || []
+      : getPnlDataSet();
+
+    const latestGraphValue = isBalanceGraph
+      ? graphValues[graphValues.length - 1]
+      : graphValues[0];
+
+    setLatestValue(latestGraphValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isBalanceGraph,
+    walletHistoryGraph?.balance_history,
+    walletPortfolioWithPnl?.pnl_history,
+  ]);
+
   // The options used to customize the UI of the graph
   const options: ChartOptions<'line'> = {
     onHover: (event, chartElements) => {
@@ -458,9 +478,11 @@ const BalancePnlGraph = () => {
           Total Value:{' '}
         </span>
         <span
-          className={`font-normal ${hoverValue ? 'text-white' : 'text-white/[.5]'}`}
+          className={`font-normal ${hoverValue || latestValue ? 'text-white' : 'text-white/[.5]'}`}
         >
-          {hoverValue ? `$${limitDigitsNumber(hoverValue)}` : '$0.00'}
+          {hoverValue
+            ? `$${limitDigitsNumber(hoverValue)}`
+            : `${latestValue ? `$${limitDigitsNumber(latestValue)}` : '$0.00'}`}
         </span>
       </Body>
       <div

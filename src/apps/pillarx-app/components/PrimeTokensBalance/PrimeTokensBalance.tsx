@@ -28,6 +28,10 @@ const PrimeTokensBalance = () => {
       state.walletPortfolio.walletPortfolio as PortfolioData | undefined
   );
 
+  const isWalletPortfolioLoading = useAppSelector(
+    (state) => state.walletPortfolio.isWalletPortfolioLoading as boolean
+  );
+
   const primeAssetsBalance = useMemo(() => {
     if (!walletPortfolio) return undefined;
 
@@ -42,6 +46,12 @@ const PrimeTokensBalance = () => {
 
     return limitDigitsNumber(totalBalance);
   }, [walletPortfolio]);
+
+  if (isWalletPortfolioLoading) {
+    return (
+      <div className="flex w-[150px] h-[20px] rounded-[10px] animate-pulse bg-white/[.5]" />
+    );
+  }
 
   return (
     <div className="flex items-center gap-[5px] relative">

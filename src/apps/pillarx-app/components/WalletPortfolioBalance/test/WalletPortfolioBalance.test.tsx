@@ -117,7 +117,7 @@ describe('WalletPortfolioBalance', () => {
       },
     });
 
-    expect(screen.getByText('-$500')).toBeInTheDocument();
+    expect(screen.getByText('-$500.00')).toBeInTheDocument();
     expect(screen.getByText('50.00%')).toBeInTheDocument();
   });
 

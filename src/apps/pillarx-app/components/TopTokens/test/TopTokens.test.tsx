@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 // services
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
@@ -56,7 +57,11 @@ describe('TopTokens component', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = render(<TopTokens />);
+    const tree = render(
+      <MemoryRouter>
+        <TopTokens />
+      </MemoryRouter>
+    );
     expect(tree).toMatchSnapshot();
   });
 
@@ -73,7 +78,11 @@ describe('TopTokens component', () => {
       })
     );
 
-    render(<TopTokens />);
+    render(
+      <MemoryRouter>
+        <TopTokens />
+      </MemoryRouter>
+    );
     expect(screen.queryByText(/Unrealized PnL/i)).not.toBeInTheDocument();
   });
 
@@ -90,7 +99,11 @@ describe('TopTokens component', () => {
       })
     );
 
-    render(<TopTokens />);
+    render(
+      <MemoryRouter>
+        <TopTokens />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByText(/Failed to load wallet portfolio/i)
@@ -123,7 +136,11 @@ describe('TopTokens component', () => {
       portfolioService.getTopNonPrimeAssetsAcrossChains as jest.Mock
     ).mockReturnValue([]);
 
-    render(<TopTokens />);
+    render(
+      <MemoryRouter>
+        <TopTokens />
+      </MemoryRouter>
+    );
     expect(screen.getByText(/No tokens yet/i)).toBeInTheDocument();
   });
 
@@ -144,7 +161,11 @@ describe('TopTokens component', () => {
       portfolioService.getTopNonPrimeAssetsAcrossChains as jest.Mock
     ).mockReturnValue(mockWalletPortfolio.assets);
 
-    render(<TopTokens />);
+    render(
+      <MemoryRouter>
+        <TopTokens />
+      </MemoryRouter>
+    );
 
     // Token info (without some of them because repeated in the DOM but hidden from user)
     expect(screen.getByText('USDC')).toBeInTheDocument();

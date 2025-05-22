@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
@@ -30,9 +30,39 @@ const ReceiveModal = () => {
   );
   const [copied, setCopied] = useState(false);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
   const handleOnCloseReceiveModal = () => {
     dispatch(setIsReceiveModalOpen(false));
   };
+
+  // ESC key listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleOnCloseReceiveModal();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        handleOnCloseReceiveModal();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (copied) {
@@ -51,12 +81,15 @@ const ReceiveModal = () => {
       className="fixed inset-0 bg-[#12111680]/[.5] backdrop-blur-sm z-30"
     >
       <div className="fixed inset-0 flex items-center justify-center z-40 mobile:items-start tablet:items-start mt-20">
-        <div className="relative flex flex-col w-full p-4 desktop:max-w-[446px] tablet:max-w-[446px] mobile:max-w-full mobile:mx-4 bg-container_grey border-[1px] border-white/[.05] rounded-2xl overflow-y-auto max-h-[75vh] mb-20">
+        <div
+          ref={modalRef}
+          className="relative flex flex-col w-full p-4 desktop:max-w-[446px] tablet:max-w-[446px] mobile:max-w-full mobile:mx-4 bg-container_grey border-[1px] border-white/[.05] rounded-2xl overflow-y-auto max-h-[75vh] mb-20"
+        >
           <div className="flex items-center justify-between mb-3">
             <p className="text-xl font-medium text-white">Receive</p>
             <div
               className="flex cursor-pointer p-2 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
-              onClick={() => handleOnCloseReceiveModal()}
+              onClick={handleOnCloseReceiveModal}
             >
               <p className="text-[13px] font-medium text-white/[.5]">ESC</p>
             </div>
