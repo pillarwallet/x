@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
+import { flushSync } from 'react-dom';
 
 import {
   useGetSwapCoinsQuery,
@@ -18,6 +19,7 @@ import { useValidatedInput } from './useValidatedInput';
 import { amountFromValidator, amountToValidator } from '../helpers/input-validator.helper';
 
 import { VIEW_TYPE } from '../constants/views'
+import { showToast, ToastType } from '../reducer/emcdSwapToastSlice';
 
 export const useExchangeLogic = () => {
   const dispatch = useDispatch()
@@ -42,8 +44,8 @@ export const useExchangeLogic = () => {
 
   const [rate, setRate] = useState<number | null>(null)
 
-  const { data, isFetching } = useGetSwapCoinsQuery()
-  const [triggerEstimate, { data: dataEstimate, isFetching: isFetchingEstimate }] = useLazyGetEstimateQuery()
+  const { data, isFetching, isError: isCoinsError, error: coinsError } = useGetSwapCoinsQuery()
+  const [triggerEstimate, { data: dataEstimate, isFetching: isFetchingEstimate, isError: isEstimateError, error: estimateError, }] = useLazyGetEstimateQuery()
 
   // Инициализация монет и начальных значений
   useEffect(() => {
@@ -54,6 +56,30 @@ export const useExchangeLogic = () => {
       setCurrentCoinTo(data[1])
     }
   }, [data, dispatch])
+
+  const setToast = ({ message, type }: { message: string; type: ToastType }) => {
+    dispatch(showToast({ message, type }))
+  }
+
+  useEffect(() => {
+    if (isCoinsError) {
+      const msg =
+        (coinsError as any)?.data?.message ||
+        (coinsError as any)?.error ||
+        'Не удалось загрузить список монет';
+      setToast({ message: msg, type: 'error' });
+    }
+  }, [isCoinsError, coinsError]);
+
+  useEffect(() => {
+    if (isEstimateError) {
+      const msg =
+        (estimateError as any)?.data?.message ||
+        (estimateError as any)?.error ||
+        'Ошибка получения курса обмена';
+      setToast({ message: msg, type: 'error' });
+    }
+  }, [isEstimateError, estimateError]);
 
   // Установка сетей, когда выбрана монета
   useEffect(() => {
@@ -86,19 +112,6 @@ export const useExchangeLogic = () => {
     }
   }, [dataEstimate])
 
-  // Тригер оценки при изменении входных данных
-  useEffect(() => {
-    if (currentCoinFrom && currentNetworkFrom && currentCoinTo && currentNetworkTo) {
-      triggerEstimate({
-        coin_from: currentCoinFrom.title,
-        coin_to: currentCoinTo.title,
-        network_from: currentNetworkFrom.title,
-        network_to: currentNetworkTo.title,
-        amount_from: amountFrom.value,
-      })
-    }
-  }, [currentCoinFrom, currentNetworkFrom, currentCoinTo, currentNetworkTo])
-
   const handleSwap = () => {
     const tempCoin = currentCoinFrom;
     setCurrentCoinFrom(currentCoinTo);
@@ -124,6 +137,22 @@ export const useExchangeLogic = () => {
       }
     }, 0);
   };
+
+  const changeNetworkFrom = (value: Record<string, any> | null) => {
+    flushSync(() => {
+      setCurrentNetworkFrom(value)
+    })
+
+    getEstimateForChangeCoinOrNetwork()
+  }
+
+  const changeNetworkTo = (value: Record<string, any> | null) => {
+    flushSync(() => {
+      setCurrentNetworkTo(value)
+    })
+
+    getEstimateForChangeCoinOrNetwork()
+  }
 
 
   // Debounce estimate (from)
@@ -166,6 +195,18 @@ export const useExchangeLogic = () => {
     debouncedTriggerEstimateFrom(value)
   }
 
+  const getEstimateForChangeCoinOrNetwork = () => {
+    if (currentCoinFrom && currentCoinTo && currentNetworkTo && currentNetworkFrom) {
+      triggerEstimate({
+        coin_from: currentCoinFrom.title,
+        coin_to: currentCoinTo.title,
+        network_from: currentNetworkFrom.title,
+        network_to: currentNetworkTo.title,
+        amount_from: amountFrom.value,
+      })
+    }
+  }
+
   const handleChangeAmountTo = (value: string | null) => {
     const validationTo = amountToValidator(value, maxTo, minTo)
     const validationFrom = amountFromValidator(amountFrom.value, maxFrom, minFrom)
@@ -178,12 +219,39 @@ export const useExchangeLogic = () => {
   }
 
   const changeCoinFrom = (value: Record<string, any>) => {
-    setCurrentCoinFrom(value)
-  }
+    const filtered = value.networks.filter((n: any) => n.withdraw_supported);
+    const selectedNetwork = filtered[0];
+
+    setCurrentCoinFrom(value);
+    setNetworksFrom(filtered);
+    setCurrentNetworkFrom(selectedNetwork);
+
+    triggerEstimate({
+      coin_from: value.title,
+      coin_to: currentCoinTo?.title,
+      network_from: selectedNetwork?.title,
+      network_to: currentNetworkTo?.title,
+      amount_from: amountFrom.value,
+    });
+  };
+
 
   const changeCoinTo = (value: Record<string, any>) => {
-    setCurrentCoinTo(value)
-  }
+    const filtered = value.networks.filter((n: any) => n.withdraw_supported);
+    const selectedNetwork = filtered[0];
+
+    setCurrentCoinTo(value);
+    setNetworksTo(filtered);
+    setCurrentNetworkTo(selectedNetwork);
+
+    triggerEstimate({
+      coin_from: currentCoinFrom?.title,
+      coin_to: value.title,
+      network_from: currentNetworkFrom?.title,
+      network_to: selectedNetwork?.title,
+      amount_from: amountFrom.value,
+    });
+  };
 
   const handleButtonClick = () => {
     dispatch(setCurrentView(VIEW_TYPE.FAQ))
@@ -223,8 +291,8 @@ export const useExchangeLogic = () => {
     handleChangeAmountTo,
     changeCoinFrom,
     changeCoinTo,
-    setCurrentNetworkFrom,
-    setCurrentNetworkTo,
+    setCurrentNetworkFrom: changeNetworkFrom,
+    setCurrentNetworkTo: changeNetworkTo,
     handleButtonClick,
     submitForm,
     handleSwap,

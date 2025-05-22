@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import SelectActivator from './components/SelectActivator';
 import SelectDropdown from './components/SelectDropdown';
@@ -16,16 +16,30 @@ interface CustomSelectProps {
   onChange?: (value: any) => void; // Callback при выборе
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ options, placeholder, currentValue, itemValue = "id", itemText = "name", onChange, withIcon, itemIcon }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({
+                                                     options,
+                                                     placeholder,
+                                                     currentValue,
+                                                     itemValue = "id",
+                                                     itemText = "name",
+                                                     onChange,
+                                                     withIcon,
+                                                     itemIcon,
+                                                   }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Option | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (currentValue) {
       setSelected(currentValue);
+      const currentIndex = options.findIndex(
+        (opt) => opt[itemValue] === currentValue[itemValue]
+      );
+      if (currentIndex !== -1) setHighlightedIndex(currentIndex);
     }
-  }, [currentValue]);
+  }, [currentValue, options, itemValue]);
 
   const toggleDropdown = () => setIsOpen((prev) => !prev);
 
@@ -48,9 +62,40 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, placeholder, curre
     };
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape" && isOpen) {
+      setIsOpen(false);
+    } else if (e.key === "Enter") {
+      if (isOpen) {
+        handleOptionClick(options[highlightedIndex]);
+      } else {
+        setIsOpen(true);
+      }
+    } else if (e.key === "ArrowDown" && isOpen) {
+      setHighlightedIndex((prev) => (prev + 1) % options.length);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp" && isOpen) {
+      setHighlightedIndex((prev) => (prev - 1 + options.length) % options.length);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div ref={dropdownRef} className="relative w-36">
-      {/* Активатор */}
+    <div
+      ref={dropdownRef}
+      className="relative w-36"
+      tabIndex={0} // чтобы фокус был на div
+      onKeyDown={handleKeyDown}
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded={isOpen}
+      aria-controls="select-listbox"
+      aria-activedescendant={
+        isOpen && options[highlightedIndex]
+          ? `option-${options[highlightedIndex][itemValue]}`
+          : undefined
+      }
+    >
       <SelectActivator
         isOpen={isOpen}
         option={selected}
@@ -58,10 +103,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, placeholder, curre
         itemText={itemText}
         itemIcon={itemIcon}
         withIcon={withIcon}
+        role="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
         toggleDropdown={toggleDropdown}
       />
 
-      {/* Список опций */}
       {isOpen && (
         <SelectDropdown
           options={options}
@@ -70,6 +117,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, placeholder, curre
           withIcon={withIcon}
           itemIcon={itemIcon}
           handleOptionClick={handleOptionClick}
+          highlightedIndex={highlightedIndex}
         />
       )}
     </div>

@@ -98,10 +98,10 @@ const ExchangeView = () => {
             </Tippy>
 
             <div className="text-sm text-color-3">
-              1 {currentCoinFrom && currentCoinFrom.title}{' '}
+              1 {currentCoinFrom?.title}{' '}
               <span className={'mb-1'}>≈</span>{' '}
               <span className={'text-color-1'}>
-                {rate} {currentCoinTo && currentCoinTo.title}
+                {rate} {currentCoinTo?.title}
               </span>
             </div>
           </div>

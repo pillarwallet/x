@@ -4,14 +4,53 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 // store
 import { addMiddleware } from '../../../store';
 
+// Define types for the API responses and requests
+interface SwapCoin {
+  title: string;
+  icon_url: string;
+  networks: string[];
+  // Add other properties as needed
+}
+
+interface ErrorData {
+  message?: string;
+  [key: string]: any;
+}
+
+interface EstimateParams {
+  coin_from: string;
+  coin_to: string;
+  amount: number;
+  network_from: string;
+  network_to: string;
+}
+
+interface EstimateResponse {
+  amount_to: string;
+  rate: string;
+  // Add other properties as needed
+}
+
+
 export const emcdSwapApi = createApi({
   reducerPath: 'emcdSwapApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://b2b-endpoint.dev-b2b.mytstnv.site',
+    baseUrl: process.env.REACT_APP_EMCD_SWAP_API_URL || 'https://b2b-endpoint.dev-b2b.mytstnv.site',
+    prepareHeaders: (headers) => {
+      return headers;
+     },
   }),
   endpoints: (builder) => ({
-    getSwapCoins: builder.query<any, void>({
+    getSwapCoins: builder.query<SwapCoin[], void>({
       query: () => 'v2/swap/coins',
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
     getEstimate: builder.query<any, any>({
       query: (params) => {
@@ -25,6 +64,14 @@ export const emcdSwapApi = createApi({
 
         return `swap/estimate?${searchParams.toString()}`;
       },
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
     createSwap: builder.mutation<any, any>({
       query: (formData) => ({
@@ -32,9 +79,25 @@ export const emcdSwapApi = createApi({
         method: 'POST',
         body: formData,
       }),
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
     getSwapStatus: builder.query<any, { swapID: string; status: number }>({
       query: ({ swapID, status }) => `swap/${swapID}/${status}`,
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
     getSwap: builder.query<any, { swapID: string }>({
       query: ({ swapID }) => `swap/${swapID}`,
@@ -45,6 +108,14 @@ export const emcdSwapApi = createApi({
         method: 'POST',
         body: formData,
       }),
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
 
     createTicket: builder.mutation<any, any>({
@@ -53,6 +124,14 @@ export const emcdSwapApi = createApi({
         method: 'POST',
         body: formData,
       }),
+      transformErrorResponse: (response: { status: number; data: ErrorData }) => {
+        console.error('API Error:', response);
+        return {
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'An error occurred'
+        };
+      },
     }),
   }),
 });

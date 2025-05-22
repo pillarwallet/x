@@ -1,20 +1,22 @@
 import React from 'react';
 
-interface SelectActivatorProps {
+interface SelectActivatorProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isOpen: boolean;
   withIcon?: boolean;
   itemIcon?: string;
   itemText?: string;
   placeholder: string;
   option: Record<string, any> | null;
+  tabIndex?: number;
   toggleDropdown: () => void;
 }
 
-const SelectActivator:React.FC<SelectActivatorProps> = ({ isOpen, toggleDropdown, withIcon, option, itemIcon, itemText, placeholder }) => {
+const SelectActivator:React.FC<SelectActivatorProps> = ({ isOpen, toggleDropdown, withIcon, option, itemIcon, itemText, placeholder, ...buttonComponents }) => {
   return (
     <button
       onClick={toggleDropdown}
-      className="w-full rounded-sm bg-bg-8 border border-color-7 hover:border-brand px-3 py-2 text-left flex items-center justify-between"
+      className="w-full outline-none rounded-sm bg-bg-8 border border-color-7 hover:border-brand px-3 py-2 text-left flex items-center justify-between"
+      { ...buttonComponents }
     >
       <div className={'flex items-center gap-x-2'}>
         {withIcon && (
