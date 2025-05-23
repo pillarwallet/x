@@ -146,8 +146,10 @@ describe('<ReceiveModal />', () => {
       'setIsReceiveModalOpen'
     );
 
-    render(<ReceiveModal />);
-    fireEvent.mouseDown(document); // simulates clicking outside modal
+    const { getByTestId } = render(<ReceiveModal />);
+
+    // Simulate mouse down oustide the modal
+    fireEvent.mouseDown(getByTestId('wallet-portfolio-tile-receive-modal'));
 
     expect(setIsReceiveModalOpenSpy).toHaveBeenCalledWith(false);
     expect(mockDispatch).toHaveBeenCalledWith({
