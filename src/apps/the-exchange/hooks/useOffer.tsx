@@ -46,16 +46,12 @@ const useOffer = () => {
         fromTokenAddress,
         fromChainId
       );
-      const toTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
-        toTokenAddress,
-        toChainId
-      );
 
       const routesRequest: RoutesRequest = {
         fromChainId,
         toChainId,
         fromTokenAddress: fromTokenAddressWithWrappedCheck,
-        toTokenAddress: toTokenAddressWithWrappedCheck,
+        toTokenAddress,
         fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
         options: {
           bridges: {
