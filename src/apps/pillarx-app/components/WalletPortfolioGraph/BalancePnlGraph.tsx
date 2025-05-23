@@ -24,7 +24,6 @@ import { PnLEntry, PortfolioData, WalletHistory } from '../../../../types/api';
 
 // utils
 import { convertDateToUnixTimestamp } from '../../../../utils/common';
-import { limitDigitsNumber } from '../../../../utils/number';
 import { PeriodFilterBalance, PeriodFilterPnl } from '../../utils/portfolio';
 
 // reducer
@@ -481,8 +480,8 @@ const BalancePnlGraph = () => {
           className={`font-normal ${hoverValue || latestValue ? 'text-white' : 'text-white/[.5]'}`}
         >
           {hoverValue
-            ? `$${limitDigitsNumber(hoverValue)}`
-            : `${latestValue ? `$${limitDigitsNumber(latestValue)}` : '$0.00'}`}
+            ? `$${hoverValue.toFixed(2)}`
+            : `${latestValue ? `$${latestValue.toFixed(2)}` : '$0.00'}`}
         </span>
       </Body>
       <div
