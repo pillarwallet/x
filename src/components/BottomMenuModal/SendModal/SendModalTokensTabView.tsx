@@ -49,6 +49,7 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 import {
+  GasConsumptions,
   getAllGaslessPaymasters,
   getGasPrice,
 } from '../../../services/gasless';
@@ -142,9 +143,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [feeAssetOptions, setFeeAssetOptions] = React.useState<
     TokenAssetSelectOption[]
   >([]);
-  const [queryString, setQueryString] = React.useState<string>(
-    `?apiKey=${process.env.REACT_APP_PAYMASTER_API_KEY}`
-  );
+  const [queryString, setQueryString] = React.useState<string>('');
   const [approveData, setApproveData] = React.useState<string>('');
   const [gasPrice, setGasPrice] = React.useState<string>();
   const [feeMin, setFeeMin] = React.useState<string>();
@@ -197,9 +196,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (!walletPortfolio) return;
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
     if (!selectedAsset) return;
-    setQueryString(
-      `?apiKey=${process.env.REACT_APP_PAYMASTER_API_KEY}&chainId=${selectedAsset.chainId}&useVp=true`
-    );
+    setQueryString(`chainId=${selectedAsset.chainId}&useVp=true`);
     getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
       (paymasterObject) => {
         // eslint-disable-next-line no-console
@@ -308,30 +305,26 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
      * though it can be even lower for deployed wallet to save rpc call for checking
      * deployed wallet or not, we can use the same gas cost for both deployed and undeployed wallet
      */
-    if (selectedAsset.chainId === 42161) {
+    if (selectedAsset.chainId === 42161) { // See if its Arbitrum Chain as gas consumptions lend to be higher than all other chains
       if (selectedAsset.type === 'token') {
         if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
-          gasCost = Number(
-            process.env.REACT_APP_NATIVE_GAS_CONSUMPTION_ARBITRUM
-          ); // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
+          gasCost = GasConsumptions.native_arb; // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
         } else {
-          gasCost = Number(
-            process.env.REACT_APP_TOKEN_GAS_CONSUMPTION_ARBITRUM
-          ); // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+          gasCost = GasConsumptions.token_arb; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
         }
       } else if (selectedAsset.type === 'nft') {
-        gasCost = Number(process.env.REACT_APP_NFT_GAS_CONSUMPTION_ARBITRUM); // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+        gasCost = GasConsumptions.nft_arb; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
       }
     } else {
       // eslint-disable-next-line no-lonely-if
       if (selectedAsset.type === 'token') {
         if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
-          gasCost = Number(process.env.REACT_APP_NATIVE_GAS_CONSUMPTION); // estimated gas consumption for native asset transfer for deployed wallet + 15% markup
+          gasCost = GasConsumptions.native; // estimated gas consumption for native asset transfer for deployed wallet + 15% markup
         } else {
-          gasCost = Number(process.env.REACT_APP_TOKEN_GAS_CONSUMPTION); // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+          gasCost = GasConsumptions.token; // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
         }
       } else if (selectedAsset.type === 'nft') {
-        gasCost = Number(process.env.REACT_APP_NFT_GAS_CONSUMPTION); // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+        gasCost = GasConsumptions.nft; // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
       }
     }
     setApprovalData(gasCost);
