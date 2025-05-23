@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
 
 // utils
-import * as numberUtils from '../../../../../utils/number';
 
 // reducer
 import * as reducerHooks from '../../../hooks/useReducerHooks';
@@ -26,11 +25,6 @@ describe('<PrimeTokensBalance />', () => {
   const mockGetPrimeAssetsWithBalances = jest.spyOn(
     portfolioService,
     'getPrimeAssetsWithBalances'
-  ) as jest.Mock;
-
-  const mockLimitDigitsNumber = jest.spyOn(
-    numberUtils,
-    'limitDigitsNumber'
   ) as jest.Mock;
 
   beforeEach(() => {
@@ -64,8 +58,6 @@ describe('<PrimeTokensBalance />', () => {
       },
     ]);
 
-    mockLimitDigitsNumber.mockReturnValue(223.46);
-
     render(<PrimeTokensBalance />);
 
     expect(
@@ -95,8 +87,6 @@ describe('<PrimeTokensBalance />', () => {
     mockGetPrimeAssetsWithBalances.mockReturnValue([
       { primeAssets: [{ usd_balance: 0 }] },
     ]);
-
-    mockLimitDigitsNumber.mockReturnValue(0);
 
     render(<PrimeTokensBalance />);
 
