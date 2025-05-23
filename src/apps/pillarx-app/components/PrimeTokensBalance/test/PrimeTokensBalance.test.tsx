@@ -49,7 +49,14 @@ describe('<PrimeTokensBalance />', () => {
   it('renders correctly when prime balance exists', () => {
     const mockPortfolio = {} as PortfolioData;
 
-    useAppSelectorMock.mockReturnValue(mockPortfolio);
+    useAppSelectorMock.mockImplementation((selectorFn) =>
+      selectorFn({
+        walletPortfolio: {
+          walletPortfolio: mockPortfolio,
+          isWalletPortfolioLoading: false,
+        },
+      })
+    );
 
     mockGetPrimeAssetsWithBalances.mockReturnValue([
       {
@@ -76,7 +83,14 @@ describe('<PrimeTokensBalance />', () => {
   it('renders balance as $0.00 when total balance is zero', () => {
     const mockPortfolio = {} as PortfolioData;
 
-    useAppSelectorMock.mockReturnValue(mockPortfolio);
+    useAppSelectorMock.mockImplementation((selectorFn) =>
+      selectorFn({
+        walletPortfolio: {
+          walletPortfolio: mockPortfolio,
+          isWalletPortfolioLoading: false,
+        },
+      })
+    );
 
     mockGetPrimeAssetsWithBalances.mockReturnValue([
       { primeAssets: [{ usd_balance: 0 }] },

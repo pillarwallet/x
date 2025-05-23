@@ -113,4 +113,46 @@ describe('<ReceiveModal />', () => {
     expect(screen.getByText('Ethereum')).toBeInTheDocument();
     expect(screen.getByText('Polygon')).toBeInTheDocument();
   });
+
+  it('closes modal when ESC key is pressed', () => {
+    useAppSelectorMock.mockImplementation((cb) =>
+      cb({ walletPortfolio: { isReceiveModalOpen: true } })
+    );
+    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+
+    const setIsReceiveModalOpenSpy = jest.spyOn(
+      walletSlice,
+      'setIsReceiveModalOpen'
+    );
+
+    render(<ReceiveModal />);
+    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+
+    expect(setIsReceiveModalOpenSpy).toHaveBeenCalledWith(false);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'walletPortfolio/setIsReceiveModalOpen',
+      payload: false,
+    });
+  });
+
+  it('closes modal when clicking outside of it', () => {
+    useAppSelectorMock.mockImplementation((cb) =>
+      cb({ walletPortfolio: { isReceiveModalOpen: true } })
+    );
+    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+
+    const setIsReceiveModalOpenSpy = jest.spyOn(
+      walletSlice,
+      'setIsReceiveModalOpen'
+    );
+
+    render(<ReceiveModal />);
+    fireEvent.mouseDown(document); // simulates clicking outside modal
+
+    expect(setIsReceiveModalOpenSpy).toHaveBeenCalledWith(false);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'walletPortfolio/setIsReceiveModalOpen',
+      payload: false,
+    });
+  });
 });

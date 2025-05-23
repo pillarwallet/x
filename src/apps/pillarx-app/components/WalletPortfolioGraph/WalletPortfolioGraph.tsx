@@ -96,7 +96,7 @@ const WalletPortfolioGraph = () => {
   return (
     <div className="flex flex-col w-full">
       <div className="flex tablet:flex-col mobile:flex-col justify-between desktop:p-3.5">
-        <div className="tablet:hidden mobile:hidden flex gap-1.5">
+        <div className="tablet:hidden mobile:hidden desktop:flex gap-1.5">
           <WalletPortfolioGraphButton
             onClick={() => dispatch(setSelectedBalanceOrPnl('balance'))}
             text="Balance"
@@ -108,7 +108,7 @@ const WalletPortfolioGraph = () => {
             isActive={selectedBalanceOrPnl === 'pnl'}
           />
         </div>
-        <div className="desktop:hidden flex w-full p-[2px] bg-[#121116] rounded-lg mb-3">
+        <div className="desktop:hidden tablet:flex mobile:flex w-full p-[2px] bg-[#121116] rounded-lg mb-3">
           <button
             type="button"
             className={`items-center justify-center w-full rounded-md p-[3px] ${selectedBalanceOrPnl === 'balance' ? 'bg-container_grey' : 'bg-[#121116]'}`}

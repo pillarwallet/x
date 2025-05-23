@@ -209,19 +209,19 @@ const WalletPortfolioTile = () => {
     >
       <div className="flex flex-col rounded-xl desktop:border-[1px] desktop:border-lighter_container_grey p-3.5 w-full desktop:gap-4 gap-3">
         <WalletPortfolioBalance />
-        <div className="tablet:hidden mobile:hidden flex w-full">
+        <div className="tablet:hidden mobile:hidden desktop:flex w-full">
           <WalletPortfolioButtons />
         </div>
         <PrimeTokensBalance />
-        <div className="desktop:hidden flex rounded-xl w-full">
+        <div className="desktop:hidden mobile:flex tablet:flex rounded-xl w-full">
           <WalletPortfolioGraph />
         </div>
-        <div className="desktop:hidden flex w-full">
+        <div className="desktop:hidden mobile:flex tablet:flex w-full">
           <WalletPortfolioButtons />
         </div>
         <TopTokens />
       </div>
-      <div className="tablet:hidden mobile:hidden flex rounded-xl border-[1px] border-lighter_container_grey w-full">
+      <div className="tablet:hidden mobile:hidden desktop:flex rounded-xl border-[1px] border-lighter_container_grey w-full">
         <WalletPortfolioGraph />
       </div>
     </TileContainer>
