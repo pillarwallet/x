@@ -29,6 +29,7 @@ exports[`<DisplayCollectionImage /> renders correctly and matches snapshot witho
     <mask
       height={90}
       id=":r0:"
+      mask-type="alpha"
       maskUnits="userSpaceOnUse"
       width={90}
       x={0}
