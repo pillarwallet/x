@@ -21,6 +21,10 @@ import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 // utils
 import { getNetworkViem } from '../../deposit/utils/blockchain';
 import { processEth } from '../utils/blockchain';
+import {
+  getWrappedTokenAddressIfNative,
+  isWrappedToken,
+} from '../utils/wrappedTokens';
 
 const useOffer = () => {
   const { isZeroAddress } = useEtherspotUtils();
@@ -36,13 +40,22 @@ const useOffer = () => {
   }: SwapType): Promise<SwapOffer | undefined> => {
     let selectedOffer: SwapOffer;
 
-    // uses getRoutes (Lifi) - different chains or same chains, different tokens or same tokens
     try {
+      // Replace native token with wrapped if needed
+      const fromTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
+        fromTokenAddress,
+        fromChainId
+      );
+      const toTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
+        toTokenAddress,
+        toChainId
+      );
+
       const routesRequest: RoutesRequest = {
         fromChainId,
         toChainId,
-        fromTokenAddress,
-        toTokenAddress,
+        fromTokenAddress: fromTokenAddressWithWrappedCheck,
+        toTokenAddress: toTokenAddressWithWrappedCheck,
         fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
         options: {
           bridges: {
@@ -119,6 +132,35 @@ const useOffer = () => {
     fromAccount: string
   ): Promise<StepTransaction[]> => {
     const stepTransactions: StepTransaction[] = [];
+
+    const isWrapRequired = isWrappedToken(
+      route.fromToken.address,
+      route.fromToken.chainId
+    );
+
+    // If wrapping is required, we will add an extra step transaction with
+    // a wrapped token deposit first
+    if (isWrapRequired) {
+      const wrapCalldata = encodeFunctionData({
+        abi: [
+          {
+            name: 'deposit',
+            type: 'function',
+            stateMutability: 'payable',
+            inputs: [],
+            outputs: [],
+          },
+        ],
+        functionName: 'deposit',
+      });
+
+      stepTransactions.push({
+        to: route.fromToken.address, // already a wrapped token address from the SwapReceiveCard
+        data: wrapCalldata,
+        value: BigInt(route.fromAmount),
+        chainId: route.fromChainId,
+      });
+    }
 
     try {
       // eslint-disable-next-line no-restricted-syntax
