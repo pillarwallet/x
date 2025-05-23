@@ -5,7 +5,6 @@ import { TbTriangleFilled } from 'react-icons/tb';
 import { PortfolioData, WalletHistory } from '../../../../types/api';
 
 // utils
-import { limitDigitsNumber } from '../../../../utils/number';
 
 // reducer
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
@@ -73,8 +72,8 @@ const WalletPortfolioBalance = () => {
     const absValue = Math.abs(balanceChange.usdValue);
 
     return balanceChange.usdValue > 0
-      ? `+$${limitDigitsNumber(absValue).toFixed(2)}`
-      : `-$${limitDigitsNumber(absValue).toFixed(2)}`;
+      ? `+$${absValue.toFixed(2)}`
+      : `-$${absValue.toFixed(2)}`;
   }, [balanceChange]);
 
   return (
@@ -97,7 +96,7 @@ const WalletPortfolioBalance = () => {
             >
               $
               {walletPortfolio.total_wallet_balance > 0
-                ? limitDigitsNumber(walletPortfolio?.total_wallet_balance)
+                ? walletPortfolio?.total_wallet_balance.toFixed(2)
                 : '0.00'}
             </p>
             <div className="flex tablet:flex-wrap mobile:flex-wrap gap-1.5 items-center">

@@ -7,7 +7,6 @@ import { getPrimeAssetsWithBalances } from '../../../../services/pillarXApiWalle
 import { PortfolioData } from '../../../../types/api';
 
 // utils
-import { limitDigitsNumber } from '../../../../utils/number';
 import { PRIME_ASSETS_MOBULA } from '../../utils/constants';
 
 // reducer
@@ -44,7 +43,7 @@ const PrimeTokensBalance = () => {
       .flatMap((assetGroup) => assetGroup.primeAssets)
       .reduce((sum, asset) => sum + asset.usd_balance, 0);
 
-    return limitDigitsNumber(totalBalance);
+    return totalBalance;
   }, [walletPortfolio]);
 
   if (isWalletPortfolioLoading) {
@@ -65,7 +64,7 @@ const PrimeTokensBalance = () => {
       >
         Prime Tokens Balance: $
         {primeAssetsBalance && primeAssetsBalance > 0
-          ? primeAssetsBalance
+          ? primeAssetsBalance.toFixed(2)
           : '0.00'}
       </BodySmall>
 

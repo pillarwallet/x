@@ -100,7 +100,7 @@ describe('WalletPortfolioBalance', () => {
       },
     });
 
-    expect(screen.getByText('$1000')).toBeInTheDocument();
+    expect(screen.getByText('$1000.00')).toBeInTheDocument();
     expect(screen.getByText(/\+?\$500/)).toBeInTheDocument();
     expect(screen.getByText('100.00%')).toBeInTheDocument();
     expect(screen.getByText('24h')).toBeInTheDocument();
