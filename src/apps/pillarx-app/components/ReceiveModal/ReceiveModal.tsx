@@ -50,20 +50,6 @@ const ReceiveModal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Click outside to close
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        handleOnCloseReceiveModal();
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
     if (copied) {
       const timer = setTimeout(() => setCopied(false), 3000);
@@ -79,11 +65,14 @@ const ReceiveModal = () => {
     <div
       id="wallet-portfolio-tile-receive-modal"
       className="fixed inset-0 bg-[#12111680]/[.5] backdrop-blur-sm z-30"
+      onMouseDown={handleOnCloseReceiveModal}
+      data-testid="wallet-portfolio-tile-receive-modal"
     >
       <div className="fixed inset-0 flex items-center justify-center z-40 mobile:items-start tablet:items-start mt-20">
         <div
           ref={modalRef}
           className="relative flex flex-col w-full p-4 desktop:max-w-[446px] tablet:max-w-[446px] mobile:max-w-full mobile:mx-4 bg-container_grey border-[1px] border-white/[.05] rounded-2xl overflow-y-auto max-h-[75vh] mb-20"
+          onMouseDown={(e) => e.stopPropagation()} // Prevents closing when clicking inside
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-xl font-medium text-white">Receive</p>
@@ -100,39 +89,39 @@ const ReceiveModal = () => {
             withdraw them.
           </BodySmall>
           <Body className="text-white mb-3">EVM Address</Body>
-          <div className="flex items-center justify-between p-3 bg-lighter_container_grey rounded-[10px] mb-6 max-w-full">
-            <div className="flex-1 min-w-0">
-              <BodySmall className="text-white/[.5] font-normal truncate">
-                {!accountAddress
-                  ? 'We were not able to retrieve your EVM address, please check your internet connection and reload the page.'
-                  : accountAddress}
-              </BodySmall>
-            </div>
-            <div className="flex flex-shrink-0 pl-2">
-              {copied ? (
-                <MdCheck
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    color: 'white',
-                    opacity: 0.5,
-                  }}
-                />
-              ) : (
-                <CopyToClipboard
-                  text={accountAddress || ''}
-                  onCopy={() => setCopied(true)}
-                >
+          <CopyToClipboard
+            text={accountAddress || ''}
+            onCopy={() => setCopied(true)}
+          >
+            <div className="flex items-center justify-between p-3 bg-lighter_container_grey rounded-[10px] mb-6 max-w-full">
+              <div className="flex-1 min-w-0">
+                <BodySmall className="text-white/[.5] font-normal truncate">
+                  {!accountAddress
+                    ? 'We were not able to retrieve your EVM address, please check your internet connection and reload the page.'
+                    : accountAddress}
+                </BodySmall>
+              </div>
+              <div className="flex flex-shrink-0 pl-2">
+                {copied ? (
+                  <MdCheck
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      color: 'white',
+                      opacity: 0.5,
+                    }}
+                  />
+                ) : (
                   <img
                     src={CopyIcon}
                     alt="copy-evm-address"
                     className="w-3 h-3.5"
                     onClick={(e) => e.stopPropagation()}
                   />
-                </CopyToClipboard>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          </CopyToClipboard>
 
           <Body className="text-white mb-6">Supported Chains</Body>
           <div className="grid grid-cols-2 gap-4">
