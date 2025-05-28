@@ -49,6 +49,8 @@ type TokenDataType = {
 let tokensData: Token[] = [];
 
 export const chainNameDataCompatibility = (chainName: string) => {
+  if (!chainName) return '';
+
   const chain = chainName.toLowerCase();
 
   if (chain === 'xdai') {

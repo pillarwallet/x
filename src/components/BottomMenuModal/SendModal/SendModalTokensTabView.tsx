@@ -37,6 +37,7 @@ import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+import useDeployWallet from '../../../hooks/useDeployWallet';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
@@ -44,6 +45,7 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 
 // utils
+import { isNativeToken } from '../../../apps/the-exchange/utils/wrappedTokens';
 import {
   decodeSendTokenCallData,
   getNativeAssetForChainId,
@@ -88,6 +90,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     React.useState<string>('');
   const [safetyWarningMessage, setSafetyWarningMessage] =
     React.useState<string>('');
+  const [deploymentCost, setDeploymentCost] = React.useState(0);
+  const [isDeploymentCostLoading, setIsDeploymentCostLoading] =
+    React.useState(true);
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
   const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
@@ -104,6 +109,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const { getWalletDeploymentCost } = useDeployWallet();
 
   /**
    * Import the recordPresence mutation from the
@@ -166,6 +172,22 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setSafetyWarningMessage('');
   }, [selectedAsset, recipient, amount]);
 
+  React.useEffect(() => {
+    const getDeploymentCost = async () => {
+      if (!accountAddress || !selectedAsset?.chainId) return;
+      setIsDeploymentCostLoading(true);
+      const cost = await getWalletDeploymentCost({
+        accountAddress,
+        chainId: selectedAsset.chainId,
+      });
+      setDeploymentCost(cost);
+      setIsDeploymentCostLoading(false);
+    };
+
+    getDeploymentCost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountAddress, selectedAsset]);
+
   const amountInFiat = React.useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
     return selectedAssetPrice * +(amount || 0);
@@ -178,12 +200,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const maxAmountAvailable = React.useMemo(() => {
     if (selectedAsset?.type !== 'token' || !selectedAssetBalance) return 0;
-    return isAmountInputAsFiat
-      ? selectedAssetPrice * selectedAssetBalance
+
+    const adjustedBalance = isNativeToken(selectedAsset.asset.contract)
+      ? selectedAssetBalance - deploymentCost
       : selectedAssetBalance;
+
+    return isAmountInputAsFiat
+      ? selectedAssetPrice * adjustedBalance
+      : adjustedBalance;
   }, [
+    selectedAsset,
+    deploymentCost,
     isAmountInputAsFiat,
-    selectedAsset?.type,
     selectedAssetPrice,
     selectedAssetBalance,
   ]);
@@ -208,7 +236,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const isSendModalInvokedFromHook = !!payload;
   const isRegularSendModal = !isSendModalInvokedFromHook && !showBatchSendModal;
   const isSendDisabled =
-    isSending || (isRegularSendModal && !isTransactionReady);
+    isSending ||
+    (isRegularSendModal && !isTransactionReady) ||
+    Number(amount) > maxAmountAvailable;
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
     if (isSendDisabled) {
@@ -546,7 +576,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   <AmountInputSymbol>
                     {isAmountInputAsFiat ? 'USD' : selectedAsset.asset.symbol}
                   </AmountInputSymbol>
-                  {maxAmountAvailable > 0 && (
+                  {!isDeploymentCostLoading && maxAmountAvailable > 0 && (
                     <TextInputButton
                       onClick={() => setAmount(`${maxAmountAvailable}`)}
                     >
