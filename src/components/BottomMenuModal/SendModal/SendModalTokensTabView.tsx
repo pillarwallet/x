@@ -11,7 +11,7 @@ import {
   useEtherspotUtils,
   useWalletAddress,
 } from '@etherspot/transaction-kit';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import {
   ArrangeVertical as ArrangeVerticalIcon,
   ClipboardText as IconClipboardText,
@@ -36,25 +36,28 @@ import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
+import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
+import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
 import {
-  decodeSendTokenCallData,
   getNativeAssetForChainId,
   isPolygonAssetNative,
   isValidEthereumAddress,
 } from '../../../utils/blockchain';
-import { pasteFromClipboard } from '../../../utils/common';
+import {
+  pasteFromClipboard,
+  transactionDescription,
+} from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
-import { processEth } from '../../../apps/the-exchange/utils/blockchain';
 import { SendModalData } from '../../../types';
 
 const getAmountLeft = (
@@ -104,6 +107,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
 
   /**
    * Import the recordPresence mutation from the
@@ -217,6 +227,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       );
       return;
     }
+
+    // remove previously saved userOp for a new one
+    localStorage.removeItem('latestUserOpStatus');
+    localStorage.removeItem('latestTransactionHash');
+    localStorage.removeItem('latestUserOpInfo');
+    localStorage.removeItem('latestUserOpChainId');
+
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
@@ -337,6 +354,93 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           setWalletConnectTxHash(txHash);
         }
       }
+
+      const transactionToSend = sent?.[0]?.batches?.[0]?.transactions?.[0];
+
+      setLatestUserOpInfo(
+        transactionDescription(selectedAsset, transactionToSend, payload)
+      );
+
+      setLatestUserOpChainId(selectedAsset?.chainId);
+
+      const userOpStatusInterval = 5000; // 5 seconds
+      const maxAttempts = 9; // 9 * 5sec = 45sec
+      let attempts = 0;
+
+      const userOperationStatus = setInterval(async () => {
+        attempts += 1;
+        try {
+          const response = await getUserOperationStatus(
+            chainIdForTxHash,
+            newUserOpHash
+          );
+          transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+          const status = response?.status;
+
+          // If OnChain, it means it has been successfully added on chain
+          if (status === 'OnChain' && response?.transaction) {
+            setUserOpStatus('Confirmed');
+            setTransactionHash(response.transaction);
+            transactionDebugLog(
+              'Transaction successfully submitted on chain with transaction hash:',
+              response.transaction
+            );
+            clearInterval(userOperationStatus);
+            return;
+          }
+
+          // Treat status Reverted as Sent until we timeout as this JSON-RPC call
+          // can try again and be successful on Polygon only - known issue
+          if (status === 'Reverted') {
+            if (attempts < maxAttempts) {
+              setUserOpStatus('Sent');
+            } else {
+              setUserOpStatus('Failed');
+              transactionDebugLog(
+                'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+                response?.transaction
+              );
+              setTransactionHash(response?.transaction);
+              clearInterval(userOperationStatus);
+            }
+            return;
+          }
+
+          // New, Pending, Submitted => still waiting
+          if (['New', 'Pending'].includes(status)) {
+            setUserOpStatus('Sending');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (['Submitted'].includes(status)) {
+            setUserOpStatus('Sent');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(userOperationStatus);
+            transactionDebugLog(
+              'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+              response?.transaction
+            );
+            if (userOpStatus !== 'Confirmed') {
+              setUserOpStatus('Failed');
+              setTransactionHash(response?.transaction);
+            }
+          }
+        } catch (err) {
+          transactionDebugLog('Error getting userOp status:', err);
+          clearInterval(userOperationStatus);
+          setUserOpStatus('Failed');
+        }
+      }, userOpStatusInterval);
     }
 
     if (!newUserOpHash) {
@@ -375,27 +479,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       selectedAsset?.chainId ||
       etherspotDefaultChainId;
 
-    const transactionDescription = () => {
-      if (selectedAsset?.type === 'token') {
-        if (transactionToBatch?.value) {
-          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`;
-        }
-        if (!transactionToBatch?.value && transactionToBatch?.data) {
-          const decodedTransferData = decodeSendTokenCallData(
-            transactionToBatch.data
-          );
-          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`;
-        }
-      }
-
-      return payload?.description;
-    };
-
     transactionDebugLog('Adding transaction to batch:', transactionToBatch);
 
     addToBatch({
       title: payload?.title || t`action.sendAsset`,
-      description: payload?.description || transactionDescription(),
+      description:
+        payload?.description ||
+        transactionDescription(selectedAsset, transactionToBatch, payload),
       chainId: chainIdForBatch,
       ...transactionToBatch,
     });

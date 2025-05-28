@@ -7,24 +7,24 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // hooks
-import { useSelectedChains } from '../../hooks/useSelectedChainsHistory';
-import { useGetTransactionsHistoryQuery } from '../../services/pillarXApiTransactionsHistory';
+import { useSelectedChains } from '../../../hooks/useSelectedChainsHistory';
+import { useGetTransactionsHistoryQuery } from '../../../services/pillarXApiTransactionsHistory';
 
 // utils
-import { getBlockScan, getChainName } from '../../utils/blockchain';
+import { getBlockScan, getChainName } from '../../../utils/blockchain';
 
 // types
 import {
   EtherscanTransaction,
   FlairTransaction,
   TransactionHistory,
-} from '../../types/api';
+} from '../../../types/api';
 
 // components
-import ChainAssetIcon from '../ChainAssetIcon';
-import HistoryChainDropdown from '../Form/HistoryChainDropdown/HistoryChainDropdown';
-import SkeletonLoader from '../SkeletonLoader';
-import Alert from '../Text/Alert';
+import ChainAssetIcon from '../../ChainAssetIcon';
+import HistoryChainDropdown from '../../Form/HistoryChainDropdown/HistoryChainDropdown';
+import SkeletonLoader from '../../SkeletonLoader';
+import Alert from '../../Text/Alert';
 
 interface HistoryModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -107,7 +107,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
     (transaction as FlairTransaction).txHash;
 
   return (
-    <Wrapper id="history-modal">
+    <>
       <HistoryChainDropdown />
       {(!allTransactions.length && !isHistoryLoading && isHistorySucess) ||
         (!filteredTransactions.length && (
@@ -169,7 +169,7 @@ const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
           </HistoryCard>
         );
       })}
-    </Wrapper>
+    </>
   );
 };
 

@@ -15,6 +15,9 @@ import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+// services
+import { getUserOperationStatus } from '../../../services/userOpStatus';
+
 // components
 import Button from '../../Button';
 import FormGroup from '../../Form/FormGroup';
@@ -22,6 +25,7 @@ import Alert from '../../Text/Alert';
 import Card from '../../Text/Card';
 
 // hooks
+import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
@@ -61,6 +65,13 @@ const SendModalBatchesTabView = () => {
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -96,6 +107,13 @@ const SendModalBatchesTabView = () => {
       );
       return;
     }
+
+    // remove previously saved userOp for a new one
+    localStorage.removeItem('latestUserOpStatus');
+    localStorage.removeItem('latestTransactionHash');
+    localStorage.removeItem('latestUserOpInfo');
+    localStorage.removeItem('latestUserOpChainId');
+
     setIsSending((prev) => ({ ...prev, [chainId]: true }));
     setEstimatedCostFormatted((prev) => ({ ...prev, [chainId]: '' }));
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
@@ -162,6 +180,82 @@ const SendModalBatchesTabView = () => {
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
+
+    setLatestUserOpInfo(`Batched transaction on ${getChainName(chainId)}`);
+
+    setLatestUserOpChainId(chainId);
+
+    const userOpStatusInterval = 5000; // 5 seconds
+    const maxAttempts = 9; // 9 * 5sec = 45sec
+    let attempts = 0;
+
+    const userOperationStatus = setInterval(async () => {
+      attempts += 1;
+      try {
+        const response = await getUserOperationStatus(chainId, newUserOpHash);
+        transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+        const status = response?.status;
+
+        if (status === 'OnChain' && response?.transaction) {
+          setUserOpStatus('Confirmed');
+          setTransactionHash(response.transaction);
+          transactionDebugLog(
+            'Transaction successfully submitted on chain with transaction hash:',
+            response.transaction
+          );
+          clearInterval(userOperationStatus);
+          return;
+        }
+
+        if (status === 'Reverted') {
+          if (attempts < maxAttempts) {
+            setUserOpStatus('Sent');
+          } else {
+            setUserOpStatus('Failed');
+            transactionDebugLog(
+              'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+              response?.transaction
+            );
+            setTransactionHash(response?.transaction);
+            clearInterval(userOperationStatus);
+          }
+          return;
+        }
+
+        if (['New', 'Pending'].includes(status)) {
+          setUserOpStatus('Sending');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (['Submitted'].includes(status)) {
+          setUserOpStatus('Sent');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (attempts >= maxAttempts) {
+          clearInterval(userOperationStatus);
+          transactionDebugLog(
+            'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+            response?.transaction
+          );
+          if (userOpStatus !== 'Confirmed') {
+            setUserOpStatus('Failed');
+            setTransactionHash(response?.transaction);
+          }
+        }
+      } catch (err) {
+        transactionDebugLog('Error getting userOp status:', err);
+        clearInterval(userOperationStatus);
+        setUserOpStatus('Failed');
+      }
+    }, userOpStatusInterval);
 
     groupedTransactionsByChainId[+chainId].forEach((transaction) =>
       removeFromBatch(transaction.id as string)
