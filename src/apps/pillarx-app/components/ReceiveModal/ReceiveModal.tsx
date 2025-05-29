@@ -93,7 +93,7 @@ const ReceiveModal = () => {
             text={accountAddress || ''}
             onCopy={() => setCopied(true)}
           >
-            <div className="flex items-center justify-between p-3 bg-lighter_container_grey rounded-[10px] mb-6 max-w-full">
+            <div className="flex items-center justify-between p-3 bg-lighter_container_grey rounded-[10px] mb-6 max-w-full cursor-pointer">
               <div className="flex-1 min-w-0">
                 <BodySmall className="text-white/[.5] font-normal truncate">
                   {!accountAddress
@@ -116,7 +116,6 @@ const ReceiveModal = () => {
                     src={CopyIcon}
                     alt="copy-evm-address"
                     className="w-3 h-3.5"
-                    onClick={(e) => e.stopPropagation()}
                   />
                 )}
               </div>
