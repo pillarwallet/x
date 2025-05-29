@@ -1,8 +1,11 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
   EtherspotBatches,
   EtherspotTransaction,
+  ISentBatches,
   useEtherspotTransactions,
 } from '@etherspot/transaction-kit';
 import { ethers } from 'ethers';
@@ -15,6 +18,9 @@ import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+// services
+import { getUserOperationStatus } from '../../../services/userOpStatus';
+
 // components
 import Button from '../../Button';
 import FormGroup from '../../Form/FormGroup';
@@ -22,6 +28,7 @@ import Alert from '../../Text/Alert';
 import Card from '../../Text/Card';
 
 // hooks
+import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
@@ -61,6 +68,13 @@ const SendModalBatchesTabView = () => {
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -96,24 +110,82 @@ const SendModalBatchesTabView = () => {
       );
       return;
     }
+
+    // remove previously saved userOp for a new one
+    localStorage.removeItem('latestUserOpStatus');
+    localStorage.removeItem('latestTransactionHash');
+    localStorage.removeItem('latestUserOpInfo');
+    localStorage.removeItem('latestUserOpChainId');
+
     setIsSending((prev) => ({ ...prev, [chainId]: true }));
     setEstimatedCostFormatted((prev) => ({ ...prev, [chainId]: '' }));
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
 
     transactionDebugLog('Preparing to send batch:', batchId);
 
-    const startTime = performance.now();
+    const trySend = async (
+      maxRetries = 3,
+      retryDelay = 2000
+    ): Promise<ISentBatches[]> => {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          const startTime = performance.now();
 
-    const sent = await send([batchId]);
+          const sent = await send([batchId]);
 
-    const endTime = performance.now();
-    const elapsedMs = endTime - startTime;
+          const endTime = performance.now();
+          const elapsedMs = endTime - startTime;
 
-    transactionDebugLog(
-      `Time taken to send batch (ms): ${elapsedMs.toFixed(2)}`
-    );
+          transactionDebugLog(
+            `Time taken to send batch (ms): ${elapsedMs.toFixed(2)}`
+          );
 
-    transactionDebugLog('Transaction send batch details:', sent);
+          transactionDebugLog(
+            `Transaction send batch succeeded on attempt ${attempt}:`,
+            sent
+          );
+
+          return sent;
+        } catch (error) {
+          const rawMessage =
+            typeof error === 'string' ? error : JSON.stringify(error);
+          transactionDebugLog(`Send attempt ${attempt} failed`, rawMessage);
+
+          const shouldRetry =
+            rawMessage.includes(
+              'maxFeePerGas must be greater or equal to baseFee'
+            ) ||
+            rawMessage.includes('fee too low') ||
+            rawMessage.includes('User op cannot be replaced');
+
+          if (!shouldRetry || attempt === maxRetries) {
+            throw error;
+          }
+
+          transactionDebugLog(
+            `Retrying send() in ${retryDelay}ms due to gas-related error...`
+          );
+          await new Promise((resolve) => {
+            setTimeout(resolve, retryDelay);
+          });
+        }
+      }
+
+      throw new Error('Retry logic exhausted without success');
+    };
+
+    let sent: ISentBatches[];
+
+    try {
+      sent = await trySend();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMes = error?.message || 'Unknown send error';
+      console.warn('Final send() failed after retries:', errorMes);
+      setErrorMessage((prev) => ({ ...prev, [chainId]: errorMes }));
+      setIsSending((prev) => ({ ...prev, [chainId]: false }));
+      return;
+    }
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     if (estimatedCostBN) {
@@ -153,7 +225,7 @@ const SendModalBatchesTabView = () => {
       return;
     }
 
-    const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
+    const newUserOpHash = sent?.[0]?.sentBatches?.[0]?.userOpHash;
 
     transactionDebugLog('Transaction batch new userOpHash:', newUserOpHash);
 
@@ -162,6 +234,82 @@ const SendModalBatchesTabView = () => {
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
+
+    setLatestUserOpInfo(`Batched transaction on ${getChainName(chainId)}`);
+
+    setLatestUserOpChainId(chainId);
+
+    const userOpStatusInterval = 5000; // 5 seconds
+    const maxAttempts = 9; // 9 * 5sec = 45sec
+    let attempts = 0;
+
+    const userOperationStatus = setInterval(async () => {
+      attempts += 1;
+      try {
+        const response = await getUserOperationStatus(chainId, newUserOpHash);
+        transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+        const status = response?.status;
+
+        if (status === 'OnChain' && response?.transaction) {
+          setUserOpStatus('Confirmed');
+          setTransactionHash(response.transaction);
+          transactionDebugLog(
+            'Transaction successfully submitted on chain with transaction hash:',
+            response.transaction
+          );
+          clearInterval(userOperationStatus);
+          return;
+        }
+
+        if (status === 'Reverted') {
+          if (attempts < maxAttempts) {
+            setUserOpStatus('Sent');
+          } else {
+            setUserOpStatus('Failed');
+            transactionDebugLog(
+              'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+              response?.transaction
+            );
+            setTransactionHash(response?.transaction);
+            clearInterval(userOperationStatus);
+          }
+          return;
+        }
+
+        if (['New', 'Pending'].includes(status)) {
+          setUserOpStatus('Sending');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (['Submitted'].includes(status)) {
+          setUserOpStatus('Sent');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (attempts >= maxAttempts) {
+          clearInterval(userOperationStatus);
+          transactionDebugLog(
+            'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+            response?.transaction
+          );
+          if (userOpStatus !== 'Confirmed') {
+            setUserOpStatus('Failed');
+            setTransactionHash(response?.transaction);
+          }
+        }
+      } catch (err) {
+        transactionDebugLog('Error getting userOp status:', err);
+        clearInterval(userOperationStatus);
+        setUserOpStatus('Failed');
+      }
+    }, userOpStatusInterval);
 
     groupedTransactionsByChainId[+chainId].forEach((transaction) =>
       removeFromBatch(transaction.id as string)

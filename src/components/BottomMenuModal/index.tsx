@@ -10,7 +10,7 @@ import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 // modals
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
-import HistoryModal from './HistoryModal';
+import HistoryModal from './HistoryModal/HistoryModal';
 import SendModal from './SendModal';
 
 // hooks

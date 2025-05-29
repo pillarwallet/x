@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
@@ -5,13 +7,14 @@ import {
   EtherspotContractTransaction,
   EtherspotTokenTransferTransaction,
   EtherspotTransaction,
+  ISentBatches,
   useEtherspot,
   useEtherspotPrices,
   useEtherspotTransactions,
   useEtherspotUtils,
   useWalletAddress,
 } from '@etherspot/transaction-kit';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import {
   ArrangeVertical as ArrangeVerticalIcon,
   ClipboardText as IconClipboardText,
@@ -36,6 +39,7 @@ import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
+import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useDeployWallet from '../../../hooks/useDeployWallet';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
@@ -43,20 +47,22 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
+import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
 import { isNativeToken } from '../../../apps/the-exchange/utils/wrappedTokens';
 import {
-  decodeSendTokenCallData,
   getNativeAssetForChainId,
   isPolygonAssetNative,
   isValidEthereumAddress,
 } from '../../../utils/blockchain';
-import { pasteFromClipboard } from '../../../utils/common';
+import {
+  pasteFromClipboard,
+  transactionDescription,
+} from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
-import { processEth } from '../../../apps/the-exchange/utils/blockchain';
 import { SendModalData } from '../../../types';
 
 const getAmountLeft = (
@@ -110,6 +116,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
   const { getWalletDeploymentCost } = useDeployWallet();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
 
   /**
    * Import the recordPresence mutation from the
@@ -247,6 +260,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       );
       return;
     }
+
+    // remove previously saved userOp for a new one
+    localStorage.removeItem('latestUserOpStatus');
+    localStorage.removeItem('latestTransactionHash');
+    localStorage.removeItem('latestUserOpInfo');
+    localStorage.removeItem('latestUserOpChainId');
+
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
@@ -268,18 +288,68 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     transactionDebugLog('Preparing to send transaction');
 
-    const startTime = performance.now();
+    const trySend = async (
+      maxRetries = 3,
+      retryDelay = 2000
+    ): Promise<ISentBatches[]> => {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          const startTime = performance.now();
 
-    const sent = await send();
+          const sent = await send();
 
-    const endTime = performance.now();
-    const elapsedMs = endTime - startTime;
+          const endTime = performance.now();
+          const elapsedMs = endTime - startTime;
 
-    transactionDebugLog(
-      `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
-    );
+          transactionDebugLog(
+            `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
+          );
 
-    transactionDebugLog('Transaction send details:', sent);
+          transactionDebugLog(
+            `Transaction send succeeded on attempt ${attempt}:`,
+            sent
+          );
+
+          return sent;
+        } catch (error) {
+          const rawMessage =
+            typeof error === 'string' ? error : JSON.stringify(error);
+          transactionDebugLog(`Send attempt ${attempt} failed`, rawMessage);
+
+          const shouldRetry =
+            rawMessage.includes(
+              'maxFeePerGas must be greater or equal to baseFee'
+            ) ||
+            rawMessage.includes('fee too low') ||
+            rawMessage.includes('User op cannot be replaced');
+
+          if (!shouldRetry || attempt === maxRetries) {
+            throw error;
+          }
+
+          transactionDebugLog(
+            `Retrying send() in ${retryDelay}ms due to gas-related error...`
+          );
+          await new Promise((resolve) => {
+            setTimeout(resolve, retryDelay);
+          });
+        }
+      }
+      throw new Error('Retry logic exhausted without success');
+    };
+
+    let sent: ISentBatches[];
+
+    try {
+      sent = await trySend();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMes = error?.message || 'Unknown send error';
+      console.warn('Final send() failed after retries:', errorMes);
+      setErrorMessage(errorMes);
+      setIsSending(false);
+      return;
+    }
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
@@ -367,6 +437,93 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           setWalletConnectTxHash(txHash);
         }
       }
+
+      const transactionToSend = sent?.[0]?.batches?.[0]?.transactions?.[0];
+
+      setLatestUserOpInfo(
+        transactionDescription(selectedAsset, transactionToSend, payload)
+      );
+
+      setLatestUserOpChainId(selectedAsset?.chainId);
+
+      const userOpStatusInterval = 5000; // 5 seconds
+      const maxAttempts = 9; // 9 * 5sec = 45sec
+      let attempts = 0;
+
+      const userOperationStatus = setInterval(async () => {
+        attempts += 1;
+        try {
+          const response = await getUserOperationStatus(
+            chainIdForTxHash,
+            newUserOpHash
+          );
+          transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+          const status = response?.status;
+
+          // If OnChain, it means it has been successfully added on chain
+          if (status === 'OnChain' && response?.transaction) {
+            setUserOpStatus('Confirmed');
+            setTransactionHash(response.transaction);
+            transactionDebugLog(
+              'Transaction successfully submitted on chain with transaction hash:',
+              response.transaction
+            );
+            clearInterval(userOperationStatus);
+            return;
+          }
+
+          // Treat status Reverted as Sent until we timeout as this JSON-RPC call
+          // can try again and be successful on Polygon only - known issue
+          if (status === 'Reverted') {
+            if (attempts < maxAttempts) {
+              setUserOpStatus('Sent');
+            } else {
+              setUserOpStatus('Failed');
+              transactionDebugLog(
+                'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+                response?.transaction
+              );
+              setTransactionHash(response?.transaction);
+              clearInterval(userOperationStatus);
+            }
+            return;
+          }
+
+          // New, Pending, Submitted => still waiting
+          if (['New', 'Pending'].includes(status)) {
+            setUserOpStatus('Sending');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (['Submitted'].includes(status)) {
+            setUserOpStatus('Sent');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(userOperationStatus);
+            transactionDebugLog(
+              'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+              response?.transaction
+            );
+            if (userOpStatus !== 'Confirmed') {
+              setUserOpStatus('Failed');
+              setTransactionHash(response?.transaction);
+            }
+          }
+        } catch (err) {
+          transactionDebugLog('Error getting userOp status:', err);
+          clearInterval(userOperationStatus);
+          setUserOpStatus('Failed');
+        }
+      }, userOpStatusInterval);
     }
 
     if (!newUserOpHash) {
@@ -405,27 +562,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       selectedAsset?.chainId ||
       etherspotDefaultChainId;
 
-    const transactionDescription = () => {
-      if (selectedAsset?.type === 'token') {
-        if (transactionToBatch?.value) {
-          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`;
-        }
-        if (!transactionToBatch?.value && transactionToBatch?.data) {
-          const decodedTransferData = decodeSendTokenCallData(
-            transactionToBatch.data
-          );
-          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`;
-        }
-      }
-
-      return payload?.description;
-    };
-
     transactionDebugLog('Adding transaction to batch:', transactionToBatch);
 
     addToBatch({
       title: payload?.title || t`action.sendAsset`,
-      description: payload?.description || transactionDescription(),
+      description:
+        payload?.description ||
+        transactionDescription(selectedAsset, transactionToBatch, payload),
       chainId: chainIdForBatch,
       ...transactionToBatch,
     });

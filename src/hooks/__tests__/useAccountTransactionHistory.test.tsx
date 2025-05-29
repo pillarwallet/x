@@ -27,6 +27,16 @@ describe('useAccountTransactionHistory', () => {
           ],
         },
       },
+      updateData: false,
+      setUpdateData: jest.fn(),
+      userOpStatus: undefined,
+      setUserOpStatus: jest.fn(),
+      transactionHash: undefined,
+      setTransactionHash: jest.fn(),
+      latestUserOpInfo: undefined,
+      setLatestUserOpInfo: jest.fn(),
+      latestUserOpChainId: undefined,
+      setLatestUserOpChainId: jest.fn(),
     },
     listenerRef: {
       current: {
@@ -34,6 +44,10 @@ describe('useAccountTransactionHistory', () => {
       },
     },
   };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('throws error when no parent provider', () => {
     expect(() => {
@@ -57,7 +71,7 @@ describe('useAccountTransactionHistory', () => {
     jest.spyOn(React, 'useContext').mockImplementation(() => mockContextValue);
 
     const { result } = renderHook(() => useAccountTransactionHistory());
-    expect(result.current).toEqual(mockContextValue.data.history);
+    expect(result.current).toEqual(mockContextValue.data);
   });
 
   it('calls onUpdated when history are updated', () => {
@@ -76,7 +90,7 @@ describe('useAccountTransactionHistory', () => {
     };
 
     act(() => {
-      mockContextValue.listenerRef.current.onHistoryUpdated(
+      mockContextValue.listenerRef.current.onHistoryUpdated!(
         mainnet.id,
         '0x7F30B1960D5556929B03a0339814fE903c55a347',
         newTransaction
@@ -89,9 +103,5 @@ describe('useAccountTransactionHistory', () => {
       '0x7F30B1960D5556929B03a0339814fE903c55a347',
       newTransaction
     );
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
   });
 });
