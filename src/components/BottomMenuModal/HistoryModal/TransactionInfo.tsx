@@ -124,14 +124,18 @@ const TransactionInfo = () => {
       {/* UserOp status */}
       <p className="text-sm font-medium text-light_purple">
         Status:{' '}
-        <span className="font-normal text-white">{displayStatus ?? 'N/A'}</span>
+        <span className="font-normal text-white">
+          {displayStatus ?? 'Starting...'}
+        </span>
       </p>
 
       <div className="flex flex-col items-start w-full space-y-2 mt-4">
         {/* Transaction info */}
         <p className="text-xs text-light_purple font-medium ">
           Tx info:{' '}
-          <span className="font-normal text-white">{displayInfo ?? 'N/A'}</span>
+          <span className="font-normal text-white">
+            {displayInfo ?? 'Waiting...'}
+          </span>
         </p>
 
         {/* Transaction hash */}
@@ -144,7 +148,7 @@ const TransactionInfo = () => {
               <p className="text-xs text-light_purple font-normal truncate">
                 Tx Hash:{' '}
                 <span className="font-normal text-white">
-                  {displayHash ?? 'N/A'}
+                  {displayHash ?? 'Waiting...'}
                 </span>
               </p>
             </div>
@@ -193,7 +197,7 @@ const TransactionInfo = () => {
         <div className="flex text-[10px] italic text-white/[.5] font-normal p-3 border-[1px] border-medium_grey rounded-md">
           Please note that this information confirms whether the transaction was
           sent but does not indicate its status. To verify the status, please
-          check the tx hash on blockscans.
+          check the transaction hash on relevant blockchain explorer.
         </div>
       </div>
     </div>
