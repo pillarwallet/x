@@ -267,6 +267,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     localStorage.removeItem('latestUserOpInfo');
     localStorage.removeItem('latestUserOpChainId');
 
+    // remove previously all states for userOp
+    setTransactionHash(undefined);
+    setUserOpStatus(undefined);
+    setLatestUserOpInfo(undefined);
+    setLatestUserOpChainId(undefined);
+
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
