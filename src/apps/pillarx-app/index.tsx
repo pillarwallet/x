@@ -3,7 +3,6 @@ import { useWalletAddress } from '@etherspot/transaction-kit';
 import { setWalletAddresses } from '@hypelab/sdk-react';
 import { useWallets } from '@privy-io/react-auth';
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
 
@@ -12,7 +11,6 @@ import { Projection } from '../../types/api';
 
 // hooks
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
-import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
 import { useGetTilesInfoQuery, useRecordProfileMutation } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
@@ -23,7 +21,6 @@ import { componentMap } from './utils/configComponent';
 import AnimatedTile from './components/AnimatedTile/AnimatedTitle';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
-import H1 from './components/Typography/H1';
 import WalletPortfolioTile from './components/WalletPortfolioTile/WalletPortfolioTile';
 
 // images
@@ -34,7 +31,6 @@ import pillarLogoLight from './images/pillarX_full_white.png';
 import { PAGE_LIMIT } from './utils/constants';
 
 const App = () => {
-  const [t] = useTranslation();
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [pageData, setPageData] = useState<Projection[]>([]);
@@ -70,15 +66,6 @@ const App = () => {
     refetch: refetchHomeFeed,
   } = useGetTilesInfoQuery(
     { page, address: walletAddress || '' },
-    { skip: !walletAddress }
-  );
-  // This is a "fire and forget" call to the waitlist
-  const {
-    data: waitlistData,
-    isLoading: isWaitlistLoading,
-    isSuccess: isWaitlistSucess,
-  } = useGetWaitlistQuery(
-    { address: walletAddress || '' },
     { skip: !walletAddress }
   );
 
@@ -202,12 +189,6 @@ const App = () => {
         src={pillarLogoLight}
         className="object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
       />
-      <H1 className="desktop:py-2.5 desktop:px-4 tablet:py-2.5 tablet:px-4 mobile:px-0">
-        {t`content.welcomeBackTester`}{' '}
-        {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess
-          ? waitlistData.number
-          : '...'}
-      </H1>
       <div
         ref={divRef}
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
