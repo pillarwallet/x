@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
@@ -5,6 +7,7 @@ import {
   EtherspotContractTransaction,
   EtherspotTokenTransferTransaction,
   EtherspotTransaction,
+  ISentBatches,
   useEtherspot,
   useEtherspotPrices,
   useEtherspotTransactions,
@@ -255,18 +258,68 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     transactionDebugLog('Preparing to send transaction');
 
-    const startTime = performance.now();
+    const trySend = async (
+      maxRetries = 3,
+      retryDelay = 2000
+    ): Promise<ISentBatches[]> => {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          const startTime = performance.now();
 
-    const sent = await send();
+          const sent = await send();
 
-    const endTime = performance.now();
-    const elapsedMs = endTime - startTime;
+          const endTime = performance.now();
+          const elapsedMs = endTime - startTime;
 
-    transactionDebugLog(
-      `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
-    );
+          transactionDebugLog(
+            `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
+          );
 
-    transactionDebugLog('Transaction send details:', sent);
+          transactionDebugLog(
+            `Transaction send succeeded on attempt ${attempt}:`,
+            sent
+          );
+
+          return sent;
+        } catch (error) {
+          const rawMessage =
+            typeof error === 'string' ? error : JSON.stringify(error);
+          transactionDebugLog(`Send attempt ${attempt} failed`, rawMessage);
+
+          const shouldRetry =
+            rawMessage.includes(
+              'maxFeePerGas must be greater or equal to baseFee'
+            ) ||
+            rawMessage.includes('fee too low') ||
+            rawMessage.includes('User op cannot be replaced');
+
+          if (!shouldRetry || attempt === maxRetries) {
+            throw error;
+          }
+
+          transactionDebugLog(
+            `Retrying send() in ${retryDelay}ms due to gas-related error...`
+          );
+          await new Promise((resolve) => {
+            setTimeout(resolve, retryDelay);
+          });
+        }
+      }
+      throw new Error('Retry logic exhausted without success');
+    };
+
+    let sent: ISentBatches[];
+
+    try {
+      sent = await trySend();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMes = error?.message || 'Unknown send error';
+      console.warn('Final send() failed after retries:', errorMes);
+      setErrorMessage(errorMes);
+      setIsSending(false);
+      return;
+    }
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
