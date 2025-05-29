@@ -1,19 +1,25 @@
 // services
-import { useEffect } from 'react';
+import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useEffect, useMemo, useState } from 'react';
 
 // services
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
   Token,
   chainIdToChainNameTokensData,
+  chainNameDataCompatibility,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
+
+// utils
+import { isNativeToken } from '../../utils/wrappedTokens';
 
 // reducer
 import { setReceiveToken } from '../../reducer/theExchangeSlice';
 
 // hooks
+import useDeployWallet from '../../../../hooks/useDeployWallet';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -37,6 +43,8 @@ const SwapReceiveCard = ({
   onClick,
 }: SwapReceiveCardProps) => {
   const dispatch = useAppDispatch();
+  const accountAddress = useWalletAddress();
+  const { getWalletDeploymentCost } = useDeployWallet();
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(
     (state) => state.swap.receiveToken as Token
@@ -44,6 +52,8 @@ const SwapReceiveCard = ({
   const selectedToken = useAppSelector(
     (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
   );
+  const [deploymentCost, setDeploymentCost] = useState(0);
+  const [isDeploymentCostLoading, setIsDeploymentCostLoading] = useState(false);
 
   const isClickable =
     (position === CardPosition.SWAP && !swapToken) ||
@@ -108,6 +118,33 @@ const SwapReceiveCard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, searchData]);
 
+  useEffect(() => {
+    const getDeploymentCost = async () => {
+      if (!accountAddress || !swapToken?.blockchain) return;
+
+      setIsDeploymentCostLoading(true);
+      const cost = await getWalletDeploymentCost({
+        accountAddress,
+        chainId: chainNameToChainIdTokensData(swapToken.blockchain),
+      });
+      setDeploymentCost(cost);
+      setIsDeploymentCostLoading(false);
+    };
+
+    getDeploymentCost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountAddress, swapToken]);
+
+  const swapTokenBalance = useMemo(() => {
+    if (!swapToken || !swapToken.balance) return 0;
+
+    const adjustedBalance = isNativeToken(swapToken.contract)
+      ? swapToken.balance - deploymentCost
+      : swapToken.balance;
+
+    return adjustedBalance;
+  }, [swapToken, deploymentCost]);
+
   return (
     <div
       id="swap-receive-card-exchange"
@@ -144,8 +181,15 @@ const SwapReceiveCard = ({
             : receiveToken?.symbol
         }
         tokenBalance={
-          position === CardPosition.SWAP ? swapToken?.balance : undefined
+          position === CardPosition.SWAP ? swapTokenBalance : undefined
         }
+        tokenChain={
+          position === CardPosition.SWAP
+            ? chainNameDataCompatibility(swapToken?.blockchain)
+            : undefined
+        }
+        isDeploymentCostLoading={isDeploymentCostLoading}
+        deploymentCost={deploymentCost}
       />
     </div>
   );
