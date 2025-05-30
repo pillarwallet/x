@@ -3,21 +3,15 @@ import { useWalletAddress } from '@etherspot/transaction-kit';
 import { setWalletAddresses } from '@hypelab/sdk-react';
 import { useWallets } from '@privy-io/react-auth';
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
 
 // types
-import { Projection, WalletData } from '../../types/api';
+import { Projection } from '../../types/api';
 
 // hooks
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
-import { useGetWaitlistQuery } from '../../services/pillarXApiWaitlist';
-import {
-  useGetTilesInfoQuery,
-  useGetWalletInfoQuery,
-  useRecordProfileMutation,
-} from './api/homeFeed';
+import { useGetTilesInfoQuery, useRecordProfileMutation } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
 
 // utils
@@ -25,10 +19,9 @@ import { componentMap } from './utils/configComponent';
 
 // components
 import AnimatedTile from './components/AnimatedTile/AnimatedTitle';
-import PortfolioOverview from './components/PortfolioOverview/PortfolioOverview';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
-import H1 from './components/Typography/H1';
+import WalletPortfolioTile from './components/WalletPortfolioTile/WalletPortfolioTile';
 
 // images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
@@ -38,13 +31,9 @@ import pillarLogoLight from './images/pillarX_full_white.png';
 import { PAGE_LIMIT } from './utils/constants';
 
 const App = () => {
-  const [t] = useTranslation();
   const [page, setPage] = useState(1);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const [pageData, setPageData] = useState<Projection[]>([]);
-  const [walletData, setWalletData] = useState<WalletData | undefined>(
-    undefined
-  );
 
   // Import wallets
   const walletAddress = useWalletAddress();
@@ -79,25 +68,6 @@ const App = () => {
     { page, address: walletAddress || '' },
     { skip: !walletAddress }
   );
-  const {
-    data: walletTile,
-    isLoading: isWalletTileLoading,
-    isFetching: isWalletTileFetching,
-    isSuccess: isWalletTileSuccess,
-    refetch: refetchWalletTile,
-  } = useGetWalletInfoQuery(
-    { address: walletAddress || '' },
-    { skip: !walletAddress }
-  );
-  // This is a "fire and forget" call to the waitlist
-  const {
-    data: waitlistData,
-    isLoading: isWaitlistLoading,
-    isSuccess: isWaitlistSucess,
-  } = useGetWaitlistQuery(
-    { address: walletAddress || '' },
-    { skip: !walletAddress }
-  );
 
   useEffect(() => {
     // This is a "fire and forget" call to the profile API
@@ -114,22 +84,6 @@ const App = () => {
       }
     }
   }, [walletAddress, privyWallets, recordProfile]);
-
-  // This useEffect is to update the wallet data
-  useEffect(() => {
-    if (!isWalletTileSuccess && walletAddress) {
-      refetchWalletTile();
-    }
-
-    if (walletTile && isWalletTileSuccess) {
-      setWalletData(walletTile);
-    }
-
-    if (!isWalletTileSuccess) {
-      setWalletData(undefined);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletTile, isWalletTileSuccess, walletAddress]);
 
   useEffect(() => {
     if (!isHomeFeedSuccess && walletAddress) {
@@ -235,20 +189,11 @@ const App = () => {
         src={pillarLogoLight}
         className="object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
       />
-      <H1 className="desktop:py-2.5 desktop:px-4 tablet:py-2.5 tablet:px-4 mobile:px-0">
-        {t`content.welcomeBackTester`}{' '}
-        {waitlistData?.number && !isWaitlistLoading && isWaitlistSucess
-          ? waitlistData.number
-          : '...'}
-      </H1>
       <div
         ref={divRef}
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
       >
-        <PortfolioOverview
-          data={walletData}
-          isDataLoading={isWalletTileLoading || isWalletTileFetching}
-        />
+        <WalletPortfolioTile />
         {DisplayHomeFeedTiles}
         {(isHomeFeedFetching || isHomeFeedLoading) && page === 1 && (
           <>

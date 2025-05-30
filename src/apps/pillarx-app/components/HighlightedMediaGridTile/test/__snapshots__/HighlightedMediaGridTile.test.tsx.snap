@@ -3,7 +3,7 @@
 exports[`<HighlightedMediaGridTile /> renders correctly and matches snapshot 1`] = `
 <div>
   <div
-    className="flex bg-container_grey rounded-2xl flex-col p-10 pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+    className="flex bg-container_grey rounded-3xl flex-col p-10 pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
     id="pillarx-feed-highlighted-media-grid-tile"
   >
     <p

@@ -106,7 +106,7 @@ const DropdownTokenList = ({
     isSuccess: isWalletPortfolioDataSuccess,
     error: walletPortfolioDataError,
   } = useGetWalletPortfolioQuery(
-    { wallet: accountAddress || '' },
+    { wallet: accountAddress || '', isPnl: false },
     { skip: !accountAddress }
   );
 
