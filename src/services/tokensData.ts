@@ -20,6 +20,11 @@ export type Token = {
   price?: number;
 };
 
+export type PortfolioToken = Token & {
+  price_change_24h?: number;
+  cross_chain_balance?: number;
+};
+
 export type TokenRawDataItem = {
   id: number;
   name: string;
@@ -44,6 +49,8 @@ type TokenDataType = {
 let tokensData: Token[] = [];
 
 export const chainNameDataCompatibility = (chainName: string) => {
+  if (!chainName) return '';
+
   const chain = chainName.toLowerCase();
 
   if (chain === 'xdai') {

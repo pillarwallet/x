@@ -14,6 +14,7 @@ import {
 // hooks
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
+import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
 import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -52,9 +53,13 @@ const ExchangeAction = () => {
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { getStepTransactions } = useOffer();
   const walletAddress = useWalletAddress();
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   useEffect(() => {
     setErrorMessage('');
+
+    transactionDebugLog('The Exchange - Offer:', bestOffer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bestOffer]);
 
   const getTransactionTitle = (
@@ -95,6 +100,11 @@ const ExchangeAction = () => {
         walletAddress as `0x${string}`
       );
 
+      transactionDebugLog(
+        'The Exchange - Step Transactions:',
+        stepTransactions
+      );
+
       if (!stepTransactions.length) {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
@@ -109,6 +119,12 @@ const ExchangeAction = () => {
           const { value } = stepTransactions[i];
           const bigIntValue = BigNumber.from(value).toBigInt();
           const integerValue = formatEther(bigIntValue);
+
+          transactionDebugLog(
+            'The Exchange - Adding transaction to batch:',
+            stepTransactions[i]
+          );
+
           addToBatch({
             title: getTransactionTitle(
               i,

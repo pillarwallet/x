@@ -6,7 +6,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="flex bg-container_grey rounded-2xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
+        class="flex bg-container_grey rounded-3xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
         id="tokens-with-market-data-tile"
       >
         <div
@@ -32,10 +32,10 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           class="w-full"
         >
           <div
-            class="flex flex-col desktop:hidden"
+            class="tablet:flex mobile:flex flex-col desktop:hidden"
           >
             <div
-              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     false 
     desktop:border-b-0
     cursor-pointer"
@@ -97,7 +97,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        17d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -138,7 +138,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
-                      0.042188
+                      0.04219
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -189,7 +189,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
               </div>
             </div>
             <div
-              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     desktop:border-b-0 tablet:border-b-0 mobile:border-b-0 
     false
     cursor-pointer"
@@ -260,7 +260,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        17d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -301,7 +301,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
-                      1.062188
+                      1.0622
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -353,13 +353,13 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
+            class="tablet:hidden mobile:hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
           >
             <div
               class="contents"
             >
               <div
-                class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+                class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     false 
     desktop:border-b-0
     cursor-pointer"
@@ -421,7 +421,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          17d ago
+                          1mo ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -462,7 +462,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
                         $
-                        0.042188
+                        0.04219
                       </p>
                       <div
                         class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -513,7 +513,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                 </div>
               </div>
               <div
-                class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+                class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     desktop:border-b-0 tablet:border-b-0 mobile:border-b-0 
     desktop:border-b-0
     cursor-pointer"
@@ -584,7 +584,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          17d ago
+                          1mo ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -625,7 +625,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                       >
                         $
-                        1.062188
+                        1.0622
                       </p>
                       <div
                         class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -683,7 +683,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
   </body>,
   "container": <div>
     <div
-      class="flex bg-container_grey rounded-2xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
+      class="flex bg-container_grey rounded-3xl mobile:bg-transparent tablet:bg-transparent flex-col p-8 gap-8 mobile:gap-6 mobile:px-3 mobile:pt-2.5 mobile:pb-6"
       id="tokens-with-market-data-tile"
     >
       <div
@@ -709,10 +709,10 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
         class="w-full"
       >
         <div
-          class="flex flex-col desktop:hidden"
+          class="tablet:flex mobile:flex flex-col desktop:hidden"
         >
           <div
-            class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+            class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     false 
     desktop:border-b-0
     cursor-pointer"
@@ -774,7 +774,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      17d ago
+                      1mo ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -815,7 +815,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
                     $
-                    0.042188
+                    0.04219
                   </p>
                   <div
                     class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -866,7 +866,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+            class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     desktop:border-b-0 tablet:border-b-0 mobile:border-b-0 
     false
     cursor-pointer"
@@ -937,7 +937,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      17d ago
+                      1mo ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -978,7 +978,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                   >
                     $
-                    1.062188
+                    1.0622
                   </p>
                   <div
                     class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
@@ -1030,13 +1030,13 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          class="hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
+          class="tablet:hidden mobile:hidden desktop:grid desktop:grid-cols-2 desktop:gap-x-14 w-full"
         >
           <div
             class="contents"
           >
             <div
-              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     false 
     desktop:border-b-0
     cursor-pointer"
@@ -1098,7 +1098,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        17d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1139,7 +1139,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
-                      0.042188
+                      0.04219
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -1190,7 +1190,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
               </div>
             </div>
             <div
-              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
+              class="flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
     desktop:border-b-0 tablet:border-b-0 mobile:border-b-0 
     desktop:border-b-0
     cursor-pointer"
@@ -1261,7 +1261,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        17d ago
+                        1mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1302,7 +1302,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       class="font-normal false desktop:text-percentage_red tablet:text-percentage_red mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
                     >
                       $
-                      1.062188
+                      1.0622
                     </p>
                     <div
                       class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded false text-percentage_red desktop:bg-percentage_red/[.1] tablet:bg-percentage_red/[.1] mobile:bg-transparent"
