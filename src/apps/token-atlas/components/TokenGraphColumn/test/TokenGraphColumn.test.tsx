@@ -1,15 +1,21 @@
+/* eslint-disable jsx-a11y/no-interactive-element-to-noninteractive-role */
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 
 // redux store
 import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
 
+// provider
+import AllowedAppsProvider from '../../../../../providers/AllowedAppsProvider';
+
 // components
 import TokenGraphColumn from '../TokenGraphColumn';
 
 // reducer
 import {
+  setIsGraphLoading,
   setPeriodFilter,
   setTokenDataGraph,
   setTokenDataInfo,
@@ -17,16 +23,40 @@ import {
 
 // types
 import {
+  MarketHistoryPairData,
   TokenAtlasInfoData,
-  TokenMarketHistory,
 } from '../../../../../types/api';
 import { PeriodFilter } from '../../../types/types';
 
-const mockTokenDataGraph: TokenMarketHistory = {
-  price_history: [
-    { timestamp: 1722466800, priceUSD: 100 },
-    { timestamp: 1722553200, priceUSD: 110 },
-  ],
+const mockTokenDataGraph: MarketHistoryPairData = {
+  result: {
+    data: [
+      {
+        volume: 1050.25,
+        open: 45000.5,
+        high: 45500.0,
+        low: 44800.25,
+        close: 45250.75,
+        time: 1712457600, // Unix timestamp
+      },
+      {
+        volume: 980.1,
+        open: 45250.75,
+        high: 46000.0,
+        low: 45000.0,
+        close: 45900.0,
+        time: 1712544000,
+      },
+      {
+        volume: 1125.8,
+        open: 45900.0,
+        high: 46250.5,
+        low: 45700.0,
+        close: 46050.5,
+        time: 1712630400,
+      },
+    ],
+  },
 };
 
 const mockTokenDataInfo: TokenAtlasInfoData = {
@@ -56,18 +86,30 @@ const mockTokenDataInfo: TokenAtlasInfoData = {
   circulating_supply: '170',
 };
 
+// Mock the chart
+jest.mock('react-chartjs-2', () => ({
+  Line: () => (
+    <canvas data-testid="price-graph" height={150} role="img" width={300} />
+  ),
+}));
+
 describe('<TokenGraphColumn />', () => {
   beforeEach(() => {
     store.dispatch(setTokenDataInfo(mockTokenDataInfo));
     store.dispatch(setTokenDataGraph(mockTokenDataGraph));
     store.dispatch(setPeriodFilter(PeriodFilter.DAY));
+    store.dispatch(setIsGraphLoading(false));
   });
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
         <Provider store={store}>
-          <TokenGraphColumn isLoadingTokenDataInfo={false} />
+          <MemoryRouter>
+            <AllowedAppsProvider>
+              <TokenGraphColumn isLoadingTokenDataInfo={false} />
+            </AllowedAppsProvider>
+          </MemoryRouter>
         </Provider>
       )
       .toJSON();
@@ -78,13 +120,17 @@ describe('<TokenGraphColumn />', () => {
   it('displays token information correctly', () => {
     render(
       <Provider store={store}>
-        <TokenGraphColumn isLoadingTokenDataInfo={false} />
+        <MemoryRouter>
+          <AllowedAppsProvider>
+            <TokenGraphColumn isLoadingTokenDataInfo={false} />
+          </AllowedAppsProvider>
+        </MemoryRouter>
       </Provider>
     );
     expect(screen.getByTestId('token-logo-graph-column')).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.name)).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.symbol)).toBeInTheDocument();
-    expect(screen.getByText(`${mockTokenDataInfo.price}`)).toBeInTheDocument();
+    expect(screen.getByText('46050.5')).toBeInTheDocument();
     expect(
       screen.getByText(`${mockTokenDataInfo.price_change_24h.toFixed(3)}`)
     ).toBeInTheDocument();

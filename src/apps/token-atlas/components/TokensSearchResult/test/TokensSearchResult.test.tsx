@@ -1,4 +1,3 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
@@ -15,44 +14,29 @@ import {
   setSearchTokenResult,
   setSelectedChain,
   setSelectedToken,
-  setTokenListData,
 } from '../../../reducer/tokenAtlasSlice';
+
+// services
+import { Token } from '../../../../../services/tokensData';
 
 const mockTokens: Token[] = [
   {
+    id: 1,
     name: 'Token1',
     symbol: 'TK1',
-    chainId: 1,
-    icon: 'logo1.png',
+    blockchain: 'Ethereum',
+    logo: 'logo1.png',
     decimals: 18,
-    address: '0x01',
+    contract: '0x01',
   },
   {
+    id: 2,
     name: 'Token2',
     symbol: 'TK2',
-    chainId: 2,
-    icon: 'logo2.png',
+    blockchain: 'Polygon',
+    logo: 'logo2.png',
     decimals: 18,
-    address: '0x02',
-  },
-];
-
-const mockTokenListData: Token[] = [
-  {
-    name: 'TokenList1',
-    symbol: 'TL1',
-    chainId: 1,
-    icon: 'listLogo1.png',
-    decimals: 18,
-    address: '0x01',
-  },
-  {
-    name: 'TokenList2',
-    symbol: 'TL2',
-    chainId: 2,
-    icon: 'listLogo2.png',
-    decimals: 18,
-    address: '0x02',
+    contract: '0x02',
   },
 ];
 
@@ -61,7 +45,6 @@ describe('<TokensSearchResult />', () => {
     store.dispatch(setSearchTokenResult(mockTokens));
     store.dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
     store.dispatch(setSelectedToken(undefined));
-    store.dispatch(setTokenListData(mockTokenListData));
   });
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
@@ -90,11 +73,10 @@ describe('<TokensSearchResult />', () => {
     expect(screen.getByText('Token2')).toBeInTheDocument();
   });
 
-  it('renders token list data when no search results are present and chain is selected', () => {
+  it('renders no results with only chain selected', () => {
     store.dispatch(setSearchTokenResult([]));
     store.dispatch(setSelectedChain({ chainId: 1, chainName: 'chain1' }));
     store.dispatch(setSelectedToken(undefined));
-    store.dispatch(setTokenListData(mockTokenListData));
 
     render(
       <Provider store={store}>
@@ -104,18 +86,20 @@ describe('<TokensSearchResult />', () => {
       </Provider>
     );
 
-    expect(screen.getByText('TokenList1')).toBeInTheDocument();
+    expect(screen.queryByText('TokenList1')).not.toBeInTheDocument();
     expect(screen.queryByText('TokenList2')).not.toBeInTheDocument();
+    expect(screen.getByText(/no tokens found/i)).toBeInTheDocument();
   });
 
   it('handles token selection', () => {
     const mockToken: Token = {
+      id: 5,
       name: 'TestToken',
       symbol: 'TTK',
-      chainId: 1,
-      icon: 'testLogo.png',
+      blockchain: 'Ethereum',
+      logo: 'testLogo.png',
       decimals: 6,
-      address: '0x06',
+      contract: '0x06',
     };
 
     store.dispatch(setSearchTokenResult([mockToken]));
@@ -132,12 +116,20 @@ describe('<TokensSearchResult />', () => {
 
     fireEvent.click(screen.getByText('TestToken'));
 
-    expect(store.getState().tokenAtlas.selectedToken).toEqual(mockToken);
+    expect(store.getState().tokenAtlas.selectedToken).toEqual({
+      id: 5,
+      name: 'TestToken',
+      symbol: 'TTK',
+      chainId: 1,
+      icon: 'testLogo.png',
+      decimals: 6,
+      address: '0x06',
+    });
     expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);
     expect(store.getState().tokenAtlas.selectedChain).toEqual({
       chainId: 0,
       chainName: 'all',
     });
-    expect(store.getState().tokenAtlas.searchTokenResult).toEqual([]);
+    expect(store.getState().tokenAtlas.searchTokenResult).toEqual(undefined);
   });
 });

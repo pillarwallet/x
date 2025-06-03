@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
 
 // provider
@@ -15,45 +15,100 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
-  setReceiveTokenData,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
 
 // types
+import { Token } from '../../../../../services/tokensData';
 import { CardPosition } from '../../../utils/types';
 
 // components
 import DropdownTokenList from '../DropdownTokenList';
 
-const mockTokenAssets = [
+const mockTokenAssets: Token[] = [
   {
-    address: '0x01',
+    id: 1,
+    contract: '0x01',
     name: 'Ether',
     symbol: 'ETH',
-    chainId: 1,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconEth.png',
+    logo: 'iconEth.png',
   },
   {
-    address: '0x02',
+    id: 2,
+    contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    chainId: 137,
+    blockchain: 'Polygon',
     decimals: 18,
-    icon: 'iconMatic.png',
+    logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameToChainIdTokensData: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainIdMap = {
+        Ethereum: 1,
+        Polygon: 137,
+      } as const;
+
+      return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
+    }),
+  chainIdToChainNameTokensData: jest
+    .fn()
+    .mockImplementation((chainId: number) => {
+      const mockChainNameMap = {
+        1: 'Ethereum',
+        137: 'Polygon',
+      } as const;
+
+      return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
+    }),
+  queryTokenData: jest.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+    },
+  ]),
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'Optimism',
+        Arbitrum: 'Arbitrum',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
+}));
 
 describe('<DropdownTokenList />', () => {
   beforeEach(() => {
     act(() => {
-      store.dispatch(setSwapTokenData(mockTokenAssets));
-      store.dispatch(setReceiveTokenData(mockTokenAssets));
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
       store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
@@ -63,7 +118,7 @@ describe('<DropdownTokenList />', () => {
       store.dispatch(setAmountSwap(0.1));
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
-      store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setUsdPriceSwapToken(1200));
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
@@ -103,7 +158,7 @@ describe('<DropdownTokenList />', () => {
   });
 
   it('allows selecting tokens in Swap card', async () => {
-    const { getByPlaceholderText, getAllByTestId } = render(
+    render(
       <Provider store={store}>
         <DropdownTokenList
           type={CardPosition.SWAP}
@@ -114,29 +169,17 @@ describe('<DropdownTokenList />', () => {
 
     act(() => {
       store.dispatch(setIsSwapOpen(true));
-      store.dispatch(setSwapChain({ chainId: 0, chainName: 'all' }));
+      store.dispatch(setSearchTokenResult(mockTokenAssets));
     });
 
-    const searchInput = getByPlaceholderText('Search tokens');
-    fireEvent.focus(searchInput);
-    fireEvent.change(searchInput, { target: { value: 'eth' } });
-
-    const tokenItems = getAllByTestId('token-list-item');
-    expect(tokenItems.length).toBe(1);
-
-    const firstTokenItem = getAllByTestId('token-list-item');
-    fireEvent.click(firstTokenItem[0]);
+    fireEvent.click(screen.getAllByTestId('token-list-item')[0]);
 
     expect(store.getState().swap.swapToken).toBe(mockTokenAssets[0]);
-    expect(store.getState().swap.swapChain).toEqual({
-      chainId: 1,
-      chainName: '1',
-    });
     expect(store.getState().swap.isSwapOpen).toBe(false);
   });
 
   it('allows selecting tokens in Receive card', async () => {
-    const { getByPlaceholderText, getAllByTestId } = render(
+    render(
       <Provider store={store}>
         <DropdownTokenList
           type={CardPosition.RECEIVE}
@@ -147,24 +190,12 @@ describe('<DropdownTokenList />', () => {
 
     act(() => {
       store.dispatch(setIsReceiveOpen(true));
-      store.dispatch(setReceiveChain({ chainId: 0, chainName: 'all' }));
+      store.dispatch(setSearchTokenResult(mockTokenAssets));
     });
 
-    const searchInput = getByPlaceholderText('Search tokens');
-    fireEvent.focus(searchInput);
-    fireEvent.change(searchInput, { target: { value: 'ma' } });
-
-    const tokenItems = getAllByTestId('token-list-item');
-    expect(tokenItems.length).toBe(1);
-
-    const firstTokenItem = getAllByTestId('token-list-item');
-    fireEvent.click(firstTokenItem[0]);
+    fireEvent.click(screen.getAllByTestId('token-list-item')[0]);
 
     expect(store.getState().swap.receiveToken).toBe(mockTokenAssets[1]);
-    expect(store.getState().swap.receiveChain).toEqual({
-      chainId: 137,
-      chainName: '137',
-    });
     expect(store.getState().swap.isReceiveOpen).toBe(false);
   });
 
@@ -186,6 +217,72 @@ describe('<DropdownTokenList />', () => {
     fireEvent.click(closeButton);
 
     expect(store.getState().swap.isSwapOpen).toBe(false);
-    expect(store.getState().swap.searchTokenResult).toEqual([]);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+  });
+
+  it('sets Swap Chain back to all when close and reopen the dropdown', async () => {
+    const { getByTestId } = render(
+      <Provider store={store}>
+        <DropdownTokenList
+          type={CardPosition.SWAP}
+          initialCardPosition={CardPosition.SWAP}
+        />
+      </Provider>
+    );
+
+    act(() => {
+      store.dispatch(setIsSwapOpen(true));
+      store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+    });
+
+    await waitFor(() => {
+      expect(store.getState().swap.swapChain).toStrictEqual({
+        chainId: 1,
+        chainName: 'Ethereum',
+      });
+    });
+
+    const closeButton = getByTestId('close-card-button');
+    fireEvent.click(closeButton);
+
+    expect(store.getState().swap.isSwapOpen).toBe(false);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+    expect(store.getState().swap.swapChain).toStrictEqual({
+      chainId: 0,
+      chainName: 'all',
+    });
+  });
+
+  it('sets Receive Chain back to all when close and reopen the dropdown', async () => {
+    const { getByTestId } = render(
+      <Provider store={store}>
+        <DropdownTokenList
+          type={CardPosition.RECEIVE}
+          initialCardPosition={CardPosition.RECEIVE}
+        />
+      </Provider>
+    );
+
+    act(() => {
+      store.dispatch(setIsReceiveOpen(true));
+      store.dispatch(setReceiveChain({ chainId: 1, chainName: 'Ethereum' }));
+    });
+
+    await waitFor(() => {
+      expect(store.getState().swap.receiveChain).toStrictEqual({
+        chainId: 1,
+        chainName: 'Ethereum',
+      });
+    });
+
+    const closeButton = getByTestId('close-card-button');
+    fireEvent.click(closeButton);
+
+    expect(store.getState().swap.isReceiveOpen).toBe(false);
+    expect(store.getState().swap.searchTokenResult).toEqual(undefined);
+    expect(store.getState().swap.receiveChain).toStrictEqual({
+      chainId: 0,
+      chainName: 'all',
+    });
   });
 });

@@ -1,5 +1,3 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
-
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -11,6 +9,9 @@ import {
   setSearchTokenResult,
   setSelectedChain,
 } from '../../reducer/tokenAtlasSlice';
+
+// utils
+import { CompatibleChains } from '../../../../utils/blockchain';
 
 // images
 import CloseCircle from '../../images/close-circle.svg';
@@ -29,20 +30,14 @@ const SearchTokenModal = () => {
   const isSelectChainDropdownOpen = useAppSelector(
     (state) => state.tokenAtlas.isSelectChainDropdownOpen as boolean
   );
-  const tokenListData = useAppSelector(
-    (state) => state.tokenAtlas.tokenListData as Token[]
-  );
 
   // select all chainsId of tokens available in the list for swap token
-  const allChains = tokenListData?.map((chain) => chain.chainId);
-  const uniqueChains = allChains.filter((chain, index) => {
-    return allChains.indexOf(chain) === index;
-  });
+  const uniqueChains = CompatibleChains.map((chain) => chain.chainId);
 
   const handleOnCloseSearchModal = () => {
     dispatch(setIsSearchTokenModalOpen(false));
     dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
-    dispatch(setSearchTokenResult([]));
+    dispatch(setSearchTokenResult(undefined));
     dispatch(setIsAllChainsVisible(false));
   };
 

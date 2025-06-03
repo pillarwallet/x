@@ -12,12 +12,17 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       className="flex items-center gap-2 mb-2"
       id="token-atlas-graph-column-name-logo-symbol"
     >
-      <img
-        alt="token-logo"
-        className="w-[30px] h-[30px] object-fill rounded-full"
-        data-testid="token-logo-graph-column"
-        src="tokenLogo.png"
-      />
+      <div
+        className="relative w-[30px] h-[30px] rounded-full"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          data-testid="token-logo-graph-column"
+          onError={[Function]}
+          src="tokenLogo.png"
+        />
+      </div>
       <p
         className="text-[13px] font-semibold font-medium text-[27px] mobile:text-[25px]"
       >
@@ -28,6 +33,14 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
       >
         TKN
       </p>
+      <button
+        className="flex w-fit ml-2 py-3 px-6 text-sm font-semibold uppercase truncate rounded bg-green hover:bg-[#5DE000] text-dark_grey"
+        onClick={[Function]}
+        type="button"
+      >
+        Buy 
+        TKN
+      </button>
     </div>
     <div
       className="flex justify-between items-center desktop:items-end"

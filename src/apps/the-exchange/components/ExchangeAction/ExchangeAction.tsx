@@ -1,22 +1,29 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+/* eslint-disable no-await-in-loop */
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
-import { ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { formatEther } from 'viem';
+
+// services
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
 
 // hooks
-import { useEtherspotSwaps } from '@etherspot/transaction-kit';
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
+import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
+import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
 import { SwapOffer } from '../../utils/types';
 
 // utils
-import {
-  convertChainIdtoName,
-  formatTokenAmount,
-} from '../../utils/converters';
+import { isApproveTransaction } from '../../../../utils/blockchain';
+import { formatTokenAmount } from '../../utils/converters';
 
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
@@ -25,7 +32,6 @@ import BodySmall from '../Typography/BodySmall';
 import NumberText from '../Typography/NumberText';
 
 // images
-import { isApproveTransaction } from '../../../../utils/blockchain';
 import ArrowRight from '../../images/arrow-right.png';
 
 const ExchangeAction = () => {
@@ -45,10 +51,15 @@ const ExchangeAction = () => {
   const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
   const { addToBatch } = useGlobalTransactionsBatch();
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
-  const { prepareCrossChainOfferTransactions } = useEtherspotSwaps();
+  const { getStepTransactions } = useOffer();
+  const walletAddress = useWalletAddress();
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   useEffect(() => {
     setErrorMessage('');
+
+    transactionDebugLog('The Exchange - Offer:', bestOffer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bestOffer]);
 
   const getTransactionTitle = (
@@ -84,55 +95,53 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
-      // receiveAmount param is unique to the ExchangeOffer type - same chain, different tokens
-      if ('receiveAmount' in bestOffer.offer) {
+      const stepTransactions = await getStepTransactions(
+        bestOffer.offer,
+        walletAddress as `0x${string}`
+      );
+
+      transactionDebugLog(
+        'The Exchange - Step Transactions:',
+        stepTransactions
+      );
+
+      if (!stepTransactions.length) {
+        setErrorMessage(
+          'We were not able to add this to the queue at the moment. Please try again.'
+        );
+        setIsAddingToBatch(false);
+        return;
+      }
+
+      if (stepTransactions.length) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < bestOffer.offer.transactions.length; ++i) {
+        for (let i = 0; i < stepTransactions.length; ++i) {
+          const { value } = stepTransactions[i];
+          const bigIntValue = BigNumber.from(value).toBigInt();
+          const integerValue = formatEther(bigIntValue);
+
+          transactionDebugLog(
+            'The Exchange - Adding transaction to batch:',
+            stepTransactions[i]
+          );
+
           addToBatch({
             title: getTransactionTitle(
               i,
-              bestOffer.offer.transactions.length,
-              bestOffer.offer.transactions[i].data
+              stepTransactions.length,
+              stepTransactions[i].data?.toString() ?? ''
             ),
             description:
-              `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` ||
+              `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
               '',
-            chainId: swapToken?.chainId || 0,
-            to: bestOffer.offer.transactions[i].to,
-            value: bestOffer.offer.transactions[i].value,
-            data: bestOffer.offer.transactions[i].data,
+            chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
+            to: stepTransactions[i].to || '',
+            value: integerValue,
+            data: stepTransactions[i].data?.toString() ?? '',
           });
         }
         setShowBatchSendModal(true);
         showSend();
-      }
-
-      // insurance param is unique to the Route type - different chains, different tokens
-      if ('id' in bestOffer.offer) {
-        const stepTransactions = await prepareCrossChainOfferTransactions(
-          bestOffer.offer
-        );
-        if (stepTransactions) {
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < stepTransactions.length; ++i) {
-            addToBatch({
-              title: getTransactionTitle(
-                i,
-                stepTransactions.length,
-                stepTransactions[i].data?.toString() ?? ''
-              ),
-              description:
-                `${amountSwap} ${swapToken.symbol} on ${convertChainIdtoName(swapToken.chainId).toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${convertChainIdtoName(receiveToken.chainId).toUpperCase()}` ||
-                '',
-              chainId: swapToken?.chainId || 0,
-              to: stepTransactions[i].to || '',
-              value: ethers.BigNumber.from(stepTransactions[i].value),
-              data: stepTransactions[i].data?.toString() ?? '',
-            });
-          }
-          setShowBatchSendModal(true);
-          showSend();
-        }
       }
       setIsAddingToBatch(false);
     } catch (error) {
@@ -164,7 +173,7 @@ const ExchangeAction = () => {
           <div className="flex gap-1 items-center">
             <TokenLogo
               tokenName={receiveToken?.name}
-              tokenLogo={receiveToken?.icon}
+              tokenLogo={receiveToken?.logo}
               showLogo={Boolean(receiveToken)}
             />
             <Body className="font-normal">{receiveToken?.symbol ?? ''}</Body>

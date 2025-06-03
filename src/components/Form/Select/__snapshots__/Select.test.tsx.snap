@@ -49,6 +49,7 @@ exports[`<Select /> renders correctly with default option 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 2"
     >
       <div
         class="c1"
@@ -198,6 +199,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 1"
     >
       <div
         class="c1"
@@ -216,6 +218,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 2"
     >
       <div
         class="c1"
@@ -234,6 +237,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 3"
     >
       <div
         class="c4"
@@ -323,6 +327,7 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 3"
     >
       <div
         class="c1"
@@ -422,6 +427,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 1"
     >
       <div
         class="c1"
@@ -440,6 +446,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 2"
     >
       <div
         class="c1"
@@ -458,6 +465,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 3"
     >
       <div
         class="c4"
@@ -537,6 +545,7 @@ exports[`<Select /> responds once clicked 1`] = `
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 2"
     >
       <div
         class="c1"
@@ -582,6 +591,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c6 {
@@ -634,6 +644,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 <div>
     <div
       class="c0"
+      id="action-bar-send-test 1"
     >
       <div
         class="c1"
@@ -652,6 +663,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 2"
     >
       <div
         class="c1"
@@ -668,6 +680,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
     </div>
     <div
       class="c0"
+      id="action-bar-send-test 3"
     >
       <div
         class="c5"
@@ -706,6 +719,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 50%;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c4 {
@@ -714,6 +728,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c5 {
@@ -722,6 +737,7 @@ exports[`<Select /> shows loading skeleton when options loading 1`] = `
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 8px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c1 {

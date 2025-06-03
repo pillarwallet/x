@@ -55,7 +55,7 @@ describe('<TokenCard />', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Test Token')).not.toBeInTheDocument();
     expect(screen.queryByText('TTK')).not.toBeInTheDocument();
-    expect(screen.getAllByTestId('random-avatar')).toHaveLength(2);
+    expect(screen.getAllByTestId('random-avatar')).toHaveLength(1);
   });
 
   it('calls onClick when clicked', () => {

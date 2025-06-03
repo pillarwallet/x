@@ -4,11 +4,17 @@ exports[`<TokenInfoHorizontal /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
 >
-  <img
-    alt="token-logo"
-    className="w-[70px] h-[70px] object-fill rounded-full mb-3.5"
-    src="https://example.com/logo.png"
-  />
+  <div
+    className="relative w-[70px] h-[70px] rounded-full mb-3.5"
+  >
+    <img
+      alt="token-logo"
+      className="w-full h-full object-fill rounded-full"
+      data-testid="token-info-horizontal-logo"
+      onError={[Function]}
+      src="https://example.com/logo.png"
+    />
+  </div>
   <p
     className="text-base font-medium text-center"
   >

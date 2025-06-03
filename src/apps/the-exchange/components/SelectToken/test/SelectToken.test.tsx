@@ -8,11 +8,11 @@ import SelectToken from '../SelectToken';
 import { CardPosition } from '../../../utils/types';
 
 // utils
-import { convertChainIdtoName } from '../../../utils/converters';
+import { getChainName } from '../../../../../utils/blockchain';
 
-// Mock the convertChainIdtoName function
+// Mock the getChainName function
 jest.mock('../../../utils/converters', () => ({
-  convertChainIdtoName: jest.fn(),
+  getChainName: jest.fn(),
 }));
 
 describe('<SelectToken />', () => {
@@ -50,7 +50,7 @@ describe('<SelectToken />', () => {
 
     expect(screen.getByText(tokenName)).toBeInTheDocument();
     expect(
-      screen.getByText(`On ${convertChainIdtoName(tokenChain)}`)
+      screen.getByText(`On ${getChainName(tokenChain)}`)
     ).toBeInTheDocument();
     expect(screen.getByAltText('token-logo')).toHaveAttribute('src', tokenLogo);
   });
@@ -61,7 +61,7 @@ describe('<SelectToken />', () => {
     expect(screen.getByText(type)).toBeInTheDocument();
     expect(screen.getByText('Select Token')).toBeInTheDocument();
     expect(
-      screen.queryByText(`On ${convertChainIdtoName(tokenChain)}`)
+      screen.queryByText(`On ${getChainName(tokenChain)}`)
     ).not.toBeInTheDocument();
     expect(screen.queryByAltText('token-logo')).not.toBeInTheDocument();
   });

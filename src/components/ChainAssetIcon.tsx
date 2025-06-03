@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { TokenListToken } from '@etherspot/prime-sdk/dist/sdk/data';
+import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import styled from 'styled-components';
 
 // utils

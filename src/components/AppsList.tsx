@@ -27,6 +27,7 @@ import { loadApps } from '../apps';
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const [apps, setApps] = React.useState<Record<string, AppManifest>>({});
   const navigate = useNavigate();
+  const { setIsAnimated } = useAllowedApps();
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [t] = useTranslation();
@@ -81,6 +82,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
                   action: 'appOpened',
                   value: appId,
                 });
+                setIsAnimated(true);
                 // eslint-disable-next-line prefer-template
                 navigate('/' + appId);
               }}

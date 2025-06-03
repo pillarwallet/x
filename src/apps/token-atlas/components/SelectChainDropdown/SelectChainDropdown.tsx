@@ -17,7 +17,7 @@ import {
 import { ChainType } from '../../types/types';
 
 // utils
-import { convertChainIdtoName } from '../../utils/converters';
+import { getChainName } from '../../../../utils/blockchain';
 
 // components
 import Body from '../Typography/Body';
@@ -67,7 +67,7 @@ const SelectChainDropdown = ({
     dispatch(
       setSelectedChain({
         chainId: Number(option),
-        chainName: option === 0 ? 'all' : convertChainIdtoName(option),
+        chainName: option === 0 ? 'all' : getChainName(option),
       })
     );
     recordPresence({
@@ -115,11 +115,12 @@ const SelectChainDropdown = ({
               // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <li
                 key={option}
+                id={`token-atlas-select-chain-dropdown-${option}`}
                 className="px-4 py-2 cursor-pointer hover:bg-light_grey hover:text-dark_grey border-b border-dark_grey last:border-none"
                 onClick={() => handleSelectChainId(option)}
               >
                 <Body className="text-base mobile:text-sm font-medium">
-                  {option === 0 ? 'all' : convertChainIdtoName(option)}
+                  {option === 0 ? 'all' : getChainName(option)}
                 </Body>
               </li>
             ))}

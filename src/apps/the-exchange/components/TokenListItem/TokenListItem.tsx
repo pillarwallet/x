@@ -1,47 +1,65 @@
+// utils
+import {
+  Token,
+  chainNameDataCompatibility,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+import { getLogoForChainId } from '../../../../utils/blockchain';
+import { limitDigits } from '../../../token-atlas/utils/converters';
+
 // components
 import TokenLogo from '../TokenLogo/TokenLogo';
 import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
 type TokenListItemProps = {
-  tokenName: string;
-  tokenSymbol: string;
-  chainName: string;
+  token: Token;
   onClick: () => void;
-  tokenLogo?: string;
+  testId?: string;
 };
 
-const TokenListItem = ({
-  tokenName,
-  tokenSymbol,
-  chainName,
-  onClick,
-  tokenLogo,
-}: TokenListItemProps) => {
+const TokenListItem = ({ token, onClick, testId }: TokenListItemProps) => {
   return (
     <div
-      id="token-list-item-exchange"
+      id={testId}
       onClick={onClick}
       className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
       data-testid="token-list-item"
     >
       <div className="flex items-center">
         <TokenLogo
-          tokenName={tokenName}
-          tokenLogo={tokenLogo}
+          tokenName={token.name}
+          tokenLogo={token.logo}
           isBigger
-          showLogo={Boolean(tokenName)}
+          showLogo={Boolean(token.name)}
+          tokenChainLogo={getLogoForChainId(
+            chainNameToChainIdTokensData(token.blockchain)
+          )}
         />
         <div className="flex flex-col ml-[10px]">
-          <Body className="group-hover:opacity-60">{tokenName}</Body>
+          <Body className="group-hover:opacity-60 truncate max-w-[150px]">
+            {token.name}
+          </Body>
           <BodySmall className="group-hover:opacity-60">
-            {tokenSymbol}
+            {token.symbol}
           </BodySmall>
         </div>
       </div>
-      <BodySmall className="group-hover:opacity-60 capitalize">
-        On {chainName}
-      </BodySmall>
+      {token.balance ? (
+        <div className="flex flex-col ml-[10px] items-end">
+          <Body className="group-hover:opacity-60 truncate max-w-[150px]">
+            {limitDigits(token.balance)}
+          </Body>
+
+          <BodySmall className="group-hover:opacity-60">
+            ${token.price && (token.price * token.balance).toFixed(4)}
+          </BodySmall>
+        </div>
+      ) : (
+        <BodySmall className="group-hover:opacity-60 capitalize truncate xs:max-w-[150px]">
+          On {chainNameDataCompatibility(token.blockchain)}
+        </BodySmall>
+      )}
     </div>
   );
 };

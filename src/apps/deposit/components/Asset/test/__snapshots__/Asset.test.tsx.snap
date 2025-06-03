@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Asset /> renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 mt-8 cursor-pointer mt-0"
+  data-testid="deposit-asset"
+  id="deposit-app-token-asset"
+  onClick={[MockFunction]}
+>
+  <div
+    className="flex justify-between"
+  >
+    <div
+      className="flex gap-2"
+    >
+      <img
+        alt="token-logo"
+        className="h-6 w-6 rounded"
+        src="https://example.com/logo.png"
+      />
+      <p
+        className="text-lg text-left"
+      >
+        TokenName (TNK)
+      </p>
+    </div>
+    <p
+      className="text-lg text-left"
+    >
+      1000
+    </p>
+  </div>
+  <p
+    className="text-sm text-left"
+  >
+    on
+     
+    <span
+      className="capitalize"
+    >
+      polygon
+    </span>
+  </p>
+</div>
+`;

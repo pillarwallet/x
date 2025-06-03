@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<WalletConnectDropdown /> renders correctly and matches snapshot 1`] = `
+<div
+  className="relative inline-block w-[254px] h-12"
+  id="walletConnect-dropdown"
+>
+  <div
+    className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+    onClick={[Function]}
+  >
+    <div
+      className="flex gap-2 items-center justify-center rounded-lg"
+    >
+      <img
+        alt="wallet-connect-logo"
+        className="w-4"
+        src={
+          {
+            "ReactComponent": {
+              "$$typeof": Symbol(react.forward_ref),
+              "render": [Function],
+            },
+            "default": "wallet-connect-logo.svg",
+          }
+        }
+      />
+      <p
+        className="text-sm font-medium text-white"
+      >
+        WalletConnect
+      </p>
+      <svg
+        className="transform "
+        color="white"
+        fill="currentColor"
+        height={20}
+        stroke="currentColor"
+        strokeWidth="0"
+        style={
+          {
+            "color": "white",
+          }
+        }
+        viewBox="0 0 24 24"
+        width={20}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z"
+        />
+      </svg>
+    </div>
+  </div>
+</div>
+`;

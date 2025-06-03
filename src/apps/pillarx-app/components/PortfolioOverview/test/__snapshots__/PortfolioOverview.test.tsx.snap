@@ -7,6 +7,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c1 {
@@ -15,6 +16,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c2 {
@@ -23,6 +25,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 .c3 {
@@ -31,10 +34,11 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
   animation: hLhBjP 1s linear infinite alternate;
   border-radius: 10px;
   margin-bottom: 0;
+  margin-top: 0;
 }
 
 <div
-  className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  className="flex bg-container_grey rounded-3xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
   id="wallet-portfolio-tile-loader"
 >
   <div
@@ -75,7 +79,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
 
 exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
 <div
-  className="flex bg-container_grey rounded-2xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
+  className="flex bg-container_grey rounded-3xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
   id="wallet-portfolio-tile"
 >
   <div
@@ -191,6 +195,58 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
+      className="relative inline-block w-[254px] h-12"
+      id="walletConnect-dropdown"
+    >
+      <div
+        className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+        onClick={[Function]}
+      >
+        <div
+          className="flex gap-2 items-center justify-center rounded-lg"
+        >
+          <img
+            alt="wallet-connect-logo"
+            className="w-4"
+            src={
+              {
+                "ReactComponent": {
+                  "$$typeof": Symbol(react.forward_ref),
+                  "render": [Function],
+                },
+                "default": "wallet-connect-logo.svg",
+              }
+            }
+          />
+          <p
+            className="text-sm font-medium text-white"
+          >
+            WalletConnect
+          </p>
+          <svg
+            className="transform "
+            color="white"
+            fill="currentColor"
+            height={20}
+            stroke="currentColor"
+            strokeWidth="0"
+            style={
+              {
+                "color": "white",
+              }
+            }
+            viewBox="0 0 24 24"
+            width={20}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div
       className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <p
@@ -200,6 +256,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
       </p>
       <div
         className="flex gap-4 items-end"
+        id="wallet-portfolio-balance"
       >
         <h1
           className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium text-[50px]"

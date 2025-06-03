@@ -15,43 +15,63 @@ import {
   setIsSwapOpen,
   setReceiveChain,
   setReceiveToken,
-  setReceiveTokenData,
   setSearchTokenResult,
   setSwapChain,
   setSwapToken,
-  setSwapTokenData,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
 } from '../../../reducer/theExchangeSlice';
 
+// utils
+import { getChainName } from '../../../../../utils/blockchain';
+
+// types
+import { Token } from '../../../../../services/tokensData';
+
 // components
 import SelectDropdown from '../SelectDropdown';
 
-const mockTokenAssets = [
+const mockTokenAssets: Token[] = [
   {
-    address: '0x01',
+    id: 1,
+    contract: '0x01',
     name: 'Ether',
     symbol: 'ETH',
-    chainId: 1,
+    blockchain: 'Ethereum',
     decimals: 18,
-    icon: 'iconEth.png',
+    logo: 'iconEth.png',
   },
   {
-    address: '0x02',
+    id: 2,
+    contract: '0x02',
     name: 'POL',
     symbol: 'POL',
-    chainId: 137,
+    blockchain: 'Polygon',
     decimals: 18,
-    icon: 'iconMatic.png',
+    logo: 'iconMatic.png',
   },
 ];
+
+jest.mock('../../../../../services/tokensData', () => ({
+  __esModule: true,
+  chainNameDataCompatibility: jest
+    .fn()
+    .mockImplementation((chainName: string) => {
+      const mockChainMap = {
+        XDAI: 'Gnosis',
+        'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
+        Optimistic: 'Optimism',
+        Arbitrum: 'Arbitrum',
+      } as const;
+
+      return mockChainMap[chainName as keyof typeof mockChainMap] || chainName;
+    }),
+}));
 
 describe('<SelectDropdown />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     act(() => {
-      store.dispatch(setSwapTokenData(mockTokenAssets));
-      store.dispatch(setReceiveTokenData(mockTokenAssets));
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
       store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
@@ -61,7 +81,7 @@ describe('<SelectDropdown />', () => {
       store.dispatch(setAmountSwap(0.1));
       store.dispatch(setAmountReceive(10));
       store.dispatch(setBestOffer(undefined));
-      store.dispatch(setSearchTokenResult([]));
+      store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setUsdPriceSwapToken(1200));
       store.dispatch(setUsdPriceReceiveToken(0.4));
       store.dispatch(setIsOfferLoading(false));
@@ -122,12 +142,13 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setSwapChain(undefined));
       store.dispatch(setIsSwapOpen(true));
     });
 
     expect(screen.getByText('Select a chain')).toBeInTheDocument();
     options.forEach((option) => {
-      expect(screen.getByText(option)).toBeInTheDocument();
+      expect(screen.getByText(getChainName(option))).toBeInTheDocument();
     });
   });
 
@@ -165,16 +186,17 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setSwapChain(undefined));
       store.dispatch(setIsSwapOpen(true));
     });
 
-    const optionElement = screen.getByText('1');
+    const optionElement = screen.getByText('Ethereum');
     fireEvent.click(optionElement);
 
     expect(onSelectMock).toHaveBeenCalled();
     expect(store.getState().swap.swapChain).toEqual({
       chainId: 1,
-      chainName: '1',
+      chainName: 'Ethereum',
     });
   });
 
@@ -191,16 +213,17 @@ describe('<SelectDropdown />', () => {
     );
 
     act(() => {
+      store.dispatch(setReceiveChain(undefined));
       store.dispatch(setIsReceiveOpen(true));
     });
 
-    const optionElement = screen.getByText('137');
+    const optionElement = screen.getByText('Polygon');
     fireEvent.click(optionElement);
 
     expect(onSelectMock).toHaveBeenCalled();
     expect(store.getState().swap.receiveChain).toEqual({
       chainId: 137,
-      chainName: '137',
+      chainName: 'Polygon',
     });
   });
 });

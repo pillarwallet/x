@@ -1,8 +1,4 @@
 /* eslint-disable import/extensions */
-import {
-  WalletProviderLike,
-  Web3eip1193WalletProvider,
-} from '@etherspot/prime-sdk';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 import {
@@ -11,7 +7,15 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { polygon, sepolia } from 'viem/chains';
+import {
+  createWalletClient,
+  custom,
+  http,
+  isAddress,
+  WalletClient,
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { mainnet, sepolia } from 'viem/chains';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -19,21 +23,26 @@ import { defaultTheme, GlobalStyle } from '../theme';
 // providers
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 import LanguageProvider from '../providers/LanguageProvider';
+import { PrivateKeyLoginProvider } from '../providers/PrivateKeyLoginProvider';
+
+// utils
+import { getNetworkViem } from '../apps/deposit/utils/blockchain';
+import { isTestnet, visibleChains } from '../utils/blockchain';
 
 // pages
-import Loading from '../pages/Loading';
-
-// hooks
-import useAllowedApps from '../hooks/useAllowedApps';
 import App from '../pages/App';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
+import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
-import { visibleChains } from '../utils/blockchain';
 import Authorized from './Authorized';
+
+// hooks
+import useAllowedApps from '../hooks/useAllowedApps';
+import usePrivateKeyLogin from '../hooks/usePrivateKeyLogin';
 
 /**
  * @name AuthLayout
@@ -53,67 +62,129 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
-  const [provider, setProvider] = useState<WalletProviderLike | undefined>(
-    undefined
-  );
+  const { account, setAccount } = usePrivateKeyLogin();
+  const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { allowed: allowedApps, isLoading: isLoadingAllowedApps } =
     useAllowedApps();
-  const previouslyAuthenticated = !!localStorage.getItem('privy:token');
+  const previouslyAuthenticated =
+    !!localStorage.getItem('privy:token') ||
+    localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
+  const isAuthenticated = authenticated || Boolean(account);
 
   /**
    * The following useEffect is to detemine if the
-   * wallet state of Privy changed, and if it did,
-   * update the provider (if any). This would also
-   * re-render Authorized component with the new
-   * state.
+   * user is logging in (or has logged in)  with a
+   * private key or if the wallet state of Privy changed,
+   * and if it did, update the provider (if any).
+   * This would also re-render Authorized component with
+   * the new state.
    */
   useEffect(() => {
-    if (!wallets.length) return;
+    const searchURL = new URLSearchParams(window.location.search);
+    const searchURLPK = searchURL.get('pk');
 
-    const updateProvider = async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let privyEthereumProvider: any;
+    if ((searchURL && searchURLPK) || account) {
+      if (searchURL && searchURLPK) {
+        try {
+          const privateKeyToAccountAddress = privateKeyToAccount(
+            searchURLPK as `0x${string}`
+          );
 
-      const privyWalletAddress = user?.wallet?.address;
+          if (isAddress(privateKeyToAccountAddress.address)) {
+            setAccount(privateKeyToAccountAddress.address);
 
-      const walletProvider = wallets.find(
-        (wallet) => wallet.address === privyWalletAddress
-      );
+            localStorage.setItem(
+              'ACCOUNT_VIA_PK',
+              privateKeyToAccountAddress.address
+            );
 
-      if (walletProvider) {
-        privyEthereumProvider = await walletProvider.getWeb3jsProvider();
+            const URLWithPK = new URL(window.location.href);
 
-        const newProvider = new Web3eip1193WalletProvider(
-          privyEthereumProvider.walletProvider
-        );
+            // Remove the 'pk' parameter
+            URLWithPK.searchParams.delete('pk');
 
-        await newProvider.refresh();
-
-        setProvider(newProvider);
+            // Replace the current history state with the updated URL
+            window.history.replaceState(null, '', URLWithPK.toString());
+          }
+        } catch (e) {
+          console.error(e);
+          localStorage.removeItem('ACCOUNT_VIA_PK');
+        }
       }
 
-      const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-      const isWithinVisibleChains = visibleChains.some(
-        (chain) => chain.id === walletChainId
-      );
-      /**
-       * Sets supported chain ID rather than throw unsupported bundler error.
-       * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
-       */
-      setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-    };
+      const updateProvider = async () => {
+        const walletChainId = 1; // default chain id is 1
 
-    updateProvider();
-  }, [wallets, user]);
+        const newProvider = createWalletClient({
+          account: account as `0x${string}`,
+          chain: getNetworkViem(walletChainId),
+          transport: http(),
+        });
+
+        setProvider(newProvider);
+
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
+        );
+        /**
+         * Sets supported chain ID rather than throw unsupported bundler error.
+         * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+         */
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+      };
+
+      updateProvider();
+    } else {
+      if (!wallets.length) return;
+
+      const updateProvider = async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let privyEthereumProvider: any;
+
+        const privyWalletAddress = user?.wallet?.address;
+
+        const walletProvider = wallets.find(
+          (wallet) => wallet.address === privyWalletAddress
+        );
+
+        if (walletProvider) {
+          privyEthereumProvider = await walletProvider.getEthereumProvider();
+
+          const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+
+          const newProvider = createWalletClient({
+            account: walletProvider.address as `0x${string}`,
+            chain: getNetworkViem(walletChainId),
+            transport: custom(privyEthereumProvider),
+          });
+
+          setProvider(newProvider);
+        }
+
+        const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
+        );
+        /**
+         * Sets supported chain ID rather than throw unsupported bundler error.
+         * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+         */
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+      };
+
+      updateProvider();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallets, user, account]);
 
   /**
    * If all the following variables are truthy within the if
    * statement, we can consider this user as logged in and
    * authenticated.
    */
-  if (isAppReady && authenticated && provider && chainId) {
+  if (isAppReady && isAuthenticated && provider && chainId) {
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.
@@ -199,7 +270,7 @@ const AuthLayout = () => {
    * statement will determine if the user is unauthorized.
    */
   if (
-    (isAppReady && !authenticated) ||
+    (isAppReady && !isAuthenticated) ||
     (isRootPage && !previouslyAuthenticated)
   ) {
     /**
@@ -245,7 +316,7 @@ const AuthLayout = () => {
    * component until a re-render is triggered by the useEffect
    * above.
    */
-  return <Loading />;
+  return <Loading type="wait" />;
 };
 
 const Main = () => {
@@ -253,21 +324,22 @@ const Main = () => {
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
       <LanguageProvider>
-        <PrivyProvider
-          appId={process.env.REACT_APP_PRIVY_APP_ID as string}
-          config={{
-            appearance: { theme: 'dark' },
-            defaultChain:
-              process.env.REACT_APP_USE_TESTNETS === 'true' ? sepolia : polygon,
-            embeddedWallets: {
-              createOnLogin: 'users-without-wallets',
-            },
-          }}
-        >
-          <AllowedAppsProvider>
-            <AuthLayout />
-          </AllowedAppsProvider>
-        </PrivyProvider>
+        <PrivateKeyLoginProvider>
+          <PrivyProvider
+            appId={process.env.REACT_APP_PRIVY_APP_ID as string}
+            config={{
+              appearance: { theme: 'dark' },
+              defaultChain: isTestnet ? sepolia : mainnet,
+              embeddedWallets: {
+                createOnLogin: 'users-without-wallets',
+              },
+            }}
+          >
+            <AllowedAppsProvider>
+              <AuthLayout />
+            </AllowedAppsProvider>
+          </PrivyProvider>
+        </PrivateKeyLoginProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

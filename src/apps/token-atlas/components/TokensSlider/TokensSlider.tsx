@@ -23,6 +23,11 @@ import { SelectedTokenType } from '../../types/types';
 
 // components
 import SkeletonLoader from '../../../../components/SkeletonLoader';
+import {
+  chainNameFromViemToMobula,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+import { CompatibleChains } from '../../../../utils/blockchain';
 import TokenCard from '../TokenCard/TokenCard';
 import Body from '../Typography/Body';
 
@@ -44,12 +49,23 @@ const TokensSlider = () => {
     isLoading,
     isFetching,
   } = useGetTrendingTokensQuery();
+
   const blockchainList = useAppSelector(
     (state) => state.tokenAtlas.blockchainList as BlockchainData[]
   );
 
-  // reduce the list the 20 first trending tokens
-  const trendingTokens = trendingTokensData?.data.slice(0, 20) || [];
+  // look for trending tokens with compatible chains and reduce the list the 20 first trending tokens
+  const trendingTokens =
+    trendingTokensData?.result
+      ?.filter((token) =>
+        token.contracts?.some((contract) =>
+          CompatibleChains.some(
+            (chain) =>
+              chainNameFromViemToMobula(chain.chainName) === contract.blockchain
+          )
+        )
+      )
+      .slice(0, 20) || [];
 
   // Ref to track the slider container
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -91,13 +107,23 @@ const TokensSlider = () => {
   }, [sliderRef]);
 
   const handleChooseToken = (token: TokenData) => {
+    const compatibleTokenContract = token.contracts?.find((contract) =>
+      CompatibleChains.some(
+        (chain) =>
+          chainNameFromViemToMobula(chain.chainName) === contract.blockchain
+      )
+    );
     const tokenData: SelectedTokenType = {
+      id: token.id || 0,
       symbol: token.symbol || '',
-      address: '',
+      address: compatibleTokenContract?.address || '',
       decimals: undefined,
-      chainId: undefined,
+      chainId: chainNameToChainIdTokensData(
+        compatibleTokenContract?.blockchain
+      ),
       name: token.name || '',
       icon: token.logo,
+      price: token.price || 0,
     };
     dispatch(setSelectedToken(tokenData));
     dispatch(setIsSearchTokenModalOpen(false));
@@ -139,12 +165,12 @@ const TokensSlider = () => {
         <div className="flex gap-4 mb-4">
           {trendingTokens &&
             trendingTokens.map((token, index) => {
-              const blockchain = blockchainList.find(
-                (chain) =>
-                  chain.name.toLowerCase() ===
-                  token.contracts?.[0].blockchain.toLowerCase()
-              );
-              const blockchainLogo = blockchain ? blockchain.logo : undefined;
+              const blockchainLogo =
+                token.contracts?.length === 1
+                  ? blockchainList.find(
+                      (chain) => chain.name === token.contracts?.[0]?.blockchain
+                    )?.logo
+                  : undefined;
               return (
                 <TokenCard
                   key={index}

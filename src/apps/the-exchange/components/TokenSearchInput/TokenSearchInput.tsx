@@ -1,18 +1,31 @@
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import Fuse from 'fuse.js';
-import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // reducer
-import { setSearchTokenResult } from '../../reducer/theExchangeSlice';
+import {
+  setIsTokenSearchErroring,
+  setIsTokenSearchLoading,
+  setSearchToken,
+  setSearchTokenResult,
+} from '../../reducer/theExchangeSlice';
+
+// services
+import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
+import { convertPortfolioAPIResponseToToken } from '../../../../services/pillarXApiWalletPortfolio';
+import {
+  chainNameToChainIdTokensData,
+  convertAPIResponseToTokens,
+} from '../../../../services/tokensData';
+
 // hooks
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
+import { PortfolioData, TokenAssetResponse } from '../../../../types/api';
 import { ChainType } from '../../utils/types';
 
 // images
@@ -41,11 +54,8 @@ const TokenSearchInput = ({
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
-  const swapTokenData = useAppSelector(
-    (state) => state.swap.swapTokenData as Token[]
-  );
-  const receiveTokenData = useAppSelector(
-    (state) => state.swap.receiveTokenData as Token[]
+  const isReceiveOpen = useAppSelector(
+    (state) => state.swap.isReceiveOpen as boolean
   );
   const swapChain = useAppSelector(
     (state) => state.swap.swapChain as ChainType
@@ -53,53 +63,139 @@ const TokenSearchInput = ({
   const receiveChain = useAppSelector(
     (state) => state.swap.receiveChain as ChainType
   );
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
 
-  // The performSearch will look for tokens close to the name or chain id being typed on filtered or all supported chains
-  const searchTokens = (tokenSearch: string) => {
-    const options = {
-      includeScore: true,
-      // Search in `chainId` and in `name`
-      keys: ['chainId', 'name'],
-    };
-    const fuse = new Fuse(
-      isSwapOpen ? swapTokenData : receiveTokenData,
-      options
-    );
-    const result = fuse.search(tokenSearch);
+  // Debounce searchText every 1-sec
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+    }, 1000);
 
-    if (
-      (isSwapOpen && swapChain.chainId === 0) ||
-      (!isSwapOpen && receiveChain.chainId === 0)
-    ) {
-      dispatch(setSearchTokenResult(result.map((tokens) => tokens.item)));
-    } else {
+    return () => clearTimeout(handler);
+  }, [searchText]);
+
+  // API call to search tokens and assets
+  const {
+    data: searchData,
+    isLoading,
+    isFetching,
+    error,
+  } = useGetSearchTokensQuery(
+    {
+      searchInput: debouncedSearchText,
+      filterBlockchains:
+        receiveChain.chainId !== 0 ? `${receiveChain.chainId}` : undefined,
+    },
+    { skip: !debouncedSearchText }
+  );
+
+  useEffect(() => {
+    dispatch(setIsTokenSearchLoading(isLoading || isFetching));
+    dispatch(setIsTokenSearchErroring(Boolean(error)));
+
+    // This is to check what has been the searched token, for other components to action
+    dispatch(setSearchToken(debouncedSearchText));
+
+    if (isReceiveOpen) {
+      if (!searchData) return;
+
+      const result = convertAPIResponseToTokens(
+        searchData?.result?.data as TokenAssetResponse[],
+        debouncedSearchText
+      );
+
       dispatch(
         setSearchTokenResult(
-          result
-            .filter(
-              (tokens) =>
-                tokens.item.chainId ===
-                (isSwapOpen ? swapChain.chainId : receiveChain.chainId)
-            )
-            .map((tokens) => tokens.item)
+          receiveChain.chainId === 0
+            ? result
+            : result
+                .filter(
+                  (tokens) =>
+                    chainNameToChainIdTokensData(tokens.blockchain) ===
+                    receiveChain.chainId
+                )
+                .map((tokens) => tokens)
         )
       );
     }
-  };
 
-  // Debounced recordPresence function with 1-second delay
-  const debouncedSearchToken = _.debounce((searchText: string) => {
-    if (value !== '') {
+    if (isSwapOpen && walletPortfolio) {
+      // This sets the token results list that will be displayed in the UI
+      const tokensWithBalances =
+        convertPortfolioAPIResponseToToken(walletPortfolio);
+
+      // Since the list of available tokens with balance is loaded, we just need
+      // here a simpler search with Fuse.js with auto select when the contract
+      // address is entered
+      if (debouncedSearchText.length > 40) {
+        const fuse = new Fuse(tokensWithBalances, {
+          keys: ['name', 'symbol', 'contract'], // Fields to search in
+          threshold: 0.2, // Allow some fuzziness for queries that are not contract like
+          minMatchCharLength: 3,
+          useExtendedSearch: true, // Enables exact match using '='
+        });
+
+        // Check if query length is above 40 characters have an exact match (likely a contract address)
+        const searchQuery =
+          debouncedSearchText.length > 40
+            ? `="${debouncedSearchText}"`
+            : debouncedSearchText;
+
+        const results = fuse.search(searchQuery).map((r) => r.item);
+        dispatch(setSearchTokenResult(results));
+      }
+
+      const fuse = new Fuse(tokensWithBalances, {
+        keys: ['name', 'symbol', 'contract'], // Fields to search in
+        threshold: 0.3, // Allow some fuzziness for queries that are not contract like
+      });
+
+      const results = fuse
+        .search(debouncedSearchText)
+        .map((token) => token.item);
+
+      dispatch(
+        setSearchTokenResult(
+          swapChain.chainId === 0
+            ? results
+            : results
+                .filter(
+                  (tokens) =>
+                    chainNameToChainIdTokensData(tokens.blockchain) ===
+                    swapChain.chainId
+                )
+                .map((tokens) => tokens)
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    searchData,
+    debouncedSearchText,
+    isSwapOpen,
+    swapChain.chainId,
+    receiveChain.chainId,
+    isReceiveOpen,
+    walletPortfolio,
+  ]);
+
+  // Record presence of the debouncedSearchText when it changes
+  useEffect(() => {
+    if (debouncedSearchText !== '') {
       recordPresence({
         address: accountAddress,
         action: 'app:theExchange:search',
-        value: { searchText },
+        value: { debouncedSearchText },
       });
     }
-  }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchText, accountAddress]);
 
   const handleClickIcon = () => {
     if (inputRef.current) {
@@ -107,25 +203,8 @@ const TokenSearchInput = ({
     }
   };
 
-  useEffect(() => {
-    searchTokens(value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapChain, receiveChain]);
-
-  useEffect(() => {
-    debouncedSearchToken(value);
-
-    // Clean-up debounce on component unmount
-    return () => {
-      debouncedSearchToken.cancel();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
-    setValue(searchValue);
-    searchTokens(searchValue);
+    setSearchText(event.target.value);
   };
 
   return (
@@ -141,7 +220,7 @@ const TokenSearchInput = ({
             ref={inputRef}
             className={`w-full h-full rounded-[3px] p-2 pr-9 bg-white focus:outline-none focus:ring-0 font-normal text-black text-md placeholder-[#717171] ${className}`}
             onChange={handleSearch}
-            value={value}
+            value={searchText}
           />
           <span
             className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"

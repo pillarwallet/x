@@ -3,12 +3,14 @@ import axios from 'axios';
 import React, { createContext, useEffect, useMemo } from 'react';
 
 // utils
-import { CompatibleChains } from '../utils/blockchain';
+import { CompatibleChains, isTestnet } from '../utils/blockchain';
 
 export interface AllowedAppsContextProps {
   data: {
     isLoading: boolean;
     allowed: string[];
+    isAnimated: boolean;
+    setIsAnimated: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }
 
@@ -22,6 +24,7 @@ interface ApiAllowedApp {
 
 const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isAnimated, setIsAnimated] = React.useState<boolean>(false);
   const [allowed, setAllowed] = React.useState<string[]>([]);
 
   useEffect(() => {
@@ -29,21 +32,21 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
 
     (async () => {
       try {
-        const chainIds =
-          process.env.REACT_APP_USE_TESTNETS === 'true'
-            ? [11155111]
-            : CompatibleChains.map((chain) => chain.chainId);
+        const chainIds = isTestnet
+          ? [11155111]
+          : CompatibleChains.map((chain) => chain.chainId);
         const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
         const { data } = await axios.get(
-          process.env.REACT_APP_USE_TESTNETS === 'true'
+          isTestnet
             ? 'https://apps-nubpgwxpiq-uc.a.run.app'
             : 'https://apps-7eu4izffpa-uc.a.run.app',
           {
             params: {
-              testnets: process.env.REACT_APP_USE_TESTNETS || 'true',
+              testnets: String(isTestnet),
             },
-            paramsSerializer: () => `${chainIdsQuery}`,
+            paramsSerializer: () =>
+              `${chainIdsQuery}&testnets=${String(isTestnet)}`,
           }
         );
         if (expired || !data?.length) {
@@ -66,8 +69,10 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       isLoading,
       allowed,
+      isAnimated,
+      setIsAnimated,
     }),
-    [isLoading, allowed]
+    [isLoading, allowed, isAnimated]
   );
 
   return (

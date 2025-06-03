@@ -5,12 +5,12 @@ import { useState } from 'react';
 import {
   setIsReceiveOpen,
   setIsSwapOpen,
-  setReceiveTokenData,
-  setSwapTokenData,
+  setReceiveChain,
+  setSearchTokenResult,
+  setSwapChain,
 } from '../../reducer/theExchangeSlice';
 
 // hooks
-import usePillarSwapAssets from '../../hooks/usePillarSwapAssets';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -37,8 +37,6 @@ const CardsSwap = () => {
     (state) => state.swap.isReceiveOpen as boolean
   );
 
-  const { getPillarSwapAssets } = usePillarSwapAssets();
-
   const initialPosition: CardPositionType = {
     swap: CardPosition.SWAP,
     receive: CardPosition.RECEIVE,
@@ -57,16 +55,14 @@ const CardsSwap = () => {
 
   // handleOpenTokenList opens the list for selecting tokens
   const handleOpenTokenList = async (position: CardPosition) => {
-    // Error handled in usePillarSwapAssets hook
-    const assets = await getPillarSwapAssets();
-
-    dispatch(setSwapTokenData(assets));
-    dispatch(setReceiveTokenData(assets));
+    dispatch(setSearchTokenResult(undefined));
 
     if (position === CardPosition.SWAP) {
       dispatch(setIsSwapOpen(true));
+      dispatch(setSwapChain({ chainId: 0, chainName: 'all' }));
     } else {
       dispatch(setIsReceiveOpen(true));
+      dispatch(setReceiveChain({ chainId: 0, chainName: 'all' }));
     }
   };
 
@@ -118,9 +114,9 @@ const CardsSwap = () => {
           }
         />
       )}
-      {!isSwapOpen && !isReceiveOpen && (
-        <SwitchCardsButton onSwap={swapCardsAction} />
-      )}
+      {process.env.REACT_APP_SWAP_BUTTON_SWITCH === 'true' &&
+        !isSwapOpen &&
+        !isReceiveOpen && <SwitchCardsButton onSwap={swapCardsAction} />}
     </div>
   );
 };

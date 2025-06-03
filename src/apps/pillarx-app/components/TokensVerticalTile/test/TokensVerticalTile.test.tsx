@@ -1,6 +1,10 @@
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
 
+// provider
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
+
 // components
 import TokensVerticalTile from '../TokensVerticalTile';
 
@@ -25,6 +29,7 @@ describe('<TokensVerticalTile />', () => {
         platforms: [{ name: 'Platform A', rank: 1, weight: 0.5 }],
         price_change_24h: 5,
         pair: 'TKA/USD',
+        price: 0.123,
       },
       {
         id: 2,
@@ -36,6 +41,7 @@ describe('<TokensVerticalTile />', () => {
         platforms: [{ name: 'Platform B', rank: 2, weight: 0.4 }],
         price_change_24h: -3,
         pair: 'TKB/USD',
+        price: 0.456,
       },
     ],
     layout: ApiLayout.TOKENS_VERTICAL,
@@ -45,12 +51,39 @@ describe('<TokensVerticalTile />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <MemoryRouter>
-          <TokensVerticalTile data={mockData} isDataLoading={false} />
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensVerticalTile data={mockData} isDataLoading={false} />
+          </MemoryRouter>
+        </Provider>
       )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
+  });
+
+  it('returns null when dataTokens is empty', () => {
+    const emptyMockData: Projection = {
+      meta: {
+        display: {
+          title: 'vertical',
+        },
+      },
+      data: [],
+      layout: ApiLayout.TOKENS_VERTICAL,
+      id: 'vertical',
+    };
+
+    const tree = renderer
+      .create(
+        <Provider store={store}>
+          <MemoryRouter>
+            <TokensVerticalTile data={emptyMockData} isDataLoading={false} />
+          </MemoryRouter>
+        </Provider>
+      )
+      .toJSON();
+
+    expect(tree).toBeNull();
   });
 });

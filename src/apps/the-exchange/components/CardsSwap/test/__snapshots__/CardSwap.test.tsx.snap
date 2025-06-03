@@ -9,12 +9,12 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
     data-testid="swap-receive-cards"
   >
     <div
-      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-light_green"
+      className="flex flex-col w-full cursor-pointer min-h-[200px] h-full justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-light_green"
       data-testid="select-token-card"
       id="swap-receive-card-exchange"
     >
       <div
-        className="flex justify-between items-start"
+        className="flex justify-between items-start mb-4"
         id="select-token-info-exchange"
         onClick={[Function]}
       >
@@ -29,17 +29,34 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey font-normal capitalize"
           >
-            On 1
+            On Ethereum
+          </p>
+          <p
+            className="text-base font-medium text-black_grey font-normal"
+          >
+            4
+             
+            <span
+              className="text-black_grey/[.4]"
+            >
+              $
+              0.4000
+            </span>
           </p>
         </div>
         <div
           className="flex min-w-fit items-end"
         >
-          <img
-            alt="token-logo"
-            className="w-5 h-5 object-fill rounded-full grayscale"
-            src="iconEth.png"
-          />
+          <div
+            className="w-5 h-5 relative rounded-full grayscale"
+          >
+            <img
+              alt="token-logo"
+              className="w-full h-full object-fill rounded-full"
+              onError={[Function]}
+              src="iconEth.png"
+            />
+          </div>
           <div
             className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
           >
@@ -81,7 +98,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
             className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
           >
             $
-            120.00
+            0.00
           </p>
           <img
             alt="Send"
@@ -91,12 +108,12 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="flex flex-col w-full cursor-pointer h-[200px] justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-purple"
+      className="flex flex-col w-full cursor-pointer min-h-[200px] h-full justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-purple"
       data-testid="select-token-card"
       id="swap-receive-card-exchange"
     >
       <div
-        className="flex justify-between items-start"
+        className="flex justify-between items-start mb-4"
         id="select-token-info-exchange"
         onClick={[Function]}
       >
@@ -111,17 +128,22 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           <p
             className="text-base font-medium text-black_grey font-normal capitalize"
           >
-            On 137
+            On Polygon
           </p>
         </div>
         <div
           className="flex min-w-fit items-end"
         >
-          <img
-            alt="token-logo"
-            className="w-5 h-5 object-fill rounded-full grayscale"
-            src="iconMatic.png"
-          />
+          <div
+            className="w-5 h-5 relative rounded-full grayscale"
+          >
+            <img
+              alt="token-logo"
+              className="w-full h-full object-fill rounded-full"
+              onError={[Function]}
+              src="iconMatic.png"
+            />
+          </div>
           <div
             className="w-3 h-3 rounded-full border border-white relative right-[7px] hidden"
           >
@@ -148,7 +170,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
             className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
           >
             $
-            4.00
+            0.00
           </p>
           <img
             alt="Receive"

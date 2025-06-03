@@ -1,7 +1,4 @@
-import { prepareNetworkName } from '@etherspot/prime-sdk';
-
-export const convertChainIdtoName = (chainId: number) =>
-  prepareNetworkName(chainId) ?? chainId.toString();
+import { PeriodFilter } from '../types/types';
 
 export const hasThreeZerosAfterDecimal = (num: number): boolean => {
   const decimalPart = num.toString().split('.')[1] || '';
@@ -25,11 +22,27 @@ export const limitDigits = (num: number): number => {
   return parseFloat(`${integerPart}.${limitedFractionalPart}`);
 };
 
-export const convertDateToUnixTimestamp = (date: Date): number =>
-  Math.floor(date.getTime() / 1000);
-
-export const convertUnixTimestampToDate = (timestamp: number): Date =>
-  new Date(timestamp * 1000);
-
 export const lowerRemoveSpaceString = (str: string) =>
   str.toLowerCase().replace(/[\s.-]/g, '');
+
+export const getGraphResolution = (filter: PeriodFilter): string => {
+  switch (filter) {
+    case PeriodFilter.HOUR:
+      // every minute
+      return '1min';
+    case PeriodFilter.DAY:
+      // every 1 min
+      return '1min';
+    case PeriodFilter.WEEK:
+      // every hour
+      return '1h';
+    case PeriodFilter.MONTH:
+      // every day
+      return '1d';
+    case PeriodFilter.YEAR:
+      // every day
+      return '1d';
+    default:
+      return '1h';
+  }
+};

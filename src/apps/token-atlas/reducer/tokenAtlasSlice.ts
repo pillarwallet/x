@@ -3,40 +3,43 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
 // types
-import { Token } from '@etherspot/prime-sdk/dist/sdk/data';
+import { Token } from '../../../services/tokensData';
 import {
   BlockchainData,
+  MarketHistoryPairData,
   TokenAtlasInfoData,
-  TokenMarketHistory,
   TokenPriceGraphPeriod,
 } from '../../../types/api';
 import { ChainType, PeriodFilter, SelectedTokenType } from '../types/types';
 
 // utils
-import { convertDateToUnixTimestamp } from '../utils/converters';
+import { convertDateToUnixTimestamp } from '../../../utils/common';
 
 export type TokenAltasState = {
   isSearchTokenModalOpen: boolean;
   isSelectChainDropdownOpen: boolean;
-  tokenListData: Token[];
   selectedChain: ChainType;
-  searchTokenResult: Token[];
+  searchTokenResult: Token[] | undefined;
   selectedToken: SelectedTokenType | undefined;
   tokenDataInfo: TokenAtlasInfoData | undefined;
-  tokenDataGraph: TokenMarketHistory | undefined;
+  tokenDataGraph: MarketHistoryPairData | undefined;
   isAllChainsVisible: boolean;
   priceGraphPeriod: TokenPriceGraphPeriod;
   periodFilter: PeriodFilter;
   isGraphLoading: boolean;
   blockchainList: BlockchainData[] | undefined;
+  searchToken: string;
+  isTokenSearchLoading: boolean;
+  isTokenSearchErroring: boolean;
+  isGraphErroring: boolean;
+  isTokenDataErroring: boolean;
 };
 
 const initialState: TokenAltasState = {
   isSearchTokenModalOpen: false,
   isSelectChainDropdownOpen: false,
-  tokenListData: [],
   selectedChain: { chainId: 0, chainName: 'all' },
-  searchTokenResult: [],
+  searchTokenResult: undefined,
   selectedToken: undefined,
   tokenDataInfo: undefined,
   tokenDataGraph: undefined,
@@ -48,6 +51,11 @@ const initialState: TokenAltasState = {
   periodFilter: PeriodFilter.DAY,
   isGraphLoading: false,
   blockchainList: [],
+  searchToken: '',
+  isTokenSearchLoading: false,
+  isTokenSearchErroring: false,
+  isGraphErroring: false,
+  isTokenDataErroring: false,
 };
 
 const tokenAtlasSlice = createSlice({
@@ -60,13 +68,10 @@ const tokenAtlasSlice = createSlice({
     setIsSelectChainDropdownOpen(state, action: PayloadAction<boolean>) {
       state.isSelectChainDropdownOpen = action.payload;
     },
-    setTokenListData(state, action: PayloadAction<Token[]>) {
-      state.tokenListData = action.payload;
-    },
     setSelectedChain(state, action: PayloadAction<ChainType>) {
       state.selectedChain = action.payload;
     },
-    setSearchTokenResult(state, action: PayloadAction<Token[]>) {
+    setSearchTokenResult(state, action: PayloadAction<Token[] | undefined>) {
       state.searchTokenResult = action.payload;
     },
     setSelectedToken(
@@ -83,7 +88,7 @@ const tokenAtlasSlice = createSlice({
     },
     setTokenDataGraph(
       state,
-      action: PayloadAction<TokenMarketHistory | undefined>
+      action: PayloadAction<MarketHistoryPairData | undefined>
     ) {
       state.tokenDataGraph = action.payload;
     },
@@ -105,13 +110,27 @@ const tokenAtlasSlice = createSlice({
     ) {
       state.blockchainList = action.payload;
     },
+    setSearchToken(state, action: PayloadAction<string>) {
+      state.searchToken = action.payload;
+    },
+    setIsTokenSearchLoading(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchLoading = action.payload;
+    },
+    setIsTokenSearchErroring(state, action: PayloadAction<boolean>) {
+      state.isTokenSearchErroring = action.payload;
+    },
+    setIsGraphErroring(state, action: PayloadAction<boolean>) {
+      state.isGraphErroring = action.payload;
+    },
+    setIsTokenDataErroring(state, action: PayloadAction<boolean>) {
+      state.isTokenDataErroring = action.payload;
+    },
   },
 });
 
 export const {
   setIsSearchTokenModalOpen,
   setIsSelectChainDropdownOpen,
-  setTokenListData,
   setSelectedChain,
   setSearchTokenResult,
   setSelectedToken,
@@ -122,6 +141,11 @@ export const {
   setPeriodFilter,
   setIsGraphLoading,
   setBlockchainList,
+  setSearchToken,
+  setIsTokenSearchLoading,
+  setIsTokenSearchErroring,
+  setIsGraphErroring,
+  setIsTokenDataErroring,
 } = tokenAtlasSlice.actions;
 
 export default tokenAtlasSlice;

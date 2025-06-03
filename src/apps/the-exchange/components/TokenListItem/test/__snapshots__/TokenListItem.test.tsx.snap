@@ -4,7 +4,6 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
 <div
   className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
   data-testid="token-list-item"
-  id="token-list-item-exchange"
   onClick={[MockFunction]}
 >
   <div
@@ -13,17 +12,23 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
     <div
       className="flex min-w-fit items-end"
     >
-      <img
-        alt="token-logo"
-        className="w-[30px] h-[30px] object-fill rounded-full grayscale"
-        src="https://example.com/token-logo.png"
-      />
       <div
-        className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] hidden"
+        className="w-[30px] h-[30px] relative rounded-full grayscale"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          onError={[Function]}
+          src="https://example.com/token-logo.png"
+        />
+      </div>
+      <div
+        className="w-3.5 h-3.5 rounded-full border border-white relative right-[7px] false"
       >
         <img
           alt="chain-logo"
-          className="w-full h-full object-fill rounded-full grayscale hidden"
+          className="w-full h-full object-fill rounded-full grayscale false"
+          src="logo-ethereum.png"
         />
       </div>
     </div>
@@ -31,7 +36,7 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
       className="flex flex-col ml-[10px]"
     >
       <p
-        className="text-base font-medium text-black_grey group-hover:opacity-60"
+        className="text-base font-medium text-black_grey group-hover:opacity-60 truncate max-w-[150px]"
       >
         Token Example
       </p>
@@ -42,11 +47,20 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
       </p>
     </div>
   </div>
-  <p
-    className="text-xs font-normal text-black_grey group-hover:opacity-60 capitalize"
+  <div
+    className="flex flex-col ml-[10px] items-end"
   >
-    On 
-    Chain Example
-  </p>
+    <p
+      className="text-base font-medium text-black_grey group-hover:opacity-60 truncate max-w-[150px]"
+    >
+      23.456728
+    </p>
+    <p
+      className="text-xs font-normal text-black_grey group-hover:opacity-60"
+    >
+      $
+      26.9752
+    </p>
+  </div>
 </div>
 `;

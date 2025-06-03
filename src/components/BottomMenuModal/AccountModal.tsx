@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  Nft,
-  NftCollection,
-  TokenListToken,
-} from '@etherspot/prime-sdk/dist/sdk/data';
+import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
+import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import {
   useEtherspotUtils,
   useWalletAddress,
@@ -36,6 +33,7 @@ import Alert from '../Text/Alert';
 
 // utils
 import {
+  getChainName,
   getLogoForChainId,
   truncateAddress,
   visibleChains,
@@ -45,10 +43,15 @@ import { formatAmountDisplay } from '../../utils/number';
 // hooks
 import useAccountBalances from '../../hooks/useAccountBalances';
 import useAccountNfts from '../../hooks/useAccountNfts';
-import useAssets from '../../hooks/useAssets';
+import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
+import {
+  Token,
+  chainIdToChainNameTokensData,
+  queryTokenData,
+} from '../../services/tokensData';
 
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -56,10 +59,10 @@ interface AccountModalProps {
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const accountAddress = useWalletAddress();
+  const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
-  const assets = useAssets();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
@@ -74,18 +77,19 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     return visibleChains.reduce<
       Record<
         string,
-        Record<
-          string,
-          { asset: TokenListToken; balance: BigNumber; chain: Chain }
-        >
+        Record<string, { asset: Token; balance: BigNumber; chain: Chain }>
       >
     >((grouped, chain) => {
       const balancesForChain = balances[chain.id]?.[accountAddress] || [];
+      const assets = queryTokenData({
+        blockchain: chainIdToChainNameTokensData(chain.id),
+      });
+
       balancesForChain.forEach((balance) => {
-        const asset = assets[chain.id]?.find(
+        const asset = assets.find(
           (a) =>
-            addressesEqual(a.address, balance.token) ||
-            (balance.token === null && isZeroAddress(a.address))
+            addressesEqual(a.contract, balance.token) ||
+            (balance.token === null && isZeroAddress(a.contract))
         );
 
         if (!asset) {
@@ -98,9 +102,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           [chain.id]: { asset, balance: balance.balance, chain },
         };
       });
+
       return grouped;
     }, {});
-  }, [accountAddress, balances, assets, addressesEqual, isZeroAddress]);
+  }, [accountAddress, balances, addressesEqual, isZeroAddress]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];
@@ -110,7 +115,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     >((all, chain) => {
       const nftCollectionsForChain = nfts[chain.id]?.[accountAddress] || [];
       nftCollectionsForChain.forEach((collection) => {
-        collection.items.forEach((nft) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        collection.items.forEach((nft: any) => {
           all.push({ nft, collection, chain });
         });
       });
@@ -133,10 +139,21 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(() => {
-    logout();
+    if (account) {
+      localStorage.removeItem('ACCOUNT_VIA_PK');
+      setAccount(undefined);
+    } else {
+      logout();
+    }
+
     clearDappStorage();
     navigate('/');
-  }, [logout, navigate]);
+
+    // Time to logout and redirect route
+    setTimeout(() => window.location.reload(), 500);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {
@@ -287,7 +304,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               const { decimals } = Object.values(groupedTokens[tokenSymbol])[0]
                 .asset;
               const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset
-                .logoURI;
+                .logo;
               const totalBalanceBN = Object.values(
                 groupedTokens[tokenSymbol]
               ).reduce(
@@ -306,7 +323,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
               if (Number(totalBalance) === 0) return undefined;
 
               return (
-                <TokenItem id="token-item-account-modal" key={tokenSymbol}>
+                <TokenItem
+                  id={`token-item-${tokenSymbol}-account-modal`}
+                  key={tokenSymbol}
+                >
                   <TokenTotals id="token-totals-account-modal">
                     <img src={logoUrl} alt={tokenSymbol} />
                     <p>
@@ -339,15 +359,18 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                     $visible={expanded[tokenSymbol]}
                   >
                     {Object.values(groupedTokens[tokenSymbol]).map(
-                      ({ balance, asset, chain }) => {
+                      ({ balance, chain }) => {
                         const assetBalanceValue = ethers.utils.formatUnits(
                           balance,
-                          asset.decimals
+                          decimals
                         );
                         return (
-                          <TokenItemChain key={`${tokenSymbol}-${chain.id}`}>
+                          <TokenItemChain
+                            key={`${tokenSymbol}-${chain.id}`}
+                            id={`action-bar-account-token-${tokenSymbol}-${chain.id}`}
+                          >
                             <ChainIcon src={getLogoForChainId(chain.id)} />
-                            <p>{chain.name}</p>
+                            <p>{getChainName(Number(chain.id))}</p>
                             <p>{formatAmountDisplay(assetBalanceValue)}</p>
                           </TokenItemChain>
                         );

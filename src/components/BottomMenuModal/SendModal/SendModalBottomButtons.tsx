@@ -16,6 +16,7 @@ interface SendModalBottomButtonsProps {
   estimatedCostFormatted: string;
   allowBatching?: boolean;
   onAddToBatch?: () => void;
+  onCancel?: () => void;
 }
 
 const SendModalBottomButtons = ({
@@ -27,6 +28,7 @@ const SendModalBottomButtons = ({
   estimatedCostFormatted,
   allowBatching = true,
   onAddToBatch,
+  onCancel,
 }: SendModalBottomButtonsProps) => {
   const [t] = useTranslation();
 
@@ -37,7 +39,7 @@ const SendModalBottomButtons = ({
       )}
       {!!errorMessage && <Alert>{`${t`label.error`}: ${errorMessage}`}</Alert>}
       <ButtonsWrapper>
-        {allowBatching && (
+        {allowBatching ? (
           <Button
             id="add-to-batch-button-send-modal"
             disabled={isSendDisabled}
@@ -48,9 +50,20 @@ const SendModalBottomButtons = ({
           >
             {t`action.addToBatch`}
           </Button>
+        ) : (
+          <Button
+            id="cancel-button-send-modal"
+            disabled={isSendDisabled}
+            onClick={onCancel}
+            $secondary
+            $fullWidth
+            $last
+          >
+            {t`action.cancel`}
+          </Button>
         )}
         <Button
-          id="send-button-send-moda;"
+          id="send-button-send-modal"
           disabled={isSendDisabled}
           onClick={() => onSend(!!safetyWarningMessage)}
           $fullWidth

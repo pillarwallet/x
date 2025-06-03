@@ -5,6 +5,14 @@ export enum ApiLayout {
   EDITORIAL = 'EDITORIAL',
   AD = 'AD',
   MEDIA_GRID_HIGHLIGHTED = 'MEDIA_GRID_HIGHLIGHTED',
+  PXPOINTS = 'PXPOINTS',
+  TOKENS_WITH_MARKET_DATA = 'TOKENS_WITH_MARKET_DATA',
+}
+
+export enum LeaderboardRankChange {
+  INCREASED = 'INCREASED',
+  DECREASED = 'DECREASED',
+  NO_CHANGE = 'NO_CHANGE',
 }
 
 export type Asset = {
@@ -101,11 +109,77 @@ export type Advertisement = {
   slug: string;
 };
 
+export type Points = {
+  address: {
+    points: {
+      total?: number;
+      lastWeek?: number;
+    };
+    ranking: {
+      global?: number;
+      leaderboardPosition?: number;
+    };
+  };
+  drops: {
+    upcoming: {
+      timestamp?: number;
+    };
+  };
+  referrals: {
+    code?: string;
+    href?: string;
+  };
+};
+
+export type TokensMarketDataRow = {
+  link?: string;
+  leftColumn?: {
+    token?: {
+      primaryImage?: string;
+      secondaryImage?: string;
+    };
+    line1?: {
+      text1?: string;
+      text2?: string;
+      copyLink?: string;
+    };
+    line2?: {
+      timestamp?: number;
+      volume?: string;
+      liquidity?: string;
+    };
+  };
+  rightColumn?: {
+    line1?: {
+      price?: string;
+      direction?: string;
+      percentage?: string;
+    };
+    line2?: {
+      transactionCount?: string;
+    };
+  };
+};
+
+export type TokensMarketData = {
+  title?: {
+    text?: string;
+    leftDecorator?: string;
+    rightDecorator?: string;
+  };
+  rows?: TokensMarketDataRow[];
+};
+
 export type Projection = {
   meta: {
     display?: GenericBannerDisplay | EditorialDisplay | TileTitle;
   };
-  data?: TokenData[] | Advertisement | MediaGridData;
+  data?:
+    | TokenData[]
+    | Advertisement
+    | MediaGridData
+    | Points
+    | TokensMarketData;
   layout: ApiLayout;
   id: string;
 };
@@ -140,6 +214,7 @@ export type TokenData = {
   trending_score?: number;
   platforms?: TokenPlatform[];
   price_change_24h?: number;
+  price: number;
   pair?: string;
 };
 
@@ -182,7 +257,9 @@ export type TokenAtlasInfoData = {
 };
 
 export type TokenAtlasInfoApiResponse = {
-  data?: TokenAtlasInfoData;
+  result: {
+    data: TokenAtlasInfoData;
+  };
 };
 
 type HistoryPoint = {
@@ -209,7 +286,7 @@ export type TokenPriceGraphPeriod = {
 };
 
 export type TrendingTokens = {
-  data: TokenData[];
+  result: TokenData[];
 };
 
 export type TokenBlockchainList = {
@@ -271,7 +348,7 @@ export type BlockchainData = {
 };
 
 export type BlockchainList = {
-  data: BlockchainData[];
+  result: { data: BlockchainData[] };
 };
 
 export type TileTitle = {
@@ -372,3 +449,304 @@ export type EtherscanTransaction = {
   methodId: string;
   functionName: string;
 };
+
+export type PointsChainData = {
+  [chainId: string]: number; // Keys are chain IDs (as strings), values are numbers
+};
+
+export type PointsEligibilityData = {
+  [chainId: string]: boolean;
+};
+
+export type PointsResult = {
+  points: number;
+  totalTxFeesUsd: number;
+  pointsPerChain: PointsChainData;
+  transactionCount: PointsChainData;
+  address: string;
+  isDeployPointsEligible: PointsEligibilityData;
+  pointsUpdatedAt: number;
+  txFeesUsd: PointsChainData;
+};
+
+export type PointsResultsData = {
+  results: PointsResult[];
+};
+
+export type WeeklyLeaderboardData = PointsResult & {
+  rankChange?: LeaderboardRankChange;
+};
+
+export type MarketHistoryPairData = {
+  result: {
+    data: {
+      volume: number;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+      time: number;
+    }[];
+  };
+};
+
+export type MobulaToken = {
+  address: string;
+  price: number | null;
+  priceToken: number;
+  priceTokenString: string;
+  approximateReserveUSD: number;
+  approximateReserveTokenRaw: string;
+  approximateReserveToken: number;
+  symbol: string;
+  name: string;
+  id: number;
+  decimals: number;
+  totalSupply: number;
+  circulatingSupply: number;
+  chainId: string;
+  logo?: string | null;
+};
+
+export type Exchange = {
+  name: string;
+  logo: string;
+};
+
+export type Pair = {
+  token0: MobulaToken;
+  token1: MobulaToken;
+  volume24h: number;
+  liquidity: number;
+  blockchain: string;
+  address: string;
+  createdAt: string | null;
+  type: string;
+  baseToken: string;
+  exchange: Exchange;
+  factory: string | null;
+  quoteToken: string;
+  price: number | null;
+  priceToken: number;
+  priceTokenString: string;
+};
+
+// This type is merging both Token and Asset types from
+// the Mobula's search API
+export type TokenAssetResponse = {
+  name: string;
+  symbol: string;
+  contracts: string[];
+  blockchains: string[];
+  decimals: number[];
+  logo: string | null;
+  price: number | null;
+  pairs: Pair[];
+  type: 'token' | 'asset';
+  volume_24h?: number;
+  total_supply?: string; // Token-specific
+  id?: number; // Asset-specific
+  market_cap?: number; // Asset-specific
+  liquidity?: number; // Asset-specific
+  volume?: number; // Asset-specific
+  twitter?: string | null; // Asset-specific
+  website?: string | null; // Asset-specific
+};
+
+export type PairResponse = {
+  token0: MobulaToken;
+  token1: MobulaToken;
+  volume24h: number;
+  liquidity: number;
+  blockchain: string;
+  address: string;
+  type: string;
+  baseToken: string;
+  exchange: Exchange;
+  quoteToken: string;
+  price: number;
+  priceToken: number;
+  priceTokenString: string;
+  createdAt: string | null;
+  factory: string | null;
+  pool_addr: number;
+  price_change_1min?: number;
+  price_change_5min?: number;
+  price_change_1h?: number;
+  price_change_4h?: number;
+  price_change_12h?: number;
+  price_change_24h?: number;
+  trades_1min?: number;
+  buys_1min?: number;
+  sells_1min?: number;
+  volume_1min?: number;
+  buy_volume_1min?: number;
+  sell_volume_1min?: number;
+  sellers_1min?: number;
+  buyers_1min?: number;
+  traders_1min?: number;
+  trades_5min?: number;
+  buys_5min?: number;
+  sells_5min?: number;
+  volume_5min?: number;
+  buy_volume_5min?: number;
+  sell_volume_5min?: number;
+  sellers_5min?: number;
+  buyers_5min?: number;
+  traders_5min?: number;
+  trades_15min?: number;
+  buys_15min?: number;
+  sells_15min?: number;
+  volume_15min?: number;
+  buy_volume_15min?: number;
+  sell_volume_15min?: number;
+  sellers_15min?: number;
+  buyers_15min?: number;
+  traders_15min?: number;
+  trades_1h?: number;
+  buys_1h?: number;
+  sells_1h?: number;
+  volume_1h?: number;
+  buy_volume_1h?: number;
+  sell_volume_1h?: number;
+  sellers_1h?: number;
+  buyers_1h?: number;
+  traders_1h?: number;
+  trades_4h?: number;
+  buys_4h?: number;
+  sells_4h?: number;
+  volume_4h?: number;
+  buy_volume_4h?: number;
+  sell_volume_4h?: number;
+  sellers_4h?: number;
+  buyers_4h?: number;
+  traders_4h?: number;
+  trades_12h?: number;
+  buys_12h?: number;
+  sells_12h?: number;
+  volume_12h?: number;
+  buy_volume_12h?: number;
+  sell_volume_12h?: number;
+  sellers_12h?: number;
+  buyers_12h?: number;
+  traders_12h?: number;
+  trades_24h?: number;
+  buys_24h?: number;
+  sells_24h?: number;
+  volume_24h?: number;
+  buy_volume_24h?: number;
+  sell_volume_24h?: number;
+  sellers_24h?: number;
+  buyers_24h?: number;
+  traders_24h?: number;
+};
+
+export type MobulaApiResponse = {
+  result: {
+    data: TokenAssetResponse[] | PairResponse[];
+  };
+};
+
+export type ContractsBalanceMobula = {
+  address: string;
+  balance: number;
+  balanceRaw: string;
+  chainId: string;
+  decimals: number;
+};
+
+export type CrossChainBalanceMobula = {
+  balance: number;
+  balanceRaw: string;
+  chainId: string;
+  address: string;
+};
+
+export type CrossChainBalances = {
+  [chainName: string]: CrossChainBalanceMobula;
+};
+
+export type AssetMobula = {
+  id: number;
+  name: string;
+  symbol: string;
+  logo: string;
+  decimals: string[];
+  contracts: string[];
+  blockchains: string[];
+};
+
+export type AssetDataMobula = {
+  contracts_balances: ContractsBalanceMobula[];
+  cross_chain_balances: CrossChainBalances;
+  price_change_24h: number;
+  estimated_balance: number;
+  price: number;
+  token_balance: number;
+  allocation: number;
+  asset: AssetMobula;
+  wallets: string[];
+  realized_pnl?: number;
+  unrealized_pnl?: number;
+  price_bought?: number;
+  total_invested?: number;
+  min_buy_price?: number;
+  max_buy_price?: number;
+};
+
+export type PnLEntry = [string, { realized: number; unrealized: number }];
+
+export type PnLHistory = {
+  '24h': PnLEntry[];
+  '7d': PnLEntry[];
+  '30d': PnLEntry[];
+  '1y': PnLEntry[];
+};
+
+export type TotalPnLHistory = {
+  '24h': {
+    realized: number;
+    unrealized: number;
+  };
+  '7d': {
+    realized: number;
+    unrealized: number;
+  };
+  '30d': {
+    realized: number;
+    unrealized: number;
+  };
+  '1y': {
+    realized: number;
+    unrealized: number;
+  };
+};
+
+export type PortfolioData = {
+  total_wallet_balance: number;
+  wallets: string[];
+  assets: AssetDataMobula[];
+  pnl_history?: PnLHistory;
+  total_realized_pnl?: number;
+  total_unrealized_pnl?: number;
+  total_pnl_history?: TotalPnLHistory;
+  balances_length: number;
+};
+
+export type WalletPortfolioMobulaResponse = {
+  result: { data: PortfolioData };
+};
+
+export type BalanceHistoryEntry = [timestamp: number, balance: number];
+
+export type WalletHistory = {
+  wallets: string[];
+  balance_usd: number;
+  balance_history: BalanceHistoryEntry[];
+};
+
+export type WalletHistoryMobulaResponse = {
+  result: { data: WalletHistory };
+};
+
+export type PrimeAssetType = { name: string; symbol: string };

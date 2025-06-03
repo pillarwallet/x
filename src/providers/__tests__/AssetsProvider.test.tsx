@@ -1,7 +1,15 @@
 import * as TransactionKit from '@etherspot/transaction-kit';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import { base, gnosis, mainnet, polygon } from 'viem/chains';
+import {
+  arbitrum,
+  base,
+  bsc,
+  gnosis,
+  mainnet,
+  optimism,
+  polygon,
+} from 'viem/chains';
 
 // providers
 import AssetsProvider, { AssetsContext } from '../AssetsProvider';
@@ -52,6 +60,9 @@ describe('AssetsProvider', () => {
         [polygon.id]: [getNativeAssetForChainId(polygon.id)],
         [gnosis.id]: [getNativeAssetForChainId(gnosis.id)],
         [base.id]: [getNativeAssetForChainId(base.id)],
+        [bsc.id]: [getNativeAssetForChainId(bsc.id)],
+        [optimism.id]: [getNativeAssetForChainId(optimism.id)],
+        [arbitrum.id]: [getNativeAssetForChainId(arbitrum.id)],
       });
     });
   });

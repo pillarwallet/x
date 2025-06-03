@@ -6,7 +6,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { useSelectedChains } from '../../../hooks/useSelectedChainsHistory';
 
 // utils
-import { CompatibleChains, getChainName } from '../../../utils/blockchain';
+import { CompatibleChains } from '../../../utils/blockchain';
 
 const HistoryChainDropdown = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -52,6 +52,7 @@ const HistoryChainDropdown = () => {
               // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <li
                 key={option.chainId}
+                id={`action-bar-history-select-chain-${option.chainId}`}
                 className="px-4 py-2 cursor-pointer flex items-center justify-between"
                 onClick={() => toggleChainSelection(option.chainId)}
               >
@@ -62,7 +63,7 @@ const HistoryChainDropdown = () => {
                       : 'text-medium_grey'
                   }`}
                 >
-                  {getChainName(option.chainId)}
+                  {option.chainName}
                 </p>
                 <BiCheckboxChecked
                   size={20}

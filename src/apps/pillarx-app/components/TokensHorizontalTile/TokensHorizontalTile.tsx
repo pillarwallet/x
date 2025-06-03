@@ -1,3 +1,4 @@
+import { useEtherspotUtils } from '@etherspot/transaction-kit';
 import { createRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,6 +7,10 @@ import { Projection, TokenData } from '../../../../types/api';
 
 // hooks
 import useRefDimensions from '../../hooks/useRefDimensions';
+
+// utils
+import { chainNameFromViemToMobula } from '../../../../services/tokensData';
+import { CompatibleChains } from '../../../../utils/blockchain';
 
 // components
 import TileContainer from '../TileContainer/TileContainer';
@@ -22,6 +27,7 @@ const TokensHorizontalTile = ({
   isDataLoading,
 }: TokensHorizontalTileProps) => {
   const navigate = useNavigate();
+  const { isZeroAddress } = useEtherspotUtils();
   const [tokenHorizontalWidth, setTokenHorizontalWidth] = useState<number>(0);
   const { data: dataTokens, meta } = data || {};
   const dataTokensHorizontal = dataTokens as TokenData[] | undefined;
@@ -54,7 +60,7 @@ const TokensHorizontalTile = ({
   const numberTokensHorizontal =
     Math.floor(dimensions.width / tokenHorizontalWidth) ?? 0;
 
-  if (!data || isDataLoading) {
+  if (!data || !dataTokensHorizontal?.length || isDataLoading) {
     return null;
   }
 
@@ -68,20 +74,31 @@ const TokensHorizontalTile = ({
         <div className="flex justify-between">
           {dataTokensHorizontal
             ?.slice(0, numberTokensHorizontal)
-            .map((token, index) => (
-              <TokenInfoHorizontal
-                key={index}
-                logo={token.logo}
-                tokenName={token.name}
-                tokenValue={undefined}
-                percentage={undefined}
-                onClick={() =>
-                  navigate(
-                    `/token-atlas?asset=${token.name}&symbol=${token.symbol}`
+            .map((token, index) => {
+              const compatibleTokenContract = token.contracts?.find(
+                (contract) =>
+                  CompatibleChains.some(
+                    (chain) =>
+                      chainNameFromViemToMobula(chain.chainName) ===
+                      contract.blockchain
                   )
-                }
-              />
-            ))}
+              );
+              return (
+                <TokenInfoHorizontal
+                  key={index}
+                  logo={token.logo}
+                  tokenName={token.name}
+                  tokenValue={undefined}
+                  percentage={undefined}
+                  tokenChains={token.contracts}
+                  onClick={() =>
+                    navigate(
+                      `/token-atlas?${!isZeroAddress(compatibleTokenContract?.address || '') ? `&asset=${compatibleTokenContract?.address}` : `&asset=${token.symbol}`}&blockchain=${compatibleTokenContract?.blockchain}`
+                    )
+                  }
+                />
+              );
+            })}
         </div>
       </TileContainer>
     </div>
