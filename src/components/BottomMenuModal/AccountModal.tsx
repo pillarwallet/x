@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
+import { useDisconnect } from 'wagmi';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -66,6 +67,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
+  const { disconnect } = useDisconnect();
+
   const [showNfts, setShowNfts] = React.useState(false);
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -138,13 +141,15 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setCopied(true);
   }, [accountAddress, copied]);
 
-  const onLogoutClick = useCallback(() => {
+  const onLogoutClick = useCallback(async () => {
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
     } else {
       logout();
     }
+
+    await disconnect();
 
     clearDappStorage();
     navigate('/');
@@ -153,7 +158,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate]);
+  }, [account, logout, navigate, disconnect]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {

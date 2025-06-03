@@ -4,6 +4,7 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useConnect, useAccount } from 'wagmi';
 
 // components
 import Button from '../components/Button';
@@ -12,9 +13,38 @@ import Button from '../components/Button';
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
 
 const Login = () => {
-  const { login, connectWallet } = usePrivy();
+  const { login } = usePrivy();
+  const { connectors, connect } = useConnect();
+  const { address } = useAccount();
   const { wallets } = useWallets();
   const [t] = useTranslation();
+
+  // Get WalletConnect connector
+  const walletConnectConnector = connectors.find(
+    ({ id }) => id === 'walletConnect'
+  );
+
+  const listenForWalletConnectUri = async () => {
+    if (!walletConnectConnector) {
+      throw new Error('WalletConnect connector not found');
+    }
+
+    connect({ connector: walletConnectConnector });
+
+    const provider = await walletConnectConnector.getProvider();
+    provider.once('display_uri', (uri: string) => {
+      const encodedURI = encodeURIComponent(uri);
+      window.location.href = `pillarwallet://wc?uri=${encodedURI}`;
+    });
+  };
+
+  useEffect(() => {
+    const reloaded = sessionStorage.getItem('loginPageReloaded');
+    if (!address || reloaded === 'true') return;
+    window.location.reload();
+
+    sessionStorage.setItem('loginPageReloaded', 'true');
+  }, [address]);
 
   useEffect(() => {
     // eslint-disable-next-line no-useless-return
@@ -44,11 +74,7 @@ const Login = () => {
       <InsideWrapper>
         <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
         <Button
-          onClick={() =>
-            connectWallet({
-              walletList: ['wallet_connect'],
-            })
-          }
+          onClick={listenForWalletConnectUri}
           $last
           $fullWidth
         >{t`action.connectPillarWallet`}</Button>
