@@ -1,4 +1,4 @@
-import { parseInt as parseIntLodash } from 'lodash';
+import { parseInt, parseInt as parseIntLodash } from 'lodash';
 
 export const formatAmountDisplay = (
   amountRaw: string | number,
@@ -66,4 +66,46 @@ export const limitDigitsNumber = (num: number): number => {
 
   // Ensure we have at least those digits in the fractional part
   return Number(num.toFixed(decimalPlaces));
+};
+
+/**
+ * @name formatExponential
+ * @description Format a number in exponential notation to a string
+ * @param {Number} num
+ * @returns {String}
+ */
+export const formatExponential = (num: number) => {
+  // Convert the number to a string with maximum precision
+  const str = num.toString();
+
+  // If the number is not in exponential format, return as is
+  if (!str.includes('e') && !str.includes('E')) {
+    return str;
+  }
+
+  // Split the number into mantissa and exponent
+  const [mantissa, exponent] = str.toLowerCase().split('e');
+  const exp = parseInt(exponent);
+
+  // Split mantissa into integer and fractional parts
+  const [intPart, fracPart = ''] = mantissa.split('.');
+
+  // Calculate the number of decimal places to move
+  const decimalPlaces = exp > 0 ? exp : -exp;
+
+  if (exp > 0) {
+    // Move decimal point to the right
+    const newIntPart =
+      intPart + (fracPart + '0'.repeat(decimalPlaces)).slice(0, decimalPlaces);
+    const newFracPart = (fracPart + '0'.repeat(decimalPlaces)).slice(
+      decimalPlaces
+    );
+    const final = newFracPart ? `${newIntPart}.${newFracPart}` : newIntPart;
+    return final;
+  }
+  // Move decimal point to the left
+  const newIntPart = '0'.repeat(decimalPlaces - intPart.length) + intPart;
+
+  const final = `0.${newIntPart}${fracPart}`;
+  return final;
 };
