@@ -1,5 +1,5 @@
 import { SessionTypes } from '@walletconnect/types';
-import { isAddressEqual } from 'viem';
+import { isAddress, isAddressEqual } from 'viem';
 
 export const PERSONAL_SIGN = 'personal_sign';
 export const ETH_SIGN = 'eth_sign';
@@ -28,10 +28,18 @@ export const getWalletAddressesFromSession = (
 
 export const isAddressInSessionViaPrivy = (
   session: SessionTypes.Struct,
-  EOAAddress: string
+  EOAAddress: string | null | undefined
 ): boolean => {
+  if (!EOAAddress || !isAddress(EOAAddress, { strict: false })) {
+    return false;
+  }
+
   const addresses = getWalletAddressesFromSession(session);
-  return addresses.some((addr) =>
-    isAddressEqual(addr as `0x${string}`, EOAAddress as `0x${string}`)
-  );
+
+  return addresses.some((addr) => {
+    if (!addr || !isAddress(addr, { strict: false })) {
+      return false; // skip if the address is invalid
+    }
+    return isAddressEqual(addr as `0x${string}`, EOAAddress as `0x${string}`);
+  });
 };
