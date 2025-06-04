@@ -294,64 +294,19 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     transactionDebugLog('Preparing to send transaction');
 
-    const trySend = async (
-      maxRetries = 3,
-      retryDelay = 2000
-    ): Promise<ISentBatches[]> => {
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-          const startTime = performance.now();
-
-          const sent = await send();
-
-          const endTime = performance.now();
-          const elapsedMs = endTime - startTime;
-
-          transactionDebugLog(
-            `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
-          );
-
-          transactionDebugLog(
-            `Transaction send succeeded on attempt ${attempt}:`,
-            sent
-          );
-
-          return sent;
-        } catch (error) {
-          const rawMessage =
-            typeof error === 'string' ? error : JSON.stringify(error);
-          transactionDebugLog(`Send attempt ${attempt} failed`, rawMessage);
-
-          const shouldRetry =
-            rawMessage.includes(
-              'maxFeePerGas must be greater or equal to baseFee'
-            ) ||
-            rawMessage.includes('fee too low') ||
-            rawMessage.includes('User op cannot be replaced');
-
-          if (!shouldRetry || attempt === maxRetries) {
-            throw error;
-          }
-
-          transactionDebugLog(
-            `Retrying send() in ${retryDelay}ms due to gas-related error...`
-          );
-          await new Promise((resolve) => {
-            setTimeout(resolve, retryDelay);
-          });
-        }
-      }
-      throw new Error('Retry logic exhausted without success');
-    };
-
     let sent: ISentBatches[];
 
     try {
-      sent = await trySend();
+      sent = await send(undefined, {
+        retryOnFeeTooLow: true,
+        maxRetries: 3,
+        feeMultiplier: 1.2, // 20% increase per retry
+      });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMes = error?.message || 'Unknown send error';
-      console.warn('Final send() failed after retries:', errorMes);
+      const errorMes =
+        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.';
       setErrorMessage(errorMes);
       setIsSending(false);
       return;
@@ -381,7 +336,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     const estimationErrorMessage =
       sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
-      setErrorMessage(estimationErrorMessage);
+      setErrorMessage(
+        'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
+      );
       setIsSending(false);
       return;
     }
@@ -412,7 +369,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
-      setErrorMessage(sendingErrorMessage);
+      setErrorMessage(
+        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+      );
       setIsSending(false);
       return;
     }
