@@ -40,6 +40,18 @@ const mockData: (WeeklyLeaderboardData | PointsResult)[] = Array.from(
       '8453': true,
     },
     pointsUpdatedAt: 1742747128583,
+    totalSwapAmountUsd: i + 30,
+    swapAmountUsd: {
+      '100': i + 10,
+      '137': i + 10,
+      '8453': i + 10,
+    },
+    totalSwapTxFeesUsd: i + 10,
+    swapTxFeesUsd: {
+      '100': i + 2,
+      '137': i + 3,
+      '8453': i + 5,
+    },
     rankChange: LeaderboardRankChange.NO_CHANGE,
   })
 );
