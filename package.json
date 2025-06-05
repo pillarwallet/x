@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.11.5",
     "@etherspot/data-utils": "^1.1.1",
     "@etherspot/modular-sdk": "^6.1.0",
-    "@etherspot/transaction-kit": "^1.1.0",
+    "@etherspot/transaction-kit": "^1.1.1",
     "@hypelab/sdk-react": "^1.0.4",
     "@lifi/sdk": "^3.6.8",
     "@lifi/types": "^9.2.0",
