@@ -12,6 +12,9 @@ import Button from '../components/Button';
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
 
+// Icon
+import { PillarWalletIcon } from '../apps/stealthex/components/common/icons';
+
 const Login = () => {
   const { login } = usePrivy();
   const { connectors, connect } = useConnect();
@@ -73,11 +76,10 @@ const Login = () => {
       )}
       <InsideWrapper>
         <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
-        <Button
-          onClick={listenForWalletConnectUri}
-          $last
-          $fullWidth
-        >{t`action.connectPillarWallet`}</Button>
+        <Button onClick={listenForWalletConnectUri} $last $fullWidth>
+          <PillarWalletIcon />
+          {t`action.connectPillarWallet`}
+        </Button>
       </InsideWrapper>
     </Wrapper>
   );
@@ -89,7 +91,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 100px;
   align-items: center;
   max-width: 500px;
   margin: 0 auto;
