@@ -112,7 +112,7 @@ describe('<LeaderboardTab />', () => {
     render(<LeaderboardTab data={mockData} />);
 
     expect(screen.getByText('My rank')).toBeInTheDocument();
-    expect(screen.getByText('PX Points')).toBeInTheDocument();
+    expect(screen.getByText('Total Swap Amount')).toBeInTheDocument();
     expect(screen.getAllByText('0xAddress1')).toHaveLength(2);
   });
 
