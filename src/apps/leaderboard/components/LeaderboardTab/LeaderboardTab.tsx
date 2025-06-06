@@ -10,8 +10,10 @@ import {
 
 // components
 import Body from '../Typography/Body';
-import BodySmall from '../Typography/BodySmall';
 import UserInfo from '../UserInfo/UserInfo';
+
+// utils
+import { formatAmountDisplay } from '../../../../utils/number';
 
 type LeaderboardTabProps = {
   data: PointsResult[] | WeeklyLeaderboardData[];
@@ -64,7 +66,7 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
           <>
             <div className="flex justify-between">
               <Body className="text-purple_light">My rank</Body>
-              <Body className="text-purple_light">PX Points</Body>
+              <Body className="text-purple_light">Total Swap Amount</Body>
             </div>
             <div className="flex flex-col">
               <div className="flex justify-between py-5 py-2">
@@ -79,11 +81,8 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
                 />
                 <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
                   <p className="desktop:text-[22px] tablet:text-[22px] mobile:text-base">
-                    {myRankData.points}
+                    ${formatAmountDisplay(myRankData.totalSwapAmountUsd ?? 0)}
                   </p>
-                  <BodySmall className="text-purple_light mobile:text-xs">
-                    PX
-                  </BodySmall>
                 </div>
               </div>
             </div>
@@ -91,7 +90,9 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
         )}
         <div className="flex justify-between">
           <Body className="text-purple_light">Rankings</Body>
-          {!myRankData && <Body className="text-purple_light">PX Points</Body>}
+          {!myRankData && (
+            <Body className="text-purple_light">Total Swap Amount</Body>
+          )}
         </div>
         <div className="flex flex-col">
           {visibleData.map((result, index) => (
@@ -112,11 +113,8 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
               />
               <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
                 <p className="desktop:text-[22px] tablet:text-[22px] mobile:text-base">
-                  {result.points}
+                  ${formatAmountDisplay(result.totalSwapAmountUsd ?? 0)}
                 </p>
-                <BodySmall className="text-purple_light mobile:text-xs">
-                  PX
-                </BodySmall>
               </div>
             </div>
           ))}
