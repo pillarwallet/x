@@ -336,8 +336,6 @@ export const config = createConfig({
       projectId: process.env.REACT_APP_WC_ID ?? '',
       showQrModal: !isMobile,
       isNewChainsStale: true,
-      methods: ['eth_sendTransaction', 'personal_sign'],
-      events: ['chainChanged', 'accountsChanged'],
       metadata: {
         name: 'PillarX',
         description: 'PillarX',
@@ -366,7 +364,6 @@ const Main = () => {
               defaultChain: isTestnet ? sepolia : mainnet,
               embeddedWallets: {
                 createOnLogin: 'users-without-wallets',
-                showWalletUIs: false,
               },
             }}
           >

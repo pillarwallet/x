@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
-import { useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -64,6 +64,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
+  const { address } = useAccount();
   const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const { addressesEqual, isZeroAddress } = useEtherspotUtils();
@@ -149,7 +150,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       logout();
     }
 
-    await disconnect();
+    if (address) {
+      await disconnect();
+    }
 
     clearDappStorage();
     navigate('/');

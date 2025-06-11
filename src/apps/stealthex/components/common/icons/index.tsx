@@ -36,6 +36,24 @@ export const CheckNotification: React.FC<IconProps> = ({
     );
 };
 
+export const PillarWalletIcon = (props: any) => {
+    return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={13}
+          height={20}
+          fill="none"
+          {...props}
+        >
+          <path
+            fill="#fff"
+            d="M9.454 6.476v5.897H0V15.9l1.765 1.766c.968.968 1.773 1.76 1.792 1.76.015 0 .026-.788.026-1.753V15.92H13V4.12l-1.773-1.773L9.454.574v5.902Z"
+          />
+          <path fill="#fff" d="M0 5.282v2.364H4.765V2.92H0v2.363Z" />
+        </svg>
+    )
+}
+
 export const NotificationIcon: React.FC<IconProps> = ({
     width = 20,
     height = 20,
