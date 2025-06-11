@@ -6,6 +6,7 @@ import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
+  setIsAboveLimit,
   setIsOfferLoading,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
@@ -20,6 +21,9 @@ import {
 // hooks
 import useOffer from '../../hooks/useOffer';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+
+// utils
+import { formatExponential } from '../../../../utils/number';
 
 // types
 import { CardPosition, SwapOffer } from '../../utils/types';
@@ -69,6 +73,9 @@ const EnterAmount = ({
   );
   const isOfferLoading = useAppSelector(
     (state) => state.swap.isOfferLoading as boolean
+  );
+  const isAboveLimit = useAppSelector(
+    (state) => state.swap.isAboveLimit as boolean
   );
 
   const [inputValue, setInputValue] = useState<string>('');
@@ -153,8 +160,8 @@ const EnterAmount = ({
     if (!swapToken && !balance) return undefined;
 
     // Check if the value exceeds the max token amount limit
-    if (tokenAmount > balance) {
-      return `The maximum amount of ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 && ' spendable'} in your wallet is ${balance.toFixed(6)} ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 && ` because your wallet is currently undeployed on ${tokenChain}`} - please change the amount and try again`;
+    if (tokenAmount > balance - (deploymentCost ?? 0)) {
+      return `The maximum amount of ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 ? ' spendable' : ''} in your wallet is ${formatExponential(balance - (deploymentCost ?? 0))} ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 ? ` because your wallet is currently undeployed on ${tokenChain}` : ''} - please change the amount and try again`;
     }
 
     return undefined;
@@ -170,12 +177,13 @@ const EnterAmount = ({
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
     dispatch(setBestOffer(undefined));
-    if (amountSwap && swapToken && receiveToken) {
+    if (amountSwap && swapToken && receiveToken && !isAboveLimit) {
       dispatch(setIsOfferLoading(true));
       debouncedGetOffer();
     }
     // Clean-up debounce on component unmount
     return () => {
+      dispatch(setIsOfferLoading(false));
       debouncedGetOffer.cancel();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,6 +196,13 @@ const EnterAmount = ({
 
     if (type === CardPosition.SWAP && swapToken) {
       dispatch(setAmountSwap(Number(value)));
+    }
+
+    if (tokenBalance && Number(value) > tokenBalance - (deploymentCost ?? 0)) {
+      dispatch(setIsAboveLimit(true));
+    }
+    if (tokenBalance && Number(value) <= tokenBalance - (deploymentCost ?? 0)) {
+      dispatch(setIsAboveLimit(false));
     }
   };
 

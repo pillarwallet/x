@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 // store
 import { addMiddleware } from '../../../store';
@@ -15,13 +15,19 @@ const chainIds = isTestnet
 
 const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: isTestnet
+    ? 'https://volumeleaderboard-nubpgwxpiq-uc.a.run.app'
+    : 'https://volumeleaderboard-7eu4izffpa-uc.a.run.app',
+});
+
+const baseQueryWithRetry = retry(baseQuery, {
+  maxRetries: 5,
+});
+
 export const leaderboardApi = createApi({
   reducerPath: 'leaderboardApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: isTestnet
-      ? 'https://pxpoints-nubpgwxpiq-uc.a.run.app'
-      : 'https://pxpoints-7eu4izffpa-uc.a.run.app',
-  }),
+  baseQuery: baseQueryWithRetry,
   endpoints: (builder) => ({
     getLeaderboard: builder.query<
       PointsResultsData,

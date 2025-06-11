@@ -467,6 +467,10 @@ export type PointsResult = {
   isDeployPointsEligible: PointsEligibilityData;
   pointsUpdatedAt: number;
   txFeesUsd: PointsChainData;
+  totalSwapAmountUsd: number;
+  swapAmountUsd: PointsChainData;
+  totalSwapTxFeesUsd: number;
+  swapTxFeesUsd: PointsChainData;
 };
 
 export type PointsResultsData = {
