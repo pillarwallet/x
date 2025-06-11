@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import renderer from 'react-test-renderer';
 
 // components
@@ -8,7 +9,9 @@ jest.mock('wagmi', () => {
   return {
     ...actualWagmi,
     createConfig: jest.fn(() => ({})),
-    WagmiProvider: ({ children }: any) => <div>{children}</div>,
+    WagmiProvider: ({ children }: { children: ReactNode }) => (
+      <div>{children}</div>
+    ),
     http: jest.fn(),
     mainnet: { id: 1 },
   };
