@@ -117,7 +117,7 @@ workflows:
           filters:
             branches:
               only:
-                - e2e
+                - staging
 
   pr_triggered_e2e_tests:
     jobs:
@@ -125,4 +125,4 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - staging
