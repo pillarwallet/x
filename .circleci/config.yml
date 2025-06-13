@@ -111,14 +111,6 @@ jobs:
 workflows:
   version: 2
 
-  e2e_commit_trigger:
-    jobs:
-      - e2e-tests:
-          filters:
-            branches:
-              only:
-                - staging
-
   pr_triggered_e2e_tests:
     jobs:
       - e2e-tests:
