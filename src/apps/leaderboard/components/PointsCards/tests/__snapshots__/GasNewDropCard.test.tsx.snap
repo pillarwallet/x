@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GasNewDropCard matches snapshot with isMigrated = false 1`] = `
+<div>
+  <div
+    class="flex flex-col w-full gap-3 rounded-[10px] p-2"
+  >
+    <div
+      class="flex gap-1.5"
+    >
+      <div
+        class="flex h-9 w-9 items-center justify-center rounded-md bg-[#3C80FF]/[.1]"
+      >
+        <img
+          alt="new-drop-icon"
+          src="[object Object]"
+        />
+      </div>
+      <div
+        class="flex flex-col"
+      >
+        <p
+          class="text-sm font-medium font-normal text-white/[.5]"
+        >
+          Next Drop
+        </p>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          7
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`GasNewDropCard matches snapshot with isMigrated = true 1`] = `
+<div>
+  <div
+    class="flex flex-col w-full gap-3 rounded-[10px] p-2"
+  >
+    <div
+      class="flex gap-1.5"
+    >
+      <div
+        class="flex h-9 w-9 items-center justify-center rounded-md bg-[#FFEA72]/[.1]"
+      >
+        <img
+          alt="gas-icon"
+          src="[object Object]"
+        />
+      </div>
+      <div
+        class="flex flex-col"
+      >
+        <p
+          class="text-sm font-medium font-normal text-white/[.5]"
+        >
+          Gas Used
+        </p>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          $
+          999
+        </p>
+      </div>
+    </div>
+    <div
+      class="flex gap-1.5"
+    >
+      <div
+        class="flex h-9 w-9 items-center justify-center rounded-md bg-[#3C80FF]/[.1]"
+      >
+        <img
+          alt="new-drop-icon"
+          src="[object Object]"
+        />
+      </div>
+      <div
+        class="flex flex-col"
+      >
+        <p
+          class="text-sm font-medium font-normal text-white/[.5]"
+        >
+          Next Drop
+        </p>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          3
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

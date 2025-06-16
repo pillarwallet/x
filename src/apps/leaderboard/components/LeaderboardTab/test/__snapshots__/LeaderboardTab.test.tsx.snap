@@ -3,1614 +3,1769 @@
 exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
 [
   <div
-    className="flex flex-col bg-container_grey rounded-2xl desktop:p-5 tablet:p-5 mobile:p-2 desktop:pr-10 tablet:pr-10 mobile:pr-4"
+    className="flex flex-col bg-container_grey desktop:p-6 tablet:p-6 mobile:p-0"
     id="leaderboard-list-data"
   >
     <div
       className="flex justify-between"
     >
       <p
-        className="text-base font-medium text-purple_light"
+        className="text-base font-medium text-white mobile:font-normal mobile:text:sm"
       >
         Rankings
-      </p>
-      <p
-        className="text-base font-medium text-purple_light"
-      >
-        PX Points
       </p>
     </div>
     <div
       className="flex flex-col"
     >
       <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
       >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
+        <div>
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
           >
             <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
               >
-                #
-                1
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                1
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r0:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
                 >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r0:)"
+                  #
+                  1
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
                 >
-                  <rect
-                    fill="#F0AB3D"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#C20D90"
-                    height={36}
-                    rx={36}
-                    transform="translate(-5 -5) rotate(269 18 18) scale(1.2)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(-5 -6) rotate(-9 18 18)"
-                  >
-                    <path
-                      d="M15 21c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={10}
-                      y={14}
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={24}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
+                  #
+                  1
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
               />
               <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
               >
                 <svg
-                  data-testid="copy-icon"
+                  className="rounded-md"
+                  data-testid="random-avatar"
                   fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
+                  role="img"
+                  viewBox="0 0 36 36"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
+                  <mask
+                    height={36}
+                    id=":r0:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r0:)"
+                  >
+                    <rect
+                      fill="#F0AB3D"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#C20D90"
+                      height={36}
+                      rx={36}
+                      transform="translate(-5 -5) rotate(269 18 18) scale(1.2)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(-5 -6) rotate(-9 18 18)"
+                    >
+                      <path
+                        d="M15 21c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={10}
+                        y={14}
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={24}
+                        y={14}
+                      />
+                    </g>
+                  </g>
                 </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
         >
           <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
+            className="font-normal text-[22px] text-white"
           >
+            $
+            50
+          </p>
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              100
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              50
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
+      >
+        <div>
+          <div
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
+          >
+            <div
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+            >
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+              >
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+                >
+                  #
+                  2
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+                >
+                  #
+                  2
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
+              />
+              <div
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
+              >
+                <svg
+                  className="rounded-md"
+                  data-testid="random-avatar"
+                  fill="none"
+                  role="img"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    height={36}
+                    id=":r1:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r1:)"
+                  >
+                    <rect
+                      fill="#C271B4"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#92A1C6"
+                      height={36}
+                      rx={6}
+                      transform="translate(4 4) rotate(270 18 18) scale(1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(6 0) rotate(0 18 18)"
+                    >
+                      <path
+                        d="M15 19c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#000000"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={14}
+                        y={14}
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={20}
+                        y={14}
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
+        >
+          <p
+            className="font-normal text-[22px] text-white"
+          >
+            $
             100
           </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
           >
-            PX
-          </p>
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              200
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              100
+            </p>
+          </div>
         </div>
       </div>
       <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
       >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
+        <div>
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
           >
             <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
               >
-                #
-                2
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                2
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r1:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
                 >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r1:)"
+                  #
+                  3
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
                 >
-                  <rect
-                    fill="#C271B4"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#92A1C6"
-                    height={36}
-                    rx={6}
-                    transform="translate(4 4) rotate(270 18 18) scale(1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(6 0) rotate(0 18 18)"
-                  >
-                    <path
-                      d="M15 19c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#000000"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={14}
-                      y={14}
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={20}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
+                  #
+                  3
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
               />
               <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
               >
                 <svg
-                  data-testid="copy-icon"
+                  className="rounded-md"
+                  data-testid="random-avatar"
                   fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
+                  role="img"
+                  viewBox="0 0 36 36"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
+                  <mask
+                    height={36}
+                    id=":r2:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r2:)"
+                  >
+                    <rect
+                      fill="#C20D90"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#146A7C"
+                      height={36}
+                      rx={6}
+                      transform="translate(5 3) rotate(271 18 18) scale(1.1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(7 -1) rotate(-1 18 18)"
+                    >
+                      <path
+                        d="M15 20c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={13}
+                        y={14}
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={21}
+                        y={14}
+                      />
+                    </g>
+                  </g>
                 </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
         >
           <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
+            className="font-normal text-[22px] text-white"
           >
+            $
+            150
+          </p>
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              300
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              150
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
+      >
+        <div>
+          <div
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
+          >
+            <div
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+            >
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+              >
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+                >
+                  #
+                  4
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+                >
+                  #
+                  4
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
+              />
+              <div
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
+              >
+                <svg
+                  className="rounded-md"
+                  data-testid="random-avatar"
+                  fill="none"
+                  role="img"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    height={36}
+                    id=":r3:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r3:)"
+                  >
+                    <rect
+                      fill="#92A1C6"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#F0AB3D"
+                      height={36}
+                      rx={6}
+                      transform="translate(6 2) rotate(272 18 18) scale(1.2)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(0 -2) rotate(-2 18 18)"
+                    >
+                      <path
+                        d="M15 21c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#000000"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={12}
+                        y={14}
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={22}
+                        y={14}
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
+        >
+          <p
+            className="font-normal text-[22px] text-white"
+          >
+            $
             200
           </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
           >
-            PX
-          </p>
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              400
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              200
+            </p>
+          </div>
         </div>
       </div>
       <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
       >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
+        <div>
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
           >
             <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
               >
-                #
-                3
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                3
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r2:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
                 >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r2:)"
+                  #
+                  5
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
                 >
-                  <rect
-                    fill="#C20D90"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#146A7C"
-                    height={36}
-                    rx={6}
-                    transform="translate(5 3) rotate(271 18 18) scale(1.1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(7 -1) rotate(-1 18 18)"
-                  >
-                    <path
-                      d="M15 20c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={13}
-                      y={14}
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={21}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
+                  #
+                  5
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
               />
               <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
               >
                 <svg
-                  data-testid="copy-icon"
+                  className="rounded-md"
+                  data-testid="random-avatar"
                   fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
+                  role="img"
+                  viewBox="0 0 36 36"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
+                  <mask
+                    height={36}
+                    id=":r4:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r4:)"
+                  >
+                    <rect
+                      fill="#146A7C"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#C271B4"
+                      height={36}
+                      rx={6}
+                      transform="translate(7 1) rotate(273 18 18) scale(1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(3.5 -3) rotate(-3 18 18)"
+                    >
+                      <path
+                        d="M15 19c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#000000"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={11}
+                        y={14}
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={23}
+                        y={14}
+                      />
+                    </g>
+                  </g>
                 </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
         >
           <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
+            className="font-normal text-[22px] text-white"
           >
+            $
+            250
+          </p>
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              500
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              250
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
+      >
+        <div>
+          <div
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
+          >
+            <div
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+            >
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+              >
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+                >
+                  #
+                  6
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+                >
+                  #
+                  6
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
+              />
+              <div
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
+              >
+                <svg
+                  className="rounded-md"
+                  data-testid="random-avatar"
+                  fill="none"
+                  role="img"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    height={36}
+                    id=":r5:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r5:)"
+                  >
+                    <rect
+                      fill="#F0AB3D"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#C20D90"
+                      height={36}
+                      rx={6}
+                      transform="translate(8 0) rotate(274 18 18) scale(1.1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(4 -4) rotate(-4 18 18)"
+                    >
+                      <path
+                        d="M15 20c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={10}
+                        y={14}
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={24}
+                        y={14}
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
+        >
+          <p
+            className="font-normal text-[22px] text-white"
+          >
+            $
             300
           </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
           >
-            PX
-          </p>
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              600
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              300
+            </p>
+          </div>
         </div>
       </div>
       <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
       >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
+        <div>
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
           >
             <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
               >
-                #
-                4
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                4
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r3:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
                 >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r3:)"
+                  #
+                  7
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
                 >
-                  <rect
-                    fill="#92A1C6"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#F0AB3D"
-                    height={36}
-                    rx={6}
-                    transform="translate(6 2) rotate(272 18 18) scale(1.2)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(0 -2) rotate(-2 18 18)"
-                  >
-                    <path
-                      d="M15 21c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#000000"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={12}
-                      y={14}
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={22}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
+                  #
+                  7
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
               />
               <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
               >
                 <svg
-                  data-testid="copy-icon"
+                  className="rounded-md"
+                  data-testid="random-avatar"
                   fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
+                  role="img"
+                  viewBox="0 0 36 36"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
+                  <mask
+                    height={36}
+                    id=":r6:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r6:)"
+                  >
+                    <rect
+                      fill="#C271B4"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#92A1C6"
+                      height={36}
+                      rx={6}
+                      transform="translate(5 -1) rotate(275 18 18) scale(1.2)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(3 -5) rotate(-5 18 18)"
+                    >
+                      <path
+                        d="M15 21c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#000000"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={14}
+                        y={14}
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={20}
+                        y={14}
+                      />
+                    </g>
+                  </g>
                 </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
         >
           <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
+            className="font-normal text-[22px] text-white"
           >
+            $
+            350
+          </p>
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              700
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              350
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
+      >
+        <div>
+          <div
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
+          >
+            <div
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+            >
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+              >
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+                >
+                  #
+                  8
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+                >
+                  #
+                  8
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
+              />
+              <div
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
+              >
+                <svg
+                  className="rounded-md"
+                  data-testid="random-avatar"
+                  fill="none"
+                  role="img"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    height={36}
+                    id=":r7:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r7:)"
+                  >
+                    <rect
+                      fill="#C20D90"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#146A7C"
+                      height={36}
+                      rx={6}
+                      transform="translate(6 -2) rotate(276 18 18) scale(1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(4 -6) rotate(-6 18 18)"
+                    >
+                      <path
+                        d="M15 19c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={13}
+                        y={14}
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={21}
+                        y={14}
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
+        >
+          <p
+            className="font-normal text-[22px] text-white"
+          >
+            $
             400
           </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
           >
-            PX
-          </p>
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              800
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              400
+            </p>
+          </div>
         </div>
       </div>
       <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
       >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
+        <div>
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
           >
             <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
               >
-                #
-                5
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                5
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r4:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
                 >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r4:)"
+                  #
+                  9
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
                 >
-                  <rect
-                    fill="#146A7C"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#C271B4"
-                    height={36}
-                    rx={6}
-                    transform="translate(7 1) rotate(273 18 18) scale(1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(3.5 -3) rotate(-3 18 18)"
-                  >
-                    <path
-                      d="M15 19c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#000000"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={11}
-                      y={14}
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={23}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
+                  #
+                  9
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
               />
               <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
               >
                 <svg
-                  data-testid="copy-icon"
+                  className="rounded-md"
+                  data-testid="random-avatar"
                   fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
+                  role="img"
+                  viewBox="0 0 36 36"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
+                  <mask
+                    height={36}
+                    id=":r8:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r8:)"
+                  >
+                    <rect
+                      fill="#92A1C6"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#F0AB3D"
+                      height={36}
+                      rx={6}
+                      transform="translate(7 -3) rotate(277 18 18) scale(1.1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(3.5 0) rotate(-7 18 18)"
+                    >
+                      <path
+                        d="M15 20c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#000000"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={12}
+                        y={14}
+                      />
+                      <rect
+                        fill="#000000"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={22}
+                        y={14}
+                      />
+                    </g>
+                  </g>
                 </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
         >
           <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
+            className="font-normal text-[22px] text-white"
           >
+            $
+            450
+          </p>
+        </div>
+        <div
+          className="flex flex-col"
+        >
+          <div
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
+            >
+              900
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
+            >
+              PX
+            </p>
+          </div>
+          <div
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
+          >
+            <p
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
+            >
+              $
+              450
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
+      >
+        <div>
+          <div
+            className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+            data-testid="leaderboard-user-data"
+            id="leaderboard-user-data"
+          >
+            <div
+              className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+            >
+              <div
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+              >
+                <p
+                  className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+                >
+                  #
+                  10
+                </p>
+                <span
+                  className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+                >
+                  #
+                  10
+                </span>
+              </div>
+              <div
+                className="desktop:flex tablet:flex mobile:hidden"
+              />
+              <div
+                className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
+              >
+                <svg
+                  className="rounded-md"
+                  data-testid="random-avatar"
+                  fill="none"
+                  role="img"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    height={36}
+                    id=":r9:"
+                    maskUnits="userSpaceOnUse"
+                    width={36}
+                    x={0}
+                    y={0}
+                  >
+                    <rect
+                      fill="#FFFFFF"
+                      height={36}
+                      width={36}
+                    />
+                  </mask>
+                  <g
+                    mask="url(#:r9:)"
+                  >
+                    <rect
+                      fill="#C20D90"
+                      height={36}
+                      width={36}
+                    />
+                    <rect
+                      fill="#146A7C"
+                      height={36}
+                      rx={6}
+                      transform="translate(5 3) rotate(211 18 18) scale(1.1)"
+                      width={36}
+                      x="0"
+                      y="0"
+                    />
+                    <g
+                      transform="translate(3 -6) rotate(-1 18 18)"
+                    >
+                      <path
+                        d="M15 20c2 1 4 1 6 0"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeLinecap="round"
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={13}
+                        y={14}
+                      />
+                      <rect
+                        fill="#FFFFFF"
+                        height={2}
+                        rx={1}
+                        stroke="none"
+                        width={1.5}
+                        x={21}
+                        y={14}
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div
+              className="flex flex-col w-[60%]"
+            >
+              <p
+                className="text-base font-medium text-white"
+              />
+              <div
+                className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+              >
+                <p
+                  className="text-sm font-medium font-normal text-white"
+                />
+                <div
+                  className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={[Function]}
+                  >
+                    <img
+                      alt="copy-address"
+                      className="w-[13px] h-[15px]"
+                      src="token-market-data-copy.png"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="text-right pr-2 mobile:hidden tablet:flex desktop:flex"
+        >
+          <p
+            className="font-normal text-[22px] text-white"
+          >
+            $
             500
           </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
         </div>
-      </div>
-      <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
-      >
         <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
+          className="flex flex-col"
         >
           <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
-          >
-            <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
-            >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
-              >
-                #
-                6
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                6
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r5:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
-                >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r5:)"
-                >
-                  <rect
-                    fill="#F0AB3D"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#C20D90"
-                    height={36}
-                    rx={6}
-                    transform="translate(8 0) rotate(274 18 18) scale(1.1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(4 -4) rotate(-4 18 18)"
-                  >
-                    <path
-                      d="M15 20c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={10}
-                      y={14}
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={24}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
+            className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end"
           >
             <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white"
             >
-              <p
-                className="text-sm font-medium text-purple_light"
-              />
-              <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
-              >
-                <svg
-                  data-testid="copy-icon"
-                  fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-        >
-          <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
-          >
-            600
-          </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
-        </div>
-      </div>
-      <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
-      >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
-          <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
-          >
-            <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
+              1,000
+               
+            </p>
+            <p
+              className="font-normal text-sm text-white"
             >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
-              >
-                #
-                7
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                7
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r6:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
-                >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r6:)"
-                >
-                  <rect
-                    fill="#C271B4"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#92A1C6"
-                    height={36}
-                    rx={6}
-                    transform="translate(5 -1) rotate(275 18 18) scale(1.2)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(3 -5) rotate(-5 18 18)"
-                  >
-                    <path
-                      d="M15 21c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#000000"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={14}
-                      y={14}
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={20}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
+              PX
+            </p>
           </div>
           <div
-            className="flex flex-col w-[60%]"
+            className="desktop:hidden tablet:hidden mobile:flex text-right justify-end"
           >
             <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
+              className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]"
             >
-              <p
-                className="text-sm font-medium text-purple_light"
-              />
-              <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
-              >
-                <svg
-                  data-testid="copy-icon"
-                  fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
-            </div>
+              $
+              500
+            </p>
           </div>
-        </div>
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-        >
-          <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
-          >
-            700
-          </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
-        </div>
-      </div>
-      <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
-      >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
-          <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
-          >
-            <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
-            >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
-              >
-                #
-                8
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                8
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r7:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
-                >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r7:)"
-                >
-                  <rect
-                    fill="#C20D90"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#146A7C"
-                    height={36}
-                    rx={6}
-                    transform="translate(6 -2) rotate(276 18 18) scale(1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(4 -6) rotate(-6 18 18)"
-                  >
-                    <path
-                      d="M15 19c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={13}
-                      y={14}
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={21}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
-              />
-              <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
-              >
-                <svg
-                  data-testid="copy-icon"
-                  fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-        >
-          <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
-          >
-            800
-          </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
-        </div>
-      </div>
-      <div
-        className="flex justify-between py-5 border-b border-[#1F1D23] py-2"
-      >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
-          <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
-          >
-            <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
-            >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
-              >
-                #
-                9
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                9
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r8:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
-                >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r8:)"
-                >
-                  <rect
-                    fill="#92A1C6"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#F0AB3D"
-                    height={36}
-                    rx={6}
-                    transform="translate(7 -3) rotate(277 18 18) scale(1.1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(3.5 0) rotate(-7 18 18)"
-                  >
-                    <path
-                      d="M15 20c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#000000"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={12}
-                      y={14}
-                    />
-                    <rect
-                      fill="#000000"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={22}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
-              />
-              <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
-              >
-                <svg
-                  data-testid="copy-icon"
-                  fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-        >
-          <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
-          >
-            900
-          </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
-        </div>
-      </div>
-      <div
-        className="flex justify-between py-5 false py-2"
-      >
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-          data-testid="leaderboard-user-data"
-          id="leaderboard-user-data"
-        >
-          <div
-            className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
-          >
-            <div
-              className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]"
-            >
-              <p
-                className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
-              >
-                #
-                10
-              </p>
-              <span
-                className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
-              >
-                #
-                10
-              </span>
-            </div>
-            <div
-              className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
-            >
-              <svg
-                className="rounded-md"
-                data-testid="random-avatar"
-                fill="none"
-                role="img"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <mask
-                  height={36}
-                  id=":r9:"
-                  maskUnits="userSpaceOnUse"
-                  width={36}
-                  x={0}
-                  y={0}
-                >
-                  <rect
-                    fill="#FFFFFF"
-                    height={36}
-                    width={36}
-                  />
-                </mask>
-                <g
-                  mask="url(#:r9:)"
-                >
-                  <rect
-                    fill="#C20D90"
-                    height={36}
-                    width={36}
-                  />
-                  <rect
-                    fill="#146A7C"
-                    height={36}
-                    rx={6}
-                    transform="translate(5 3) rotate(211 18 18) scale(1.1)"
-                    width={36}
-                    x="0"
-                    y="0"
-                  />
-                  <g
-                    transform="translate(3 -6) rotate(-1 18 18)"
-                  >
-                    <path
-                      d="M15 20c2 1 4 1 6 0"
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeLinecap="round"
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={13}
-                      y={14}
-                    />
-                    <rect
-                      fill="#FFFFFF"
-                      height={2}
-                      rx={1}
-                      stroke="none"
-                      width={1.5}
-                      x={21}
-                      y={14}
-                    />
-                  </g>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div
-            className="flex flex-col w-[60%]"
-          >
-            <p
-              className="text-base font-medium text-white"
-            />
-            <div
-              className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-            >
-              <p
-                className="text-sm font-medium text-purple_light"
-              />
-              <div
-                className="flex gap-2 items-center cursor-pointer"
-                onClick={[Function]}
-              >
-                <svg
-                  data-testid="copy-icon"
-                  fill="none"
-                  height={15}
-                  viewBox="0 0 24 24"
-                  width={15}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
-                    stroke="#E2DDFF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
-        >
-          <p
-            className="desktop:text-[22px] tablet:text-[22px] mobile:text-base"
-          >
-            1000
-          </p>
-          <p
-            className="text-sm font-medium text-purple_light mobile:text-xs"
-          >
-            PX
-          </p>
         </div>
       </div>
     </div>

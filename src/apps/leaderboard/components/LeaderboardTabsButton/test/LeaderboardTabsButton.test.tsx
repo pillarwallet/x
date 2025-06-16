@@ -1,73 +1,93 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import renderer from 'react-test-renderer';
+import { Provider } from 'react-redux';
+
+// store
+import { store } from '../../../../../store';
+
+// hooks
+import * as reducerHooks from '../../../hooks/useReducerHooks';
+
+// reducer
+import { setTimeTab } from '../../../reducer/LeaderboardSlice';
 
 // components
 import LeaderboardTabsButton from '../LeaderboardTabsButton';
 
 describe('<LeaderboardTabsButton />', () => {
-  const mockTabs = ['Weekly', 'All time'];
-  const mockOnTabClick = jest.fn();
+  const useAppSelectorMock = jest.spyOn(reducerHooks, 'useAppSelector');
+  const useAppDispatchMock = jest.spyOn(reducerHooks, 'useAppDispatch');
 
-  it('renders correctly and matches snapshot', () => {
-    const tree = renderer
-      .create(
-        <LeaderboardTabsButton
-          tabs={mockTabs}
-          activeTab={0}
-          onTabClick={mockOnTabClick}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+  const mockDispatch = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useAppDispatchMock.mockReturnValue(mockDispatch);
   });
 
-  it('renders all tabs', () => {
-    render(
-      <LeaderboardTabsButton
-        tabs={mockTabs}
-        activeTab={0}
-        onTabClick={mockOnTabClick}
-      />
+  it('matches snapshot', () => {
+    useAppSelectorMock.mockReturnValue('weekly');
+
+    const { container } = render(
+      <Provider store={store}>
+        <LeaderboardTabsButton />
+      </Provider>
     );
-    mockTabs.forEach((tab) => {
-      expect(screen.getByText(tab)).toBeInTheDocument();
-    });
+
+    expect(container).toMatchSnapshot();
   });
 
-  it('applies active class to the correct tab', () => {
+  it('renders both buttons', () => {
+    useAppSelectorMock.mockReturnValue('weekly');
+
     render(
-      <LeaderboardTabsButton
-        tabs={mockTabs}
-        activeTab={1}
-        onTabClick={mockOnTabClick}
-      />
+      <Provider store={store}>
+        <LeaderboardTabsButton />
+      </Provider>
     );
-    const activeTab = screen.getByText(mockTabs[1]).closest('button');
-    expect(activeTab).toHaveClass('bg-purple_medium');
+
+    expect(screen.getByRole('button', { name: /weekly/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /all time/i })
+    ).toBeInTheDocument();
   });
 
-  it('calls onTabClick when a tab is clicked', () => {
+  it('dispatches setTimeTab("all") when "All Time" is clicked', () => {
+    useAppSelectorMock.mockReturnValue('weekly');
+
     render(
-      <LeaderboardTabsButton
-        tabs={mockTabs}
-        activeTab={0}
-        onTabClick={mockOnTabClick}
-      />
+      <Provider store={store}>
+        <LeaderboardTabsButton />
+      </Provider>
     );
-    const tabButton = screen.getByText(mockTabs[1]);
-    fireEvent.click(tabButton);
-    expect(mockOnTabClick).toHaveBeenCalledWith(1);
+
+    fireEvent.click(screen.getByRole('button', { name: /all time/i }));
+    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('all'));
   });
 
-  it('changes active tab when clicked', () => {
+  it('dispatches setTimeTab("weekly") when "Weekly" is clicked', () => {
+    useAppSelectorMock.mockReturnValue('all');
+
     render(
-      <LeaderboardTabsButton
-        tabs={mockTabs}
-        activeTab={1}
-        onTabClick={mockOnTabClick}
-      />
+      <Provider store={store}>
+        <LeaderboardTabsButton />
+      </Provider>
     );
-    fireEvent.click(screen.getByText(mockTabs[0]));
-    expect(mockOnTabClick).toHaveBeenCalledWith(0);
+
+    fireEvent.click(screen.getByRole('button', { name: /weekly/i }));
+    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('weekly'));
+  });
+
+  it('does not dispatch if clicking already active tab', () => {
+    useAppSelectorMock.mockReturnValue('weekly');
+
+    render(
+      <Provider store={store}>
+        <LeaderboardTabsButton />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /weekly/i }));
+
+    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('weekly'));
   });
 });

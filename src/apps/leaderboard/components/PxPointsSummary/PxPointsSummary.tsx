@@ -76,7 +76,7 @@ const PxPointsSummary = ({
             My PX Points
           </p>
         </div>
-        {!isEligibleForLottery && (
+        {isEligibleForLottery && (
           <div className="flex gap-1 items-center px-1.5 py-[4px] rounded-md bg-[#25232D]">
             <img
               src={LotteryTicketIcon}
