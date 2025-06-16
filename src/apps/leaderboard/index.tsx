@@ -1,141 +1,137 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { formatDistanceToNowStrict } from 'date-fns';
-import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 // styles
 import styled from 'styled-components';
 import './styles/tailwindLeaderboard.css';
 
 // types
-import { LeaderboardRankChange, WeeklyLeaderboardData } from '../../types/api';
-
-// api
-import { useGetLeaderboardQuery } from './api/leaderboard';
+import { LeaderboardTableData } from '../../types/api';
 
 // components
-import SkeletonLoader from '../../components/SkeletonLoader';
 import BodySmall from '../pillarx-app/components/Typography/BodySmall';
-import LeaderboardTab from './components/LeaderboardTab/LeaderboardTab';
+import InfoBanner from './components/InfoBanner/InfoBanner';
+import LeaderboardFiltersButton from './components/LeaderboardTabsButton/LeaderboardFiltersButton';
 import LeaderboardTabsButton from './components/LeaderboardTabsButton/LeaderboardTabsButton';
-import Body from './components/Typography/Body';
+import Leaderboards from './components/Leaderboards/Leaderboards';
+import PxPointsSummary from './components/PxPointsSummary/PxPointsSummary';
 import H1 from './components/Typography/H1';
+
+// hooks
+import { useLeaderboardData } from './hooks/useLeaderboardData';
+import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
 // images
 import PillarXLogo from './images/pillarX_full_white.png';
 
+// reducer
+import {
+  LeaderboardTabsType,
+  LeaderboardTimeTabsType,
+  setActiveTab,
+  setIsUserInMigrationData,
+} from './reducer/LeaderboardSlice';
+
 const App = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [comparisonData, setComparisonData] = useState<WeeklyLeaderboardData[]>(
-    []
-  );
+  const dispatch = useAppDispatch();
   const walletAddress = useWalletAddress();
 
-  const currentMonday = DateTime.now().startOf('week').toUnixInteger();
-  const currentSunday = DateTime.now().endOf('week').toUnixInteger();
-  const lastMonday = DateTime.now()
-    .startOf('week')
-    .minus({ weeks: 1 })
-    .toUnixInteger();
-  const lastSunday = DateTime.now()
-    .endOf('week')
-    .minus({ weeks: 1 })
-    .toUnixInteger();
-
-  const {
-    data: allTimeData,
-    isSuccess: isSuccessAllTimeData,
-    isLoading: isLoadingAllTimeData,
-  } = useGetLeaderboardQuery(
-    {
-      skipDefaultPoints: true,
-    },
-    { refetchOnMountOrArgChange: true }
+  const activeTab = useAppSelector(
+    (state) => state.leaderboard.activeTab as LeaderboardTabsType
+  );
+  const timeTab = useAppSelector(
+    (state) => state.leaderboard.timeTab as LeaderboardTimeTabsType
+  );
+  const isUserInMigrationData = useAppSelector(
+    (state) => state.leaderboard.isUserInMigrationData as boolean
   );
 
   const {
-    data: weeklyData,
-    isSuccess: isSuccessWeeklyData,
-    isLoading: isLoadingWeeklyData,
-  } = useGetLeaderboardQuery(
-    {
-      skipDefaultPoints: true,
-      from: currentMonday,
-      until: currentSunday,
-    },
-    { refetchOnMountOrArgChange: true }
-  );
+    allTimeTradingData,
+    allTimeMigrationData,
+    weeklyMigrationData,
+    weeklyTradingData,
+    mergedAllTimeData,
+    mergedWeeklyTimeData,
+    migrationQuery,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useLeaderboardData(timeTab);
 
-  const {
-    data: lastWeeklyData,
-    isSuccess: isSuccessLastWeeklyData,
-    isLoading: isLoadingLastWeeklyData,
-  } = useGetLeaderboardQuery(
-    {
-      skipDefaultPoints: true,
-      from: lastMonday,
-      until: lastSunday,
-    },
-    { refetchOnMountOrArgChange: true }
-  );
+  const handleAllTabClick = useCallback(() => {
+    dispatch(setActiveTab('all'));
+  }, [dispatch]);
 
-  const compareIndexes = (currentIndex: number, previousIndex: number) => {
-    if (currentIndex === previousIndex) return LeaderboardRankChange.NO_CHANGE;
-    return currentIndex > previousIndex
-      ? LeaderboardRankChange.INCREASED
-      : LeaderboardRankChange.DECREASED;
-  };
+  const handleMigrationTabClick = useCallback(() => {
+    dispatch(setActiveTab('migration'));
+  }, [dispatch]);
 
-  // Compare weekly data and calculate rank changes
+  const handleTradingTabClick = useCallback(() => {
+    dispatch(setActiveTab('trading'));
+  }, [dispatch]);
+
+  // Check if user wallet address is present in migration data
   useEffect(() => {
-    if (
-      activeTab === 0 &&
-      weeklyData &&
-      lastWeeklyData &&
-      !isLoadingWeeklyData &&
-      !isLoadingLastWeeklyData
-    ) {
-      // New mapping of last week data for quick comparison of addresses and indexes only
-      const lastWeeklyDataMap = new Map<string, number>();
-      lastWeeklyData.results.forEach((userData, index) => {
-        lastWeeklyDataMap.set(userData.address, index);
-      });
-
-      const updatedWeeklyData: WeeklyLeaderboardData[] = weeklyData.results.map(
-        (currentUserData, currentIndex) => {
-          // Finding last week index if the address existed last week
-          const lastIndex = lastWeeklyDataMap.get(currentUserData.address);
-
-          const rankChange =
-            lastIndex !== undefined
-              ? compareIndexes(currentIndex, lastIndex)
-              : LeaderboardRankChange.NO_CHANGE;
-
-          return {
-            ...currentUserData,
-            rankChange,
-          };
-        }
-      );
-
-      setComparisonData(updatedWeeklyData);
+    if (!walletAddress || !migrationQuery.data) {
+      dispatch(setIsUserInMigrationData(false));
+      return;
     }
+
+    const userInMigrationData = migrationQuery.data.result.some((result) =>
+      result.pxAddresses.some(
+        (address) => address.toLowerCase() === walletAddress.toLowerCase()
+      )
+    );
+
+    dispatch(setIsUserInMigrationData(userInMigrationData));
+  }, [walletAddress, migrationQuery.data, dispatch]);
+
+  // Memoized volume and gas calculations
+  const { totalVolume, totalGas } = useMemo(() => {
+    const calculateTotals = (data: LeaderboardTableData[] | undefined) => {
+      if (!data) return { volume: 0, gas: 0 };
+      return {
+        volume: data.reduce((sum, entry) => sum + entry.totalAmountUsd, 0),
+        gas: data.reduce((sum, entry) => sum + (entry.totalGas || 0), 0),
+      };
+    };
+
+    let volume = 0;
+    let gas = 0;
+
+    if (activeTab === 'trading') {
+      const data =
+        timeTab === 'weekly' ? weeklyTradingData : allTimeTradingData;
+      const totals = calculateTotals(data);
+      volume = totals.volume;
+      gas = totals.gas;
+    } else if (activeTab === 'migration') {
+      const data =
+        timeTab === 'weekly' ? weeklyMigrationData : allTimeMigrationData;
+      const totals = calculateTotals(data);
+      volume = totals.volume;
+      gas = totals.gas;
+    } else if (activeTab === 'all') {
+      const data =
+        timeTab === 'weekly' ? mergedWeeklyTimeData : mergedAllTimeData;
+      const totals = calculateTotals(data);
+      volume = totals.volume;
+      gas = totals.gas;
+    }
+
+    return { totalVolume: volume, totalGas: gas };
   }, [
     activeTab,
-    weeklyData,
-    lastWeeklyData,
-    isLoadingWeeklyData,
-    isLoadingLastWeeklyData,
+    timeTab,
+    weeklyTradingData,
+    allTimeTradingData,
+    weeklyMigrationData,
+    allTimeMigrationData,
+    mergedWeeklyTimeData,
+    mergedAllTimeData,
   ]);
-
-  const userWeeklyData = weeklyData?.results.find(
-    (result) => result.address === walletAddress
-  );
-
-  const userAllTimeData = allTimeData?.results.find(
-    (result) => result.address === walletAddress
-  );
 
   return (
     <Wrapper id="leaderboard-app">
@@ -144,89 +140,135 @@ const App = () => {
         alt="pillar-x-logo"
         className="w-min object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
       />
-      <div className="flex justify-between items-end">
-        <H1 className="px-4 py-2.5 mb-1">Leaderboard</H1>
-        {activeTab === 0 && userWeeklyData ? (
-          <BodySmall className="text-purple_light text-[10px] px-4 py-2.5 mb-1 font-light">
-            Last sync:{' '}
-            {formatDistanceToNowStrict(
-              DateTime.fromMillis(userWeeklyData.pointsUpdatedAt).toISO() || '',
-              { addSuffix: true }
-            )}
-          </BodySmall>
-        ) : (
-          userAllTimeData && (
-            <BodySmall className="text-purple_light text-[10px] px-4 py-2.5 mb-1 font-light">
-              Last sync:{' '}
-              {formatDistanceToNowStrict(
-                DateTime.fromMillis(userAllTimeData.pointsUpdatedAt).toISO() ||
-                  '',
-                { addSuffix: true }
-              )}
-            </BodySmall>
-          )
-        )}
-      </div>
+      <InfoBanner />
 
-      <LeaderboardTabsButton
-        tabs={['Weekly', 'All time']}
-        activeTab={activeTab}
-        onTabClick={setActiveTab}
+      <H1 className="px-4 py-2.5 mb-1">Leaderboards</H1>
+
+      <PxPointsSummary
+        allTimeTradingData={allTimeTradingData}
+        allTimeMigrationData={allTimeMigrationData}
+        mergedAllTimeData={mergedAllTimeData}
+        mergedWeeklyTimeData={mergedWeeklyTimeData}
+        isUserInMigrationData={isUserInMigrationData}
       />
 
-      {activeTab === 0 && (
-        <>
-          {(isLoadingWeeklyData || isLoadingLastWeeklyData) && (
-            <div className="flex flex-col">
-              {[...Array(3)].map((_, index) => (
-                <SkeletonLoader
-                  key={index}
-                  $height="50px"
-                  $radius="6px"
-                  $marginBottom="16px"
-                />
-              ))}
-            </div>
+      <div className="flex flex-col bg-container_grey desktop:px-6 desktop:pt-6 tablet:px-6 tablet:pt-6 mobile:p-4 pb-12 rounded-2xl mt-3">
+        <div className="desktop:flex tablet:flex mobile:flex mobile:flex-col mobile:gap-2.5 items-center justify-between mb-3">
+          <div className="flex gap-2">
+            <LeaderboardFiltersButton
+              isActive={activeTab === 'all'}
+              text="All"
+              onClick={handleAllTabClick}
+            />
+            {isUserInMigrationData && (
+              <LeaderboardFiltersButton
+                isActive={activeTab === 'migration'}
+                text="Migration"
+                onClick={handleMigrationTabClick}
+              />
+            )}
+            <LeaderboardFiltersButton
+              isActive={activeTab === 'trading'}
+              text="Trading"
+              onClick={handleTradingTabClick}
+            />
+          </div>
+          <LeaderboardTabsButton />
+        </div>
+
+        <div className="flex gap-3 desktop:mb-6 tablet:mb-6 mobile:self-center">
+          <BodySmall className="text-white font-normal">
+            Total Volume:{' '}
+            <span className="text-purple_medium">
+              ${totalVolume?.toFixed(2) || '0.00'}
+            </span>
+          </BodySmall>
+          {totalGas && totalGas > 0 ? (
+            <BodySmall className="text-white font-normal">
+              Total Gas:{' '}
+              <span className="text-purple_medium">
+                ${totalGas?.toFixed(2)}
+              </span>
+            </BodySmall>
+          ) : null}
+        </div>
+
+        {/* TRADING - WEEKLY */}
+        {activeTab === 'trading' && timeTab === 'weekly' && (
+          <Leaderboards
+            isLoading={isLoading.weekly}
+            isError={isError.weekly}
+            isSuccess={isSuccess.weekly}
+            data={weeklyTradingData}
+            errorMessage="Failed to load weekly trading data. Please try again later."
+            noDataMessage="No available leaderboard data for this week."
+          />
+        )}
+
+        {/* TRADING - ALL TIME */}
+        {activeTab === 'trading' && timeTab === 'all' && (
+          <Leaderboards
+            isLoading={isLoading.allTime}
+            isError={isError.allTime}
+            isSuccess={isSuccess.allTime}
+            data={allTimeTradingData}
+            errorMessage="Failed to load all-time trading data. Please try again later."
+            noDataMessage="No available leaderboard data."
+          />
+        )}
+
+        {/* MIGRATION - ALL TIME */}
+        {activeTab === 'migration' &&
+          timeTab === 'all' &&
+          isUserInMigrationData && (
+            <Leaderboards
+              isLoading={isLoading.migration}
+              isError={isError.migration}
+              isSuccess={isSuccess.migration}
+              data={allTimeMigrationData}
+              errorMessage="Failed to load migration data. Please try again later."
+              noDataMessage="No available migration data."
+            />
           )}
 
-          {isSuccessWeeklyData &&
-            isSuccessLastWeeklyData &&
-            comparisonData.length > 0 && (
-              <LeaderboardTab data={comparisonData} />
-            )}
-
-          {isSuccessWeeklyData &&
-            (!weeklyData?.results || weeklyData.results.length === 0) && (
-              <Body>No available leaderboard data for this week.</Body>
-            )}
-        </>
-      )}
-
-      {activeTab === 1 && (
-        <>
-          {isLoadingAllTimeData && (
-            <div className="flex flex-col">
-              {[...Array(3)].map((_, index) => (
-                <SkeletonLoader
-                  key={index}
-                  $height="50px"
-                  $radius="6px"
-                  $marginBottom="16px"
-                />
-              ))}
-            </div>
+        {/* MIGRATION - WEEKLY */}
+        {activeTab === 'migration' &&
+          timeTab === 'weekly' &&
+          isUserInMigrationData && (
+            <Leaderboards
+              isLoading={isLoading.migration}
+              isError={isError.migration}
+              isSuccess={isSuccess.migration}
+              data={weeklyMigrationData}
+              errorMessage="Failed to load weekly migration data. Please try again later."
+              noDataMessage="No available migration data for this week."
+            />
           )}
 
-          {isSuccessAllTimeData && allTimeData?.results?.length > 0 && (
-            <LeaderboardTab data={allTimeData.results} />
-          )}
+        {/* ALL - ALL TIME */}
+        {activeTab === 'all' && timeTab === 'all' && (
+          <Leaderboards
+            isLoading={isLoading.merged}
+            isError={isError.merged}
+            isSuccess={isSuccess.merged}
+            data={mergedAllTimeData}
+            errorMessage="Failed to load leaderboard data. Please try again later."
+            noDataMessage="No available leaderboard data."
+          />
+        )}
 
-          {isSuccessAllTimeData &&
-            (!allTimeData?.results || allTimeData.results.length === 0) && (
-              <Body>No available leaderboard data.</Body>
-            )}
-        </>
-      )}
+        {/* ALL - WEEKLY */}
+        {activeTab === 'all' && timeTab === 'weekly' && (
+          <Leaderboards
+            isLoading={isLoading.mergedWeekly}
+            isError={isError.mergedWeekly}
+            isSuccess={isSuccess.mergedWeekly}
+            data={mergedWeeklyTimeData}
+            errorMessage="Failed to load weekly leaderboard data. Please try again later."
+            noDataMessage="No available leaderboard data for this week."
+          />
+        )}
+      </div>
     </Wrapper>
   );
 };

@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { addMiddleware } from '../../../store';
 
 // types
-import { PointsResultsData } from '../../../types/api';
+import { MigrationApiResponse, PointsResultsData } from '../../../types/api';
 
 // utils
 import { CompatibleChains, isTestnet } from '../../../utils/blockchain';
@@ -15,19 +15,19 @@ const chainIds = isTestnet
 
 const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
-const baseQuery = fetchBaseQuery({
+const baseVolumeQuery = fetchBaseQuery({
   baseUrl: isTestnet
     ? 'https://volumeleaderboard-nubpgwxpiq-uc.a.run.app'
     : 'https://volumeleaderboard-7eu4izffpa-uc.a.run.app',
 });
 
-const baseQueryWithRetry = retry(baseQuery, {
+const baseVolumeQueryWithRetry = retry(baseVolumeQuery, {
   maxRetries: 5,
 });
 
 export const leaderboardApi = createApi({
   reducerPath: 'leaderboardApi',
-  baseQuery: baseQueryWithRetry,
+  baseQuery: baseVolumeQueryWithRetry,
   endpoints: (builder) => ({
     getLeaderboard: builder.query<
       PointsResultsData,
@@ -44,9 +44,31 @@ export const leaderboardApi = createApi({
   }),
 });
 
+const baseMigrationQuery = fetchBaseQuery({
+  baseUrl: isTestnet
+    ? 'https://profiles-nubpgwxpiq-uc.a.run.app/migrantAddresses'
+    : 'https://profiles-7eu4izffpa-uc.a.run.app/migrantAddresses',
+});
+
+const baseMigrationQueryWithRetry = retry(baseMigrationQuery, {
+  maxRetries: 5,
+});
+
+export const leaderboardMigrationApi = createApi({
+  reducerPath: 'leaderboardMigrationApi',
+  baseQuery: baseMigrationQueryWithRetry,
+  endpoints: (builder) => ({
+    getLeaderboardMigration: builder.query<MigrationApiResponse, void>({
+      query: () => `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
+    }),
+  }),
+});
+
 /**
  * Add this to the store
  */
 addMiddleware(leaderboardApi);
+addMiddleware(leaderboardMigrationApi);
 
 export const { useGetLeaderboardQuery } = leaderboardApi;
+export const { useGetLeaderboardMigrationQuery } = leaderboardMigrationApi;

@@ -459,18 +459,20 @@ export type PointsEligibilityData = {
 };
 
 export type PointsResult = {
-  points: number;
-  totalTxFeesUsd: number;
-  pointsPerChain: PointsChainData;
-  transactionCount: PointsChainData;
+  points?: number;
+  totalTxFeesUsd?: number;
+  pointsPerChain?: PointsChainData;
+  transactionCount?: PointsChainData;
   address: string;
-  isDeployPointsEligible: PointsEligibilityData;
-  pointsUpdatedAt: number;
-  txFeesUsd: PointsChainData;
-  totalSwapAmountUsd: number;
-  swapAmountUsd: PointsChainData;
-  totalSwapTxFeesUsd: number;
-  swapTxFeesUsd: PointsChainData;
+  isDeployPointsEligible?: PointsEligibilityData;
+  pointsUpdatedAt?: number;
+  txFeesUsd?: PointsChainData;
+  totalSwapAmountUsd?: number;
+  swapAmountUsd?: PointsChainData;
+  totalSwapTxFeesUsd?: number;
+  swapTxFeesUsd?: PointsChainData;
+  completedSwap: boolean;
+  transactionHistory: PointsTransactionHistoryItem;
 };
 
 export type PointsResultsData = {
@@ -754,3 +756,110 @@ export type WalletHistoryMobulaResponse = {
 };
 
 export type PrimeAssetType = { name: string; symbol: string };
+
+export type MigrationTimestamp = {
+  _seconds?: number;
+  _nanoseconds?: number;
+};
+
+export type PointsTransactionAsset = {
+  id?: number | null;
+  name?: string;
+  symbol?: string;
+  decimals?: number;
+  totalSupply?: number;
+  circulatingSupply?: number;
+  price?: number;
+  liquidity?: number;
+  priceChange24hPercent?: number;
+  marketCapUSD?: number;
+  logo?: string | null;
+  nativeChainId?: string | null;
+  contract?: string;
+};
+
+export type PointsTransactionDetails = {
+  hash?: string;
+  chainId?: string;
+  fees?: string;
+  feesUSD?: number;
+  date?: string;
+};
+
+export type PointsTransactionHistoryItem = {
+  id?: string;
+  timestamp?: number;
+  from?: string;
+  to?: string;
+  contract?: string;
+  hash?: string;
+  amount_usd?: number;
+  amount?: number;
+  block_number?: number;
+  type?: string;
+  blockchain?: string;
+  tx_cost?: number;
+  transaction?: PointsTransactionDetails;
+  asset?: PointsTransactionAsset;
+};
+
+export type MigrationPointsMatrix = {
+  transferPoints?: number;
+  transferUsd?: number;
+  week1Usd?: number;
+  week1WithBonus?: number;
+  week2Usd?: number;
+  week2WithBonus?: number;
+  week3Usd?: number;
+  week3WithBonus?: number;
+  week4Usd?: number;
+  week4WithBonus?: number;
+};
+
+export type MigrationProgress = {
+  totalAmountUsd?: number;
+  completedSwap?: boolean;
+  completedSwapWeek1?: boolean;
+  completedSwapWeek2?: boolean;
+  completedSwapWeek3?: boolean;
+  completedSwapWeek4?: boolean;
+  totalSwapAmountUsd?: number;
+  totalSwapAmountWeek1?: number;
+  totalSwapAmountWeek2?: number;
+  totalSwapAmountWeek3?: number;
+  totalSwapAmountWeek4?: number;
+  totalGasAmountUsd?: number;
+  migratedAmountUsd?: number;
+  migratedFeesUsd?: number;
+  pointsMatrix?: MigrationPointsMatrix;
+  totalPoints?: number;
+};
+
+export type MigrationEntry = {
+  id?: string;
+  source?: string;
+  lastSeen?: MigrationTimestamp;
+  pxAddresses: string[];
+  baseDataCheckActive?: boolean;
+  eoaOwnerAddress?: string;
+  lastUpdatedAt?: number;
+  totalWalletBalance?: number;
+  lastTransactionHistoryFetch?: MigrationTimestamp;
+  transactionHistory?: PointsTransactionHistoryItem[];
+  progress?: MigrationProgress;
+  totalPoints?: number;
+};
+
+export type MigrationApiResponse = {
+  result: MigrationEntry[];
+};
+
+export type LeaderboardTableData = {
+  totalPoints: number;
+  totalAmountUsd: number;
+  addresses: string[];
+  completedSwap?: boolean;
+  totalGas?: number;
+  rankChange?: LeaderboardRankChange;
+  source?: string | undefined;
+};

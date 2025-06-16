@@ -1,16 +1,13 @@
-import {
-  Copy as CopyIcon,
-  CopySuccess as CopySuccessIcon,
-} from 'iconsax-react';
 import { useCallback, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { MdCheck } from 'react-icons/md';
 import { TbTriangleFilled, TbTriangleInvertedFilled } from 'react-icons/tb';
+
+// images
+import CopyIcon from '../../../pillarx-app/images/token-market-data-copy.png';
 
 // types
 import { LeaderboardRankChange } from '../../../../types/api';
-
-// utils
-import { truncateAddress } from '../../../../utils/blockchain';
 
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
@@ -37,13 +34,15 @@ const UserInfo = ({
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 769) {
-        setDisplayWalletAddress(walletAddress);
-      } else if (window.innerWidth < 769 && window.innerWidth >= 530) {
-        setDisplayWalletAddress(truncateAddress(walletAddress, 32));
-      } else if (window.innerWidth < 530 && window.innerWidth >= 410) {
-        setDisplayWalletAddress(truncateAddress(walletAddress, 18));
-      } else if (window.innerWidth < 410) {
-        setDisplayWalletAddress(`${walletAddress.slice(0, 6)}...`);
+        setDisplayWalletAddress(
+          `${walletAddress.slice(0, 10)}...${walletAddress.slice(-8)}`
+        );
+      } else if (window.innerWidth < 769 && window.innerWidth >= 369) {
+        setDisplayWalletAddress(
+          `${walletAddress.slice(0, 5)}...${walletAddress.slice(-4)}`
+        );
+      } else if (window.innerWidth <= 368) {
+        setDisplayWalletAddress(`${walletAddress.slice(0, 7)}...`);
       }
     };
 
@@ -93,44 +92,53 @@ const UserInfo = ({
       data-testid="leaderboard-user-data"
       className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
     >
-      <div className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5">
+      <div className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5">
         <div
-          className={`relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] ${
+          className={`relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 ${
             rankChange === LeaderboardRankChange.NO_CHANGE &&
-            'desktop:mr-[23px] tablet:mr-[23px] mobile:mr-[15px]'
+            'desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0'
           }`}
         >
-          <Body className="text-purple_light truncate overflow-hidden w-full mobile:text-sm">
+          <Body className="truncate text-white overflow-hidden mobile:text-sm w-full">
             #{rank}
           </Body>
-          <span className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition">
+          <span className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10">
             #{rank}
           </span>
         </div>
-        {rankChange !== LeaderboardRankChange.NO_CHANGE && rankChangeTriangle}
-        <div className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden">
+
+        <div className="desktop:flex tablet:flex mobile:hidden">
+          {rankChange !== LeaderboardRankChange.NO_CHANGE && rankChangeTriangle}
+        </div>
+
+        <div className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden">
           <RandomAvatar name={walletAddress} variant="beam" />
         </div>
       </div>
       <div className="flex flex-col w-[60%]">
         {username ?? <Body className="text-white">{username}</Body>}
-        <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
-          <BodySmall className="text-purple_light">
+        <div className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2">
+          <BodySmall className="font-normal text-white">
             {displayedWalletAddress}
           </BodySmall>
-          <CopyToClipboard text={walletAddress} onCopy={onCopyCodeClick}>
-            <div className="flex gap-2 items-center cursor-pointer">
-              {copied ? (
-                <CopySuccessIcon
-                  size={15}
-                  color="#E2DDFF"
-                  data-testid="copy-success-icon"
-                />
-              ) : (
-                <CopyIcon size={15} color="#E2DDFF" data-testid="copy-icon" />
-              )}
-            </div>
-          </CopyToClipboard>
+          <div className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center">
+            <CopyToClipboard
+              text={walletAddress || ''}
+              onCopy={onCopyCodeClick}
+            >
+              <div className="cursor-pointer">
+                {copied ? (
+                  <MdCheck className="w-[13px] h-[13px] text-white opacity-50" />
+                ) : (
+                  <img
+                    src={CopyIcon}
+                    alt="copy-address"
+                    className="w-[13px] h-[15px]"
+                  />
+                )}
+              </div>
+            </CopyToClipboard>
+          </div>
         </div>
       </div>
     </div>
