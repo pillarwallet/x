@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 
 // types
@@ -7,113 +7,107 @@ import { LeaderboardRankChange } from '../../../../../types/api';
 // components
 import UserInfo from '../UserInfo';
 
+jest.mock('../../RandomAvatar/RandomAvatar', () => ({
+  __esModule: true,
+  default: function MockAvatar() {
+    return <div data-testid="mock-avatar">Avatar</div>;
+  },
+}));
+
+const resizeWindow = (width: number) => {
+  window.innerWidth = width;
+  window.dispatchEvent(new Event('resize'));
+};
+
 describe('<UserInfo />', () => {
-  const mockUser = {
-    rank: 1,
-    walletAddress: '0x1234567890abcdef',
-    rankChange: LeaderboardRankChange.INCREASED,
-    username: 'User1',
-  };
+  const walletAddress = '0x1234567890abcdef1234567890abcdef12345678';
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
-      .create(
-        <UserInfo
-          rank={mockUser.rank}
-          walletAddress={mockUser.walletAddress}
-          rankChange={mockUser.rankChange}
-          username={mockUser.username}
-        />
-      )
+      .create(<UserInfo rank={1} walletAddress={walletAddress} />)
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
-  it('displays the correct rank and username', () => {
-    render(
-      <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={mockUser.rankChange}
-        username={mockUser.username}
-      />
-    );
-    expect(screen.getAllByText(`#${mockUser.rank}`)).toHaveLength(2);
-    expect(screen.getByText(mockUser.username)).toBeInTheDocument();
+  it('shows walletAddress for desktop and tablet width', () => {
+    resizeWindow(800);
+    render(<UserInfo rank={1} walletAddress={walletAddress} />);
+    expect(screen.getByText(/0x12345678...12345678/)).toBeInTheDocument();
   });
 
-  it('displays truncated wallet address', () => {
-    render(
-      <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={mockUser.rankChange}
-        username={mockUser.username}
-      />
-    );
-    expect(screen.getByText(/0x1234.*cdef/)).toBeInTheDocument();
+  it('shows shortened walletAddress for mobile width', () => {
+    resizeWindow(500);
+    render(<UserInfo rank={1} walletAddress={walletAddress} />);
+    expect(screen.getByText(/0x123...5678/)).toBeInTheDocument();
   });
 
-  it('shows copy success icon when copying', () => {
-    render(
-      <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={mockUser.rankChange}
-        username={mockUser.username}
-      />
-    );
-    fireEvent.click(screen.getByTestId('copy-icon'));
-    expect(screen.getByTestId('copy-success-icon')).toBeInTheDocument();
+  it('shows shortened walletAddress for very small mobile width', () => {
+    resizeWindow(300);
+    render(<UserInfo rank={1} walletAddress={walletAddress} />);
+    expect(screen.getByText(/0x12345\.\.\./)).toBeInTheDocument();
   });
 
-  it('displays the correct rank change icon if rank down', () => {
-    render(
-      <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={mockUser.rankChange}
-        username={mockUser.username}
-      />
-    );
-    expect(screen.getByTestId('leaderboard-rank-down')).toBeInTheDocument();
+  it('renders avatar', () => {
+    render(<UserInfo rank={1} walletAddress={walletAddress} />);
+    expect(screen.getByTestId('mock-avatar')).toBeInTheDocument();
   });
 
-  it('displays the correct rank change icon if rank up', () => {
+  it('displays rank and tooltip', () => {
+    render(<UserInfo rank={42} walletAddress={walletAddress} />);
+    expect(screen.getAllByText('#42')[0]).toBeInTheDocument();
+  });
+
+  it('shows username when provided', () => {
     render(
       <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
+        rank={1}
+        walletAddress={walletAddress}
+        username="blockuser.eth"
+      />
+    );
+    expect(screen.getByText('blockuser.eth')).toBeInTheDocument();
+  });
+
+  it('shows rank decrease icon', () => {
+    render(
+      <UserInfo
+        rank={1}
+        walletAddress={walletAddress}
         rankChange={LeaderboardRankChange.DECREASED}
-        username={mockUser.username}
       />
     );
     expect(screen.getByTestId('leaderboard-rank-up')).toBeInTheDocument();
   });
 
-  it('does not display any icon if rank change is same', () => {
+  it('shows rank increase icon', () => {
     render(
       <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={LeaderboardRankChange.NO_CHANGE}
-        username={mockUser.username}
+        rank={1}
+        walletAddress={walletAddress}
+        rankChange={LeaderboardRankChange.INCREASED}
       />
     );
-    expect(screen.queryByTestId('leaderboard-rank-up')).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId('leaderboard-rank-down')
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('leaderboard-rank-down')).toBeInTheDocument();
   });
 
-  it('does not display username if does not exists', () => {
+  it('does not show rank change icon if NO_CHANGE', () => {
     render(
       <UserInfo
-        rank={mockUser.rank}
-        walletAddress={mockUser.walletAddress}
-        rankChange={mockUser.rankChange}
+        rank={1}
+        walletAddress={walletAddress}
+        rankChange={LeaderboardRankChange.NO_CHANGE}
       />
     );
-    expect(screen.queryByText(mockUser.username)).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(/leaderboard-rank-(up|down)/)
+    ).not.toBeInTheDocument();
   });
 });

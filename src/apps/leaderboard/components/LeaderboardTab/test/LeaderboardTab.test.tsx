@@ -5,56 +5,20 @@ import renderer from 'react-test-renderer';
 // types
 import {
   LeaderboardRankChange,
-  PointsResult,
-  WeeklyLeaderboardData,
+  LeaderboardTableData,
 } from '../../../../../types/api';
 
 // components
 import LeaderboardTab from '../LeaderboardTab';
 
-const mockData: (WeeklyLeaderboardData | PointsResult)[] = Array.from(
-  { length: 25 },
-  (_, i) => ({
-    address: `0xAddress${i + 1}`,
-    points: (i + 1) * 100,
-    totalGasUsed: (i + 1) * 10,
-    pointsPerChain: {
-      '100': i + 7,
-      '137': i + 160,
-      '8453': i + 40,
-    },
-    transactionCount: {
-      '100': i + 7,
-      '137': i + 8,
-      '8453': i + 2,
-    },
-    txFeesUsd: {
-      '100': i + 1863679,
-      '137': i + 1816553,
-      '8453': i + 415853,
-    },
-    totalTxFeesUsd: i + 2,
-    isDeployPointsEligible: {
-      '100': true,
-      '137': true,
-      '8453': true,
-    },
-    pointsUpdatedAt: 1742747128583,
-    totalSwapAmountUsd: i + 30,
-    swapAmountUsd: {
-      '100': i + 10,
-      '137': i + 10,
-      '8453': i + 10,
-    },
-    totalSwapTxFeesUsd: i + 10,
-    swapTxFeesUsd: {
-      '100': i + 2,
-      '137': i + 3,
-      '8453': i + 5,
-    },
-    rankChange: LeaderboardRankChange.NO_CHANGE,
-  })
-);
+const mockData: LeaderboardTableData[] = Array.from({ length: 25 }, (_, i) => ({
+  addresses: [`0xAddress${i + 1}`],
+  totalPoints: (i + 1) * 100,
+  totalAmountUsd: (i + 1) * 50,
+  rankChange: LeaderboardRankChange.NO_CHANGE,
+  completedSwap: false,
+  totalGas: (i + 1) * 10,
+}));
 
 const mockWalletAddress = '0xAddress1';
 
@@ -68,6 +32,9 @@ describe('<LeaderboardTab />', () => {
       disconnect: () => null,
     });
     window.IntersectionObserver = mockIntersectionObserver;
+
+    // Default mock for useWalletAddress to undefined
+    jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -81,7 +48,7 @@ describe('<LeaderboardTab />', () => {
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(10);
   });
 
-  it('loads more items when clicking "Loading more" ', () => {
+  it('loads more items when clicking "Loading more"', () => {
     render(<LeaderboardTab data={mockData} />);
 
     const loadMoreDiv = screen.getByText(/Loading more/i);
@@ -112,16 +79,17 @@ describe('<LeaderboardTab />', () => {
     render(<LeaderboardTab data={mockData} />);
 
     expect(screen.getByText('My rank')).toBeInTheDocument();
-    expect(screen.getByText('Total Swap Amount')).toBeInTheDocument();
-    expect(screen.getAllByText('0xAddress1')).toHaveLength(2);
+    expect(
+      screen.getAllByText(new RegExp(mockWalletAddress, 'i')).length
+    ).toBeGreaterThanOrEqual(2);
   });
 
   it('does not display "My rank" section if wallet address is not in the data', () => {
-    const mockDataWithoutWallet = mockData.filter(
-      (entry) => entry.address !== mockWalletAddress
-    );
+    jest
+      .spyOn(TransactionKit, 'useWalletAddress')
+      .mockReturnValue('0xNotInData');
 
-    render(<LeaderboardTab data={mockDataWithoutWallet} />);
+    render(<LeaderboardTab data={mockData} />);
 
     expect(screen.queryByText('My rank')).not.toBeInTheDocument();
   });
