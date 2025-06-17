@@ -10,7 +10,7 @@ exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
     className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
   >
     <div
-      className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 false"
+      className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
     >
       <p
         className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -26,7 +26,7 @@ exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
       </span>
     </div>
     <div
-      className="desktop:flex tablet:flex mobile:hidden"
+      className="desktop:flex tablet:flex mobile:hidden w-[9px]"
     >
       <svg
         color="#FF366C"

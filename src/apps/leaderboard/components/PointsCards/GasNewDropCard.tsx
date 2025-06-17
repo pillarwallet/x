@@ -28,7 +28,7 @@ const GasNewDropCard = ({
               Gas Used
             </BodySmall>
             <BodySmall className="font-semibold text-white">
-              ${gasUsed}
+              ${gasUsed ? gasUsed.toFixed(2) : '-'}
             </BodySmall>
           </div>
         </div>

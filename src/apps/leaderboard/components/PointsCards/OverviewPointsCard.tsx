@@ -21,7 +21,7 @@ const OverviewPointsCard = ({
   return (
     <div className="flex flex-col w-full h-full rounded-[10px] bg-purple_medium/[.05] p-3 gap-3">
       <BodySmall className="font-normal">My PX Overview</BodySmall>
-      <div className="flex-col w-full gap-2.5">
+      <div className="flex flex-col w-full gap-2.5">
         <div className="flex w-full justify-between items-center">
           <div className="flex gap-2 items-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]">
@@ -31,9 +31,9 @@ const OverviewPointsCard = ({
               PX Points
             </BodySmall>
           </div>
-          <BodySmall className="font-semi-bold text-white">
+          <BodySmall className="font-semibold text-white">
             {myAllTimeMerged.entry?.totalPoints || 0}{' '}
-            <span className="font-semi-bold text-white/[.5]">PX</span>
+            <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
         <div className="flex w-full justify-between items-center">
@@ -45,14 +45,14 @@ const OverviewPointsCard = ({
               Current Rank
             </BodySmall>
           </div>
-          <BodySmall className="font-semi-bold text-white">
-            <span className="font-semi-bold text-white/[.5]">#</span>
+          <BodySmall className="font-semibold text-white">
+            <span className="font-semibold text-white/[.5]">#</span>
             {myAllTimeMerged.index !== -1 ? myAllTimeMerged.index + 1 : '-'}
           </BodySmall>
         </div>
       </div>
       <BodySmall className="font-normal">Weekly</BodySmall>
-      <div className="flex-col w-full gap-2.5">
+      <div className="flex flex-col w-full gap-2.5">
         <div className="flex w-full justify-between items-center">
           <div className="flex gap-2 items-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]">
@@ -62,8 +62,8 @@ const OverviewPointsCard = ({
               Weekly Rank
             </BodySmall>
           </div>
-          <BodySmall className="font-semi-bold text-white">
-            <span className="font-semi-bold text-white/[.5]">#</span>
+          <BodySmall className="font-semibold text-white">
+            <span className="font-semibold text-white/[.5]">#</span>
             {myWeeklyMerged.index !== -1 ? myWeeklyMerged.index + 1 : '-'}
           </BodySmall>
         </div>
@@ -76,9 +76,9 @@ const OverviewPointsCard = ({
               Earned This Week
             </BodySmall>
           </div>
-          <BodySmall className="font-semi-bold text-white">
+          <BodySmall className="font-semibold text-white">
             {myWeeklyMerged.entry?.totalPoints || 0}{' '}
-            <span className="font-semi-bold text-white/[.5]">PX</span>
+            <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
       </div>

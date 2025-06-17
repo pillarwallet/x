@@ -31,7 +31,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -47,7 +47,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -206,7 +206,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -222,7 +222,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -381,7 +381,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -397,7 +397,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -556,7 +556,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -572,7 +572,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -731,7 +731,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -747,7 +747,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -906,7 +906,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -922,7 +922,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -1081,7 +1081,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -1097,7 +1097,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -1256,7 +1256,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -1272,7 +1272,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -1431,7 +1431,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -1447,7 +1447,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
@@ -1606,7 +1606,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
               className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
             >
               <div
-                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0"
+                className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
               >
                 <p
                   className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
@@ -1622,7 +1622,7 @@ exports[`<LeaderboardTab /> renders correctly and matches snapshot 1`] = `
                 </span>
               </div>
               <div
-                className="desktop:flex tablet:flex mobile:hidden"
+                className="desktop:flex tablet:flex mobile:hidden w-[9px]"
               />
               <div
                 className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"

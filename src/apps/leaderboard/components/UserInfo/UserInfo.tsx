@@ -93,12 +93,7 @@ const UserInfo = ({
       className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
     >
       <div className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5">
-        <div
-          className={`relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0 ${
-            rankChange === LeaderboardRankChange.NO_CHANGE &&
-            'desktop:mr-[19px] tablet:mr-[19px] mobile:mr-0'
-          }`}
-        >
+        <div className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0">
           <Body className="truncate text-white overflow-hidden mobile:text-sm w-full">
             #{rank}
           </Body>
@@ -107,8 +102,10 @@ const UserInfo = ({
           </span>
         </div>
 
-        <div className="desktop:flex tablet:flex mobile:hidden">
-          {rankChange !== LeaderboardRankChange.NO_CHANGE && rankChangeTriangle}
+        <div className="desktop:flex tablet:flex mobile:hidden w-[9px]">
+          {rankChange !== LeaderboardRankChange.NO_CHANGE
+            ? rankChangeTriangle
+            : null}
         </div>
 
         <div className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden">

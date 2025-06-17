@@ -69,7 +69,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       totalPoints: result.totalSwapAmountUsd || 0,
       totalAmountUsd: result.totalSwapAmountUsd || 0,
       totalGas: result.totalTxFeesUsd || 0,
-      addresses: [result.address] || [],
+      addresses: [result.address],
     }));
   }, [allTimeQuery.data]);
 
@@ -81,7 +81,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       const allMigrationEntries = migrationQuery.data.result.map((result) => ({
         totalPoints: result?.progress?.totalPoints || 0,
         totalAmountUsd: result?.progress?.migratedAmountUsd || 0,
-        addresses: result?.pxAddresses || [],
+        addresses: result?.pxAddresses,
         totalGas: result?.progress?.migratedFeesUsd || 0,
         source: result.source || undefined,
       }));
@@ -115,7 +115,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
             totalPoints: currentUserData.totalSwapAmountUsd || 0,
             totalAmountUsd: currentUserData.totalSwapAmountUsd || 0,
             totalGas: currentUserData.totalTxFeesUsd || 0,
-            addresses: [currentUserData.address] || [],
+            addresses: [currentUserData.address],
             completedSwap: currentUserData.completedSwap || false,
             rankChange,
           };
@@ -194,7 +194,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
           totalPoints: entry.totalSwapAmountUsd || 0,
           totalAmountUsd: entry.totalSwapAmountUsd || 0,
           totalGas: entry.totalTxFeesUsd || 0,
-          addresses: [entry.address] || [],
+          addresses: [entry.address],
           completedSwap: entry.completedSwap === true,
         }));
 
@@ -216,12 +216,14 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       // Address to rank index map (based on last address)
       const lastIndexMap = new Map<string, number>();
       lastMerged.forEach((entry, index) => {
-        const lastAddress = entry.addresses[entry.addresses.length - 1];
+        // In merged data only one address (common to both trading and migration)
+        const lastAddress = entry.addresses[0];
         if (lastAddress) lastIndexMap.set(lastAddress, index);
       });
 
       // Apply rank change
       const mergedWithRankChange = currentMerged.map((entry, currentIndex) => {
+        // In merged data only one address (common to both trading and migration)
         const address = entry.addresses[0];
         const lastIndex = address ? lastIndexMap.get(address) : undefined;
 

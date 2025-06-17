@@ -134,12 +134,13 @@ export const getMergeLeaderboardData = (
       foundEntry.totalAmountUsd += entry.totalAmountUsd;
       foundEntry.totalGas = (foundEntry.totalGas ?? 0) + (entry.totalGas ?? 0);
       foundEntry.completedSwap =
-        foundEntry.completedSwap || false || entry.completedSwap || false;
-      const combinedAddresses = foundEntry.addresses.concat(entry.addresses);
-      foundEntry.addresses = Array.from(new Set(combinedAddresses));
+        foundEntry.completedSwap || entry.completedSwap || false;
+
+      // Set the common address only
+      foundEntry.addresses = [matchingAddress];
     } else {
       // CASE 2: No match found - add as new entry
-      const primaryAddress = entry.addresses[0];
+      const primaryAddress = entry.addresses[entry.addresses.length - 1];
       addressMap.set(primaryAddress, { ...entry });
     }
   });

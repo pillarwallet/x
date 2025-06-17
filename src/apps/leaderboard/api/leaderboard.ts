@@ -39,7 +39,7 @@ export const leaderboardApi = createApi({
       }
     >({
       query: ({ skipDefaultPoints, address, from, until }) =>
-        `?${skipDefaultPoints ? `skipDefaultPoints=${skipDefaultPoints}&` : ''}${address ? `address=${address}&` : ''}${from ? `from=${from}&` : ''}${until ? `until=${until}&` : ''}${chainIdsQuery}&testnets=${String(isTestnet)}`,
+        `?${skipDefaultPoints ? `skipDefaultPoints=${skipDefaultPoints}&` : ''}${address ? `address=${address}&` : ''}${from ? `from=${from * 1000}&` : ''}${until ? `until=${until * 1000}&` : ''}${chainIdsQuery}&testnets=${String(isTestnet)}`,
     }),
   }),
 });

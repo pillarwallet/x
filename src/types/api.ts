@@ -471,8 +471,8 @@ export type PointsResult = {
   swapAmountUsd?: PointsChainData;
   totalSwapTxFeesUsd?: number;
   swapTxFeesUsd?: PointsChainData;
-  completedSwap: boolean;
-  transactionHistory: PointsTransactionHistoryItem;
+  completedSwap?: boolean;
+  transactionHistory?: PointsTransactionHistoryItem;
 };
 
 export type PointsResultsData = {

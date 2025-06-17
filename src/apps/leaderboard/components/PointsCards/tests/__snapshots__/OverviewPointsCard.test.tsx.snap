@@ -11,7 +11,7 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
       My PX Overview
     </p>
     <div
-      class="flex-col w-full gap-2.5"
+      class="flex flex-col w-full gap-2.5"
     >
       <div
         class="flex w-full justify-between items-center"
@@ -34,12 +34,12 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           0
            
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             PX
           </span>
@@ -66,10 +66,10 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             #
           </span>
@@ -83,7 +83,7 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
       Weekly
     </p>
     <div
-      class="flex-col w-full gap-2.5"
+      class="flex flex-col w-full gap-2.5"
     >
       <div
         class="flex w-full justify-between items-center"
@@ -106,10 +106,10 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             #
           </span>
@@ -137,12 +137,12 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           0
            
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             PX
           </span>
@@ -164,7 +164,7 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
       My PX Overview
     </p>
     <div
-      class="flex-col w-full gap-2.5"
+      class="flex flex-col w-full gap-2.5"
     >
       <div
         class="flex w-full justify-between items-center"
@@ -187,12 +187,12 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           1234
            
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             PX
           </span>
@@ -219,10 +219,10 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             #
           </span>
@@ -236,7 +236,7 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
       Weekly
     </p>
     <div
-      class="flex-col w-full gap-2.5"
+      class="flex flex-col w-full gap-2.5"
     >
       <div
         class="flex w-full justify-between items-center"
@@ -259,10 +259,10 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             #
           </span>
@@ -290,12 +290,12 @@ exports[`OverviewPointsCard matches snapshot with full data 1`] = `
           </p>
         </div>
         <p
-          class="text-sm font-medium font-semi-bold text-white"
+          class="text-sm font-medium font-semibold text-white"
         >
           345
            
           <span
-            class="font-semi-bold text-white/[.5]"
+            class="font-semibold text-white/[.5]"
           >
             PX
           </span>

@@ -19,7 +19,7 @@ describe('GasNewDropCard', () => {
   it('renders gasUsed and newDropTime when isMigrated is true', () => {
     render(<GasNewDropCard gasUsed={1234} newDropTime={5} isMigrated />);
     expect(screen.getByText('Gas Used')).toBeInTheDocument();
-    expect(screen.getByText('$1234')).toBeInTheDocument();
+    expect(screen.getByText('$1234.00')).toBeInTheDocument();
     expect(screen.getByText('Next Drop')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
   });

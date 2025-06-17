@@ -63,7 +63,7 @@ exports[`GasNewDropCard matches snapshot with isMigrated = true 1`] = `
           class="text-sm font-medium font-semibold text-white"
         >
           $
-          999
+          999.00
         </p>
       </div>
     </div>
