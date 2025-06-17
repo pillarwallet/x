@@ -133,7 +133,7 @@ const PxPointsSummary = ({
           <GasNewDropCard
             newDropTime={0}
             gasUsed={myAllTimeMigration.entry?.totalGas || 0}
-            isMigrated
+            isMigrated={isUserInMigrationData}
           />
         </div>
       </div>
