@@ -54,7 +54,7 @@ describe('OverviewPointsCard', () => {
 
     expect(screen.getByText('My PX Overview')).toBeInTheDocument();
     expect(screen.getByText('PX Points')).toBeInTheDocument();
-    expect(screen.getByText('1234')).toBeInTheDocument();
+    expect(screen.getByText('1,234')).toBeInTheDocument();
     expect(screen.getByText('Current Rank')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('Weekly')).toBeInTheDocument();

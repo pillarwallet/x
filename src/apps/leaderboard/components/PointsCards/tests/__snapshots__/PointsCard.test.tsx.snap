@@ -38,7 +38,7 @@ exports[`<PointsCard /> renders correctly and matches snapshot 1`] = `
       <p
         class="text-sm font-medium font-semibold text-white"
       >
-        1234
+        1,234
          
         <span
           class="text-white/[.5]"

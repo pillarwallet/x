@@ -1,6 +1,9 @@
 // types
 import { LeaderboardTableData } from '../../../../types/api';
 
+// utils
+import { formatAmountDisplay } from '../../../../utils/number';
+
 // images
 import CurrentRankIcon from '../../images/current-rank-icon.svg';
 import EarnedLastWeekIcon from '../../images/earned-last-week-icon.svg';
@@ -32,7 +35,9 @@ const OverviewPointsCard = ({
             </BodySmall>
           </div>
           <BodySmall className="font-semibold text-white">
-            {myAllTimeMerged.entry?.totalPoints || 0}{' '}
+            {formatAmountDisplay(
+              Math.floor(myAllTimeMerged.entry?.totalPoints || 0)
+            )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
@@ -77,7 +82,9 @@ const OverviewPointsCard = ({
             </BodySmall>
           </div>
           <BodySmall className="font-semibold text-white">
-            {myWeeklyMerged.entry?.totalPoints || 0}{' '}
+            {formatAmountDisplay(
+              Math.floor(myWeeklyMerged.entry?.totalPoints || 0)
+            )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
