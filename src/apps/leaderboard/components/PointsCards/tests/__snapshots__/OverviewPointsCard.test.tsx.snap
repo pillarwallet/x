@@ -1,0 +1,307 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
+<div>
+  <div
+    class="flex flex-col w-full h-full rounded-[10px] bg-purple_medium/[.05] p-3 gap-3"
+  >
+    <p
+      class="text-sm font-medium font-normal"
+    >
+      My PX Overview
+    </p>
+    <div
+      class="flex flex-col w-full gap-2.5"
+    >
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="pillarx-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            PX Points
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          0
+           
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            PX
+          </span>
+        </p>
+      </div>
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="current-rank-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Current Rank
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            #
+          </span>
+          -
+        </p>
+      </div>
+    </div>
+    <p
+      class="text-sm font-medium font-normal"
+    >
+      Weekly
+    </p>
+    <div
+      class="flex flex-col w-full gap-2.5"
+    >
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="pillarx-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Weekly Rank
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            #
+          </span>
+          -
+        </p>
+      </div>
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="current-rank-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Earned This Week
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          0
+           
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            PX
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`OverviewPointsCard matches snapshot with full data 1`] = `
+<div>
+  <div
+    class="flex flex-col w-full h-full rounded-[10px] bg-purple_medium/[.05] p-3 gap-3"
+  >
+    <p
+      class="text-sm font-medium font-normal"
+    >
+      My PX Overview
+    </p>
+    <div
+      class="flex flex-col w-full gap-2.5"
+    >
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="pillarx-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            PX Points
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          1,234
+           
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            PX
+          </span>
+        </p>
+      </div>
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="current-rank-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Current Rank
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            #
+          </span>
+          5
+        </p>
+      </div>
+    </div>
+    <p
+      class="text-sm font-medium font-normal"
+    >
+      Weekly
+    </p>
+    <div
+      class="flex flex-col w-full gap-2.5"
+    >
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="pillarx-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Weekly Rank
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            #
+          </span>
+          10
+        </p>
+      </div>
+      <div
+        class="flex w-full justify-between items-center"
+      >
+        <div
+          class="flex gap-2 items-center"
+        >
+          <div
+            class="flex h-6 w-6 items-center justify-center rounded-[5px] bg-purple_medium/[.05]"
+          >
+            <img
+              alt="current-rank-icon"
+              src="[object Object]"
+            />
+          </div>
+          <p
+            class="text-sm font-medium font-normal text-white/[.5]"
+          >
+            Earned This Week
+          </p>
+        </div>
+        <p
+          class="text-sm font-medium font-semibold text-white"
+        >
+          345
+           
+          <span
+            class="font-semibold text-white/[.5]"
+          >
+            PX
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

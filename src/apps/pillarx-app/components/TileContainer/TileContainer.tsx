@@ -8,7 +8,7 @@ type TileContainerProps = {
 
 const TileContainer = ({ children, className, id }: TileContainerProps) => {
   return (
-    <div id={id} className={`flex bg-container_grey rounded-2xl ${className}`}>
+    <div id={id} className={`flex bg-container_grey rounded-3xl ${className}`}>
       {children}
     </div>
   );

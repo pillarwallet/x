@@ -2,7 +2,7 @@
 
 exports[`<EditorialTile /> renders correctly and matches snapshot 1`] = `
 <div
-  className="flex bg-container_grey rounded-2xl flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+  className="flex bg-container_grey rounded-3xl flex-col desktop:p-10 desktop:pt-[30px] tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
   id="editorial-tile"
 >
   <a

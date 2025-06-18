@@ -37,6 +37,24 @@ export interface AccountBalancesContext {
     history: TransactionHistory;
     updateData: boolean;
     setUpdateData: React.Dispatch<React.SetStateAction<boolean>>;
+    userOpStatus: 'Sending' | 'Sent' | 'Confirmed' | 'Failed' | undefined;
+    setUserOpStatus: React.Dispatch<
+      React.SetStateAction<
+        'Sending' | 'Sent' | 'Confirmed' | 'Failed' | undefined
+      >
+    >;
+    transactionHash: string | undefined;
+    setTransactionHash: React.Dispatch<
+      React.SetStateAction<string | undefined>
+    >;
+    latestUserOpInfo: string | undefined;
+    setLatestUserOpInfo: React.Dispatch<
+      React.SetStateAction<string | undefined>
+    >;
+    latestUserOpChainId: number | undefined;
+    setLatestUserOpChainId: React.Dispatch<
+      React.SetStateAction<number | undefined>
+    >;
   };
 }
 
@@ -62,6 +80,18 @@ const AccountTransactionHistoryProvider = ({
   const listenerRef = useRef<AccountTransactionHistoryListenerRef>({});
   const { getAccountTransactions } = useEtherspotHistory();
   const [updateData, setUpdateData] = useState<boolean>(false);
+  const [userOpStatus, setUserOpStatus] = useState<
+    'Sending' | 'Sent' | 'Confirmed' | 'Failed' | undefined
+  >(undefined);
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(
+    undefined
+  );
+  const [latestUserOpInfo, setLatestUserOpInfo] = useState<string | undefined>(
+    undefined
+  );
+  const [latestUserOpChainId, setLatestUserOpChainId] = useState<
+    number | undefined
+  >(undefined);
 
   useEffect(() => {
     let expired = false;
@@ -151,10 +181,25 @@ const AccountTransactionHistoryProvider = ({
   const contextData = useMemo(
     () => ({
       history,
+      transactionHash,
+      setTransactionHash,
+      userOpStatus,
+      setUserOpStatus,
       updateData,
       setUpdateData,
+      latestUserOpInfo,
+      setLatestUserOpInfo,
+      latestUserOpChainId,
+      setLatestUserOpChainId,
     }),
-    [history, updateData]
+    [
+      history,
+      transactionHash,
+      userOpStatus,
+      updateData,
+      latestUserOpInfo,
+      latestUserOpChainId,
+    ]
   );
 
   return (

@@ -1,4 +1,5 @@
-/* eslint-disable import/extensions */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
@@ -7,6 +8,7 @@ import {
   EtherspotContractTransaction,
   EtherspotTokenTransferTransaction,
   EtherspotTransaction,
+  ISentBatches,
   useEtherspot,
   useEtherspotPrices,
   useEtherspotTransactions,
@@ -42,7 +44,9 @@ import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountBalances from '../../../hooks/useAccountBalances';
+import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
+import useDeployWallet from '../../../hooks/useDeployWallet';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
@@ -53,19 +57,22 @@ import {
   getAllGaslessPaymasters,
   getGasPrice,
 } from '../../../services/gasless';
+import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
+import { isNativeToken } from '../../../apps/the-exchange/utils/wrappedTokens';
 import {
-  decodeSendTokenCallData,
   getNativeAssetForChainId,
   isPolygonAssetNative,
   isValidEthereumAddress,
 } from '../../../utils/blockchain';
-import { pasteFromClipboard } from '../../../utils/common';
+import {
+  pasteFromClipboard,
+  transactionDescription,
+} from '../../../utils/common';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
-import { processEth } from '../../../apps/the-exchange/utils/blockchain';
 import { SendModalData } from '../../../types';
 import {
   chainNameToChainIdTokensData,
@@ -113,6 +120,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     React.useState<string>('');
   const [safetyWarningMessage, setSafetyWarningMessage] =
     React.useState<string>('');
+  const [deploymentCost, setDeploymentCost] = React.useState(0);
+  const [isDeploymentCostLoading, setIsDeploymentCostLoading] =
+    React.useState(true);
   const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
   const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
@@ -333,6 +343,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   }, [gasPrice, selectedFeeAsset]);
 
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const { getWalletDeploymentCost } = useDeployWallet();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
 
   /**
    * Import the recordPresence mutation from the
@@ -395,6 +413,22 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setSafetyWarningMessage('');
   }, [selectedAsset, recipient, amount]);
 
+  React.useEffect(() => {
+    const getDeploymentCost = async () => {
+      if (!accountAddress || !selectedAsset?.chainId) return;
+      setIsDeploymentCostLoading(true);
+      const cost = await getWalletDeploymentCost({
+        accountAddress,
+        chainId: selectedAsset.chainId,
+      });
+      setDeploymentCost(cost);
+      setIsDeploymentCostLoading(false);
+    };
+
+    getDeploymentCost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountAddress, selectedAsset]);
+
   const amountInFiat = React.useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
     return selectedAssetPrice * +(amount || 0);
@@ -407,12 +441,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const maxAmountAvailable = React.useMemo(() => {
     if (selectedAsset?.type !== 'token' || !selectedAssetBalance) return 0;
-    return isAmountInputAsFiat
-      ? selectedAssetPrice * selectedAssetBalance
+
+    const adjustedBalance = isNativeToken(selectedAsset.asset.contract)
+      ? selectedAssetBalance - deploymentCost
       : selectedAssetBalance;
+
+    return isAmountInputAsFiat
+      ? selectedAssetPrice * adjustedBalance
+      : adjustedBalance;
   }, [
+    selectedAsset,
+    deploymentCost,
     isAmountInputAsFiat,
-    selectedAsset?.type,
     selectedAssetPrice,
     selectedAssetBalance,
   ]);
@@ -437,7 +477,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const isSendModalInvokedFromHook = !!payload;
   const isRegularSendModal = !isSendModalInvokedFromHook && !showBatchSendModal;
   const isSendDisabled =
-    isSending || (isRegularSendModal && !isTransactionReady);
+    isSending ||
+    (isRegularSendModal && !isTransactionReady) ||
+    Number(amount) > maxAmountAvailable;
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
     if (isSendDisabled) {
@@ -446,6 +488,19 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       );
       return;
     }
+
+    // remove previously saved userOp for a new one
+    localStorage.removeItem('latestUserOpStatus');
+    localStorage.removeItem('latestTransactionHash');
+    localStorage.removeItem('latestUserOpInfo');
+    localStorage.removeItem('latestUserOpChainId');
+
+    // remove previously all states for userOp
+    setTransactionHash(undefined);
+    setUserOpStatus(undefined);
+    setLatestUserOpInfo(undefined);
+    setLatestUserOpChainId(undefined);
+
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
@@ -481,18 +536,23 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     transactionDebugLog('Preparing to send transaction');
 
-    const startTime = performance.now();
+    let sent: ISentBatches[];
 
-    const sent = await send();
+    try {
+      sent = await send(undefined, {
+        retryOnFeeTooLow: true,
+        maxRetries: 3,
+        feeMultiplier: 1.2, // 20% increase per retry
+      });
 
-    const endTime = performance.now();
-    const elapsedMs = endTime - startTime;
-
-    transactionDebugLog(
-      `Time taken to send transaction (ms): ${elapsedMs.toFixed(2)}`
-    );
-
-    transactionDebugLog('Transaction send details:', sent);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const errorMes =
+        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.';
+      setErrorMessage(errorMes);
+      setIsSending(false);
+      return;
+    }
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     let costAsFiat = 0;
@@ -518,7 +578,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     const estimationErrorMessage =
       sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
     if (estimationErrorMessage) {
-      setErrorMessage(estimationErrorMessage);
+      setErrorMessage(
+        'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
+      );
       setIsSending(false);
       return;
     }
@@ -549,7 +611,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
-      setErrorMessage(sendingErrorMessage);
+      setErrorMessage(
+        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+      );
       setIsSending(false);
       return;
     }
@@ -580,6 +644,93 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           setWalletConnectTxHash(txHash);
         }
       }
+
+      const transactionToSend = sent?.[0]?.batches?.[0]?.transactions?.[0];
+
+      setLatestUserOpInfo(
+        transactionDescription(selectedAsset, transactionToSend, payload)
+      );
+
+      setLatestUserOpChainId(selectedAsset?.chainId);
+
+      const userOpStatusInterval = 5000; // 5 seconds
+      const maxAttempts = 9; // 9 * 5sec = 45sec
+      let attempts = 0;
+
+      const userOperationStatus = setInterval(async () => {
+        attempts += 1;
+        try {
+          const response = await getUserOperationStatus(
+            chainIdForTxHash,
+            newUserOpHash
+          );
+          transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+          const status = response?.status;
+
+          // If OnChain, it means it has been successfully added on chain
+          if (status === 'OnChain' && response?.transaction) {
+            setUserOpStatus('Confirmed');
+            setTransactionHash(response.transaction);
+            transactionDebugLog(
+              'Transaction successfully submitted on chain with transaction hash:',
+              response.transaction
+            );
+            clearInterval(userOperationStatus);
+            return;
+          }
+
+          // Treat status Reverted as Sent until we timeout as this JSON-RPC call
+          // can try again and be successful on Polygon only - known issue
+          if (status === 'Reverted') {
+            if (attempts < maxAttempts) {
+              setUserOpStatus('Sent');
+            } else {
+              setUserOpStatus('Failed');
+              transactionDebugLog(
+                'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+                response?.transaction
+              );
+              setTransactionHash(response?.transaction);
+              clearInterval(userOperationStatus);
+            }
+            return;
+          }
+
+          // New, Pending, Submitted => still waiting
+          if (['New', 'Pending'].includes(status)) {
+            setUserOpStatus('Sending');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (['Submitted'].includes(status)) {
+            setUserOpStatus('Sent');
+            transactionDebugLog(
+              `UserOp Status is ${status}. Check transaction hash:`,
+              response?.transaction
+            );
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(userOperationStatus);
+            transactionDebugLog(
+              'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+              response?.transaction
+            );
+            if (userOpStatus !== 'Confirmed') {
+              setUserOpStatus('Failed');
+              setTransactionHash(response?.transaction);
+            }
+          }
+        } catch (err) {
+          transactionDebugLog('Error getting userOp status:', err);
+          clearInterval(userOperationStatus);
+          setUserOpStatus('Failed');
+        }
+      }, userOpStatusInterval);
     }
 
     if (!newUserOpHash) {
@@ -623,27 +774,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       selectedAsset?.chainId ||
       etherspotDefaultChainId;
 
-    const transactionDescription = () => {
-      if (selectedAsset?.type === 'token') {
-        if (transactionToBatch?.value) {
-          return `${processEth(transactionToBatch.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transactionToBatch.to.substring(0, 6)}...${transactionToBatch.to.substring(transactionToBatch.to.length - 5)}`;
-        }
-        if (!transactionToBatch?.value && transactionToBatch?.data) {
-          const decodedTransferData = decodeSendTokenCallData(
-            transactionToBatch.data
-          );
-          return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transactionToBatch.to.length - 5)}`;
-        }
-      }
-
-      return payload?.description;
-    };
-
     transactionDebugLog('Adding transaction to batch:', transactionToBatch);
 
     addToBatch({
       title: payload?.title || t`action.sendAsset`,
-      description: payload?.description || transactionDescription(),
+      description:
+        payload?.description ||
+        transactionDescription(selectedAsset, transactionToBatch, payload),
       chainId: chainIdForBatch,
       ...transactionToBatch,
     });
@@ -892,7 +1029,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   <AmountInputSymbol>
                     {isAmountInputAsFiat ? 'USD' : selectedAsset.asset.symbol}
                   </AmountInputSymbol>
-                  {maxAmountAvailable > 0 && (
+                  {!isDeploymentCostLoading && maxAmountAvailable > 0 && (
                     <TextInputButton
                       onClick={() => setAmount(`${maxAmountAvailable}`)}
                     >

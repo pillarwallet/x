@@ -11,6 +11,8 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 // Services
 import depositSlice from './apps/deposit/reducer/depositSlice';
+import leaderboardSlice from './apps/leaderboard/reducer/LeaderboardSlice';
+import walletPortfolioSlice from './apps/pillarx-app/reducer/WalletPortfolioSlice';
 import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
 import tokenAtlasSlice from './apps/token-atlas/reducer/tokenAtlasSlice';
 import { pillarXApiPresence } from './services/pillarXApiPresence';
@@ -85,6 +87,8 @@ addMiddleware(pillarXApiTransactionsHistory);
 addReducer(swapSlice);
 addReducer(tokenAtlasSlice);
 addReducer(depositSlice);
+addReducer(walletPortfolioSlice);
+addReducer(leaderboardSlice);
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
