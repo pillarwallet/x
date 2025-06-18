@@ -85,7 +85,7 @@ const TopTokens = () => {
           <div className="desktop:hidden tablet:flex mobile:flex text-base font-medium text-white">
             Top Tokens
           </div>
-          <div className="grid desktop:grid-cols-[2fr_1fr_1fr] tablet:grid-cols-2 mobile::grid-cols-2 gap-3">
+          <div className="grid desktop:grid-cols-[2fr_1fr_1fr] tablet:grid-cols-2 mobile:grid-cols-2 gap-3">
             {/* Header Row */}
             <div className="tablet:hidden mobile:hidden desktop:flex text-base font-medium text-white">
               Top Tokens
