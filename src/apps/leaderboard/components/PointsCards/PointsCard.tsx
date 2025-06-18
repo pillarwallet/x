@@ -1,3 +1,6 @@
+// utils
+import { formatAmountDisplay } from '../../../../utils/number';
+
 // components
 import BodySmall from '../Typography/BodySmall';
 
@@ -34,7 +37,8 @@ const PointsCard = ({
       <div className="flex w-full items-center justify-between px-1">
         <BodySmall className="font-normal text-white">Points</BodySmall>
         <BodySmall className="font-semibold text-white">
-          {points} <span className="text-white/[.5]">PX</span>
+          {formatAmountDisplay(Math.floor(points || 0))}{' '}
+          <span className="text-white/[.5]">PX</span>
         </BodySmall>
       </div>
       <div className="flex w-full items-center justify-between px-1 mb-1">

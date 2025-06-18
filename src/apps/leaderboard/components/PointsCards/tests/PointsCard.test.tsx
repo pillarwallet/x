@@ -45,7 +45,7 @@ describe('<PointsCard />', () => {
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute('src', 'trading-icon.png');
 
-    expect(screen.getByText(/1234/i)).toBeInTheDocument();
+    expect(screen.getByText(/1,234/i)).toBeInTheDocument();
     expect(screen.getByText('PX')).toBeInTheDocument();
 
     expect(screen.getByText('1')).toBeInTheDocument();

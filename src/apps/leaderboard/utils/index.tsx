@@ -89,7 +89,7 @@ export const getLastWeekMigrationData = (
       const { pointsMatrix } = entry.progress;
 
       const completedSwapWeek =
-        `completedSwapWeek${currentWeek}` as keyof MigrationProgress;
+        `completedSwapWeek${lastWeek}` as keyof MigrationProgress;
 
       return {
         totalPoints:
@@ -113,41 +113,53 @@ export const getMergeLeaderboardData = (
   tradingDataSource: LeaderboardTableData[],
   migrationDataSource: LeaderboardTableData[]
 ): LeaderboardTableData[] => {
-  const addressMap = new Map<string, LeaderboardTableData>();
-
-  // Add ALL entries from tradingDataSource to the map
-  tradingDataSource.forEach((entry) => {
-    const address = entry.addresses[0];
-    addressMap.set(address, { ...entry });
+  // Create a map of addresses to migration data for quick lookup
+  const migrationMap = new Map<
+    string,
+    { data: LeaderboardTableData; index: number }
+  >();
+  migrationDataSource.forEach((entry, index) => {
+    entry.addresses.forEach((address) => {
+      migrationMap.set(address, { data: entry, index });
+    });
   });
 
-  // Process migrationDataSource entries
-  migrationDataSource.forEach((entry) => {
-    const matchingAddress = entry.addresses.find((address) =>
-      addressMap.has(address)
-    );
+  const usedMigrationIndices = new Set<number>();
 
-    if (matchingAddress) {
-      // CASE 1: Match found - merge the data
-      const foundEntry = addressMap.get(matchingAddress)!;
-      foundEntry.totalPoints += entry.totalPoints;
-      foundEntry.totalAmountUsd += entry.totalAmountUsd;
-      foundEntry.totalGas = (foundEntry.totalGas ?? 0) + (entry.totalGas ?? 0);
-      foundEntry.completedSwap =
-        foundEntry.completedSwap || entry.completedSwap || false;
+  // Process trading data with merging
+  const processedTradingData = tradingDataSource.map((tradingEntry) => {
+    const tradingAddress = tradingEntry.addresses[0];
+    const migrationMatch = migrationMap.get(tradingAddress);
 
-      // Set the common address only
-      foundEntry.addresses = [matchingAddress];
-    } else {
-      // CASE 2: No match found - add as new entry
-      const primaryAddress = entry.addresses[entry.addresses.length - 1];
-      addressMap.set(primaryAddress, { ...entry });
+    if (migrationMatch && !usedMigrationIndices.has(migrationMatch.index)) {
+      usedMigrationIndices.add(migrationMatch.index);
+
+      // Merge the data
+      return {
+        totalPoints: tradingEntry.totalPoints + migrationMatch.data.totalPoints,
+        totalAmountUsd:
+          tradingEntry.totalAmountUsd + migrationMatch.data.totalAmountUsd,
+        addresses: [tradingAddress], // Only the common address
+        completedSwap:
+          tradingEntry.completedSwap ||
+          false ||
+          migrationMatch.data.completedSwap ||
+          false,
+        totalGas:
+          (tradingEntry.totalGas || 0) + (migrationMatch.data.totalGas || 0),
+      };
     }
+
+    // No match found, return trading data as is
+    return { ...tradingEntry };
   });
 
-  return Array.from(addressMap.values()).sort(
-    (a, b) => b.totalPoints - a.totalPoints
-  );
+  // Add unprocessed migration data
+  const unprocessedMigrationData = migrationDataSource
+    .filter((_, index) => !usedMigrationIndices.has(index))
+    .map((entry) => ({ ...entry }));
+
+  return [...processedTradingData, ...unprocessedMigrationData];
 };
 
 /**
