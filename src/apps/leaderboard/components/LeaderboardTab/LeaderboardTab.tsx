@@ -72,11 +72,11 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
               </Body>
 
               {/* USD label — hidden on mobile */}
-              <Body className="text-white/[.5] text-right mobile:hidden desktop:flex tablet:flex justify-center">
+              <Body className="text-white/[.5] text-left mobile:hidden desktop:flex tablet:flex justify-start">
                 USD value
               </Body>
 
-              <Body className="text-white/[.5] text-right mobile:hidden desktop:flex tablet:flex justify-center">
+              <Body className="text-white/[.5] text-right mobile:hidden desktop:flex tablet:flex justify-end">
                 PX Points
               </Body>
 

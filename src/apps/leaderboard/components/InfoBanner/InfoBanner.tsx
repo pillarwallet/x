@@ -13,7 +13,7 @@ const InfoBanner = () => {
   if (!visible) return null;
 
   return (
-    <div className="relative bg-[#3C80FF]/[.1] py-5 px-6 rounded-2xl border-[1px] border-[#3C80FF]/[.1] w-full mb-3">
+    <div className="relative bg-[#3C80FF]/[.1] desktop:py-5 desktop:px-6 tablet:py-5 tablet:px-6 mobile:p-4 rounded-2xl border-[1px] border-[#3C80FF]/[.1] w-full mb-3">
       <button
         type="button"
         onClick={() => setVisible(false)}
@@ -22,9 +22,9 @@ const InfoBanner = () => {
       >
         <MdOutlineClose size={12} color="white" />
       </button>
-      <div className="flex gap-3 items-center">
-        <div className="flex items-center justify-center rounded-full bg-[#3C80FF]/[.4] w-9 h-9">
-          <InfoIcon />
+      <div className="flex gap-3 desktop:items-center tablet:items-center mobile:items-start">
+        <div className="flex-shrink-0 flex items-center justify-center rounded-full bg-[#3C80FF]/[.4] desktop:w-9 desktop:h-9 tablet:w-9 tablet:h-9 mobile:w-4 mobile:h-4">
+          <InfoIcon className="mobile:w-[2.3px] h-auto" />
         </div>
         <div className="flex flex-col">
           <BodySmall className="font-normal text-white">
