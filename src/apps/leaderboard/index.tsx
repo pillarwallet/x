@@ -9,6 +9,9 @@ import './styles/tailwindLeaderboard.css';
 // types
 import { LeaderboardTableData } from '../../types/api';
 
+// utils
+import { formatAmountDisplay } from '../../utils/number';
+
 // components
 import BodySmall from '../pillarx-app/components/Typography/BodySmall';
 import InfoBanner from './components/InfoBanner/InfoBanner';
@@ -180,14 +183,17 @@ const App = () => {
           <BodySmall className="text-white font-normal">
             Total Volume:{' '}
             <span className="text-purple_medium">
-              ${totalVolume?.toFixed(2) || '0.00'}
+              $
+              {totalVolume
+                ? formatAmountDisplay(totalVolume.toFixed(2))
+                : '0.00'}
             </span>
           </BodySmall>
           {totalGas && totalGas > 0 ? (
             <BodySmall className="text-white font-normal">
               Total Gas:{' '}
               <span className="text-purple_medium">
-                ${totalGas?.toFixed(2)}
+                {formatAmountDisplay(totalGas.toFixed(2))}
               </span>
             </BodySmall>
           ) : null}

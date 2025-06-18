@@ -25,9 +25,14 @@ exports[`GasNewDropCard matches snapshot with isMigrated = false 1`] = `
           Next Drop
         </p>
         <p
-          class="text-sm font-medium font-semibold text-white"
+          class="text-sm text-white font-semibold"
         >
-          7
+          -32
+          <span
+            class="text-base"
+          >
+            m
+          </span>
         </p>
       </div>
     </div>
@@ -87,9 +92,14 @@ exports[`GasNewDropCard matches snapshot with isMigrated = true 1`] = `
           Next Drop
         </p>
         <p
-          class="text-sm font-medium font-semibold text-white"
+          class="text-sm text-white font-semibold"
         >
-          3
+          -32
+          <span
+            class="text-base"
+          >
+            m
+          </span>
         </p>
       </div>
     </div>

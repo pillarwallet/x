@@ -159,7 +159,9 @@ export const getMergeLeaderboardData = (
     .filter((_, index) => !usedMigrationIndices.has(index))
     .map((entry) => ({ ...entry }));
 
-  return [...processedTradingData, ...unprocessedMigrationData];
+  return [...processedTradingData, ...unprocessedMigrationData].sort(
+    (a, b) => b.totalPoints - a.totalPoints
+  );
 };
 
 /**
@@ -225,5 +227,5 @@ export const getMergeLeaderboardMigrationDataByAddresses = (
     allEntries.forEach((e) => processed.add(e));
   });
 
-  return mergedData;
+  return mergedData.sort((a, b) => b.totalPoints - a.totalPoints);
 };
