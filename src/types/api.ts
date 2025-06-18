@@ -862,4 +862,5 @@ export type LeaderboardTableData = {
   totalGas?: number;
   rankChange?: LeaderboardRankChange;
   source?: string | undefined;
+  newDropTime?: number;
 };

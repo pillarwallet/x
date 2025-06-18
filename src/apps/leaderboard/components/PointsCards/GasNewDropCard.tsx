@@ -4,6 +4,7 @@ import NewDropIcon from '../../images/new-drop-icon.svg';
 
 // components
 import BodySmall from '../Typography/BodySmall';
+import FormattedNewDrop from './FormattedNewDrop';
 
 type GasNewDropCardProps = {
   newDropTime: number;
@@ -42,9 +43,9 @@ const GasNewDropCard = ({
           <BodySmall className="font-normal text-white/[.5]">
             Next Drop
           </BodySmall>
-          <BodySmall className="font-semibold text-white">
-            {newDropTime}
-          </BodySmall>
+          {newDropTime ? (
+            <FormattedNewDrop timestamp={newDropTime + 24 * 60 * 60 * 1000} />
+          ) : null}
         </div>
       </div>
     </div>

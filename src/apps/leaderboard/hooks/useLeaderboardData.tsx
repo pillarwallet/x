@@ -70,6 +70,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       totalAmountUsd: result.totalSwapAmountUsd || 0,
       totalGas: result.totalTxFeesUsd || 0,
       addresses: [result.address],
+      newDropTime: result.pointsUpdatedAt || 0,
     }));
   }, [allTimeQuery.data]);
 

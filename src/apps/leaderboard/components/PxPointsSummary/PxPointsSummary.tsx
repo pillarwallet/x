@@ -131,7 +131,7 @@ const PxPointsSummary = ({
             textTooltip="These are points calculated from trading assets, only trades above $2 are calculated."
           />
           <GasNewDropCard
-            newDropTime={0}
+            newDropTime={myAllTimeTrading.entry?.newDropTime || 0}
             gasUsed={myAllTimeMigration.entry?.totalGas || 0}
             isMigrated={isUserInMigrationData}
           />
