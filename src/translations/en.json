@@ -47,7 +47,10 @@
     "noNftsFound": "No NFTs found",
     "noTokensFound": "No tokens found",
     "failedToGetTransactionDataForBatching": "Failed to get transaction data for batching",
-    "cannotBatchBatchedTransactions": "Cannot batch batched transactions"
+    "cannotBatchBatchedTransactions": "Cannot batch batched transactions",
+    "insufficientBalanceForGasless": "Insufficient balance for gasless transaction",
+    "paymasterNotSupported": "Gasless action for add to batch is not available at the moment",
+    "failedWalletPortfolio": "Failed to get wallet balances"
   },
   "warning": {
     "transactionSafety": {
@@ -70,7 +73,9 @@
     "sent": "Sent",
     "on": "On",
     "received": "Received",
-    "latestApps": "Latest Apps"
+    "latestApps": "Latest Apps",
+    "feeType": "Fee Type",
+    "selectFeeAsset": "Select fee asset"
   },
   "placeholder": {
     "enterAddress": "Enter address"

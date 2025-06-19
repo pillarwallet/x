@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 // types
 import {
   LeaderboardRankChange,
-  PointsResult,
-  WeeklyLeaderboardData,
+  LeaderboardTableData,
 } from '../../../../types/api';
 
 // components
@@ -16,7 +15,7 @@ import UserInfo from '../UserInfo/UserInfo';
 import { formatAmountDisplay } from '../../../../utils/number';
 
 type LeaderboardTabProps = {
-  data: PointsResult[] | WeeklyLeaderboardData[];
+  data: LeaderboardTableData[];
 };
 
 const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
@@ -54,34 +53,77 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
   const visibleData = data.slice(0, visibleCount);
   const isEndOfData = visibleData.length === data.length;
 
-  const myRankData = data.find((result) => result.address === walletAddress);
+  const myRankData = walletAddress
+    ? data.find((result) => result.addresses?.includes(walletAddress))
+    : undefined;
 
   return (
     <>
       <div
         id="leaderboard-list-data"
-        className="flex flex-col bg-container_grey rounded-2xl desktop:p-5 tablet:p-5 mobile:p-2 desktop:pr-10 tablet:pr-10 mobile:pr-4"
+        className="flex flex-col bg-container_grey desktop:p-6 tablet:p-6 mobile:p-0"
       >
         {myRankData && (
           <>
-            <div className="flex justify-between">
-              <Body className="text-purple_light">My rank</Body>
-              <Body className="text-purple_light">Total Swap Amount</Body>
+            {/* Header Row */}
+            <div className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center">
+              <Body className="text-white/[.5] mobile:font-normal mobile:text:sm">
+                My rank
+              </Body>
+
+              {/* USD label — hidden on mobile */}
+              <Body className="text-white/[.5] text-left mobile:hidden desktop:flex tablet:flex justify-start">
+                USD value
+              </Body>
+
+              <Body className="text-white/[.5] text-right mobile:hidden desktop:flex tablet:flex justify-end">
+                PX Points
+              </Body>
+
+              <Body className="desktop:hidden tablet:hidden mobile:flex text-white/[.5] text-right mobile:font-normal mobile:text:sm mobile:justify-end">
+                PX Points/USD value
+              </Body>
             </div>
-            <div className="flex flex-col">
-              <div className="flex justify-between py-5 py-2">
+            <div className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-2.5">
+              {/* Column 1: User Info */}
+              <div>
                 <UserInfo
                   rank={data.indexOf(myRankData) + 1}
-                  walletAddress={myRankData.address}
+                  walletAddress={walletAddress || ''}
                   rankChange={
                     'rankChange' in myRankData
                       ? (myRankData.rankChange as LeaderboardRankChange)
                       : LeaderboardRankChange.NO_CHANGE
                   }
                 />
-                <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
-                  <p className="desktop:text-[22px] tablet:text-[22px] mobile:text-base">
-                    ${formatAmountDisplay(myRankData.totalSwapAmountUsd ?? 0)}
+              </div>
+
+              {/* Column 2: USD Value (hidden on mobile) */}
+              <div className="text-right pr-2 mobile:hidden tablet:flex desktop:flex">
+                <p className="font-normal text-[22px] text-white">
+                  $
+                  {formatAmountDisplay(
+                    Math.floor(myRankData.totalAmountUsd) || 0
+                  )}
+                </p>
+              </div>
+
+              {/* Column 3: PX Points */}
+              <div className="flex flex-col">
+                <div className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end">
+                  <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white">
+                    {formatAmountDisplay(
+                      Math.floor(myRankData.totalPoints) || 0
+                    )}
+                  </p>
+                  <p className="font-normal text-sm text-white">PX</p>
+                </div>
+                <div className="desktop:hidden tablet:hidden mobile:flex text-right justify-end">
+                  <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]">
+                    $
+                    {formatAmountDisplay(
+                      Math.floor(myRankData.totalAmountUsd) || 0
+                    )}
                   </p>
                 </div>
               </div>
@@ -89,32 +131,56 @@ const LeaderboardTab = ({ data }: LeaderboardTabProps) => {
           </>
         )}
         <div className="flex justify-between">
-          <Body className="text-purple_light">Rankings</Body>
-          {!myRankData && (
-            <Body className="text-purple_light">Total Swap Amount</Body>
-          )}
+          <Body className="text-white mobile:font-normal mobile:text:sm">
+            Rankings
+          </Body>
         </div>
         <div className="flex flex-col">
           {visibleData.map((result, index) => (
             <div
-              key={result.address}
-              className={`flex justify-between py-5 ${
-                index !== visibleData.length - 1 && 'border-b border-[#1F1D23]'
-              } py-2`}
+              key={`${result.addresses?.[result.addresses.length - 1]}-${index}`}
+              className="grid desktop:grid-cols-[70%_15%_15%] tablet:grid-cols-[70%_15%_15%] mobile:grid-cols-[70%_30%] items-center desktop:py-5 tablet:py-5 mobile:py-[5px]"
             >
-              <UserInfo
-                rank={index + 1}
-                walletAddress={result.address}
-                rankChange={
-                  'rankChange' in result
-                    ? (result.rankChange as LeaderboardRankChange)
-                    : LeaderboardRankChange.NO_CHANGE
-                }
-              />
-              <div className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center">
-                <p className="desktop:text-[22px] tablet:text-[22px] mobile:text-base">
-                  ${formatAmountDisplay(result.totalSwapAmountUsd ?? 0)}
+              {/* Column 1: User Info */}
+              <div>
+                <UserInfo
+                  rank={index + 1}
+                  walletAddress={
+                    result.addresses?.[result.addresses.length - 1] || ''
+                  }
+                  rankChange={
+                    'rankChange' in result
+                      ? (result.rankChange as LeaderboardRankChange)
+                      : LeaderboardRankChange.NO_CHANGE
+                  }
+                />
+              </div>
+
+              {/* Column 2: USD Value (hidden on mobile) */}
+              <div className="text-right pr-2 mobile:hidden tablet:flex desktop:flex">
+                <p className="font-normal text-[22px] text-white">
+                  ${formatAmountDisplay(Math.floor(result.totalAmountUsd) || 0)}
                 </p>
+              </div>
+
+              {/* Column 3: PX Points */}
+              <div className="flex flex-col">
+                <div className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end">
+                  <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white">
+                    {formatAmountDisplay(
+                      Math.floor(result.totalPoints) || 0
+                    )}{' '}
+                  </p>
+                  <p className="font-normal text-sm text-white">PX</p>
+                </div>
+                <div className="desktop:hidden tablet:hidden mobile:flex text-right justify-end">
+                  <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white/[.5]">
+                    $
+                    {formatAmountDisplay(
+                      Math.floor(result.totalAmountUsd) || 0
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
