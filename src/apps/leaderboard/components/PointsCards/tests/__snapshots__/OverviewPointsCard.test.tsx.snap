@@ -36,7 +36,7 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
         <p
           class="text-sm font-medium font-semibold text-white"
         >
-          0
+          -
            
           <span
             class="font-semibold text-white/[.5]"
@@ -139,7 +139,7 @@ exports[`OverviewPointsCard matches snapshot with empty data 1`] = `
         <p
           class="text-sm font-medium font-semibold text-white"
         >
-          0
+          -
            
           <span
             class="font-semibold text-white/[.5]"

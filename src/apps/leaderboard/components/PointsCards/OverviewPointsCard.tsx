@@ -35,9 +35,11 @@ const OverviewPointsCard = ({
             </BodySmall>
           </div>
           <BodySmall className="font-semibold text-white">
-            {formatAmountDisplay(
-              Math.floor(myAllTimeMerged.entry?.totalPoints || 0)
-            )}{' '}
+            {myAllTimeMerged.index === -1
+              ? '-'
+              : formatAmountDisplay(
+                  Math.floor(myAllTimeMerged.entry?.totalPoints || 0)
+                )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
@@ -82,9 +84,11 @@ const OverviewPointsCard = ({
             </BodySmall>
           </div>
           <BodySmall className="font-semibold text-white">
-            {formatAmountDisplay(
-              Math.floor(myWeeklyMerged.entry?.totalPoints || 0)
-            )}{' '}
+            {myWeeklyMerged.index === -1
+              ? '-'
+              : formatAmountDisplay(
+                  Math.floor(myWeeklyMerged.entry?.totalPoints || 0)
+                )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>
         </div>
