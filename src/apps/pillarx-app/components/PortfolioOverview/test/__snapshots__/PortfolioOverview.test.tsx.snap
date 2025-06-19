@@ -176,15 +176,7 @@ exports[`<PortfolioOverview /> renders correctly and matches snapshot 1`] = `
         <img
           alt="copy-adress-icon"
           className="cursor-pointer"
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "copy-icon.svg",
-            }
-          }
+          src="token-market-data-copy.png"
           style={
             {
               "height": "full",

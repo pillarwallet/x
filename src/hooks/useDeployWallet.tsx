@@ -182,7 +182,7 @@ const useDeployWallet = () => {
       const gasPrice = BigInt(gasPriceHex);
 
       // This is a static gas unit for approx wallet deployment in "gas units" on all chains
-      const gasUnits = BigInt(271000);
+      const gasUnits = BigInt(330000);
 
       // Calculate total gas cost in wei
       const gasCostWei = gasPrice * gasUnits;

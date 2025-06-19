@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
 // images
-import CopyIcon from '../../images/copy-icon.svg';
+import CopyIcon from '../../images/token-market-data-copy.png';
 
 // components
 import TokenLogoMarketDataRow from '../TokenMarketDataRow/TokenLogoMarketDataRow';
