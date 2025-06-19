@@ -61,7 +61,7 @@ const App = () => {
     isLoading,
     isError,
     isSuccess,
-  } = useLeaderboardData(timeTab);
+  } = useLeaderboardData();
 
   const handleAllTabClick = useCallback(() => {
     dispatch(setActiveTab('all'));
@@ -193,7 +193,7 @@ const App = () => {
             <BodySmall className="text-white font-normal">
               Total Gas:{' '}
               <span className="text-purple_medium">
-                {formatAmountDisplay(totalGas.toFixed(2))}
+                ${formatAmountDisplay(totalGas.toFixed(2))}
               </span>
             </BodySmall>
           ) : null}

@@ -8,7 +8,7 @@ type PointsCardProps = {
   title: string;
   icon: string;
   background: string;
-  points: number;
+  points?: number;
   rank?: number;
   textTooltip?: string;
 };
@@ -39,7 +39,7 @@ const PointsCard = ({
       <div className="flex w-full items-center justify-between px-1">
         <BodySmall className="font-normal text-white">Points</BodySmall>
         <BodySmall className="font-semibold text-white">
-          {formatAmountDisplay(Math.floor(points || 0))}{' '}
+          {points != null ? formatAmountDisplay(Math.floor(points)) : '-'}{' '}
           <span className="text-white/[.5]">PX</span>
         </BodySmall>
       </div>

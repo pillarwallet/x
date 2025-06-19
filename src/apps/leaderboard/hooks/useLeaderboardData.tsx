@@ -12,9 +12,6 @@ import {
   useGetLeaderboardQuery,
 } from '../api/leaderboard';
 
-// reducer
-import { LeaderboardTimeTabsType } from '../reducer/LeaderboardSlice';
-
 // utils
 import {
   getCurrentWeekMigrationData,
@@ -27,7 +24,7 @@ import {
 import { useDateRanges } from './useDateRanges';
 import { useRankComparison } from './useRankComparison';
 
-export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
+export const useLeaderboardData = () => {
   const dateRanges = useDateRanges();
   const compareIndexes = useRankComparison();
   const [weeklyTradingData, setWeeklyTradingData] = useState<
@@ -37,7 +34,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
   // API calls
   const allTimeQuery = useGetLeaderboardQuery(
     { skipDefaultPoints: true },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, refetchOnFocus: true }
   );
 
   const weeklyQuery = useGetLeaderboardQuery(
@@ -46,7 +43,7 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       from: dateRanges.currentMonday,
       until: dateRanges.currentSunday,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, refetchOnFocus: true }
   );
 
   const lastWeeklyQuery = useGetLeaderboardQuery(
@@ -55,11 +52,12 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       from: dateRanges.lastMonday,
       until: dateRanges.lastSunday,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, refetchOnFocus: true }
   );
 
   const migrationQuery = useGetLeaderboardMigrationQuery(undefined, {
     refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
   });
 
   // Process all time trading data
@@ -93,7 +91,6 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
   // Process weekly trading data
   useEffect(() => {
     if (
-      timeTab === 'weekly' &&
       weeklyQuery.data &&
       lastWeeklyQuery.data &&
       !weeklyQuery.isLoading &&
@@ -125,7 +122,6 @@ export const useLeaderboardData = (timeTab: LeaderboardTimeTabsType) => {
       setWeeklyTradingData(updatedWeeklyData);
     }
   }, [
-    timeTab,
     weeklyQuery.data,
     lastWeeklyQuery.data,
     weeklyQuery.isLoading,

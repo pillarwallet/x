@@ -72,6 +72,6 @@ describe('OverviewPointsCard', () => {
       />
     );
 
-    expect(screen.getAllByText('-').length).toBe(2);
+    expect(screen.getAllByText('-').length).toBe(4);
   });
 });

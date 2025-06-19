@@ -109,7 +109,7 @@ const PxPointsSummary = ({
               title="Migration"
               icon={MigrationIcon}
               background="bg-percentage_red/[.05]"
-              points={myAllTimeMigration.entry?.totalPoints || 0}
+              points={myAllTimeMigration.entry?.totalPoints}
               rank={
                 myAllTimeMigration.index !== -1
                   ? myAllTimeMigration.index + 1
@@ -122,7 +122,7 @@ const PxPointsSummary = ({
             title="Trading"
             icon={TradingIcon}
             background="bg-percentage_green/[.05]"
-            points={myAllTimeTrading.entry?.totalPoints || 0}
+            points={myAllTimeTrading.entry?.totalPoints}
             rank={
               myAllTimeTrading.index !== -1
                 ? myAllTimeTrading.index + 1
