@@ -216,7 +216,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           const nativeToken = tokens.filter((token: Token) =>
             isNativeToken(token.contract)
           );
-          if (nativeToken.length > 0) setNativeAssetPrice(nativeToken[0]?.price || 0);
+          if (nativeToken.length > 0)
+            setNativeAssetPrice(nativeToken[0]?.price || 0);
           const feeOptions = paymasterObject
             .map(
               (item: {
