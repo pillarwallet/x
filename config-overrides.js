@@ -28,11 +28,10 @@ module.exports = function override(config) {
   ];
 
   // Chunking
-  
   config.optimization.splitChunks = {
     cacheGroups: {
       vendor: {
-       test: /[\\/]node_modules[\\/]/,
+        test: /[\\/]node_modules[\\/]/,
         chunks: 'all',
         maxSize: 50000,
       },
