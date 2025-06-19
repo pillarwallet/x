@@ -16,13 +16,17 @@ const chainIds = isTestnet
 
 const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: isTestnet
+    ? 'https://feed-nubpgwxpiq-uc.a.run.app'
+    : 'https://feed-7eu4izffpa-uc.a.run.app',
+});
+
+const baseQueryWithRetry = retry(baseQuery, { maxRetries: 5 });
+
 export const homeFeedApi = createApi({
   reducerPath: 'homeFeedApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: isTestnet
-      ? 'https://feed-nubpgwxpiq-uc.a.run.app'
-      : 'https://feed-7eu4izffpa-uc.a.run.app',
-  }),
+  baseQuery: baseQueryWithRetry,
   endpoints: (builder) => ({
     getTilesInfo: builder.query<ApiResponse, { page: number; address: string }>(
       {

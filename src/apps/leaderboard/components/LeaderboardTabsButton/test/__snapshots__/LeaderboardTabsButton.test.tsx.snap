@@ -1,31 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<LeaderboardTabsButton /> renders correctly and matches snapshot 1`] = `
-<div
-  className="flex w-full bg-container_grey rounded-2xl p-4 gap-4 mb-5"
-  id="leaderboard-button-tabs"
->
-  <button
-    className="p-3 w-full bg-purple_medium rounded-md"
-    onClick={[Function]}
-    type="button"
+exports[`<LeaderboardTabsButton /> matches snapshot 1`] = `
+<div>
+  <div
+    class="flex w-fit p-1 bg-[#121116] rounded-[10px]"
+    id="leaderboard-button-tabs"
   >
-    <p
-      className="text-base font-medium text-white"
+    <button
+      class="items-center justify-center w-[130px] rounded-md p-1.5 bg-container_grey"
+      type="button"
     >
-      Weekly
-    </p>
-  </button>
-  <button
-    className="p-3 w-full hover:bg-medium_grey hover:rounded-md"
-    onClick={[Function]}
-    type="button"
-  >
-    <p
-      className="text-base font-medium text-white"
+      <p
+        class="font-normal text-[13px] text-white"
+      >
+        Weekly
+      </p>
+    </button>
+    <button
+      class="items-center justify-center w-[130px] rounded-md p-1.5 bg-[#121116]"
+      type="button"
     >
-      All time
-    </p>
-  </button>
+      <p
+        class="font-normal text-[13px] text-white/[.5]"
+      >
+        All Time
+      </p>
+    </button>
+  </div>
 </div>
 `;
