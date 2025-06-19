@@ -55,7 +55,6 @@ import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence'
 import {
   GasConsumptions,
   getAllGaslessPaymasters,
-  getGasPrice,
 } from '../../../services/gasless';
 import { getUserOperationStatus } from '../../../services/userOpStatus';
 
@@ -149,6 +148,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [selectedFeeAsset, setSelectedFeeAsset] = React.useState<{
     token: string;
     decimals: number;
+    tokenPrice?: string;
   }>();
   const [feeAssetOptions, setFeeAssetOptions] = React.useState<
     TokenAssetSelectOption[]
@@ -167,7 +167,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     data: walletPortfolioData,
     isSuccess: isWalletPortfolioDataSuccess,
     error: walletPortfolioDataError,
-  } = useGetWalletPortfolioQuery({ wallet: accountAddress || '' });
+  } = useGetWalletPortfolioQuery({
+    wallet: accountAddress || '',
+    isPnl: false,
+  });
 
   useEffect(() => {
     if (walletPortfolioData && isWalletPortfolioDataSuccess) {
@@ -206,12 +209,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (!walletPortfolio) return;
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
     if (!selectedAsset) return;
-    setQueryString(`chainId=${selectedAsset.chainId}&useVp=true`);
+    setQueryString(`?chainId=${selectedAsset.chainId}`);
     getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
       (paymasterObject) => {
-        // eslint-disable-next-line no-console
-        console.log(paymasterObject);
         if (paymasterObject) {
+          const nativeToken = tokens.filter((token: Token) =>
+            isNativeToken(token.contract)
+          );
+          setNativeAssetPrice(nativeToken[0]?.price || 0);
           const feeOptions = paymasterObject
             .map(
               (item: {
@@ -254,6 +259,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             setSelectedFeeAsset({
               token: feeOptions[0].asset.contract,
               decimals: feeOptions[0].asset.decimals,
+              tokenPrice: feeOptions[0].asset.price?.toString(),
             });
             setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
             setPaymasterContext({
@@ -275,16 +281,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   }, [selectedAsset, walletPortfolio]);
 
   const setApprovalData = async (gasCost: number) => {
-    if (selectedFeeAsset && gasPrice) {
+    if (selectedFeeAsset && gasPrice && gasCost) {
       const estimatedCost = Number(
         utils.formatEther(BigNumber.from(gasCost).mul(gasPrice))
       );
       const costAsFiat = +estimatedCost * nativeAssetPrice;
-      const feeTokenPrice = await getPrices([selectedFeeAsset.token]);
+      const feeTokenPrice = selectedFeeAsset.tokenPrice;
       let estimatedCostInToken;
       if (feeTokenPrice) {
-        const feeTokenPriceInUSD = feeTokenPrice[0].usd;
-        estimatedCostInToken = (costAsFiat / feeTokenPriceInUSD).toFixed(
+        estimatedCostInToken = (costAsFiat / +feeTokenPrice).toFixed(
           selectedFeeAsset.decimals
         );
         setFeeMin(estimatedCostInToken);
@@ -315,7 +320,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
      * though it can be even lower for deployed wallet to save rpc call for checking
      * deployed wallet or not, we can use the same gas cost for both deployed and undeployed wallet
      */
-    if (selectedAsset.chainId === 42161) { // See if its Arbitrum Chain as gas consumptions lend to be higher than all other chains
+    // See if its Arbitrum Chain as gas consumptions lend to be higher than all other chains
+    if (selectedAsset.chainId === 42161) {
       if (selectedAsset.type === 'token') {
         if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
           gasCost = GasConsumptions.native_arb; // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
@@ -343,7 +349,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   }, [gasPrice, selectedFeeAsset]);
 
   const { transactionDebugLog } = useTransactionDebugLogger();
-  const { getWalletDeploymentCost } = useDeployWallet();
+  const { getWalletDeploymentCost, getGasPrice } = useDeployWallet();
   const {
     userOpStatus,
     setTransactionHash,
@@ -840,11 +846,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   };
 
   const handleOnChange = (value: SelectOption) => {
+    const tokenOption = feeAssetOptions.filter(
+      (option) => option.id === value.id
+    )[0] as TokenAssetSelectOption;
     const values = value.id.split('-');
     const tokenAddress = values[0];
     setSelectedFeeAsset({
       token: tokenAddress,
       decimals: Number(values[3]) ?? 18,
+      tokenPrice: tokenOption.asset.price?.toString(),
     });
     const paymasterAddress = value.id.split('-')[2];
     setSelectedPaymasterAddress(paymasterAddress);
