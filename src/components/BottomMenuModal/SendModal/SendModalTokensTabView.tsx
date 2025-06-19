@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
   EtherspotBatch,
   EtherspotBatches,
@@ -14,7 +15,7 @@ import {
   useEtherspotUtils,
   useWalletAddress,
 } from '@etherspot/transaction-kit';
-import { ethers } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import {
   ArrangeVertical as ArrangeVerticalIcon,
   ClipboardText as IconClipboardText,
@@ -26,12 +27,16 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // components
-import AssetSelect, { AssetSelectOption } from '../../Form/AssetSelect';
+import AssetSelect, {
+  AssetSelectOption,
+  TokenAssetSelectOption,
+} from '../../Form/AssetSelect';
 import FormGroup from '../../Form/FormGroup';
 import Label from '../../Form/Label';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
+import Select, { SelectOption } from '../../Form/Select';
 
 // providers
 import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
@@ -47,6 +52,10 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 
 // services
 import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
+import {
+  GasConsumptions,
+  getAllGaslessPaymasters,
+} from '../../../services/gasless';
 import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
@@ -64,6 +73,20 @@ import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import { SendModalData } from '../../../types';
+import {
+  chainNameToChainIdTokensData,
+  Token,
+} from '../../../services/tokensData';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../../apps/the-exchange/hooks/useReducerHooks';
+import {
+  convertPortfolioAPIResponseToToken,
+  useGetWalletPortfolioQuery,
+} from '../../../services/pillarXApiWalletPortfolio';
+import { PortfolioData } from '../../../types/api';
+import { setWalletPortfolio } from '../../../apps/the-exchange/reducer/theExchangeSlice';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -114,8 +137,220 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   } = useBottomMenuModal();
   const contextNfts = useContext(AccountNftsContext);
   const contextBalances = useContext(AccountBalancesContext);
+  const paymasterUrl = process.env.REACT_APP_PAYMASTER_URL;
+  const [isPaymaster, setIsPaymaster] = React.useState<boolean>(false);
+  const [paymasterContext, setPaymasterContext] = React.useState<{
+    mode: string;
+    token?: string;
+  } | null>({ mode: 'sponsor' });
+  const [selectedPaymasterAddress, setSelectedPaymasterAddress] =
+    React.useState<string>('');
+  const [selectedFeeAsset, setSelectedFeeAsset] = React.useState<{
+    token: string;
+    decimals: number;
+    tokenPrice?: string;
+  }>();
+  const [feeAssetOptions, setFeeAssetOptions] = React.useState<
+    TokenAssetSelectOption[]
+  >([]);
+  const [queryString, setQueryString] = React.useState<string>('');
+  const [approveData, setApproveData] = React.useState<string>('');
+  const [gasPrice, setGasPrice] = React.useState<string>();
+  const [feeMin, setFeeMin] = React.useState<string>();
+
+  const dispatch = useAppDispatch();
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
+  );
+
+  const {
+    data: walletPortfolioData,
+    isSuccess: isWalletPortfolioDataSuccess,
+    error: walletPortfolioDataError,
+  } = useGetWalletPortfolioQuery({
+    wallet: accountAddress || '',
+    isPnl: false,
+  });
+
+  useEffect(() => {
+    if (walletPortfolioData && isWalletPortfolioDataSuccess) {
+      dispatch(setWalletPortfolio(walletPortfolioData?.result?.data));
+    }
+    if (!isWalletPortfolioDataSuccess || walletPortfolioDataError) {
+      if (walletPortfolioDataError) {
+        console.error(walletPortfolioDataError);
+        setErrorMessage(t`error.failedWalletPortfolio`);
+      }
+      dispatch(setWalletPortfolio(undefined));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    walletPortfolioData,
+    isWalletPortfolioDataSuccess,
+    walletPortfolioDataError,
+  ]);
+
+  const [feeType, setFeeType] = React.useState([
+    {
+      id: 'Gasless',
+      title: 'Gasless',
+      type: 'token',
+      value: '',
+    },
+    {
+      id: 'Native Token',
+      title: 'Native Token',
+      type: 'token',
+      value: '',
+    },
+  ]);
+
+  useEffect(() => {
+    if (!walletPortfolio) return;
+    const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
+    if (!selectedAsset) return;
+    setQueryString(`?chainId=${selectedAsset.chainId}`);
+    getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
+      (paymasterObject) => {
+        if (paymasterObject) {
+          const nativeToken = tokens.filter((token: Token) =>
+            isNativeToken(token.contract)
+          );
+          if (nativeToken.length > 0)
+            setNativeAssetPrice(nativeToken[0]?.price || 0);
+          const feeOptions = paymasterObject
+            .map(
+              (item: {
+                gasToken: string;
+                chainId: number;
+                epVersion: string;
+                paymasterAddress: string;
+                // eslint-disable-next-line consistent-return, array-callback-return
+              }) => {
+                const tokenData = tokens.find(
+                  (token: Token) =>
+                    token.contract === item.gasToken.toLowerCase()
+                );
+                if (tokenData)
+                  return {
+                    id: `${item.gasToken}-${item.chainId}-${item.paymasterAddress}-${tokenData.decimals}`,
+                    type: 'token',
+                    title: tokenData.name,
+                    imageSrc: tokenData.logo,
+                    chainId: chainNameToChainIdTokensData(tokenData.blockchain),
+                    value: tokenData.balance,
+                    price: tokenData.price,
+                    asset: {
+                      ...tokenData,
+                      contract: item.gasToken,
+                      decimals: tokenData.decimals,
+                    },
+                  } as TokenAssetSelectOption;
+              }
+            )
+            .filter(
+              (value): value is TokenAssetSelectOption => value !== undefined
+            );
+          if (feeOptions && feeOptions.length > 0 && feeOptions[0]) {
+            setFeeAssetOptions(feeOptions);
+            // get Skandha gas price
+            getGasPrice(selectedAsset.chainId).then((res) => {
+              setGasPrice(res);
+            });
+            setSelectedFeeAsset({
+              token: feeOptions[0].asset.contract,
+              decimals: feeOptions[0].asset.decimals,
+              tokenPrice: feeOptions[0].asset.price?.toString(),
+            });
+            setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
+            setPaymasterContext({
+              mode: 'commonerc20',
+              token: feeOptions[0].asset.contract,
+            });
+            setIsPaymaster(true);
+          } else {
+            setFeeType([]);
+          }
+        } else {
+          setPaymasterContext(null);
+          setIsPaymaster(false);
+          setFeeType([]);
+        }
+      }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAsset, walletPortfolio]);
+
+  const setApprovalData = async (gasCost: number) => {
+    if (selectedFeeAsset && gasPrice && gasCost) {
+      const estimatedCost = Number(
+        utils.formatEther(BigNumber.from(gasCost).mul(gasPrice))
+      );
+      const costAsFiat = +estimatedCost * nativeAssetPrice;
+      const feeTokenPrice = selectedFeeAsset.tokenPrice;
+      let estimatedCostInToken;
+      if (feeTokenPrice) {
+        estimatedCostInToken = (costAsFiat / +feeTokenPrice).toFixed(
+          selectedFeeAsset.decimals
+        );
+        setFeeMin(estimatedCostInToken);
+        setApproveData(
+          encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [
+              selectedPaymasterAddress as Address,
+              parseUnits(estimatedCostInToken, selectedFeeAsset.decimals),
+            ],
+          })
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedAsset) return;
+    if (!gasPrice) return;
+    let gasCost = 0;
+    /*
+     * The gas cost is estimated based on the type of asset being sent.
+     * The gas cost is calculated based on the type of asset being sent
+     * and the chain ID of the asset. The gas cost is then used to calculate
+     * the estimated cost in fiat.
+     * And the token cost is generally estimated as $0.01 even for undeployed wallet
+     * though it can be even lower for deployed wallet to save rpc call for checking
+     * deployed wallet or not, we can use the same gas cost for both deployed and undeployed wallet
+     */
+    // See if its Arbitrum Chain as gas consumptions lend to be higher than all other chains
+    if (selectedAsset.chainId === 42161) {
+      if (selectedAsset.type === 'token') {
+        if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
+          gasCost = GasConsumptions.native_arb; // estimated gas consumption for native asset transfer for undeployed wallet + 15% markup
+        } else {
+          gasCost = GasConsumptions.token_arb; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+        }
+      } else if (selectedAsset.type === 'nft') {
+        gasCost = GasConsumptions.nft_arb; // estimated gas consumption for token asset transfer for undeployed wallet + 15% markup
+      }
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (selectedAsset.type === 'token') {
+        if (selectedAsset.asset.contract === ethers.constants.AddressZero) {
+          gasCost = GasConsumptions.native; // estimated gas consumption for native asset transfer for deployed wallet + 15% markup
+        } else {
+          gasCost = GasConsumptions.token; // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+        }
+      } else if (selectedAsset.type === 'nft') {
+        gasCost = GasConsumptions.nft; // estimated gas consumption for token asset transfer for deployed wallet + 15% markup
+      }
+    }
+    setApprovalData(gasCost);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gasPrice, selectedFeeAsset]);
+
   const { transactionDebugLog } = useTransactionDebugLogger();
-  const { getWalletDeploymentCost } = useDeployWallet();
+  const { getWalletDeploymentCost, getGasPrice } = useDeployWallet();
   const {
     userOpStatus,
     setTransactionHash,
@@ -290,6 +525,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       setIsSending(false);
       setErrorMessage('');
       return;
+    }
+
+    if (isPaymaster && paymasterContext?.mode === 'commonerc20') {
+      const amountLeft = +getAmountLeft(
+        selectedAsset,
+        amount,
+        selectedAssetBalance
+      );
+      if (!feeMin) return;
+      if (amountLeft < +feeMin) {
+        setErrorMessage(t`error.insufficientBalanceForGasless`);
+        setIsSending(false);
+        return;
+      }
     }
 
     transactionDebugLog('Preparing to send transaction');
@@ -516,6 +765,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (isSendDisabled) return;
     setErrorMessage('');
 
+    if (isPaymaster) {
+      setErrorMessage(t`error.paymasterNotSupported`);
+      return;
+    }
+
     const transactionToBatch = batches?.[0]?.batches?.[0]?.transactions?.[0];
     if (!transactionToBatch) {
       setErrorMessage(t`error.failedToGetTransactionDataForBatching`);
@@ -592,6 +846,46 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setRecipient('');
   };
 
+  const handleOnChange = (value: SelectOption) => {
+    const tokenOption = feeAssetOptions.filter(
+      (option) => option.id === value.id
+    )[0] as TokenAssetSelectOption;
+    const values = value.id.split('-');
+    const tokenAddress = values[0];
+    setSelectedFeeAsset({
+      token: tokenAddress,
+      decimals: Number(values[3]) ?? 18,
+      tokenPrice: tokenOption.asset.price?.toString(),
+    });
+    const paymasterAddress = value.id.split('-')[2];
+    setSelectedPaymasterAddress(paymasterAddress);
+  };
+
+  const handleOnChangeFeeAsset = (value: SelectOption) => {
+    if (value.title === 'Gasless') {
+      setPaymasterContext({
+        mode: 'commonerc20',
+        token: selectedFeeAsset?.token,
+      });
+      setIsPaymaster(true);
+    } else {
+      setPaymasterContext(null);
+      setIsPaymaster(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedFeeAsset) return;
+    if (isPaymaster && paymasterContext?.mode === 'commonerc20') {
+      setPaymasterContext({
+        mode: 'commonerc20',
+        token: selectedFeeAsset.token,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFeeAsset]);
+
   const transferFromAbi = {
     inputs: [
       { internalType: 'address', name: 'from', type: 'address' },
@@ -614,23 +908,85 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           }
         />
         {'transaction' in payload && (
-          <EtherspotBatches>
-            <EtherspotBatch chainId={payload.transaction.chainId}>
-              <EtherspotTransaction
-                to={payload.transaction.to}
-                value={payload.transaction.value || '0'}
-                data={payload.transaction.data || undefined}
-              />
-            </EtherspotBatch>
-          </EtherspotBatches>
+          <>
+            <EtherspotBatches
+              paymaster={
+                isPaymaster
+                  ? {
+                      url: `${paymasterUrl}${queryString}`,
+                      context: paymasterContext,
+                    }
+                  : undefined
+              }
+              id="batch-1"
+            >
+              <EtherspotBatch chainId={payload.transaction.chainId}>
+                {isPaymaster &&
+                  selectedPaymasterAddress &&
+                  selectedFeeAsset && (
+                    <EtherspotTransaction
+                      to={selectedFeeAsset.token}
+                      data={approveData}
+                    />
+                  )}
+                <EtherspotTransaction
+                  to={payload.transaction.to}
+                  value={payload.transaction.value || '0'}
+                  data={payload.transaction.data || undefined}
+                />
+              </EtherspotBatch>
+            </EtherspotBatches>
+            {feeType.length > 0 && (
+              <>
+                <Label>{t`label.feeType`}</Label>
+                <Select
+                  type="token"
+                  onChange={handleOnChangeFeeAsset}
+                  options={feeType}
+                  defaultSelectedId={feeType[0].id}
+                />
+              </>
+            )}
+            {paymasterContext?.mode === 'commonerc20' &&
+              feeAssetOptions.length > 0 && (
+                <>
+                  <Label>{t`label.selectFeeAsset`}</Label>
+                  <Select
+                    type="token"
+                    onChange={handleOnChange}
+                    options={feeAssetOptions}
+                    defaultSelectedId={feeAssetOptions[0]?.id}
+                  />
+                </>
+              )}
+          </>
         )}
         {'batches' in payload && (
-          <EtherspotBatches>
+          <EtherspotBatches
+            paymaster={
+              isPaymaster
+                ? {
+                    url: `${paymasterUrl}${queryString}`,
+                    context: paymasterContext,
+                  }
+                : undefined
+            }
+            id="batch-1"
+          >
             {payload.batches.map((batch, index) => (
               <EtherspotBatch
                 key={`${batch.chainId}-${index}`}
                 chainId={batch.chainId}
               >
+                {isPaymaster &&
+                  selectedPaymasterAddress &&
+                  approveData &&
+                  selectedFeeAsset && (
+                    <EtherspotTransaction
+                      to={selectedFeeAsset.token}
+                      data={approveData}
+                    />
+                  )}
                 {batch.transactions.map((transaction, idx) => (
                   <EtherspotTransaction
                     key={`${transaction.to}-${idx}`}
@@ -716,8 +1072,27 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           )}
         </FormGroup>
       )}
-      {selectedAsset && (
+      {selectedAsset && feeType.length > 0 && (
         <FormGroup>
+          <Label>{t`label.feeType`}</Label>
+          <Select
+            type="token"
+            onChange={handleOnChangeFeeAsset}
+            options={feeType}
+            defaultSelectedId={feeType[0].id}
+          />
+          {paymasterContext?.mode === 'commonerc20' &&
+            feeAssetOptions.length > 0 && (
+              <>
+                <Label>{t`label.selectFeeAsset`}</Label>
+                <Select
+                  type="token"
+                  onChange={handleOnChange}
+                  options={feeAssetOptions}
+                  defaultSelectedId={feeAssetOptions[0]?.id}
+                />
+              </>
+            )}
           <Label>{t`label.sendTo`}</Label>
           <TextInput
             id="send-to-address-input-send-modal"
@@ -744,8 +1119,27 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         </FormGroup>
       )}
       {isTransactionReady && (
-        <EtherspotBatches>
+        <EtherspotBatches
+          paymaster={
+            isPaymaster
+              ? {
+                  url: `${paymasterUrl}${queryString}`,
+                  context: paymasterContext,
+                }
+              : undefined
+          }
+          id="batch-1"
+        >
           <EtherspotBatch chainId={selectedAsset.chainId}>
+            {isPaymaster &&
+              selectedPaymasterAddress &&
+              selectedFeeAsset &&
+              approveData && (
+                <EtherspotTransaction
+                  to={selectedFeeAsset.token}
+                  data={approveData}
+                />
+              )}
             {selectedAsset?.type === 'nft' && (
               <EtherspotContractTransaction
                 contractAddress={selectedAsset.collection.contractAddress}
