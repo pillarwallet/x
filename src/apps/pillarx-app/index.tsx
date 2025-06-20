@@ -91,7 +91,7 @@ const App = () => {
     }
 
     // when apiData loads, we save it in a state to keep previous data
-    if (homeFeed && isHomeFeedSuccess) {
+    if (homeFeed && isHomeFeedSuccess && walletAddress) {
       setPageData((prevData) => {
         const newApiData = [...prevData];
         homeFeed.projection.forEach((item) => {

@@ -11,9 +11,7 @@ import Button from '../components/Button';
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
-
-// Icon
-import { PillarWalletIcon } from '../apps/stealthex/components/common/icons';
+import PillarWalletIcon from '../apps/leaderboard/images/pillar-wallet-icon.svg';
 
 const Login = () => {
   const { login } = usePrivy();
