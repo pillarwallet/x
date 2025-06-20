@@ -6,7 +6,7 @@ run-name: ${{ github.actor }} merged to ${{ github.repository }} Sentry source m
 #     branches:
 #       - main
 #       - staging
-on: [pull_request]
+on: push
 
 jobs:
   lint:
