@@ -15,10 +15,8 @@ import BottomMenu from '.';
 import { defaultTheme } from '../../theme';
 
 // providers
-import AccountBalancesProvider from '../../providers/AccountBalancesProvider';
 import AccountNftsProvider from '../../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../../providers/AccountTransactionHistoryProvider';
-import AssetsProvider from '../../providers/AssetsProvider';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
@@ -58,25 +56,21 @@ describe('<BottomMenu />', () => {
           <BrowserRouter>
             {/* <EtherspotTransactionKit provider={provider}> */}
             <AccountTransactionHistoryProvider>
-              <AssetsProvider>
-                <AccountBalancesProvider>
-                  <AccountNftsProvider>
-                    <ThemeProvider theme={defaultTheme}>
-                      <LanguageProvider>
-                        <GlobalTransactionsBatchProvider>
-                          <PrivateKeyLoginProvider>
-                            <BottomMenuModalProvider>
-                              <SelectedChainsHistoryProvider>
-                                <BottomMenu />
-                              </SelectedChainsHistoryProvider>
-                            </BottomMenuModalProvider>
-                          </PrivateKeyLoginProvider>
-                        </GlobalTransactionsBatchProvider>
-                      </LanguageProvider>
-                    </ThemeProvider>
-                  </AccountNftsProvider>
-                </AccountBalancesProvider>
-              </AssetsProvider>
+              <AccountNftsProvider>
+                <ThemeProvider theme={defaultTheme}>
+                  <LanguageProvider>
+                    <GlobalTransactionsBatchProvider>
+                      <PrivateKeyLoginProvider>
+                        <BottomMenuModalProvider>
+                          <SelectedChainsHistoryProvider>
+                            <BottomMenu />
+                          </SelectedChainsHistoryProvider>
+                        </BottomMenuModalProvider>
+                      </PrivateKeyLoginProvider>
+                    </GlobalTransactionsBatchProvider>
+                  </LanguageProvider>
+                </ThemeProvider>
+              </AccountNftsProvider>
             </AccountTransactionHistoryProvider>
             {/* </EtherspotTransactionKit> */}
           </BrowserRouter>

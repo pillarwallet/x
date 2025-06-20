@@ -4,17 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { PiCaretDown, PiCaretUp } from 'react-icons/pi';
 import styled from 'styled-components';
 
+// types
+import { SelectOption } from '../../../types';
+
 // components
+import RandomAvatar from '../../../apps/pillarx-app/components/RandomAvatar/RandomAvatar';
+import { CompatibleChains } from '../../../utils/blockchain';
 import SkeletonLoader from '../../SkeletonLoader';
 import Alert from '../../Text/Alert';
-
-export interface SelectOption {
-  id: string;
-  title: string;
-  value: string | number;
-  isLoadingValue?: boolean;
-  imageSrc?: string;
-}
 
 const ListItem = ({
   option,
@@ -28,6 +25,10 @@ const ListItem = ({
   hideValue?: boolean;
 }) => {
   const [hideImage, setHideImage] = useState(false);
+
+  const isChainName = CompatibleChains.map((chains) => chains.chainName).some(
+    (chain) => option.title.includes(chain)
+  );
 
   return (
     <ListItemWrapper
@@ -44,6 +45,11 @@ const ListItem = ({
           />
         </ListItemLeft>
       )}
+      {!option.imageSrc && !isChainName && (
+        <ListItemLeft>
+          <RandomAvatar name={option.title} isRound variant="marble" />
+        </ListItemLeft>
+      )}
       <ListItemRight>
         <ListItemTitle>{option.title}</ListItemTitle>
         {!hideValue && (
@@ -52,7 +58,11 @@ const ListItem = ({
               <ListItemValue>{option.value}</ListItemValue>
             )}
             {option.isLoadingValue && (
-              <SkeletonLoader $height="15px" $width="30%" />
+              <SkeletonLoader
+                data-testid="skeleton-loader-list-item"
+                $height="15px"
+                $width="30%"
+              />
             )}
           </>
         )}

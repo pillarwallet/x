@@ -34,7 +34,6 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // providers
-import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
 import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
 
@@ -66,7 +65,6 @@ const SendModalBatchesTabView = () => {
   const { send } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
   const contextNfts = useContext(AccountNftsContext);
-  const contextBalances = useContext(AccountBalancesContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
   const {
     userOpStatus,
@@ -93,14 +91,12 @@ const SendModalBatchesTabView = () => {
   useEffect(() => {
     if (!anyChainSending) {
       contextNfts?.data.setUpdateData(true);
-      contextBalances?.data.setUpdateData(true);
     }
 
     if (anyChainSending) {
       contextNfts?.data.setUpdateData(false);
-      contextBalances?.data.setUpdateData(false);
     }
-  }, [contextNfts?.data, contextBalances?.data, anyChainSending]);
+  }, [contextNfts?.data, anyChainSending]);
 
   const onSend = async (chainId: number, batchId: string) => {
     if (isSending[chainId]) {
