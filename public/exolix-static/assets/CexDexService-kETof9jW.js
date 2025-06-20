@@ -1,1 +1,0 @@
-import{aK as e,aN as r}from"./main-CDKDnvW7.js";import{S as i}from"./ServiceList-CfW5g8Lj.js";import"./App-DCKfOddi.js";import"./tslib.es6-D9yd9Yl3.js";function a(){return e.jsxs("div",{children:[e.jsx("h1",{children:"CexDexService"}),e.jsx(i,{exclude:[r.CEX_DEX]})]})}export{a as default};
