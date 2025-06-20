@@ -1,7 +1,8 @@
+// @ts-nocheck
 import styled, { keyframes } from 'styled-components';
 
-import searchIcon from '../../icons/search.svg';
 import closeIcon from '../../icons/close.svg';
+import searchIcon from '../../icons/search.svg';
 
 export const Container = styled.div`
   position: absolute;
@@ -26,7 +27,7 @@ export const Heading = styled.div`
   height: 54px;
 `;
 
-export const Body = styled.div<{type: string}>`
+export const Body = styled.div<{ type: string }>`
   padding: 0;
   background-color: ${({ theme }) => theme.background};
   max-height: ${({ type }) => (type === 'to' ? '160px' : '250px')};

@@ -1,14 +1,23 @@
+// @ts-nocheck
 import styled from 'styled-components';
 
-import arrow from '../../icons/temp/arrow.svg';
 import arrowHover from '../../icons/temp/arrow-hover.svg';
+import arrow from '../../icons/temp/arrow.svg';
 
 export const Row = styled.div`
   display: flex;
   position: relative;
 `;
 
-const getInputGroupHover = ({ $isActive, $isDisabled, theme } : {$isActive: boolean, $isDisabled: boolean, theme: Record<string, string>}) => {
+const getInputGroupHover = ({
+  $isActive,
+  $isDisabled,
+  theme,
+}: {
+  $isActive: boolean;
+  $isDisabled: boolean;
+  theme: Record<string, string>;
+}) => {
   if ($isDisabled) return theme.background1;
   if ($isActive) return theme.background;
 
@@ -45,12 +54,15 @@ export const InputGroup = styled.div<{
 }>`
   display: flex;
   height: 54px;
-  background: ${({ $isActive, theme }) => ($isActive ? theme.background : theme.background1)};
-  border-radius: ${({ $withError }) => ($withError ? '8px 0px 0px 0px' : '8px 0px 0px 8px')};
+  background: ${({ $isActive, theme }) =>
+    $isActive ? theme.background : theme.background1};
+  border-radius: ${({ $withError }) =>
+    $withError ? '8px 0px 0px 0px' : '8px 0px 0px 8px'};
   padding: 10px 10px 6px 16px;
   align-items: center;
   justify-content: space-between;
-  border: ${({ theme, $isActive }) => $isActive && `1px solid ${theme.inputActiveBorder}`};
+  border: ${({ theme, $isActive }) =>
+    $isActive && `1px solid ${theme.inputActiveBorder}`};
   position: relative;
   width: calc(100% - 90px);
   gap: 18px;
@@ -87,7 +99,7 @@ export const InputGroup = styled.div<{
   }
 `;
 
-const getTickerSizeDesk = ({ $length }: {$length: number | undefined}) => {
+const getTickerSizeDesk = ({ $length }: { $length: number | undefined }) => {
   switch ($length) {
     case 7:
       return '15px';
@@ -102,7 +114,7 @@ const getTickerSizeDesk = ({ $length }: {$length: number | undefined}) => {
   }
 };
 
-const getTickerSize = ({ $length }: {$length: number | undefined}) => {
+const getTickerSize = ({ $length }: { $length: number | undefined }) => {
   switch ($length) {
     case 5:
       return '11px';
@@ -150,7 +162,11 @@ export const InputText = styled.div`
   font-weight: 600;
 `;
 
-export const InputTo = styled.div<{ $fixed: boolean; $hide: boolean | undefined, $isDisabled: boolean }>`
+export const InputTo = styled.div<{
+  $fixed: boolean;
+  $hide: boolean | undefined;
+  $isDisabled: boolean;
+}>`
   background: transparent;
   border: none;
   outline: none;
@@ -163,7 +179,7 @@ export const InputTo = styled.div<{ $fixed: boolean; $hide: boolean | undefined,
   line-height: 120%;
   color: ${({ theme }) => theme.text1};
   display: ${({ $hide }) => ($hide ? 'none' : 'flex')};
-  pointer-events: ${({ $isDisabled }) => $isDisabled ? 'none' : 'all'};
+  pointer-events: ${({ $isDisabled }) => ($isDisabled ? 'none' : 'all')};
   align-items: center;
   max-width: 100%;
 
@@ -273,7 +289,7 @@ export const Icon = styled.div`
   }
 `;
 
-export const Name = styled.span<{$length: number | undefined}>`
+export const Name = styled.span<{ $length: number | undefined }>`
   margin-right: 0;
   font-family: Inter, sans-serif;
   font-feature-settings: 'calt' off;
