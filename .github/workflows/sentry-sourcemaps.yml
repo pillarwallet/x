@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: echo "{data:[]}" >| src/data/tokens.json
+      - run: cat src/data/tokens.json
       - run: npm i
       - run: |
           export NODE_OPTIONS="--max_old_space_size=4096"
