@@ -2,13 +2,61 @@
 
 exports[`<Select /> renders correctly with default option 1`] = `
 <DocumentFragment>
-  <div>
+  .c5 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c3 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 2"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -79,21 +127,21 @@ exports[`<Select /> renders correctly with default option 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 2
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test2
         </p>
       </div>
       <div
-        class="sc-dTvVRJ euuemL"
+        class="c5"
       >
         <svg
           fill="currentColor"
@@ -116,12 +164,34 @@ exports[`<Select /> renders correctly with default option 1`] = `
 
 exports[`<Select /> renders correctly with no options 1`] = `
 <DocumentFragment>
-  <div>
+  .c0 {
+  padding: 13px 13px 13px;
+  background: transparent;
+  border: 1px solid rgba(226, 221, 255, 0.15);
+  color: rgba(226, 221, 255, 0.9);
+  margin-bottom: 15px;
+  font-size: 12px;
+  border-radius: 6px;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c1 {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+<div>
     <p
-      class="sc-hvigdm eKBcQB"
+      class="c0"
     >
       <span
-        class="sc-fhHczv ldBfyP"
+        class="c1"
       >
         <svg
           fill="none"
@@ -154,13 +224,60 @@ exports[`<Select /> renders correctly with no options 1`] = `
 
 exports[`<Select /> renders correctly with option image 1`] = `
 <DocumentFragment>
-  <div>
+  .c5 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c3 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 1"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -231,26 +348,26 @@ exports[`<Select /> renders correctly with option image 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 1
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 2"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -321,44 +438,44 @@ exports[`<Select /> renders correctly with option image 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 2
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test2
         </p>
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 3"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <img
           alt="test 3"
-          class="sc-ggWZvA kpXhYu"
+          class="c5"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 3
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test3
         </p>
@@ -370,37 +487,91 @@ exports[`<Select /> renders correctly with option image 1`] = `
 
 exports[`<Select /> renders correctly with selected option image 1`] = `
 <DocumentFragment>
-  <div>
+  .c2 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c6 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c3 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c4 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c5 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 3"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <img
           alt="test 3"
-          class="sc-ggWZvA kpXhYu"
+          class="c2"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c3"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c4"
         >
           test 3
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c5"
         >
           test3
         </p>
       </div>
       <div
-        class="sc-dTvVRJ euuemL"
+        class="c6"
       >
         <svg
           fill="currentColor"
@@ -423,13 +594,60 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 
 exports[`<Select /> renders correctly with some options 1`] = `
 <DocumentFragment>
-  <div>
+  .c5 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c3 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 1"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -500,26 +718,26 @@ exports[`<Select /> renders correctly with some options 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 1
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 2"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -590,44 +808,44 @@ exports[`<Select /> renders correctly with some options 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 2
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test2
         </p>
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 3"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <img
           alt="test 3"
-          class="sc-ggWZvA kpXhYu"
+          class="c5"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 3
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test3
         </p>
@@ -639,13 +857,61 @@ exports[`<Select /> renders correctly with some options 1`] = `
 
 exports[`<Select /> responds once clicked 1`] = `
 <DocumentFragment>
-  <div>
+  .c5 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 5px;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c3 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 2"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -716,21 +982,21 @@ exports[`<Select /> responds once clicked 1`] = `
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 2
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test2
         </p>
       </div>
       <div
-        class="sc-dTvVRJ euuemL"
+        class="c5"
       >
         <svg
           fill="currentColor"
@@ -753,13 +1019,69 @@ exports[`<Select /> responds once clicked 1`] = `
 
 exports[`<Select /> shows loading skeleton on option item where option value is loading 1`] = `
 <DocumentFragment>
-  <div>
+  .c5 {
+  height: 15px;
+  width: 30%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.c6 {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c3 {
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.c0:hover {
+  background: rgba(217, 217, 217, 0.2);
+}
+
+<div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 1"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -830,26 +1152,26 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 1
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 2"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <svg
           class="rounded-md"
@@ -920,43 +1242,43 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
         </svg>
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 2
         </p>
         <div
-          class="sc-bRKDuR leMxPT"
+          class="c5"
           data-testid="skeleton-loader-list-item"
         />
       </div>
     </div>
     <div
-      class="sc-kNOymR lcUCdr"
+      class="c0"
       id="action-bar-send-test 3"
     >
       <div
-        class="sc-jwTyAe kxknmQ"
+        class="c1"
       >
         <img
           alt="test 3"
-          class="sc-ggWZvA kpXhYu"
+          class="c6"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="sc-hjsuWn joxzXa"
+        class="c2"
       >
         <p
-          class="sc-jJLAfE SwxeK"
+          class="c3"
         >
           test 3
         </p>
         <p
-          class="sc-hwkwBN knRsnb"
+          class="c4"
         >
           test3
         </p>
@@ -968,24 +1290,76 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 
 exports[`<Select /> shows loading skeleton when options loading 1`] = `
 <DocumentFragment>
-  <div
-    class="sc-kNOymR amqZb"
+  .c2 {
+  height: 42px;
+  width: 42px;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 50%;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.c4 {
+  height: 15px;
+  width: 80%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.c5 {
+  height: 15px;
+  width: 30%;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 8px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.c1 {
+  width: 42px;
+}
+
+.c3 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.c0 {
+  border-radius: 10px;
+  background: rgba(217, 217, 217, 0.05);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+<div
+    class="c0"
   >
     <div
-      class="sc-jwTyAe kxknmQ"
+      class="c1"
     >
       <div
-        class="sc-bRKDuR fUDIyl"
+        class="c2"
       />
     </div>
     <div
-      class="sc-hjsuWn joxzXa"
+      class="c3"
     >
       <div
-        class="sc-bRKDuR eWLgrM"
+        class="c4"
       />
       <div
-        class="sc-bRKDuR leMxPT"
+        class="c5"
       />
     </div>
   </div>
