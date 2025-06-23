@@ -1,12 +1,11 @@
 name: Sentry Source Maps
 run-name: ${{ github.actor }} merged to ${{ github.repository }} Sentry source maps upload...
 
-# on:
-#   push:
-#     branches:
-#       - main
-#       - staging
-on: push
+on:
+  push:
+    branches:
+      - main
+      - staging
 
 jobs:
   sentry-sourcemaps:
@@ -23,7 +22,6 @@ jobs:
           npm run build
         env:
           NODE_OPTIONS: --max_old_space_size=8192
-      # - run: npm run sentry:sourcemaps
       - name: Create Sentry release
         uses: getsentry/action-release@v3
         env:
@@ -31,5 +29,6 @@ jobs:
           SENTRY_ORG: pillar-project
           SENTRY_PROJECT: x
         with:
-          # environment: production
+          # if branch name is main, use production environment else use staging
+          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           sourcemaps: './build'
