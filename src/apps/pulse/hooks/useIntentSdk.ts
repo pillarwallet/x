@@ -21,7 +21,7 @@ export default function useIntentSdk() {
       const options: Options = {
         bundlerApiKey: process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || "",
         mode: MODE.testnet,
-        modularAccount: "0x4fF10e22E6e0a79EAD375C5f83c37229f7eEC91d"
+        modularAccount: accountAddress as Hex
       }
 
       walletProvider.getEthereumProvider().then((provider) => {

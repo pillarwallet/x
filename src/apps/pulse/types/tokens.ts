@@ -20,3 +20,13 @@ type SelectedToken = {
   decimals: number;
   address: string;
 }
+
+type PayingToken = {
+  name: string;
+  symbol: string;
+  logo: string;
+  actualBal: string;
+  totalUsd: number;
+  totalRaw: string;
+  chainId: number;
+}

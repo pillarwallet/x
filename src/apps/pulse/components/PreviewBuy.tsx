@@ -1,13 +1,19 @@
+import { ExpressIntentResponse } from "@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types";
+import useExpressIntent from "../hooks/useExpressIntent";
 import Esc from "./Esc";
-import PayingToken from "./PayingToken";
+import PayingToken  from "./PayingToken";
 import Refresh from "./Refresh";
+import useIntentSdk from "../hooks/useIntentSdk";
 
 interface Props {
   closePreview: () => void,
-  buyToken?: SelectedToken | null
+  buyToken?: SelectedToken | null,
+  payingTokens: PayingToken[],
+  expressIntentResponse: ExpressIntentResponse | null
 }
 
 export default function PreviewBuy(props: Props) {
+  const totalPay = props.payingTokens.reduce((acc, curr) => acc + curr.totalUsd, 0).toFixed(2);
 
   const detailsEntry = (lhs: string, rhs: string, moreInfo = true, tokenName = '') => {
     return (
@@ -40,6 +46,15 @@ export default function PreviewBuy(props: Props) {
     )
   }
 
+  const {intentSdk} = useIntentSdk();
+
+  const shortlistBid = async () => {
+    const res = await intentSdk?.shortlistBid(
+      props.expressIntentResponse?.intentHash!, props.expressIntentResponse?.bids[0].bidHash!
+    );
+    console.log(res)
+  }
+
   return (
     <div
       className="flex flex-col"
@@ -62,12 +77,11 @@ export default function PreviewBuy(props: Props) {
 
       <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
         <div>You’re paying</div>
-        <div className="flex">Total: $5.37</div>
+        <div className="flex">Total: ${totalPay}</div>
       </div>
 
       <div className="rounded-[10px]" style={{width: 422, minHeight: 50, background: "black", margin: 10}}>
-          <PayingToken />
-          <PayingToken />
+        {props.payingTokens.map((item) => <PayingToken payingToken={item}/>)}
       </div>
 
       <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
@@ -81,13 +95,13 @@ export default function PreviewBuy(props: Props) {
         >
           <div className="flex items-center">
             <img
-              src="https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+              src={props.buyToken?.logo}
               style={{width: 32, height: 32, borderRadius: 50, marginLeft: 10}}
             />
             <div style={{marginLeft: 5}}>
               <div className="flex">
-                <div style={{fontSize: 13}}>Pillar</div>
-                <div style={{color: "grey", marginLeft: 5, fontSize: 13}}>PLR</div>
+                <div style={{fontSize: 13}}>{props.buyToken?.name}</div>
+                <div style={{color: "grey", marginLeft: 5, fontSize: 13}}>{props.buyToken?.symbol}</div>
               </div>
               <div className="flex">
                 <div style={{fontSize: 13, color: "grey"}}>{props.buyToken?.address?.slice(0,6)}...{props.buyToken?.address.slice(-4)}</div>
@@ -103,8 +117,8 @@ export default function PreviewBuy(props: Props) {
             </div>
           </div>
           <div className="flex flex-col justify-center" style={{marginRight: 10}}>
-            <div className="flex" style={{fontSize: 13, textAlign: "right"}}>2.557,14</div>
-            <div className="flex justify-end" style={{fontSize: 12, color: "grey", textAlign: "right"}}>$5.37</div>
+            <div className="flex" style={{fontSize: 13, textAlign: "right"}}>{props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(4) : ""}</div>
+            <div className="flex justify-end" style={{fontSize: 12, color: "grey", textAlign: "right"}}>${totalPay}</div>
           </div>
         </div>
       </div>
@@ -116,7 +130,7 @@ export default function PreviewBuy(props: Props) {
       <div>
         <div style={{width: 422, height: 137, background: "black", borderRadius: 10, margin: 10}}>
           {
-            detailsEntry("Rate", "1 USD ≈ 511.428", false, "PLR")
+            detailsEntry("Rate", `1 USD ≈ ${props.buyToken?.usdValue ? Number(1/Number(props.buyToken.usdValue)).toFixed(3) : 1.000}`, false, props.buyToken?.symbol ?? '')
           }
           {
             detailsEntry("Minimum Receive", "$0.95")
@@ -133,7 +147,18 @@ export default function PreviewBuy(props: Props) {
         </div>
       </div>
 
-      <button style={{width: 422, height: 50, margin: 10, borderRadius: 10, backgroundColor: "#8A77FF"}}>Confirm</button>
+      <button
+        style={{
+          width: 422,
+          height: 50,
+          margin: 10,
+          borderRadius: 10,
+          backgroundColor: "#8A77FF"
+        }}
+        onClick={shortlistBid}
+      >
+        Confirm
+      </button>
     </div>
   )
 }

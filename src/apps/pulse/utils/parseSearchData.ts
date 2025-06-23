@@ -1,4 +1,5 @@
 import { PairResponse, TokenAssetResponse } from "../../../types/api";
+import { CHAIN_LOGOS } from "../constants/tokens";
 import { MOBULA_CHAIN_NAMES } from "./constants";
 
 export type Asset = {
@@ -28,7 +29,7 @@ export function parseAssetData(asset: TokenAssetResponse): Asset[] {
         volume: asset.volume,
         price: asset.price,
         liquidity: asset.liquidity,
-        chainLogo: "",
+        chainLogo: CHAIN_LOGOS[blockchains[i]],
         chain: blockchains[i],
         decimals: decimals[i],
         contract: contracts[i],

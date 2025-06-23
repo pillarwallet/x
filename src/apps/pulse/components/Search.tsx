@@ -3,6 +3,8 @@ import {useTokenSearch} from "../hooks/useTokenSearch";
 import {TailSpin} from "react-loader-spinner";
 import Close from "./Close";
 import { Asset, parseSearchData } from "../utils/parseSearchData";
+import { MOBULA_CHAIN_NAMES_TO_CHAIN_ID } from "../utils/constants";
+import { getLogoForChainId } from "../../../utils/blockchain";
 
 export default function Search(
   props: {
@@ -33,14 +35,14 @@ export default function Search(
   const handleTokenSelect = (item: Asset) => {
     if(props.isBuy) {
       props.setBuyToken({
-        name: "USDC",
-        symbol: "USDC",
-        logo: "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
-        usdValue: "0.9998",
+        name: item.name,
+        symbol: item.symbol,
+        logo: item.logo ?? "",
+        usdValue: item.price ? item.price.toFixed(4) : Number.parseFloat("0").toFixed(4),
         dailyPriceChange: -0.02,
-        chainId: 84532,
-        decimals: 6,
-        address: "0x4de0Bb9BA339b16bdc4ac845dedF65a00d63213A"
+        chainId: MOBULA_CHAIN_NAMES_TO_CHAIN_ID[item.chain],
+        decimals: item.decimals,
+        address: item.contract,
       });
     } else {
       props.setSellToken({
@@ -125,7 +127,19 @@ export default function Search(
             {list?.assets.map((item) => {
               return (
                 <button className="flex" style={{width: 398, height: 36, marginTop: 10, marginBottom: 10}} onClick={(e) => {handleTokenSelect(item)}}>
-                  <img src={item.logo || ""} style={{width: 36, height: 36, marginLeft: 10, borderRadius: 50}}/>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <img src={item.logo || ""} style={{width: 36, height: 36, marginLeft: 10, borderRadius: 50}}/>
+                    <img
+                      src={getLogoForChainId(MOBULA_CHAIN_NAMES_TO_CHAIN_ID[item.chain])}
+                      style={{position: "absolute",
+                        bottom: "-2px",
+                        right: "-2px",
+                        width: 15,
+                        height: 15,
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </div>
                   <div className="flex flex-col" style={{width: 200, height: 14, marginLeft: 10}}>
                     <div className="flex">
                       <p style={{fontSize: 13, fontWeight: 400}}>{item.symbol}</p>

@@ -5,6 +5,7 @@ import { useWalletAddress } from "@etherspot/transaction-kit";
 import { useGetWalletPortfolioQuery } from "../../../services/pillarXApiWalletPortfolio";
 import useIntentSdk from "../hooks/useIntentSdk";
 import PreviewBuy from "./PreviewBuy";
+import { ExpressIntentResponse } from "@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types";
 
 interface Props {
   setSearching: Dispatch<SetStateAction<boolean>>,
@@ -22,6 +23,8 @@ export default function HomeScreen(
 
   const accountAddress = useWalletAddress();
   const [previewBuy, setPreviewBuy] = useState(false);
+  const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
+  const [expressIntentResponse, setExpressIntentResponse] = useState<ExpressIntentResponse | null>(null);
 
   const closePreviewBuy = () => {
     setPreviewBuy(false);
@@ -33,17 +36,20 @@ export default function HomeScreen(
     isFetching: isWalletPortfolioDataFetching,
     refetch: refetchWalletPortfolioData,
   } = useGetWalletPortfolioQuery(
-    { wallet: accountAddress || '' },
+    { wallet: accountAddress || '', isPnl: false },
     { skip: !accountAddress }
   );
-
-  const {intentSdk} = useIntentSdk();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen" style={{backgroundColor: 'black'}}>
       {
         previewBuy ?
-        <PreviewBuy closePreview={closePreviewBuy} buyToken={props.buyToken}/> :
+        <PreviewBuy
+          closePreview={closePreviewBuy}
+          buyToken={props.buyToken}
+          payingTokens={payingTokens}
+          expressIntentResponse={expressIntentResponse}
+        /> :
         <>
         <button
           className="flex items-center justify-center"
@@ -145,6 +151,8 @@ export default function HomeScreen(
               token={props.buyToken}
               walletPortfolioData={walletPortfolioData}
               setPreviewBuy={setPreviewBuy}
+              setPayingTokens={setPayingTokens}
+              setExpressIntentResponse={setExpressIntentResponse}
             /> :
             <Sell
               setSearching={props.setSearching}

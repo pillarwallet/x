@@ -1,9 +1,12 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { WalletPortfolioMobulaResponse } from "../../../types/api";
-import useExpressIntent from "../hooks/useExpressIntent";
-import { DispensableAsset, UserIntent } from "@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { PortfolioData, WalletPortfolioMobulaResponse } from "../../../types/api";
+import { DispensableAsset, ExpressIntentResponse, UserIntent } from "@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types";
 import { Hex } from "viem";
 import { TailSpin } from "react-loader-spinner";
+import { useWalletAddress } from "@etherspot/transaction-kit";
+import { STABLE_CURRENCIES } from "../constants/tokens";
+import useIntentSdk from "../hooks/useIntentSdk";
+import { getLogoForChainId } from "../../../utils/blockchain";
 
 interface Props {
   setSearching: Dispatch<SetStateAction<boolean>>,
@@ -11,6 +14,8 @@ interface Props {
   setToken: Dispatch<SetStateAction<SelectedToken>>,
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined,
   setPreviewBuy: Dispatch<SetStateAction<boolean>>,
+  setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>,
+  setExpressIntentResponse: Dispatch<SetStateAction<ExpressIntentResponse | null>>
 }
 
 function getDesiredAssetValue(input: string, decimals: number, usdValue: string): bigint {
@@ -18,33 +23,77 @@ function getDesiredAssetValue(input: string, decimals: number, usdValue: string)
   return BigInt(Number(value.toFixed(4)) * Math.pow(10, decimals));
 }
 
-function getDispensableAssets(input: string): [DispensableAsset[], bigint[]] {
-  // TODO: use wallet portfolio to stratagize which dispensable asset to use
-  return [
-    [{
-      asset: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
-      chainId: BigInt(11155111),
-      maxValue: BigInt(Number(parseFloat(input).toFixed(4)) * Math.pow(10, 6))
-    }],
-    [BigInt(11155111)]
-  ]
+function getDispensableAssets(
+  input: string,
+  portfolioData: PortfolioData | undefined
+): [DispensableAsset[], bigint[], PayingToken[]] {
+  // TODO: build a logic to use multiple tokens from different chains.
+  if(!portfolioData?.assets) {
+    return [[],[],[]];
+  }
+
+  for(const item of portfolioData.assets) {
+    const price = item.price;
+    for(const token of item.contracts_balances) {
+      const tokenItem = {
+        chainId: Number(token.chainId.split(":").at(-1)),
+        address: token.address
+      }
+
+      const usdEq = price * token.balance;
+      const t = STABLE_CURRENCIES.find(
+        (token) => token.address.toLowerCase() == tokenItem.address.toLowerCase() && token.chainId == tokenItem.chainId
+      );
+      if(usdEq > Number(input) && t) {
+        return [
+          [{
+            asset: tokenItem.address as Hex,
+            chainId: BigInt(tokenItem.chainId),
+            maxValue: BigInt(
+              Number((Number(Number(input).toFixed(4)) / price).toPrecision(4)) * (10 ** token.decimals)
+            )
+          }],
+          [BigInt(tokenItem.chainId)],
+          [{
+            name: item.asset.name,
+            logo: item.asset.logo,
+            symbol: item.asset.symbol,
+            chainId: tokenItem.chainId,
+            actualBal: token.balance.toString(),
+            totalUsd: Number(Number(input).toFixed(4)),
+            totalRaw: (Number(Number(input).toFixed(4)) / price).toFixed(4)
+          }]
+        ]
+      }
+    }
+  }
+  return [[],[],[]];
 }
 
 export default function Buy(
   props: Props
 ) {
   const [usdAmount, setUsdAmount] = useState<string>("0.00");
+  const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>("0.00");
   const [userIntent, setUserIntent] = useState<UserIntent | null>(null);
-  const {expressIntentResponse, isLoading, refetch, setRefetch} = useExpressIntent(userIntent);
-  const accountAddress = "0x4fF10e22E6e0a79EAD375C5f83c37229f7eEC91d";
+  // const {expressIntentResponse, isLoading, refetch, setRefetch} = useExpressIntent(userIntent);
+  const {intentSdk} = useIntentSdk();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [expressIntentResponse, setExpressIntentResponse] = useState<ExpressIntentResponse | null>(null);
+  const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
+  const accountAddress = useWalletAddress();
 
-  const manageIntent = (input: string) => {
-    setUsdAmount(input);
-    if(Number(parseFloat(input) > 0) && props.token) {
-      const [dispensableAssets, permittedChains] = getDispensableAssets(input);
+  const manageIntent = async (input: string) => {
+    setNoEnoughLiquidity(false);
+    if(Number(parseFloat(input) > 0) && props.token && accountAddress && intentSdk) {
+      const [dispensableAssets, permittedChains, payingTokens] = getDispensableAssets(input, props.walletPortfolioData?.result.data);
+      if(dispensableAssets.length == 0 && permittedChains.length == 0) {
+        setNoEnoughLiquidity(true);
+        return;
+      }
       const intent: UserIntent = {
         constraints: {
-          deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60 * 60 * 24),
+          deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
           desiredAssets: [{
             asset: props.token.address as Hex,
             chainId: BigInt(props.token.chainId),
@@ -58,31 +107,59 @@ export default function Buy(
         intentHash: "0x000000000000000000000000000000000000000000000000000000000000000",
         core: {
           permittedAccounts: [{
-            account: accountAddress,
-            chainId: BigInt(11155111)
+            account: accountAddress as Hex,
+            chainId: BigInt(props.token.chainId)
           }]
         }
       }
+      setIsLoading(true);
       setUserIntent(intent);
+      const response = await intentSdk.expressIntent(intent);
+      setExpressIntentResponse(response);
+      props.setPayingTokens(payingTokens);
+      setIsLoading(false);
     } else {
       setUserIntent(null);
+      props.setPayingTokens([]);
     }
   }
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     if(!input || !Number.isNaN(parseFloat(input))) {
-      manageIntent(input);
+      setUsdAmount(input);
     }
   };
 
   const handleBuySubmit = () => {
+    props.setExpressIntentResponse(expressIntentResponse);
     props.setPreviewBuy(true);
   }
 
   const isDisabled = () => {
-    return isLoading || !props.token || !(parseFloat(usdAmount) > 0) || !expressIntentResponse || expressIntentResponse?.bids?.length === 0
+    return isLoading ||
+      !props.token ||
+      !(parseFloat(usdAmount) > 0) ||
+      !expressIntentResponse ||
+      expressIntentResponse?.bids?.length === 0 ||
+      notEnoughLiquidity
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(!usdAmount || !Number.isNaN(parseFloat(usdAmount))) {
+        setDebouncedUsdAmount(usdAmount);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [usdAmount]);
+
+  useEffect(() => {
+    if (debouncedUsdAmount) {
+      manageIntent(debouncedUsdAmount)
+    }
+  }, [debouncedUsdAmount]);
 
   return (
     <>
@@ -96,7 +173,7 @@ export default function Buy(
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: 125,
+                  width: 150,
                   height: 36,
                   backgroundColor: "#1E1D24",
                   borderRadius: 10,
@@ -104,7 +181,42 @@ export default function Buy(
                   marginTop: 15
                 }}
               >
-                <img src={props.token.logo || ""} style={{width: 24, height: 24, borderRadius: 50, marginLeft: 5}}/>
+                {/* <div>
+                  <img src={props.token.logo || ""} style={{width: 24, height: 24, borderRadius: 50, marginLeft: 5}}/>
+                  <div style={{alignSelf: "end", justifySelf: "end"}}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" fill="#8A77FF"/>
+                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" stroke="white" stroke-opacity="0.1"/>
+                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" stroke="#1E1D24"/>
+                      <path d="M8.77856 7.59305L9.9582 6.41341C10.6134 5.75821 10.6134 4.69592 9.9582 4.04072V4.04072C9.303 3.38552 8.24071 3.38552 7.5855 4.04072L6.40587 5.22036" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M7.59463 8.77685L6.41499 9.95649C5.75979 10.6117 4.6975 10.6117 4.0423 9.95649V9.95649C3.3871 9.30129 3.3871 8.239 4.0423 7.5838L5.22194 6.40416" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M8.06476 5.93219L5.93537 8.06158" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div> */}
+                <div style={{position: "relative", display: "inline-block" }}>
+                  <img
+                    src={props.token.logo}
+                    alt="Main"
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: 50,
+                      marginLeft: 5,
+                      marginRight: 5
+                    }}
+                  />
+                  <img
+                    src={getLogoForChainId(props.token.chainId)}
+                    style={{position: "absolute",
+                      bottom: "-2px",
+                      right: "-2px",
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
                 <div className="flex flex-col" style={{marginLeft: 5, marginTop: 5, height: 36}}>
                   <div className="flex">
                     <p style={{fontSize: 12, fontWeight: 400}}>{props.token.symbol}</p>
@@ -131,7 +243,7 @@ export default function Buy(
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: 125,
+                  width: 140,
                   height: 36,
                   backgroundColor: "#1E1D24",
                   borderRadius: 10,
@@ -165,10 +277,11 @@ export default function Buy(
             <div className="flex" style={{height: 36, fontSize: 36, width: 189}}>
               <input
                 className="no-spinner"
-                style={{width: 210, textAlign: "right"}}
+                style={{width: 185, textAlign: "right"}}
                 onChange={handleUsdAmountChange}
                 value={usdAmount}
                 type="text"
+                disabled={isLoading}
               />
               <p style={{lineHeight: 1, color: "grey"}}>USD</p>
             </div>
@@ -177,7 +290,7 @@ export default function Buy(
         <div className="flex justify-between" style={{margin: 10}}>
           <div className="flex">
             {
-              (!isLoading && expressIntentResponse && expressIntentResponse.bids.length === 0) &&
+              (notEnoughLiquidity || (!isLoading && expressIntentResponse && expressIntentResponse.bids.length === 0)) &&
               <>
                 <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.70433 3.22114L1.31589 10.7442C0.732563 11.7442 1.45387 13 2.61156 13H11.3884C12.5461 13 13.2674 11.7442 12.6841 10.7442L8.29567 3.22115C7.71685 2.22889 6.28315 2.22889 5.70433 3.22114Z" fill="#FF366C" fill-opacity="0.3" stroke="#FF366C"/>
@@ -222,7 +335,13 @@ export default function Buy(
               <button
                 className="flex-1 items-center justify-center"
                 style={{backgroundColor: "#121116", borderRadius: 10, margin: 2, color: "grey"}}
-                onClick={() => {manageIntent(parseFloat(item).toFixed(2))}}
+                onClick={() => {
+                  if(item === "MAX") {
+                    setUsdAmount(props.walletPortfolioData?.result.data.total_wallet_balance.toFixed(2) ?? "0.00")
+                  } else {
+                    setUsdAmount(parseFloat(item).toFixed(2))
+                  }
+                }}
               >
                 ${item}
               </button>
@@ -248,7 +367,7 @@ export default function Buy(
               <div className="flex items-center justify-center"><TailSpin color="#FFFFFF" height={15} width={15} /></div>
             </> :
             props.token?.symbol ?
-            `Buy ${parseFloat(usdAmount) > 0 ? usdAmount : ""}
+            `Buy ${parseFloat(usdAmount) > 0 ? (Number(usdAmount)/Number(props.token.usdValue)).toFixed(4) : ""}
             ${props.token.symbol}` : "Buy"
           }
         </button>
