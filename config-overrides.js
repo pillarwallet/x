@@ -21,11 +21,11 @@ module.exports = function override(config) {
   config.optimization = config.optimization || {};
   // Minimiser
   config.optimization.minimize = true;
-  config.optimization.minimizer = [
-    new TerserPlugin({
-      test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
-    }),
-  ];
+  // config.optimization.minimizer = [
+  //   new TerserPlugin({
+  //     test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
+  //   }),
+  // ];
 
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
