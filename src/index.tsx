@@ -10,7 +10,7 @@ import Main from './containers/Main';
 import { store } from './store';
 
 if (typeof window !== 'undefined') {
-  // @ts-expect-error
+  // @ts-expect-error: Browser does not exists in global
   window.Browser = {
     T: () => {},
   };
