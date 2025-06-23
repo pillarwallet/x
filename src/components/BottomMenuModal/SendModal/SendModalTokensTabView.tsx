@@ -513,7 +513,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       if (
         selectedAsset?.type === 'token' &&
         selectedAsset?.asset?.contract?.toLowerCase() ===
-         selectedFeeAsset?.token?.toLowerCase()
+          selectedFeeAsset?.token?.toLowerCase()
       ) {
         amountLeft = +getAmountLeft(
           selectedAsset,
