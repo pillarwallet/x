@@ -36,7 +36,7 @@ export default function HomeScreen(
     isFetching: isWalletPortfolioDataFetching,
     refetch: refetchWalletPortfolioData,
   } = useGetWalletPortfolioQuery(
-    { wallet: accountAddress || '', isPnl: false },
+    { wallet: accountAddress || '' },
     { skip: !accountAddress }
   );
 

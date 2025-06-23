@@ -1,9 +1,12 @@
 import { ExpressIntentResponse } from "@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types";
-import useExpressIntent from "../hooks/useExpressIntent";
 import Esc from "./Esc";
 import PayingToken  from "./PayingToken";
 import Refresh from "./Refresh";
 import useIntentSdk from "../hooks/useIntentSdk";
+import { useState } from "react";
+import { TailSpin } from "react-loader-spinner";
+import IntentTracker from "./IntentTracker";
+import { getLogoForChainId } from "../../../utils/blockchain";
 
 interface Props {
   closePreview: () => void,
@@ -14,6 +17,9 @@ interface Props {
 
 export default function PreviewBuy(props: Props) {
   const totalPay = props.payingTokens.reduce((acc, curr) => acc + curr.totalUsd, 0).toFixed(2);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [showTracker, setShowTracker] = useState(false);
 
   const detailsEntry = (lhs: string, rhs: string, moreInfo = true, tokenName = '') => {
     return (
@@ -49,10 +55,16 @@ export default function PreviewBuy(props: Props) {
   const {intentSdk} = useIntentSdk();
 
   const shortlistBid = async () => {
-    const res = await intentSdk?.shortlistBid(
-      props.expressIntentResponse?.intentHash!, props.expressIntentResponse?.bids[0].bidHash!
-    );
-    console.log(res)
+    setIsLoading(true);
+    try {
+      const res = await intentSdk?.shortlistBid(
+        props.expressIntentResponse?.intentHash!, props.expressIntentResponse?.bids[0].bidHash!
+      );
+      setShowTracker(true);
+    } catch (error) {
+      console.log("shortlisting bid failed:: ", error);
+    }
+    setIsLoading(false);
   }
 
   return (
@@ -65,100 +77,145 @@ export default function PreviewBuy(props: Props) {
         borderRadius: 10,
       }}
     >
-      <div className="flex justify-between" style={{margin: 10}}>
-        <div style={{fontSize: 20}}>Preview</div>
-        <div className="flex">
-          <Refresh />
-          <div style={{marginLeft: 10}}>
-            <Esc closePreview={props.closePreview} />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
-        <div>You’re paying</div>
-        <div className="flex">Total: ${totalPay}</div>
-      </div>
-
-      <div className="rounded-[10px]" style={{width: 422, minHeight: 50, background: "black", margin: 10}}>
-        {props.payingTokens.map((item) => <PayingToken payingToken={item}/>)}
-      </div>
-
-      <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
-        <div>You’re buying</div>
-      </div>
-
-      <div>
-        <div
-          className="flex justify-between"
-          style={{width: 422, height: 50, background: "black", borderRadius: 10, margin: 10}}
-        >
-          <div className="flex items-center">
-            <img
-              src={props.buyToken?.logo}
-              style={{width: 32, height: 32, borderRadius: 50, marginLeft: 10}}
-            />
-            <div style={{marginLeft: 5}}>
-              <div className="flex">
-                <div style={{fontSize: 13}}>{props.buyToken?.name}</div>
-                <div style={{color: "grey", marginLeft: 5, fontSize: 13}}>{props.buyToken?.symbol}</div>
-              </div>
-              <div className="flex">
-                <div style={{fontSize: 13, color: "grey"}}>{props.buyToken?.address?.slice(0,6)}...{props.buyToken?.address.slice(-4)}</div>
-                <button style={{marginLeft: 5}} onClick={() => {navigator.clipboard.writeText(props.buyToken?.address ?? '')}}>
-                  <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g opacity="0.5">
-                      <path opacity="0.5" d="M4 1.50004C4 0.671611 4.67157 3.76701e-05 5.5 3.76701e-05H8.5C9.32843 3.76701e-05 10 0.671611 10 1.50004V6.50004C10 7.32846 9.32843 8.00004 8.5 8.00004H7V5C7 3.89543 6.10457 3 5 3H4L4 1.50004Z" fill="white"/>
-                      <path d="M0 5.5C0 4.67157 0.671573 4 1.5 4H4.5C5.32843 4 6 4.67157 6 5.5V10.5C6 11.3284 5.32843 12 4.5 12H1.5C0.671573 12 0 11.3284 0 10.5V5.5Z" fill="white"/>
-                    </g>
-                  </svg>
-                </button>
-              </div>
+      {
+        showTracker ?
+        <>
+        <IntentTracker
+          closePreview={props.closePreview}
+          bidHash={props.expressIntentResponse?.bids[0].bidHash!}
+          token={props.buyToken!}
+          isBuy={true}
+          amount={props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(4) : ""}
+        />
+        </> :
+        <>
+        <div className="flex justify-between" style={{margin: 10}}>
+          <div style={{fontSize: 20}}>Preview</div>
+          <div className="flex">
+            <Refresh />
+            <div style={{marginLeft: 10}}>
+              <Esc closePreview={props.closePreview} />
             </div>
           </div>
-          <div className="flex flex-col justify-center" style={{marginRight: 10}}>
-            <div className="flex" style={{fontSize: 13, textAlign: "right"}}>{props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(4) : ""}</div>
-            <div className="flex justify-end" style={{fontSize: 12, color: "grey", textAlign: "right"}}>${totalPay}</div>
+        </div>
+
+        <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
+          <div>You’re paying</div>
+          <div className="flex">Total: ${totalPay}</div>
+        </div>
+
+        <div className="rounded-[10px]" style={{width: 422, minHeight: 50, background: "black", margin: 10}}>
+          {props.payingTokens.map((item) => <PayingToken payingToken={item}/>)}
+        </div>
+
+        <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
+          <div>You’re buying</div>
+        </div>
+
+        <div>
+          <div
+            className="flex justify-between"
+            style={{width: 422, height: 50, background: "black", borderRadius: 10, margin: 10}}
+          >
+            <div className="flex items-center">
+              <div style={{position: "relative", display: "inline-block" }}>
+                <img
+                  src={props.buyToken?.logo}
+                  alt="Main"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 50,
+                    marginLeft: 5,
+                    marginRight: 5
+                  }}
+                />
+                <img
+                  src={getLogoForChainId(props.buyToken?.chainId!)}
+                  style={{position: "absolute",
+                    bottom: "-1px",
+                    right: "2px",
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                  }}
+                />
+              </div>
+              <div style={{marginLeft: 5}}>
+                <div className="flex">
+                  <div style={{fontSize: 13}}>{props.buyToken?.name}</div>
+                  <div style={{color: "grey", marginLeft: 5, fontSize: 13}}>{props.buyToken?.symbol}</div>
+                </div>
+                <div className="flex">
+                  <div style={{fontSize: 13, color: "grey"}}>{props.buyToken?.address?.slice(0,6)}...{props.buyToken?.address.slice(-4)}</div>
+                  <button style={{marginLeft: 5}} onClick={() => {navigator.clipboard.writeText(props.buyToken?.address ?? '')}}>
+                    <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g opacity="0.5">
+                        <path opacity="0.5" d="M4 1.50004C4 0.671611 4.67157 3.76701e-05 5.5 3.76701e-05H8.5C9.32843 3.76701e-05 10 0.671611 10 1.50004V6.50004C10 7.32846 9.32843 8.00004 8.5 8.00004H7V5C7 3.89543 6.10457 3 5 3H4L4 1.50004Z" fill="white"/>
+                        <path d="M0 5.5C0 4.67157 0.671573 4 1.5 4H4.5C5.32843 4 6 4.67157 6 5.5V10.5C6 11.3284 5.32843 12 4.5 12H1.5C0.671573 12 0 11.3284 0 10.5V5.5Z" fill="white"/>
+                      </g>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center" style={{marginRight: 10}}>
+              <div className="flex" style={{fontSize: 13, textAlign: "right"}}>{props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(4) : ""}</div>
+              <div className="flex justify-end" style={{fontSize: 12, color: "grey", textAlign: "right"}}>${totalPay}</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
-        <div>Details</div>
-      </div>
-
-      <div>
-        <div style={{width: 422, height: 137, background: "black", borderRadius: 10, margin: 10}}>
-          {
-            detailsEntry("Rate", `1 USD ≈ ${props.buyToken?.usdValue ? Number(1/Number(props.buyToken.usdValue)).toFixed(3) : 1.000}`, false, props.buyToken?.symbol ?? '')
-          }
-          {
-            detailsEntry("Minimum Receive", "$0.95")
-          }
-          {
-            detailsEntry("Price Impact", "0.00%")
-          }
-          {
-            detailsEntry("Max Spillage", "0.5%")
-          }
-          {
-            detailsEntry("Gas Fee", "≈ $0.05")
-          }
+        <div className="flex justify-between" style={{margin: 10, marginBottom: 0, fontSize: 13, color: "grey"}}>
+          <div>Details</div>
         </div>
-      </div>
 
-      <button
-        style={{
-          width: 422,
-          height: 50,
-          margin: 10,
-          borderRadius: 10,
-          backgroundColor: "#8A77FF"
-        }}
-        onClick={shortlistBid}
-      >
-        Confirm
-      </button>
+        <div>
+          <div style={{width: 422, height: 137, background: "black", borderRadius: 10, margin: 10}}>
+            {
+              detailsEntry("Rate", `1 USD ≈ ${props.buyToken?.usdValue ? Number(1/Number(props.buyToken.usdValue)).toFixed(3) : 1.000}`, false, props.buyToken?.symbol ?? '')
+            }
+            {
+              detailsEntry("Minimum Receive", "$0.95")
+            }
+            {
+              detailsEntry("Price Impact", "0.00%")
+            }
+            {
+              detailsEntry("Max Spillage", "0.5%")
+            }
+            {
+              detailsEntry("Gas Fee", "≈ $0.05")
+            }
+          </div>
+        </div>
+        
+        <div
+          className="flex"
+          style={{margin: 10, width: 422, height: 50, borderRadius: 10, backgroundColor: "black"}}
+        >
+          <button
+            className="flex-1 items-center justify-center"
+            style={{
+              borderRadius: 10,
+              backgroundColor: isLoading ? "#121116" : "#8A77FF",
+              margin: 2
+            }}
+            onClick={shortlistBid}
+            disabled={isLoading}
+          >
+            {
+              isLoading  ?
+              <div className="flex items-center justify-center">
+                Waiting for signature...
+              </div> :
+              <>Confirm</>
+            }
+          </button>
+        </div>
+        </>
+      }
+      
     </div>
   )
 }

@@ -75,8 +75,6 @@ export default function Buy(
 ) {
   const [usdAmount, setUsdAmount] = useState<string>("0.00");
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>("0.00");
-  const [userIntent, setUserIntent] = useState<UserIntent | null>(null);
-  // const {expressIntentResponse, isLoading, refetch, setRefetch} = useExpressIntent(userIntent);
   const {intentSdk} = useIntentSdk();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [expressIntentResponse, setExpressIntentResponse] = useState<ExpressIntentResponse | null>(null);
@@ -113,13 +111,15 @@ export default function Buy(
         }
       }
       setIsLoading(true);
-      setUserIntent(intent);
-      const response = await intentSdk.expressIntent(intent);
-      setExpressIntentResponse(response);
+      try {
+        const response = await intentSdk.expressIntent(intent);
+        setExpressIntentResponse(response);
+      } catch (error) {
+        console.log("express intent failed:: ", error);
+      }
       props.setPayingTokens(payingTokens);
       setIsLoading(false);
     } else {
-      setUserIntent(null);
       props.setPayingTokens([]);
     }
   }
@@ -181,19 +181,6 @@ export default function Buy(
                   marginTop: 15
                 }}
               >
-                {/* <div>
-                  <img src={props.token.logo || ""} style={{width: 24, height: 24, borderRadius: 50, marginLeft: 5}}/>
-                  <div style={{alignSelf: "end", justifySelf: "end"}}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" fill="#8A77FF"/>
-                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" stroke="white" stroke-opacity="0.1"/>
-                      <rect x="0.5" y="0.5" width="13" height="13" rx="6.5" stroke="#1E1D24"/>
-                      <path d="M8.77856 7.59305L9.9582 6.41341C10.6134 5.75821 10.6134 4.69592 9.9582 4.04072V4.04072C9.303 3.38552 8.24071 3.38552 7.5855 4.04072L6.40587 5.22036" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M7.59463 8.77685L6.41499 9.95649C5.75979 10.6117 4.6975 10.6117 4.0423 9.95649V9.95649C3.3871 9.30129 3.3871 8.239 4.0423 7.5838L5.22194 6.40416" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M8.06476 5.93219L5.93537 8.06158" stroke="white" stroke-width="0.666667" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                </div> */}
                 <div style={{position: "relative", display: "inline-block" }}>
                   <img
                     src={props.token.logo}
@@ -243,7 +230,7 @@ export default function Buy(
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: 140,
+                  width: 150,
                   height: 36,
                   backgroundColor: "#1E1D24",
                   borderRadius: 10,
