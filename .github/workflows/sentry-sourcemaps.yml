@@ -9,7 +9,7 @@ run-name: ${{ github.actor }} merged to ${{ github.repository }} Sentry source m
 on: push
 
 jobs:
-  lint:
+  sentry-sourcemaps:
     runs-on: ubuntu-latest
     # runs-on: ubuntu-32gb
     steps:
@@ -23,4 +23,13 @@ jobs:
           npm run build
         env:
           NODE_OPTIONS: --max_old_space_size=8192
-      - run: npm run sentry:sourcemaps
+      # - run: npm run sentry:sourcemaps
+      - name: Create Sentry release
+        uses: getsentry/action-release@v3
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: pillar-project
+          SENTRY_PROJECT: x
+        with:
+          # environment: production
+          sourcemaps: './build'
