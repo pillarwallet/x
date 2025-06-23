@@ -1,42 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`] = `
-.c0 {
-  height: 77px;
-  width: 180px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c1 {
-  height: 36px;
-  width: 150px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c2 {
-  height: 36px;
-  width: 190px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c3 {
-  height: 36px;
-  width: 80px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 10px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
 <div
   className="flex bg-container_grey rounded-3xl p-10 gap-20 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23] mobile:flex-col mobile:gap-4"
   id="wallet-portfolio-tile-loader"
@@ -53,7 +17,7 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
       className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full"
     >
       <div
-        className="c0"
+        className="sc-bRKDuR UXGul"
       />
     </div>
   </div>
@@ -64,14 +28,14 @@ exports[`<PortfolioOverview /> displays loading skeleton when data is loading 1`
       className="flex w-full gap-4 justify-end mobile:flex-row tablet:flex-col tablet:items-end mobile:flex-row mobile:justify-between mobile:items-start"
     >
       <div
-        className="c1"
+        className="sc-bRKDuR hZPpRh"
       />
       <div
-        className="c2"
+        className="sc-bRKDuR cYpHEx"
       />
     </div>
     <div
-      className="c3"
+      className="sc-bRKDuR jwsknR"
     />
   </div>
 </div>
