@@ -230,7 +230,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               }) => {
                 const tokenData = tokens.find(
                   (token: Token) =>
-                    token.contract === item.gasToken.toLowerCase()
+                    token.contract.toLowerCase() === item.gasToken.toLowerCase()
                 );
                 if (tokenData)
                   return {
@@ -512,7 +512,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       let amountLeft = 0;
       if (
         selectedAsset?.type === 'token' &&
-        selectedAsset.asset.contract === selectedFeeAsset?.token?.toLowerCase()
+        selectedAsset?.asset?.contract?.toLowerCase() === selectedFeeAsset?.token?.toLowerCase()
       ) {
         amountLeft = +getAmountLeft(
           selectedAsset,
