@@ -31,7 +31,7 @@ export interface TransactionHistory {
   };
 }
 
-export interface AccountBalancesContext {
+export interface AccountHistoryContext {
   listenerRef: React.MutableRefObject<AccountTransactionHistoryListenerRef>;
   data: {
     history: TransactionHistory;
@@ -68,7 +68,7 @@ export interface AccountTransactionHistoryListenerRef {
 }
 
 export const AccountTransactionHistoryContext =
-  createContext<AccountBalancesContext | null>(null);
+  createContext<AccountHistoryContext | null>(null);
 
 const AccountTransactionHistoryProvider = ({
   children,

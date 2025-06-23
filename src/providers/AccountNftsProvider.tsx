@@ -92,7 +92,7 @@ const AccountNftsProvider = ({ children }: React.PropsWithChildren) => {
 
       if (expired) return;
 
-      timeout = setTimeout(refresh, 30000); // ~30s
+      timeout = setTimeout(refresh, 60000); // ~60s
     };
 
     refresh();
