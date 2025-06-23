@@ -32,7 +32,8 @@ const Login = () => {
 
     connect({ connector: walletConnectConnector });
 
-    const provider = await walletConnectConnector.getProvider();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const provider: any = await walletConnectConnector.getProvider();
     provider.once('display_uri', (uri: string) => {
       const encodedURI = encodeURIComponent(uri);
       window.location.href = `pillarwallet://wc?uri=${encodedURI}`;
@@ -75,7 +76,7 @@ const Login = () => {
       <InsideWrapper>
         <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
         <Button onClick={listenForWalletConnectUri} $last $fullWidth>
-          <PillarWalletIcon />
+          <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
           {t`action.connectPillarWallet`}
         </Button>
       </InsideWrapper>

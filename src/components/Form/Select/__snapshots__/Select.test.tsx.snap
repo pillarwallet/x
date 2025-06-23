@@ -2,71 +2,98 @@
 
 exports[`<Select /> renders correctly with default option 1`] = `
 <DocumentFragment>
-  .c4 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-right: 5px;
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c2 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c3 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 2"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r5:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r5:)"
+          >
+            <rect
+              fill="#146A7C"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#F0AB3D"
+              filter="url(#filter_:r5:)"
+              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C271B4"
+              filter="url(#filter_:r5:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r5:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 2
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test2
         </p>
       </div>
       <div
-        class="c4"
+        class="sc-dTvVRJ euuemL"
       >
         <svg
           fill="currentColor"
@@ -89,34 +116,12 @@ exports[`<Select /> renders correctly with default option 1`] = `
 
 exports[`<Select /> renders correctly with no options 1`] = `
 <DocumentFragment>
-  .c0 {
-  padding: 13px 13px 13px;
-  background: transparent;
-  border: 1px solid rgba(226, 221, 255, 0.15);
-  color: rgba(226, 221, 255, 0.9);
-  margin-bottom: 15px;
-  font-size: 12px;
-  border-radius: 6px;
-  min-height: 35px;
-  display: flex;
-  align-items: center;
-}
-
-.c0:last-child {
-  margin-bottom: 0;
-}
-
-.c1 {
-  display: inline-block;
-  margin-right: 10px;
-}
-
-<div>
+  <div>
     <p
-      class="c0"
+      class="sc-hvigdm eKBcQB"
     >
       <span
-        class="c1"
+        class="sc-fhHczv ldBfyP"
       >
         <svg
           fill="none"
@@ -149,116 +154,211 @@ exports[`<Select /> renders correctly with no options 1`] = `
 
 exports[`<Select /> renders correctly with option image 1`] = `
 <DocumentFragment>
-  .c5 {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-.c4 {
-  width: 42px;
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c2 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c3 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 1"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r8:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r8:)"
+          >
+            <rect
+              fill="#F0AB3D"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#C271B4"
+              filter="url(#filter_:r8:)"
+              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C20D90"
+              filter="url(#filter_:r8:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r8:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 1
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 2"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r9:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r9:)"
+          >
+            <rect
+              fill="#146A7C"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#F0AB3D"
+              filter="url(#filter_:r9:)"
+              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C271B4"
+              filter="url(#filter_:r9:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r9:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 2
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test2
         </p>
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 3"
     >
       <div
-        class="c4"
+        class="sc-jwTyAe kxknmQ"
       >
         <img
           alt="test 3"
-          class="c5"
+          class="sc-ggWZvA kpXhYu"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="c1"
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 3
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test3
         </p>
@@ -270,91 +370,37 @@ exports[`<Select /> renders correctly with option image 1`] = `
 
 exports[`<Select /> renders correctly with selected option image 1`] = `
 <DocumentFragment>
-  .c2 {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-.c6 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-right: 5px;
-}
-
-.c1 {
-  width: 42px;
-}
-
-.c3 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c4 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c5 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 3"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
       >
         <img
           alt="test 3"
-          class="c2"
+          class="sc-ggWZvA kpXhYu"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="c3"
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c4"
+          class="sc-jJLAfE SwxeK"
         >
           test 3
         </p>
         <p
-          class="c5"
+          class="sc-hwkwBN knRsnb"
         >
           test3
         </p>
       </div>
       <div
-        class="c6"
+        class="sc-dTvVRJ euuemL"
       >
         <svg
           fill="currentColor"
@@ -377,116 +423,211 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 
 exports[`<Select /> renders correctly with some options 1`] = `
 <DocumentFragment>
-  .c5 {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-.c4 {
-  width: 42px;
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c2 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c3 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 1"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r0:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r0:)"
+          >
+            <rect
+              fill="#F0AB3D"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#C271B4"
+              filter="url(#filter_:r0:)"
+              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C20D90"
+              filter="url(#filter_:r0:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r0:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 1
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 2"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r1:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r1:)"
+          >
+            <rect
+              fill="#146A7C"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#F0AB3D"
+              filter="url(#filter_:r1:)"
+              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C271B4"
+              filter="url(#filter_:r1:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r1:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 2
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test2
         </p>
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 3"
     >
       <div
-        class="c4"
+        class="sc-jwTyAe kxknmQ"
       >
         <img
           alt="test 3"
-          class="c5"
+          class="sc-ggWZvA kpXhYu"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="c1"
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 3
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test3
         </p>
@@ -498,71 +639,98 @@ exports[`<Select /> renders correctly with some options 1`] = `
 
 exports[`<Select /> responds once clicked 1`] = `
 <DocumentFragment>
-  .c4 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-right: 5px;
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c2 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c3 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 2"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r4:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r4:)"
+          >
+            <rect
+              fill="#146A7C"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#F0AB3D"
+              filter="url(#filter_:r4:)"
+              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C271B4"
+              filter="url(#filter_:r4:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r4:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 2
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test2
         </p>
       </div>
       <div
-        class="c4"
+        class="sc-dTvVRJ euuemL"
       >
         <svg
           fill="currentColor"
@@ -585,123 +753,210 @@ exports[`<Select /> responds once clicked 1`] = `
 
 exports[`<Select /> shows loading skeleton on option item where option value is loading 1`] = `
 <DocumentFragment>
-  .c4 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c6 {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-.c5 {
-  width: 42px;
-}
-
-.c1 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c2 {
-  font-size: 15px;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.c3 {
-  font-size: 14px;
-  font-weight: 400;
-  word-break: break-word;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-.c0:hover {
-  background: rgba(217, 217, 217, 0.2);
-}
-
-<div>
+  <div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 1"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r6:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r6:)"
+          >
+            <rect
+              fill="#F0AB3D"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#C271B4"
+              filter="url(#filter_:r6:)"
+              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C20D90"
+              filter="url(#filter_:r6:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r6:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 1
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test1
         </p>
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 2"
     >
       <div
-        class="c1"
+        class="sc-jwTyAe kxknmQ"
+      >
+        <svg
+          class="rounded-md"
+          data-testid="random-avatar"
+          fill="none"
+          role="img"
+          viewBox="0 0 80 80"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            height="80"
+            id=":r7:"
+            maskUnits="userSpaceOnUse"
+            width="80"
+            x="0"
+            y="0"
+          >
+            <rect
+              fill="#FFFFFF"
+              height="80"
+              rx="160"
+              width="80"
+            />
+          </mask>
+          <g
+            mask="url(#:r7:)"
+          >
+            <rect
+              fill="#146A7C"
+              height="80"
+              width="80"
+            />
+            <path
+              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+              fill="#F0AB3D"
+              filter="url(#filter_:r7:)"
+              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
+            />
+            <path
+              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+              fill="#C271B4"
+              filter="url(#filter_:r7:)"
+              style="mix-blend-mode: overlay;"
+              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
+            />
+          </g>
+          <defs>
+            <filter
+              color-interpolation-filters="sRGB"
+              filterUnits="userSpaceOnUse"
+              id="filter_:r7:"
+            >
+              <feflood
+                flood-opacity="0"
+                result="BackgroundImageFix"
+              />
+              <feblend
+                in="SourceGraphic"
+                in2="BackgroundImageFix"
+                result="shape"
+              />
+              <fegaussianblur
+                result="effect1_foregroundBlur"
+                stdDeviation="7"
+              />
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <div
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 2
         </p>
         <div
-          class="c4"
+          class="sc-bRKDuR leMxPT"
+          data-testid="skeleton-loader-list-item"
         />
       </div>
     </div>
     <div
-      class="c0"
+      class="sc-kNOymR lcUCdr"
       id="action-bar-send-test 3"
     >
       <div
-        class="c5"
+        class="sc-jwTyAe kxknmQ"
       >
         <img
           alt="test 3"
-          class="c6"
+          class="sc-ggWZvA kpXhYu"
           src="https://via.placeholder.com/150"
           title="test 3"
         />
       </div>
       <div
-        class="c1"
+        class="sc-hjsuWn joxzXa"
       >
         <p
-          class="c2"
+          class="sc-jJLAfE SwxeK"
         >
           test 3
         </p>
         <p
-          class="c3"
+          class="sc-hwkwBN knRsnb"
         >
           test3
         </p>
@@ -713,76 +968,24 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 
 exports[`<Select /> shows loading skeleton when options loading 1`] = `
 <DocumentFragment>
-  .c2 {
-  height: 42px;
-  width: 42px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 50%;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c4 {
-  height: 15px;
-  width: 80%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c5 {
-  height: 15px;
-  width: 30%;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 8px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.c1 {
-  width: 42px;
-}
-
-.c3 {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.c0 {
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.05);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  gap: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 10px;
-}
-
-<div
-    class="c0"
+  <div
+    class="sc-kNOymR amqZb"
   >
     <div
-      class="c1"
+      class="sc-jwTyAe kxknmQ"
     >
       <div
-        class="c2"
+        class="sc-bRKDuR fUDIyl"
       />
     </div>
     <div
-      class="c3"
+      class="sc-hjsuWn joxzXa"
     >
       <div
-        class="c4"
+        class="sc-bRKDuR eWLgrM"
       />
       <div
-        class="c5"
+        class="sc-bRKDuR leMxPT"
       />
     </div>
   </div>

@@ -1,8 +1,11 @@
 import { ITransaction } from '@etherspot/transaction-kit';
 import { BigNumber, ethers } from 'ethers';
+
+// types
+import { AssetSelectOption, SendModalData } from '../types';
+
+// utils
 import { processEth } from '../apps/the-exchange/utils/blockchain';
-import { AssetSelectOption } from '../components/Form/AssetSelect';
-import { SendModalData } from '../types';
 import { decodeSendTokenCallData } from './blockchain';
 
 export const getObjectHash = (obj: unknown, salt?: string | number) => {

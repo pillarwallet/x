@@ -3,16 +3,12 @@
 exports[`<Paragraph /> renders correctly 1`] = `
 [
   <p
-    className=""
+    className="sc-bRKDuR gDJYPK"
   >
     Some regular text.
   </p>,
-  .c0 {
-  text-align: center;
-}
-
-<p
-    className="c0"
+  <p
+    className="sc-bRKDuR cUYzzR"
   >
     centered
   </p>,
