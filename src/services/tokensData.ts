@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 import Fuse from 'fuse.js';
-import tokens from '../data/tokens.json';
-import { TokenAssetResponse } from '../types/api';
+
+// types
+import {
+  AssetMobula,
+  ContractsBalanceMobula,
+  PortfolioData,
+  PrimeAssetType,
+  TokenAssetResponse,
+} from '../types/api';
+
+// utils
 import {
   CompatibleChains,
   getNativeAssetForChainId,
@@ -18,6 +26,11 @@ export type Token = {
   decimals: number;
   balance?: number;
   price?: number;
+};
+
+export type PortfolioToken = Token & {
+  price_change_24h?: number;
+  cross_chain_balance?: number;
 };
 
 export type TokenRawDataItem = {
@@ -37,13 +50,9 @@ export type TokenQueryParams = {
   blockchain?: string;
 };
 
-type TokenDataType = {
-  data: TokenRawDataItem[];
-};
-
-let tokensData: Token[] = [];
-
 export const chainNameDataCompatibility = (chainName: string) => {
+  if (!chainName) return '';
+
   const chain = chainName.toLowerCase();
 
   if (chain === 'xdai') {
@@ -85,128 +94,116 @@ export const chainNameFromViemToMobula = (chainName: string) => {
   return chainName;
 };
 
-/**
- * Loads the locally saved Mobula tokens list, rename the chain name,
- * adds the gas token for each compatible chains and rename tokens
- * that are in reality Wrapped tokens
- */
-export const loadTokensData = (): Token[] => {
-  /**
-   * List all compatible blockchains with PillarX and rename
-   * some chains that have a different name on Mobula
-   */
-  const allowedBlockchains = CompatibleChains.map((chain) =>
-    chainNameFromViemToMobula(chain.chainName)
+export const convertPortfolioAPIResponseToToken = (
+  portfolioData: PortfolioData
+): PortfolioToken[] => {
+  if (!portfolioData) return [];
+
+  return portfolioData.assets.flatMap((asset) =>
+    asset.contracts_balances
+      .filter((contract) => contract.balance > 0)
+      .map((contract) => ({
+        id: asset.asset.id,
+        name: asset.asset.name,
+        symbol: asset.asset.symbol,
+        logo: asset.asset.logo,
+        blockchain: chainIdToChainNameTokensData(
+          Number(contract.chainId.split(':')[1])
+        ),
+        contract: contract.address,
+        decimals: contract.decimals,
+        balance: contract.balance,
+        price: asset.price,
+        price_change_24h: asset.price_change_24h,
+        cross_chain_balance: asset.token_balance,
+      }))
   );
-
-  /**
-   * Check if the tokens list has not been loaded yet and
-   * list all tokens one by one with their respective chain
-   * and contract address
-   */
-  if (tokensData.length === 0) {
-    tokensData = (tokens as TokenDataType).data.flatMap((item) =>
-      item.blockchains
-        .map((blockchain, index) => {
-          let { name } = item;
-          let { symbol } = item;
-          const contract = item.contracts[index];
-
-          /**
-           * Changes token name and symbol to its Wrapped token
-           * since on Mobula the tokens below are actually the
-           * Wrapped tokens according to their contract address
-           */
-          if (name === 'XDAI' && symbol === 'XDAI') {
-            name = 'Wrapped XDAI';
-            symbol = 'WXDAI';
-          }
-
-          if (
-            name === 'Ethereum' &&
-            symbol === 'ETH' &&
-            contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-          ) {
-            name = 'Wrapped Ether';
-            symbol = 'WETH';
-          }
-
-          if (
-            name === 'BNB' &&
-            symbol === 'BNB' &&
-            contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
-          ) {
-            name = 'Wrapped BNB';
-            symbol = 'WBNB';
-          }
-
-          if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
-            name = 'POL';
-            symbol = 'POL';
-          }
-
-          /**
-           * Some contract addresses are the gas tokens on Mobula,
-           * so we are removing them from the Mobula tokens list
-           * since we are counting them already as native that we pushed
-           * to that list earlier in this function
-           */
-          return contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' &&
-            !(
-              name === 'POL' &&
-              contract === '0x0000000000000000000000000000000000001010'
-            )
-            ? {
-                id: item.id,
-                name,
-                symbol,
-                logo: item.logo,
-                blockchain,
-                contract,
-                decimals: item.decimals[index],
-              }
-            : null;
-        })
-        .filter(
-          (token): token is Token =>
-            token !== null && allowedBlockchains.includes(token.blockchain)
-        )
-    );
-    // Add native/gas tokens
-    CompatibleChains.forEach((chain) => {
-      const nativeAsset = getNativeAssetForChainId(chain.chainId);
-      const nativeTokenOption: Token = {
-        id: chain.chainId,
-        name: nativeAsset.name,
-        symbol: nativeAsset.symbol,
-        logo: nativeAsset.logoURI,
-        blockchain: chainIdToChainNameTokensData(nativeAsset.chainId),
-        contract: nativeAsset.address,
-        decimals: nativeAsset.decimals,
-      };
-      tokensData.push(nativeTokenOption);
-    });
-  }
-
-  return tokensData;
 };
 
-export const queryTokenData = ({
-  id,
-  name,
-  symbol,
-  blockchain,
-}: TokenQueryParams): Token[] => {
-  const loadedTokens = loadTokensData();
+export const getPrimeAssetsWithBalances = (
+  walletPortfolio: PortfolioData,
+  primeAssets: PrimeAssetType[]
+): {
+  name: string;
+  symbol: string;
+  primeAssets: { asset: AssetMobula; usd_balance: number }[];
+}[] => {
+  return primeAssets.map(({ name, symbol }) => {
+    const primeAssetsMatch = walletPortfolio.assets
+      .filter(
+        (assetData) =>
+          assetData.asset.name === name && assetData.asset.symbol === symbol
+      )
+      .map((assetData) => ({
+        asset: assetData.asset,
+        usd_balance: assetData.estimated_balance,
+      }));
 
-  return loadedTokens.filter((item) => {
-    return (
-      (!id || item.id === id) &&
-      (!name || item.name.toLowerCase() === name.toLowerCase()) &&
-      (!symbol || item.symbol.toLowerCase() === symbol.toLowerCase()) &&
-      (!blockchain || item.blockchain === blockchain)
-    );
+    return {
+      name,
+      symbol,
+      primeAssets: primeAssetsMatch,
+    };
   });
+};
+
+export const getTopNonPrimeAssetsAcrossChains = (
+  walletPortfolio: PortfolioData,
+  primeAssets: PrimeAssetType[]
+): {
+  asset: AssetMobula;
+  usdBalance: number;
+  tokenBalance: number;
+  unrealizedPnLUsd: number;
+  unrealizedPnLPercentage: number;
+  contract: ContractsBalanceMobula;
+  price: number;
+}[] => {
+  const primeAssetSet = new Set(
+    primeAssets.map((a) => `${a.name}|${a.symbol}`)
+  );
+
+  // Here we are filtering the tokens and removing the ones that are Prime Assets
+  // We then select the top three tokens with the highest USD value
+  const nonPrimeAssetBalances = walletPortfolio.assets
+    // Filter out assets that are prime assets
+    .filter(
+      (assetData) =>
+        !primeAssetSet.has(`${assetData.asset.name}|${assetData.asset.symbol}`)
+    )
+    // Flat map to recreate an array of assets with their balances
+    .flatMap((assetData) =>
+      assetData.contracts_balances.map((contract) => {
+        const usdBalance = contract.balance * assetData.price;
+        const priceChangePercent = assetData.price_change_24h ?? 0;
+
+        const previousBalance =
+          priceChangePercent === -100
+            ? 0
+            : usdBalance / (1 + priceChangePercent / 100);
+
+        const unrealizedPnLUsd = usdBalance - previousBalance;
+
+        const unrealizedPnLPercentage =
+          previousBalance > 0 ? (unrealizedPnLUsd / previousBalance) * 100 : 0;
+
+        return {
+          asset: assetData.asset,
+          usdBalance,
+          tokenBalance: contract.balance,
+          unrealizedPnLUsd,
+          unrealizedPnLPercentage,
+          contract,
+          price: assetData.price,
+        };
+      })
+    );
+
+  const topThree = nonPrimeAssetBalances
+    .sort((a, b) => b.usdBalance - a.usdBalance)
+    .slice(0, 3);
+
+  return topThree;
 };
 
 // Converts chain id to Mobula blockchain name
@@ -278,65 +275,69 @@ export const convertAPIResponseToTokens = (
   );
 
   // Show the Mobula's API result, but also check for exceptions on the native/gas token
-  const tokenData = result.flatMap((item) =>
-    item.blockchains
-      .map((blockchain, index) => {
-        let { name, symbol } = item;
-        const contract = item.contracts[index];
+  const tokenData = result
+    .filter((item) => item.type === 'token' || item.type === 'asset')
+    .flatMap(
+      (item) =>
+        item.blockchains
+          .map((blockchain, index) => {
+            let { name, symbol } = item;
+            const contract = item.contracts[index];
 
-        // Rename Wrapped tokens
-        if (name === 'XDAI' && symbol === 'XDAI') {
-          name = 'Wrapped XDAI';
-          symbol = 'WXDAI';
-        }
+            // Rename Wrapped tokens
+            if (name === 'XDAI' && symbol === 'XDAI') {
+              name = 'Wrapped XDAI';
+              symbol = 'WXDAI';
+            }
 
-        if (
-          name === 'Ethereum' &&
-          symbol === 'ETH' &&
-          contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-        ) {
-          name = 'Wrapped Ether';
-          symbol = 'WETH';
-        }
+            if (
+              name === 'Ethereum' &&
+              symbol === 'ETH' &&
+              contract !== '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            ) {
+              name = 'Wrapped Ether';
+              symbol = 'WETH';
+            }
 
-        if (
-          name === 'BNB' &&
-          symbol === 'BNB' &&
-          contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
-        ) {
-          name = 'Wrapped BNB';
-          symbol = 'WBNB';
-        }
+            if (
+              name === 'BNB' &&
+              symbol === 'BNB' &&
+              contract !== '0xb8c77482e45f1f44de1745f52c74426c631bdd52'
+            ) {
+              name = 'Wrapped BNB';
+              symbol = 'WBNB';
+            }
 
-        if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
-          name = 'POL';
-          symbol = 'POL';
-        }
+            if (name === 'POL (ex-MATIC)' && symbol === 'POL') {
+              name = 'POL';
+              symbol = 'POL';
+            }
 
-        // Remove gas/native token contracts that are already included separately
-        if (
-          contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ||
-          (name === 'POL' &&
-            contract === '0x0000000000000000000000000000000000001010')
-        ) {
-          return null;
-        }
+            // Remove gas/native token contracts that are already included separately
+            if (
+              contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ||
+              (name === 'POL' &&
+                contract === '0x0000000000000000000000000000000000001010')
+            ) {
+              return null;
+            }
 
-        return {
-          id: item.id,
-          name,
-          symbol,
-          logo: item.logo,
-          blockchain,
-          contract,
-          decimals: item.decimals[index],
-        };
-      })
-      .filter(
-        (token): token is Token =>
-          token !== null && allowedBlockchains.includes(token.blockchain)
-      )
-  );
+            return {
+              id: item.id,
+              name,
+              symbol,
+              logo: item.logo,
+              blockchain,
+              contract,
+              decimals: item.decimals[index],
+              price: item.price,
+            };
+          })
+          .filter(
+            (token) =>
+              token !== null && allowedBlockchains.includes(token.blockchain)
+          ) as Token[]
+    );
 
   // Use Fuse.js to match native tokens that are not included in Mobula's token list
   // as well as look for an exact match of contract address

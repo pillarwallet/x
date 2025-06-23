@@ -1,18 +1,33 @@
-import { ExchangeOffer } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/exchange-offer';
-import { Route } from '@lifi/types';
+import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import {
+  LiFiStep,
+  Route,
+  RoutesRequest,
+  getRoutes,
+  getStepTransaction,
+} from '@lifi/sdk';
 import { parseUnits } from 'ethers/lib/utils';
-
-// hooks
-import { useEtherspotSwaps } from '@etherspot/transaction-kit';
+import {
+  createPublicClient,
+  encodeFunctionData,
+  erc20Abi,
+  formatUnits,
+  http,
+} from 'viem';
 
 // types
-import { SwapOffer, SwapType } from '../utils/types';
+import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 
 // utils
+import { getNetworkViem } from '../../deposit/utils/blockchain';
 import { processEth } from '../utils/blockchain';
+import {
+  getWrappedTokenAddressIfNative,
+  isWrappedToken,
+} from '../utils/wrappedTokens';
 
-const useOffer = (chainId?: number) => {
-  const { getOffers } = useEtherspotSwaps(chainId);
+const useOffer = () => {
+  const { isZeroAddress } = useEtherspotUtils();
 
   const getBestOffer = async ({
     fromAmount,
@@ -25,100 +40,238 @@ const useOffer = (chainId?: number) => {
   }: SwapType): Promise<SwapOffer | undefined> => {
     let selectedOffer: SwapOffer;
 
-    // uses getAdvanceRoutesLifi (Lifi) - different chains, different tokens
-    if (fromChainId !== toChainId) {
-      try {
-        const allOffersResponse = await getOffers(
-          parseUnits(`${fromAmount}`, fromTokenDecimals),
-          fromTokenAddress,
-          toTokenAddress,
-          toChainId
-        );
-        const allOffers = allOffersResponse?.offers as Route[];
+    try {
+      // Replace native token with wrapped if needed
+      const fromTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
+        fromTokenAddress,
+        fromChainId
+      );
 
-        if (allOffers.length) {
-          const bestOffer = allOffers.reduce((a, b) => {
-            const receiveAmountA = processEth(a.toAmount, toTokenDecimals);
-            const receiveAmountB = processEth(b.toAmount, toTokenDecimals);
-            return receiveAmountA > receiveAmountB ? a : b;
-          });
+      const routesRequest: RoutesRequest = {
+        fromChainId,
+        toChainId,
+        fromTokenAddress: fromTokenAddressWithWrappedCheck,
+        toTokenAddress,
+        fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
+        options: {
+          bridges: {
+            allow: ['relay'],
+          },
+          exchanges: { allow: ['openocean', 'kyberswap'] },
+        },
+      };
 
-          selectedOffer = {
-            tokenAmountToReceive: processEth(
-              bestOffer.toAmount,
-              toTokenDecimals
-            ),
-            offer: bestOffer as Route,
-          };
+      const result = await getRoutes(routesRequest);
+      const { routes } = result;
 
-          return selectedOffer;
-        }
-      } catch (e) {
-        console.error(
-          'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
-          e
-        );
-        return {} as SwapOffer;
+      const allOffers = routes as Route[];
+
+      if (allOffers.length) {
+        const bestOffer = allOffers.reduce((a, b) => {
+          const receiveAmountA = processEth(a.toAmount, toTokenDecimals);
+          const receiveAmountB = processEth(b.toAmount, toTokenDecimals);
+          return receiveAmountA > receiveAmountB ? a : b;
+        });
+
+        selectedOffer = {
+          tokenAmountToReceive: processEth(bestOffer.toAmount, toTokenDecimals),
+          offer: bestOffer as Route,
+        };
+
+        return selectedOffer;
       }
-    }
-
-    // TO DO - (add slippage) uses getQuotes (Connext) - different chains, same token
-    // if ((fromChainId !== toChainId) && swapToken?.name === receiveToken?.name) {
-    //     try {
-    //         const allOffersResponse = await getQuotes(toTokenAddress, toChainId, fromTokenAddress, parseUnits(`${fromAmount}`, fromTokenDecimals), slippage);
-    //     } catch (e) {
-    //         console.error('Sorry, an error occurred while trying to fetch the best swap offer. Please try again.', e);
-    //     }
-    //     return selectedOffer;
-    // }
-
-    // uses getExchangeOffers - same chain, different tokens
-    if (
-      fromChainId === toChainId &&
-      fromAmount > 0 &&
-      fromTokenAddress &&
-      toTokenAddress
-    ) {
-      try {
-        const allOffersResponse = await getOffers(
-          parseUnits(`${fromAmount}`, fromTokenDecimals),
-          fromTokenAddress,
-          toTokenAddress,
-          toChainId
-        );
-        const allOffers = allOffersResponse?.offers as ExchangeOffer[];
-
-        if (allOffers.length) {
-          const bestOffer = allOffers.reduce((a, b) => {
-            const receiveAmountA = processEth(a.receiveAmount, toTokenDecimals);
-            const receiveAmountB = processEth(b.receiveAmount, toTokenDecimals);
-            return receiveAmountA > receiveAmountB ? a : b;
-          });
-
-          selectedOffer = {
-            tokenAmountToReceive: processEth(
-              bestOffer.receiveAmount,
-              toTokenDecimals
-            ),
-            offer: bestOffer as ExchangeOffer,
-          };
-
-          return selectedOffer;
-        }
-      } catch (e) {
-        console.error(
-          'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
-          e
-        );
-        return {} as SwapOffer;
-      }
+    } catch (e) {
+      console.error(
+        'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
+        e
+      );
+      return {} as SwapOffer;
     }
 
     return {} as SwapOffer;
   };
 
+  const isAllowanceSet = async ({
+    owner,
+    spender,
+    tokenAddress,
+    chainId,
+  }: {
+    owner: string;
+    spender: string;
+    tokenAddress: string;
+    chainId: number;
+  }) => {
+    if (isZeroAddress(tokenAddress)) return undefined;
+    try {
+      const publicClient = createPublicClient({
+        chain: getNetworkViem(chainId),
+        transport: http(),
+      });
+
+      const allowance = await publicClient.readContract({
+        address: tokenAddress as `0x${string}`,
+        abi: erc20Abi,
+        functionName: 'allowance',
+        args: [owner as `0x${string}`, spender as `0x${string}`],
+      });
+
+      return allowance === BigInt(0) ? undefined : allowance;
+    } catch (error) {
+      console.error('Failed to check token allowance:', error);
+      return undefined;
+    }
+  };
+
+  const getStepTransactions = async (
+    route: Route,
+    fromAccount: string
+  ): Promise<StepTransaction[]> => {
+    const stepTransactions: StepTransaction[] = [];
+
+    const isWrapRequired = isWrappedToken(
+      route.fromToken.address,
+      route.fromToken.chainId
+    );
+
+    // If wrapping is required, we will add an extra step transaction with
+    // a wrapped token deposit first
+    if (isWrapRequired) {
+      const wrapCalldata = encodeFunctionData({
+        abi: [
+          {
+            name: 'deposit',
+            type: 'function',
+            stateMutability: 'payable',
+            inputs: [],
+            outputs: [],
+          },
+        ],
+        functionName: 'deposit',
+      });
+
+      stepTransactions.push({
+        to: route.fromToken.address, // already a wrapped token address from the SwapReceiveCard
+        data: wrapCalldata,
+        value: BigInt(route.fromAmount),
+        chainId: route.fromChainId,
+      });
+    }
+
+    try {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const step of route.steps) {
+        // eslint-disable-next-line no-await-in-loop
+        const isAllowance = await isAllowanceSet({
+          owner: fromAccount,
+          spender: step.estimate.approvalAddress,
+          tokenAddress: step.action.fromToken.address,
+          chainId: step.action.fromChainId,
+        });
+
+        const isEnoughAllowance = isAllowance
+          ? formatUnits(isAllowance, step.action.fromToken.decimals) >=
+            formatUnits(
+              BigInt(step.action.fromAmount),
+              step.action.fromToken.decimals
+            )
+          : undefined;
+
+        // Here we are checking if this is not a native/gas token and if the allowance
+        // is not set, then we manually add an approve transaction
+        if (
+          !isZeroAddress(step.action.fromToken.address) &&
+          !isEnoughAllowance
+        ) {
+          // We endode the callData for the approve transaction
+          const calldata = encodeFunctionData({
+            abi: [
+              {
+                inputs: [
+                  {
+                    internalType: 'address',
+                    name: 'spender',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'value',
+                    type: 'uint256',
+                  },
+                ],
+                name: 'approve',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                stateMutability: 'nonpayable',
+                type: 'function',
+              },
+            ],
+            functionName: 'approve',
+            args: [
+              step.estimate.approvalAddress as `0x${string}`,
+              BigInt(step.estimate.fromAmount),
+            ],
+          });
+
+          // We push the approve transaction to the stepTransactions array
+          stepTransactions.push({
+            data: calldata,
+            value: BigInt(0),
+            to: step.action.fromToken.address,
+            chainId: step.action.fromChainId,
+            transactionType: 'approval',
+          });
+        }
+
+        const actionCopy = { ...step.action };
+
+        // This is to make sure we have a fromAddress, which is not always
+        // provided by Lifi
+        if (!actionCopy.fromAddress) {
+          actionCopy.fromAddress = fromAccount;
+        }
+
+        // This is to make sure we have a toAddress, which is not always
+        // provided by Lifi, from and to address are the same
+        actionCopy.toAddress = actionCopy.fromAddress;
+
+        const modifiedStep: LiFiStep = { ...step, action: actionCopy };
+
+        // eslint-disable-next-line no-await-in-loop
+        const updatedStep = await getStepTransaction(modifiedStep);
+
+        if (!updatedStep.transactionRequest) {
+          throw new Error('No transactionRequest');
+        }
+
+        const { to, data, value, gasLimit, gasPrice, chainId, type } =
+          updatedStep.transactionRequest;
+
+        stepTransactions.push({
+          to,
+          data: data as `0x${string}`,
+          value: BigInt(`${value}`),
+          gasLimit: BigInt(`${gasLimit}`),
+          gasPrice: BigInt(`${gasPrice}`),
+          chainId,
+          type,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to get step transactions:', error);
+    }
+
+    return stepTransactions;
+  };
+
   return {
     getBestOffer,
+    getStepTransactions,
   };
 };
 

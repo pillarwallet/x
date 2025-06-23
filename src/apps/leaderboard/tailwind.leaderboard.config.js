@@ -12,16 +12,18 @@ module.exports = {
       tablet: { max: '1024px' },
       mobile: { max: '768px' },
       xs: { max: '470px' },
+      xxs: { max: '368px' },
     },
     extend: {
       colors: {
         deep_purple: { A700: '#5e00ff' },
-        container_grey: '#27262F',
+        container_grey: '#1E1D24',
         medium_grey: '#312F3A',
         purple_light: '#E2DDFF',
         purple_medium: '#8A77FF',
-        percentage_green: '#05FFDD',
+        percentage_green: '#5CFF93',
         percentage_red: '#FF366C',
+        dark_blue: '#2E2A4A',
       },
       fontFamily: {
         custom: ['Formular'],

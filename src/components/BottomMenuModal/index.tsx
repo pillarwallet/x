@@ -4,13 +4,12 @@ import { Transition } from 'react-transition-group';
 import styled from 'styled-components';
 
 // context
-import { AccountBalancesContext } from '../../providers/AccountBalancesProvider';
 import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 
 // modals
 import AccountModal from './AccountModal';
 import AppsModal from './AppsModal';
-import HistoryModal from './HistoryModal';
+import HistoryModal from './HistoryModal/HistoryModal';
 import SendModal from './SendModal';
 
 // hooks
@@ -19,7 +18,6 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 const BottomMenuModal = () => {
   const modalRef = React.useRef<HTMLDivElement>(null);
   const contextNfts = useContext(AccountNftsContext);
-  const contextBalances = useContext(AccountBalancesContext);
   const { active, activeIndex, hide } = useBottomMenuModal();
 
   const lastValidActiveIndex = React.useRef<number>(activeIndex ?? 0);
@@ -33,15 +31,13 @@ const BottomMenuModal = () => {
     // update nfts and token balances when Account tab is open
     if (activeIndex === 2) {
       contextNfts?.data.setUpdateData(true);
-      contextBalances?.data.setUpdateData(true);
     }
 
     // stop updating nfts and token balances when Account tab is closed, History or Apps Tabs are open, or no tab is open
     if (activeIndex === 1 || activeIndex === 3 || activeIndex === null) {
       contextNfts?.data.setUpdateData(false);
-      contextBalances?.data.setUpdateData(false);
     }
-  }, [contextNfts?.data, contextBalances?.data, activeIndex]);
+  }, [contextNfts?.data, activeIndex]);
 
   return (
     <Transition nodeRef={modalRef} in={!!active} timeout={100}>

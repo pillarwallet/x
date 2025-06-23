@@ -15,7 +15,10 @@ import {
   WalletClient,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { polygon, sepolia } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
+import { WagmiProvider, createConfig } from 'wagmi';
+import { walletConnect } from 'wagmi/connectors';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -72,6 +75,11 @@ const AuthLayout = () => {
     localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || Boolean(account);
+
+  useEffect(() => {
+    if (!authenticated) return;
+    sessionStorage.setItem('loginPageReloaded', 'false');
+  }, [authenticated]);
 
   /**
    * The following useEffect is to detemine if the
@@ -319,6 +327,30 @@ const AuthLayout = () => {
   return <Loading type="wait" />;
 };
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+export const config = createConfig({
+  chains: [mainnet],
+  connectors: [
+    walletConnect({
+      projectId: process.env.REACT_APP_WC_ID ?? '',
+      showQrModal: !isMobile,
+      isNewChainsStale: true,
+      metadata: {
+        name: 'PillarX',
+        description: 'PillarX',
+        url: 'https://pillarx.app/',
+        icons: ['https://pillarx.app/favicon.ico'],
+      },
+    }),
+  ],
+  transports: {
+    [mainnet.id]: http(),
+  },
+});
+
+const queryClient = new QueryClient();
+
 const Main = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -329,15 +361,19 @@ const Main = () => {
             appId={process.env.REACT_APP_PRIVY_APP_ID as string}
             config={{
               appearance: { theme: 'dark' },
-              defaultChain: isTestnet ? sepolia : polygon,
+              defaultChain: isTestnet ? sepolia : mainnet,
               embeddedWallets: {
                 createOnLogin: 'users-without-wallets',
               },
             }}
           >
-            <AllowedAppsProvider>
-              <AuthLayout />
-            </AllowedAppsProvider>
+            <QueryClientProvider client={queryClient}>
+              <WagmiProvider config={config}>
+                <AllowedAppsProvider>
+                  <AuthLayout />
+                </AllowedAppsProvider>
+              </WagmiProvider>
+            </QueryClientProvider>
           </PrivyProvider>
         </PrivateKeyLoginProvider>
       </LanguageProvider>

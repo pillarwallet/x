@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Main /> renders correctly 1`] = `
-[
+<div>
   <header
     className="header "
     id="header"
@@ -43,6 +43,13 @@ exports[`<Main /> renders correctly 1`] = `
               Testing Campaign
             </a>
           </li>
+          <li>
+            <a
+              href="https://blog.pillarx.app/"
+            >
+              Blog
+            </a>
+          </li>
         </ul>
         <a
           className="header__social"
@@ -72,7 +79,7 @@ exports[`<Main /> renders correctly 1`] = `
         />
       </div>
     </div>
-  </header>,
+  </header>
   <section
     className="home_hero"
   >
@@ -107,7 +114,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_feature"
   >
@@ -215,7 +222,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_intro"
   >
@@ -241,7 +248,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_signup"
   >
@@ -350,7 +357,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_build"
   >
@@ -402,7 +409,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <footer
     className="footer"
   >
@@ -424,6 +431,6 @@ exports[`<Main /> renders correctly 1`] = `
         </a>
       </div>
     </div>
-  </footer>,
-]
+  </footer>
+</div>
 `;

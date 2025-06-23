@@ -2,13 +2,17 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable react/no-unstable-nested-components */
 import { CircularProgress } from '@mui/material';
+import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useRef, useState } from 'react';
+import { RiArrowDownSLine } from 'react-icons/ri';
 
 // services
 import { useWalletConnect } from '../../../../services/walletConnect';
 
+// utils
+import { isAddressInSessionViaPrivy } from '../../../../utils/walletConnect';
+
 // images
-import ArrowDown from '../../images/arrow-down.svg';
 import SettingIcon from '../../images/setting-wheel.svg';
 import Ticked from '../../images/tick-square-ticked.svg';
 import Unticked from '../../images/tick-square-unticked.svg';
@@ -17,7 +21,6 @@ import WalletConnectLogo from '../../images/wallet-connect-logo.svg';
 // components
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import SwitchToggle from '../SwitchToggle/SwitchToggle';
-import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
 const WalletConnectDropdown = () => {
@@ -35,6 +38,7 @@ const WalletConnectDropdown = () => {
     isLoadingDisconnect,
     isLoadingDisconnectAll,
   } = useWalletConnect();
+  const { user } = usePrivy();
 
   const getClipboardText = async (prompt: boolean) => {
     try {
@@ -122,8 +126,16 @@ const WalletConnectDropdown = () => {
     setIsDropdownOpen(false);
   };
 
+  const filteredSessions = Object.fromEntries(
+    Object.entries(activeSessions || {}).filter(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_, session]) =>
+        !isAddressInSessionViaPrivy(session, user?.wallet?.address || '')
+    )
+  );
+
   const numberActiveSessions =
-    !!activeSessions && Object.entries(activeSessions).length;
+    !!filteredSessions && Object.entries(filteredSessions).length;
 
   const DisplayContentWalletConnect = () => {
     if (
@@ -236,7 +248,7 @@ const WalletConnectDropdown = () => {
           )}
 
           <ul className="flex flex-col gap-4">
-            {Object.values(activeSessions ?? {}).map((session: any) => (
+            {Object.values(filteredSessions ?? {}).map((session: any) => (
               <li key={session.topic}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -322,20 +334,20 @@ const WalletConnectDropdown = () => {
   return (
     <div
       id="walletConnect-dropdown"
-      className="relative inline-block w-[254px] h-12 mb-4"
+      className="relative inline-block w-[254px] h-12"
       ref={dropdownRef}
     >
       <div
-        className={`flex w-full h-full items-center bg-medium_grey cursor-pointer ${isDropdownOpen ? 'rounded-t-md' : 'rounded-md'}`}
+        className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
         onClick={handleDropdownToggle}
       >
-        <div className="flex w-full gap-2 h-full items-center px-3 border-r-2 border-purple_light/[.1]">
+        <div className="flex gap-2 items-center justify-center rounded-lg">
           <img
             src={WalletConnectLogo}
             alt="wallet-connect-logo"
-            className="w-[24px]"
+            className="w-4"
           />
-          <Body className="text-white">WalletConnect</Body>
+          <BodySmall className="text-white">WalletConnect</BodySmall>
           {numberActiveSessions ? (
             <div className="flex w-[19px] h-[19px] bg-purple_medium rounded justify-center items-center">
               <p className="font-semibold text-white text-[10px]">
@@ -343,17 +355,15 @@ const WalletConnectDropdown = () => {
               </p>
             </div>
           ) : null}
-        </div>
-        <div className="flex min-w-[46px] h-full items-center justify-center">
-          <img
-            src={ArrowDown}
-            alt="arrow-down"
-            className={`w-3.5 transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+          <RiArrowDownSLine
+            color="white"
+            size={20}
+            className={`transform ${isDropdownOpen ? 'rotate-180' : ''}`}
           />
         </div>
       </div>
       {isDropdownOpen && (
-        <div className="flex flex-col gap-4 absolute left-0 w-full p-4 bg-medium_grey rounded-b-md border-t-2 border-purple_light/[.1] z-10">
+        <div className="flex flex-col py-[9px] px-3 w-fit h-fit border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] gap-4 absolute left-0 w-full p-4 bg-container_grey z-10">
           <DisplayContentWalletConnect />
         </div>
       )}

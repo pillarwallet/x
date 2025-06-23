@@ -6,6 +6,7 @@ import {
   setAmountReceive,
   setAmountSwap,
   setBestOffer,
+  setIsAboveLimit,
   setIsOfferLoading,
   setUsdPriceReceiveToken,
   setUsdPriceSwapToken,
@@ -20,6 +21,9 @@ import {
 // hooks
 import useOffer from '../../hooks/useOffer';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+
+// utils
+import { formatExponential } from '../../../../utils/number';
 
 // types
 import { CardPosition, SwapOffer } from '../../utils/types';
@@ -36,9 +40,19 @@ type EnterAmountProps = {
   type: CardPosition;
   tokenSymbol?: string;
   tokenBalance?: number;
+  tokenChain?: string;
+  isDeploymentCostLoading?: boolean;
+  deploymentCost?: number;
 };
 
-const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
+const EnterAmount = ({
+  type,
+  tokenSymbol,
+  tokenBalance,
+  tokenChain,
+  isDeploymentCostLoading,
+  deploymentCost,
+}: EnterAmountProps) => {
   const dispatch = useAppDispatch();
   const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
   const amountReceive = useAppSelector(
@@ -60,11 +74,12 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   const isOfferLoading = useAppSelector(
     (state) => state.swap.isOfferLoading as boolean
   );
+  const isAboveLimit = useAppSelector(
+    (state) => state.swap.isAboveLimit as boolean
+  );
 
   const [inputValue, setInputValue] = useState<string>('');
-  const { getBestOffer } = useOffer(
-    chainNameToChainIdTokensData(swapToken?.blockchain) || undefined
-  );
+  const { getBestOffer } = useOffer();
   const [isNoOffer, setIsNoOffer] = useState<boolean>(false);
 
   // get usd price only when swap token changes
@@ -145,8 +160,8 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
     if (!swapToken && !balance) return undefined;
 
     // Check if the value exceeds the max token amount limit
-    if (tokenAmount > balance) {
-      return `The maximum amount of ${swapToken?.symbol} in your wallet is ${balance.toFixed(6)} ${swapToken?.symbol} - please change the amount and try again`;
+    if (tokenAmount > balance - (deploymentCost ?? 0)) {
+      return `The maximum amount of ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 ? ' spendable' : ''} in your wallet is ${formatExponential(balance - (deploymentCost ?? 0))} ${swapToken?.symbol}${deploymentCost && deploymentCost > 0 ? ` because your wallet is currently undeployed on ${tokenChain}` : ''} - please change the amount and try again`;
     }
 
     return undefined;
@@ -162,12 +177,13 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
   // getOffer will be called every time the swap amount or the swap/receive token is changed
   useEffect(() => {
     dispatch(setBestOffer(undefined));
-    if (amountSwap && swapToken && receiveToken) {
+    if (amountSwap && swapToken && receiveToken && !isAboveLimit) {
       dispatch(setIsOfferLoading(true));
       debouncedGetOffer();
     }
     // Clean-up debounce on component unmount
     return () => {
+      dispatch(setIsOfferLoading(false));
       debouncedGetOffer.cancel();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,6 +196,13 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
 
     if (type === CardPosition.SWAP && swapToken) {
       dispatch(setAmountSwap(Number(value)));
+    }
+
+    if (tokenBalance && Number(value) > tokenBalance - (deploymentCost ?? 0)) {
+      dispatch(setIsAboveLimit(true));
+    }
+    if (tokenBalance && Number(value) <= tokenBalance - (deploymentCost ?? 0)) {
+      dispatch(setIsAboveLimit(false));
     }
   };
 
@@ -201,14 +224,15 @@ const EnterAmount = ({ type, tokenSymbol, tokenBalance }: EnterAmountProps) => {
             className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
             data-testid="enter-amount-input"
           />
-          {tokenBalanceLimit(Number(inputValue), tokenBalance || 0) && (
-            <BodySmall
-              id="token-balance-limit-exchange"
-              data-testid="error-max-limit"
-            >
-              {tokenBalanceLimit(Number(inputValue), tokenBalance || 0)}
-            </BodySmall>
-          )}
+          {tokenBalanceLimit(Number(inputValue), tokenBalance || 0) &&
+            !isDeploymentCostLoading && (
+              <BodySmall
+                id="token-balance-limit-exchange"
+                data-testid="error-max-limit"
+              >
+                {tokenBalanceLimit(Number(inputValue), tokenBalance || 0)}
+              </BodySmall>
+            )}
         </>
       ) : (
         <ExchangeOffer

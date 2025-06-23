@@ -28,7 +28,6 @@ import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
 // utils
 import {
-  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../services/tokensData';
@@ -139,7 +138,7 @@ export const App = () => {
     symbol: isWrappedOrNativeToken
       ? getSymbol(selectedToken.symbol)
       : undefined,
-    blockchain: chainIdToChainNameTokensData(selectedToken.chainId),
+    blockchain: `${selectedToken.chainId}`,
   });
 
   const {
@@ -153,7 +152,7 @@ export const App = () => {
     symbol: isWrappedOrNativeToken
       ? getSymbol(selectedToken.symbol)
       : undefined,
-    blockchain: chainIdToChainNameTokensData(selectedToken.chainId),
+    blockchain: `${selectedToken.chainId}`,
     period: getGraphResolution(periodFilter),
     from: priceGraphPeriod.from,
     to: priceGraphPeriod.to,
@@ -169,7 +168,7 @@ export const App = () => {
   const { data: searchData } = useGetSearchTokensQuery(
     {
       searchInput: asset || '',
-      filterBlockchains: chain || undefined,
+      filterBlockchains: `${chain || ''}`,
     },
     { skip: !asset && !chain }
   );

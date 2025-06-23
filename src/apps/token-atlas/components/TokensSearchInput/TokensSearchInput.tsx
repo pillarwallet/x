@@ -18,7 +18,6 @@ import {
 // services
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
-  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
@@ -69,7 +68,8 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
   } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
-      filterBlockchains: chainIdToChainNameTokensData(selectedChain.chainId),
+      filterBlockchains:
+        selectedChain.chainId !== 0 ? `${selectedChain.chainId}` : undefined,
     },
     { skip: !debouncedSearchText }
   );
