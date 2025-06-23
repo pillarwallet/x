@@ -22,28 +22,20 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // components
-import AssetSelect, {
-  AssetSelectOption,
-  TokenAssetSelectOption,
-} from '../../Form/AssetSelect';
+import AssetSelect from '../../Form/AssetSelect';
 import FormGroup from '../../Form/FormGroup';
 import Label from '../../Form/Label';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
-import Select, { SelectOption } from '../../Form/Select';
-
-// providers
-import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
-import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
+import Select from '../../Form/Select';
 
 // hooks
-import useAccountBalances from '../../../hooks/useAccountBalances';
 import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useDeployWallet from '../../../hooks/useDeployWallet';
@@ -72,7 +64,12 @@ import {
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
-import { SendModalData } from '../../../types';
+import {
+  SendModalData,
+  AssetSelectOption,
+  TokenAssetSelectOption,
+  SelectOption,
+} from '../../../types';
 import {
   chainNameToChainIdTokensData,
   Token,
@@ -122,7 +119,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [deploymentCost, setDeploymentCost] = React.useState(0);
   const [isDeploymentCostLoading, setIsDeploymentCostLoading] =
     React.useState(true);
-  const { addressesEqual } = useEtherspotUtils();
   const accountAddress = useWalletAddress();
   const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
@@ -134,7 +130,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setShowBatchSendModal,
     setWalletConnectPayload,
   } = useBottomMenuModal();
-  const contextNfts = useContext(AccountNftsContext);
   const paymasterUrl = process.env.REACT_APP_PAYMASTER_URL;
   const [isPaymaster, setIsPaymaster] = React.useState<boolean>(false);
   const [paymasterContext, setPaymasterContext] = React.useState<{
@@ -369,16 +364,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
    * collect data on what apps are being opened
    */
   const [recordPresence] = useRecordPresenceMutation();
-
-  useEffect(() => {
-    if (!isSending) {
-      contextNfts?.data.setUpdateData(true);
-    }
-
-    if (isSending) {
-      contextNfts?.data.setUpdateData(false);
-    }
-  }, [contextNfts?.data, isSending]);
 
   React.useEffect(() => {
     if (!selectedAsset) return;
