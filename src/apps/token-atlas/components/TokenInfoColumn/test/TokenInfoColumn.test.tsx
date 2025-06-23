@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 
 // redux store
+import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
+
+// components
+import TokenInfoColumn from '../TokenInfoColumn';
 
 // reducer
 import {
   setIsAllChainsVisible,
   setTokenDataInfo,
 } from '../../../reducer/tokenAtlasSlice';
-
-// components
-import TokenInfoColumn from '../TokenInfoColumn';
 
 // types
 import { TokenAtlasInfoData } from '../../../../../types/api';
@@ -67,14 +67,24 @@ describe('<TokenInfoColumn />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('displays one circular loading when loading data', () => {
+  it('displays circular loading when loading data', () => {
     render(
       <Provider store={store}>
         <TokenInfoColumn isLoadingTokenDataInfo />
       </Provider>
     );
 
-    expect(screen.getAllByTestId('circular-loading')).toHaveLength(1);
+    expect(screen.getAllByTestId('circular-loading')).toHaveLength(2);
+  });
+
+  it('renders some of the blockchain cards when not loading', () => {
+    render(
+      <Provider store={store}>
+        <TokenInfoColumn isLoadingTokenDataInfo={false} />
+      </Provider>
+    );
+
+    expect(screen.getByText('Ethereum')).toBeInTheDocument();
   });
 
   it('renders the correct price change cards', () => {
@@ -110,16 +120,15 @@ describe('<TokenInfoColumn />', () => {
     expect(screen.getByText('100')).toBeInTheDocument();
   });
 
-  it('renders fallback "-" for missing tokenDataInfo values', () => {
-    store.dispatch(setTokenDataInfo(undefined));
-
+  it('does not crash when tokenDataInfo is undefined', () => {
     render(
       <Provider store={store}>
         <TokenInfoColumn isLoadingTokenDataInfo={false} />
       </Provider>
     );
 
-    expect(screen.getByText('All time high')).toBeInTheDocument();
-    expect(screen.getAllByText('-')).toHaveLength(5); // 5 stats with fallback
+    expect(screen.getByText('Blockchains')).toBeInTheDocument();
+    expect(screen.getByText('Price changes')).toBeInTheDocument();
+    expect(screen.getByText('Stats')).toBeInTheDocument();
   });
 });

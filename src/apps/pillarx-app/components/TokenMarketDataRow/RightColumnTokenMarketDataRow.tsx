@@ -3,9 +3,6 @@ import { TbTriangleFilled } from 'react-icons/tb';
 // types
 import { TokensMarketDataRow } from '../../../../types/api';
 
-// utils
-import { limitDigitsNumber } from '../../../../utils/number';
-
 // components
 import HighDecimalsFormatted from '../HighDecimalsFormatted/HighDecimalsFormatted';
 import BodySmall from '../Typography/BodySmall';
@@ -24,7 +21,7 @@ const RightColumnTokenMarketDataRow = ({
       <div className="flex desktop:gap-1 tablet:gap-1 mobile:flex-col mobile:items-end">
         {rightColumn?.line1?.price ? (
           <HighDecimalsFormatted
-            value={limitDigitsNumber(Number(rightColumn.line1.price || 0))}
+            value={Number(rightColumn.line1.price || 0)}
             moneySymbol="$"
             styleNumber={`font-normal ${rightColumn?.line1?.direction === 'UP' && 'desktop:text-market_row_green tablet:text-market_row_green'} ${rightColumn?.line1?.direction === 'DOWN' && 'desktop:text-percentage_red tablet:text-percentage_red'} mobile:text-white desktop:text-base tablet:text-base mobile:text-sm`}
             styleZeros="mobile:text-white desktop:text-xs tablet:text-xs mobile:text-[10px]"

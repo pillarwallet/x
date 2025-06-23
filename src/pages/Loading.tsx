@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useEffect, useState } from 'react';
 import BigBangStarField from 'react-big-bang-star-field';
 import styled from 'styled-components';
 import '../styles/landing/tailwind.css';
 
+// images
 import PillarXLogoLoading from '../assets/images/pillarX_full_white.png';
 
 type LoadingProps = {
@@ -14,7 +14,6 @@ type LoadingProps = {
 
 const Loading = ({ type }: LoadingProps) => {
   const [show, setShow] = useState(true);
-  const { logout } = usePrivy();
 
   const logoTransitions = useTransition(show, {
     from: { opacity: 0 },
@@ -35,18 +34,6 @@ const Loading = ({ type }: LoadingProps) => {
 
     return () => clearTimeout(timer);
   }, []);
-
-  // Auto logout after 15 seconds
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const handleLogout = async () => {
-        await logout();
-      };
-      handleLogout();
-    }, 15000); // 15 seconds
-
-    return () => clearTimeout(timeout);
-  }, [logout]);
 
   return (
     <Wrapper>

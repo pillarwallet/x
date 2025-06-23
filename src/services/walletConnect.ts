@@ -2,7 +2,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
-import { usePrivy } from '@privy-io/react-auth';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
 import {
@@ -13,12 +12,7 @@ import { SessionTypes } from '@walletconnect/types';
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  checksumAddress,
-  formatEther,
-  hexToBigInt,
-  isAddressEqual,
-} from 'viem';
+import { checksumAddress, formatEther, hexToBigInt } from 'viem';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -34,8 +28,7 @@ import {
   ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
   WALLETCONNECT_EVENT,
-  getWalletAddressesFromSession,
-} from '../utils/walletConnect';
+} from '../utils/walletConnectConstants';
 
 export const useWalletConnect = () => {
   const wallet = useWalletAddress();
@@ -52,7 +45,6 @@ export const useWalletConnect = () => {
   } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
   const { showModal, hideModal } = useWalletConnectModal();
-  const { logout, user } = usePrivy();
   const { walletConnectTxHash, setWalletConnectTxHash } =
     useGlobalTransactionsBatch();
   const [isLoadingDisconnectAll, setIsLoadingDisconnectAll] =
@@ -64,45 +56,6 @@ export const useWalletConnect = () => {
   );
   const walletConnectPayloadRef = useRef<SendModalData | undefined>(
     walletConnectPayload
-  );
-
-  const prevSessionsRef = useRef<Record<string, SessionTypes.Struct>>({});
-
-  const handleLogout = async () => {
-    await logout();
-    window.location.reload();
-  };
-
-  // useCallback to check if one of the walletConnect session
-  // has been initialised by Privy login
-  const isAddressInSessionViaPrivy = useCallback(
-    (session: SessionTypes.Struct): boolean => {
-      const addresses = getWalletAddressesFromSession(session);
-      return addresses.some((addr) =>
-        isAddressEqual(
-          addr as `0x${string}`,
-          user?.wallet?.address as `0x${string}`
-        )
-      );
-    },
-    [user?.wallet?.address]
-  );
-
-  // This is to logout if session was initialised by Privy
-  const checkAndLogoutIfPrivySession = useCallback(
-    (session: SessionTypes.Struct | undefined) => {
-      if (!session) return false;
-
-      const wasPrivyLinked = isAddressInSessionViaPrivy(session);
-
-      if (wasPrivyLinked && user?.wallet?.address) {
-        handleLogout();
-        return true;
-      }
-      return false;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAddressInSessionViaPrivy, user?.wallet?.address]
   );
 
   // WalletConnect initialisation
@@ -149,12 +102,6 @@ export const useWalletConnect = () => {
       setActiveSessions(currentActiveSessions);
     }
   }, [walletKit]);
-
-  useEffect(() => {
-    if (activeSessions) {
-      prevSessionsRef.current = { ...activeSessions };
-    }
-  }, [activeSessions]);
 
   useEffect(() => {
     walletConnectTxHashRef.current = walletConnectTxHash;
@@ -307,8 +254,6 @@ export const useWalletConnect = () => {
         // Update activeSessions after disconnecting
         const updatedSessions = walletKit?.getActiveSessions();
         setActiveSessions(updatedSessions);
-
-        checkAndLogoutIfPrivySession(sessionData);
       } catch (error: any) {
         console.error('Error disconnecting session:', error.message);
         showToast({
@@ -320,9 +265,7 @@ export const useWalletConnect = () => {
 
       setIsLoadingDisconnect(false);
     },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, getSessionFromTopic, initWalletKit, showToast]
+    [getSessionFromTopic, initWalletKit, showToast, walletKit]
   );
 
   const disconnectAllSessions = useCallback(async () => {
@@ -341,13 +284,7 @@ export const useWalletConnect = () => {
     const currentSessions = walletKit?.getActiveSessions() ?? {};
     const sessionTopics = Object.keys(currentSessions);
 
-    // Filter out any Privy session
-    const topicsToDisconnect = sessionTopics.filter((topic) => {
-      const session = currentSessions[topic];
-      return !isAddressInSessionViaPrivy(session);
-    });
-
-    for (const topic of topicsToDisconnect) {
+    for (const topic of sessionTopics) {
       try {
         setIsLoadingDisconnectAll(true);
         await walletKit?.disconnectSession({
@@ -370,7 +307,6 @@ export const useWalletConnect = () => {
 
     // Update activeSessions after all sessions are disconnected
     setActiveSessions(walletKit?.getActiveSessions());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initWalletKit, showToast, walletKit]);
 
   const onSessionProposal = useCallback(
@@ -487,25 +423,16 @@ export const useWalletConnect = () => {
     [showModal, showToast, wallet, walletKit]
   );
 
-  const onSessionDelete = useCallback(
-    (event: { topic: string }) => {
-      const deletedTopic = event.topic;
+  const onSessionDelete = useCallback(() => {
+    // Update activeSessions after dApp disconnecting
+    const updatedSessions = walletKit?.getActiveSessions();
+    setActiveSessions(updatedSessions);
 
-      const deletedSession = prevSessionsRef.current[deletedTopic];
-
-      checkAndLogoutIfPrivySession(deletedSession);
-
-      // Update activeSessions after dApp disconnecting
-      const updatedSessions = walletKit?.getActiveSessions();
-      setActiveSessions(updatedSessions);
-
-      showToast({
-        title: 'WalletConnect',
-        subtitle: 'A connection ended from the dApp.',
-      });
-    },
-    [showToast, walletKit, checkAndLogoutIfPrivySession]
-  );
+    showToast({
+      title: 'WalletConnect',
+      subtitle: 'A connection ended from the dApp.',
+    });
+  }, [showToast, walletKit]);
 
   const onSessionRequest = useCallback(
     async (requestEvent: WalletKitTypes.SessionRequest) => {
@@ -688,17 +615,12 @@ export const useWalletConnect = () => {
     walletKit.on('proposal_expire', hideModal);
     walletKit.on('session_request_expire', onSessionRequestExpires);
 
-    const initialSessions = walletKit.getActiveSessions();
-    if (initialSessions) {
-      prevSessionsRef.current = { ...initialSessions };
-    }
-
     // eslint-disable-next-line consistent-return
     return () => {
       walletKit.off('session_proposal', onSessionProposal);
       walletKit.off('session_delete', onSessionDelete);
       walletKit.off('session_request', onSessionRequest);
-      walletKit.off('proposal_expire', hideModal);
+      walletKit.on('proposal_expire', hideModal);
       walletKit.off('session_request_expire', onSessionRequestExpires);
     };
   }, [

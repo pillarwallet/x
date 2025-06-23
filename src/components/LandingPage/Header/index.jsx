@@ -70,9 +70,6 @@ const Header = () => {
                   Testing Campaign
                 </NavLink>
               </li>
-              <li>
-                <a href="https://blog.pillarx.app/">Blog</a>
-              </li>
             </ul>
 
             <a

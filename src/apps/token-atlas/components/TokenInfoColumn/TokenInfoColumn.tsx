@@ -2,14 +2,18 @@ import { CircularProgress } from '@mui/material';
 import { createRef } from 'react';
 
 // hooks
-import { useAppSelector } from '../../hooks/useReducerHooks';
+import useRefDimensions from '../../../pillarx-app/hooks/useRefDimensions';
+import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
+
+// reducer
+import { setIsAllChainsVisible } from '../../reducer/tokenAtlasSlice';
 
 // types
 import { TokenAtlasInfoData } from '../../../../types/api';
 
 // components
+import ChainCard from '../ChainCard/ChainCard';
 import PriceCard from '../PriceCard/PriceCard';
-import TokenAudit from '../TokenAudit/TokenAudit';
 import Body from '../Typography/Body';
 import BodyLight from '../Typography/BodyLight';
 
@@ -22,11 +26,28 @@ const TokenInfoColumn = ({
   className,
   isLoadingTokenDataInfo,
 }: TokenInfoColumnProps) => {
+  const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
   );
-
+  const isAllChainsVisible = useAppSelector(
+    (state) => state.tokenAtlas.isAllChainsVisible as boolean
+  );
   const divRef = createRef<HTMLDivElement>();
+  const dimensions = useRefDimensions(divRef);
+
+  // This is to make sure that if the chains do not all fit in one line, we add the number of hidden chains
+  const tokenBlockchainsList =
+    tokenDataInfo?.contracts.map((contract) => contract.blockchain) || [];
+  const numberVisibleCards = Math.floor((dimensions.width - 50) / 158);
+  const numberHiddenCards = Math.max(
+    tokenBlockchainsList.length - numberVisibleCards,
+    0
+  );
+
+  const handleShowAllChains = () => {
+    dispatch(setIsAllChainsVisible(!isAllChainsVisible));
+  };
 
   const priceChanges = [
     { period: '1H', percentage: tokenDataInfo?.price_change_1h },
@@ -42,7 +63,42 @@ const TokenInfoColumn = ({
       ref={divRef}
       className={`flex flex-col gap-10 ${className}`}
     >
-      <TokenAudit />
+      <div className="flex flex-col gap-2">
+        <Body>Blockchains</Body>
+        <div
+          id="token-atlas-info-column-blockchain-list"
+          className="w-full h-fit flex flex-wrap gap-2"
+        >
+          {isLoadingTokenDataInfo && (
+            <CircularProgress
+              size={32}
+              sx={{ color: '#979797' }}
+              data-testid="circular-loading"
+            />
+          )}
+          {isAllChainsVisible
+            ? tokenBlockchainsList.map((chain, index) => (
+                <ChainCard key={index} chainName={chain} />
+              ))
+            : tokenBlockchainsList
+                .slice(0, numberVisibleCards)
+                .map((chain, index) => (
+                  <ChainCard key={index} chainName={chain} />
+                ))}
+          {numberHiddenCards !== 0 && (
+            <div
+              className="flex rounded-full bg-medium_grey p-2 items-center h-8 cursor-pointer"
+              onClick={handleShowAllChains}
+            >
+              {numberHiddenCards > 0 && !isAllChainsVisible ? (
+                <Body>+ {numberHiddenCards}</Body>
+              ) : (
+                <Body className="text-[9px] font-medium">Show less</Body>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
       <div
         id="token-atlas-info-column-price-change-cards"
         className="flex flex-col gap-2"

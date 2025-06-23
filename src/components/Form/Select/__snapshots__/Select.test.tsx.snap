@@ -2,7 +2,7 @@
 
 exports[`<Select /> renders correctly with default option 1`] = `
 <DocumentFragment>
-  .c5 {
+  .c4 {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,23 +10,19 @@ exports[`<Select /> renders correctly with default option 1`] = `
 }
 
 .c1 {
-  width: 42px;
-}
-
-.c2 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.c3 {
+.c2 {
   font-size: 15px;
   font-weight: 500;
   word-break: break-word;
 }
 
-.c4 {
+.c3 {
   font-size: 14px;
   font-weight: 400;
   word-break: break-word;
@@ -58,90 +54,19 @@ exports[`<Select /> renders correctly with default option 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r5:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r5:)"
-          >
-            <rect
-              fill="#146A7C"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#F0AB3D"
-              filter="url(#filter_:r5:)"
-              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C271B4"
-              filter="url(#filter_:r5:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r5:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 2
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test2
         </p>
       </div>
       <div
-        class="c5"
+        class="c4"
       >
         <svg
           fill="currentColor"
@@ -230,24 +155,24 @@ exports[`<Select /> renders correctly with option image 1`] = `
   border-radius: 50%;
 }
 
-.c1 {
+.c4 {
   width: 42px;
 }
 
-.c2 {
+.c1 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.c3 {
+.c2 {
   font-size: 15px;
   font-weight: 500;
   word-break: break-word;
 }
 
-.c4 {
+.c3 {
   font-size: 14px;
   font-weight: 400;
   word-break: break-word;
@@ -279,84 +204,13 @@ exports[`<Select /> renders correctly with option image 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r8:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r8:)"
-          >
-            <rect
-              fill="#F0AB3D"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#C271B4"
-              filter="url(#filter_:r8:)"
-              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C20D90"
-              filter="url(#filter_:r8:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r8:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 1
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test1
         </p>
@@ -369,84 +223,13 @@ exports[`<Select /> renders correctly with option image 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r9:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r9:)"
-          >
-            <rect
-              fill="#146A7C"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#F0AB3D"
-              filter="url(#filter_:r9:)"
-              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C271B4"
-              filter="url(#filter_:r9:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r9:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 2
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test2
         </p>
@@ -457,7 +240,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
       id="action-bar-send-test 3"
     >
       <div
-        class="c1"
+        class="c4"
       >
         <img
           alt="test 3"
@@ -467,15 +250,15 @@ exports[`<Select /> renders correctly with option image 1`] = `
         />
       </div>
       <div
-        class="c2"
+        class="c1"
       >
         <p
-          class="c3"
+          class="c2"
         >
           test 3
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test3
         </p>
@@ -600,24 +383,24 @@ exports[`<Select /> renders correctly with some options 1`] = `
   border-radius: 50%;
 }
 
-.c1 {
+.c4 {
   width: 42px;
 }
 
-.c2 {
+.c1 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.c3 {
+.c2 {
   font-size: 15px;
   font-weight: 500;
   word-break: break-word;
 }
 
-.c4 {
+.c3 {
   font-size: 14px;
   font-weight: 400;
   word-break: break-word;
@@ -649,84 +432,13 @@ exports[`<Select /> renders correctly with some options 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r0:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r0:)"
-          >
-            <rect
-              fill="#F0AB3D"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#C271B4"
-              filter="url(#filter_:r0:)"
-              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C20D90"
-              filter="url(#filter_:r0:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r0:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 1
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test1
         </p>
@@ -739,84 +451,13 @@ exports[`<Select /> renders correctly with some options 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r1:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r1:)"
-          >
-            <rect
-              fill="#146A7C"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#F0AB3D"
-              filter="url(#filter_:r1:)"
-              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C271B4"
-              filter="url(#filter_:r1:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r1:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 2
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test2
         </p>
@@ -827,7 +468,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
       id="action-bar-send-test 3"
     >
       <div
-        class="c1"
+        class="c4"
       >
         <img
           alt="test 3"
@@ -837,15 +478,15 @@ exports[`<Select /> renders correctly with some options 1`] = `
         />
       </div>
       <div
-        class="c2"
+        class="c1"
       >
         <p
-          class="c3"
+          class="c2"
         >
           test 3
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test3
         </p>
@@ -857,7 +498,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
 
 exports[`<Select /> responds once clicked 1`] = `
 <DocumentFragment>
-  .c5 {
+  .c4 {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -865,23 +506,19 @@ exports[`<Select /> responds once clicked 1`] = `
 }
 
 .c1 {
-  width: 42px;
-}
-
-.c2 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.c3 {
+.c2 {
   font-size: 15px;
   font-weight: 500;
   word-break: break-word;
 }
 
-.c4 {
+.c3 {
   font-size: 14px;
   font-weight: 400;
   word-break: break-word;
@@ -913,90 +550,19 @@ exports[`<Select /> responds once clicked 1`] = `
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r4:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r4:)"
-          >
-            <rect
-              fill="#146A7C"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#F0AB3D"
-              filter="url(#filter_:r4:)"
-              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C271B4"
-              filter="url(#filter_:r4:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r4:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 2
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test2
         </p>
       </div>
       <div
-        class="c5"
+        class="c4"
       >
         <svg
           fill="currentColor"
@@ -1019,7 +585,7 @@ exports[`<Select /> responds once clicked 1`] = `
 
 exports[`<Select /> shows loading skeleton on option item where option value is loading 1`] = `
 <DocumentFragment>
-  .c5 {
+  .c4 {
   height: 15px;
   width: 30%;
   animation: hLhBjP 1s linear infinite alternate;
@@ -1034,24 +600,24 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
   border-radius: 50%;
 }
 
-.c1 {
+.c5 {
   width: 42px;
 }
 
-.c2 {
+.c1 {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.c3 {
+.c2 {
   font-size: 15px;
   font-weight: 500;
   word-break: break-word;
 }
 
-.c4 {
+.c3 {
   font-size: 14px;
   font-weight: 400;
   word-break: break-word;
@@ -1083,84 +649,13 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r6:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r6:)"
-          >
-            <rect
-              fill="#F0AB3D"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#C271B4"
-              filter="url(#filter_:r6:)"
-              transform="translate(2 2) rotate(354 40 40) scale(1.5)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C20D90"
-              filter="url(#filter_:r6:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(7 -7) rotate(351 40 40) scale(1.5)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r6:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 1
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test1
         </p>
@@ -1173,85 +668,13 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
       <div
         class="c1"
       >
-        <svg
-          class="rounded-md"
-          data-testid="random-avatar"
-          fill="none"
-          role="img"
-          viewBox="0 0 80 80"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            height="80"
-            id=":r7:"
-            maskUnits="userSpaceOnUse"
-            width="80"
-            x="0"
-            y="0"
-          >
-            <rect
-              fill="#FFFFFF"
-              height="80"
-              rx="160"
-              width="80"
-            />
-          </mask>
-          <g
-            mask="url(#:r7:)"
-          >
-            <rect
-              fill="#146A7C"
-              height="80"
-              width="80"
-            />
-            <path
-              d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-              fill="#F0AB3D"
-              filter="url(#filter_:r7:)"
-              transform="translate(0 0) rotate(352 40 40) scale(1.2)"
-            />
-            <path
-              d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-              fill="#C271B4"
-              filter="url(#filter_:r7:)"
-              style="mix-blend-mode: overlay;"
-              transform="translate(-4 -4) rotate(-348 40 40) scale(1.2)"
-            />
-          </g>
-          <defs>
-            <filter
-              color-interpolation-filters="sRGB"
-              filterUnits="userSpaceOnUse"
-              id="filter_:r7:"
-            >
-              <feflood
-                flood-opacity="0"
-                result="BackgroundImageFix"
-              />
-              <feblend
-                in="SourceGraphic"
-                in2="BackgroundImageFix"
-                result="shape"
-              />
-              <fegaussianblur
-                result="effect1_foregroundBlur"
-                stdDeviation="7"
-              />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-      <div
-        class="c2"
-      >
         <p
-          class="c3"
+          class="c2"
         >
           test 2
         </p>
         <div
-          class="c5"
-          data-testid="skeleton-loader-list-item"
+          class="c4"
         />
       </div>
     </div>
@@ -1260,7 +683,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
       id="action-bar-send-test 3"
     >
       <div
-        class="c1"
+        class="c5"
       >
         <img
           alt="test 3"
@@ -1270,15 +693,15 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
         />
       </div>
       <div
-        class="c2"
+        class="c1"
       >
         <p
-          class="c3"
+          class="c2"
         >
           test 3
         </p>
         <p
-          class="c4"
+          class="c3"
         >
           test3
         </p>

@@ -8,6 +8,7 @@ import { addMiddleware } from '../store';
 
 // utils
 import { CompatibleChains, isTestnet } from '../utils/blockchain';
+import { chainIdToChainNameTokensData } from './tokensData';
 
 const fetchBaseQueryWithRetry = retry(
   fetchBaseQuery({
@@ -49,9 +50,9 @@ export const pillarXApiSearchTokens = createApi({
                   }
                 : {
                     filters: JSON.stringify({
-                      blockchains: CompatibleChains.map(
-                        (chain) => chain.chainId
-                      ).join(','),
+                      blockchains: CompatibleChains.map((chain) =>
+                        chainIdToChainNameTokensData(chain.chainId)
+                      ).join(', '),
                     }),
                   }),
             },

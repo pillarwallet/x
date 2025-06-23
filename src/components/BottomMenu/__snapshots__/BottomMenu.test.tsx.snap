@@ -4,59 +4,280 @@ exports[`<BottomMenu /> renders correctly if not authenticated 1`] = `null`;
 
 exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
 [
-  <div
-    className="sc-iRTMaw ehWBuK"
+  .c7 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c7::-webkit-scrollbar {
+  display: none;
+}
+
+.c8 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c8::-webkit-scrollbar {
+  display: none;
+}
+
+.c6 {
+  width: 100%;
+  min-height: 30vh;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c6::-webkit-scrollbar {
+  display: none;
+}
+
+.c5 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c5::-webkit-scrollbar {
+  display: none;
+}
+
+.c1 {
+  overflow: hidden;
+}
+
+.c2 {
+  transition: 100ms linear;
+  transform: translateY(1000px);
+  display: none;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+  width: 100%;
+  position: relative;
+}
+
+.c3 {
+  align-self: flex-start;
+  transform: translateX(calc(0 * -336px));
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+}
+
+.c4 {
+  width: 336px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 31px 20px 20px;
+  overflow: hidden;
+  max-height: 50vh;
+}
+
+.c9 {
+  background: rgba(255, 255, 255, 0.4);
+  height: 4px;
+  width: 40px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  top: 14px;
+  left: 148px;
+}
+
+.c14 {
+  display: none;
+  margin-left: 10px;
+}
+
+.c16 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #8A77FF;
+  width: 20px;
+}
+
+.c17 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #77FFF9;
+  width: 20px;
+}
+
+.c18 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #D5FF48;
+  width: 20px;
+}
+
+.c19 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #3699FF;
+  width: 20px;
+}
+
+.c12 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #89888b;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  letter-spacing: -0.5px;
+  font-size: 14px;
+  user-select: none;
+  padding: 0 7px;
+  height: 100%;
+}
+
+.c12.active .c15 {
+  display: block;
+}
+
+.c12:first-child {
+  margin-left: 17px;
+}
+
+.c12:last-child {
+  margin-right: 17px;
+}
+
+.c0 {
+  margin: 0 auto;
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  z-index: 100;
+  width: 338px;
+  transform: translateX(-50%);
+  border: 1px solid #363439;
+  background: rgba(18, 15, 23, 0.70);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+}
+
+.c10 {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  height: 45px;
+  width: 100%;
+}
+
+.c10:not(.c10:hover) .c11.active,
+.c10 .c11:hover {
+  color: #fff;
+  padding: 0 15px;
+  margin: 0;
+}
+
+.c10:not(.c10:hover) .c11.active .c15,
+.c10 .c11:hover .c15 {
+  width: 32px;
+  transform: translateX(calc(-50% + 5px));
+}
+
+.c10:not(.c10:hover) .c11.active .c13,
+.c10 .c11:hover .c13 {
+  display: block;
+}
+
+<div
+    className="c0"
     id="bottom-menu"
   >
     <div
-      className="sc-hldWLq cXbbUI"
+      className="c1"
     >
       <div
-        className="sc-iPXUjb cnfVou"
+        className="c2"
       >
         <div
-          className="sc-hlweCQ cKThDg"
+          className="c3"
         >
           <div
-            className="sc-iQqcaB cyNSWs"
+            className="c4"
           >
             <div
-              className="sc-ikkVnJ hMcSUu"
+              className="c5"
             />
           </div>
           <div
-            className="sc-iQqcaB cyNSWs"
+            className="c4"
           >
             <div
-              className="sc-bAehkN gpZsaY"
+              className="c6"
             />
           </div>
           <div
-            className="sc-iQqcaB cyNSWs"
+            className="c4"
           >
             <div
-              className="sc-kCuUfV cGXgnb"
+              className="c7"
             />
           </div>
           <div
-            className="sc-iQqcaB cyNSWs"
+            className="c4"
           >
             <div
-              className="sc-fhfEft bJcwMW"
+              className="c8"
             />
           </div>
         </div>
         <div
-          className="sc-fcSHUR hQznzH"
+          className="c9"
           onClick={[Function]}
         />
       </div>
     </div>
     <div
-      className="sc-eKrodz jjiSYV"
+      className="c10"
     >
       <div
-        className="sc-erPUmh dKrrsl active"
+        className="c11 c12 active"
         id="menu-item-Home"
         onClick={[Function]}
       >
@@ -76,18 +297,18 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
           />
         </svg>
         <span
-          className="sc-jCWzJg iDqLwD"
+          className="c13 c14"
         >
           Home
         </span>
       </div>
       <div
-        className="sc-erPUmh dKrrsl"
+        className="c11 c12"
         id="menu-item-Send"
         onClick={[Function]}
       >
         <div
-          className="sc-jVxTAy hMLpbZ"
+          className="c15 c16"
         />
         <svg
           fill="none"
@@ -105,18 +326,18 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
           />
         </svg>
         <span
-          className="sc-jCWzJg iDqLwD"
+          className="c13 c14"
         >
           Send
         </span>
       </div>
       <div
-        className="sc-erPUmh dKrrsl"
+        className="c11 c12"
         id="menu-item-History"
         onClick={[Function]}
       >
         <div
-          className="sc-jVxTAy jNbIWX"
+          className="c15 c17"
         />
         <svg
           fill="none"
@@ -134,18 +355,18 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
           />
         </svg>
         <span
-          className="sc-jCWzJg iDqLwD"
+          className="c13 c14"
         >
           History
         </span>
       </div>
       <div
-        className="sc-erPUmh dKrrsl"
+        className="c11 c12"
         id="menu-item-Account"
         onClick={[Function]}
       >
         <div
-          className="sc-jVxTAy bCpxgl"
+          className="c15 c18"
         />
         <svg
           fill="none"
@@ -170,18 +391,18 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
           />
         </svg>
         <span
-          className="sc-jCWzJg iDqLwD"
+          className="c13 c14"
         >
           Account
         </span>
       </div>
       <div
-        className="sc-erPUmh dKrrsl"
+        className="c11 c12"
         id="menu-item-Apps"
         onClick={[Function]}
       >
         <div
-          className="sc-jVxTAy gIJyHx"
+          className="c15 c19"
         />
         <svg
           fill="none"
@@ -199,15 +420,31 @@ exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
           />
         </svg>
         <span
-          className="sc-jCWzJg iDqLwD"
+          className="c13 c14"
         >
           Apps
         </span>
       </div>
     </div>
   </div>,
-  <div
-    className="sc-jkvfRO iOuZiG"
+  .c0 {
+  position: fixed;
+  z-index: 98;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: 100ms linear;
+  backdrop-filter: blur(0px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 114px;
+  overflow: hidden;
+}
+
+<div
+    className="c0"
   />,
 ]
 `;

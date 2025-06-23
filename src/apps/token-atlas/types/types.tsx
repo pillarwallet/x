@@ -19,5 +19,4 @@ export type SelectedTokenType = {
   chainId?: number;
   name: string;
   icon?: string;
-  price?: number;
 };

@@ -89,7 +89,7 @@ export const defaultTheme: Theme = {
   },
   color: {
     background: {
-      body: '#121116',
+      body: '#1F1D23',
       bottomMenu: 'rgba(18, 15, 23, 0.70)',
       bottomMenuItemHover: 'rgba(216, 232, 255, 0.10)',
       bottomMenuModal: 'rgba(16, 16, 16, 0.70)',

@@ -134,7 +134,6 @@ describe('<TokensSlider />', () => {
       chainId: 1,
       name: 'Token1',
       icon: 'logo1.png',
-      price: 0,
     });
 
     expect(store.getState().tokenAtlas.isSearchTokenModalOpen).toBe(false);

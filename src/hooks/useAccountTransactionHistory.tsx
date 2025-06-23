@@ -21,7 +21,7 @@ const useAccountTransactionHistory = (params?: {
     context.listenerRef.current.onHistoryUpdated = params.onUpdated;
   }
 
-  return context.data;
+  return context.data.history;
 };
 
 export default useAccountTransactionHistory;

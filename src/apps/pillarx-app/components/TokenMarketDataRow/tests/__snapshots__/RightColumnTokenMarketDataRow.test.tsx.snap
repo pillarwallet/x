@@ -15,7 +15,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
             class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
           >
             $
-            0.04219
+            0.042188
           </p>
           <div
             class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"
@@ -76,7 +76,7 @@ exports[`<RightColumnTokenMarketDataRow /> - ETH token row renders and matches s
           class="font-normal desktop:text-market_row_green tablet:text-market_row_green false mobile:text-white desktop:text-base tablet:text-base mobile:text-sm"
         >
           $
-          0.04219
+          0.042188
         </p>
         <div
           class="flex gap-1 items-center desktop:px-1 desktop:rounded tablet:px-1 tablet:rounded text-market_row_green desktop:bg-market_row_green/[.1] tablet:bg-market_row_green/[.1] mobile:bg-transparent false"

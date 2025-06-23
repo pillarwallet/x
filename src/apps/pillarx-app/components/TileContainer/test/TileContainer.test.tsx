@@ -66,7 +66,7 @@ describe('<TileContainer />', () => {
     expect(tree.type).toBe('div');
     expect(tree.props.className).toContain('flex');
     expect(tree.props.className).toContain('bg-container_grey');
-    expect(tree.props.className).toContain('rounded-3xl');
+    expect(tree.props.className).toContain('rounded-2xl');
   });
 
   it('applies the custom class', () => {
@@ -78,7 +78,7 @@ describe('<TileContainer />', () => {
       .toJSON() as ReactTestRendererJSON;
     expect(tree.props.className).toContain('flex');
     expect(tree.props.className).toContain('bg-container_grey');
-    expect(tree.props.className).toContain('rounded-3xl');
+    expect(tree.props.className).toContain('rounded-2xl');
     expect(tree.props.className).toContain(customClass);
   });
 });

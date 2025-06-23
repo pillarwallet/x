@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEtherspot } from '@etherspot/transaction-kit';
-import { EVM, createConfig } from '@lifi/sdk';
-import { Chain, WalletClient, createWalletClient, http } from 'viem';
-
 // styles
 import styled from 'styled-components';
 import './styles/tailwindTheExchange.css';
 
 // hooks
 import { useAppSelector } from './hooks/useReducerHooks';
-
-// utils
-import { supportedChains } from '../../utils/blockchain';
 
 // components
 import CardsSwap from './components/CardsSwap/CardsSwap';
@@ -23,34 +16,12 @@ import SwapSummary from './components/SwapSummary/SwapSummary';
 import XBackground from './images/x-background.svg';
 
 export const App = () => {
-  const { provider } = useEtherspot();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
   const isReceiveOpen = useAppSelector(
     (state) => state.swap.isReceiveOpen as boolean
   );
-
-  createConfig({
-    integrator: 'PillarX',
-    providers: [
-      EVM({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        getWalletClient: async () => provider as any,
-        switchChain: async (chainId) =>
-          // Switch chain by creating a new wallet client
-          createWalletClient({
-            account: (provider as WalletClient).account,
-            chain: supportedChains.find(
-              (chain) => chain.id === chainId
-            ) as Chain,
-            transport: http(),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          }) as any,
-      }),
-    ],
-    apiKey: process.env.REACT_APP_LIFI_API_KEY,
-  });
 
   return (
     <Wrapper>

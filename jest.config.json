@@ -14,5 +14,5 @@
     "@walletconnect/utils": "<rootDir>/__mocks__/walletConnectMock.ts"
   },
   "testEnvironment": "jest-fixed-jsdom",
-  "transformIgnorePatterns": ["node_modules/(?!(mime|wagmi|@wagmi)/)"]
+  "transformIgnorePatterns": ["node_modules/(?!(mime)/)"]
 }

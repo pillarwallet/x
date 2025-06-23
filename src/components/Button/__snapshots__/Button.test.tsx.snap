@@ -2,13 +2,82 @@
 
 exports[`<Button /> renders correctly 1`] = `
 [
-  <button
-    className="sc-bRKDuR cQIPGv"
+  .c0 {
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: #997cfa;
+  color: #fff;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 15px;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0:hover {
+  opacity: 0.7;
+}
+
+.c0:active {
+  opacity: 0.4;
+}
+
+.c0:focus {
+  outline: none;
+}
+
+<button
+    className="c0"
   >
     Some regular text.
   </button>,
-  <button
-    className="sc-bRKDuR fUfyXc"
+  .c0 {
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: #997cfa;
+  color: #fff;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 15px;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0:hover {
+  opacity: 0.7;
+}
+
+.c0:active {
+  opacity: 0.4;
+}
+
+.c0:focus {
+  outline: none;
+}
+
+<button
+    className="c0"
   >
     full width button
   </button>,

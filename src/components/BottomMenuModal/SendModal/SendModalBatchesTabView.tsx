@@ -1,11 +1,8 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   EtherspotBatch,
   EtherspotBatches,
   EtherspotTransaction,
-  ISentBatches,
   useEtherspotTransactions,
 } from '@etherspot/transaction-kit';
 import { ethers } from 'ethers';
@@ -18,9 +15,6 @@ import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-// services
-import { getUserOperationStatus } from '../../../services/userOpStatus';
-
 // components
 import Button from '../../Button';
 import FormGroup from '../../Form/FormGroup';
@@ -28,12 +22,11 @@ import Alert from '../../Text/Alert';
 import Card from '../../Text/Card';
 
 // hooks
-import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
-import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // providers
+import { AccountBalancesContext } from '../../../providers/AccountBalancesProvider';
 import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 import { IGlobalBatchTransaction } from '../../../providers/GlobalTransactionsBatchProvider';
 
@@ -46,11 +39,8 @@ import {
 import { formatAmountDisplay } from '../../../utils/number';
 
 const SendModalBatchesTabView = () => {
-  const {
-    transactions: globalTransactionsBatch,
-    removeFromBatch,
-    addToBatch,
-  } = useGlobalTransactionsBatch();
+  const { transactions: globalTransactionsBatch, removeFromBatch } =
+    useGlobalTransactionsBatch();
   const [t] = useTranslation();
   const [expanded, setExpanded] = React.useState<
     Record<number, boolean | undefined>
@@ -65,14 +55,7 @@ const SendModalBatchesTabView = () => {
   const { send } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
   const contextNfts = useContext(AccountNftsContext);
-  const { transactionDebugLog } = useTransactionDebugLogger();
-  const {
-    userOpStatus,
-    setTransactionHash,
-    setUserOpStatus,
-    setLatestUserOpInfo,
-    setLatestUserOpChainId,
-  } = useAccountTransactionHistory();
+  const contextBalances = useContext(AccountBalancesContext);
 
   const groupedTransactionsByChainId = globalTransactionsBatch.reduce(
     (acc, globalTransaction) => {
@@ -91,52 +74,22 @@ const SendModalBatchesTabView = () => {
   useEffect(() => {
     if (!anyChainSending) {
       contextNfts?.data.setUpdateData(true);
+      contextBalances?.data.setUpdateData(true);
     }
 
     if (anyChainSending) {
       contextNfts?.data.setUpdateData(false);
+      contextBalances?.data.setUpdateData(false);
     }
-  }, [contextNfts?.data, anyChainSending]);
+  }, [contextNfts?.data, contextBalances?.data, anyChainSending]);
 
   const onSend = async (chainId: number, batchId: string) => {
-    if (isSending[chainId]) {
-      transactionDebugLog(
-        'Another batch is being sent, cannot process the sending of this batch:',
-        batchId
-      );
-      return;
-    }
-
-    // remove previously saved userOp for a new one
-    localStorage.removeItem('latestUserOpStatus');
-    localStorage.removeItem('latestTransactionHash');
-    localStorage.removeItem('latestUserOpInfo');
-    localStorage.removeItem('latestUserOpChainId');
-
+    if (isSending[chainId]) return;
     setIsSending((prev) => ({ ...prev, [chainId]: true }));
     setEstimatedCostFormatted((prev) => ({ ...prev, [chainId]: '' }));
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
 
-    transactionDebugLog('Preparing to send batch:', batchId);
-
-    let sent: ISentBatches[];
-
-    try {
-      sent = await send([batchId], {
-        retryOnFeeTooLow: true,
-        maxRetries: 3,
-        feeMultiplier: 1.2, // 20% increase per retry
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      const errorMes =
-        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.';
-      console.warn('Final send() failed after retries:', errorMes);
-      setErrorMessage((prev) => ({ ...prev, [chainId]: errorMes }));
-      setIsSending((prev) => ({ ...prev, [chainId]: false }));
-      return;
-    }
+    const sent = await send([batchId]);
 
     const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
     if (estimatedCostBN) {
@@ -147,9 +100,6 @@ const SendModalBatchesTabView = () => {
         estimatedCostBN,
         nativeAsset.decimals
       );
-
-      transactionDebugLog('Transaction batch estimated cost:', estimatedCost);
-
       setEstimatedCostFormatted((prev) => ({
         ...prev,
         [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`,
@@ -163,8 +113,7 @@ const SendModalBatchesTabView = () => {
     if (estimationErrorMessage) {
       setErrorMessage((prev) => ({
         ...prev,
-        [chainId]:
-          'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.',
+        [chainId]: estimationErrorMessage,
       }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
@@ -172,130 +121,23 @@ const SendModalBatchesTabView = () => {
 
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
-      setErrorMessage((prev) => ({
-        ...prev,
-        [chainId]:
-          'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.',
-      }));
+      setErrorMessage((prev) => ({ ...prev, [chainId]: sendingErrorMessage }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
 
-    const newUserOpHash = sent?.[0]?.sentBatches?.[0]?.userOpHash;
-
-    transactionDebugLog('Transaction batch new userOpHash:', newUserOpHash);
-
+    const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
       return;
     }
 
-    setLatestUserOpInfo(`Batched transaction on ${getChainName(chainId)}`);
-
-    setLatestUserOpChainId(chainId);
-
-    const userOpStatusInterval = 5000; // 5 seconds
-    const maxAttempts = 9; // 9 * 5sec = 45sec
-    let attempts = 0;
-
-    const userOperationStatus = setInterval(async () => {
-      attempts += 1;
-      try {
-        const response = await getUserOperationStatus(chainId, newUserOpHash);
-        transactionDebugLog(`UserOp status attempt ${attempts}`, response);
-
-        const status = response?.status;
-
-        if (status === 'OnChain' && response?.transaction) {
-          setUserOpStatus('Confirmed');
-          setTransactionHash(response.transaction);
-          transactionDebugLog(
-            'Transaction successfully submitted on chain with transaction hash:',
-            response.transaction
-          );
-          clearInterval(userOperationStatus);
-          return;
-        }
-
-        if (status === 'Reverted') {
-          if (attempts < maxAttempts) {
-            setUserOpStatus('Sent');
-          } else {
-            setUserOpStatus('Failed');
-            transactionDebugLog(
-              'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
-              response?.transaction
-            );
-            setTransactionHash(response?.transaction);
-            clearInterval(userOperationStatus);
-          }
-          return;
-        }
-
-        if (['New', 'Pending'].includes(status)) {
-          setUserOpStatus('Sending');
-          transactionDebugLog(
-            `UserOp Status is ${status}. Check transaction hash:`,
-            response?.transaction
-          );
-        }
-
-        if (['Submitted'].includes(status)) {
-          setUserOpStatus('Sent');
-          transactionDebugLog(
-            `UserOp Status is ${status}. Check transaction hash:`,
-            response?.transaction
-          );
-        }
-
-        if (attempts >= maxAttempts) {
-          clearInterval(userOperationStatus);
-          transactionDebugLog(
-            'Max attempts reached without userOp with OnChain status. Check transaction hash:',
-            response?.transaction
-          );
-          if (userOpStatus !== 'Confirmed') {
-            setUserOpStatus('Failed');
-            setTransactionHash(response?.transaction);
-          }
-        }
-      } catch (err) {
-        transactionDebugLog('Error getting userOp status:', err);
-        clearInterval(userOperationStatus);
-        setUserOpStatus('Failed');
-      }
-    }, userOpStatusInterval);
-
     groupedTransactionsByChainId[+chainId].forEach((transaction) =>
       removeFromBatch(transaction.id as string)
     );
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
-  };
-
-  // To remove one transaction the entire batch needs to be rebuilt by
-  // removing all transactions then re-adding all transactions minus
-  // the one that has been deleted
-  const removeOneTransaction = (transactionId: string, chainId: number) => {
-    // All transactions for this chain
-    const chainTransactions = globalTransactionsBatch.filter(
-      (tx) => tx.chainId === chainId
-    );
-    // Remove all transactions from UI state
-    chainTransactions.forEach((tx) => {
-      removeFromBatch(tx.id as string);
-    });
-
-    // Wait for state update
-    setTimeout(() => {
-      // Adding back all transactions except the one we wanted to remove
-      chainTransactions.forEach((tx) => {
-        if (tx.id !== transactionId) {
-          addToBatch(tx);
-        }
-      });
-    }, 0);
   };
 
   return (
@@ -354,10 +196,7 @@ const SendModalBatchesTabView = () => {
                       >
                         <RemoveButton
                           onClick={() =>
-                            removeOneTransaction(
-                              transaction.id as string,
-                              +chainId
-                            )
+                            removeFromBatch(transaction.id as string)
                           }
                         >
                           <TrashIcon size={15} />

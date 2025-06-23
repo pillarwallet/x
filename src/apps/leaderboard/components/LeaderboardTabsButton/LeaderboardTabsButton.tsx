@@ -1,43 +1,36 @@
-// reducer
-import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
-import {
-  LeaderboardTimeTabsType,
-  setTimeTab,
-} from '../../reducer/LeaderboardSlice';
+// components
+import Body from '../Typography/Body';
 
-const LeaderboardTabsButton = () => {
-  const dispatch = useAppDispatch();
-  const timeTab = useAppSelector(
-    (state) => state.leaderboard.timeTab as LeaderboardTimeTabsType
-  );
+type LeaderboardTabsButtonProps = {
+  tabs: string[];
+  activeTab: number;
+  onTabClick: (index: number) => void;
+};
 
+const LeaderboardTabsButton = ({
+  tabs,
+  activeTab,
+  onTabClick,
+}: LeaderboardTabsButtonProps) => {
   return (
     <div
       id="leaderboard-button-tabs"
-      className="flex w-fit p-1 bg-[#121116] rounded-[10px]"
+      className="flex w-full bg-container_grey rounded-2xl p-4 gap-4 mb-5"
     >
-      <button
-        type="button"
-        className={`items-center justify-center w-[130px] rounded-md p-1.5 ${timeTab === 'weekly' ? 'bg-container_grey' : 'bg-[#121116]'}`}
-        onClick={() => dispatch(setTimeTab('weekly'))}
-      >
-        <p
-          className={`font-normal text-[13px] ${timeTab === 'weekly' ? 'text-white' : 'text-white/[.5]'}`}
+      {tabs.map((tab, index) => (
+        <button
+          type="button"
+          key={index}
+          onClick={() => onTabClick(index)}
+          className={`p-3 w-full ${
+            activeTab === index
+              ? 'bg-purple_medium rounded-md'
+              : 'hover:bg-medium_grey hover:rounded-md'
+          }`}
         >
-          Weekly
-        </p>
-      </button>
-      <button
-        type="button"
-        className={`items-center justify-center w-[130px] rounded-md p-1.5 ${timeTab === 'all' ? 'bg-container_grey' : 'bg-[#121116]'}`}
-        onClick={() => dispatch(setTimeTab('all'))}
-      >
-        <p
-          className={`font-normal text-[13px] ${timeTab === 'all' ? 'text-white' : 'text-white/[.5]'}`}
-        >
-          All Time
-        </p>
-      </button>
+          <Body className="text-white">{tab}</Body>
+        </button>
+      ))}
     </div>
   );
 };

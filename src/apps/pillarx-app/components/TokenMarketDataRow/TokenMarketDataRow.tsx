@@ -24,7 +24,7 @@ const TokenMarketDataRow = ({
   const navigate = useNavigate();
   return (
     <div
-      className={`flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-lighter_container_grey
+      className={`flex w-full h-full items-center justify-between gap-2 py-3 border-b-[1px] border-[#25232D]
     ${isLastNumber && 'desktop:border-b-0 tablet:border-b-0 mobile:border-b-0'} 
     ${isMiddleNumber && 'desktop:border-b-0'}
     ${data.link && 'cursor-pointer'}`}

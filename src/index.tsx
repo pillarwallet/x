@@ -10,7 +10,7 @@ import Main from './containers/Main';
 import { store } from './store';
 
 if (typeof window !== 'undefined') {
-  // @ts-expect-error: Browser does not exists in global
+  // @ts-expect-error: issue with @uniswap/smart-order-router v3.26.1, ref – https://github.com/Uniswap/smart-order-router/issues/484
   window.Browser = {
     T: () => {},
   };

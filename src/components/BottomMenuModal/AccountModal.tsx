@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import {
+  useEtherspotUtils,
+  useWalletAddress,
+} from '@etherspot/transaction-kit';
 import { useLogout } from '@privy-io/react-auth';
 import Tippy from '@tippyjs/react';
 import Avatar from 'boring-avatars';
+import { BigNumber, ethers } from 'ethers';
 import {
   ArrowRight2 as ArrowRightIcon,
   Copy as CopyIcon,
@@ -20,7 +24,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -38,15 +41,17 @@ import {
 import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
+import useAccountBalances from '../../hooks/useAccountBalances';
 import useAccountNfts from '../../hooks/useAccountNfts';
 import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 
 // services
 import { clearDappStorage } from '../../services/dappLocalStorage';
-import { useGetWalletPortfolioQuery } from '../../services/pillarXApiWalletPortfolio';
-
-// components
-import RandomAvatar from '../../apps/pillarx-app/components/RandomAvatar/RandomAvatar';
+import {
+  Token,
+  chainIdToChainNameTokensData,
+  queryTokenData,
+} from '../../services/tokensData';
 
 interface AccountModalProps {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -58,65 +63,49 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
-  const { address: wcAddress } = useAccount();
-  const { disconnect } = useDisconnect();
-
+  const balances = useAccountBalances();
   const nfts = useAccountNfts();
+  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [showNfts, setShowNfts] = React.useState(false);
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
   const [copied, setCopied] = React.useState(false);
-  const [hideImage, setHideImage] = React.useState(false);
-
-  const {
-    data: walletPortfolioData,
-    isLoading: isWalletPortfolioDataLoading,
-    isFetching: isWalletPortfolioDataFetching,
-    isSuccess: isWalletPortfolioDataSuccess,
-  } = useGetWalletPortfolioQuery(
-    { wallet: accountAddress || '', isPnl: false },
-    { skip: !accountAddress, refetchOnFocus: true, pollingInterval: 120000 }
-  );
 
   const groupedTokens = useMemo(() => {
-    if (
-      !accountAddress ||
-      !isWalletPortfolioDataSuccess ||
-      !walletPortfolioData?.result?.data
-    )
-      return [];
+    if (!accountAddress) return {};
 
-    const portfolioData = walletPortfolioData.result.data;
+    return visibleChains.reduce<
+      Record<
+        string,
+        Record<string, { asset: Token; balance: BigNumber; chain: Chain }>
+      >
+    >((grouped, chain) => {
+      const balancesForChain = balances[chain.id]?.[accountAddress] || [];
+      const assets = queryTokenData({
+        blockchain: chainIdToChainNameTokensData(chain.id),
+      });
 
-    // Each asset in the API response is already a grouped token with cross-chain data
-    return portfolioData.assets
-      .filter((asset) => asset.token_balance > 0) // Only show tokens with balance
-      .map((asset) => {
-        const chains = asset.contracts_balances
-          .filter((contract) => contract.balance > 0)
-          .map((contract) => {
-            const chainId = Number(contract.chainId.split(':')[1]); // Handle chainId format like "eip155:1"
-            return {
-              balance: contract.balance,
-              chain: visibleChains.find((chain) => chain.id === chainId)!,
-              address: contract.address,
-            };
-          })
-          .filter((item) => item.chain); // Remove items where chain wasn't found
+      balancesForChain.forEach((balance) => {
+        const asset = assets.find(
+          (a) =>
+            addressesEqual(a.contract, balance.token) ||
+            (balance.token === null && isZeroAddress(a.contract))
+        );
 
-        return {
-          asset,
-          totalBalance: asset.token_balance,
-          chains,
-          symbol: asset.asset.symbol,
+        if (!asset) {
+          return;
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        grouped[asset.symbol] = {
+          ...(grouped[asset.symbol] ?? {}),
+          [chain.id]: { asset, balance: balance.balance, chain },
         };
-      })
-      .filter((token) => token.chains.length > 0); // Only include tokens with supported chains
-  }, [
-    accountAddress,
-    isWalletPortfolioDataSuccess,
-    walletPortfolioData?.result?.data,
-  ]);
+      });
+
+      return grouped;
+    }, {});
+  }, [accountAddress, balances, addressesEqual, isZeroAddress]);
 
   const allNfts = useMemo(() => {
     if (!accountAddress) return [];
@@ -149,16 +138,12 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setCopied(true);
   }, [accountAddress, copied]);
 
-  const onLogoutClick = useCallback(async () => {
+  const onLogoutClick = useCallback(() => {
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
     } else {
       logout();
-    }
-
-    if (wcAddress) {
-      await disconnect();
     }
 
     clearDappStorage();
@@ -168,7 +153,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate, disconnect]);
+  }, [account, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {
@@ -185,9 +170,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     Object.keys(nfts).some((chainId) => !nfts[+chainId]?.[accountAddress]);
   const tokensLoading =
     !accountAddress ||
-    isWalletPortfolioDataLoading ||
-    isWalletPortfolioDataFetching ||
-    !isWalletPortfolioDataSuccess;
+    Object.keys(nfts).some((chainId) => !balances[+chainId]?.[accountAddress]);
 
   if (!isContentVisible) {
     return <Wrapper />;
@@ -292,7 +275,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         )}
         {!showNfts && (
           <>
-            {!tokensLoading && !groupedTokens.length && (
+            {!tokensLoading && !Object.keys(groupedTokens).length && (
               <Alert>{t`error.noTokensFound`}</Alert>
             )}
             {tokensLoading && (
@@ -317,34 +300,38 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                 />
               </>
             )}
-            {groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
-              const logoUrl = asset.asset.logo;
-              const tokenChainsCount = chains.length;
+            {Object.keys(groupedTokens).map((tokenSymbol) => {
+              const { decimals } = Object.values(groupedTokens[tokenSymbol])[0]
+                .asset;
+              const logoUrl = Object.values(groupedTokens[tokenSymbol])[0].asset
+                .logo;
+              const totalBalanceBN = Object.values(
+                groupedTokens[tokenSymbol]
+              ).reduce(
+                (total, { balance }) => total.add(balance),
+                BigNumber.from(0)
+              );
+              const totalBalance = ethers.utils.formatUnits(
+                totalBalanceBN,
+                decimals
+              );
+              const tokenChainsCount = Object.values(
+                groupedTokens[tokenSymbol]
+              ).length;
+
+              // This is to ensure that balances that are equal to 0 do not appear for the user
+              if (Number(totalBalance) === 0) return undefined;
 
               return (
                 <TokenItem
-                  id={`token-item-${symbol}-account-modal`}
-                  key={`${symbol}-${asset.asset.id}`}
+                  id={`token-item-${tokenSymbol}-account-modal`}
+                  key={tokenSymbol}
                 >
                   <TokenTotals id="token-totals-account-modal">
-                    {!hideImage && logoUrl ? (
-                      <img
-                        src={logoUrl}
-                        alt={symbol}
-                        onError={() => setHideImage(true)}
-                      />
-                    ) : (
-                      <div className="h-6 w-6">
-                        <RandomAvatar
-                          name={asset.asset.name}
-                          isRound
-                          variant="marble"
-                        />
-                      </div>
-                    )}
+                    <img src={logoUrl} alt={tokenSymbol} />
                     <p>
                       {formatAmountDisplay(totalBalance)}{' '}
-                      <TokenSymbol>{symbol}</TokenSymbol>
+                      <TokenSymbol>{tokenSymbol}</TokenSymbol>
                     </p>
                     <TokenTotalsRight>
                       <IconHierarchy
@@ -355,12 +342,11 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                       <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
                       <VerticalDivider />
                       <ToggleButton
-                        $expanded={expanded[`${symbol}-${asset.asset.id}`]}
+                        $expanded={expanded[tokenSymbol]}
                         onClick={() =>
                           setExpanded((prev) => ({
                             ...prev,
-                            [`${symbol}-${asset.asset.id}`]:
-                              !prev[`${symbol}-${asset.asset.id}`],
+                            [tokenSymbol]: !prev[tokenSymbol],
                           }))
                         }
                       >
@@ -370,20 +356,26 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                   </TokenTotals>
                   <TokenChainsWrapper
                     id="token-chains-account-modal"
-                    $visible={expanded[`${symbol}-${asset.asset.id}`]}
+                    $visible={expanded[tokenSymbol]}
                   >
-                    {chains.map(({ balance, chain, address }) => {
-                      return (
-                        <TokenItemChain
-                          key={`${symbol}-${chain.id}-${address}`}
-                          id={`action-bar-account-token-${symbol}-${chain.id}`}
-                        >
-                          <ChainIcon src={getLogoForChainId(chain.id)} />
-                          <p>{getChainName(Number(chain.id))}</p>
-                          <p>{formatAmountDisplay(balance)}</p>
-                        </TokenItemChain>
-                      );
-                    })}
+                    {Object.values(groupedTokens[tokenSymbol]).map(
+                      ({ balance, chain }) => {
+                        const assetBalanceValue = ethers.utils.formatUnits(
+                          balance,
+                          decimals
+                        );
+                        return (
+                          <TokenItemChain
+                            key={`${tokenSymbol}-${chain.id}`}
+                            id={`action-bar-account-token-${tokenSymbol}-${chain.id}`}
+                          >
+                            <ChainIcon src={getLogoForChainId(chain.id)} />
+                            <p>{getChainName(Number(chain.id))}</p>
+                            <p>{formatAmountDisplay(assetBalanceValue)}</p>
+                          </TokenItemChain>
+                        );
+                      }
+                    )}
                   </TokenChainsWrapper>
                 </TokenItem>
               );
@@ -421,16 +413,16 @@ const TopBarIcon = styled.div<{ $transparent?: boolean }>`
   ${({ onClick }) =>
     onClick &&
     `
-      cursor: pointer;
+    cursor: pointer;
 
-      &:hover {
-        opacity: 0.7;
-      }
+    &:hover {
+      opacity: 0.7;
+    }
 
-      &:active {
-        opacity: 0.4;
-      }
-    `}
+    &:active {
+      opacity: 0.4;
+    }
+  `}
 `;
 
 const AccountSection = styled.div`
@@ -597,10 +589,10 @@ const NftTitle = styled.p`
 `;
 
 const NftCollectionTitle = styled.p`
-    font-size: 11px;
-    color: ${({ theme }) => theme.color.text.cardContent}
-    padding-right: 25px;
-  `;
+  font-size: 11px;
+  color: ${({ theme }) => theme.color.text.cardContent}
+  padding-right: 25px;
+`;
 
 const NftsWrapper = styled.div`
   display: flex;

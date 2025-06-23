@@ -92,7 +92,15 @@ exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = 
     <img
       alt="copy-adress-icon"
       className="cursor-pointer"
-      src="token-market-data-copy.png"
+      src={
+        {
+          "ReactComponent": {
+            "$$typeof": Symbol(react.forward_ref),
+            "render": [Function],
+          },
+          "default": "copy-icon.svg",
+        }
+      }
       style={
         {
           "height": "full",

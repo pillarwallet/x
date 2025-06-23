@@ -7,92 +7,162 @@ exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
   id="leaderboard-user-data"
 >
   <div
-    className="flex items-center desktop:gap-2.5 tablet:gap-2.5 mobile:gap-1.5"
+    className="flex items-center desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5"
   >
     <div
-      className="relative group desktop:w-[45px] tablet:w-[45px] mobile:w-[35px] flex-shrink-0"
+      className="relative group desktop:w-[35px] tablet:w-[35px] mobile:w-[30px] false"
     >
       <p
-        className="text-base font-medium truncate text-white overflow-hidden mobile:text-sm w-full"
+        className="text-base font-medium text-purple_light truncate overflow-hidden w-full mobile:text-sm"
       >
         #
         1
       </p>
       <span
-        className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 group-hover:scale-100 transition text-white text-xs z-10"
+        className="absolute left-1/2 top-full mt-1 w-max max-w-xs -translate-x-1/2 scale-0 text-white text-xs group-hover:scale-100 transition"
       >
         #
         1
       </span>
     </div>
+    <svg
+      color="#FF366C"
+      data-testid="leaderboard-rank-down"
+      fill="none"
+      height={9}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      style={
+        {
+          "color": "#FF366C",
+        }
+      }
+      viewBox="0 0 24 24"
+      width={9}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0 0h24v24H0z"
+        fill="none"
+        stroke="none"
+      />
+      <path
+        d="M20.118 3h-16.225a2.914 2.914 0 0 0 -2.503 4.371l8.116 13.549a2.917 2.917 0 0 0 4.987 .005l8.11 -13.539a2.914 2.914 0 0 0 -2.486 -4.386z"
+        fill="currentColor"
+        strokeWidth="0"
+      />
+    </svg>
     <div
-      className="desktop:flex tablet:flex mobile:hidden w-[9px]"
+      className="desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded mr-3.5 overflow-hidden"
     >
       <svg
-        color="#FF366C"
-        data-testid="leaderboard-rank-down"
+        className="rounded-md"
+        data-testid="random-avatar"
         fill="none"
-        height={9}
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        style={
-          {
-            "color": "#FF366C",
-          }
-        }
-        viewBox="0 0 24 24"
-        width={9}
+        role="img"
+        viewBox="0 0 36 36"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="M0 0h24v24H0z"
-          fill="none"
-          stroke="none"
-        />
-        <path
-          d="M20.118 3h-16.225a2.914 2.914 0 0 0 -2.503 4.371l8.116 13.549a2.917 2.917 0 0 0 4.987 .005l8.11 -13.539a2.914 2.914 0 0 0 -2.486 -4.386z"
-          fill="currentColor"
-          strokeWidth="0"
-        />
+        <mask
+          height={36}
+          id=":r0:"
+          maskUnits="userSpaceOnUse"
+          width={36}
+          x={0}
+          y={0}
+        >
+          <rect
+            fill="#FFFFFF"
+            height={36}
+            width={36}
+          />
+        </mask>
+        <g
+          mask="url(#:r0:)"
+        >
+          <rect
+            fill="#92A1C6"
+            height={36}
+            width={36}
+          />
+          <rect
+            fill="#F0AB3D"
+            height={36}
+            rx={36}
+            transform="translate(2 6) rotate(142 18 18) scale(1.1)"
+            width={36}
+            x="0"
+            y="0"
+          />
+          <g
+            transform="translate(-6 4) rotate(2 18 18)"
+          >
+            <path
+              d="M13,20 a1,0.75 0 0,0 10,0"
+              fill="#000000"
+            />
+            <rect
+              fill="#000000"
+              height={2}
+              rx={1}
+              stroke="none"
+              width={1.5}
+              x={12}
+              y={14}
+            />
+            <rect
+              fill="#000000"
+              height={2}
+              rx={1}
+              stroke="none"
+              width={1.5}
+              x={22}
+              y={14}
+            />
+          </g>
+        </g>
       </svg>
-    </div>
-    <div
-      className="flex-shrink-0 desktop:w-[50px] desktop:h-[50px] tablet:w-[50px] tablet:h-[50px] mobile:w-[40px] mobile:h-[40px] object-fill rounded overflow-hidden"
-    >
-      <div
-        data-testid="mock-avatar"
-      >
-        Avatar
-      </div>
     </div>
   </div>
   <div
     className="flex flex-col w-[60%]"
   >
-    <p
-      className="text-base font-medium text-white"
-    />
+    User1
     <div
-      className="flex items-center desktop:w-[200px] tablet:w-[200px] mobile:w-[120px] xxs:w-[100px] justify-between gap-2"
+      className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
     >
       <p
-        className="text-sm font-medium font-normal text-white"
+        className="text-sm font-medium text-purple_light"
       />
       <div
-        className="flex-shrink-0 w-[16px] h-[16px] flex items-center justify-center"
+        className="flex gap-2 items-center cursor-pointer"
+        onClick={[Function]}
       >
-        <div
-          className="cursor-pointer"
-          onClick={[Function]}
+        <svg
+          data-testid="copy-icon"
+          fill="none"
+          height={15}
+          viewBox="0 0 24 24"
+          width={15}
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <img
-            alt="copy-address"
-            className="w-[13px] h-[15px]"
-            src="token-market-data-copy.png"
+          <path
+            d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"
+            stroke="#E2DDFF"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
           />
-        </div>
+          <path
+            d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"
+            stroke="#E2DDFF"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
       </div>
     </div>
   </div>

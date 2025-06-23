@@ -5,7 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
 // components
-import CopyIcon from '../../images/token-market-data-copy.png';
+import CopyIcon from '../../images/copy-icon.svg';
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
 import Body from '../Typography/Body';
 

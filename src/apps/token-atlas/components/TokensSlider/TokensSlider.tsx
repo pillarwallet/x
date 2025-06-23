@@ -123,7 +123,6 @@ const TokensSlider = () => {
       ),
       name: token.name || '',
       icon: token.logo,
-      price: token.price || 0,
     };
     dispatch(setSelectedToken(tokenData));
     dispatch(setIsSearchTokenModalOpen(false));

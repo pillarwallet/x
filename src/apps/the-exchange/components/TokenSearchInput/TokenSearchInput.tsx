@@ -17,6 +17,7 @@ import {
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import { convertPortfolioAPIResponseToToken } from '../../../../services/pillarXApiWalletPortfolio';
 import {
+  chainIdToChainNameTokensData,
   chainNameToChainIdTokensData,
   convertAPIResponseToTokens,
 } from '../../../../services/tokensData';
@@ -89,8 +90,7 @@ const TokenSearchInput = ({
   } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
-      filterBlockchains:
-        receiveChain.chainId !== 0 ? `${receiveChain.chainId}` : undefined,
+      filterBlockchains: chainIdToChainNameTokensData(receiveChain.chainId),
     },
     { skip: !debouncedSearchText }
   );

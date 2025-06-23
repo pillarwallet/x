@@ -24,7 +24,6 @@ export type SwapState = {
   isTokenSearchLoading: boolean;
   isTokenSearchErroring: boolean;
   walletPortfolio: PortfolioData | undefined;
-  isAboveLimit: boolean;
 };
 
 const initialState: SwapState = {
@@ -51,7 +50,6 @@ const initialState: SwapState = {
   isTokenSearchLoading: false,
   isTokenSearchErroring: false,
   walletPortfolio: undefined,
-  isAboveLimit: false,
 };
 
 const swapSlice = createSlice({
@@ -112,9 +110,6 @@ const swapSlice = createSlice({
     ) {
       state.walletPortfolio = action.payload;
     },
-    setIsAboveLimit(state, action: PayloadAction<boolean>) {
-      state.isAboveLimit = action.payload;
-    },
   },
 });
 
@@ -136,7 +131,6 @@ export const {
   setIsTokenSearchLoading,
   setIsTokenSearchErroring,
   setWalletPortfolio,
-  setIsAboveLimit,
 } = swapSlice.actions;
 
 export default swapSlice;

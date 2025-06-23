@@ -10,8 +10,10 @@ import BottomMenu from '../components/BottomMenu';
 import Loading from '../pages/Loading';
 
 // providers
+import AccountBalancesProvider from '../providers/AccountBalancesProvider';
 import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
+import AssetsProvider from '../providers/AssetsProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
@@ -55,22 +57,26 @@ export default function Authorized({
       dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
     >
       <AccountTransactionHistoryProvider>
-        <AccountNftsProvider>
-          <GlobalTransactionBatchesProvider>
-            <BottomMenuModalProvider>
-              <SelectedChainsHistoryProvider>
-                <WalletConnectToastProvider>
-                  <WalletConnectModalProvider>
-                    <AuthContentWrapper>
-                      <Outlet />
-                    </AuthContentWrapper>
-                    <BottomMenu />
-                  </WalletConnectModalProvider>
-                </WalletConnectToastProvider>
-              </SelectedChainsHistoryProvider>
-            </BottomMenuModalProvider>
-          </GlobalTransactionBatchesProvider>
-        </AccountNftsProvider>
+        <AssetsProvider>
+          <AccountBalancesProvider>
+            <AccountNftsProvider>
+              <GlobalTransactionBatchesProvider>
+                <BottomMenuModalProvider>
+                  <SelectedChainsHistoryProvider>
+                    <WalletConnectToastProvider>
+                      <WalletConnectModalProvider>
+                        <AuthContentWrapper>
+                          <Outlet />
+                        </AuthContentWrapper>
+                        <BottomMenu />
+                      </WalletConnectModalProvider>
+                    </WalletConnectToastProvider>
+                  </SelectedChainsHistoryProvider>
+                </BottomMenuModalProvider>
+              </GlobalTransactionBatchesProvider>
+            </AccountNftsProvider>
+          </AccountBalancesProvider>
+        </AssetsProvider>
       </AccountTransactionHistoryProvider>
     </EtherspotTransactionKit>
   );

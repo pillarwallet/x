@@ -23,7 +23,6 @@
   },
   "action": {
     "getStarted": "Get Started",
-    "connectPillarWallet": "Connect with Pillar Wallet",
     "next": "Next",
     "send": "Send",
     "logout": "Logout",
@@ -47,10 +46,7 @@
     "noNftsFound": "No NFTs found",
     "noTokensFound": "No tokens found",
     "failedToGetTransactionDataForBatching": "Failed to get transaction data for batching",
-    "cannotBatchBatchedTransactions": "Cannot batch batched transactions",
-    "insufficientBalanceForGasless": "Insufficient balance for gasless transaction",
-    "paymasterNotSupported": "Gasless action for add to batch is not available at the moment",
-    "failedWalletPortfolio": "Failed to get wallet balances"
+    "cannotBatchBatchedTransactions": "Cannot batch batched transactions"
   },
   "warning": {
     "transactionSafety": {
@@ -73,9 +69,7 @@
     "sent": "Sent",
     "on": "On",
     "received": "Received",
-    "latestApps": "Latest Apps",
-    "feeType": "Fee Type",
-    "selectFeeAsset": "Select fee asset"
+    "latestApps": "Latest Apps"
   },
   "placeholder": {
     "enterAddress": "Enter address"

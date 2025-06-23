@@ -107,22 +107,6 @@ const provider = createWalletClient({
   transport: http('http://localhost:8545'),
 });
 
-jest.mock('wagmi', () => ({
-  createConfig: jest.fn(),
-  http: jest.fn(),
-  mainnet: { id: 1, name: 'mainnet' },
-  useAccount: jest.fn().mockReturnValue({
-    address: '0x',
-  }),
-  useDisconnect: jest.fn().mockReturnValue({
-    disconnect: jest.fn(),
-  }),
-}));
-
-jest.mock('wagmi/connectors', () => ({
-  walletConnect: jest.fn(),
-}));
-
 jest.mock('@etherspot/transaction-kit', () => ({
   useEtherspotAssets: jest.fn().mockReturnValue({
     getAssets: async () => etherspotTestAssets,

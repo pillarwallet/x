@@ -1,93 +1,73 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-
-// store
-import { store } from '../../../../../store';
-
-// hooks
-import * as reducerHooks from '../../../hooks/useReducerHooks';
-
-// reducer
-import { setTimeTab } from '../../../reducer/LeaderboardSlice';
+import renderer from 'react-test-renderer';
 
 // components
 import LeaderboardTabsButton from '../LeaderboardTabsButton';
 
 describe('<LeaderboardTabsButton />', () => {
-  const useAppSelectorMock = jest.spyOn(reducerHooks, 'useAppSelector');
-  const useAppDispatchMock = jest.spyOn(reducerHooks, 'useAppDispatch');
+  const mockTabs = ['Weekly', 'All time'];
+  const mockOnTabClick = jest.fn();
 
-  const mockDispatch = jest.fn();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    useAppDispatchMock.mockReturnValue(mockDispatch);
+  it('renders correctly and matches snapshot', () => {
+    const tree = renderer
+      .create(
+        <LeaderboardTabsButton
+          tabs={mockTabs}
+          activeTab={0}
+          onTabClick={mockOnTabClick}
+        />
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it('matches snapshot', () => {
-    useAppSelectorMock.mockReturnValue('weekly');
-
-    const { container } = render(
-      <Provider store={store}>
-        <LeaderboardTabsButton />
-      </Provider>
-    );
-
-    expect(container).toMatchSnapshot();
-  });
-
-  it('renders both buttons', () => {
-    useAppSelectorMock.mockReturnValue('weekly');
-
+  it('renders all tabs', () => {
     render(
-      <Provider store={store}>
-        <LeaderboardTabsButton />
-      </Provider>
+      <LeaderboardTabsButton
+        tabs={mockTabs}
+        activeTab={0}
+        onTabClick={mockOnTabClick}
+      />
     );
-
-    expect(screen.getByRole('button', { name: /weekly/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /all time/i })
-    ).toBeInTheDocument();
+    mockTabs.forEach((tab) => {
+      expect(screen.getByText(tab)).toBeInTheDocument();
+    });
   });
 
-  it('dispatches setTimeTab("all") when "All Time" is clicked', () => {
-    useAppSelectorMock.mockReturnValue('weekly');
-
+  it('applies active class to the correct tab', () => {
     render(
-      <Provider store={store}>
-        <LeaderboardTabsButton />
-      </Provider>
+      <LeaderboardTabsButton
+        tabs={mockTabs}
+        activeTab={1}
+        onTabClick={mockOnTabClick}
+      />
     );
-
-    fireEvent.click(screen.getByRole('button', { name: /all time/i }));
-    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('all'));
+    const activeTab = screen.getByText(mockTabs[1]).closest('button');
+    expect(activeTab).toHaveClass('bg-purple_medium');
   });
 
-  it('dispatches setTimeTab("weekly") when "Weekly" is clicked', () => {
-    useAppSelectorMock.mockReturnValue('all');
-
+  it('calls onTabClick when a tab is clicked', () => {
     render(
-      <Provider store={store}>
-        <LeaderboardTabsButton />
-      </Provider>
+      <LeaderboardTabsButton
+        tabs={mockTabs}
+        activeTab={0}
+        onTabClick={mockOnTabClick}
+      />
     );
-
-    fireEvent.click(screen.getByRole('button', { name: /weekly/i }));
-    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('weekly'));
+    const tabButton = screen.getByText(mockTabs[1]);
+    fireEvent.click(tabButton);
+    expect(mockOnTabClick).toHaveBeenCalledWith(1);
   });
 
-  it('does not dispatch if clicking already active tab', () => {
-    useAppSelectorMock.mockReturnValue('weekly');
-
+  it('changes active tab when clicked', () => {
     render(
-      <Provider store={store}>
-        <LeaderboardTabsButton />
-      </Provider>
+      <LeaderboardTabsButton
+        tabs={mockTabs}
+        activeTab={1}
+        onTabClick={mockOnTabClick}
+      />
     );
-
-    fireEvent.click(screen.getByRole('button', { name: /weekly/i }));
-
-    expect(mockDispatch).toHaveBeenCalledWith(setTimeTab('weekly'));
+    fireEvent.click(screen.getByText(mockTabs[0]));
+    expect(mockOnTabClick).toHaveBeenCalledWith(0);
   });
 });

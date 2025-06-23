@@ -8,27 +8,9 @@ on:
       - staging
 
 jobs:
-  sentry-sourcemaps:
+  lint:
     runs-on: ubuntu-latest
-    # runs-on: ubuntu-32gb
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
       - run: npm i
-      - run: |
-          export NODE_OPTIONS="--max_old_space_size=8192"
-          npm run build
-        env:
-          NODE_OPTIONS: --max_old_space_size=8192
-      - name: Create Sentry release
-        uses: getsentry/action-release@v3
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: pillar-project
-          SENTRY_PROJECT: x
-        with:
-          # if branch name is main, use production environment else use staging
-          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-          sourcemaps: './build'
+      - run: npm run sentry:sourcemaps
