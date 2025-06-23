@@ -33,11 +33,11 @@ const Login = () => {
     connect({ connector: walletConnectConnector });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // const provider: any = await walletConnectConnector.getProvider();
-    // provider.once('display_uri', (uri: string) => {
-    //   const encodedURI = encodeURIComponent(uri);
-    //   window.location.href = `pillarwallet://wc?uri=${encodedURI}`;
-    // });
+    const provider: any = await walletConnectConnector.getProvider();
+    provider.once('display_uri', (uri: string) => {
+      const encodedURI = encodeURIComponent(uri);
+      window.location.href = `pillarwallet://wc?uri=${encodedURI}`;
+    });
   };
 
   useEffect(() => {
