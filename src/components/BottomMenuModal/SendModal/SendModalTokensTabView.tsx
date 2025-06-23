@@ -22,7 +22,7 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -34,6 +34,9 @@ import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
 import Select from '../../Form/Select';
+
+// providers
+import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
 
 // hooks
 import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
@@ -136,6 +139,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     mode: string;
     token?: string;
   } | null>({ mode: 'sponsor' });
+  const contextNfts = useContext(AccountNftsContext);
   const [selectedPaymasterAddress, setSelectedPaymasterAddress] =
     React.useState<string>('');
   const [selectedFeeAsset, setSelectedFeeAsset] = React.useState<{
@@ -364,6 +368,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
    * collect data on what apps are being opened
    */
   const [recordPresence] = useRecordPresenceMutation();
+
+  useEffect(() => {
+    if (!isSending) {
+      contextNfts?.data.setUpdateData(true);
+    }
+
+    if (isSending) {
+      contextNfts?.data.setUpdateData(false);
+    }
+  }, [contextNfts?.data, isSending]);
 
   React.useEffect(() => {
     if (!selectedAsset) return;
