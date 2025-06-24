@@ -1,15 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<TokensSlider /> renders correctly and matches snapshot when loading 1`] = `
-.c0 {
-  height: 125px;
-  width: 108px;
-  animation: hLhBjP 1s linear infinite alternate;
-  border-radius: 9px;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
 <div
   className="flex flex-col overflow-x-scroll"
   data-testid="token-slider-loader"
@@ -27,19 +18,19 @@ exports[`<TokensSlider /> renders correctly and matches snapshot when loading 1`
       className="flex gap-4 mb-4"
     >
       <div
-        className="c0"
+        className="sc-bRKDuR kenhLH"
       />
       <div
-        className="c0"
+        className="sc-bRKDuR kenhLH"
       />
       <div
-        className="c0"
+        className="sc-bRKDuR kenhLH"
       />
       <div
-        className="c0"
+        className="sc-bRKDuR kenhLH"
       />
       <div
-        className="c0"
+        className="sc-bRKDuR kenhLH"
       />
     </div>
   </div>

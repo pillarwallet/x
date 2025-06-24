@@ -1,0 +1,1609 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@coinbase/wallet-sdk": {
+      "name": "@coinbase/wallet-sdk",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102340,
+          "name": "@coinbase/wallet-sdk",
+          "dependency": "@coinbase/wallet-sdk",
+          "title": "Unknown vulnerability in Coinbase Wallet SDK",
+          "url": "https://github.com/advisories/GHSA-8rgj-285w-qcq4",
+          "severity": "high",
+          "cwe": [],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=4.0 <4.3.0"
+        }
+      ],
+      "effects": [
+        "@privy-io/react-auth"
+      ],
+      "range": ">=4.0 <4.3.0",
+      "nodes": [
+        "node_modules/@coinbase/wallet-sdk"
+      ],
+      "fixAvailable": true
+    },
+    "@etherspot/eip1271-verification-util": {
+      "name": "@etherspot/eip1271-verification-util",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "ethers"
+      ],
+      "effects": [
+        "@etherspot/transaction-kit"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/transaction-kit",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@etherspot/modular-sdk": {
+      "name": "@etherspot/modular-sdk",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "biome"
+      ],
+      "effects": [
+        "@etherspot/transaction-kit"
+      ],
+      "range": ">=5.0.1",
+      "nodes": [
+        "node_modules/@etherspot/modular-sdk"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/modular-sdk",
+        "version": "5.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@etherspot/transaction-kit": {
+      "name": "@etherspot/transaction-kit",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@etherspot/eip1271-verification-util",
+        "@etherspot/modular-sdk"
+      ],
+      "effects": [],
+      "range": ">=0.2.0",
+      "nodes": [
+        "node_modules/@etherspot/transaction-kit"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/transaction-kit",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@ethersproject/providers": {
+      "name": "@ethersproject/providers",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "ws"
+      ],
+      "effects": [],
+      "range": "<=5.7.2",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util/node_modules/@ethersproject/providers"
+      ],
+      "fixAvailable": true
+    },
+    "@ethersproject/signing-key": {
+      "name": "@ethersproject/signing-key",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "elliptic"
+      ],
+      "effects": [
+        "ethers"
+      ],
+      "range": "<=5.7.0",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util/node_modules/@ethersproject/signing-key"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/transaction-kit",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/auth": {
+      "name": "@firebase/auth",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "undici"
+      ],
+      "effects": [
+        "@firebase/auth-compat",
+        "firebase"
+      ],
+      "range": "1.7.7-20240813205648 - 1.7.7-canary.1ff9661af || 1.7.8-20240827161511 - 1.7.9",
+      "nodes": [
+        "node_modules/@firebase/auth-compat/node_modules/@firebase/auth",
+        "node_modules/firebase/node_modules/@firebase/auth"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/auth-compat": {
+      "name": "@firebase/auth-compat",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@firebase/auth",
+        "undici"
+      ],
+      "effects": [
+        "firebase"
+      ],
+      "range": "0.5.12-20240813205648 - 0.5.12-canary.fa0ed08fb || 0.5.13-20240827161511 - 0.5.14",
+      "nodes": [
+        "node_modules/@firebase/auth-compat"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/firestore": {
+      "name": "@firebase/firestore",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "undici"
+      ],
+      "effects": [
+        "@firebase/firestore-compat",
+        "firebase"
+      ],
+      "range": "4.7.1-20240827161511 - 4.7.3",
+      "nodes": [
+        "node_modules/@firebase/firestore"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/firestore-compat": {
+      "name": "@firebase/firestore-compat",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@firebase/firestore"
+      ],
+      "effects": [
+        "firebase"
+      ],
+      "range": "<=0.0.900-exp.520ca39d0 || 0.3.25-20240130223218 - 0.3.25-20240131233318 || 0.3.30-20240424141009 - 0.3.30-dataconnect-preview.f2ddc3d7b || 0.3.35-20240813205648 - 0.3.35-canary.fa0ed08fb || 0.3.36-20240827161511 - 0.3.38",
+      "nodes": [
+        "node_modules/@firebase/firestore-compat"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/functions": {
+      "name": "@firebase/functions",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "undici"
+      ],
+      "effects": [
+        "@firebase/functions-compat",
+        "firebase"
+      ],
+      "range": "0.11.7-20240827161511 - 0.11.8",
+      "nodes": [
+        "node_modules/@firebase/functions"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/functions-compat": {
+      "name": "@firebase/functions-compat",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@firebase/functions"
+      ],
+      "effects": [
+        "firebase"
+      ],
+      "range": "0.3.12-20240702143745 - 0.3.12-dataconnect-preview.d986d4bf2 || 0.3.13-20240827161511 - 0.3.14",
+      "nodes": [
+        "node_modules/@firebase/functions-compat"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/storage": {
+      "name": "@firebase/storage",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "undici"
+      ],
+      "effects": [
+        "@firebase/storage-compat",
+        "firebase"
+      ],
+      "range": "0.13.0-20240814182916 - 0.13.0-canary.fa0ed08fb || 0.13.1-20240827161511 - 0.13.2",
+      "nodes": [
+        "node_modules/@firebase/storage"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@firebase/storage-compat": {
+      "name": "@firebase/storage-compat",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@firebase/storage"
+      ],
+      "effects": [
+        "firebase"
+      ],
+      "range": "<=0.0.900-exp.520ca39d0 || 0.1.4-202192711727 - 0.1.4-canary.f27fe4304 || 0.3.10-20240814182916 - 0.3.10-canary.fa0ed08fb || 0.3.11-20240827161511 - 0.3.12",
+      "nodes": [
+        "node_modules/@firebase/storage-compat"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@openzeppelin/contracts": {
+      "name": "@openzeppelin/contracts",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1088893,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts's SignatureChecker may revert on invalid EIP-1271 signers",
+          "url": "https://github.com/advisories/GHSA-4g63-c64m-25w9",
+          "severity": "high",
+          "cwe": [
+            "CWE-20",
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=4.1.0 <4.7.1"
+        },
+        {
+          "source": 1089256,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts's GovernorVotesQuorumFraction updates to quorum may affect past defeated proposals",
+          "url": "https://github.com/advisories/GHSA-xrc4-737v-9q75",
+          "severity": "high",
+          "cwe": [
+            "CWE-682"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=4.3.0 <4.7.2"
+        },
+        {
+          "source": 1089265,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts's ERC165Checker may revert instead of returning false",
+          "url": "https://github.com/advisories/GHSA-qh9x-gcfh-pcrw",
+          "severity": "high",
+          "cwe": [
+            "CWE-20",
+            "CWE-252"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=4.0.0 <4.7.1"
+        },
+        {
+          "source": 1090187,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts vulnerable to ECDSA signature malleability",
+          "url": "https://github.com/advisories/GHSA-4h98-2769-gh6h",
+          "severity": "high",
+          "cwe": [
+            "CWE-354"
+          ],
+          "cvss": {
+            "score": 7.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:L"
+          },
+          "range": ">=4.1.0 <4.7.3"
+        },
+        {
+          "source": 1090189,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts's Cross chain utilities for Arbitrum L2 see EOA calls as cross chain calls",
+          "url": "https://github.com/advisories/GHSA-9j3m-g383-29qr",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-669"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=4.6.0 <4.7.2"
+        },
+        {
+          "source": 1091839,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "GovernorCompatibilityBravo may trim proposal calldata",
+          "url": "https://github.com/advisories/GHSA-93hq-5wgc-jc82",
+          "severity": "high",
+          "cwe": [
+            "CWE-20"
+          ],
+          "cvss": {
+            "score": 8.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"
+          },
+          "range": ">=4.3.0 <4.8.3"
+        },
+        {
+          "source": 1092641,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts ERC165Checker unbounded gas consumption",
+          "url": "https://github.com/advisories/GHSA-7grf-83vw-6f5x",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=2.0.0 <4.7.2"
+        },
+        {
+          "source": 1094526,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts vulnerable to Improper Escaping of Output",
+          "url": "https://github.com/advisories/GHSA-g4vp-m682-qqmp",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-116"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=4.0.0 <4.9.3"
+        },
+        {
+          "source": 1094706,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts using MerkleProof multiproofs may allow proving arbitrary leaves for specific trees",
+          "url": "https://github.com/advisories/GHSA-wprv-93r4-jj2p",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-354"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=4.7.0 <4.9.2"
+        },
+        {
+          "source": 1094945,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts TransparentUpgradeableProxy clashing selector calls may not be delegated",
+          "url": "https://github.com/advisories/GHSA-mx2q-35m2-x2rh",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=3.2.0 <4.8.3"
+        },
+        {
+          "source": 1094980,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts's governor proposal creation may be blocked by frontrunning",
+          "url": "https://github.com/advisories/GHSA-5h3x-9wvq-w4m2",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-862"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=4.3.0 <4.9.1"
+        },
+        {
+          "source": 1096606,
+          "name": "@openzeppelin/contracts",
+          "dependency": "@openzeppelin/contracts",
+          "title": "OpenZeppelin Contracts base64 encoding may read from potentially dirty memory",
+          "url": "https://github.com/advisories/GHSA-9vx6-7xxf-x967",
+          "severity": "low",
+          "cwe": [
+            "CWE-125"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=4.5.0 <4.9.6"
+        }
+      ],
+      "effects": [
+        "@uniswap/swap-router-contracts",
+        "@uniswap/universal-router",
+        "@uniswap/v3-periphery",
+        "@uniswap/v3-staker"
+      ],
+      "range": "<=4.9.5",
+      "nodes": [
+        "node_modules/@openzeppelin/contracts",
+        "node_modules/@uniswap/universal-router/node_modules/@openzeppelin/contracts",
+        "node_modules/@uniswap/v3-staker/node_modules/@openzeppelin/contracts"
+      ],
+      "fixAvailable": false
+    },
+    "@privy-io/react-auth": {
+      "name": "@privy-io/react-auth",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@coinbase/wallet-sdk"
+      ],
+      "effects": [],
+      "range": "1.67.0-beta-20240529133757 - 2.4.0",
+      "nodes": [
+        "node_modules/@privy-io/react-auth"
+      ],
+      "fixAvailable": true
+    },
+    "@sentry/node": {
+      "name": "@sentry/node",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "cookie"
+      ],
+      "effects": [
+        "hardhat"
+      ],
+      "range": "4.0.0-beta.0 - 7.74.2-alpha.1",
+      "nodes": [
+        "node_modules/@sentry/node"
+      ],
+      "fixAvailable": true
+    },
+    "@svgr/plugin-svgo": {
+      "name": "@svgr/plugin-svgo",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "svgo"
+      ],
+      "effects": [
+        "@svgr/webpack"
+      ],
+      "range": "<=5.5.0",
+      "nodes": [
+        "node_modules/@svgr/plugin-svgo"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@svgr/webpack": {
+      "name": "@svgr/webpack",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@svgr/plugin-svgo"
+      ],
+      "effects": [
+        "react-scripts"
+      ],
+      "range": "4.0.0 - 5.5.0",
+      "nodes": [
+        "node_modules/@svgr/webpack"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@uniswap/router-sdk": {
+      "name": "@uniswap/router-sdk",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@uniswap/swap-router-contracts",
+        "@uniswap/v3-sdk",
+        "@uniswap/v4-sdk"
+      ],
+      "effects": [
+        "@uniswap/smart-order-router"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/router-sdk"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/smart-order-router": {
+      "name": "@uniswap/smart-order-router",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@uniswap/router-sdk",
+        "@uniswap/swap-router-contracts",
+        "@uniswap/universal-router",
+        "@uniswap/universal-router-sdk",
+        "@uniswap/v3-sdk",
+        "axios"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/smart-order-router"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/swap-router-contracts": {
+      "name": "@uniswap/swap-router-contracts",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@openzeppelin/contracts",
+        "@uniswap/v3-periphery",
+        "hardhat-watcher"
+      ],
+      "effects": [
+        "@uniswap/router-sdk",
+        "@uniswap/smart-order-router",
+        "@uniswap/v3-sdk"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/swap-router-contracts"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/universal-router": {
+      "name": "@uniswap/universal-router",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@openzeppelin/contracts"
+      ],
+      "effects": [
+        "@uniswap/smart-order-router",
+        "@uniswap/universal-router-sdk"
+      ],
+      "range": "1.2.1 - 1.6.0",
+      "nodes": [
+        "node_modules/@uniswap/universal-router"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/universal-router-sdk": {
+      "name": "@uniswap/universal-router-sdk",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@uniswap/router-sdk",
+        "@uniswap/universal-router",
+        "@uniswap/v3-sdk"
+      ],
+      "effects": [
+        "@uniswap/smart-order-router"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/universal-router-sdk"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/v3-periphery": {
+      "name": "@uniswap/v3-periphery",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@openzeppelin/contracts"
+      ],
+      "effects": [
+        "@uniswap/v3-sdk"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/v3-periphery"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/v3-sdk": {
+      "name": "@uniswap/v3-sdk",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@uniswap/swap-router-contracts",
+        "@uniswap/v3-periphery",
+        "@uniswap/v3-staker"
+      ],
+      "effects": [
+        "@uniswap/router-sdk",
+        "@uniswap/smart-order-router",
+        "@uniswap/universal-router-sdk",
+        "@uniswap/v4-sdk"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/v3-sdk"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/v3-staker": {
+      "name": "@uniswap/v3-staker",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@openzeppelin/contracts",
+        "@uniswap/v3-periphery"
+      ],
+      "effects": [
+        "@uniswap/v3-sdk"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/v3-staker"
+      ],
+      "fixAvailable": false
+    },
+    "@uniswap/v4-sdk": {
+      "name": "@uniswap/v4-sdk",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@uniswap/v3-sdk"
+      ],
+      "effects": [
+        "@uniswap/router-sdk"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@uniswap/v4-sdk"
+      ],
+      "fixAvailable": false
+    },
+    "axios": {
+      "name": "axios",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1097679,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios Cross-Site Request Forgery Vulnerability",
+          "url": "https://github.com/advisories/GHSA-wf5p-g6vw-rhxx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-352"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=0.8.1 <0.28.0"
+        },
+        {
+          "source": 1103617,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL",
+          "url": "https://github.com/advisories/GHSA-jr5f-v2jv-69x6",
+          "severity": "high",
+          "cwe": [
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.30.0"
+        }
+      ],
+      "effects": [
+        "@uniswap/smart-order-router"
+      ],
+      "range": "<=0.29.0",
+      "nodes": [
+        "node_modules/@uniswap/smart-order-router/node_modules/axios"
+      ],
+      "fixAvailable": false
+    },
+    "biome": {
+      "name": "biome",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "inquirer-promise",
+        "request-promise"
+      ],
+      "effects": [
+        "@etherspot/modular-sdk"
+      ],
+      "range": ">=0.3.0",
+      "nodes": [
+        "node_modules/biome"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/modular-sdk",
+        "version": "5.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "cookie": {
+      "name": "cookie",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1103907,
+          "name": "cookie",
+          "dependency": "cookie",
+          "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+          "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+          "severity": "low",
+          "cwe": [
+            "CWE-74"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.7.0"
+        }
+      ],
+      "effects": [
+        "@sentry/node"
+      ],
+      "range": "<0.7.0",
+      "nodes": [
+        "node_modules/cookie"
+      ],
+      "fixAvailable": true
+    },
+    "css-select": {
+      "name": "css-select",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "nth-check"
+      ],
+      "effects": [
+        "svgo"
+      ],
+      "range": "<=3.1.0",
+      "nodes": [
+        "node_modules/svgo/node_modules/css-select"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "elliptic": {
+      "name": "elliptic",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1098593,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic's EDDSA missing signature length check",
+          "url": "https://github.com/advisories/GHSA-f7q4-pwc6-w24p",
+          "severity": "low",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": ">=4.0.0 <=6.5.6"
+        },
+        {
+          "source": 1098594,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic's ECDSA missing check for whether leading bit of r and s is zero",
+          "url": "https://github.com/advisories/GHSA-977x-g7h5-7qgw",
+          "severity": "low",
+          "cwe": [
+            "CWE-130"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": ">=2.0.0 <=6.5.6"
+        },
+        {
+          "source": 1098595,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic allows BER-encoded signatures",
+          "url": "https://github.com/advisories/GHSA-49q7-c7j4-3p7m",
+          "severity": "low",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": ">=5.2.1 <=6.5.6"
+        },
+        {
+          "source": 1101387,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Valid ECDSA signatures erroneously rejected in Elliptic",
+          "url": "https://github.com/advisories/GHSA-fc9h-whq2-v747",
+          "severity": "low",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 4.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L"
+          },
+          "range": "<6.6.0"
+        },
+        {
+          "source": 1101424,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic's verify function omits uniqueness validation",
+          "url": "https://github.com/advisories/GHSA-434g-2637-qmqr",
+          "severity": "low",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": "<6.5.6"
+        },
+        {
+          "source": 1102901,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic's private key extraction in ECDSA upon signing a malformed input (e.g. a string)",
+          "url": "https://github.com/advisories/GHSA-vjh7-7g9h-fjfh",
+          "severity": "critical",
+          "cwe": [
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=6.6.0"
+        }
+      ],
+      "effects": [
+        "@ethersproject/signing-key"
+      ],
+      "range": "<=6.6.0",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util/node_modules/elliptic"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/transaction-kit",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "ethers": {
+      "name": "ethers",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@ethersproject/providers",
+        "@ethersproject/signing-key"
+      ],
+      "effects": [
+        "@etherspot/eip1271-verification-util"
+      ],
+      "range": "5.0.15 - 5.7.2",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util/node_modules/ethers"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/transaction-kit",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "firebase": {
+      "name": "firebase",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@firebase/auth",
+        "@firebase/auth-compat",
+        "@firebase/firestore",
+        "@firebase/firestore-compat",
+        "@firebase/functions",
+        "@firebase/functions-compat",
+        "@firebase/storage",
+        "@firebase/storage-compat"
+      ],
+      "effects": [],
+      "range": "0.900.22 || 7.9.1-0 - 7.9.1-canary.0396117e || 8.10.0-20217172214 - 8.10.0-canary.f40c0db53 || 9.0.0-20217250818 - 9.0.0-canary.d0d3acb10 || 9.0.1-2021727231341 - 9.0.1-canary.e039e1472 || 9.0.2-2021891633 - 9.0.2-canary.ff9baf70c || 9.0.3-202181503543 - 9.1.0-canary.f7d8324a1 || 9.1.1-2021830195733 - 9.1.1-canary.e70de6201 || 9.1.2-20219523556 - 9.1.2-canary.fc1d36497 || 9.22.1-20230524195328 || 10.7.3-20240130223218 || 10.12.2-20240523185724 - 10.12.2-canary.872e6f63e || 10.12.3-20240702143745 - 10.12.3-canary.fd8bd4b02 || 10.12.4-20240716220314 - 10.12.4-dataconnect-preview.d986d4bf2 || 10.12.5-20240730204232 - 10.12.5-canary.e6b852562 || 10.13.0-20240813205648 - 10.13.0-canary.fa0ed08fb || 10.13.1-20240827161511 - 10.14.1",
+      "nodes": [
+        "node_modules/firebase"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "hardhat": {
+      "name": "hardhat",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@sentry/node"
+      ],
+      "effects": [
+        "hardhat-watcher"
+      ],
+      "range": "0.1.0-rc.0 - 3.0.0-next.1",
+      "nodes": [
+        "node_modules/hardhat"
+      ],
+      "fixAvailable": true
+    },
+    "hardhat-watcher": {
+      "name": "hardhat-watcher",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "hardhat"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/hardhat-watcher"
+      ],
+      "fixAvailable": true
+    },
+    "inquirer": {
+      "name": "inquirer",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "lodash"
+      ],
+      "effects": [
+        "inquirer-promise"
+      ],
+      "range": "<=0.11.4",
+      "nodes": [
+        "node_modules/inquirer"
+      ],
+      "fixAvailable": true
+    },
+    "inquirer-promise": {
+      "name": "inquirer-promise",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "inquirer"
+      ],
+      "effects": [],
+      "range": "<=0.0.3",
+      "nodes": [
+        "node_modules/inquirer-promise"
+      ],
+      "fixAvailable": true
+    },
+    "lodash": {
+      "name": "lodash",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1085674,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Regular Expression Denial of Service (ReDoS) in lodash",
+          "url": "https://github.com/advisories/GHSA-x5rq-j2xg-h7qm",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<4.17.11"
+        },
+        {
+          "source": 1094499,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Prototype Pollution in lodash",
+          "url": "https://github.com/advisories/GHSA-4xc9-xhrj-v574",
+          "severity": "high",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<4.17.11"
+        },
+        {
+          "source": 1094500,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Regular Expression Denial of Service (ReDoS) in lodash",
+          "url": "https://github.com/advisories/GHSA-29mw-wpgm-hmr9",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<4.17.21"
+        },
+        {
+          "source": 1096305,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Prototype Pollution in lodash",
+          "url": "https://github.com/advisories/GHSA-p6mc-m468-83gw",
+          "severity": "high",
+          "cwe": [
+            "CWE-770",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:H"
+          },
+          "range": ">=3.7.0 <4.17.19"
+        },
+        {
+          "source": 1096996,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Command Injection in lodash",
+          "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm",
+          "severity": "high",
+          "cwe": [
+            "CWE-77",
+            "CWE-94"
+          ],
+          "cvss": {
+            "score": 7.2,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+          },
+          "range": "<4.17.21"
+        },
+        {
+          "source": 1097130,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Prototype Pollution in lodash",
+          "url": "https://github.com/advisories/GHSA-fvqr-27wr-82fm",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-471",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<4.17.5"
+        },
+        {
+          "source": 1097140,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Prototype Pollution in lodash",
+          "url": "https://github.com/advisories/GHSA-jf85-cpcp-j695",
+          "severity": "critical",
+          "cwe": [
+            "CWE-20",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 9.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H"
+          },
+          "range": "<4.17.12"
+        }
+      ],
+      "effects": [
+        "inquirer"
+      ],
+      "range": "<=4.17.20",
+      "nodes": [
+        "node_modules/inquirer/node_modules/lodash"
+      ],
+      "fixAvailable": true
+    },
+    "nth-check": {
+      "name": "nth-check",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1095141,
+          "name": "nth-check",
+          "dependency": "nth-check",
+          "title": "Inefficient Regular Expression Complexity in nth-check",
+          "url": "https://github.com/advisories/GHSA-rp65-9cf3-cjxr",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<2.0.1"
+        }
+      ],
+      "effects": [
+        "css-select"
+      ],
+      "range": "<2.0.1",
+      "nodes": [
+        "node_modules/svgo/node_modules/nth-check"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "postcss": {
+      "name": "postcss",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1094544,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS line return parsing error",
+          "url": "https://github.com/advisories/GHSA-7fh5-64p2-3v2j",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-74",
+            "CWE-144"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": "<8.4.31"
+        }
+      ],
+      "effects": [
+        "resolve-url-loader"
+      ],
+      "range": "<8.4.31",
+      "nodes": [
+        "node_modules/resolve-url-loader/node_modules/postcss"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "react-app-rewired": {
+      "name": "react-app-rewired",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "react-scripts"
+      ],
+      "effects": [],
+      "range": ">=0.3.0",
+      "nodes": [
+        "node_modules/react-app-rewired"
+      ],
+      "fixAvailable": {
+        "name": "react-app-rewired",
+        "version": "0.1.0",
+        "isSemVerMajor": true
+      }
+    },
+    "react-scripts": {
+      "name": "react-scripts",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@svgr/webpack",
+        "resolve-url-loader",
+        "webpack-dev-server"
+      ],
+      "effects": [
+        "react-app-rewired"
+      ],
+      "range": ">=0.1.0",
+      "nodes": [
+        "node_modules/react-scripts"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "request": {
+      "name": "request",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096727,
+          "name": "request",
+          "dependency": "request",
+          "title": "Server-Side Request Forgery in Request",
+          "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<=2.88.2"
+        },
+        "tough-cookie"
+      ],
+      "effects": [
+        "request-promise"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/request"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/modular-sdk",
+        "version": "5.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "request-promise": {
+      "name": "request-promise",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "request"
+      ],
+      "effects": [
+        "biome"
+      ],
+      "range": ">=0.0.2",
+      "nodes": [
+        "node_modules/request-promise"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/modular-sdk",
+        "version": "5.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "resolve-url-loader": {
+      "name": "resolve-url-loader",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "postcss"
+      ],
+      "effects": [
+        "react-scripts"
+      ],
+      "range": "0.0.1-experiment-postcss || 3.0.0-alpha.1 - 4.0.0",
+      "nodes": [
+        "node_modules/resolve-url-loader"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "svgo": {
+      "name": "svgo",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "css-select"
+      ],
+      "effects": [
+        "@svgr/plugin-svgo"
+      ],
+      "range": "1.0.0 - 1.3.2",
+      "nodes": [
+        "node_modules/svgo"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "tough-cookie": {
+      "name": "tough-cookie",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1097682,
+          "name": "tough-cookie",
+          "dependency": "tough-cookie",
+          "title": "tough-cookie Prototype Pollution vulnerability",
+          "url": "https://github.com/advisories/GHSA-72xf-g2v4-qvf3",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": "<4.1.3"
+        }
+      ],
+      "effects": [
+        "request"
+      ],
+      "range": "<4.1.3",
+      "nodes": [
+        "node_modules/request/node_modules/tough-cookie"
+      ],
+      "fixAvailable": {
+        "name": "@etherspot/modular-sdk",
+        "version": "5.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "undici": {
+      "name": "undici",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1101609,
+          "name": "undici",
+          "dependency": "undici",
+          "title": "Use of Insufficiently Random Values in undici",
+          "url": "https://github.com/advisories/GHSA-c76h-2ccp-4975",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-330"
+          ],
+          "cvss": {
+            "score": 6.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=6.0.0 <6.21.1"
+        },
+        {
+          "source": 1104500,
+          "name": "undici",
+          "dependency": "undici",
+          "title": "undici Denial of Service attack via bad certificate data",
+          "url": "https://github.com/advisories/GHSA-cxrh-j4jr-qwg3",
+          "severity": "low",
+          "cwe": [
+            "CWE-401"
+          ],
+          "cvss": {
+            "score": 3.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.0.0 <6.21.2"
+        }
+      ],
+      "effects": [
+        "@firebase/auth",
+        "@firebase/auth-compat",
+        "@firebase/firestore",
+        "@firebase/functions",
+        "@firebase/storage"
+      ],
+      "range": "6.0.0 - 6.21.1",
+      "nodes": [
+        "node_modules/undici"
+      ],
+      "fixAvailable": {
+        "name": "firebase",
+        "version": "11.9.1",
+        "isSemVerMajor": true
+      }
+    },
+    "webpack-dev-server": {
+      "name": "webpack-dev-server",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1105256,
+          "name": "webpack-dev-server",
+          "dependency": "webpack-dev-server",
+          "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site with non-Chromium based browser",
+          "url": "https://github.com/advisories/GHSA-9jgg-88mc-972h",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-346"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=5.2.0"
+        },
+        {
+          "source": 1105257,
+          "name": "webpack-dev-server",
+          "dependency": "webpack-dev-server",
+          "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site",
+          "url": "https://github.com/advisories/GHSA-4v9v-hfq4-rm2v",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-749"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=5.2.0"
+        }
+      ],
+      "effects": [
+        "react-scripts"
+      ],
+      "range": "<=5.2.0",
+      "nodes": [
+        "node_modules/webpack-dev-server"
+      ],
+      "fixAvailable": {
+        "name": "react-scripts",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "ws": {
+      "name": "ws",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1098393,
+          "name": "ws",
+          "dependency": "ws",
+          "title": "ws affected by a DoS when handling a request with many HTTP headers",
+          "url": "https://github.com/advisories/GHSA-3h5v-q93c-6h6q",
+          "severity": "high",
+          "cwe": [
+            "CWE-476"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=7.0.0 <7.5.10"
+        }
+      ],
+      "effects": [
+        "@ethersproject/providers"
+      ],
+      "range": "7.0.0 - 7.5.9",
+      "nodes": [
+        "node_modules/@etherspot/eip1271-verification-util/node_modules/ws"
+      ],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 6,
+      "moderate": 28,
+      "high": 16,
+      "critical": 2,
+      "total": 52
+    },
+    "dependencies": {
+      "prod": 2512,
+      "dev": 226,
+      "optional": 58,
+      "peer": 124,
+      "peerOptional": 0,
+      "total": 2885
+    }
+  }
+}
