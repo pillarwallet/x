@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
   EtherspotBatch,
   EtherspotBatches,
@@ -24,16 +25,15 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 
 // components
 import AssetSelect from '../../Form/AssetSelect';
 import FormGroup from '../../Form/FormGroup';
 import Label from '../../Form/Label';
-import Select from '../../Form/Select';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
+import Select from '../../Form/Select';
 
 // providers
 import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
@@ -46,11 +46,11 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // services
+import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 import {
   GasConsumptions,
   getAllGaslessPaymasters,
 } from '../../../services/gasless';
-import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
@@ -68,31 +68,25 @@ import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import {
-  AssetSelectOption,
-  SelectOption,
   SendModalData,
+  AssetSelectOption,
   TokenAssetSelectOption,
+  SelectOption,
 } from '../../../types';
-import { PortfolioData } from '../../../types/api';
-
-// hooks
+import {
+  chainNameToChainIdTokensData,
+  Token,
+} from '../../../services/tokensData';
 import {
   useAppDispatch,
   useAppSelector,
 } from '../../../apps/the-exchange/hooks/useReducerHooks';
-
-// reducer
-import { setWalletPortfolio } from '../../../apps/the-exchange/reducer/theExchangeSlice';
-
-// services
 import {
   convertPortfolioAPIResponseToToken,
   useGetWalletPortfolioQuery,
 } from '../../../services/pillarXApiWalletPortfolio';
-import {
-  Token,
-  chainNameToChainIdTokensData,
-} from '../../../services/tokensData';
+import { PortfolioData } from '../../../types/api';
+import { setWalletPortfolio } from '../../../apps/the-exchange/reducer/theExchangeSlice';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -139,19 +133,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setShowBatchSendModal,
     setWalletConnectPayload,
   } = useBottomMenuModal();
-  const contextNfts = useContext(AccountNftsContext);
   const paymasterUrl = process.env.REACT_APP_PAYMASTER_URL;
   const [isPaymaster, setIsPaymaster] = React.useState<boolean>(false);
   const [paymasterContext, setPaymasterContext] = React.useState<{
     mode: string;
     token?: string;
   } | null>({ mode: 'sponsor' });
+  const contextNfts = useContext(AccountNftsContext);
   const [selectedPaymasterAddress, setSelectedPaymasterAddress] =
     React.useState<string>('');
   const [selectedFeeAsset, setSelectedFeeAsset] = React.useState<{
     token: string;
     decimals: number;
     tokenPrice?: string;
+    balance?: string;
   }>();
   const [feeAssetOptions, setFeeAssetOptions] = React.useState<
     TokenAssetSelectOption[]
@@ -235,7 +230,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               }) => {
                 const tokenData = tokens.find(
                   (token: Token) =>
-                    token.contract === item.gasToken.toLowerCase()
+                    token.contract.toLowerCase() === item.gasToken.toLowerCase()
                 );
                 if (tokenData)
                   return {
@@ -268,6 +263,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               token: feeOptions[0].asset.contract,
               decimals: feeOptions[0].asset.decimals,
               tokenPrice: feeOptions[0].asset.price?.toString(),
+              balance: feeOptions[0].value?.toString(),
             });
             setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
             setPaymasterContext({
@@ -513,10 +509,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     }
 
     if (isPaymaster && paymasterContext?.mode === 'commonerc20') {
-      const amountLeft =
-        selectedAsset?.type === 'token'
-          ? +getAmountLeft(selectedAsset, amount, selectedAsset.balance)
-          : 0;
+      let amountLeft = 0;
+      if (
+        selectedAsset?.type === 'token' &&
+        selectedAsset?.asset?.contract?.toLowerCase() ===
+          selectedFeeAsset?.token?.toLowerCase()
+      ) {
+        amountLeft = +getAmountLeft(
+          selectedAsset,
+          amount,
+          selectedAsset.balance
+        );
+      } else {
+        amountLeft = +(selectedFeeAsset?.balance ?? 0);
+      }
       if (!feeMin) return;
       if (amountLeft < +feeMin) {
         setErrorMessage(t`error.insufficientBalanceForGasless`);
@@ -840,6 +846,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       token: tokenAddress,
       decimals: Number(values[3]) ?? 18,
       tokenPrice: tokenOption.asset.price?.toString(),
+      balance: tokenOption.value?.toString(),
     });
     const paymasterAddress = value.id.split('-')[2];
     setSelectedPaymasterAddress(paymasterAddress);
@@ -1077,6 +1084,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 />
               </>
             )}
+        </FormGroup>
+      )}
+      {selectedAsset && (
+        <FormGroup>
           <Label>{t`label.sendTo`}</Label>
           <TextInput
             id="send-to-address-input-send-modal"
