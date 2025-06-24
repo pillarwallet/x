@@ -191,7 +191,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     walletPortfolioDataError,
   ]);
 
-  const [feeType, setFeeType] = React.useState([
+  const feeTypeOptions = [
     {
       id: 'Gasless',
       title: 'Gasless',
@@ -204,7 +204,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       type: 'token',
       value: '',
     },
-  ]);
+  ];
+
+  const [feeType, setFeeType] = React.useState(feeTypeOptions);
 
   useEffect(() => {
     if (!walletPortfolio) return;
@@ -214,11 +216,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
       (paymasterObject) => {
         if (paymasterObject) {
-          const nativeToken = tokens.filter((token: Token) =>
-            isNativeToken(token.contract)
+          const nativeToken = tokens.filter(
+            (token: Token) =>
+              isNativeToken(token.contract) &&
+              chainNameToChainIdTokensData(token.blockchain) ===
+                selectedAsset.chainId
           );
-          if (nativeToken.length > 0)
+          if (nativeToken.length > 0) {
             setNativeAssetPrice(nativeToken[0]?.price || 0);
+          }
           const feeOptions = paymasterObject
             .map(
               (item: {
@@ -254,6 +260,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               (value): value is TokenAssetSelectOption => value !== undefined
             );
           if (feeOptions && feeOptions.length > 0 && feeOptions[0]) {
+            setFeeType(feeTypeOptions);
             setFeeAssetOptions(feeOptions);
             // get Skandha gas price
             getGasPrice(selectedAsset.chainId).then((res) => {
@@ -272,11 +279,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             });
             setIsPaymaster(true);
           } else {
+            setIsPaymaster(false);
+            setPaymasterContext(null);
+            setFeeAssetOptions([]);
             setFeeType([]);
           }
         } else {
           setPaymasterContext(null);
           setIsPaymaster(false);
+          setFeeAssetOptions([]);
           setFeeType([]);
         }
       }
@@ -927,7 +938,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 />
               </EtherspotBatch>
             </EtherspotBatches>
-            {feeType.length > 0 && (
+            {feeType.length > 0 && feeAssetOptions.length > 0 && (
               <>
                 <Label>{t`label.feeType`}</Label>
                 <Select
