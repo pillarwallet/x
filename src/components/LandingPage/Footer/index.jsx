@@ -11,7 +11,7 @@ const Footer = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <img src="/landing-images/home-x.svg" alt="home-image" />
+              <img src="https://cdn.pillarx.app/home-x.svg" alt="home-image" />
             </a>
           </div>
         </div>
