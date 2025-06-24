@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PxPointsSummary /> renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col bg-container_grey desktop:py-5 desktop:px-6 tablet:py-5 tablet:px-6 mobile:p-3 rounded-2xl"
+  >
+    <div
+      class="flex justify-between items-center"
+    >
+      <div
+        class="flex gap-2 items-center"
+      >
+        <div
+          class="w-5 h-5 rounded p-[0.6px] bg-gradient-to-b from-white via-white/[.6] to-[#360064] shadow-[0_0_15px_0_#693397,0_2px_6px_0_#00000080]"
+        >
+          <div
+            class="flex w-full h-full items-center justify-center rounded bg-[#360064]"
+          >
+            <img
+              alt="pillar-wallet-icon"
+              src="[object Object]"
+            />
+          </div>
+        </div>
+        <p
+          class="desktop:text-xl tablet:text-xl mobile:text-base font-medium"
+        >
+          My PX Points
+        </p>
+      </div>
+      <div
+        class="flex gap-1 items-center px-1.5 py-[4px] rounded-md bg-[#25232D]"
+      >
+        <img
+          alt="lottery-qualified-icon"
+          class="w-5 h-4"
+          src="lottery-qualified-icon.png"
+        />
+        <div>
+          Qualified
+           
+          <span
+            class="desktop:inline tablet:inline mobile:hidden"
+          >
+            for Lottery
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="desktop:flex tablet:flex mobile:flex mobile:flex-col gap-3 mt-4"
+    >
+      <div
+        class="desktop:w-[44%] tablet:w-[44%] mobile:w-full"
+      >
+        <div>
+          OverviewPointsCard
+        </div>
+      </div>
+      <div
+        class="desktop:w-[56%] tablet:w-[56%] mobile:w-full grid grid-cols-2 gap-3"
+      >
+        <div>
+          Migration
+           PointsCard
+        </div>
+        <div>
+          Trading
+           PointsCard
+        </div>
+        <div>
+          GasNewDropCard
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

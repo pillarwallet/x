@@ -27,7 +27,6 @@ module.exports = function override(config) {
     }),
   ];
 
-  // Chunking
   config.optimization.splitChunks = {
     cacheGroups: {
       vendor: {
@@ -53,5 +52,6 @@ module.exports = function override(config) {
       fullySpecified: false,
     },
   });
+
   return config;
 };

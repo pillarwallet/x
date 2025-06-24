@@ -185,12 +185,16 @@ const WalletPortfolioTile = () => {
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (isRefreshAll) {
-      refetchWalletPortfolioData();
-      refetchWalletHistoryData();
-      refetchTopTokenUnrealizedPnLData();
+      // Only refetch if accountAddress exists
+      if (accountAddress) {
+        refetchWalletPortfolioData();
+        refetchWalletHistoryData();
+        refetchTopTokenUnrealizedPnLData();
 
-      if (selectedBalanceOrPnl === 'pnl') {
-        refetchWalletPortfolioWithPnlData();
+        // Only refetch PnL data if it should be fetched
+        if (shouldFetchPnl) {
+          refetchWalletPortfolioWithPnlData();
+        }
       }
 
       const timeout = setTimeout(() => {
@@ -200,7 +204,7 @@ const WalletPortfolioTile = () => {
       return () => clearTimeout(timeout);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRefreshAll]);
+  }, [isRefreshAll, accountAddress, shouldFetchPnl]);
 
   return (
     <TileContainer
