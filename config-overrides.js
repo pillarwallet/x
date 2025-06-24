@@ -21,31 +21,21 @@ module.exports = function override(config) {
   config.optimization = config.optimization || {};
   // Minimiser
   config.optimization.minimize = true;
-  // config.optimization.minimizer = [
-  //   new TerserPlugin({
-  //     parallel: true,
-  //     test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
-  //   }),
-  // ];
+  config.optimization.minimizer = [
+    new TerserPlugin({
+      test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
+    }),
+  ];
 
-  // Exclude certain files from the build
-  config.module.rules = config.module.rules.filter((rule) => {
-    if (rule.oneOf) {
-      rule.oneOf = rule.oneOf.filter((oneOfRule) => {
-        // Exclude files in node_modules/@noble/hashes/esm/sha3.js
-        if (
-          oneOfRule.test &&
-          oneOfRule.test.toString().includes('node_modules')
-        ) {
-          return !oneOfRule.test
-            .toString()
-            .includes('@noble/hashes/esm/sha3.js');
-        }
-        return true;
-      });
-    }
-    return true;
-  });
+  config.optimization.splitChunks = {
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        chunks: 'all',
+        maxSize: 50000,
+      },
+    },
+  };
 
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
