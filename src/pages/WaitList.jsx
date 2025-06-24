@@ -109,7 +109,10 @@ const Waitlist = () => {
               </div>
             </div>
             <div className="home_build__logo">
-              <img src="/landing-images/home-logo-px.svg" alt="home-logo" />
+              <img
+                src="https://cdn.pillarx.app/home-logo-px.svg"
+                alt="home-logo"
+              />
             </div>
           </div>
         </div>

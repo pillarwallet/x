@@ -20,12 +20,19 @@ module.exports = function override(config) {
   config.resolve.fallback = fallback;
   config.optimization = config.optimization || {};
   // Minimiser
-  config.optimization.minimize = true;
-  config.optimization.minimizer = [
-    new TerserPlugin({
-      test: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
-    }),
-  ];
+  // config.optimization.minimize = true;
+  // config.optimization.minimizer = [
+  //   new TerserPlugin({
+  //     parallel: true,
+  //     terserOptions: {
+  //       mangle: false,
+  //       module: true,
+  //       keep_classnames: true,
+  //       keep_fnames: true,
+  //     },
+  //     // include: /node_modules\/@noble\/hashes\/esm\/sha3\.js$/,
+  //   }),
+  // ];
 
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({

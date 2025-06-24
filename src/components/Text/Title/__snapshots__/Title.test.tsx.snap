@@ -1,8 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<PrimaryTitle /> renders correctly 1`] = `
+.c0 {
+  font-size: 30px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
 <h1
-  className="sc-bRKDuR hBHaXX"
+  className="c0"
 >
   Some regular text.
 </h1>

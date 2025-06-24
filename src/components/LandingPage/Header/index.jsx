@@ -1,7 +1,7 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, ScrollRestoration } from 'react-router-dom';
 
 const Header = () => {
@@ -82,7 +82,7 @@ const Header = () => {
               className="header__social"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-              <img src="/landing-images/home-x.svg" alt="home-image" />
+              <img src="https://cdn.pillarx.app/home-x.svg" alt="home-image" />
             </a>
           </nav>
 

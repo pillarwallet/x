@@ -60,7 +60,7 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="home-image"
-            src="/landing-images/home-x.svg"
+            src="https://cdn.pillarx.app/home-x.svg"
           />
         </a>
       </nav>
@@ -94,7 +94,7 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="PillarX logo"
-            src="/landing-images/home-px.png"
+            src="https://cdn.pillarx.app/home-px.png"
           />
         </div>
         <div
@@ -145,12 +145,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-1.png"
+              poster="https://cdn.pillarx.app/home-feature-1.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-1.mp4"
+                src="https://cdn.pillarx.app/home-feature-1.mp4"
                 type="video/mp4"
               />
             </video>
@@ -177,12 +177,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-2.png"
+              poster="https://cdn.pillarx.app/home-feature-2.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-2.mp4"
+                src="https://cdn.pillarx.app/home-feature-2.mp4"
                 type="video/mp4"
               />
             </video>
@@ -209,12 +209,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-3.png"
+              poster="https://cdn.pillarx.app/home-feature-3.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-3.mp4"
+                src="https://cdn.pillarx.app/home-feature-3.mp4"
                 type="video/mp4"
               />
             </video>
@@ -243,7 +243,7 @@ exports[`<Main /> renders correctly 1`] = `
           </p>
           <img
             alt="PillarX Dashboard"
-            src="/landing-images/home-hero.png"
+            src="https://cdn.pillarx.app/home-hero.png"
           />
         </div>
       </div>
@@ -404,7 +404,7 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="home-logo"
-            src="/landing-images/home-logo-px.svg"
+            src="https://cdn.pillarx.app/home-logo-px.svg"
           />
         </div>
       </div>
@@ -426,7 +426,7 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="home-image"
-            src="/landing-images/home-x.svg"
+            src="https://cdn.pillarx.app/home-x.svg"
           />
         </a>
       </div>
