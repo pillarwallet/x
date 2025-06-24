@@ -5,8 +5,8 @@ import neueBoldFont from '../../../assets/landing-fonts/NeueHaasDisplayBold.ttf'
 import neueRegularFont from '../../../assets/landing-fonts/NeueHaasDisplayRoman.ttf';
 
 // Slick Styles
-import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
 
 const GlobalStyles = createGlobalStyle`
 
@@ -779,23 +779,23 @@ const GlobalStyles = createGlobalStyle`
   }
   
   .home_feature__detail--one {
-    background-image: url("/landing-images/home-feature-bg-1.png");
+    background-image: url("https://cdn.pillarx.app/home-feature-bg-1.png");
     background-position: center bottom;
   }
   
   .home_feature__detail--two {
-    background-image: url("/landing-images/home-feature-bg-2.png");
+    background-image: url("https://cdn.pillarx.app/home-feature-bg-2.png");
     background-position: center center;
   }
   
   .home_feature__detail--three {
-    background-image: url("/landing-images/home-feature-bg-3.png");
+    background-image: url("https://cdn.pillarx.app/home-feature-bg-3.png");
     background-position: center top;
   }
 
   @media only screen and (max-width: 767px) {
     .home_feature__detail--three {
-      background-image: url("/landing-images/home-feature-bg-3-mobile.png");
+      background-image: url("https://cdn.pillarx.app/home-feature-bg-3-mobile.png");
       background-position: center bottom;
     }
   }
@@ -1550,17 +1550,17 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .developers_feature__detail:first-child {
-    background-image: url("/landing-images/developer-feature-bg-1.png");
+    background-image: url("https://cdn.pillarx.app/developer-feature-bg-1.png");
     background-position: center center;
   }
 
   .developers_feature__detail:nth-child(2) {
-    background-image: url("/landing-images/developer-feature-bg-2.png");
+    background-image: url("https://cdn.pillarx.app/developer-feature-bg-2.png");
     background-position: center center;
   }
 
   .developers_feature__detail:nth-child(3) {
-    background-image: url("/landing-images/developer-feature-bg-3.png");
+    background-image: url("https://cdn.pillarx.app/developer-feature-bg-3.png");
     background-position: center center;
   }
 

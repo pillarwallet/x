@@ -21,7 +21,10 @@ export default function LandingPage() {
         <div className="container">
           <div className="home_hero__wrapper">
             <div className="home_hero__content">
-              <img src="/landing-images/home-px.png" alt="PillarX logo" />
+              <img
+                src="https://cdn.pillarx.app/home-px.png"
+                alt="PillarX logo"
+              />
             </div>
             <div className="home_hero__signup">
               <p>
@@ -59,10 +62,10 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-feature-1.png"
+                  poster="https://cdn.pillarx.app/home-feature-1.png"
                 >
                   <source
-                    src="/landing-images/home-feature-1.mp4"
+                    src="https://cdn.pillarx.app/home-feature-1.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -87,10 +90,10 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-feature-2.png"
+                  poster="https://cdn.pillarx.app/home-feature-2.png"
                 >
                   <source
-                    src="/landing-images/home-feature-2.mp4"
+                    src="https://cdn.pillarx.app/home-feature-2.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -113,10 +116,10 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-feature-3.png"
+                  poster="https://cdn.pillarx.app/home-feature-3.png"
                 >
                   <source
-                    src="/landing-images/home-feature-3.mp4"
+                    src="https://cdn.pillarx.app/home-feature-3.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -139,7 +142,7 @@ export default function LandingPage() {
                 ecosystem.
               </p>
               <img
-                src="/landing-images/home-hero.png"
+                src="https://cdn.pillarx.app/home-hero.png"
                 alt="PillarX Dashboard"
               />
             </div>
@@ -208,7 +211,10 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="home_build__logo">
-              <img src="/landing-images/home-logo-px.svg" alt="home-logo" />
+              <img
+                src="https://cdn.pillarx.app/home-logo-px.svg"
+                alt="home-logo"
+              />
             </div>
           </div>
         </div>
