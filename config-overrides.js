@@ -16,6 +16,9 @@ module.exports = function override(config) {
     zlib: false, // require.resolve("browserify-zlib") can be polyfilled here if needed
     fs: false,
     path: false,
+    net: false,
+    tls: false,
+    child_process: false,
   });
   config.resolve.fallback = fallback;
   config.optimization = config.optimization || {};
