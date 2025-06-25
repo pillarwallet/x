@@ -35,6 +35,7 @@ function getDispensableAssets(
   for(const item of portfolioData.assets) {
     const price = item.price;
     for(const token of item.contracts_balances) {
+      console.log("token:: ", token);
       const tokenItem = {
         chainId: Number(token.chainId.split(":").at(-1)),
         address: token.address
@@ -354,7 +355,7 @@ export default function Buy(
               <div className="flex items-center justify-center"><TailSpin color="#FFFFFF" height={15} width={15} /></div>
             </> :
             props.token?.symbol ?
-            `Buy ${parseFloat(usdAmount) > 0 ? (Number(usdAmount)/Number(props.token.usdValue)).toFixed(4) : ""}
+            `Buy ${parseFloat(debouncedUsdAmount) > 0 ? (Number(debouncedUsdAmount)/Number(props.token.usdValue)).toFixed(4) : ""}
             ${props.token.symbol}` : "Buy"
           }
         </button>

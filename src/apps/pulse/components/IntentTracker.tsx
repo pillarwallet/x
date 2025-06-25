@@ -99,7 +99,7 @@ export default function IntentTracker(props: Props) {
           <div className="flex flex-col items-center">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm`}
-              style={{...getCircleCss(bid?.bidStatus), color: "grey"}}
+              style={{...getCircleCss(bid?.bidStatus), color: "white"}}
             >
               1
             </div>
@@ -120,7 +120,7 @@ export default function IntentTracker(props: Props) {
           <div className="flex flex-col items-center">
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm`}
-              style={{...getCircleCss(bid?.bidStatus, false), color: "grey"}}
+              style={{...getCircleCss(bid?.bidStatus, false), color: "white"}}
             >
               2
             </div>
