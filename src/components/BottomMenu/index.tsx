@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -29,6 +30,7 @@ import { animation } from '../../theme';
 
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
+  const { isConnected } = useAccount();
   const { account } = usePrivateKeyLogin();
   const navLocation = useLocation();
   const navigate = useNavigate();
@@ -58,7 +60,7 @@ const BottomMenu = () => {
     };
   }, [overlayRef, hide]);
 
-  if (!authenticated && !account) return null;
+  if (!authenticated && !account && !isConnected) return null;
 
   const isHomeActive =
     active === null && navLocation.pathname === navigationRoute.home;

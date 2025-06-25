@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -17,7 +17,6 @@ const Login = () => {
   const { login } = usePrivy();
   const { connectors, connect } = useConnect();
   const { address } = useAccount();
-  const { wallets } = useWallets();
   const [t] = useTranslation();
 
   // Get WalletConnect connector
@@ -47,12 +46,6 @@ const Login = () => {
 
     sessionStorage.setItem('loginPageReloaded', 'true');
   }, [address]);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-useless-return
-    if (!wallets.length) return;
-    wallets[0].loginOrLink();
-  }, [wallets]);
 
   const logoTransitions = useTransition(true, {
     from: { opacity: 0 },
