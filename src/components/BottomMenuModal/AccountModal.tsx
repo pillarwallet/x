@@ -325,77 +325,79 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                 />
               </>
             )}
-            {groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
-              const logoUrl = asset.asset.logo;
-              const tokenChainsCount = chains.length;
+            {!tokensLoading &&
+              groupedTokens.length > 0 &&
+              groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
+                const logoUrl = asset.asset.logo;
+                const tokenChainsCount = chains.length;
 
-              return (
-                <TokenItem
-                  id={`token-item-${symbol}-account-modal`}
-                  key={`${symbol}-${asset.asset.id}`}
-                >
-                  <TokenTotals id="token-totals-account-modal">
-                    {!hideImage && logoUrl ? (
-                      <img
-                        src={logoUrl}
-                        alt={symbol}
-                        onError={() => setHideImage(true)}
-                      />
-                    ) : (
-                      <div className="h-6 w-6">
-                        <RandomAvatar
-                          name={asset.asset.name}
-                          isRound
-                          variant="marble"
-                        />
-                      </div>
-                    )}
-                    <p>
-                      {formatAmountDisplay(totalBalance)}{' '}
-                      <TokenSymbol>{symbol}</TokenSymbol>
-                    </p>
-                    <TokenTotalsRight>
-                      <IconHierarchy
-                        size={13}
-                        color={theme.color.icon.cardIcon}
-                        variant="Bold"
-                      />
-                      <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
-                      <VerticalDivider />
-                      <ToggleButton
-                        $expanded={expanded[`${symbol}-${asset.asset.id}`]}
-                        onClick={() =>
-                          setExpanded((prev) => ({
-                            ...prev,
-                            [`${symbol}-${asset.asset.id}`]:
-                              !prev[`${symbol}-${asset.asset.id}`],
-                          }))
-                        }
-                      >
-                        <ArrowRightIcon size={15} />
-                      </ToggleButton>
-                    </TokenTotalsRight>
-                  </TokenTotals>
-                  <TokenChainsWrapper
-                    id="token-chains-account-modal"
-                    $visible={expanded[`${symbol}-${asset.asset.id}`]}
+                return (
+                  <TokenItem
+                    id={`token-item-${symbol}-account-modal`}
+                    key={`${symbol}-${asset.asset.id}`}
                   >
-                    {chains.map(({ balance, chain, address }) => {
-                      return (
-                        <TokenItemChain
-                          key={`${symbol}-${chain.id}-${address}`}
-                          id={`action-bar-account-token-${symbol}-${chain.id}`}
+                    <TokenTotals id="token-totals-account-modal">
+                      {!hideImage && logoUrl ? (
+                        <img
+                          src={logoUrl}
+                          alt={symbol}
+                          onError={() => setHideImage(true)}
+                        />
+                      ) : (
+                        <div className="h-6 w-6">
+                          <RandomAvatar
+                            name={asset.asset.name}
+                            isRound
+                            variant="marble"
+                          />
+                        </div>
+                      )}
+                      <p>
+                        {formatAmountDisplay(totalBalance)}{' '}
+                        <TokenSymbol>{symbol}</TokenSymbol>
+                      </p>
+                      <TokenTotalsRight>
+                        <IconHierarchy
+                          size={13}
+                          color={theme.color.icon.cardIcon}
+                          variant="Bold"
+                        />
+                        <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
+                        <VerticalDivider />
+                        <ToggleButton
+                          $expanded={expanded[`${symbol}-${asset.asset.id}`]}
+                          onClick={() =>
+                            setExpanded((prev) => ({
+                              ...prev,
+                              [`${symbol}-${asset.asset.id}`]:
+                                !prev[`${symbol}-${asset.asset.id}`],
+                            }))
+                          }
                         >
-                          <ChainIcon src={getLogoForChainId(chain.id)} />
-                          <p>{getChainName(Number(chain.id))}</p>
-                          <p>{formatAmountDisplay(balance)}</p>
-                        </TokenItemChain>
-                      );
-                    })}
-                  </TokenChainsWrapper>
-                </TokenItem>
-              );
-            })}
+                          <ArrowRightIcon size={15} />
+                        </ToggleButton>
+                      </TokenTotalsRight>
+                    </TokenTotals>
+                    <TokenChainsWrapper
+                      id="token-chains-account-modal"
+                      $visible={expanded[`${symbol}-${asset.asset.id}`]}
+                    >
+                      {chains.map(({ balance, chain, address }) => {
+                        return (
+                          <TokenItemChain
+                            key={`${symbol}-${chain.id}-${address}`}
+                            id={`action-bar-account-token-${symbol}-${chain.id}`}
+                          >
+                            <ChainIcon src={getLogoForChainId(chain.id)} />
+                            <p>{getChainName(Number(chain.id))}</p>
+                            <p>{formatAmountDisplay(balance)}</p>
+                          </TokenItemChain>
+                        );
+                      })}
+                    </TokenChainsWrapper>
+                  </TokenItem>
+                );
+              })}
           </>
         )}
       </TabContent>
