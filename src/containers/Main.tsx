@@ -16,7 +16,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { WagmiProvider, createConfig } from 'wagmi';
+import { WagmiProvider, createConfig, useAccount } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -65,6 +65,7 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
+  const { isConnected, address } = useAccount();
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
@@ -93,7 +94,7 @@ const AuthLayout = () => {
     const searchURL = new URLSearchParams(window.location.search);
     const searchURLPK = searchURL.get('pk');
 
-    if ((searchURL && searchURLPK) || account) {
+    if ((searchURL && searchURLPK) || account || address) {
       if (searchURL && searchURLPK) {
         try {
           const privateKeyToAccountAddress = privateKeyToAccount(
@@ -126,7 +127,7 @@ const AuthLayout = () => {
         const walletChainId = 1; // default chain id is 1
 
         const newProvider = createWalletClient({
-          account: account as `0x${string}`,
+          account: (account || address) as `0x${string}`,
           chain: getNetworkViem(walletChainId),
           transport: http(),
         });
@@ -185,14 +186,14 @@ const AuthLayout = () => {
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account]);
+  }, [wallets, user, account, address]);
 
   /**
    * If all the following variables are truthy within the if
    * statement, we can consider this user as logged in and
    * authenticated.
    */
-  if (isAppReady && isAuthenticated && provider && chainId) {
+  if (isAppReady && (isAuthenticated || isConnected) && provider && chainId) {
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.
