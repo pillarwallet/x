@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import {
   createBrowserRouter,
@@ -16,9 +17,8 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { WagmiProvider, createConfig } from 'wagmi';
+import { createConfig, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -243,10 +243,10 @@ const AuthLayout = () => {
 
     // Finally, add the development app to the route definition
     // if it exists...
-    if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
+    if (import.meta.env.VITE_PX_DEVELOPMENT_ID) {
       authorizedRoutesDefinition[0].children.push({
-        path: `/${process.env.REACT_APP_PX_DEVELOPMENT_ID}`,
-        element: <App id={process.env.REACT_APP_PX_DEVELOPMENT_ID} />,
+        path: `/${import.meta.env.VITE_PX_DEVELOPMENT_ID}`,
+        element: <App id={import.meta.env.VITE_PX_DEVELOPMENT_ID} />,
       });
     }
 
@@ -333,7 +333,7 @@ export const config = createConfig({
   chains: [mainnet],
   connectors: [
     walletConnect({
-      projectId: process.env.REACT_APP_WC_ID ?? '',
+      projectId: import.meta.env.VITE_WC_ID ?? '',
       showQrModal: !isMobile,
       isNewChainsStale: true,
       metadata: {
@@ -358,7 +358,7 @@ const Main = () => {
       <LanguageProvider>
         <PrivateKeyLoginProvider>
           <PrivyProvider
-            appId={process.env.REACT_APP_PRIVY_APP_ID as string}
+            appId={import.meta.env.VITE_PRIVY_APP_ID as string}
             config={{
               appearance: { theme: 'dark' },
               defaultChain: isTestnet ? sepolia : mainnet,

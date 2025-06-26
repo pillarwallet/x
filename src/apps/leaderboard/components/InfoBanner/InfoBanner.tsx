@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
 
 // images
-import { ReactComponent as InfoIcon } from '../../images/info-icon.svg';
+import InfoIcon from '../../images/info-icon.svg?react';
 
 // components
 import BodySmall from '../Typography/BodySmall';

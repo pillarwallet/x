@@ -182,4 +182,4 @@ jest.mock('@etherspot/transaction-kit', () => ({
   }),
 }));
 
-process.env.REACT_APP_PRIVY_APP_ID = 'test';
+import.meta.env.VITE_PRIVY_APP_ID = 'test';

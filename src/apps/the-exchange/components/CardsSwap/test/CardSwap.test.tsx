@@ -157,7 +157,7 @@ describe('<CardsSwap />', () => {
       store.dispatch(setSearchTokenResult(undefined));
       store.dispatch(setIsOfferLoading(false));
     });
-    process.env.REACT_APP_SWAP_BUTTON_SWITCH = 'true';
+    import.meta.env.VITE_SWAP_BUTTON_SWITCH = 'true';
   });
 
   it('renders correctly and matches snapshot', () => {

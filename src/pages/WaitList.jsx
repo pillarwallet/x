@@ -9,7 +9,7 @@ import { Header } from '../components/LandingPage/Header';
 
 // Plausible Domain Config
 const { trackEvent } = Plausible({
-  domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN,
+  domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN,
 });
 
 const Waitlist = () => {

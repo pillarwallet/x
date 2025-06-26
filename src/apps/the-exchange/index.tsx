@@ -49,7 +49,7 @@ export const App = () => {
           }) as any,
       }),
     ],
-    apiKey: process.env.REACT_APP_LIFI_API_KEY,
+    apiKey: import.meta.env.VITE_LIFI_API_KEY,
   });
 
   return (
