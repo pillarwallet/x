@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Hex } from "viem";
 import Esc from "./Esc";
 import useIntentSdk from "../hooks/useIntentSdk";
+import TransactionStatus from "./TxStatus";
 
 
 interface Props {
@@ -48,6 +49,7 @@ const getCircleCss = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTE
 export default function IntentTracker(props: Props) {
   const {intentSdk} = useIntentSdk();
   const [bid, setBid] = useState<any>(null);
+  const [resourceLockInfo, setResourceLockInfo] = useState<any>(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -64,6 +66,16 @@ export default function IntentTracker(props: Props) {
         console.error(err);
       }
 
+      try {
+        const res = await intentSdk.getResourceLockInfoByBidHash(props.bidHash);
+        console.log("resourcelock info:: ", res);
+        if(res) {
+          setResourceLockInfo(res.resourceLockInfo);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+
       if (!isCancelled) {
         setTimeout(poll, 15000);
       }
@@ -76,6 +88,7 @@ export default function IntentTracker(props: Props) {
     };
   }, [intentSdk]);
 
+  console.log(resourceLockInfo?.resourceLocks?.[0]?.transactionHash, bid?.bidStatus);
   return (
     <>
     <div className="flex justify-between" style={{margin: 10}}>
@@ -108,7 +121,12 @@ export default function IntentTracker(props: Props) {
           {/* Content */}
           <div className="flex-1 pb-6">
             <div>Resource Lock Creation</div>
-            <p style={{fontSize: 10}}>state.description</p>
+            <TransactionStatus
+              chainId={resourceLockInfo?.resourceLocks?.[0]?.chainId}
+              completed={resourceLockInfo?.resourceLocks?.[0]?.transactionHash && getStatusIndex(bid?.bidStatus) >= 2}
+              text="Creating Resource Lock"
+              txHash={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
+            />
           </div>
         </div>
 
@@ -129,7 +147,12 @@ export default function IntentTracker(props: Props) {
           {/* Content */}
           <div className="flex-1 pb-6">
             <div>{props.isBuy ? "Buy" : "Sell"} Complete</div>
-            <p style={{fontSize: 10}}>state.description</p>
+            <TransactionStatus
+              chainId={props.token.chainId}
+              text=""
+              completed={getStatusIndex(bid?.bidStatus) >= 3}
+              txHash={bid?.executedTransactions?.[0]?.transactionHash}
+            />
           </div>
         </div>
       </div>
@@ -146,6 +169,7 @@ export default function IntentTracker(props: Props) {
           backgroundColor: getStatusIndex(bid?.bidStatus) !== 3 ? "#121116" : "#8A77FF"
         }}
         disabled={getStatusIndex(bid?.bidStatus) !== 3}
+        onClick={props.closePreview}
       >
         Close
       </button>

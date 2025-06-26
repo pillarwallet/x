@@ -278,7 +278,7 @@ export default function Buy(
         <div className="flex justify-between" style={{margin: 10}}>
           <div className="flex">
             {
-              (notEnoughLiquidity || (!isLoading && expressIntentResponse && expressIntentResponse.bids.length === 0)) &&
+              (notEnoughLiquidity || (!isLoading && expressIntentResponse && expressIntentResponse.bids?.length === 0)) &&
               <>
                 <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.70433 3.22114L1.31589 10.7442C0.732563 11.7442 1.45387 13 2.61156 13H11.3884C12.5461 13 13.2674 11.7442 12.6841 10.7442L8.29567 3.22115C7.71685 2.22889 6.28315 2.22889 5.70433 3.22114Z" fill="#FF366C" fill-opacity="0.3" stroke="#FF366C"/>
