@@ -59,7 +59,6 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
 };
 
 const App = ({ id }: { id: string }) => {
-  console.log(`Loading app with id: ${id}`);
   const [t] = useTranslation();
   const { isAnimated } = useAllowedApps();
   const [app, setApp] = useState<AppManifest | null>();
@@ -72,7 +71,6 @@ const App = ({ id }: { id: string }) => {
   useEffect(() => {
     const fetchApp = async () => {
       const loadedApp = await loadApp(id);
-      console.log(`Loaded app manifest for ${id}`, loadedApp);
       setApp(loadedApp);
 
       // Start the spring animation with reset, immediate, and configuration
@@ -95,10 +93,9 @@ const App = ({ id }: { id: string }) => {
       setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
     try {
-      const app = await import(/* @vite-ignore */ `../../apps/${id}`);
-      console.log(`Loaded app component for ${id}`, app);
+      const appImport = await import(/* @vite-ignore */ `../../apps/${id}`);
 
-      return app;
+      return appImport;
     } catch (e) {
       console.error(`Failed to load app component for ${id}`, e);
       return { default: () => <Alert>{t`error.appNotFound`}</Alert> };
