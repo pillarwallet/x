@@ -14,6 +14,10 @@ jest.mock('wagmi', () => {
     ),
     http: jest.fn(),
     mainnet: { id: 1 },
+    useAccount: jest.fn().mockReturnValue({
+      address: '0x',
+      isConnected: false,
+    }),
   };
 });
 

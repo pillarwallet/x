@@ -113,6 +113,7 @@ jest.mock('wagmi', () => ({
   mainnet: { id: 1, name: 'mainnet' },
   useAccount: jest.fn().mockReturnValue({
     address: '0x',
+    isConnected: false,
   }),
   useDisconnect: jest.fn().mockReturnValue({
     disconnect: jest.fn(),

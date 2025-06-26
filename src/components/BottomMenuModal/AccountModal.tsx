@@ -58,7 +58,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const [t] = useTranslation();
-  const { address: wcAddress } = useAccount();
+  const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
 
   const nfts = useAccountNfts();
@@ -150,15 +150,23 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
+    if (isConnected) {
+      try {
+        await disconnect();
+      } catch (e) {
+        /* empty */
+      }
+    }
+
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
     } else {
-      logout();
-    }
-
-    if (wcAddress) {
-      await disconnect();
+      try {
+        await logout();
+      } catch (e) {
+        /* empty */
+      }
     }
 
     clearDappStorage();
