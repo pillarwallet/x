@@ -18,7 +18,7 @@ if (typeof window !== 'undefined') {
 
 let sentryReleaseTag;
 
-// add a release tag only if REACT_APP_VERSION provided
+// add a release tag only if VITE_VERSION provided
 if (import.meta.env.VITE_VERSION) {
   sentryReleaseTag =
     'pillarx@' +
