@@ -25,7 +25,7 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
       href={txUrl}
       target="_blank"
       rel="noopener noreferrer"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+      style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
     >
       <span style={{ fontSize: 10, textDecoration: "underline" }}>{txHash.slice(0, 6)}...{txHash.slice(-4)}</span>
       <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="10" height="10" viewBox="0,0,256,256">

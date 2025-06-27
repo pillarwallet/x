@@ -25,31 +25,31 @@ const getStatusIndex = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLIS
   return -1;
 }
 
-const getCircleCss = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTED" | "EXECUTED", f = true) => {
-  const index = getStatusIndex(status);
-  if(f) {
-    if(index >= 2) {
-      return {
-        backgroundColor: "#8A77FF",
-      }
-    }
-    return {
-      border: "1px solid white"
-    }
-  }
-  if (index >= 3)
-    return {
-      backgroundColor: "#8A77FF",
-    }
-  return {
-    border: "1px solid white"
-  }
-}
-
 export default function IntentTracker(props: Props) {
   const {intentSdk} = useIntentSdk();
   const [bid, setBid] = useState<any>(null);
   const [resourceLockInfo, setResourceLockInfo] = useState<any>(null);
+
+  const getCircleCss = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTED" | "EXECUTED", f = true) => {
+    const index = getStatusIndex(status);
+    if(f) {
+      if(resourceLockInfo?.resourceLocks?.[0]?.transactionHash) {
+        return {
+          backgroundColor: "#8A77FF",
+        }
+      }
+      return {
+        border: "1px solid white"
+      }
+    }
+    if (index >= 3)
+      return {
+        backgroundColor: "#8A77FF",
+      }
+    return {
+      border: "1px solid white"
+    }
+  }
 
   useEffect(() => {
     let isCancelled = false;
@@ -119,18 +119,18 @@ export default function IntentTracker(props: Props) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 pb-6">
+          <div className="flex-1 pb-6" style={{height: 40}}>
             <div>Resource Lock Creation</div>
             <TransactionStatus
               chainId={resourceLockInfo?.resourceLocks?.[0]?.chainId}
-              completed={resourceLockInfo?.resourceLocks?.[0]?.transactionHash && getStatusIndex(bid?.bidStatus) >= 2}
+              completed={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
               text="Creating Resource Lock"
               txHash={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
             />
           </div>
         </div>
 
-        <div style={{height: 25, marginLeft: 19, width: 1, backgroundColor: getStatusIndex(bid?.bidStatus) >= 2 ? "#8A77FF" : "white"}}></div>
+        <div style={{height: 25, marginLeft: 19, width: 1, backgroundColor: resourceLockInfo?.resourceLocks?.[0]?.transactionHash ? "#8A77FF" : "white"}}></div>
         <div style={{height: 25, marginLeft: 19, width: 1, backgroundColor: getStatusIndex(bid?.bidStatus) >= 3 ? "#8A77FF" : "white"}}></div>
 
 
