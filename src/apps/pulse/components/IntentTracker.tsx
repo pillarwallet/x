@@ -3,6 +3,7 @@ import { Hex } from "viem";
 import Esc from "./Esc";
 import useIntentSdk from "../hooks/useIntentSdk";
 import TransactionStatus from "./TxStatus";
+import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
 
 
 interface Props {
@@ -94,7 +95,21 @@ export default function IntentTracker(props: Props) {
     <div className="flex justify-between" style={{margin: 10}}>
       <div className="flex" style={{fontSize: 20}}>
         {`${props.isBuy ? "Buy" : "Sell"}`}
-        <img src={props.token.logo} style={{borderRadius: 50, height: 32, width: 32, marginLeft: 10}}/>
+        {
+          props.token.logo ?
+          <img src={props.token.logo} style={{borderRadius: 50, height: 32, width: 32, marginLeft: 10}}/> :
+          <div className="flex w-full h-full overflow-hidden rounded-full" style={{
+            width: 32,
+            height: 32,
+            borderRadius: 50,
+            marginLeft: 10,
+          }}>
+            <RandomAvatar name={props.token?.name || ''} />
+            <span className="absolute flex items-center justify-center text-white text-lg font-bold" style={{marginLeft: 5}}>
+              {props.token?.name?.slice(0, 2)}
+            </span>
+          </div>
+        }
       </div>
       <div className="flex">
         <div style={{marginLeft: 10}}>

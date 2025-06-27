@@ -7,6 +7,7 @@ import { useWalletAddress } from "@etherspot/transaction-kit";
 import { STABLE_CURRENCIES } from "../constants/tokens";
 import useIntentSdk from "../hooks/useIntentSdk";
 import { getLogoForChainId } from "../../../utils/blockchain";
+import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
 
 interface Props {
   setSearching: Dispatch<SetStateAction<boolean>>,
@@ -183,17 +184,32 @@ export default function Buy(
                 }}
               >
                 <div style={{position: "relative", display: "inline-block" }}>
-                  <img
-                    src={props.token.logo}
-                    alt="Main"
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 50,
-                      marginLeft: 5,
-                      marginRight: 5
-                    }}
-                  />
+                  {
+                    props.token.logo ?
+                    <img
+                      src={props.token.logo}
+                      alt="Main"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 50,
+                        marginLeft: 5,
+                        marginRight: 5
+                      }}
+                    /> :
+                    <div className="w-full h-full overflow-hidden rounded-full" style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 50,
+                        marginLeft: 5,
+                        marginRight: 5
+                      }}>
+                      <RandomAvatar name={props.token.name || ''} />
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                        {props.token.name?.slice(0, 2)}
+                      </span>
+                    </div>
+                  }
                   <img
                     src={getLogoForChainId(props.token.chainId)}
                     style={{position: "absolute",

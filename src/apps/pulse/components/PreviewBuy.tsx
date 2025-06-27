@@ -7,6 +7,7 @@ import { useState } from "react";
 import { TailSpin } from "react-loader-spinner";
 import IntentTracker from "./IntentTracker";
 import { getLogoForChainId } from "../../../utils/blockchain";
+import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
 
 interface Props {
   closePreview: () => void,
@@ -119,17 +120,32 @@ export default function PreviewBuy(props: Props) {
           >
             <div className="flex items-center">
               <div style={{position: "relative", display: "inline-block" }}>
-                <img
-                  src={props.buyToken?.logo}
-                  alt="Main"
-                  style={{
+                {
+                  props.buyToken?.logo ?
+                  <img
+                    src={props.buyToken?.logo}
+                    alt="Main"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 50,
+                      marginLeft: 5,
+                      marginRight: 5
+                    }}
+                  /> :
+                  <div className="w-full h-full overflow-hidden rounded-full" style={{
                     width: 32,
                     height: 32,
                     borderRadius: 50,
                     marginLeft: 5,
                     marginRight: 5
-                  }}
-                />
+                  }}>
+                    <RandomAvatar name={props.buyToken?.name || ''} />
+                    <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      {props.buyToken?.name?.slice(0, 2)}
+                    </span>
+                  </div>
+                }
                 <img
                   src={getLogoForChainId(props.buyToken?.chainId!)}
                   style={{position: "absolute",

@@ -5,6 +5,7 @@ import Close from "./Close";
 import { Asset, parseSearchData } from "../utils/parseSearchData";
 import { MOBULA_CHAIN_NAMES_TO_CHAIN_ID } from "../utils/constants";
 import { getLogoForChainId } from "../../../utils/blockchain";
+import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
 
 export default function Search(
   props: {
@@ -128,7 +129,21 @@ export default function Search(
               return (
                 <button className="flex" style={{width: 398, height: 36, marginTop: 10, marginBottom: 10}} onClick={(e) => {handleTokenSelect(item)}}>
                   <div style={{ position: "relative", display: "inline-block" }}>
-                    <img src={item.logo || ""} style={{width: 36, height: 36, marginLeft: 10, borderRadius: 50}}/>
+                    {
+                      item.logo ?
+                      <img src={item.logo || ""} style={{width: 36, height: 36, marginLeft: 10, borderRadius: 50}}/> :
+                      <div className="w-full h-full overflow-hidden rounded-full" style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 50,
+                        marginLeft: 10,
+                      }}>
+                        <RandomAvatar name={item.name || ''} />
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold" style={{marginLeft: 10}}>
+                          {item.name?.slice(0, 2)}
+                        </span>
+                      </div>
+                    }
                     <img
                       src={getLogoForChainId(MOBULA_CHAIN_NAMES_TO_CHAIN_ID[item.chain])}
                       style={{position: "absolute",
