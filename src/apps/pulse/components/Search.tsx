@@ -6,6 +6,8 @@ import { Asset, parseSearchData } from "../utils/parseSearchData";
 import { MOBULA_CHAIN_NAMES_TO_CHAIN_ID } from "../utils/constants";
 import { getLogoForChainId } from "../../../utils/blockchain";
 import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
+import { useLocation, useNavigate } from "react-router-dom";
+import { isAddress } from "viem";
 
 export default function Search(
   props: {
@@ -24,13 +26,35 @@ export default function Search(
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const useQuery = () => {
+    const { search } = useLocation();
+    return new URLSearchParams(search);
+  }
+  
+  const query = useQuery();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const removeQueryParams = () => {
+    // This keeps the path and removes everything after '?'
+    navigate(location.pathname, { replace: true });
+  };
+
   useEffect(() => {
     inputRef.current?.focus();
+    const tokenAddress = query.get('asset');
+    const chainId = query.get('blockchain');
+
+    if(isAddress(tokenAddress || "")) {
+      setSearchText(tokenAddress!);
+    }
   }, []);
 
   const handleClose = () => {
     setSearchText("");
     props.setSearching(false);
+    removeQueryParams();
   }
 
   const handleTokenSelect = (item: Asset) => {
@@ -59,6 +83,7 @@ export default function Search(
     }
     setSearchText("");
     props.setSearching(false);
+    removeQueryParams();
   }
 
   return (
