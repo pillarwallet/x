@@ -17,31 +17,31 @@ import * as sliceActions from '../../../reducer/WalletPortfolioSlice';
 import WalletPortfolioTile from '../WalletPortfolioTile';
 
 // Mock child components to isolate the tile itself
-jest.mock('../../WalletPortfolioBalance/WalletPortfolioBalance', () => ({
+vi.mock('../../WalletPortfolioBalance/WalletPortfolioBalance', () => ({
   __esModule: true,
   default: function WalletPortfolioBalance() {
     return <div>WalletPortfolioBalance</div>;
   },
 }));
-jest.mock('../../WalletPortfolioButtons/WalletPortfolioButtons', () => ({
+vi.mock('../../WalletPortfolioButtons/WalletPortfolioButtons', () => ({
   __esModule: true,
   default: function WalletPortfolioButtons() {
     return <div>WalletPortfolioButtons</div>;
   },
 }));
-jest.mock('../../PrimeTokensBalance/PrimeTokensBalance', () => ({
+vi.mock('../../PrimeTokensBalance/PrimeTokensBalance', () => ({
   __esModule: true,
   default: function PrimeTokensBalance() {
     return <div>PrimeTokensBalance</div>;
   },
 }));
-jest.mock('../../WalletPortfolioGraph/WalletPortfolioGraph', () => ({
+vi.mock('../../WalletPortfolioGraph/WalletPortfolioGraph', () => ({
   __esModule: true,
   default: function WalletPortfolioGraph() {
     return <div>WalletPortfolioGraph</div>;
   },
 }));
-jest.mock('../../TopTokens/TopTokens', () => ({
+vi.mock('../../TopTokens/TopTokens', () => ({
   __esModule: true,
   default: function TopTokens() {
     return <div>TopTokens</div>;
@@ -49,16 +49,15 @@ jest.mock('../../TopTokens/TopTokens', () => ({
 }));
 
 describe('<WalletPortfolioTile />', () => {
-  const dispatch = jest.fn();
+  const dispatch = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock Redux hooks
-    jest.spyOn(reduxHooks, 'useAppDispatch').mockReturnValue(dispatch);
-    jest
-      .spyOn(reduxHooks, 'useAppSelector')
-      .mockImplementation((selectorFn: any) =>
+    vi.spyOn(reduxHooks, 'useAppDispatch').mockReturnValue(dispatch);
+    vi.spyOn(reduxHooks, 'useAppSelector').mockImplementation(
+      (selectorFn: any) =>
         selectorFn({
           walletPortfolio: {
             priceGraphPeriod: { from: 1111 },
@@ -67,19 +66,18 @@ describe('<WalletPortfolioTile />', () => {
             isRefreshAll: false,
           },
         })
-      );
+    );
 
-    jest.spyOn(transactionKit, 'useWalletAddress').mockReturnValue('0x1234');
+    vi.spyOn(transactionKit, 'useWalletAddress').mockReturnValue('0x1234');
 
     // Mock useDataFetchingState
-    jest
-      .spyOn(fetchStateHook, 'useDataFetchingState')
-      .mockImplementation(() => {});
+    vi.spyOn(fetchStateHook, 'useDataFetchingState').mockImplementation(
+      () => {}
+    );
 
     // Mock queries
-    jest
-      .spyOn(apiHooks, 'useGetWalletPortfolioQuery')
-      .mockImplementation((args: any) => {
+    vi.spyOn(apiHooks, 'useGetWalletPortfolioQuery').mockImplementation(
+      (args: any) => {
         if (args.isPnl) {
           return {
             data: { result: { data: {} } },
@@ -87,7 +85,7 @@ describe('<WalletPortfolioTile />', () => {
             isFetching: false,
             isSuccess: true,
             error: null,
-            refetch: jest.fn(),
+            refetch: vi.fn(),
           };
         }
         return {
@@ -96,17 +94,18 @@ describe('<WalletPortfolioTile />', () => {
           isFetching: false,
           isSuccess: true,
           error: null,
-          refetch: jest.fn(),
+          refetch: vi.fn(),
         };
-      });
+      }
+    );
 
-    jest.spyOn(historyHooks, 'useGetWalletHistoryQuery').mockReturnValue({
+    vi.spyOn(historyHooks, 'useGetWalletHistoryQuery').mockReturnValue({
       data: { result: { data: {} } },
       isLoading: false,
       isFetching: false,
       isSuccess: true,
       error: null,
-      refetch: jest.fn(),
+      refetch: vi.fn(),
     });
   });
 
@@ -126,7 +125,7 @@ describe('<WalletPortfolioTile />', () => {
   });
 
   it('skips rendering parts if no wallet address', () => {
-    jest.spyOn(transactionKit, 'useWalletAddress').mockReturnValue(undefined);
+    vi.spyOn(transactionKit, 'useWalletAddress').mockReturnValue(undefined);
 
     render(<WalletPortfolioTile />);
 
@@ -134,12 +133,11 @@ describe('<WalletPortfolioTile />', () => {
   });
 
   it('triggers refetch on isRefreshAll true and dispatch reset after timeout', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
-    const refetchMock = jest.fn();
-    jest
-      .spyOn(reduxHooks, 'useAppSelector')
-      .mockImplementation((selectorFn: any) =>
+    const refetchMock = vi.fn();
+    vi.spyOn(reduxHooks, 'useAppSelector').mockImplementation(
+      (selectorFn: any) =>
         selectorFn({
           walletPortfolio: {
             priceGraphPeriod: { from: 1111 },
@@ -148,22 +146,20 @@ describe('<WalletPortfolioTile />', () => {
             isRefreshAll: true,
           },
         })
-      );
+    );
 
-    jest
-      .spyOn(apiHooks, 'useGetWalletPortfolioQuery')
-      .mockImplementation(() => {
-        return {
-          data: { result: { data: {} } },
-          isLoading: false,
-          isFetching: false,
-          isSuccess: true,
-          error: null,
-          refetch: refetchMock,
-        };
-      });
+    vi.spyOn(apiHooks, 'useGetWalletPortfolioQuery').mockImplementation(() => {
+      return {
+        data: { result: { data: {} } },
+        isLoading: false,
+        isFetching: false,
+        isSuccess: true,
+        error: null,
+        refetch: refetchMock,
+      };
+    });
 
-    jest.spyOn(historyHooks, 'useGetWalletHistoryQuery').mockReturnValue({
+    vi.spyOn(historyHooks, 'useGetWalletHistoryQuery').mockReturnValue({
       data: { result: { data: {} } },
       isLoading: false,
       isFetching: false,
@@ -175,9 +171,9 @@ describe('<WalletPortfolioTile />', () => {
     render(<WalletPortfolioTile />);
     expect(refetchMock).toHaveBeenCalledTimes(4);
 
-    jest.advanceTimersByTime(5000);
+    vi.advanceTimersByTime(5000);
     expect(dispatch).toHaveBeenCalledWith(sliceActions.setIsRefreshAll(false));
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 });

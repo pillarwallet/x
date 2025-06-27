@@ -52,7 +52,7 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-jest.mock('../../../../../services/tokensData', () => ({
+vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
   chainNameDataCompatibility: jest
     .fn()
@@ -70,7 +70,7 @@ jest.mock('../../../../../services/tokensData', () => ({
 
 describe('<SelectDropdown />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
@@ -89,8 +89,8 @@ describe('<SelectDropdown />', () => {
   });
 
   const options = [1, 137];
-  const onClickMock = jest.fn();
-  const onSelectMock = jest.fn();
+  const onClickMock = vi.fn();
+  const onSelectMock = vi.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer

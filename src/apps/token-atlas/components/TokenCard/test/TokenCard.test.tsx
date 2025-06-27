@@ -6,7 +6,7 @@ import renderer from 'react-test-renderer';
 import TokenCard from '../TokenCard';
 
 describe('<TokenCard />', () => {
-  const mockOnClick = jest.fn();
+  const mockOnClick = vi.fn();
 
   const defaultProps = {
     tokenLogo: 'token-logo.png',
@@ -17,7 +17,7 @@ describe('<TokenCard />', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {

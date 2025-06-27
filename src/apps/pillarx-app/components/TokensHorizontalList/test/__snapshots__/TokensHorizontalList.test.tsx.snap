@@ -1,4 +1,32 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TokensHorizontalList /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="w-full h-fit flex justify-end"
+  data-testid="tokens-list"
+>
+  <img
+    alt="token-logo"
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo1"
+  />
+  <img
+    alt="token-logo"
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo2"
+  />
+  <img
+    alt="token-logo"
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo3"
+  />
+  <img
+    alt="token-logo"
+    className="w-10 h-10 object-fill rounded-full desktop:mr-10 tablet:mr-[-10px] mobile:mr-1.5 mobile:w-[30px] mobile:h-[30px]"
+    src="logo4"
+  />
+</div>
+`;
 
 exports[`<TokensHorizontalList /> renders correctly and matches snapshot 1`] = `
 <div

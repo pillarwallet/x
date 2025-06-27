@@ -16,7 +16,7 @@ const mockToken: BalanceInfo = {
   balance: '1000',
 };
 
-const mockOnSelectAsset = jest.fn();
+const mockOnSelectAsset = vi.fn();
 
 describe('<Asset />', () => {
   it('renders correctly and matches snapshot', () => {

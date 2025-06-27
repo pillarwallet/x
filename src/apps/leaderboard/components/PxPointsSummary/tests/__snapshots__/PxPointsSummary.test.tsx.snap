@@ -1,4 +1,82 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<PxPointsSummary /> > renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col bg-container_grey desktop:py-5 desktop:px-6 tablet:py-5 tablet:px-6 mobile:p-3 rounded-2xl"
+  >
+    <div
+      class="flex justify-between items-center"
+    >
+      <div
+        class="flex gap-2 items-center"
+      >
+        <div
+          class="w-5 h-5 rounded p-[0.6px] bg-gradient-to-b from-white via-white/[.6] to-[#360064] shadow-[0_0_15px_0_#693397,0_2px_6px_0_#00000080]"
+        >
+          <div
+            class="flex w-full h-full items-center justify-center rounded bg-[#360064]"
+          >
+            <img
+              alt="pillar-wallet-icon"
+              src="data:image/svg+xml,%3csvg%20width='10'%20height='14'%20viewBox='0%200%2010%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.86766%204.75968V8.62798H3.76708H0.666504V9.78571V10.9409L1.82423%2012.0987C2.45936%2012.7338%202.98698%2013.2539%202.99945%2013.2539C3.00948%2013.2539%203.01693%2012.7363%203.01693%2012.1037V10.9535H6.10504H9.19316V7.08275V3.21437L8.03041%202.05162L6.86766%200.888875V4.75968Z'%20fill='white'/%3e%3cpath%20d='M0.666504%203.97711V5.52744H2.2293H3.7921V3.97711V2.42678H2.2293H0.666504V3.97711Z'%20fill='white'/%3e%3c/svg%3e"
+            />
+          </div>
+        </div>
+        <p
+          class="desktop:text-xl tablet:text-xl mobile:text-base font-medium"
+        >
+          My PX Points
+        </p>
+      </div>
+      <div
+        class="flex gap-1 items-center px-1.5 py-[4px] rounded-md bg-[#25232D]"
+      >
+        <img
+          alt="lottery-qualified-icon"
+          class="w-5 h-4"
+          src="/src/apps/leaderboard/images/lottery-qualified-icon.png"
+        />
+        <div>
+          Qualified
+           
+          <span
+            class="desktop:inline tablet:inline mobile:hidden"
+          >
+            for Lottery
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="desktop:flex tablet:flex mobile:flex mobile:flex-col gap-3 mt-4"
+    >
+      <div
+        class="desktop:w-[44%] tablet:w-[44%] mobile:w-full"
+      >
+        <div>
+          OverviewPointsCard
+        </div>
+      </div>
+      <div
+        class="desktop:w-[56%] tablet:w-[56%] mobile:w-full grid grid-cols-2 gap-3"
+      >
+        <div>
+          Migration
+           PointsCard
+        </div>
+        <div>
+          Trading
+           PointsCard
+        </div>
+        <div>
+          GasNewDropCard
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`<PxPointsSummary /> renders correctly and matches snapshot 1`] = `
 <div>

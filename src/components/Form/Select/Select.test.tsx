@@ -63,7 +63,7 @@ describe('<Select />', () => {
   it('responds once clicked', async () => {
     const user = userEvent.setup();
 
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     await act(async () => {
       rendered = render(

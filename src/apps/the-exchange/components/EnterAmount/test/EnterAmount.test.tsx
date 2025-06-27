@@ -54,32 +54,32 @@ const mockTokenAssets: Token[] = [
 ];
 
 // Mock transaction-kit hooks being used
-jest.mock('@etherspot/transaction-kit', () => ({
+vi.mock('@etherspot/transaction-kit', () => ({
   __esModule: true,
-  useEtherspotSwaps: jest.fn().mockReturnValue({
-    getOffers: jest.fn().mockResolvedValue([]),
-    prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue({}),
-    getQuotes: jest.fn().mockResolvedValue({}),
+  useEtherspotSwaps: vi.fn().mockReturnValue({
+    getOffers: vi.fn().mockResolvedValue([]),
+    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue({}),
+    getQuotes: vi.fn().mockResolvedValue({}),
   }),
-  useWalletAddress: jest.fn().mockReturnValue({
-    walletAddress: jest.fn(),
+  useWalletAddress: vi.fn().mockReturnValue({
+    walletAddress: vi.fn(),
   }),
-  useEtherspotUtils: jest.fn().mockReturnValue({
-    isZeroAddress: jest.fn(),
-    addressesEqual: jest.fn(),
+  useEtherspotUtils: vi.fn().mockReturnValue({
+    isZeroAddress: vi.fn(),
+    addressesEqual: vi.fn(),
   }),
 }));
 
-jest.mock('@lifi/sdk', () => ({
-  LiFi: jest.fn().mockImplementation(() => ({
-    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
-    getStepTransaction: jest.fn().mockResolvedValue({}),
+vi.mock('@lifi/sdk', () => ({
+  LiFi: vi.fn().mockImplementation(() => ({
+    getRoutes: vi.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: vi.fn().mockResolvedValue({}),
   })),
 }));
 
 describe('<EnterAmount />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));

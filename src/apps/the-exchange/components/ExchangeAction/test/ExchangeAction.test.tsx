@@ -86,41 +86,41 @@ export const mockBestOffer: SwapOffer = {
 };
 
 // Mock hooks and utils
-jest.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
-  addToBatch: jest.fn(),
+vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
+  addToBatch: vi.fn(),
 }));
-jest.mock('../../../../../hooks/useBottomMenuModal', () => () => ({
-  showSend: jest.fn(),
+vi.mock('../../../../../hooks/useBottomMenuModal', () => () => ({
+  showSend: vi.fn(),
 }));
-jest.mock('@etherspot/transaction-kit', () => ({
+vi.mock('@etherspot/transaction-kit', () => ({
   useEtherspotSwaps: () => ({
-    prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue([]),
+    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue([]),
   }),
-  useEtherspotUtils: jest.fn().mockReturnValue({
-    isZeroAddress: jest.fn(),
+  useEtherspotUtils: vi.fn().mockReturnValue({
+    isZeroAddress: vi.fn(),
   }),
-  useWalletAddress: jest.fn().mockReturnValue({
-    walletAddress: jest.fn(),
+  useWalletAddress: vi.fn().mockReturnValue({
+    walletAddress: vi.fn(),
   }),
 }));
-jest.mock('../../../utils/converters', () => ({
-  hasThreeZerosAfterDecimal: jest.fn((num) => num % 1 === 0),
-  formatTokenAmount: jest.fn((amount) => {
+vi.mock('../../../utils/converters', () => ({
+  hasThreeZerosAfterDecimal: vi.fn((num) => num % 1 === 0),
+  formatTokenAmount: vi.fn((amount) => {
     if (amount === undefined) return '0.00000000';
     return Number(amount).toFixed(8);
   }),
 }));
 
-jest.mock('@lifi/sdk', () => ({
-  LiFi: jest.fn().mockImplementation(() => ({
-    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
-    getStepTransaction: jest.fn().mockResolvedValue({}),
+vi.mock('@lifi/sdk', () => ({
+  LiFi: vi.fn().mockImplementation(() => ({
+    getRoutes: vi.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: vi.fn().mockResolvedValue({}),
   })),
 }));
 
 describe('<ExchangeAction />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));

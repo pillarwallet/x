@@ -7,8 +7,8 @@ import TokensVerticalList from '../TokensVerticalList';
 // types
 import { TokenData } from '../../../../../types/api';
 
-jest.mock('../../HorizontalToken/HorizontalToken', () => 'HorizontalToken');
-jest.mock('../../Typography/Body', () => 'Body');
+vi.mock('../../HorizontalToken/HorizontalToken', () => 'HorizontalToken');
+vi.mock('../../Typography/Body', () => 'Body');
 
 describe('<TokensVerticalList />', () => {
   const mockData: TokenData[] = [

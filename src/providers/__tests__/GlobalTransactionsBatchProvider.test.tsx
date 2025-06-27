@@ -83,6 +83,6 @@ describe('GlobalTransactionsBatchProvider', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

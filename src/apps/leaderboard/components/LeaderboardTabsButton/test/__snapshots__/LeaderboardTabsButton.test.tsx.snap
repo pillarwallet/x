@@ -1,4 +1,34 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<LeaderboardTabsButton /> > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex w-fit p-1 bg-[#121116] rounded-[10px]"
+    id="leaderboard-button-tabs"
+  >
+    <button
+      class="items-center justify-center w-[130px] rounded-md p-1.5 bg-container_grey"
+      type="button"
+    >
+      <p
+        class="font-normal text-[13px] text-white"
+      >
+        Weekly
+      </p>
+    </button>
+    <button
+      class="items-center justify-center w-[130px] rounded-md p-1.5 bg-[#121116]"
+      type="button"
+    >
+      <p
+        class="font-normal text-[13px] text-white/[.5]"
+      >
+        All Time
+      </p>
+    </button>
+  </div>
+</div>
+`;
 
 exports[`<LeaderboardTabsButton /> matches snapshot 1`] = `
 <div>

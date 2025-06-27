@@ -1,4 +1,23 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<Paragraph /> > renders correctly 1`] = `
+[
+  <p
+    className=""
+  >
+    Some regular text.
+  </p>,
+  .c0 {
+  text-align: center;
+}
+
+<p
+    className="c0"
+  >
+    centered
+  </p>,
+]
+`;
 
 exports[`<Paragraph /> renders correctly 1`] = `
 [

@@ -8,6 +8,9 @@ import renderer, {
 } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
 
+// types
+import type { Mock } from 'vitest';
+
 // components
 import BottomMenu from '.';
 
@@ -42,13 +45,13 @@ describe('<BottomMenu />', () => {
   let rendered: ReactTestRenderer | null = null;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     store.replaceReducer(() => ({}));
     addMiddleware(pillarXApiTransactionsHistory);
   });
 
   it('renders correctly when authenticated', async () => {
-    (usePrivy as jest.Mock).mockImplementation(() => ({ authenticated: true }));
+    (usePrivy as Mock).mockImplementation(() => ({ authenticated: true }));
 
     await act(async () => {
       rendered = renderer.create(
@@ -89,11 +92,11 @@ describe('<BottomMenu />', () => {
     ).toBe(5); // other menu items
     expect(bottomMenuElement.type).toBe('div');
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly if not authenticated', async () => {
-    (usePrivy as jest.Mock).mockImplementation(() => ({
+    (usePrivy as Mock).mockImplementation(() => ({
       authenticated: false,
     }));
 
@@ -123,6 +126,6 @@ describe('<BottomMenu />', () => {
     const treeElement = tree as ReactTestRendererJSON;
     expect(treeElement).toBe(null);
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

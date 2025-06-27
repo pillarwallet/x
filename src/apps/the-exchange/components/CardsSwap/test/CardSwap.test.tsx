@@ -51,16 +51,16 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-jest.mock('../../../../../services/pillarXApiSearchTokens', () => ({
+vi.mock('../../../../../services/pillarXApiSearchTokens', () => ({
   __esModule: true,
-  useGetSearchTokensQuery: jest.fn().mockReturnValue({
+  useGetSearchTokensQuery: vi.fn().mockReturnValue({
     data: undefined,
     isLoading: false,
     isFetching: false,
   }),
 }));
 
-jest.mock('../../../../../services/tokensData', () => ({
+vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
   chainNameToChainIdTokensData: jest
     .fn()
@@ -82,8 +82,8 @@ jest.mock('../../../../../services/tokensData', () => ({
 
       return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
     }),
-  convertAPIResponseToTokens: jest.fn().mockReturnValue(mockTokenAssets),
-  queryTokenData: jest.fn().mockReturnValue([
+  convertAPIResponseToTokens: vi.fn().mockReturnValue(mockTokenAssets),
+  queryTokenData: vi.fn().mockReturnValue([
     {
       id: 1,
       contract: '0x01',
@@ -118,32 +118,32 @@ jest.mock('../../../../../services/tokensData', () => ({
 }));
 
 // Mock transaction-kit hooks being used
-jest.mock('@etherspot/transaction-kit', () => ({
+vi.mock('@etherspot/transaction-kit', () => ({
   __esModule: true,
-  useEtherspotSwaps: jest.fn().mockReturnValue({
-    getOffers: jest.fn().mockResolvedValue([]),
-    prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue({}),
-    getQuotes: jest.fn().mockResolvedValue({}),
+  useEtherspotSwaps: vi.fn().mockReturnValue({
+    getOffers: vi.fn().mockResolvedValue([]),
+    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue({}),
+    getQuotes: vi.fn().mockResolvedValue({}),
   }),
-  useWalletAddress: jest.fn().mockReturnValue({
-    walletAddress: jest.fn(),
+  useWalletAddress: vi.fn().mockReturnValue({
+    walletAddress: vi.fn(),
   }),
-  useEtherspotUtils: jest.fn().mockReturnValue({
-    isZeroAddress: jest.fn(),
-    addressesEqual: jest.fn(),
+  useEtherspotUtils: vi.fn().mockReturnValue({
+    isZeroAddress: vi.fn(),
+    addressesEqual: vi.fn(),
   }),
 }));
 
-jest.mock('@lifi/sdk', () => ({
-  LiFi: jest.fn().mockImplementation(() => ({
-    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
-    getStepTransaction: jest.fn().mockResolvedValue({}),
+vi.mock('@lifi/sdk', () => ({
+  LiFi: vi.fn().mockImplementation(() => ({
+    getRoutes: vi.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: vi.fn().mockResolvedValue({}),
   })),
 }));
 
 describe('<CardsSwap />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));

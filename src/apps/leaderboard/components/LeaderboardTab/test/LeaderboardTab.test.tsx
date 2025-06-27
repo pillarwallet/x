@@ -25,7 +25,7 @@ const mockWalletAddress = '0xAddress1';
 describe('<LeaderboardTab />', () => {
   beforeEach(() => {
     // IntersectionObserver isn't available in test environment
-    const mockIntersectionObserver = jest.fn();
+    const mockIntersectionObserver = vi.fn();
     mockIntersectionObserver.mockReturnValue({
       observe: () => null,
       unobserve: () => null,
@@ -34,7 +34,7 @@ describe('<LeaderboardTab />', () => {
     window.IntersectionObserver = mockIntersectionObserver;
 
     // Default mock for useWalletAddress to undefined
-    jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
+    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -72,9 +72,9 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('displays "My rank" section if wallet address is in the data', () => {
-    jest
-      .spyOn(TransactionKit, 'useWalletAddress')
-      .mockReturnValue(mockWalletAddress);
+    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(
+      mockWalletAddress
+    );
 
     render(<LeaderboardTab data={mockData} />);
 
@@ -85,9 +85,7 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('does not display "My rank" section if wallet address is not in the data', () => {
-    jest
-      .spyOn(TransactionKit, 'useWalletAddress')
-      .mockReturnValue('0xNotInData');
+    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue('0xNotInData');
 
     render(<LeaderboardTab data={mockData} />);
 

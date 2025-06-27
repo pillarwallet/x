@@ -4,17 +4,17 @@ import renderer from 'react-test-renderer';
 // components
 import Main from './Main';
 
-jest.mock('wagmi', () => {
-  const actualWagmi = jest.requireActual('wagmi');
+vi.mock('wagmi', () => {
+  const actualWagmi = vi.importActual('wagmi');
   return {
     ...actualWagmi,
-    createConfig: jest.fn(() => ({})),
+    createConfig: vi.fn(() => ({})),
     WagmiProvider: ({ children }: { children: ReactNode }) => (
       <div>{children}</div>
     ),
-    http: jest.fn(),
+    http: vi.fn(),
     mainnet: { id: 1 },
-    useAccount: jest.fn().mockReturnValue({
+    useAccount: vi.fn().mockReturnValue({
       address: '0x',
       isConnected: false,
     }),

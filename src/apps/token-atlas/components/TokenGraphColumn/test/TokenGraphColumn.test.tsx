@@ -87,7 +87,7 @@ const mockTokenDataInfo: TokenAtlasInfoData = {
 };
 
 // Mock the chart
-jest.mock('react-chartjs-2', () => ({
+vi.mock('react-chartjs-2', () => ({
   Line: () => (
     <canvas data-testid="price-graph" height={150} role="img" width={300} />
   ),

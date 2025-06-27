@@ -1,4 +1,58 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EditorialTag /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex relative rounded py-1 px-2 w-fit mr-2"
+  id="editorial-tag"
+>
+  <div
+    className="absolute inset-0 rounded opacity-10"
+    style={
+      {
+        "backgroundColor": "blue",
+        "zIndex": 5,
+      }
+    }
+  />
+  <div
+    className="flex relative items-center gap-1"
+    style={
+      {
+        "zIndex": 10,
+      }
+    }
+  >
+    <svg
+      aria-hidden={true}
+      className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+      data-testid="icon-tag"
+      focusable="false"
+      style={
+        {
+          "color": "blue",
+          "height": 16,
+          "width": 16,
+        }
+      }
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+      />
+    </svg>
+    <p
+      className="text-xs"
+      style={
+        {
+          "color": "blue",
+        }
+      }
+    >
+      Tag1
+    </p>
+  </div>
+</div>
+`;
 
 exports[`<EditorialTag /> renders correctly and matches snapshot 1`] = `
 <div

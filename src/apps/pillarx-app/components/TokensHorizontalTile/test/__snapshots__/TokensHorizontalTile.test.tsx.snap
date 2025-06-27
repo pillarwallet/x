@@ -1,4 +1,54 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TokensHorizontalTile /> > displays loading skeleton when data is loading 1`] = `null`;
+
+exports[`<TokensHorizontalTile /> > renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    className="flex bg-container_grey rounded-3xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"
+    id="tokens-horizontal-tile"
+  >
+    <p
+      className="text-base font-medium text-purple_light mb-2.5"
+    >
+      horizontal title
+    </p>
+    <div
+      className="flex justify-between"
+    >
+      <div
+        className="flex flex-col py-5 px-[22px] gap-1 w-[122px] h-auto items-center cursor-pointer tablet:w-[120px] mobile:w-[100px] mobile:px-3.5"
+        onClick={[Function]}
+      >
+        <div
+          className="relative w-[70px] h-[70px] rounded-full mb-3.5"
+        >
+          <img
+            alt="token-logo"
+            className="w-full h-full object-fill rounded-full"
+            data-testid="token-info-horizontal-logo"
+            onError={[Function]}
+            src="https://www.logo.com/example/"
+          />
+          <div
+            className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/5 translate-y-1/5"
+          >
+            <img
+              alt="logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+        <p
+          className="text-base font-medium text-center"
+        >
+          The best token
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading 1`] = `null`;
 

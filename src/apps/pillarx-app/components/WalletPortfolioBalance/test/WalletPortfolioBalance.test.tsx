@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fireEvent, render, screen } from '@testing-library/react';
 
+// types
+import type { Mock } from 'vitest';
+
 // reducer
 import {
   useAppDispatch as useAppDispatchMock,
@@ -11,25 +14,25 @@ import { setIsRefreshAll } from '../../../reducer/WalletPortfolioSlice';
 // components
 import WalletPortfolioBalance from '../WalletPortfolioBalance';
 
-jest.mock('../../../hooks/useReducerHooks');
-jest.mock('../../../../../components/SkeletonLoader', () => ({
+vi.mock('../../../hooks/useReducerHooks');
+vi.mock('../../../../../components/SkeletonLoader', () => ({
   __esModule: true,
   default: function SkeletonLoader() {
     return <div data-testid="skeleton-loader">Loading...</div>;
   },
 }));
-jest.mock('../../../images/refresh-button.png', () => 'refresh-icon.png');
-jest.mock(
+vi.mock('../../../images/refresh-button.png', () => 'refresh-icon.png');
+vi.mock(
   '../../../images/wallet-portfolio-icon.png',
   () => 'wallet-portfolio-icon.png'
 );
 
-const mockDispatch = jest.fn();
-(useAppDispatchMock as unknown as jest.Mock).mockReturnValue(mockDispatch);
+const mockDispatch = vi.fn();
+(useAppDispatchMock as unknown as Mock).mockReturnValue(mockDispatch);
 
 describe('WalletPortfolioBalance', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const baseSelectorState = {
@@ -50,16 +53,15 @@ describe('WalletPortfolioBalance', () => {
     topTokenUnrealizedPnL?: any;
     overrides?: Partial<(typeof baseSelectorState)['walletPortfolio']>;
   }) => {
-    (useAppSelectorMock as unknown as jest.Mock).mockImplementation(
-      (selectorFn) =>
-        selectorFn({
-          walletPortfolio: {
-            walletPortfolio,
-            topTokenUnrealizedPnL,
-            ...baseSelectorState.walletPortfolio,
-            ...overrides,
-          },
-        })
+    (useAppSelectorMock as unknown as Mock).mockImplementation((selectorFn) =>
+      selectorFn({
+        walletPortfolio: {
+          walletPortfolio,
+          topTokenUnrealizedPnL,
+          ...baseSelectorState.walletPortfolio,
+          ...overrides,
+        },
+      })
     );
 
     render(<WalletPortfolioBalance />);

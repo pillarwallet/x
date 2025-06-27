@@ -4,15 +4,15 @@ import WalletAddressOverview from '../WalletAddressOverview';
 
 describe('<WalletAddressOverview />', () => {
   const address = '0x1234567890';
-  const mockSetIsCopied = jest.fn();
-  const mockUseState = jest.spyOn(React, 'useState');
+  const mockSetIsCopied = vi.fn();
+  const mockUseState = vi.spyOn(React, 'useState');
 
   beforeEach(() => {
     mockUseState.mockReturnValue([false, mockSetIsCopied]);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {

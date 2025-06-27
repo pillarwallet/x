@@ -1,4 +1,52 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TokenResultCard /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex w-full bg-medium_grey rounded-lg p-4 justify-between items-center cursor-pointer"
+  data-testid="token-result-card"
+  id="token-atlas-token-result-card-Ethereum-Ethereum"
+  onClick={[MockFunction spy]}
+>
+  <div
+    className="flex items-center min-w-0 flex-1"
+  >
+    <div
+      className="relative w-[30px] h-[30px] rounded-full mr-2"
+    >
+      <img
+        alt="token-logo"
+        className="w-full h-full object-fill rounded-full"
+        onError={[Function]}
+        src="https://example.com/logo.png"
+      />
+    </div>
+    <div
+      className="flex flex-col mr-2 min-w-0"
+    >
+      <p
+        className="text-[13px] font-semibold text-base capitalize truncate min-w-0"
+      >
+        Ethereum
+      </p>
+      <p
+        className="text-[13px] font-semibold text-white_grey"
+      >
+        ETH
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex-1 min-w-0 text-right"
+  >
+    <p
+      className="text-[13px] font-semibold text-base font-medium capitalize truncate min-w-0"
+    >
+      On 
+      Ethereum
+    </p>
+  </div>
+</div>
+`;
 
 exports[`<TokenResultCard /> renders correctly and matches snapshot 1`] = `
 <div

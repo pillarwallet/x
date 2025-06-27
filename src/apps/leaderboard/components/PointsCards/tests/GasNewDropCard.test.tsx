@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import GasNewDropCard from '../GasNewDropCard';
 
 // Mock luxon DateTime.now()
-jest.mock('luxon', () => {
-  const actualLuxon = jest.requireActual('luxon');
+vi.mock('luxon', () => {
+  const actualLuxon = vi.requireActual('luxon');
   return {
     ...actualLuxon,
     DateTime: {

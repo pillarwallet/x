@@ -9,9 +9,9 @@ import { store } from '../../../../../store';
 import HorizontalToken from '../HorizontalToken';
 
 // Mock components
-jest.mock('../../Typography/BodySmall', () => 'BodySmall');
-jest.mock('../../Typography/Body', () => 'Body');
-jest.mock('../../TokensPercentage/TokensPercentage', () => 'TokensPercentage');
+vi.mock('../../Typography/BodySmall', () => 'BodySmall');
+vi.mock('../../Typography/Body', () => 'Body');
+vi.mock('../../TokensPercentage/TokensPercentage', () => 'TokensPercentage');
 
 describe('<HorizontalToken />', () => {
   const tokenIndex = 1;

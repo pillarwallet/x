@@ -20,7 +20,7 @@ describe('<TokenListItem />', () => {
     price: 1.15,
   };
 
-  const onClickMock = jest.fn();
+  const onClickMock = vi.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer

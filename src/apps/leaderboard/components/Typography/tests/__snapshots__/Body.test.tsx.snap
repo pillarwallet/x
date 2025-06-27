@@ -1,4 +1,24 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<Body /> > renders correctly 1`] = `
+[
+  <p
+    className="text-base font-medium undefined"
+  >
+    Some regular text.
+  </p>,
+  <p
+    className="text-base font-medium text-red-500"
+  >
+    Some red text
+  </p>,
+  <p
+    className="text-base font-medium text-[23px]"
+  >
+    Some text with font size 23px
+  </p>,
+]
+`;
 
 exports[`<Body /> renders correctly 1`] = `
 [

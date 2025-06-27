@@ -39,7 +39,7 @@ describe('AccountTransactionHistoryProvider', () => {
   };
 
   let wrapper: React.FC;
-  let mockGetAccountTransactions: jest.Mock;
+  let mockGetAccountTransactions: vi.mock;
   let returnLongerHistory: boolean = false;
 
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('AccountTransactionHistoryProvider', () => {
       </AccountTransactionHistoryProvider>
     );
 
-    mockGetAccountTransactions = jest
+    mockGetAccountTransactions = vi
       .fn()
       .mockImplementation((walletAddress: string, chainId: number) => {
         if (chainId === polygon.id && walletAddress === accountAddress) {
@@ -69,16 +69,16 @@ describe('AccountTransactionHistoryProvider', () => {
         return [];
       });
 
-    jest.spyOn(TransactionKit, 'useEtherspotHistory').mockReturnValue({
+    vi.spyOn(TransactionKit, 'useEtherspotHistory').mockReturnValue({
       getAccountTransactions: mockGetAccountTransactions,
-      getAccountTransaction: jest.fn(),
-      getAccountTransactionStatus: jest.fn(),
+      getAccountTransaction: vi.fn(),
+      getAccountTransactionStatus: vi.fn(),
     });
 
-    jest
-      .spyOn(TransactionKit, 'useWalletAddress')
-      .mockReturnValue(accountAddress);
-    jest.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
+    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(
+      accountAddress
+    );
+    vi.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
   });
 
   it('initializes with empty history', () => {
@@ -107,7 +107,7 @@ describe('AccountTransactionHistoryProvider', () => {
   });
 
   it('does not update history when wallet address is not set', async () => {
-    jest.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
+    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
 
     const { result } = renderHook(
       () => React.useContext(AccountTransactionHistoryContext),
@@ -118,9 +118,9 @@ describe('AccountTransactionHistoryProvider', () => {
   });
 
   it('calls onHistoryUpdated when history change', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
-    const onHistoryUpdated = jest.fn();
+    const onHistoryUpdated = vi.fn();
 
     const { result } = renderHook(
       () => React.useContext(AccountTransactionHistoryContext),
@@ -152,7 +152,7 @@ describe('AccountTransactionHistoryProvider', () => {
 
     returnLongerHistory = true;
 
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     await waitFor(async () => {
       expect(
@@ -164,6 +164,6 @@ describe('AccountTransactionHistoryProvider', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

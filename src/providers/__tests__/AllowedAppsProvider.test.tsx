@@ -2,6 +2,9 @@ import { renderHook, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import React from 'react';
 
+// types
+import type { Mock } from 'vitest';
+
 // providers
 import AllowedAppsProvider from '../AllowedAppsProvider';
 
@@ -22,7 +25,7 @@ describe('AllowedAppsProvider', () => {
       <AllowedAppsProvider>{children}</AllowedAppsProvider>
     );
 
-    (axios.get as jest.Mock).mockImplementation(() =>
+    (axios.get as Mock).mockImplementation(() =>
       Promise.resolve({ data: allowedAppsMock })
     );
   });
@@ -48,6 +51,6 @@ describe('AllowedAppsProvider', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

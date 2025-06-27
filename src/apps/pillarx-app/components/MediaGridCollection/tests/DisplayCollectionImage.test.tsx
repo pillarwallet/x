@@ -4,14 +4,14 @@ import renderer from 'react-test-renderer';
 import DisplayCollectionImage from '../DisplayCollectionImage';
 
 describe('<DisplayCollectionImage />', () => {
-  const openMock = jest.fn();
+  const openMock = vi.fn();
 
   beforeAll(() => {
     global.open = openMock;
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   /**

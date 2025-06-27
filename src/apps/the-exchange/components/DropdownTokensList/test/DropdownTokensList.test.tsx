@@ -50,7 +50,7 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-jest.mock('../../../../../services/tokensData', () => ({
+vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
   chainNameToChainIdTokensData: jest
     .fn()
@@ -72,7 +72,7 @@ jest.mock('../../../../../services/tokensData', () => ({
 
       return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
     }),
-  queryTokenData: jest.fn().mockReturnValue([
+  queryTokenData: vi.fn().mockReturnValue([
     {
       id: 1,
       contract: '0x01',

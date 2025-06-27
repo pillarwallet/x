@@ -1,4 +1,108 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<WalletAddressOverview /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
+>
+  <div
+    className="bg-medium_grey rounded-full w-10 h-10 overflow-hidden"
+  >
+    <svg
+      className="rounded-md"
+      data-testid="random-avatar"
+      fill="none"
+      role="img"
+      viewBox="0 0 80 80"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <mask
+        height={80}
+        id=":r0:"
+        maskUnits="userSpaceOnUse"
+        width={80}
+        x={0}
+        y={0}
+      >
+        <rect
+          fill="#FFFFFF"
+          height={80}
+          width={80}
+        />
+      </mask>
+      <g
+        mask="url(#:r0:)"
+      >
+        <rect
+          fill="#C271B4"
+          height={80}
+          width={80}
+        />
+        <path
+          d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+          fill="#C20D90"
+          filter="url(#filter_:r0:)"
+          transform="translate(-2 2) rotate(-26 40 40) scale(1.5)"
+        />
+        <path
+          d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+          fill="#92A1C6"
+          filter="url(#filter_:r0:)"
+          style={
+            {
+              "mixBlendMode": "overlay",
+            }
+          }
+          transform="translate(7 7) rotate(39 40 40) scale(1.5)"
+        />
+      </g>
+      <defs>
+        <filter
+          colorInterpolationFilters="sRGB"
+          filterUnits="userSpaceOnUse"
+          id="filter_:r0:"
+        >
+          <feFlood
+            floodOpacity={0}
+            result="BackgroundImageFix"
+          />
+          <feBlend
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            result="effect1_foregroundBlur"
+            stdDeviation={7}
+          />
+        </filter>
+      </defs>
+    </svg>
+  </div>
+  <p
+    className="text-base font-medium undefined"
+  >
+    0x1234
+    ...
+    67890
+  </p>
+  <div
+    className="w-4 h-4"
+    onClick={[Function]}
+  >
+    <img
+      alt="copy-adress-icon"
+      className="cursor-pointer"
+      src="/src/apps/pillarx-app/images/token-market-data-copy.png"
+      style={
+        {
+          "height": "full",
+          "width": "full",
+        }
+      }
+    />
+  </div>
+</div>
+`;
 
 exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = `
 <div

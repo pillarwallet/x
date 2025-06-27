@@ -5,9 +5,9 @@ import { ApiLayout, MediaGridData, Projection } from '../../../../../types/api';
 import HighlightedMediaGridTile from '../HighlightedMediaGridTile';
 
 // Mock useRefDimensions
-jest.mock('../../../hooks/useRefDimensions', () => ({
+vi.mock('../../../hooks/useRefDimensions', () => ({
   __esModule: true,
-  default: jest.fn(() => ({ width: 1200 })),
+  default: vi.fn(() => ({ width: 1200 })),
 }));
 
 describe('<HighlightedMediaGridTile />', () => {

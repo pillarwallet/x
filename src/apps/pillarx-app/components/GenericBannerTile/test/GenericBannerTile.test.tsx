@@ -80,7 +80,7 @@ describe('<GenericBannerTile />', () => {
   });
 
   it('calls window.open when button is clicked', () => {
-    window.open = jest.fn();
+    window.open = vi.fn();
 
     render(
       <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />

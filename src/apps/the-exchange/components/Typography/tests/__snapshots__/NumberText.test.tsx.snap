@@ -1,4 +1,24 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<NumberText /> > renders correctly 1`] = `
+[
+  <h1
+    className="text-black_grey undefined"
+  >
+    Some number text.
+  </h1>,
+  <h1
+    className="text-black_grey text-red-500"
+  >
+    Some red heading red text
+  </h1>,
+  <h1
+    className="text-black_grey text-[120px]"
+  >
+    Some heading with font size 120px
+  </h1>,
+]
+`;
 
 exports[`<NumberText /> renders correctly 1`] = `
 [
