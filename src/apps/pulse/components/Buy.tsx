@@ -224,7 +224,9 @@ export default function Buy(
                 <div className="flex flex-col" style={{marginLeft: 5, marginTop: 5, height: 36}}>
                   <div className="flex">
                     <p style={{fontSize: 12, fontWeight: 400}}>{props.token.symbol}</p>
-                    <p style={{fontSize: 12, fontWeight: 400, marginLeft: 3, color: "grey"}}>{props.token.name}</p>
+                    <p style={{fontSize: 12, fontWeight: 400, marginLeft: 3, color: "grey"}}>
+                      {props.token.name.length >= 10 ? `${props.token.name.slice(0, 6)}...` : props.token.name}
+                    </p>
                   </div>
                   <div className="flex">
                     <p style={{fontSize: 10, fontWeight: 400, color: "grey", height: 10}}>${props.token.usdValue}</p>
