@@ -21,7 +21,7 @@ interface Props {
 
 function getDesiredAssetValue(input: string, decimals: number, usdValue: string): bigint {
   const value = Number(parseFloat(input)) / Number(parseFloat(usdValue));
-  return BigInt(Number(value.toFixed(4)) * Math.pow(10, decimals));
+  return BigInt(Math.ceil(Number(value.toFixed(6))) * Math.pow(10, decimals));
 }
 
 function getDispensableAssets(
@@ -52,7 +52,7 @@ function getDispensableAssets(
             asset: tokenItem.address as Hex,
             chainId: BigInt(tokenItem.chainId),
             maxValue: BigInt(
-              Number((Number(Number(input).toFixed(4)) / price).toPrecision(4)) * (10 ** token.decimals)
+              Math.ceil(Number((Number(Number(input).toFixed(6)) / price).toPrecision(6)) * (10 ** token.decimals))
             )
           }],
           [BigInt(tokenItem.chainId)],
@@ -62,8 +62,8 @@ function getDispensableAssets(
             symbol: item.asset.symbol,
             chainId: tokenItem.chainId,
             actualBal: token.balance.toString(),
-            totalUsd: Number(Number(input).toFixed(4)),
-            totalRaw: (Number(Number(input).toFixed(4)) / price).toFixed(4)
+            totalUsd: Number(Number(input).toFixed(6)),
+            totalRaw: (Number(Number(input).toFixed(6)) / price).toFixed(6)
           }]
         ]
       }

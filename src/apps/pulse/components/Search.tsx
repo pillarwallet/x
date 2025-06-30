@@ -63,7 +63,7 @@ export default function Search(
         name: item.name,
         symbol: item.symbol,
         logo: item.logo ?? "",
-        usdValue: item.price ? item.price.toFixed(4) : Number.parseFloat("0").toFixed(4),
+        usdValue: item.price ? item.price.toFixed(6) : Number.parseFloat("0").toFixed(6),
         dailyPriceChange: -0.02,
         chainId: MOBULA_CHAIN_NAMES_TO_CHAIN_ID[item.chain],
         decimals: item.decimals,
@@ -187,9 +187,9 @@ export default function Search(
                     </div>
                     <div className="flex">
                       <p style={{fontSize: 13, fontWeight: 400}}>MCap:</p>
-                      <p style={{fontSize: 13, fontWeight: 400, marginLeft: 3, color: "grey"}}>{item.mCap ? (item.mCap/10**6).toFixed(3) : 0}</p>
+                      <p style={{fontSize: 13, fontWeight: 400, marginLeft: 3, color: "grey"}}>{item.mCap ? (item.mCap/10**6).toFixed(3) : 0}M</p>
                       <p style={{fontSize: 13, fontWeight: 400, marginLeft: 3}}>Vol:</p>
-                      <p style={{fontSize: 13, fontWeight: 400, marginLeft: 3, color: "grey"}}>{item.volume ? (item.volume/10**6).toFixed(3) : 0}</p>
+                      <p style={{fontSize: 13, fontWeight: 400, marginLeft: 3, color: "grey"}}>{item.volume ? (item.volume/10**6).toFixed(3) : 0}M</p>
                     </div>
                   </div>
                 </button>

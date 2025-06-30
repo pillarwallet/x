@@ -176,7 +176,9 @@ export default function PreviewBuy(props: Props) {
               </div>
             </div>
             <div className="flex flex-col justify-center" style={{marginRight: 10}}>
-              <div className="flex" style={{fontSize: 13, textAlign: "right"}}>{props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(4) : ""}</div>
+              <div className="flex" style={{fontSize: 13, textAlign: "right"}}>
+                {props.buyToken?.usdValue ? (Number(totalPay)/Number(props.buyToken.usdValue)).toFixed(6) : ""}
+              </div>
               <div className="flex justify-end" style={{fontSize: 12, color: "grey", textAlign: "right"}}>${totalPay}</div>
             </div>
           </div>
