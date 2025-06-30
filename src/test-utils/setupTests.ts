@@ -1,11 +1,53 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
-import { TextDecoder, TextEncoder } from 'util';
+// Polyfill for TextEncoder and TextDecoder MUST be at the very top
+// This must be done before any other imports that might use TextEncoder/TextDecoder
 
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
+// Create proper polyfills for TextEncoder and TextDecoder
+if (typeof globalThis.TextEncoder === 'undefined') {
+  const {
+    TextEncoder: NodeTextEncoder,
+    TextDecoder: NodeTextDecoder,
+  } = require('util');
+
+  // Create wrapper classes that match the Web API
+  class TextEncoderPolyfill {
+    readonly encoding = 'utf-8';
+
+    encode(input = ''): Uint8Array {
+      return new NodeTextEncoder().encode(input);
+    }
+  }
+
+  class TextDecoderPolyfill {
+    readonly encoding: string;
+    readonly fatal: boolean;
+    readonly ignoreBOM: boolean;
+
+    constructor(
+      encoding = 'utf-8',
+      options: { fatal?: boolean; ignoreBOM?: boolean } = {}
+    ) {
+      this.encoding = encoding;
+      this.fatal = options.fatal || false;
+      this.ignoreBOM = options.ignoreBOM || false;
+    }
+
+    decode(input?: any, options: { stream?: boolean } = {}): string {
+      return new NodeTextDecoder(this.encoding, {
+        fatal: this.fatal,
+        ignoreBOM: this.ignoreBOM,
+      }).decode(input, options);
+    }
+  }
+
+  globalThis.TextEncoder = TextEncoderPolyfill as any;
+  globalThis.TextDecoder = TextDecoderPolyfill as any;
+  (global as any).TextEncoder = TextEncoderPolyfill;
+  (global as any).TextDecoder = TextDecoderPolyfill;
+}
+
+import React from 'react';
+
 import '@testing-library/jest-dom';
 import { BigNumber } from 'ethers';
 import 'jest-styled-components';
@@ -27,9 +69,6 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
-
-// polyfill for TextEncoder and TextDecoder for jsdom environment (viem dep related)
-Object.assign(global, { TextDecoder, TextEncoder });
 
 vi.mock('@firebase/app');
 vi.mock('@firebase/analytics');

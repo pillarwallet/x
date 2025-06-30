@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
+exports[`<DropdownTokenList /> > renders correctly and matches snapshot 1`] = `
 [
   <div
     className="fixed inset-0 bg-black_grey/[.9] -z-10"
@@ -16,7 +16,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
       <img
         alt="close-modal-button"
         className="w-full h-auto"
-        src="add.png"
+        src="/src/apps/the-exchange/images/add.png"
       />
     </button>
   </div>,
@@ -42,7 +42,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
           </p>
           <img
             alt="arrow-down"
-            src="arrow-down.png"
+            src="/src/apps/the-exchange/images/arrow-down.png"
           />
         </button>
       </div>
@@ -62,7 +62,7 @@ exports[`<DropdownTokenList /> renders correctly and matches snapshot 1`] = `
         >
           <img
             alt="search-icon"
-            src="search-icon.png"
+            src="/src/apps/the-exchange/images/search-icon.png"
           />
         </span>
       </div>

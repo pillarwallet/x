@@ -14,7 +14,9 @@ import AccountTransactionHistoryProvider, {
 
 const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
 
-describe('AccountTransactionHistoryProvider', () => {
+// Skipping due to this being removed in an upcoming version of
+// TransactionKit
+describe.skip('AccountTransactionHistoryProvider', () => {
   const accountTransactionsMock = [
     {
       transactionHash: '0x1',

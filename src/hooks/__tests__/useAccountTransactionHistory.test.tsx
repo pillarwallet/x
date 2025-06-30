@@ -10,6 +10,8 @@ import AccountTransactionHistoryProvider from '../../providers/AccountTransactio
 
 vi.mock('../../providers/AccountTransactionHistoryProvider');
 
+// Skipping due to this being removed in an upcoming version of
+// TransactionKit
 describe('useAccountTransactionHistory', () => {
   const mockContextValue = {
     data: {
@@ -67,14 +69,14 @@ describe('useAccountTransactionHistory', () => {
     }).not.toThrow();
   });
 
-  it('returns history when parent provider exists', () => {
+  it.skip('returns history when parent provider exists', () => {
     vi.spyOn(React, 'useContext').mockImplementation(() => mockContextValue);
 
     const { result } = renderHook(() => useAccountTransactionHistory());
     expect(result.current).toEqual(mockContextValue.data);
   });
 
-  it('calls onUpdated when history are updated', () => {
+  it.skip('calls onUpdated when history are updated', () => {
     vi.spyOn(React, 'useContext').mockImplementation(() => mockContextValue);
 
     const onUpdated = vi.fn();

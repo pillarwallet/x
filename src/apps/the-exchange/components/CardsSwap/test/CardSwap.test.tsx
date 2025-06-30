@@ -62,7 +62,7 @@ vi.mock('../../../../../services/pillarXApiSearchTokens', () => ({
 
 vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
-  chainNameToChainIdTokensData: jest
+  chainNameToChainIdTokensData: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainIdMap = {
@@ -72,7 +72,7 @@ vi.mock('../../../../../services/tokensData', () => ({
 
       return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || '';
     }),
-  chainIdToChainNameTokensData: jest
+  chainIdToChainNameTokensData: vi
     .fn()
     .mockImplementation((chainId: number) => {
       const mockChainNameMap = {
@@ -82,7 +82,30 @@ vi.mock('../../../../../services/tokensData', () => ({
 
       return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
     }),
-  convertAPIResponseToTokens: vi.fn().mockReturnValue(mockTokenAssets),
+  convertAPIResponseToTokens: vi.fn().mockReturnValue([
+    {
+      id: 1,
+      contract: '0x01',
+      name: 'Ether',
+      symbol: 'ETH',
+      blockchain: 'Ethereum',
+      decimals: 18,
+      logo: 'iconEth.png',
+      balance: 4,
+      price: 0.1,
+    },
+    {
+      id: 2,
+      contract: '0x02',
+      name: 'POL',
+      symbol: 'POL',
+      blockchain: 'Polygon',
+      decimals: 18,
+      logo: 'iconMatic.png',
+      balance: 12,
+      price: 100,
+    },
+  ]),
   queryTokenData: vi.fn().mockReturnValue([
     {
       id: 1,
@@ -103,7 +126,7 @@ vi.mock('../../../../../services/tokensData', () => ({
       logo: 'iconMatic.png',
     },
   ]),
-  chainNameDataCompatibility: jest
+  chainNameDataCompatibility: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {

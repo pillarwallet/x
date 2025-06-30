@@ -80,17 +80,6 @@ exports[`<DisplayCollectionImage /> > renders correctly and matches snapshot wit
 </div>
 `;
 
-exports[`<DisplayCollectionImage /> renders correctly and matches snapshot with image 1`] = `
-<img
-  alt="nft-image"
-  className="test-class undefined"
-  data-testid="display-collection-image"
-  id="pillarx-feed-display-collection-image"
-  onClick={[Function]}
-  src="test-image.png"
-/>
-`;
-
 exports[`<DisplayCollectionImage /> renders correctly and matches snapshot without image 1`] = `
 <div
   className="overflow-hidden test-class undefined"

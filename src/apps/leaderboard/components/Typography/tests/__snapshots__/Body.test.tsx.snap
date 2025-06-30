@@ -19,23 +19,3 @@ exports[`<Body /> > renders correctly 1`] = `
   </p>,
 ]
 `;
-
-exports[`<Body /> renders correctly 1`] = `
-[
-  <p
-    className="text-base font-medium undefined"
-  >
-    Some regular text.
-  </p>,
-  <p
-    className="text-base font-medium text-red-500"
-  >
-    Some red text
-  </p>,
-  <p
-    className="text-base font-medium text-[23px]"
-  >
-    Some text with font size 23px
-  </p>,
-]
-`;

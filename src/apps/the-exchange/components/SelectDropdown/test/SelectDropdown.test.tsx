@@ -54,7 +54,7 @@ const mockTokenAssets: Token[] = [
 
 vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
-  chainNameDataCompatibility: jest
+  chainNameDataCompatibility: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {

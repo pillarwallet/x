@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
+exports[`<CardsSwap /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex w-full justify-center"
 >
@@ -102,7 +102,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           </p>
           <img
             alt="Send"
-            src="send-arrow.png"
+            src="/src/apps/the-exchange/images/send-arrow.png"
           />
         </div>
       </div>
@@ -174,7 +174,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
           </p>
           <img
             alt="Receive"
-            src="receive-arrow.png"
+            src="/src/apps/the-exchange/images/receive-arrow.png"
           />
         </div>
       </div>
@@ -189,7 +189,7 @@ exports[`<CardsSwap /> renders correctly and matches snapshot 1`] = `
     <img
       alt="swap-icon"
       className="w-[18px] h-[18px] desktop:w-6 desktop:h-6"
-      src="arrow-swap-horizontal.png"
+      src="/src/apps/the-exchange/images/arrow-swap-horizontal.png"
     />
   </button>
 </div>

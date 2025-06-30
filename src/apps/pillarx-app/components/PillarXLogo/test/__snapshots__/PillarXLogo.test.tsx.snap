@@ -16,20 +16,3 @@ exports[`<PillarXLogo /> > renders correctly and matches snapshot 1`] = `
   />,
 ]
 `;
-
-exports[`<PillarXLogo /> renders correctly and matches snapshot 1`] = `
-[
-  <img
-    alt="pillar-x-logo"
-    className="w-min undefined"
-    onClick={[Function]}
-    src="https://example.com/logo.png"
-  />,
-  <img
-    alt="pillar-x-logo"
-    className="w-min custom-class"
-    onClick={[Function]}
-    src="https://example.com/logo.png"
-  />,
-]
-`;

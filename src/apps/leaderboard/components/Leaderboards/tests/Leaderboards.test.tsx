@@ -5,12 +5,14 @@ import SkeletonLoader from '../../../../../components/SkeletonLoader';
 import LeaderboardTab from '../../LeaderboardTab/LeaderboardTab';
 import Leaderboards from '../Leaderboards';
 
-vi.mock('../../LeaderboardTab/LeaderboardTab', () =>
-  vi.fn(() => <div>LeaderboardTab Mock</div>)
-);
-vi.mock('../../../../../components/SkeletonLoader', () =>
-  vi.fn(() => <div>SkeletonLoader Mock</div>)
-);
+vi.mock('../../LeaderboardTab/LeaderboardTab', () => ({
+  __esModule: true,
+  default: vi.fn(() => <div>LeaderboardTab Mock</div>),
+}));
+vi.mock('../../../../../components/SkeletonLoader', () => ({
+  __esModule: true,
+  default: vi.fn(() => <div>SkeletonLoader Mock</div>),
+}));
 
 describe('Leaderboards Component', () => {
   afterEach(() => {

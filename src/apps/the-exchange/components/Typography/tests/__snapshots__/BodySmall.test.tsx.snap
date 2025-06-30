@@ -19,23 +19,3 @@ exports[`<BodySmall /> > renders correctly 1`] = `
   </p>,
 ]
 `;
-
-exports[`<BodySmall /> renders correctly 1`] = `
-[
-  <p
-    className="text-xs font-normal text-black_grey undefined"
-  >
-    Some small text.
-  </p>,
-  <p
-    className="text-xs font-normal text-black_grey text-red-500"
-  >
-    Some red small text
-  </p>,
-  <p
-    className="text-xs font-normal text-black_grey text-[7px]"
-  >
-    Some small text with font size 7px
-  </p>,
-]
-`;

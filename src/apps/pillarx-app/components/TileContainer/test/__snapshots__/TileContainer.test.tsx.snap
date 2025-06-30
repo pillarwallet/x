@@ -28,32 +28,3 @@ exports[`<TileContainer /> > renders correctly and matches snapshot 1`] = `
   </div>,
 ]
 `;
-
-exports[`<TileContainer /> renders correctly and matches snapshot 1`] = `
-[
-  <div
-    className="flex bg-container_grey rounded-3xl undefined"
-  >
-    <div>
-      Div as children
-    </div>
-  </div>,
-  <div
-    className="flex bg-container_grey rounded-3xl custom-class"
-  >
-    <div>
-      Div as children
-    </div>
-  </div>,
-  <div
-    className="flex bg-container_grey rounded-3xl undefined"
-  >
-    <div>
-      First child
-    </div>
-    <div>
-      Second child
-    </div>
-  </div>,
-]
-`;

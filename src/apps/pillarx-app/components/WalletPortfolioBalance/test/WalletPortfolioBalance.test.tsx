@@ -21,11 +21,18 @@ vi.mock('../../../../../components/SkeletonLoader', () => ({
     return <div data-testid="skeleton-loader">Loading...</div>;
   },
 }));
-vi.mock('../../../images/refresh-button.png', () => 'refresh-icon.png');
-vi.mock(
-  '../../../images/wallet-portfolio-icon.png',
-  () => 'wallet-portfolio-icon.png'
-);
+vi.mock('../../../images/refresh-button.png', () => {
+  return {
+    __esModule: true,
+    default: 'refresh-button.png',
+  };
+});
+vi.mock('../../../images/wallet-portfolio-icon.png', () => {
+  return {
+    __esModule: true,
+    default: 'wallet-portfolio-icon.png',
+  };
+});
 
 const mockDispatch = vi.fn();
 (useAppDispatchMock as unknown as Mock).mockReturnValue(mockDispatch);

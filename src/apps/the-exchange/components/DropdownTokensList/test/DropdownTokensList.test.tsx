@@ -52,7 +52,7 @@ const mockTokenAssets: Token[] = [
 
 vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
-  chainNameToChainIdTokensData: jest
+  chainNameToChainIdTokensData: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainIdMap = {
@@ -62,7 +62,7 @@ vi.mock('../../../../../services/tokensData', () => ({
 
       return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
     }),
-  chainIdToChainNameTokensData: jest
+  chainIdToChainNameTokensData: vi
     .fn()
     .mockImplementation((chainId: number) => {
       const mockChainNameMap = {
@@ -92,7 +92,7 @@ vi.mock('../../../../../services/tokensData', () => ({
       logo: 'iconMatic.png',
     },
   ]),
-  chainNameDataCompatibility: jest
+  chainNameDataCompatibility: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {

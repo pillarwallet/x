@@ -9,9 +9,24 @@ import { store } from '../../../../../store';
 import HorizontalToken from '../HorizontalToken';
 
 // Mock components
-vi.mock('../../Typography/BodySmall', () => 'BodySmall');
-vi.mock('../../Typography/Body', () => 'Body');
-vi.mock('../../TokensPercentage/TokensPercentage', () => 'TokensPercentage');
+vi.mock('../../Typography/BodySmall', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'BodySmall'),
+  };
+});
+vi.mock('../../Typography/Body', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'Body Mock'),
+  };
+});
+vi.mock('../../TokensPercentage/TokensPercentage', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'TokensPercentage Mock'),
+  };
+});
 
 describe('<HorizontalToken />', () => {
   const tokenIndex = 1;

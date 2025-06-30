@@ -17,29 +17,3 @@ exports[`<TokensPercentage /> > renders correctly and matches snapshot 1`] = `
   </p>
 </div>
 `;
-
-exports[`<TokensPercentage /> renders correctly and matches snapshot 1`] = `
-<div
-  className="flex gap-1 items-center"
->
-  <img
-    alt="percentage-up"
-    className="w-[10px] h[9px]"
-    src={
-      {
-        "ReactComponent": {
-          "$$typeof": Symbol(react.forward_ref),
-          "render": [Function],
-        },
-        "default": "triangle-up-green.svg",
-      }
-    }
-  />
-  <p
-    className="text-sm font-medium text-percentage_green"
-  >
-    12.34
-    %
-  </p>
-</div>
-`;

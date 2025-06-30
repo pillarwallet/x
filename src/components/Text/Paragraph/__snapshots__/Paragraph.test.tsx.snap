@@ -18,22 +18,3 @@ exports[`<Paragraph /> > renders correctly 1`] = `
   </p>,
 ]
 `;
-
-exports[`<Paragraph /> renders correctly 1`] = `
-[
-  <p
-    className=""
-  >
-    Some regular text.
-  </p>,
-  .c0 {
-  text-align: center;
-}
-
-<p
-    className="c0"
-  >
-    centered
-  </p>,
-]
-`;

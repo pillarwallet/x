@@ -89,9 +89,17 @@ export const mockBestOffer: SwapOffer = {
 vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
   addToBatch: vi.fn(),
 }));
-vi.mock('../../../../../hooks/useBottomMenuModal', () => () => ({
-  showSend: vi.fn(),
-}));
+vi.mock('../../../../../hooks/useBottomMenuModal', () => () => {
+  return {
+    _esModule: true,
+    default: vi.fn(() => ({
+      open: vi.fn(),
+      close: vi.fn(),
+      isOpen: false, // Default value for isOpen
+    })),
+  };
+});
+
 vi.mock('@etherspot/transaction-kit', () => ({
   useEtherspotSwaps: () => ({
     prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue([]),

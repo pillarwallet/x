@@ -1,79 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensVerticalList /> renders correctly and matches snapshot for left position 1`] = `
+exports[`<TokensVerticalList /> > renders correctly and matches snapshot for left position 1`] = `
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
 >
-  <HorizontalToken
-    isLast={false}
-    onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x1",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={1}
-    tokenLogo="logoA.png"
-    tokenName="Token A"
-    tokenSymbol="TKA"
-  />
-  <HorizontalToken
-    isLast={true}
-    onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x2",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={2}
-    tokenLogo="logoB.png"
-    tokenName="Token B"
-    tokenSymbol="TKB"
-  />
+  HorizontalToken
+  HorizontalToken
 </div>
 `;
 
-exports[`<TokensVerticalList /> renders correctly and matches snapshot for right position 1`] = `
+exports[`<TokensVerticalList /> > renders correctly and matches snapshot for right position 1`] = `
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
 >
-  <HorizontalToken
-    isLast={false}
-    onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x1",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={4}
-    tokenLogo="logoA.png"
-    tokenName="Token A"
-    tokenSymbol="TKA"
-  />
-  <HorizontalToken
-    isLast={true}
-    onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x2",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={5}
-    tokenLogo="logoB.png"
-    tokenName="Token B"
-    tokenSymbol="TKB"
-  />
+  HorizontalToken
+  HorizontalToken
 </div>
 `;

@@ -7,8 +7,18 @@ import TokensVerticalList from '../TokensVerticalList';
 // types
 import { TokenData } from '../../../../../types/api';
 
-vi.mock('../../HorizontalToken/HorizontalToken', () => 'HorizontalToken');
-vi.mock('../../Typography/Body', () => 'Body');
+vi.mock('../../HorizontalToken/HorizontalToken', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'HorizontalToken'),
+  };
+});
+vi.mock('../../Typography/Body', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'Body'),
+  };
+});
 
 describe('<TokensVerticalList />', () => {
   const mockData: TokenData[] = [

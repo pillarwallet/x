@@ -1,12 +1,10 @@
 // Mock for @reown
 
 const Client = vi.fn(() => ({
-  connect: jest
+  connect: vi
     .fn()
     .mockResolvedValue('Mock WalletConnect connection established'),
-  disconnect: jest
-    .fn()
-    .mockResolvedValue('Mock WalletConnect connection closed'),
+  disconnect: vi.fn().mockResolvedValue('Mock WalletConnect connection closed'),
 }));
 
 const WalletKit = {
@@ -20,16 +18,16 @@ const WalletKitTypes = {
 
 const WalletConnectCore = vi.fn(() => ({
   init: vi.fn().mockResolvedValue('Mock WalletConnect Core initialised'),
-  connect: jest
+  connect: vi
     .fn()
     .mockResolvedValue('Mock WalletConnect Core connection established'),
-  disconnect: jest
+  disconnect: vi
     .fn()
     .mockResolvedValue('Mock WalletConnect Core connection closed'),
 }));
 
 // Mock for @walletconnect/utils
-const buildApprovedNamespaces = jest
+const buildApprovedNamespaces = vi
   .fn()
   .mockReturnValue('Mock WalletConnect approved namespaces');
 const getSdkError = vi.fn().mockReturnValue('Mock WalletConnect SDK error');

@@ -21,7 +21,7 @@
     // from generated source code references.
     // This improves issue grouping in Sentry.
     "sourceRoot": "/",
-    "types": ["vite/client", "node", "jest", "vitest/globals"]
+    "types": ["vite/client", "node", "vitest/globals"]
   },
   "include": ["vite.config.ts", "src", "__mocks__"]
 }

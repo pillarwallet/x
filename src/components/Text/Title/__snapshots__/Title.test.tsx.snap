@@ -13,17 +13,3 @@ exports[`<PrimaryTitle /> > renders correctly 1`] = `
   Some regular text.
 </h1>
 `;
-
-exports[`<PrimaryTitle /> renders correctly 1`] = `
-.c0 {
-  font-size: 30px;
-  margin-bottom: 15px;
-  font-weight: 500;
-}
-
-<h1
-  className="c0"
->
-  Some regular text.
-</h1>
-`;
