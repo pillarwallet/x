@@ -15,7 +15,20 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
   chainId,
 }) => {
   if (!txHash || !completed) {
-    return <span style={{fontSize: 10}}>{text}</span>;
+    return <span style={{fontSize: 10}}>
+      {
+        text === "Failed to create resource lock" || text === "Transaction failed" ?
+        <div className="flex">
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.70433 3.22114L1.31589 10.7442C0.732563 11.7442 1.45387 13 2.61156 13H11.3884C12.5461 13 13.2674 11.7442 12.6841 10.7442L8.29567 3.22115C7.71685 2.22889 6.28315 2.22889 5.70433 3.22114Z" fill="#FF366C" fill-opacity="0.3" stroke="#FF366C"/>
+            <path d="M7.64289 10.6428C7.64289 10.9979 7.35508 11.2857 7.00003 11.2857C6.64499 11.2857 6.35718 10.9979 6.35718 10.6428C6.35718 10.2878 6.64499 9.99999 7.00003 9.99999C7.35508 9.99999 7.64289 10.2878 7.64289 10.6428Z" fill="#FF366C"/>
+            <path d="M6.35718 5.92856C6.35718 5.57352 6.64499 5.28571 7.00003 5.28571C7.35508 5.28571 7.64289 5.57352 7.64289 5.92856L7.42861 9.14285C7.42861 9.37954 7.23673 9.57142 7.00003 9.57142C6.76334 9.57142 6.57146 9.37954 6.57146 9.14285L6.35718 5.92856Z" fill="#FF366C"/>
+          </svg>
+          <p style={{textDecoration: "underline", color: "#FF366C",}}>{text}</p>
+        </div> :
+        <p>{text}</p>
+      }
+    </span>;
   }
 
   const txUrl = `${getBlockScan(chainId)}${txHash}`;

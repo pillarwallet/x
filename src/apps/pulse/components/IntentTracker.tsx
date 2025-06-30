@@ -139,7 +139,11 @@ export default function IntentTracker(props: Props) {
             <TransactionStatus
               chainId={resourceLockInfo?.resourceLocks?.[0]?.chainId}
               completed={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
-              text="Creating Resource Lock"
+              text={
+                bid?.bidStatus === "SHORTLISTING_FAILED" ?
+                  "Failed to create resource lock" :
+                  "Creating Resource Lock"
+              }
               txHash={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
             />
           </div>
@@ -164,7 +168,11 @@ export default function IntentTracker(props: Props) {
             <div>{props.isBuy ? "Buy" : "Sell"} Complete</div>
             <TransactionStatus
               chainId={props.token.chainId}
-              text=""
+              text={
+                bid?.bidStatus === "FAILED_EXECUTION" ?
+                  "Transaction failed" :
+                  ""
+              }
               completed={getStatusIndex(bid?.bidStatus) >= 3}
               txHash={bid?.executedTransactions?.[0]?.transactionHash}
             />
