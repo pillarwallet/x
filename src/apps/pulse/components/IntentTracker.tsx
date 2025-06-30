@@ -1,0 +1,202 @@
+import { useEffect, useState } from "react"
+import { Hex } from "viem";
+import Esc from "./Esc";
+import useIntentSdk from "../hooks/useIntentSdk";
+import TransactionStatus from "./TxStatus";
+import RandomAvatar from "../../pillarx-app/components/RandomAvatar/RandomAvatar";
+
+
+interface Props {
+  closePreview: () => void,
+  token: SelectedToken,
+  bidHash: Hex;
+  isBuy: boolean;
+  amount: string;
+}
+
+const getStatusIndex = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTED" | "EXECUTED") => {
+  if(status === "PENDING")
+    return 0;
+  if(status === "SHORTLISTING_INITIATED")
+    return 1;
+  if(status === "SHORTLISTED")
+    return 2;
+  if(status === "EXECUTED")
+    return 3;
+  return -1;
+}
+
+export default function IntentTracker(props: Props) {
+  const {intentSdk} = useIntentSdk();
+  const [bid, setBid] = useState<any>(null);
+  const [resourceLockInfo, setResourceLockInfo] = useState<any>(null);
+
+  const getCircleCss = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTED" | "EXECUTED", f = true) => {
+    const index = getStatusIndex(status);
+    if(f) {
+      if(resourceLockInfo?.resourceLocks?.[0]?.transactionHash) {
+        return {
+          backgroundColor: "#8A77FF",
+        }
+      }
+      return {
+        border: "1px solid white"
+      }
+    }
+    if (index >= 3)
+      return {
+        backgroundColor: "#8A77FF",
+      }
+    return {
+      border: "1px solid white"
+    }
+  }
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const poll = async () => {
+      if (isCancelled || !intentSdk) return;
+
+      try {
+        const res = await intentSdk.searchBidByBidHash(props.bidHash);
+        if(res && res.length > 0) {
+          setBid(res[0]);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+      try {
+        const res = await intentSdk.getResourceLockInfoByBidHash(props.bidHash);
+        console.log("resourcelock info:: ", res);
+        if(res) {
+          setResourceLockInfo(res.resourceLockInfo);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+
+      if (!isCancelled) {
+        setTimeout(poll, 15000);
+      }
+    };
+
+    poll(); // Start polling
+
+    return () => {
+      isCancelled = true; // Cleanup
+    };
+  }, [intentSdk]);
+
+  console.log(resourceLockInfo?.resourceLocks?.[0]?.transactionHash, bid?.bidStatus);
+  return (
+    <>
+    <div className="flex justify-between" style={{margin: 10}}>
+      <div className="flex" style={{fontSize: 20}}>
+        {`${props.isBuy ? "Buy" : "Sell"}`}
+        {
+          props.token.logo ?
+          <img src={props.token.logo} style={{borderRadius: 50, height: 32, width: 32, marginLeft: 10}}/> :
+          <div className="flex w-full h-full overflow-hidden rounded-full" style={{
+            width: 32,
+            height: 32,
+            borderRadius: 50,
+            marginLeft: 10,
+          }}>
+            <RandomAvatar name={props.token?.name || ''} />
+            <span className="absolute flex items-center justify-center text-white text-lg font-bold" style={{marginLeft: 5}}>
+              {props.token?.name?.slice(0, 2)}
+            </span>
+          </div>
+        }
+      </div>
+      <div className="flex">
+        <div style={{marginLeft: 10}}>
+          <Esc closePreview={props.closePreview} />
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex justify-between"
+      style={{width: 422, height: 180, background: "black", borderRadius: 10, margin: 10}}
+    >
+      {/* Vertical Timeline */}
+      <div className="p-8">
+        <div className="flex items-start gap-8">
+          <div className="flex flex-col items-center">
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm`}
+              style={{...getCircleCss(bid?.bidStatus), color: "white"}}
+            >
+              1
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 pb-6" style={{height: 40}}>
+            <div>Resource Lock Creation</div>
+            <TransactionStatus
+              chainId={resourceLockInfo?.resourceLocks?.[0]?.chainId}
+              completed={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
+              text={
+                bid?.bidStatus === "SHORTLISTING_FAILED" ?
+                  "Failed to create resource lock" :
+                  "Creating Resource Lock"
+              }
+              txHash={resourceLockInfo?.resourceLocks?.[0]?.transactionHash}
+            />
+          </div>
+        </div>
+
+        <div style={{height: 25, marginLeft: 19, width: 1, backgroundColor: resourceLockInfo?.resourceLocks?.[0]?.transactionHash ? "#8A77FF" : "white"}}></div>
+        <div style={{height: 25, marginLeft: 19, width: 1, backgroundColor: getStatusIndex(bid?.bidStatus) >= 3 ? "#8A77FF" : "white"}}></div>
+
+
+        <div className="flex items-start gap-8">
+          <div className="flex flex-col items-center">
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm`}
+              style={{...getCircleCss(bid?.bidStatus, false), color: "white"}}
+            >
+              2
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 pb-6">
+            <div>{props.isBuy ? "Buy" : "Sell"} Complete</div>
+            <TransactionStatus
+              chainId={props.token.chainId}
+              text={
+                bid?.bidStatus === "FAILED_EXECUTION" ?
+                  "Transaction failed" :
+                  ""
+              }
+              completed={getStatusIndex(bid?.bidStatus) >= 3}
+              txHash={bid?.executedTransactions?.[0]?.transactionHash}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex"
+      style={{margin: 10, width: 422, height: 50, borderRadius: 10, backgroundColor: "black"}}
+    >
+      <button
+        className="flex-1 items-center justify-center"
+        style={{
+          margin: 2,
+          borderRadius: 10,
+          backgroundColor: getStatusIndex(bid?.bidStatus) !== 3 ? "#121116" : "#8A77FF"
+        }}
+        disabled={getStatusIndex(bid?.bidStatus) !== 3}
+        onClick={props.closePreview}
+      >
+        Close
+      </button>
+    </div>
+    </>
+  )
+}

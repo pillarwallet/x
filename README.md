@@ -1,6 +1,6 @@
 # Welcome to PillarX!
 
-## PillarX is an ecosystem of trustable web3 apps all in one place. We've taken care of the infrstructure and account management so you don't need to.
+## PillarX is an ecosystem of trustable web3 apps all in one place. We've taken care of the infrastructure and account management so you don't need to.
 
 🛠️ **Here to build a PillarX app?** Head over to the [README.md](src/apps/README.md)
 file within the `src/apps` directory to learn how to get started.
