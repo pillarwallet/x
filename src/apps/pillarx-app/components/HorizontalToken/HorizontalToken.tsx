@@ -94,7 +94,7 @@ const HorizontalToken = ({
           ) : null}
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col test">
           {tokenSymbol && <Body>{tokenSymbol}</Body>}
           {tokenName && (
             <BodySmall className="text-purple_light">{tokenName}</BodySmall>

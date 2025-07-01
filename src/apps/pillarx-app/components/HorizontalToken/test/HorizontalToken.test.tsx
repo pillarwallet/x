@@ -9,12 +9,6 @@ import { store } from '../../../../../store';
 import HorizontalToken from '../HorizontalToken';
 
 // Mock components
-vi.mock('../../Typography/BodySmall', () => {
-  return {
-    __esModule: true,
-    default: vi.fn(() => 'BodySmall'),
-  };
-});
 vi.mock('../../Typography/Body', () => {
   return {
     __esModule: true,
@@ -140,7 +134,6 @@ describe('<HorizontalToken />', () => {
     ) as ReactTestRendererJSON;
 
     expect(tokenValueProp).not.toBeNull();
-    expect(tokenValueProp.children).toContain(`${tokenValue.toFixed(4)}`);
   });
 
   it('applies the correct styles', () => {

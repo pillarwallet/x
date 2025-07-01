@@ -86,10 +86,13 @@ export const mockBestOffer: SwapOffer = {
 };
 
 // Mock hooks and utils
-vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
-  addToBatch: vi.fn(),
+vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => ({
+  _esModule: true,
+  default: vi.fn(() => ({
+    addToBatch: vi.fn(),
+  })),
 }));
-vi.mock('../../../../../hooks/useBottomMenuModal', () => () => {
+vi.mock('../../../../../hooks/useBottomMenuModal', () => {
   return {
     _esModule: true,
     default: vi.fn(() => ({
