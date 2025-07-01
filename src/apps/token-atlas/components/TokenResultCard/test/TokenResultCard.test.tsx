@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
 import TokenResultCard from '../TokenResultCard';

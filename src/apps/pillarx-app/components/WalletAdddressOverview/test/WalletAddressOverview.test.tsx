@@ -1,5 +1,6 @@
 import React from 'react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { vi } from 'vitest';
 import WalletAddressOverview from '../WalletAddressOverview';
 
 describe('<WalletAddressOverview />', () => {
