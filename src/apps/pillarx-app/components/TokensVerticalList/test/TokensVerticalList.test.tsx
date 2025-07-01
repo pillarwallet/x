@@ -2,11 +2,11 @@ import { MemoryRouter } from 'react-router-dom';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
 
 // components
+import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
 import TokensVerticalList from '../TokensVerticalList';
 
 // types
-import { Provider } from 'react-redux';
 import { TokenData } from '../../../../../types/api';
 
 vi.mock('../../Typography/Body', () => {

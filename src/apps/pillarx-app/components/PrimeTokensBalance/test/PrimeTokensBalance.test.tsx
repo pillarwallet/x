@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 
-// services
-import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
-
 // types
 import type { Mock } from 'vitest';
+
+// services
+import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
 
 // reducer
 import * as reducerHooks from '../../../hooks/useReducerHooks';
