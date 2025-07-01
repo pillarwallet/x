@@ -71,6 +71,7 @@ const Waitlist = () => {
                 <a
                   href="https://blog.pillarx.app/pillarx-soft-launch-join-unlock-exclusive-rewards/"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   the prize pool
                 </a>

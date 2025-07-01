@@ -28,7 +28,8 @@ export default function LandingPage() {
             </div>
             <div className="home_hero__signup">
               <p>
-                Special Soft Launch Campaign with a $10,000 prize pool is now live. Exclusively for waitlist participants and Pillar users!
+                Special Soft Launch Campaign with a $10,000 prize pool is now
+                live. Exclusively for waitlist participants and Pillar users!
               </p>
               <a
                 href="/waitlist"
