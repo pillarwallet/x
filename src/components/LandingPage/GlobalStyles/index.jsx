@@ -986,6 +986,10 @@ const GlobalStyles = createGlobalStyle`
     margin: calc(var(--margin) * 3) 0 calc(var(--margin) * 6) 0;
   }
 
+  .home_signup__content p a {
+    text-decoration: underline;
+  }
+
   @media only screen and (max-width: 767px) {
     .home_signup__content p {
       font-size: 1.8rem;
