@@ -1,18 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import GasNewDropCard from '../GasNewDropCard';
-
-// vi.mock('luxon', async () => {
-//   const actualLuxon = await vi.importMock('luxon').then((m) => m.default || m);
-
-//   return {
-//     ...actualLuxon,
-//     DateTime: {
-//       // ...actualLuxon.DateTime,
-//       now: () => actualLuxon.DateTime.fromMillis(1750307487101), // fixed mock time (Oct 19, 2025)
-//       fromMillis: actualLuxon.DateTime.fromMillis,
-//     },
-//   };
-// });
 
 beforeAll(() => {
   vi.useFakeTimers();

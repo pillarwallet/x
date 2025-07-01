@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // types
 import type { Mock } from 'vitest';

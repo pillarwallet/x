@@ -1,5 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
 import { Provider } from 'react-redux';

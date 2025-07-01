@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 import { ApiLayout, MediaGridData, Projection } from '../../../../../types/api';
 import HighlightedMediaGridTile from '../HighlightedMediaGridTile';
 

@@ -49,7 +49,7 @@ exports[`<TokensVerticalTile /> > renders correctly and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            className="flex flex-col test"
+            className="flex flex-col"
           >
             <p
               className="text-base font-medium undefined"
@@ -100,7 +100,7 @@ exports[`<TokensVerticalTile /> > renders correctly and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            className="flex flex-col test"
+            className="flex flex-col"
           >
             <p
               className="text-base font-medium undefined"

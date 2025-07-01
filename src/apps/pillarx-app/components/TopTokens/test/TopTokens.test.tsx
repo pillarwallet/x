@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 
 // services
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';

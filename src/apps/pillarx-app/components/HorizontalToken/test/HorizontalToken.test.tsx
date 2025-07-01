@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';

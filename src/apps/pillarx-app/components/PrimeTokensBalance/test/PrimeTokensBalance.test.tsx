@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 
 // types
 import type { Mock } from 'vitest';

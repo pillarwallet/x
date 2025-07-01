@@ -25,7 +25,7 @@ exports[`<HorizontalToken /> > renders correctly and matches snapshot 1`] = `
       />
     </div>
     <div
-      className="flex flex-col test"
+      className="flex flex-col"
     >
       Body Mock
       <p

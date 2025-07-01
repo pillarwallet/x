@@ -37,7 +37,7 @@ exports[`<TokensVerticalList /> > renders correctly and matches snapshot for lef
         </div>
       </div>
       <div
-        className="flex flex-col test"
+        className="flex flex-col"
       >
         Body
         <p
@@ -84,7 +84,7 @@ exports[`<TokensVerticalList /> > renders correctly and matches snapshot for lef
         </div>
       </div>
       <div
-        className="flex flex-col test"
+        className="flex flex-col"
       >
         Body
         <p
@@ -138,7 +138,7 @@ exports[`<TokensVerticalList /> > renders correctly and matches snapshot for rig
         </div>
       </div>
       <div
-        className="flex flex-col test"
+        className="flex flex-col"
       >
         Body
         <p
@@ -185,7 +185,7 @@ exports[`<TokensVerticalList /> > renders correctly and matches snapshot for rig
         </div>
       </div>
       <div
-        className="flex flex-col test"
+        className="flex flex-col"
       >
         Body
         <p

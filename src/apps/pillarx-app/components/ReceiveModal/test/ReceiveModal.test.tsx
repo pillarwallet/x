@@ -1,5 +1,6 @@
 import * as transactionKit from '@etherspot/transaction-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // types
 import type { Mock } from 'vitest';
