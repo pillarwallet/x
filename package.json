@@ -9,7 +9,7 @@
     "test": "vitest",
     "test:watch": "eslint . && jest --detectOpenHandles --watch",
     "test:update": "vitest -u",
-    "test:ci": "jest --detectOpenHandles --silent -u",
+    "test:ci": "vitest run --coverage",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build",
     "postinstall": "patch-package",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
