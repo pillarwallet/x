@@ -949,7 +949,7 @@ const GlobalStyles = createGlobalStyle`
   
   .home_signup__content h1 {
     font-size: 7rem;
-    max-width: 20ch;
+    max-width: 22ch;
     line-height: 1;
   }
 
