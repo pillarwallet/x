@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // types
 import { LeaderboardRankChange } from '../../../../../types/api';

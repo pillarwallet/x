@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
 import Main from './Main';

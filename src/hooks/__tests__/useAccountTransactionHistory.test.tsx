@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { mainnet } from 'viem/chains';
+import { vi } from 'vitest';
 
 // hooks
 import useAccountTransactionHistory from '../useAccountTransactionHistory';

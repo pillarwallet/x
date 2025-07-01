@@ -6,6 +6,7 @@ import renderer, {
   act,
 } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
 
 // types
 import type { Mock } from 'vitest';

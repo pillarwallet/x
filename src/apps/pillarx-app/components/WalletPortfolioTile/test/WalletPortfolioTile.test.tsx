@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as transactionKit from '@etherspot/transaction-kit';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // servuces
 import * as historyHooks from '../../../../../services/pillarXApiWalletHistory';

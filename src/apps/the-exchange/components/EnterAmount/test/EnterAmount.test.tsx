@@ -1,5 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';

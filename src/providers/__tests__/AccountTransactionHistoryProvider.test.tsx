@@ -3,6 +3,7 @@ import * as TransactionKit from '@etherspot/transaction-kit';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { polygon } from 'viem/chains';
+import { vi } from 'vitest';
 
 // services
 import * as dappLocalStorage from '../../services/dappLocalStorage';

@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // components
 import SkeletonLoader from '../../../../../components/SkeletonLoader';

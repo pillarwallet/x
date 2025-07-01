@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // redux store
 import { Provider } from 'react-redux';

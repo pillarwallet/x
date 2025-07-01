@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import React from 'react';
+import { vi } from 'vitest';
 
 // types
 import type { Mock } from 'vitest';
