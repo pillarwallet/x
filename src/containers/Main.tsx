@@ -237,14 +237,14 @@ const AuthLayout = () => {
     ];
 
     /**
-     * Import directort globs
+     * Import app directory globs so that we can
+     * dynamically extract and import the manifest
+     * data needed to show the app icons
      */
     const appImports = import.meta.glob('../apps/*/index.tsx');
-    console.log('appImports', appImports);
     for (const path in appImports) {
       // Extract the app ID from the path
       const appId = path.split('/')[2];
-      console.log('appId', appId);
 
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}`,

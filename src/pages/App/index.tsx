@@ -92,15 +92,9 @@ const App = ({ id }: { id: string }) => {
     await new Promise((resolve) => {
       setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
+
     try {
       const appImport = await import(`../../apps/${id}`);
-      console.log(`Loaded app component for ${id}`, appImport);
-      // const appImport = await import.meta.glob(/* @vite-ignore */`../../apps/${id}`, {
-      //   eager: true,
-      //   import: 'default',
-      //.  query: 'react'
-      // });
-      // console.log(`Loaded app component for ${id}`, appImport);
 
       return appImport;
     } catch (e) {
