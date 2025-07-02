@@ -41,6 +41,7 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Waitlist from '../pages/WaitList';
+import Privacy from '../pages/Privacy';
 import Authorized from './Authorized';
 
 // hooks
@@ -223,6 +224,10 @@ const AuthLayout = () => {
             element: <Developers />,
           },
           {
+            path: '/privacy-policy',
+            element: <Privacy />,
+          },
+          {
             path: '/login',
             element: <Navigate to="/" />,
           },
@@ -271,7 +276,8 @@ const AuthLayout = () => {
   const isRootPage =
     window.location.pathname === '/' ||
     window.location.pathname === '/waitlist' ||
-    window.location.pathname === '/developers';
+    window.location.pathname === '/developers' ||
+    window.location.pathname === '/privacy-policy';
 
   /**
    * The following if statement determines if the user is
@@ -299,6 +305,10 @@ const AuthLayout = () => {
       {
         path: '/developers',
         element: <Developers />,
+      },
+      {
+        path: '/privacy-policy',
+        element: <Privacy />,
       },
       {
         path: '/login',
