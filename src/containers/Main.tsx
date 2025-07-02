@@ -71,8 +71,7 @@ const AuthLayout = () => {
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  const { allowed: allowedApps, isLoading: isLoadingAllowedApps } =
-    useAllowedApps();
+  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated =
     !!localStorage.getItem('privy:token') ||
     localStorage.getItem('ACCOUNT_VIA_PK');
@@ -242,7 +241,7 @@ const AuthLayout = () => {
      * data needed to show the app icons
      */
     const appImports = import.meta.glob('../apps/*/index.tsx');
-    for (const path in appImports) {
+    Object.keys(appImports).forEach((path) => {
       // Extract the app ID from the path
       const appId = path.split('/')[2];
 
@@ -255,7 +254,7 @@ const AuthLayout = () => {
         path: `/${appId}/*`,
         element: <App id={appId} />,
       });
-    }
+    });
 
     // ...and add the 404 route to the route definition
     // for good measure
