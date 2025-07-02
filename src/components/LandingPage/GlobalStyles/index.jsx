@@ -549,7 +549,7 @@ const GlobalStyles = createGlobalStyle`
     transition: all ease 0.3s;
   }
 
-  .footer__footer__socials a:hover {
+  .footer__socials a:hover {
     opacity: 0.7;
   }
   
