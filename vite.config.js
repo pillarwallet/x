@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react(), svgr({})],
   build: {
     outDir: 'build',
+    commonjsOptions: { transformMixedEsModules: true },
   },
   test: {
     globals: true,
