@@ -29,7 +29,7 @@ import logoPolygon from '../assets/images/logo-polygon.png';
 export const isTestnet = (() => {
   const storedIsTestnet = localStorage.getItem('isTestnet');
   if (storedIsTestnet === null || storedIsTestnet === undefined) {
-    return process.env.REACT_APP_USE_TESTNETS === 'true';
+    return import.meta.env.VITE_USE_TESTNETS === 'true';
   }
   return storedIsTestnet === 'true';
 })();

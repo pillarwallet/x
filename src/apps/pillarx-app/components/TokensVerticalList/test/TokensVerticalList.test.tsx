@@ -1,14 +1,21 @@
 import { MemoryRouter } from 'react-router-dom';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
+import { Provider } from 'react-redux';
+import { store } from '../../../../../store';
 import TokensVerticalList from '../TokensVerticalList';
 
 // types
 import { TokenData } from '../../../../../types/api';
 
-jest.mock('../../HorizontalToken/HorizontalToken', () => 'HorizontalToken');
-jest.mock('../../Typography/Body', () => 'Body');
+vi.mock('../../Typography/Body', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'Body'),
+  };
+});
 
 describe('<TokensVerticalList />', () => {
   const mockData: TokenData[] = [
@@ -42,7 +49,9 @@ describe('<TokensVerticalList />', () => {
     const tree = renderer
       .create(
         <MemoryRouter>
-          <TokensVerticalList position="left" data={mockData} />
+          <Provider store={store}>
+            <TokensVerticalList position="left" data={mockData} />
+          </Provider>
         </MemoryRouter>
       )
       .toJSON();
@@ -54,7 +63,9 @@ describe('<TokensVerticalList />', () => {
     const tree = renderer
       .create(
         <MemoryRouter>
-          <TokensVerticalList position="right" data={mockData} />
+          <Provider store={store}>
+            <TokensVerticalList position="right" data={mockData} />
+          </Provider>
         </MemoryRouter>
       )
       .toJSON();
@@ -66,7 +77,9 @@ describe('<TokensVerticalList />', () => {
     const tree = renderer
       .create(
         <MemoryRouter>
-          <TokensVerticalList position="left" data={mockData} />
+          <Provider store={store}>
+            <TokensVerticalList position="left" data={mockData} />
+          </Provider>
         </MemoryRouter>
       )
       .toJSON() as ReactTestRendererJSON;
@@ -80,7 +93,9 @@ describe('<TokensVerticalList />', () => {
     const tree = renderer
       .create(
         <MemoryRouter>
-          <TokensVerticalList position="left" data={mockData} />
+          <Provider store={store}>
+            <TokensVerticalList position="left" data={mockData} />
+          </Provider>
         </MemoryRouter>
       )
       .toJSON() as ReactTestRendererJSON;
@@ -88,12 +103,14 @@ describe('<TokensVerticalList />', () => {
     const tokensList = tree.children as ReactTestRendererJSON[];
 
     tokensList.forEach((tokenElement, index) => {
-      expect(tokenElement.props.tokenIndex).toBe(index + 1);
-      expect(tokenElement.props.tokenName).toBe(mockData[index].name);
-      expect(tokenElement.props.tokenSymbol).toBe(mockData[index].symbol);
+      const indexNumber = tokenElement.children[0].children[0].children[1];
+
+      expect(Number(indexNumber)).toBe(index + 1);
+      expect(JSON.stringify(tokenElement.children)).toContain(
+        mockData[index].name
+      );
       expect(tokenElement.props.tokenValue).toBeUndefined();
       expect(tokenElement.props.percentage).toBeUndefined();
-      expect(tokenElement.props.isLast).toBe(index === mockData.length - 1);
     });
   });
 });

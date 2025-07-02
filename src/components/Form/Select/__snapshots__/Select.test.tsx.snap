@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Select /> renders correctly with default option 1`] = `
+exports[`<Select /> > renders correctly with default option 1`] = `
 <DocumentFragment>
   .c5 {
   display: flex;
@@ -162,7 +162,7 @@ exports[`<Select /> renders correctly with default option 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> renders correctly with no options 1`] = `
+exports[`<Select /> > renders correctly with no options 1`] = `
 <DocumentFragment>
   .c0 {
   padding: 13px 13px 13px;
@@ -222,7 +222,7 @@ exports[`<Select /> renders correctly with no options 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> renders correctly with option image 1`] = `
+exports[`<Select /> > renders correctly with option image 1`] = `
 <DocumentFragment>
   .c5 {
   width: 42px;
@@ -485,7 +485,7 @@ exports[`<Select /> renders correctly with option image 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> renders correctly with selected option image 1`] = `
+exports[`<Select /> > renders correctly with selected option image 1`] = `
 <DocumentFragment>
   .c2 {
   width: 42px;
@@ -592,7 +592,7 @@ exports[`<Select /> renders correctly with selected option image 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> renders correctly with some options 1`] = `
+exports[`<Select /> > renders correctly with some options 1`] = `
 <DocumentFragment>
   .c5 {
   width: 42px;
@@ -855,7 +855,7 @@ exports[`<Select /> renders correctly with some options 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> responds once clicked 1`] = `
+exports[`<Select /> > responds once clicked 1`] = `
 <DocumentFragment>
   .c5 {
   display: flex;
@@ -1017,7 +1017,7 @@ exports[`<Select /> responds once clicked 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<Select /> shows loading skeleton on option item where option value is loading 1`] = `
+exports[`<Select /> > shows loading skeleton on option item where option value is loading 1`] = `
 <DocumentFragment>
   .c5 {
   height: 15px;
@@ -1288,7 +1288,7 @@ exports[`<Select /> shows loading skeleton on option item where option value is 
 </DocumentFragment>
 `;
 
-exports[`<Select /> shows loading skeleton when options loading 1`] = `
+exports[`<Select /> > shows loading skeleton when options loading 1`] = `
 <DocumentFragment>
   .c2 {
   height: 42px;

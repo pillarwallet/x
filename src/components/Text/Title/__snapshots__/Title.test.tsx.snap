@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<PrimaryTitle /> renders correctly 1`] = `
+exports[`<PrimaryTitle /> > renders correctly 1`] = `
 .c0 {
   font-size: 30px;
   margin-bottom: 15px;

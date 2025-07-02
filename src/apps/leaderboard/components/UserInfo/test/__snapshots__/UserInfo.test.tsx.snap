@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
+exports[`<UserInfo /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex desktop:gap-3.5 tablet:gap-3.5 mobile:gap-1.5 items-center"
   data-testid="leaderboard-user-data"
@@ -90,7 +90,7 @@ exports[`<UserInfo /> renders correctly and matches snapshot 1`] = `
           <img
             alt="copy-address"
             className="w-[13px] h-[15px]"
-            src="token-market-data-copy.png"
+            src="/src/apps/pillarx-app/images/token-market-data-copy.png"
           />
         </div>
       </div>

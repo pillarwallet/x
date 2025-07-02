@@ -18,21 +18,21 @@ if (typeof window !== 'undefined') {
 
 let sentryReleaseTag;
 
-// add a release tag only if REACT_APP_VERSION provided
-if (process.env.REACT_APP_VERSION) {
+// add a release tag only if VITE_VERSION provided
+if (import.meta.env.VITE_VERSION) {
   sentryReleaseTag =
     'pillarx@' +
-    process.env.REACT_APP_VERSION +
-    (process.env.REACT_APP_COMMIT_SHA
-      ? '-' + process.env.REACT_APP_COMMIT_SHA
+    import.meta.env.VITE_VERSION +
+    (import.meta.env.VITE_COMMIT_SHA
+      ? '-' + import.meta.env.VITE_COMMIT_SHA
       : '');
 }
 
 Sentry.init({
-  dsn: process.env.REACT_APP_SENTRY_DSN,
+  dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   enabled: process.env.NODE_ENV === 'production',
-  environment: process.env.REACT_APP_SENTRY_ENVIRONMENT ?? process.env.NODE_ENV,
+  environment: import.meta.env.VITE_SENTRY_ENVIRONMENT ?? process.env.NODE_ENV,
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,

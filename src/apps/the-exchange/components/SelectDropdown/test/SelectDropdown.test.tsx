@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';
@@ -52,9 +53,9 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-jest.mock('../../../../../services/tokensData', () => ({
+vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
-  chainNameDataCompatibility: jest
+  chainNameDataCompatibility: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {
@@ -70,7 +71,7 @@ jest.mock('../../../../../services/tokensData', () => ({
 
 describe('<SelectDropdown />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
@@ -89,8 +90,8 @@ describe('<SelectDropdown />', () => {
   });
 
   const options = [1, 137];
-  const onClickMock = jest.fn();
-  const onSelectMock = jest.fn();
+  const onClickMock = vi.fn();
+  const onSelectMock = vi.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer

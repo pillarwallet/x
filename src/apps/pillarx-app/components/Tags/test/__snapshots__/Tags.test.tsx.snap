@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Tags /> renders correctly and matches snapshot 1`] = `
+exports[`<Tags /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex gap-2 items-center bg-medium_grey py-1.5 desktop:px-4 tablet:px-4 rounded-md mobile:px-3"
 >

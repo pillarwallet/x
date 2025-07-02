@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<PrimeTokensBalance /> renders correctly and matches snapshot 1`] = `
+exports[`<PrimeTokensBalance /> > renders correctly and matches snapshot 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
@@ -11,7 +11,7 @@ exports[`<PrimeTokensBalance /> renders correctly and matches snapshot 1`] = `
         <img
           alt="prime-tokens-icon"
           class="w-4 h-4 opacity-50"
-          src="prime-tokens-icon.png"
+          src="/src/apps/pillarx-app/images/prime-tokens-icon.png"
         />
         <p
           class="text-sm font-medium text-white text-opacity-50"
@@ -25,7 +25,7 @@ exports[`<PrimeTokensBalance /> renders correctly and matches snapshot 1`] = `
           <img
             alt="prime-tokens-question-icon"
             class="w-3 h-3 cursor-pointer"
-            src="prime-tokens-question-icon.png"
+            src="/src/apps/pillarx-app/images/prime-tokens-question-icon.png"
           />
         </div>
       </div>
@@ -38,7 +38,7 @@ exports[`<PrimeTokensBalance /> renders correctly and matches snapshot 1`] = `
       <img
         alt="prime-tokens-icon"
         class="w-4 h-4 opacity-50"
-        src="prime-tokens-icon.png"
+        src="/src/apps/pillarx-app/images/prime-tokens-icon.png"
       />
       <p
         class="text-sm font-medium text-white text-opacity-50"
@@ -52,7 +52,7 @@ exports[`<PrimeTokensBalance /> renders correctly and matches snapshot 1`] = `
         <img
           alt="prime-tokens-question-icon"
           class="w-3 h-3 cursor-pointer"
-          src="prime-tokens-question-icon.png"
+          src="/src/apps/pillarx-app/images/prime-tokens-question-icon.png"
         />
       </div>
     </div>

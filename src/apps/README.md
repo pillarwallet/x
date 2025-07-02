@@ -29,10 +29,10 @@ Note: We have also included several example apps in the `src/apps` folder to hel
 
 4. Create a new folder in `src/apps/` with the identifier of your app as the folder name, e.g. `src/apps/your-app-identifier`, (identifier requirements: lowercase letters, kebab case). Examples of your identifier could be your brand or project name.
 
-5. Modify the `REACT_APP_PX_DEVELOPMENT_ID` property in your `.env` file to match your app identifier i.e. `your-app-identifier`. You may need to run `npm run start` again for the changes in the `.env` file to be picked up.
+5. Modify the `VITE_PX_DEVELOPMENT_ID` property in your `.env` file to match your app identifier i.e. `your-app-identifier`. You may need to run `npm run start` again for the changes in the `.env` file to be picked up.
 
 ```bash
-REACT_APP_PX_DEVELOPMENT_ID="your-app-identifier"
+VITE_PX_DEVELOPMENT_ID="your-app-identifier"
 ```
 
 6. Create a file: `src/apps/{your-app-identifier}/index.{js|ts|tsx}` and add a default export called `App` within your React component. You can check the example app to see how it's done.

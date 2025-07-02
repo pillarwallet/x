@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<PillarXLogo /> renders correctly and matches snapshot 1`] = `
+exports[`<PillarXLogo /> > renders correctly and matches snapshot 1`] = `
 [
   <img
     alt="pillar-x-logo"

@@ -1,17 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import GasNewDropCard from '../GasNewDropCard';
 
-// Mock luxon DateTime.now()
-jest.mock('luxon', () => {
-  const actualLuxon = jest.requireActual('luxon');
-  return {
-    ...actualLuxon,
-    DateTime: {
-      ...actualLuxon.DateTime,
-      now: () => actualLuxon.DateTime.fromMillis(1750307487101), // fixed mock time (Oct 19, 2025)
-      fromMillis: actualLuxon.DateTime.fromMillis,
-    },
-  };
+beforeAll(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date(1750307487101)); // fixed mock time (Oct 19, 2025)
+});
+
+afterAll(() => {
+  vi.useRealTimers();
 });
 
 describe('GasNewDropCard', () => {

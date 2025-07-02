@@ -69,17 +69,21 @@ const App = ({ id }: { id: string }) => {
   }));
 
   useEffect(() => {
-    const loadedApp = loadApp(id);
-    setApp(loadedApp);
+    const fetchApp = async () => {
+      const loadedApp = await loadApp(id);
+      setApp(loadedApp);
 
-    // Start the spring animation with reset, immediate, and configuration
-    api.start({
-      from: { opacity: 0 },
-      to: { opacity: 1 },
-      config: { duration: 500 },
-      delay: isAnimated ? 1500 : 0, // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
-      reset: true,
-    });
+      // Start the spring animation with reset, immediate, and configuration
+      api.start({
+        from: { opacity: 0 },
+        to: { opacity: 1 },
+        config: { duration: 500 },
+        delay: isAnimated ? 1500 : 0, // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
+        reset: true,
+      });
+    };
+
+    fetchApp();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -89,8 +93,11 @@ const App = ({ id }: { id: string }) => {
       setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
     try {
-      return await import(`../../apps/${id}`);
+      const appImport = await import(/* @vite-ignore */ `../../apps/${id}`);
+
+      return appImport;
     } catch (e) {
+      console.error(`Failed to load app component for ${id}`, e);
       return { default: () => <Alert>{t`error.appNotFound`}</Alert> };
     }
   });

@@ -2,6 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // api
 import { useGetTrendingTokensQuery } from '../../../api/token';
@@ -19,8 +23,8 @@ import {
 // components
 import TokensSlider from '../TokensSlider';
 
-jest.mock('../../../api/token', () => ({
-  useGetTrendingTokensQuery: jest.fn(),
+vi.mock('../../../api/token', () => ({
+  useGetTrendingTokensQuery: vi.fn(),
 }));
 
 const mockTrendingTokens = {
@@ -44,14 +48,14 @@ const mockTrendingTokens = {
 
 describe('<TokensSlider />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     store.dispatch(setSelectedToken(undefined));
     store.dispatch(setIsSearchTokenModalOpen(false));
     store.dispatch(setSelectedChain({ chainId: 0, chainName: 'all' }));
   });
 
   it('renders correctly and matches snapshot when loading', () => {
-    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+    (useGetTrendingTokensQuery as Mock).mockReturnValue({
       data: null,
       isLoading: true,
       isFetching: false,
@@ -71,7 +75,7 @@ describe('<TokensSlider />', () => {
   });
 
   it('renders loading skeletons while fetching data', () => {
-    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+    (useGetTrendingTokensQuery as Mock).mockReturnValue({
       data: null,
       isLoading: true,
       isFetching: false,
@@ -90,7 +94,7 @@ describe('<TokensSlider />', () => {
   });
 
   it('renders correctly when trending tokens are available', () => {
-    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+    (useGetTrendingTokensQuery as Mock).mockReturnValue({
       data: mockTrendingTokens,
       isLoading: false,
       isFetching: false,
@@ -109,7 +113,7 @@ describe('<TokensSlider />', () => {
   });
 
   it('handles token selection correctly', () => {
-    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+    (useGetTrendingTokensQuery as Mock).mockReturnValue({
       data: mockTrendingTokens,
       isLoading: false,
       isFetching: false,
@@ -145,7 +149,7 @@ describe('<TokensSlider />', () => {
   });
 
   it('renders correctly when no trending tokens are available', () => {
-    (useGetTrendingTokensQuery as jest.Mock).mockReturnValue({
+    (useGetTrendingTokensQuery as Mock).mockReturnValue({
       data: { data: [] },
       isLoading: false,
       isFetching: false,

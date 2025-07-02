@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensSlider /> renders correctly and matches snapshot when loading 1`] = `
+exports[`<TokensSlider /> > renders correctly and matches snapshot when loading 1`] = `
 .c0 {
   height: 125px;
   width: 108px;

@@ -48,7 +48,7 @@ const useDeployWallet = () => {
   };
 
   const getGasPrice = async (chainId: number): Promise<string | undefined> => {
-    const apiKey = process.env.REACT_APP_ETHERSPOT_DATA_API_KEY;
+    const apiKey = import.meta.env.VITE_ETHERSPOT_DATA_API_KEY;
 
     if (!chainId) {
       console.error('getGasPrice: chainId is required');
@@ -86,7 +86,7 @@ const useDeployWallet = () => {
     accountAddress: string,
     chainId: number
   ): Promise<boolean | undefined> => {
-    const apiKey = process.env.REACT_APP_ETHERSPOT_DATA_API_KEY;
+    const apiKey = import.meta.env.VITE_ETHERSPOT_DATA_API_KEY;
 
     if (!accountAddress) {
       console.error('isWalletDeployed: accountAddress is required');

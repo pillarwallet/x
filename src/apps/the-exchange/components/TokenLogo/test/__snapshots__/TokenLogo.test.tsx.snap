@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenLogo /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenLogo /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex min-w-fit items-end"
 >

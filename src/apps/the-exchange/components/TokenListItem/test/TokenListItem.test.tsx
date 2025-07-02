@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // utils
 import { limitDigits } from '../../../../token-atlas/utils/converters';
@@ -20,7 +21,7 @@ describe('<TokenListItem />', () => {
     price: 1.15,
   };
 
-  const onClickMock = jest.fn();
+  const onClickMock = vi.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer

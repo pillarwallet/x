@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = `
+exports[`<WalletAddressOverview /> > renders correctly and matches snapshot 1`] = `
 <div
   className="desktop:flex tablet:flex mobile:hidden mb-[54px] gap-2.5 items-center"
 >
@@ -92,7 +92,7 @@ exports[`<WalletAddressOverview /> renders correctly and matches snapshot 1`] = 
     <img
       alt="copy-adress-icon"
       className="cursor-pointer"
-      src="token-market-data-copy.png"
+      src="/src/apps/pillarx-app/images/token-market-data-copy.png"
       style={
         {
           "height": "full",

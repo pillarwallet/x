@@ -1,14 +1,69 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<DisplayCollectionImage /> renders correctly and matches snapshot with image 1`] = `
-<img
-  alt="nft-image"
-  className="test-class undefined"
+exports[`<DisplayCollectionImage /> > renders correctly and matches snapshot without image 1`] = `
+<div
+  className="overflow-hidden test-class undefined"
   data-testid="display-collection-image"
-  id="pillarx-feed-display-collection-image"
+  id="pillarx-feed-display-collection-avatar"
   onClick={[Function]}
-  src="test-image.png"
-/>
+>
+  <svg
+    className="rounded-md"
+    data-testid="random-avatar"
+    fill="none"
+    role="img"
+    viewBox="0 0 80 80"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      height={80}
+      id=":r0:"
+      maskUnits="userSpaceOnUse"
+      width={80}
+      x={0}
+      y={0}
+    >
+      <rect
+        fill="#FFFFFF"
+        height={80}
+        width={80}
+      />
+    </mask>
+    <g
+      mask="url(#:r0:)"
+    >
+      <rect
+        fill="#F0AB3D"
+        height={80}
+        width={80}
+      />
+      <rect
+        fill="#C271B4"
+        height={10}
+        transform="translate(6 -6) rotate(254 40 40)"
+        width={80}
+        x={10}
+        y={30}
+      />
+      <circle
+        cx={40}
+        cy={40}
+        fill="#C20D90"
+        r={16}
+        transform="translate(-6 6)"
+      />
+      <line
+        stroke="#92A1C6"
+        strokeWidth={2}
+        transform="translate(-8 -8) rotate(148 40 40)"
+        x1={0}
+        x2={80}
+        y1={40}
+        y2={40}
+      />
+    </g>
+  </svg>
+</div>
 `;
 
 exports[`<DisplayCollectionImage /> renders correctly and matches snapshot without image 1`] = `

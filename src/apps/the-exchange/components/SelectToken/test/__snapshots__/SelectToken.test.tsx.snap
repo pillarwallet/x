@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<SelectToken /> renders correctly and matches snapshot 1`] = `
+exports[`<SelectToken /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex justify-between items-start mb-4"
   id="select-token-info-exchange"
-  onClick={[MockFunction]}
+  onClick={[MockFunction spy]}
 >
   <div
     className="flex w-full flex-col"

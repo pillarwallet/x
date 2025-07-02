@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletPortfolioBalance renders correctly and matches snapshot 1`] = `
+exports[`WalletPortfolioBalance > renders correctly and matches snapshot 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
@@ -37,7 +37,7 @@ exports[`WalletPortfolioBalance renders correctly and matches snapshot 1`] = `
           <img
             alt="refresh-button"
             class="w-9 h-[34px]"
-            src="refresh-icon.png"
+            src="refresh-button.png"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@ exports[`WalletPortfolioBalance renders correctly and matches snapshot 1`] = `
         <img
           alt="refresh-button"
           class="w-9 h-[34px]"
-          src="refresh-icon.png"
+          src="refresh-button.png"
         />
       </div>
     </div>

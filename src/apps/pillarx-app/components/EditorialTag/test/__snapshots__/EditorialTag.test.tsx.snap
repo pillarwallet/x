@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<EditorialTag /> renders correctly and matches snapshot 1`] = `
+exports[`<EditorialTag /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex relative rounded py-1 px-2 w-fit mr-2"
   id="editorial-tag"

@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
   EtherspotBatch,
   EtherspotBatches,
@@ -25,15 +24,16 @@ import {
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 
 // components
 import AssetSelect from '../../Form/AssetSelect';
 import FormGroup from '../../Form/FormGroup';
 import Label from '../../Form/Label';
+import Select from '../../Form/Select';
 import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
-import Select from '../../Form/Select';
 
 // providers
 import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
@@ -46,11 +46,11 @@ import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatc
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // services
-import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 import {
   GasConsumptions,
   getAllGaslessPaymasters,
 } from '../../../services/gasless';
+import { useRecordPresenceMutation } from '../../../services/pillarXApiPresence';
 import { getUserOperationStatus } from '../../../services/userOpStatus';
 
 // utils
@@ -68,25 +68,25 @@ import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
 import {
-  SendModalData,
-  AssetSelectOption,
-  TokenAssetSelectOption,
-  SelectOption,
-} from '../../../types';
+  useAppDispatch,
+  useAppSelector,
+} from '../../../apps/the-exchange/hooks/useReducerHooks';
+import { setWalletPortfolio } from '../../../apps/the-exchange/reducer/theExchangeSlice';
+import {
+  convertPortfolioAPIResponseToToken,
+  useGetWalletPortfolioQuery,
+} from '../../../services/pillarXApiWalletPortfolio';
 import {
   chainNameToChainIdTokensData,
   Token,
 } from '../../../services/tokensData';
 import {
-  useAppDispatch,
-  useAppSelector,
-} from '../../../apps/the-exchange/hooks/useReducerHooks';
-import {
-  convertPortfolioAPIResponseToToken,
-  useGetWalletPortfolioQuery,
-} from '../../../services/pillarXApiWalletPortfolio';
+  AssetSelectOption,
+  SelectOption,
+  SendModalData,
+  TokenAssetSelectOption,
+} from '../../../types';
 import { PortfolioData } from '../../../types/api';
-import { setWalletPortfolio } from '../../../apps/the-exchange/reducer/theExchangeSlice';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -133,7 +133,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setShowBatchSendModal,
     setWalletConnectPayload,
   } = useBottomMenuModal();
-  const paymasterUrl = process.env.REACT_APP_PAYMASTER_URL;
+  const paymasterUrl = import.meta.env.VITE_PAYMASTER_URL;
   const [isPaymaster, setIsPaymaster] = React.useState<boolean>(false);
   const [paymasterContext, setPaymasterContext] = React.useState<{
     mode: string;

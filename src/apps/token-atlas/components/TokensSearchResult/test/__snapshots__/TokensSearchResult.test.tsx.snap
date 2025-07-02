@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensSearchResult /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensSearchResult /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col w-full"
   id="token-atlas-token-search-result"

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // types
 import { ApiLayout, Projection } from '../../../../../types/api';
@@ -80,7 +81,7 @@ describe('<GenericBannerTile />', () => {
   });
 
   it('calls window.open when button is clicked', () => {
-    window.open = jest.fn();
+    window.open = vi.fn();
 
     render(
       <GenericBannerTile data={mockDataGenericBanner} isDataLoading={false} />

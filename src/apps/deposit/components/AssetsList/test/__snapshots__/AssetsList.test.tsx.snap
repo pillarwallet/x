@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<AssetsList /> renders correctly and matches snapshot 1`] = `
+exports[`<AssetsList /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-4 w-full mt-8"
   id="deposit-app-assets-list"

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<EnterAmount /> renders correctly and matches snapshot 1`] = `
+exports[`<EnterAmount /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-1 group"
   id="enter-amount-exchange"
@@ -36,7 +36,7 @@ exports[`<EnterAmount /> renders correctly and matches snapshot 1`] = `
     </p>
     <img
       alt="Send"
-      src="send-arrow.png"
+      src="/src/apps/the-exchange/images/send-arrow.png"
     />
   </div>
 </div>

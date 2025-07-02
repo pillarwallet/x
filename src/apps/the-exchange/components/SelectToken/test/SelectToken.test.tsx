@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 
+import { vi } from 'vitest';
+
 // components
 import SelectToken from '../SelectToken';
 
@@ -11,8 +13,8 @@ import { CardPosition } from '../../../utils/types';
 import { getChainName } from '../../../../../utils/blockchain';
 
 // Mock the getChainName function
-jest.mock('../../../utils/converters', () => ({
-  getChainName: jest.fn(),
+vi.mock('../../../utils/converters', () => ({
+  getChainName: vi.fn(),
 }));
 
 describe('<SelectToken />', () => {
@@ -20,7 +22,7 @@ describe('<SelectToken />', () => {
   const tokenName = 'Token Example';
   const tokenChain = 1;
   const tokenLogo = 'https://example.com/token-logo.png';
-  const onClickMock = jest.fn();
+  const onClickMock = vi.fn();
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer

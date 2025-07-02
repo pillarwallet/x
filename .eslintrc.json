@@ -90,6 +90,7 @@
     "postcss.config.js",
     "config-overrides.js",
     "tailwind.config.js",
+    "setupTests.ts",
     "src/apps/**", // Ignore everything in src/apps/
     "!src/apps/pillarx-app/", // Unignore this folder
     "!src/apps/pillarx-app/**", // Unignore all contents in this folder

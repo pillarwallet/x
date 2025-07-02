@@ -50,9 +50,9 @@ export default function Authorized({
       provider={provider}
       chainId={chainId}
       bundlerApiKey={
-        process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || undefined
+        import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || undefined
       }
-      dataApiKey={process.env.REACT_APP_ETHERSPOT_DATA_API_KEY || undefined}
+      dataApiKey={import.meta.env.VITE_ETHERSPOT_DATA_API_KEY || undefined}
     >
       <AccountTransactionHistoryProvider>
         <AccountNftsProvider>
