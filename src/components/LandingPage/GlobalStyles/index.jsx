@@ -609,7 +609,7 @@ const GlobalStyles = createGlobalStyle`
   
   .home_hero__content {
     position: absolute;
-    transform: translateY(-90%);
+    transform: translateY(-130%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -617,7 +617,7 @@ const GlobalStyles = createGlobalStyle`
 
   @media only screen and (max-width: 767px) {
     .home_hero__content {
-      transform: translateY(-210%);
+      transform: translateY(-300%);
     }
   }
   
