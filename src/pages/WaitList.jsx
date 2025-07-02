@@ -122,6 +122,28 @@ const Waitlist = () => {
         </div>
       </section>
 
+      <section className="home_signup_tnc">
+        <div className="container">
+          <div className="home_signup_tnc__content">
+            <p>
+              Participation in the PillarX Soft Launch Campaign is subject to
+              the official campaign rules and eligibility requirements. Rewards
+              may vary depending on participant activity, task completion, or
+              other criteria outlined in the{' '}
+              <a
+                href="https://blog.pillarx.app/pillarx-soft-launch-10000-allocated-for-migrating/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                campaign terms
+              </a>
+              . PillarX reserves the right to modify, suspend, or terminate the
+              campaign at any time without prior notice.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <Footer />
     </>
