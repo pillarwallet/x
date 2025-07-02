@@ -60,6 +60,7 @@
     "i18next": "^23.7.6",
     "iconsax-react": "^0.0.8",
     "identicon.js": "^2.3.3",
+    "jest-styled-components": "^7.2.0",
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "mime": "^4.0.4",
