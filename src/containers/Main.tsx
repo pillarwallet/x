@@ -250,28 +250,12 @@ const AuthLayout = () => {
         path: `/${appId}`,
         element: <App id={appId} />,
       });
+
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${appId}/*`,
+        element: <App id={appId} />,
+      });
     }
-
-    // Next, add the allowed apps to the route definition
-    // allowedApps.forEach((appId) => {
-    // authorizedRoutesDefinition[0].children.push({
-    //   path: `/${appId}`,
-    //   element: <App id={appId} />,
-    // });
-    // authorizedRoutesDefinition[0].children.push({
-    //   path: `/${appId}/*`,
-    //   element: <App id={appId} />,
-    // });
-    // });
-
-    // Finally, add the development app to the route definition
-    // if it exists...
-    // if (import.meta.env.VITE_PX_DEVELOPMENT_ID) {
-    //   authorizedRoutesDefinition[0].children.push({
-    //     path: `/${import.meta.env.VITE_PX_DEVELOPMENT_ID}`,
-    //     element: <App id={import.meta.env.VITE_PX_DEVELOPMENT_ID} />,
-    //   });
-    // }
 
     // ...and add the 404 route to the route definition
     // for good measure
