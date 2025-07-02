@@ -239,24 +239,18 @@ const AuthLayout = () => {
     /**
      * Import directort globs
      */
-    // const appImports = import.meta.glob('../apps/*/index.tsx');
-    // console.log('appImports', appImports);
-    // for (const path in appImports) {
-    //   // Extract the app ID from the path
-    //   const appId = path.split('/')[2];
-    //   console.log('appId', appId);
+    const appImports = import.meta.glob('../apps/*/index.tsx');
+    console.log('appImports', appImports);
+    for (const path in appImports) {
+      // Extract the app ID from the path
+      const appId = path.split('/')[2];
+      console.log('appId', appId);
 
-    //   authorizedRoutesDefinition[0].children.push({
-    //     path: `/${appId}`,
-    //     element: <App id={appId} />,
-    //   });
-    // }
-
-    authorizedRoutesDefinition[0].children.push({
-      path: `/token-atlas`,
-      element: <App id="token-atlas" />,
-      // element: <TokenAtlas.App />,
-    });
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${appId}`,
+        element: <App id={appId} />,
+      });
+    }
 
     // Next, add the allowed apps to the route definition
     // allowedApps.forEach((appId) => {
