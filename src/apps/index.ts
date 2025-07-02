@@ -72,6 +72,20 @@ export const loadApps = async (allowedApps: string[]) => {
   }
 
   /**
+   * Load App Manifests
+   */
+
+  const appManifests = import.meta.glob('../apps/**/manifest.json');
+  console.log('App Manifests:', appManifests);
+
+  /**
+   * Load Apps
+   */
+
+  const globbedApps = import.meta.glob('../apps/**');
+  console.log('Globbed Apps:', globbedApps);
+
+  /**
    * Finally, did we have a VITE_PX_DEVELOPMENT_ID environment variable set?
    * Attempt to load this also.
    */
@@ -86,6 +100,8 @@ export const loadApps = async (allowedApps: string[]) => {
       loadedApps[import.meta.env.VITE_PX_DEVELOPMENT_ID] = developmentApp;
     }
   }
+
+  console.log(loadedApps);
 
   // Return the final list of apps
   return loadedApps;

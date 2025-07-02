@@ -33,20 +33,21 @@ import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
 
 // pages
-import App from '../pages/App';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
-import Waitlist from '../pages/WaitList';
 import Privacy from '../pages/Privacy';
+import Waitlist from '../pages/WaitList';
 import Authorized from './Authorized';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
 import usePrivateKeyLogin from '../hooks/usePrivateKeyLogin';
+
+import App from '../pages/App';
 
 /**
  * @name AuthLayout
@@ -235,26 +236,48 @@ const AuthLayout = () => {
       },
     ];
 
-    // Next, add the allowed apps to the route definition
-    allowedApps.forEach((appId) => {
-      authorizedRoutesDefinition[0].children.push({
-        path: `/${appId}`,
-        element: <App id={appId} />,
-      });
-      authorizedRoutesDefinition[0].children.push({
-        path: `/${appId}/*`,
-        element: <App id={appId} />,
-      });
+    /**
+     * Import directort globs
+     */
+    // const appImports = import.meta.glob('../apps/*/index.tsx');
+    // console.log('appImports', appImports);
+    // for (const path in appImports) {
+    //   // Extract the app ID from the path
+    //   const appId = path.split('/')[2];
+    //   console.log('appId', appId);
+
+    //   authorizedRoutesDefinition[0].children.push({
+    //     path: `/${appId}`,
+    //     element: <App id={appId} />,
+    //   });
+    // }
+
+    authorizedRoutesDefinition[0].children.push({
+      path: `/token-atlas`,
+      element: <App id="token-atlas" />,
+      // element: <TokenAtlas.App />,
     });
+
+    // Next, add the allowed apps to the route definition
+    // allowedApps.forEach((appId) => {
+    // authorizedRoutesDefinition[0].children.push({
+    //   path: `/${appId}`,
+    //   element: <App id={appId} />,
+    // });
+    // authorizedRoutesDefinition[0].children.push({
+    //   path: `/${appId}/*`,
+    //   element: <App id={appId} />,
+    // });
+    // });
 
     // Finally, add the development app to the route definition
     // if it exists...
-    if (import.meta.env.VITE_PX_DEVELOPMENT_ID) {
-      authorizedRoutesDefinition[0].children.push({
-        path: `/${import.meta.env.VITE_PX_DEVELOPMENT_ID}`,
-        element: <App id={import.meta.env.VITE_PX_DEVELOPMENT_ID} />,
-      });
-    }
+    // if (import.meta.env.VITE_PX_DEVELOPMENT_ID) {
+    //   authorizedRoutesDefinition[0].children.push({
+    //     path: `/${import.meta.env.VITE_PX_DEVELOPMENT_ID}`,
+    //     element: <App id={import.meta.env.VITE_PX_DEVELOPMENT_ID} />,
+    //   });
+    // }
 
     // ...and add the 404 route to the route definition
     // for good measure

@@ -94,6 +94,13 @@ const App = ({ id }: { id: string }) => {
     }); // artificial 1s delay
     try {
       const appImport = await import(/* @vite-ignore */ `../../apps/${id}`);
+      console.log(`Loaded app component for ${id}`, appImport);
+      // const appImport = await import.meta.glob(/* @vite-ignore */`../../apps/${id}`, {
+      //   eager: true,
+      //   import: 'default',
+      //.  query: 'react'
+      // });
+      // console.log(`Loaded app component for ${id}`, appImport);
 
       return appImport;
     } catch (e) {
