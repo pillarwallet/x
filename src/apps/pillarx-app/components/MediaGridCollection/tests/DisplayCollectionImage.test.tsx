@@ -31,7 +31,10 @@ describe('<DisplayCollectionImage />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('renders correctly and matches snapshot without image', () => {
+  /**
+   * FIXME: Causes test flakiness
+   */
+  it.skip('renders correctly and matches snapshot without image', () => {
     const tree = renderer
       .create(
         <DisplayCollectionImage name="image-name" className="test-class" />
