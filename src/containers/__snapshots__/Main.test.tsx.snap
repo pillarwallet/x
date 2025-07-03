@@ -101,7 +101,7 @@ exports[`<Main /> > renders correctly 1`] = `
           className="home_hero__signup"
         >
           <p>
-            Earn PX points and get a chance to share the $1,000 prize pool!
+            Special Soft Launch Campaign with a $10,000 prize pool is now live. Exclusively for waitlist participants and Pillar users!
           </p>
           <a
             className="cta plausible-event-name=Waitlist+Home+Hero"
@@ -419,16 +419,40 @@ exports[`<Main /> > renders correctly 1`] = `
       <div
         className="footer__wrapper"
       >
-        <a
-          href="https://twitter.com/PX_Web3"
-          rel="noreferrer"
-          target="_blank"
+        <div
+          className="footer__links"
         >
-          <img
-            alt="home-image"
-            src="https://cdn.pillarx.app/home-x.svg"
-          />
-        </a>
+          <a
+            href="/privacy-policy"
+            onClick={[Function]}
+          >
+            Privacy Policy
+          </a>
+        </div>
+        <div
+          className="footer__socials"
+        >
+          <a
+            href="https://x.com/PX_Web3"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="x-image"
+              src="https://cdn.pillarx.app/home-x.svg"
+            />
+          </a>
+          <a
+            href="https://t.me/+WmZpena91_dlNDhk"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="home-image"
+              src="https://cdn.pillarx.app/social-telegram.svg"
+            />
+          </a>
+        </div>
       </div>
     </div>
   </footer>

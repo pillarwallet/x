@@ -17,8 +17,7 @@ export const loadApp = async (appId: string) => {
   let appManifest: AppManifest | null = null;
 
   try {
-    const appPath = `./${appId}/manifest.json` as string;
-    appManifest = (await import(/* @vite-ignore */ appPath)) as AppManifest;
+    appManifest = (await import(`./${appId}/manifest.json`)) as AppManifest;
 
     if (appManifest.translations) {
       Object.keys(appManifest.translations).forEach((languageKey) => {
@@ -68,22 +67,6 @@ export const loadApps = async (allowedApps: string[]) => {
       }
     } else {
       continue;
-    }
-  }
-
-  /**
-   * Finally, did we have a VITE_PX_DEVELOPMENT_ID environment variable set?
-   * Attempt to load this also.
-   */
-  if (import.meta.env.VITE_PX_DEVELOPMENT_ID) {
-    const developmentApp = await loadApp(
-      import.meta.env.VITE_PX_DEVELOPMENT_ID
-    );
-
-    // Did we load it okay?
-    if (developmentApp) {
-      // Add to the loadedApps record
-      loadedApps[import.meta.env.VITE_PX_DEVELOPMENT_ID] = developmentApp;
     }
   }
 
