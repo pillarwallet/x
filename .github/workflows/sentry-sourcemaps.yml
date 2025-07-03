@@ -32,3 +32,5 @@ jobs:
           # if branch name is main, use production environment else use staging
           environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           sourcemaps: './build'
+          ignore_missing: true
+          release: ${{ github.sha }}
