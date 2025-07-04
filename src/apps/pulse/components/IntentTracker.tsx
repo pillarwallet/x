@@ -23,6 +23,10 @@ const getStatusIndex = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLIS
     return 2;
   if(status === "EXECUTED")
     return 3;
+  if(status === "CLAIMED")
+    return 4;
+  if(status === "RESOURCE_LOCK_RELEASED")
+    return 5;
   return -1;
 }
 
@@ -189,9 +193,9 @@ export default function IntentTracker(props: Props) {
         style={{
           margin: 2,
           borderRadius: 10,
-          backgroundColor: getStatusIndex(bid?.bidStatus) !== 3 ? "#121116" : "#8A77FF"
+          backgroundColor: getStatusIndex(bid?.bidStatus) < 3 ? "#121116" : "#8A77FF"
         }}
-        disabled={getStatusIndex(bid?.bidStatus) !== 3}
+        disabled={getStatusIndex(bid?.bidStatus) < 3}
         onClick={props.closePreview}
       >
         Close
