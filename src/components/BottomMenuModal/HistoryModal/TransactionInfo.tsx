@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
@@ -11,7 +12,7 @@ import CopyIcon from '../../../apps/pillarx-app/images/copy-icon.svg';
 import ExternalLinkLogo from '../../../apps/token-atlas/images/external-link-audit.svg';
 
 // utils
-import { getBlockScan } from '../../../utils/blockchain';
+import { getBlockScan, getBlockScanName } from '../../../utils/blockchain';
 
 const TransactionInfo = () => {
   const {
@@ -20,6 +21,7 @@ const TransactionInfo = () => {
     latestUserOpInfo,
     latestUserOpChainId,
   } = useAccountTransactionHistory();
+  const walletAddress = useWalletAddress();
 
   const [copied, setCopied] = useState(false);
 
@@ -83,14 +85,32 @@ const TransactionInfo = () => {
     }
   }, [userOpStatus, transactionHash, latestUserOpInfo, latestUserOpChainId]);
 
-  const steps = ['Sending', 'Sent', 'Confirmed/Failed'] as const;
+  const steps = ['Sending', 'Sent'] as const;
 
   const stepIndex = (() => {
     if (displayStatus === 'Sending') return 0;
-    if (displayStatus === 'Sent') return 1;
-    if (displayStatus === 'Confirmed' || displayStatus === 'Failed') return 2;
+    if (
+      displayStatus === 'Sent' ||
+      displayStatus === 'Confirmed' ||
+      displayStatus === 'Failed'
+    )
+      return 1;
     return -1;
   })();
+
+  const stepsStatus = () => {
+    if (displayStatus === 'Sending') {
+      return 'Sending';
+    }
+    if (
+      displayStatus === 'Sent' ||
+      displayStatus === 'Confirmed' ||
+      displayStatus === 'Failed'
+    ) {
+      return 'Sent';
+    }
+    return '...';
+  };
 
   useEffect(() => {
     if (copied) {
@@ -111,11 +131,7 @@ const TransactionInfo = () => {
             <div
               key={index}
               className={`flex-1 h-2 mx-1 rounded ${
-                isStepCompleted
-                  ? displayStatus === 'Failed' && index === 2
-                    ? 'bg-[#FF366C]'
-                    : 'bg-medium_purple'
-                  : 'bg-white/[.5]'
+                isStepCompleted ? 'bg-medium_purple' : 'bg-white/[.5]'
               }`}
             />
           );
@@ -123,57 +139,74 @@ const TransactionInfo = () => {
       </div>
       {/* UserOp status */}
       <p className="text-sm font-medium text-light_purple">
-        Status:{' '}
-        <span className="font-normal text-white">
-          {displayStatus ?? 'Starting...'}
-        </span>
+        Status: <span className="font-normal text-white">{stepsStatus()}</span>
       </p>
 
       <div className="flex flex-col items-start w-full space-y-2 mt-4">
         {/* Transaction info */}
         <p className="text-xs text-light_purple font-medium ">
           Tx info:{' '}
-          <span className="font-normal text-white">
-            {displayInfo ?? 'Waiting...'}
-          </span>
+          <span className="font-normal text-white">{displayInfo ?? '...'}</span>
         </p>
-
         {/* Transaction hash */}
-        <CopyToClipboard
-          text={displayHash || ''}
-          onCopy={() => setCopied(true)}
-        >
-          <div className="flex items-center justify-between max-w-full cursor-pointer">
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-light_purple font-normal truncate">
-                Tx Hash:{' '}
-                <span className="font-normal text-white">
-                  {displayHash ?? 'Waiting...'}
-                </span>
-              </p>
-            </div>
-            <div className="flex flex-shrink-0 pl-2">
-              {copied ? (
-                <MdCheck
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    color: 'white',
-                    opacity: 0.5,
-                  }}
-                />
+        {displayStatus !== 'Confirmed' && displayStatus !== 'Failed' ? (
+          <div className="flex items-center justify-between max-w-full">
+            <p className="text-xs text-light_purple font-normal truncate">
+              Tx Hash:{' '}
+              <span className="font-normal text-white">
+                {displayHash ?? '...'}
+              </span>
+            </p>
+          </div>
+        ) : (
+          <CopyToClipboard
+            text={displayHash || ''}
+            onCopy={() => setCopied(true)}
+          >
+            <div className="flex items-center justify-between max-w-full cursor-pointer">
+              {displayStatus !== 'Confirmed' ||
+              !displayHash ||
+              displayChainId === '137' ? (
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs white font-normal truncate">
+                    Please check the transaction status on{' '}
+                    {getBlockScanName(Number(displayChainId))}:
+                  </p>
+                </div>
               ) : (
-                <img
-                  src={CopyIcon}
-                  alt="copy-evm-address"
-                  className="w-3 h-3.5"
-                />
+                <>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-light_purple font-normal truncate">
+                      Tx Hash:{' '}
+                      <span className="font-normal text-white">
+                        {displayHash}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex flex-shrink-0 pl-2">
+                    {copied ? (
+                      <MdCheck
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          color: 'white',
+                          opacity: 0.5,
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={CopyIcon}
+                        alt="copy-evm-address"
+                        className="w-3 h-3.5"
+                      />
+                    )}
+                  </div>
+                </>
               )}
             </div>
-          </div>
-        </CopyToClipboard>
-
-        {displayHash && displayChainId && (
+          </CopyToClipboard>
+        )}
+        {displayHash && displayChainId && displayStatus === 'Confirmed' && (
           <button
             type="button"
             className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
@@ -186,6 +219,29 @@ const TransactionInfo = () => {
             }
           >
             <p className="text-sm text-white font-normal">View transaction</p>
+            <img
+              className="w-3 h-3"
+              src={ExternalLinkLogo}
+              alt="external-link-icon"
+            />
+          </button>
+        )}
+
+        {displayStatus === 'Failed' && displayChainId && (
+          <button
+            type="button"
+            className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
+            onClick={() =>
+              window.open(
+                `${getBlockScan(Number(displayChainId), true)}${walletAddress}`,
+                '_blank',
+                'noopener,noreferrer'
+              )
+            }
+          >
+            <p className="text-sm text-white font-normal">
+              View {getBlockScanName(Number(displayChainId))}
+            </p>
             <img
               className="w-3 h-3"
               src={ExternalLinkLogo}

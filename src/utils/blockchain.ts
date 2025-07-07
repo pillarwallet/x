@@ -215,22 +215,43 @@ export const isApproveTransaction = (callData: string) => {
   return methodId === approveMethodId;
 };
 
-export const getBlockScan = (chain: number) => {
+export const getBlockScan = (chain: number, isAddress: boolean = false) => {
   switch (chain) {
     case 1:
-      return 'https://etherscan.io/tx/';
+      return `https://etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 137:
-      return 'https://polygonscan.com/tx/';
+      return `https://polygonscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 8453:
-      return 'https://basescan.org/tx/';
+      return `https://basescan.org/${isAddress ? 'address' : 'tx'}/`;
     case 100:
-      return 'https://gnosisscan.io/tx/';
+      return `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 56:
-      return 'https://bscscan.com/tx/';
+      return `https://bscscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 10:
-      return 'https://optimistic.etherscan.io/tx/';
+      return `https://optimistic.etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 42161:
-      return 'http://arbiscan.io/tx/';
+      return `http://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
+    default:
+      return '';
+  }
+};
+
+export const getBlockScanName = (chain: number) => {
+  switch (chain) {
+    case 1:
+      return 'Etherscan';
+    case 137:
+      return 'Polygonscan';
+    case 8453:
+      return 'Basescan';
+    case 100:
+      return 'Gnosisscan';
+    case 56:
+      return 'Bscscan';
+    case 10:
+      return 'Optimistic Etherscan';
+    case 42161:
+      return 'Arbiscan';
     default:
       return '';
   }

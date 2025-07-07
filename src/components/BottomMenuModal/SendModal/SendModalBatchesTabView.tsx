@@ -7,7 +7,9 @@ import {
   EtherspotTransaction,
   ISentBatches,
   useEtherspotTransactions,
+  useWalletAddress,
 } from '@etherspot/transaction-kit';
+import * as Sentry from '@sentry/react';
 import { ethers } from 'ethers';
 import {
   ArrowRight2 as ArrowRightIcon,
@@ -64,6 +66,7 @@ const SendModalBatchesTabView = () => {
   >({});
   const { send } = useEtherspotTransactions();
   const { showHistory } = useBottomMenuModal();
+  const accountAddress = useWalletAddress();
   const contextNfts = useContext(AccountNftsContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
   const {
@@ -198,6 +201,7 @@ const SendModalBatchesTabView = () => {
     const userOpStatusInterval = 5000; // 5 seconds
     const maxAttempts = 9; // 9 * 5sec = 45sec
     let attempts = 0;
+    let sentryCaptured = false;
 
     const userOperationStatus = setInterval(async () => {
       attempts += 1;
@@ -218,6 +222,15 @@ const SendModalBatchesTabView = () => {
           return;
         }
 
+        const sentryPayload = {
+          walletAddress: accountAddress,
+          userOpHash: newUserOpHash,
+          chainId,
+          transactionHash: response?.transaction,
+          attempts,
+          status,
+        };
+
         if (status === 'Reverted') {
           if (attempts < maxAttempts) {
             setUserOpStatus('Sent');
@@ -227,6 +240,31 @@ const SendModalBatchesTabView = () => {
               'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
               response?.transaction
             );
+
+            // Sentry capturing
+            if (!sentryCaptured) {
+              sentryCaptured = true;
+              // Polygon chain
+              if (chainId === 137) {
+                Sentry.captureMessage(
+                  `Max attempts reached with userOp status "${status}" on Polygon`,
+                  {
+                    level: 'warning',
+                    extra: sentryPayload,
+                  }
+                );
+              } else {
+                // Other chains
+                Sentry.captureException(
+                  `Max attempts reached with userOp status "${status}"`,
+                  {
+                    level: 'error',
+                    extra: sentryPayload,
+                  }
+                );
+              }
+            }
+
             setTransactionHash(response?.transaction);
             clearInterval(userOperationStatus);
           }
@@ -257,6 +295,31 @@ const SendModalBatchesTabView = () => {
           );
           if (userOpStatus !== 'Confirmed') {
             setUserOpStatus('Failed');
+
+            // Sentry capturing
+            if (!sentryCaptured) {
+              sentryCaptured = true;
+              // Polygon chain
+              if (chainId === 137) {
+                Sentry.captureMessage(
+                  `Max attempts reached with userOp status "${status}" on Polygon`,
+                  {
+                    level: 'warning',
+                    extra: sentryPayload,
+                  }
+                );
+              } else {
+                // Other chains
+                Sentry.captureException(
+                  `Max attempts reached with userOp status "${status}"`,
+                  {
+                    level: 'error',
+                    extra: sentryPayload,
+                  }
+                );
+              }
+            }
+
             setTransactionHash(response?.transaction);
           }
         }
@@ -264,6 +327,19 @@ const SendModalBatchesTabView = () => {
         transactionDebugLog('Error getting userOp status:', err);
         clearInterval(userOperationStatus);
         setUserOpStatus('Failed');
+
+        // Sentry capturing
+        Sentry.captureException(
+          err instanceof Error ? err.message : 'Error getting userOp status',
+          {
+            extra: {
+              walletAddress: accountAddress,
+              userOpHash: newUserOpHash,
+              chainId,
+              attempts,
+            },
+          }
+        );
       }
     }, userOpStatusInterval);
 
