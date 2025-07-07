@@ -14,6 +14,7 @@ import {
   useEtherspotUtils,
   useWalletAddress,
 } from '@etherspot/transaction-kit';
+import * as Sentry from '@sentry/react';
 import { BigNumber, ethers, utils } from 'ethers';
 import {
   ArrangeVertical as ArrangeVerticalIcon,
@@ -77,8 +78,8 @@ import {
   useGetWalletPortfolioQuery,
 } from '../../../services/pillarXApiWalletPortfolio';
 import {
-  chainNameToChainIdTokensData,
   Token,
+  chainNameToChainIdTokensData,
 } from '../../../services/tokensData';
 import {
   AssetSelectOption,
@@ -664,6 +665,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       const userOpStatusInterval = 5000; // 5 seconds
       const maxAttempts = 9; // 9 * 5sec = 45sec
       let attempts = 0;
+      let sentryCaptured = false;
 
       const userOperationStatus = setInterval(async () => {
         attempts += 1;
@@ -688,6 +690,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             return;
           }
 
+          const sentryPayload = {
+            walletAddress: accountAddress,
+            userOpHash: newUserOpHash,
+            chainId: chainIdForTxHash,
+            transactionHash: response?.transaction,
+            attempts,
+            status,
+          };
+
           // Treat status Reverted as Sent until we timeout as this JSON-RPC call
           // can try again and be successful on Polygon only - known issue
           if (status === 'Reverted') {
@@ -699,6 +710,33 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
                 response?.transaction
               );
+
+              // Sentry capturing
+              if (!sentryCaptured) {
+                sentryCaptured = true;
+                // Polygon chain
+                if (chainIdForTxHash === 137) {
+                  Sentry.captureMessage(
+                    `Max attempts reached with userOp status "${status}" on Polygon`,
+                    {
+                      level: 'warning',
+                      extra: sentryPayload,
+                    }
+                  );
+                } else {
+                  // Other chains
+                  Sentry.captureException(
+                    new Error(
+                      `Max attempts reached with userOp status "${status}"`
+                    ),
+                    {
+                      level: 'error',
+                      extra: sentryPayload,
+                    }
+                  );
+                }
+              }
+
               setTransactionHash(response?.transaction);
               clearInterval(userOperationStatus);
             }
@@ -730,6 +768,33 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             );
             if (userOpStatus !== 'Confirmed') {
               setUserOpStatus('Failed');
+
+              // Sentry capturing
+              if (!sentryCaptured) {
+                sentryCaptured = true;
+                // Polygon chain
+                if (chainIdForTxHash === 137) {
+                  Sentry.captureMessage(
+                    `Max attempts reached with userOp status "${status}" on Polygon`,
+                    {
+                      level: 'warning',
+                      extra: sentryPayload,
+                    }
+                  );
+                } else {
+                  // Other chains
+                  Sentry.captureException(
+                    new Error(
+                      `Max attempts reached with userOp status "${status}"`
+                    ),
+                    {
+                      level: 'error',
+                      extra: sentryPayload,
+                    }
+                  );
+                }
+              }
+
               setTransactionHash(response?.transaction);
             }
           }
@@ -737,6 +802,21 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           transactionDebugLog('Error getting userOp status:', err);
           clearInterval(userOperationStatus);
           setUserOpStatus('Failed');
+
+          // Sentry capturing
+          Sentry.captureException(
+            err instanceof Error
+              ? err
+              : new Error('Error getting userOp status'),
+            {
+              extra: {
+                walletAddress: accountAddress,
+                userOpHash: newUserOpHash,
+                chainId: chainIdForTxHash,
+                attempts,
+              },
+            }
+          );
         }
       }, userOpStatusInterval);
     }
