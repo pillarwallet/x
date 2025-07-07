@@ -167,12 +167,10 @@ const TransactionInfo = () => {
               {displayStatus !== 'Confirmed' ||
               !displayHash ||
               displayChainId === '137' ? (
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs white font-normal truncate">
-                    Please check the transaction status on{' '}
-                    {getBlockScanName(Number(displayChainId))}:
-                  </p>
-                </div>
+                <p className="text-xs white font-normal">
+                  Please check the transaction status on{' '}
+                  {getBlockScanName(Number(displayChainId))}:
+                </p>
               ) : (
                 <>
                   <div className="flex-1 min-w-0">
@@ -206,49 +204,53 @@ const TransactionInfo = () => {
             </div>
           </CopyToClipboard>
         )}
-        {displayHash && displayChainId && displayStatus === 'Confirmed' && (
-          <button
-            type="button"
-            className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
-            onClick={() =>
-              window.open(
-                `${getBlockScan(Number(displayChainId))}${displayHash}`,
-                '_blank',
-                'noopener,noreferrer'
-              )
-            }
-          >
-            <p className="text-sm text-white font-normal">View transaction</p>
-            <img
-              className="w-3 h-3"
-              src={ExternalLinkLogo}
-              alt="external-link-icon"
-            />
-          </button>
-        )}
+        {displayHash &&
+          displayChainId &&
+          displayStatus === 'Confirmed' &&
+          displayChainId !== '137' && (
+            <button
+              type="button"
+              className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
+              onClick={() =>
+                window.open(
+                  `${getBlockScan(Number(displayChainId))}${displayHash}`,
+                  '_blank',
+                  'noopener,noreferrer'
+                )
+              }
+            >
+              <p className="text-sm text-white font-normal">View transaction</p>
+              <img
+                className="w-3 h-3"
+                src={ExternalLinkLogo}
+                alt="external-link-icon"
+              />
+            </button>
+          )}
 
-        {displayStatus === 'Failed' && displayChainId && (
-          <button
-            type="button"
-            className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
-            onClick={() =>
-              window.open(
-                `${getBlockScan(Number(displayChainId), true)}${walletAddress}`,
-                '_blank',
-                'noopener,noreferrer'
-              )
-            }
-          >
-            <p className="text-sm text-white font-normal">
-              View {getBlockScanName(Number(displayChainId))}
-            </p>
-            <img
-              className="w-3 h-3"
-              src={ExternalLinkLogo}
-              alt="external-link-icon"
-            />
-          </button>
-        )}
+        {(displayStatus === 'Failed' || displayChainId === '137') &&
+          displayChainId && (
+            <button
+              type="button"
+              className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
+              onClick={() =>
+                window.open(
+                  `${getBlockScan(Number(displayChainId), true)}${walletAddress}`,
+                  '_blank',
+                  'noopener,noreferrer'
+                )
+              }
+            >
+              <p className="text-sm text-white font-normal">
+                View {getBlockScanName(Number(displayChainId))}
+              </p>
+              <img
+                className="w-3 h-3"
+                src={ExternalLinkLogo}
+                alt="external-link-icon"
+              />
+            </button>
+          )}
 
         <div className="flex text-[10px] italic text-white/[.5] font-normal p-3 border-[1px] border-medium_grey rounded-md">
           Please note that this information confirms whether the transaction was
