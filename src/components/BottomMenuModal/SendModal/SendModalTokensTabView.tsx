@@ -806,7 +806,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           // Sentry capturing
           Sentry.captureException(
             err instanceof Error
-              ? err
+              ? err.message
               : new Error('Error getting userOp status'),
             {
               extra: {

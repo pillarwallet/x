@@ -334,7 +334,9 @@ const SendModalBatchesTabView = () => {
 
         // Sentry capturing
         Sentry.captureException(
-          err instanceof Error ? err : new Error('Error getting userOp status'),
+          err instanceof Error
+            ? err.message
+            : new Error('Error getting userOp status'),
           {
             extra: {
               walletAddress: accountAddress,

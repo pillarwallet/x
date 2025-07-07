@@ -215,22 +215,22 @@ export const isApproveTransaction = (callData: string) => {
   return methodId === approveMethodId;
 };
 
-export const getBlockScan = (chain: number, isAdress: boolean = false) => {
+export const getBlockScan = (chain: number, isAddress: boolean = false) => {
   switch (chain) {
     case 1:
-      return `https://etherscan.io/${isAdress ? 'address' : 'tx'}/`;
+      return `https://etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 137:
-      return `https://polygonscan.com/${isAdress ? 'address' : 'tx'}/`;
+      return `https://polygonscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 8453:
-      return `https://basescan.org/${isAdress ? 'address' : 'tx'}/`;
+      return `https://basescan.org/${isAddress ? 'address' : 'tx'}/`;
     case 100:
-      return `https://gnosisscan.io/${isAdress ? 'address' : 'tx'}/`;
+      return `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 56:
-      return `https://bscscan.com/${isAdress ? 'address' : 'tx'}/`;
+      return `https://bscscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 10:
-      return `https://optimistic.etherscan.io/${isAdress ? 'address' : 'tx'}/`;
+      return `https://optimistic.etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 42161:
-      return `http://arbiscan.io/${isAdress ? 'address' : 'tx'}/`;
+      return `http://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
     default:
       return '';
   }
