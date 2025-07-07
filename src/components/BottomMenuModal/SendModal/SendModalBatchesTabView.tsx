@@ -256,9 +256,7 @@ const SendModalBatchesTabView = () => {
               } else {
                 // Other chains
                 Sentry.captureException(
-                  new Error(
-                    `Max attempts reached with userOp status "${status}"`
-                  ),
+                  `Max attempts reached with userOp status "${status}"`,
                   {
                     level: 'error',
                     extra: sentryPayload,
@@ -313,9 +311,7 @@ const SendModalBatchesTabView = () => {
               } else {
                 // Other chains
                 Sentry.captureException(
-                  new Error(
-                    `Max attempts reached with userOp status "${status}"`
-                  ),
+                  `Max attempts reached with userOp status "${status}"`,
                   {
                     level: 'error',
                     extra: sentryPayload,
@@ -334,9 +330,7 @@ const SendModalBatchesTabView = () => {
 
         // Sentry capturing
         Sentry.captureException(
-          err instanceof Error
-            ? err.message
-            : new Error('Error getting userOp status'),
+          err instanceof Error ? err.message : 'Error getting userOp status',
           {
             extra: {
               walletAddress: accountAddress,
