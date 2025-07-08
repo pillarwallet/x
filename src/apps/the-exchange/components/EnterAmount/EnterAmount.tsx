@@ -126,7 +126,7 @@ const EnterAmount = ({
       toTokenAddress: receiveToken?.contract ?? '',
       toChainId: chainNameToChainIdTokensData(receiveToken?.blockchain) ?? 0,
       toTokenDecimals: receiveToken?.decimals ?? 0,
-      slippage: 0.05,
+      slippage: 0.03,
     };
 
     const offer = await getBestOffer(params).catch((e) => {
