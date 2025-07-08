@@ -19,6 +19,10 @@ import {
 import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 
 // utils
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../services/tokensData';
 import { getNetworkViem } from '../../deposit/utils/blockchain';
 import { processEth } from '../utils/blockchain';
 import {
@@ -37,6 +41,7 @@ const useOffer = () => {
     toTokenAddress,
     toChainId,
     toTokenDecimals,
+    slippage,
   }: SwapType): Promise<SwapOffer | undefined> => {
     let selectedOffer: SwapOffer;
 
@@ -54,6 +59,7 @@ const useOffer = () => {
         toTokenAddress,
         fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
         options: {
+          slippage,
           bridges: {
             allow: ['relay'],
           },
@@ -124,15 +130,18 @@ const useOffer = () => {
   };
 
   const getStepTransactions = async (
+    tokenToSwap: Token,
     route: Route,
     fromAccount: string
   ): Promise<StepTransaction[]> => {
     const stepTransactions: StepTransaction[] = [];
 
-    const isWrapRequired = isWrappedToken(
-      route.fromToken.address,
-      route.fromToken.chainId
-    );
+    const isWrapRequired =
+      isWrappedToken(route.fromToken.address, route.fromToken.chainId) &&
+      !isWrappedToken(
+        tokenToSwap.contract,
+        chainNameToChainIdTokensData(tokenToSwap.blockchain)
+      );
 
     // If wrapping is required, we will add an extra step transaction with
     // a wrapped token deposit first

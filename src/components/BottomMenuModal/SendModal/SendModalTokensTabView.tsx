@@ -573,6 +573,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         estimatedCostBN,
         nativeAsset.decimals
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       costAsFiat = +estimatedCost * nativeAssetPrice;
 
       transactionDebugLog('Transaction estimated cost:', estimatedCost);
@@ -594,19 +595,20 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       return;
     }
 
-    // warning if cost in fiat is higher than amount
-    if (
-      !ignoreSafetyWarning &&
-      amountInFiat &&
-      costAsFiat &&
-      costAsFiat > amountInFiat
-    ) {
-      setSafetyWarningMessage(
-        t`warning.transactionSafety.costHigherThanAmount`
-      );
-      setIsSending(false);
-      return;
-    }
+    // TO DO - reintroduce this warning when Transaction Kit 2.0 is released
+    // // warning if cost in fiat is higher than amount
+    // if (
+    //   !ignoreSafetyWarning &&
+    //   amountInFiat &&
+    //   costAsFiat &&
+    //   costAsFiat > amountInFiat
+    // ) {
+    //   setSafetyWarningMessage(
+    //     t`warning.transactionSafety.costHigherThanAmount`
+    //   );
+    //   setIsSending(false);
+    //   return;
+    // }
 
     // Record the sending of this asset
     recordPresence({

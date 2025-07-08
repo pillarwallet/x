@@ -210,6 +210,7 @@ const TransactionInfo = () => {
           displayChainId !== '137' && (
             <button
               type="button"
+              data-url={`${getBlockScan(Number(displayChainId))}${displayHash}`}
               className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
               onClick={() =>
                 window.open(
@@ -233,6 +234,7 @@ const TransactionInfo = () => {
             <button
               type="button"
               className="flex bg-purple_medium rounded-md justify-between px-4 py-2 self-center items-center gap-1"
+              data-url={`${getBlockScan(Number(displayChainId), true)}${walletAddress}`}
               onClick={() =>
                 window.open(
                   `${getBlockScan(Number(displayChainId), true)}${walletAddress}`,
