@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<PointsCard /> renders correctly and matches snapshot 1`] = `
+exports[`<PointsCard /> > renders correctly and matches snapshot 1`] = `
 <div>
   <div
     class="group flex flex-col w-full gap-3 rounded-[10px] p-2 bg-blue-500 relative"

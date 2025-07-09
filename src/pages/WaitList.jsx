@@ -9,7 +9,7 @@ import { Header } from '../components/LandingPage/Header';
 
 // Plausible Domain Config
 const { trackEvent } = Plausible({
-  domain: process.env.REACT_APP_PLAUSIBLE_DOMAIN,
+  domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN,
 });
 
 const Waitlist = () => {
@@ -62,18 +62,11 @@ const Waitlist = () => {
         <div className="container">
           <div className="home_signup__wrapper">
             <div className="home_signup__content">
-              <h1>
-                Test PillarX, Earn PX points and Win from the $1,000 prize pool!
-                <span>*</span>
-              </h1>
+              <h1>Join PillarX Soft Launch and Collect PX Points!</h1>
               <p>
-                Join our exclusive testing campaign and lead the Web3
-                revolution.
-                <br />{' '}
-                <strong>
-                  Share your referral code to get your network to sign up.
-                </strong>
-                <br /> The more you share, the higher your ranking.
+                Test the upgraded PillarX experience and collect PX points.
+                <br /> Join the waitlist and keep an eye on your inbox for the
+                access link
               </p>
               <div className="home_signup__content__form home_signup__content__form--waitlist">
                 <div
@@ -109,7 +102,10 @@ const Waitlist = () => {
               </div>
             </div>
             <div className="home_build__logo">
-              <img src="/landing-images/home-logo-px.svg" alt="home-logo" />
+              <img
+                src="https://cdn.pillarx.app/home-logo-px.svg"
+                alt="home-logo"
+              />
             </div>
           </div>
         </div>
@@ -119,16 +115,19 @@ const Waitlist = () => {
         <div className="container">
           <div className="home_signup_tnc__content">
             <p>
-              *A marketing campaign with a $1,000 prize pool will be hosted on{' '}
-              <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
-                PillarX’s X account
+              Participation in the PillarX Soft Launch Campaign is subject to
+              the official campaign rules and eligibility requirements. Rewards
+              may vary depending on participant activity, task completion, or
+              other criteria outlined in the{' '}
+              <a
+                href="https://blog.pillarx.app/pillarx-soft-launch-10000-allocated-for-migrating/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                campaign terms
               </a>
-              . Participants can enter weekly raffles for a chance to win a
-              share of the prize pool. Full details will be provided on{' '}
-              <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
-                X
-              </a>
-              . Stay tuned for updates!
+              . PillarX reserves the right to modify, suspend, or terminate the
+              campaign at any time without prior notice.
             </p>
           </div>
         </div>

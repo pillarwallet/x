@@ -96,6 +96,7 @@ const ExchangeAction = () => {
       setIsAddingToBatch(true);
 
       const stepTransactions = await getStepTransactions(
+        swapToken,
         bestOffer.offer,
         walletAddress as `0x${string}`
       );

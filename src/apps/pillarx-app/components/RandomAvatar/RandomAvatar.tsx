@@ -5,12 +5,14 @@ type RandomAvatarProps = {
   name: string;
   variant?: string;
   isRandomVariant?: boolean;
+  isRound?: boolean;
 };
 
 const RandomAvatar = ({
   name,
   variant,
   isRandomVariant,
+  isRound = false,
 }: RandomAvatarProps) => {
   const variants: AvatarVariantType[] = [
     'marble',
@@ -39,7 +41,7 @@ const RandomAvatar = ({
       name={name}
       variant={avatarVariant()}
       className="rounded-md"
-      square
+      square={!isRound}
       data-testid="random-avatar"
     />
   );

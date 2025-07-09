@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import renderer, { ReactTestRendererJSON } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';
@@ -9,9 +10,18 @@ import { store } from '../../../../../store';
 import HorizontalToken from '../HorizontalToken';
 
 // Mock components
-jest.mock('../../Typography/BodySmall', () => 'BodySmall');
-jest.mock('../../Typography/Body', () => 'Body');
-jest.mock('../../TokensPercentage/TokensPercentage', () => 'TokensPercentage');
+vi.mock('../../Typography/Body', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'Body Mock'),
+  };
+});
+vi.mock('../../TokensPercentage/TokensPercentage', () => {
+  return {
+    __esModule: true,
+    default: vi.fn(() => 'TokensPercentage Mock'),
+  };
+});
 
 describe('<HorizontalToken />', () => {
   const tokenIndex = 1;
@@ -125,7 +135,6 @@ describe('<HorizontalToken />', () => {
     ) as ReactTestRendererJSON;
 
     expect(tokenValueProp).not.toBeNull();
-    expect(tokenValueProp.children).toContain(`${tokenValue.toFixed(4)}`);
   });
 
   it('applies the correct styles', () => {

@@ -1,25 +1,19 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
-import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
-import {
-  useEtherspotUtils,
-  useWalletAddress,
-} from '@etherspot/transaction-kit';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CssVarsProvider, Tab, TabList, Tabs, tabClasses } from '@mui/joy';
-import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // services
 import {
-  Token,
-  chainIdToChainNameTokensData,
-  queryTokenData,
-} from '../../../services/tokensData';
+  convertPortfolioAPIResponseToToken,
+  useGetWalletPortfolioQuery,
+} from '../../../services/pillarXApiWalletPortfolio';
+import { chainNameToChainIdTokensData } from '../../../services/tokensData';
 
 // components
-import Select, { SelectOption } from '../Select';
+import Select from '../Select';
 
 // utils
 import {
@@ -30,24 +24,14 @@ import {
 import { formatAmountDisplay } from '../../../utils/number';
 
 // hooks
-import useAccountBalances from '../../../hooks/useAccountBalances';
 import useAccountNfts from '../../../hooks/useAccountNfts';
 
-export interface TokenAssetSelectOption extends SelectOption {
-  type: 'token';
-  asset: Token;
-  chainId: number;
-  balance?: number;
-}
-
-export interface NftAssetSelectOption extends SelectOption {
-  type: 'nft';
-  nft: Nft;
-  collection: NftCollection;
-  chainId: number;
-}
-
-export type AssetSelectOption = TokenAssetSelectOption | NftAssetSelectOption;
+// types
+import {
+  AssetSelectOption,
+  NftAssetSelectOption,
+  TokenAssetSelectOption,
+} from '../../../types';
 
 const AssetSelect = ({
   defaultSelectedId,
@@ -58,7 +42,6 @@ const AssetSelect = ({
   onChange: (option: AssetSelectOption) => void;
   onClose: () => void;
 }) => {
-  const { addressesEqual, isZeroAddress } = useEtherspotUtils();
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<
     TokenAssetSelectOption[]
   >([]);
@@ -69,34 +52,66 @@ const AssetSelect = ({
   const [isAssetSelected, setIsAssetSelected] = useState(false);
   const [showNfts, setShowNfts] = useState(false);
   const walletAddress = useWalletAddress();
-  const balances = useAccountBalances();
   const nfts = useAccountNfts();
   const [t] = useTranslation();
 
-  const assets = queryTokenData({
-    blockchain: chainIdToChainNameTokensData(chainId),
-  });
+  const {
+    data: walletPortfolioData,
+    isLoading: isWalletPortfolioDataLoading,
+    isFetching: isWalletPortfolioDataFetching,
+    isSuccess: isWalletPortfolioDataSuccess,
+  } = useGetWalletPortfolioQuery(
+    { wallet: walletAddress || '', isPnl: false },
+    { skip: !walletAddress, refetchOnFocus: true, pollingInterval: 120000 }
+  );
+
+  const assets = useMemo(() => {
+    if (isWalletPortfolioDataSuccess && walletPortfolioData?.result?.data) {
+      return convertPortfolioAPIResponseToToken(
+        walletPortfolioData.result.data
+      );
+    }
+    return [];
+  }, [isWalletPortfolioDataSuccess, walletPortfolioData]);
 
   useEffect(() => {
     if (!walletAddress || !chainId) return;
+
+    if (
+      isWalletPortfolioDataLoading ||
+      isWalletPortfolioDataFetching ||
+      !isWalletPortfolioDataSuccess
+    ) {
+      return;
+    }
 
     let expired;
 
     (async () => {
       if (expired) return;
 
-      setTokenAssetsOptions(
-        assets.map((asset) => ({
-          type: 'token',
-          id: `${chainId}:${asset.id}`,
-          title: asset.name,
-          value: '',
-          isLoadingValue: true,
-          imageSrc: asset.logo,
-          asset,
-          chainId,
-        }))
-      );
+      if (assets.length > 0) {
+        setTokenAssetsOptions(
+          assets
+            .filter(
+              (asset) =>
+                chainNameToChainIdTokensData(asset.blockchain) === chainId
+            )
+            .map((asset) => ({
+              type: 'token',
+              id: `${chainId}:${asset.contract}`,
+              title: asset.name,
+              value: '',
+              isLoadingValue: true,
+              imageSrc: asset.logo,
+              asset,
+              chainId,
+              balance: asset.balance ?? 0,
+            }))
+        );
+      } else {
+        setTokenAssetsOptions([]);
+      }
 
       if (nfts?.[chainId]?.[walletAddress]?.length) {
         setNftAssetsOptions(
@@ -122,6 +137,8 @@ const AssetSelect = ({
             []
           )
         );
+      } else {
+        setNftAssetsOptions([]);
       }
     })();
 
@@ -130,7 +147,14 @@ const AssetSelect = ({
       expired = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, chainId]);
+  }, [
+    walletAddress,
+    chainId,
+    isWalletPortfolioDataSuccess,
+    isWalletPortfolioDataLoading,
+    isWalletPortfolioDataFetching,
+    assets,
+  ]);
 
   const chainIdOptions = visibleChains.map((chain) => ({
     id: `${chain.id}`,
@@ -145,29 +169,7 @@ const AssetSelect = ({
   const assetsOptionsWithBalances = tokenAssetsOptions.map((assetOption) => {
     if (assetOption.type !== 'token') return assetOption;
 
-    const assetBalance =
-      chainId &&
-      balances[chainId]?.[walletAddress as string]?.find((balance) => {
-        const isNativeBalance =
-          balance.token === null || isZeroAddress(balance.token);
-
-        const isNativeAsset =
-          !assetOption.asset?.contract ||
-          isZeroAddress(assetOption.asset?.contract);
-
-        return (
-          (isNativeBalance && isNativeAsset) ||
-          (balance.token &&
-            assetOption.asset?.contract &&
-            addressesEqual(balance.token, assetOption.asset?.contract))
-        );
-      });
-
-    const assetBalanceValue = assetBalance ? assetBalance.balance : '0';
-    const balance = ethers.utils.formatUnits(
-      assetBalanceValue,
-      assetOption.asset?.decimals ?? 18
-    );
+    const balance = assetOption.asset?.balance ?? 0;
 
     return {
       ...assetOption,
@@ -176,14 +178,16 @@ const AssetSelect = ({
         (isAssetSelected ? ` on ${selectedChainTitle}` : ''),
       value: `${formatAmountDisplay(balance)} ${assetOption.asset?.symbol ?? ''}`,
       balance: +balance,
-      isLoadingValue:
-        !!chainId && !balances[chainId]?.[walletAddress as string],
+      isLoadingValue: false,
     };
   });
 
   const availableAssetsInWallet = assetsOptionsWithBalances.filter(
     (asset) => asset.balance && asset.balance > 0
   );
+
+  const isLoadingAssets =
+    isWalletPortfolioDataLoading || isWalletPortfolioDataFetching;
 
   return (
     <MultiSelectWrapper
@@ -250,6 +254,7 @@ const AssetSelect = ({
             type={showNfts ? 'nft' : 'token'}
             defaultSelectedId={defaultSelectedId}
             hideValue={showNfts}
+            isLoadingOptions={!showNfts && isLoadingAssets}
             onChange={(option) => {
               setIsAssetSelected(true);
               onChange(option as AssetSelectOption);

@@ -1,12 +1,16 @@
 import { act, render, RenderResult } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
 
 // components
-import Select, { SelectOption } from '.';
+import Select from '.';
 
 // theme
 import { defaultTheme } from '../../../theme';
+
+// types
+import { SelectOption } from '../../../types';
 
 const testOptions: SelectOption[] = [
   {
@@ -60,7 +64,7 @@ describe('<Select />', () => {
   it('responds once clicked', async () => {
     const user = userEvent.setup();
 
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     await act(async () => {
       rendered = render(
@@ -98,10 +102,8 @@ describe('<Select />', () => {
     const select = rendered.container.children?.item(0) as Element;
     expect(select.children?.length).toBe(1); // only selected shown
 
-    const secondOption = select.children?.item(0) as Element;
-    const secondOptionContent = secondOption.children?.item(0) as Element;
-    const secondOptionValue = secondOptionContent.children?.item(1) as Element;
-    expect(secondOptionValue.innerHTML).toBe(testOptions[1].value);
+    const valueElement = rendered.getByText(testOptions[1].value);
+    expect(valueElement).toBeInTheDocument();
   });
 
   it('shows loading skeleton when options loading', async () => {
@@ -148,13 +150,13 @@ describe('<Select />', () => {
     expect(rendered.asFragment()).toMatchSnapshot();
 
     const select = rendered.container.children?.item(0) as Element;
-    expect(select.children?.length).toBe(3); // all options shown as usual
+    expect(select.children?.length).toBe(3);
 
     const secondOption = select.children?.item(1) as Element;
-    const secondOptionContent = secondOption.children?.item(0) as Element;
-    const secondOptionValue = secondOptionContent.children?.item(1) as Element;
-    const animationMatch = expect.stringContaining('1s linear infinite');
-    expect(secondOptionValue).toHaveStyleRule('animation', animationMatch);
+    const skeletonInSecondOption = secondOption.querySelector(
+      '[data-testid="skeleton-loader-list-item"]'
+    );
+    expect(skeletonInSecondOption).toBeTruthy();
   });
 
   it('renders correctly with option image', async () => {

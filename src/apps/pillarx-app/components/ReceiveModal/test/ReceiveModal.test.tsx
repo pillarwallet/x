@@ -1,5 +1,9 @@
 import * as transactionKit from '@etherspot/transaction-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // reducer
 import * as reducerHooks from '../../../hooks/useReducerHooks';
@@ -8,33 +12,31 @@ import * as walletSlice from '../../../reducer/WalletPortfolioSlice';
 // components
 import ReceiveModal from '../ReceiveModal';
 
-jest.mock('../../../../../utils/blockchain', () => {
-  const original = jest.requireActual('../../../../../utils/blockchain');
+vi.mock('../../../../../utils/blockchain', () => {
+  const original = vi.importActual('../../../../../utils/blockchain');
   return {
     ...original,
     CompatibleChains: [
       { chainId: 1, chainName: 'Ethereum' },
       { chainId: 137, chainName: 'Polygon' },
     ],
-    getLogoForChainId: jest.fn(() => 'mocked-logo-url'),
+    getLogoForChainId: vi.fn(() => 'mocked-logo-url'),
   };
 });
 
-jest.mock('../../../hooks/useReducerHooks');
-jest.mock('@etherspot/transaction-kit', () => ({
-  useWalletAddress: jest.fn(),
+vi.mock('../../../hooks/useReducerHooks');
+vi.mock('@etherspot/transaction-kit', () => ({
+  useWalletAddress: vi.fn(),
 }));
 
 describe('<ReceiveModal />', () => {
-  const useAppSelectorMock =
-    reducerHooks.useAppSelector as unknown as jest.Mock;
-  const useAppDispatchMock =
-    reducerHooks.useAppDispatch as unknown as jest.Mock;
+  const useAppSelectorMock = reducerHooks.useAppSelector as unknown as Mock;
+  const useAppDispatchMock = reducerHooks.useAppDispatch as unknown as Mock;
 
-  const mockDispatch = jest.fn();
+  const mockDispatch = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     useAppDispatchMock.mockReturnValue(mockDispatch);
   });
 
@@ -47,7 +49,7 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: false } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
 
     const { container } = render(<ReceiveModal />);
     expect(container.firstChild).toBeNull();
@@ -57,7 +59,7 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
 
     render(<ReceiveModal />);
 
@@ -70,7 +72,7 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue(undefined);
+    (transactionKit.useWalletAddress as Mock).mockReturnValue(undefined);
 
     render(<ReceiveModal />);
 
@@ -83,9 +85,9 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
 
-    const setIsReceiveModalOpenSpy = jest.spyOn(
+    const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,
       'setIsReceiveModalOpen'
     );
@@ -106,7 +108,7 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0xabc');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0xabc');
 
     render(<ReceiveModal />);
 
@@ -118,9 +120,9 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
 
-    const setIsReceiveModalOpenSpy = jest.spyOn(
+    const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,
       'setIsReceiveModalOpen'
     );
@@ -139,9 +141,9 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as jest.Mock).mockReturnValue('0x123');
+    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
 
-    const setIsReceiveModalOpenSpy = jest.spyOn(
+    const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,
       'setIsReceiveModalOpen'
     );

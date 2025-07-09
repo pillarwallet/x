@@ -114,7 +114,7 @@ const CardsSwap = () => {
           }
         />
       )}
-      {process.env.REACT_APP_SWAP_BUTTON_SWITCH === 'true' &&
+      {import.meta.env.VITE_SWAP_BUTTON_SWITCH === 'true' &&
         !isSwapOpen &&
         !isReceiveOpen && <SwitchCardsButton onSwap={swapCardsAction} />}
     </div>

@@ -5,7 +5,7 @@ export const getUserOperationStatus = async (
   userOpHash: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any | undefined> => {
-  const apiKey = process.env.REACT_APP_ETHERSPOT_DATA_API_KEY;
+  const apiKey = import.meta.env.VITE_ETHERSPOT_DATA_API_KEY;
 
   if (!chainId) {
     console.error('getUserOperationStatus: chainId is required');

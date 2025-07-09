@@ -1,13 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 import { ApiLayout, MediaGridData, Projection } from '../../../../../types/api';
 import HighlightedMediaGridTile from '../HighlightedMediaGridTile';
 
 // Mock useRefDimensions
-jest.mock('../../../hooks/useRefDimensions', () => ({
+vi.mock('../../../hooks/useRefDimensions', () => ({
   __esModule: true,
-  default: jest.fn(() => ({ width: 1200 })),
+  default: vi.fn(() => ({ width: 1200 })),
 }));
 
 describe('<HighlightedMediaGridTile />', () => {

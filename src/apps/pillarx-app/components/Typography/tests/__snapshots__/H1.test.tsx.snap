@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<H1 /> renders correctly 1`] = `
+exports[`<H1 /> > renders correctly 1`] = `
 [
   <h1
     className="desktop:text-3xl desktop:leading-[45px] tablet:text-3xl tablet:leading-[45px] mobile:text-xl mobile:leading-5 font-medium undefined"

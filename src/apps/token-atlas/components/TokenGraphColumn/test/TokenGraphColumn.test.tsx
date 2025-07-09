@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // redux store
 import { Provider } from 'react-redux';
@@ -87,7 +88,7 @@ const mockTokenDataInfo: TokenAtlasInfoData = {
 };
 
 // Mock the chart
-jest.mock('react-chartjs-2', () => ({
+vi.mock('react-chartjs-2', () => ({
   Line: () => (
     <canvas data-testid="price-graph" height={150} role="img" width={300} />
   ),

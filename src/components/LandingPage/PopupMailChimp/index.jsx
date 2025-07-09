@@ -4,7 +4,7 @@ import { useFormFields, useMailChimpForm } from 'use-mailchimp-form';
 
 const PopupMailChimp = () => {
   // Plausible Custom Event
-  const domain = process.env.REACT_APP_PLAUSIBLE_DOMAIN;
+  const domain = import.meta.env.VITE_PLAUSIBLE_DOMAIN;
   const { trackEvent } = Plausible({
     domain,
   });

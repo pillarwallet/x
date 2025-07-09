@@ -3,12 +3,21 @@ import i18next from 'i18next';
 // types
 import { AppManifest } from '../types';
 
-export const loadApp = (appId: string) => {
+/**
+ * @name loadApp
+ * @description Loads an app manifest from the apps directory.
+ * This function dynamically imports the manifest.json file for the specified appId.
+ * It also adds any translations defined in the manifest to the i18next instance.
+ * If the app cannot be loaded, it logs an error to the console.
+ *
+ * @param appId - the app identifier to load
+ * @returns AppManifest | null
+ */
+export const loadApp = async (appId: string) => {
   let appManifest: AppManifest | null = null;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    appManifest = require(`./${appId}/manifest.json`) as AppManifest;
+    appManifest = (await import(`./${appId}/manifest.json`)) as AppManifest;
 
     if (appManifest.translations) {
       Object.keys(appManifest.translations).forEach((languageKey) => {
@@ -28,7 +37,19 @@ export const loadApp = (appId: string) => {
   return appManifest;
 };
 
-export const loadApps = (allowedApps: string[]) => {
+/**
+ * @name loadApps
+ * @description Loads multiple app manifests based on the allowedApps array.
+ * It iterates through the allowedApps array, loading each app manifest using the loadApp function.
+ * If the app manifest is successfully loaded, it is added to the loadedApps record.
+ * Additionally, if the VITE_PX_DEVELOPMENT_ID environment variable is set,
+ * it attempts to load that app manifest as well.
+ *
+ * @param allowedApps - an array of app identifiers that are allowed to be loaded
+ * @returns Promise<Record<string, AppManifest>>
+ * @throws Will log an error if an app fails to load.
+ */
+export const loadApps = async (allowedApps: string[]) => {
   const loadedApps: Record<string, AppManifest> = {};
 
   /**
@@ -40,26 +61,12 @@ export const loadApps = (allowedApps: string[]) => {
     const appIdentifier = allowedApps[index];
 
     if (appIdentifier) {
-      const loadedApp = loadApp(appIdentifier);
+      const loadedApp = await loadApp(appIdentifier);
       if (loadedApp) {
         loadedApps[appIdentifier] = loadedApp;
       }
     } else {
       continue;
-    }
-  }
-
-  /**
-   * Finally, did we have a REACT_APP_PX_DEVELOPMENT_ID environment variable set?
-   * Attempt to load this also.
-   */
-  if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
-    const developmentApp = loadApp(process.env.REACT_APP_PX_DEVELOPMENT_ID);
-
-    // Did we load it okay?
-    if (developmentApp) {
-      // Add to the loadedApps record
-      loadedApps[process.env.REACT_APP_PX_DEVELOPMENT_ID] = developmentApp;
     }
   }
 

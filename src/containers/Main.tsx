@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import {
   createBrowserRouter,
@@ -16,6 +17,8 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
+import { createConfig, useAccount, WagmiProvider } from 'wagmi';
+import { walletConnect } from 'wagmi/connectors';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -30,19 +33,21 @@ import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
 
 // pages
-import App from '../pages/App';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
+import Privacy from '../pages/Privacy';
 import Waitlist from '../pages/WaitList';
 import Authorized from './Authorized';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
 import usePrivateKeyLogin from '../hooks/usePrivateKeyLogin';
+
+import App from '../pages/App';
 
 /**
  * @name AuthLayout
@@ -62,16 +67,21 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
+  const { isConnected, address } = useAccount();
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  const { allowed: allowedApps, isLoading: isLoadingAllowedApps } =
-    useAllowedApps();
+  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated =
     !!localStorage.getItem('privy:token') ||
     localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || Boolean(account);
+
+  useEffect(() => {
+    if (!authenticated) return;
+    sessionStorage.setItem('loginPageReloaded', 'false');
+  }, [authenticated]);
 
   /**
    * The following useEffect is to detemine if the
@@ -85,7 +95,7 @@ const AuthLayout = () => {
     const searchURL = new URLSearchParams(window.location.search);
     const searchURLPK = searchURL.get('pk');
 
-    if ((searchURL && searchURLPK) || account) {
+    if ((searchURL && searchURLPK) || account || address) {
       if (searchURL && searchURLPK) {
         try {
           const privateKeyToAccountAddress = privateKeyToAccount(
@@ -118,7 +128,7 @@ const AuthLayout = () => {
         const walletChainId = 1; // default chain id is 1
 
         const newProvider = createWalletClient({
-          account: account as `0x${string}`,
+          account: (account || address) as `0x${string}`,
           chain: getNetworkViem(walletChainId),
           transport: http(),
         });
@@ -177,14 +187,14 @@ const AuthLayout = () => {
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account]);
+  }, [wallets, user, account, address]);
 
   /**
    * If all the following variables are truthy within the if
    * statement, we can consider this user as logged in and
    * authenticated.
    */
-  if (isAppReady && isAuthenticated && provider && chainId) {
+  if (isAppReady && (isAuthenticated || isConnected) && provider && chainId) {
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.
@@ -214,6 +224,10 @@ const AuthLayout = () => {
             element: <Developers />,
           },
           {
+            path: '/privacy-policy',
+            element: <Privacy />,
+          },
+          {
             path: '/login',
             element: <Navigate to="/" />,
           },
@@ -221,26 +235,26 @@ const AuthLayout = () => {
       },
     ];
 
-    // Next, add the allowed apps to the route definition
-    allowedApps.forEach((appId) => {
+    /**
+     * Import app directory globs so that we can
+     * dynamically extract and import the manifest
+     * data needed to show the app icons
+     */
+    const appImports = import.meta.glob('../apps/*/index.tsx');
+    Object.keys(appImports).forEach((path) => {
+      // Extract the app ID from the path
+      const appId = path.split('/')[2];
+
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}`,
         element: <App id={appId} />,
       });
+
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}/*`,
         element: <App id={appId} />,
       });
     });
-
-    // Finally, add the development app to the route definition
-    // if it exists...
-    if (process.env.REACT_APP_PX_DEVELOPMENT_ID) {
-      authorizedRoutesDefinition[0].children.push({
-        path: `/${process.env.REACT_APP_PX_DEVELOPMENT_ID}`,
-        element: <App id={process.env.REACT_APP_PX_DEVELOPMENT_ID} />,
-      });
-    }
 
     // ...and add the 404 route to the route definition
     // for good measure
@@ -262,7 +276,8 @@ const AuthLayout = () => {
   const isRootPage =
     window.location.pathname === '/' ||
     window.location.pathname === '/waitlist' ||
-    window.location.pathname === '/developers';
+    window.location.pathname === '/developers' ||
+    window.location.pathname === '/privacy-policy';
 
   /**
    * The following if statement determines if the user is
@@ -292,6 +307,10 @@ const AuthLayout = () => {
         element: <Developers />,
       },
       {
+        path: '/privacy-policy',
+        element: <Privacy />,
+      },
+      {
         path: '/login',
         element: <Login />,
       },
@@ -319,6 +338,30 @@ const AuthLayout = () => {
   return <Loading type="wait" />;
 };
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+export const config = createConfig({
+  chains: [mainnet],
+  connectors: [
+    walletConnect({
+      projectId: import.meta.env.VITE_WC_ID ?? '',
+      showQrModal: !isMobile,
+      isNewChainsStale: true,
+      metadata: {
+        name: 'PillarX',
+        description: 'PillarX',
+        url: 'https://pillarx.app/',
+        icons: ['https://pillarx.app/favicon.ico'],
+      },
+    }),
+  ],
+  transports: {
+    [mainnet.id]: http(),
+  },
+});
+
+const queryClient = new QueryClient();
+
 const Main = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -326,7 +369,7 @@ const Main = () => {
       <LanguageProvider>
         <PrivateKeyLoginProvider>
           <PrivyProvider
-            appId={process.env.REACT_APP_PRIVY_APP_ID as string}
+            appId={import.meta.env.VITE_PRIVY_APP_ID as string}
             config={{
               appearance: { theme: 'dark' },
               defaultChain: isTestnet ? sepolia : mainnet,
@@ -335,9 +378,13 @@ const Main = () => {
               },
             }}
           >
-            <AllowedAppsProvider>
-              <AuthLayout />
-            </AllowedAppsProvider>
+            <QueryClientProvider client={queryClient}>
+              <WagmiProvider config={config}>
+                <AllowedAppsProvider>
+                  <AuthLayout />
+                </AllowedAppsProvider>
+              </WagmiProvider>
+            </QueryClientProvider>
           </PrivyProvider>
         </PrivateKeyLoginProvider>
       </LanguageProvider>

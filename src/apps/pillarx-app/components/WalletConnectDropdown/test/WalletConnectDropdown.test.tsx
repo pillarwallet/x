@@ -1,5 +1,9 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // hooks
 import { useWalletConnect } from '../../../../../services/walletConnect';
@@ -7,22 +11,22 @@ import { useWalletConnect } from '../../../../../services/walletConnect';
 // components
 import WalletConnectDropdown from '../WalletConnectDropdown';
 
-jest.mock('../../../../../services/walletConnect', () => ({
-  useWalletConnect: jest.fn(),
+vi.mock('../../../../../services/walletConnect', () => ({
+  useWalletConnect: vi.fn(),
 }));
 
 Object.defineProperty(navigator, 'clipboard', {
   value: {
-    readText: jest.fn(),
+    readText: vi.fn(),
   },
   writable: true,
 });
 
 // 'Type' for the return value of `useWalletConnect` hook
 interface UseWalletConnectProps {
-  connect: jest.Mock;
-  disconnect: jest.Mock;
-  disconnectAllSessions: jest.Mock;
+  connect: vi.mock;
+  disconnect: vi.mock;
+  disconnectAllSessions: vi.mock;
   activeSessions:
     | Record<
         string,
@@ -35,13 +39,13 @@ interface UseWalletConnectProps {
 }
 
 describe('<WalletConnectDropdown />', () => {
-  const mockConnect = jest.fn();
-  const mockDisconnect = jest.fn();
-  const mockDisconnectAllSessions = jest.fn();
+  const mockConnect = vi.fn();
+  const mockDisconnect = vi.fn();
+  const mockDisconnectAllSessions = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useWalletConnect as jest.Mock<UseWalletConnectProps>).mockReturnValue({
+    vi.clearAllMocks();
+    (useWalletConnect as Mock).mockReturnValue({
       connect: mockConnect,
       disconnect: mockDisconnect,
       disconnectAllSessions: mockDisconnectAllSessions,
@@ -77,7 +81,7 @@ describe('<WalletConnectDropdown />', () => {
   it('calls connect function with a URI when connect button is clicked', async () => {
     const copiedUri = 'some-mocked-uri';
 
-    (navigator.clipboard.readText as jest.Mock).mockImplementation(() =>
+    (navigator.clipboard.readText as Mock).mockImplementation(() =>
       Promise.resolve(copiedUri)
     );
 
@@ -93,7 +97,7 @@ describe('<WalletConnectDropdown />', () => {
   });
 
   it('displays active sessions when available', () => {
-    (useWalletConnect as jest.Mock<UseWalletConnectProps>).mockReturnValue({
+    (useWalletConnect as Mock).mockReturnValue({
       connect: mockConnect,
       disconnect: mockDisconnect,
       disconnectAllSessions: mockDisconnectAllSessions,
@@ -114,7 +118,7 @@ describe('<WalletConnectDropdown />', () => {
   });
 
   it('calls disconnect when disconnect button is clicked', async () => {
-    (useWalletConnect as jest.Mock<UseWalletConnectProps>).mockReturnValue({
+    (useWalletConnect as Mock<UseWalletConnectProps>).mockReturnValue({
       connect: mockConnect,
       disconnect: mockDisconnect,
       disconnectAllSessions: mockDisconnectAllSessions,
@@ -138,7 +142,7 @@ describe('<WalletConnectDropdown />', () => {
   });
 
   it('disconnectAll button appears when several sessions are connected', async () => {
-    (useWalletConnect as jest.Mock<UseWalletConnectProps>).mockReturnValue({
+    (useWalletConnect as Mock).mockReturnValue({
       connect: mockConnect,
       disconnect: mockDisconnect,
       disconnectAllSessions: mockDisconnectAllSessions,

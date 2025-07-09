@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Main /> renders correctly 1`] = `
-[
+exports[`<Main /> > renders correctly 1`] = `
+<div>
   <header
     className="header "
     id="header"
@@ -60,7 +60,7 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="home-image"
-            src="/landing-images/home-x.svg"
+            src="https://cdn.pillarx.app/home-x.svg"
           />
         </a>
       </nav>
@@ -79,7 +79,7 @@ exports[`<Main /> renders correctly 1`] = `
         />
       </div>
     </div>
-  </header>,
+  </header>
   <section
     className="home_hero"
   >
@@ -94,14 +94,14 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="PillarX logo"
-            src="/landing-images/home-px.png"
+            src="https://cdn.pillarx.app/home-px.png"
           />
         </div>
         <div
           className="home_hero__signup"
         >
           <p>
-            Earn PX points and get a chance to share the $1,000 prize pool!
+            Join PillarX Soft Launch and Collect PX Points! Exclusively For Waitlist Participants & Pillar Users.
           </p>
           <a
             className="cta plausible-event-name=Waitlist+Home+Hero"
@@ -114,7 +114,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_feature"
   >
@@ -145,12 +145,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-1.png"
+              poster="https://cdn.pillarx.app/home-feature-1.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-1.mp4"
+                src="https://cdn.pillarx.app/home-feature-1.mp4"
                 type="video/mp4"
               />
             </video>
@@ -177,12 +177,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-2.png"
+              poster="https://cdn.pillarx.app/home-feature-2.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-2.mp4"
+                src="https://cdn.pillarx.app/home-feature-2.mp4"
                 type="video/mp4"
               />
             </video>
@@ -209,12 +209,12 @@ exports[`<Main /> renders correctly 1`] = `
               loop={true}
               muted={true}
               playsInline={true}
-              poster="/landing-images/home-feature-3.png"
+              poster="https://cdn.pillarx.app/home-feature-3.png"
               preload="none"
               width="100%"
             >
               <source
-                src="/landing-images/home-feature-3.mp4"
+                src="https://cdn.pillarx.app/home-feature-3.mp4"
                 type="video/mp4"
               />
             </video>
@@ -222,7 +222,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_intro"
   >
@@ -243,12 +243,12 @@ exports[`<Main /> renders correctly 1`] = `
           </p>
           <img
             alt="PillarX Dashboard"
-            src="/landing-images/home-hero.png"
+            src="https://cdn.pillarx.app/home-hero.png"
           />
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_signup"
   >
@@ -357,7 +357,7 @@ exports[`<Main /> renders correctly 1`] = `
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <section
     className="home_build"
   >
@@ -404,12 +404,12 @@ exports[`<Main /> renders correctly 1`] = `
         >
           <img
             alt="home-logo"
-            src="/landing-images/home-logo-px.svg"
+            src="https://cdn.pillarx.app/home-logo-px.svg"
           />
         </div>
       </div>
     </div>
-  </section>,
+  </section>
   <footer
     className="footer"
   >
@@ -419,18 +419,42 @@ exports[`<Main /> renders correctly 1`] = `
       <div
         className="footer__wrapper"
       >
-        <a
-          href="https://twitter.com/PX_Web3"
-          rel="noreferrer"
-          target="_blank"
+        <div
+          className="footer__links"
         >
-          <img
-            alt="home-image"
-            src="/landing-images/home-x.svg"
-          />
-        </a>
+          <a
+            href="/privacy-policy"
+            onClick={[Function]}
+          >
+            Privacy Policy
+          </a>
+        </div>
+        <div
+          className="footer__socials"
+        >
+          <a
+            href="https://x.com/PX_Web3"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="x-image"
+              src="https://cdn.pillarx.app/home-x.svg"
+            />
+          </a>
+          <a
+            href="https://t.me/+WmZpena91_dlNDhk"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="home-image"
+              src="https://cdn.pillarx.app/social-telegram.svg"
+            />
+          </a>
+        </div>
       </div>
     </div>
-  </footer>,
-]
+  </footer>
+</div>
 `;

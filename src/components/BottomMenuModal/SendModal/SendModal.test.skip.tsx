@@ -15,7 +15,6 @@ import SendModal from '.';
 import { defaultTheme } from '../../../theme';
 
 // providers
-import AccountBalancesProvider from '../../../providers/AccountBalancesProvider';
 import AccountTransactionHistoryProvider from '../../../providers/AccountTransactionHistoryProvider';
 import BottomMenuModalProvider from '../../../providers/BottomMenuModalProvider';
 import LanguageProvider from '../../../providers/LanguageProvider';
@@ -52,15 +51,13 @@ describe('<SendModal />', () => {
         <BrowserRouter>
           <TransactionKit.EtherspotTransactionKit provider={provider}>
             <AccountTransactionHistoryProvider>
-              <AccountBalancesProvider>
-                <ThemeProvider theme={defaultTheme}>
-                  <LanguageProvider>
-                    <BottomMenuModalProvider>
-                      <SendModal isContentVisible />
-                    </BottomMenuModalProvider>
-                  </LanguageProvider>
-                </ThemeProvider>
-              </AccountBalancesProvider>
+              <ThemeProvider theme={defaultTheme}>
+                <LanguageProvider>
+                  <BottomMenuModalProvider>
+                    <SendModal isContentVisible />
+                  </BottomMenuModalProvider>
+                </LanguageProvider>
+              </ThemeProvider>
             </AccountTransactionHistoryProvider>
           </TransactionKit.EtherspotTransactionKit>
         </BrowserRouter>
@@ -210,7 +207,7 @@ describe('<SendModal />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     rendered.unmount();
   });
 });

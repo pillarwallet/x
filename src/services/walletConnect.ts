@@ -108,7 +108,7 @@ export const useWalletConnect = () => {
   // WalletConnect initialisation
   const initWalletKit = useCallback(async () => {
     const core = new Core({
-      projectId: process.env.REACT_APP_REOWN_PROJECT_ID,
+      projectId: import.meta.env.VITE_REOWN_PROJECT_ID,
     });
 
     const walletKitInit = await WalletKit.init({

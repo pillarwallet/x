@@ -1,21 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensPercentage /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensPercentage /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex gap-1 items-center"
 >
   <img
     alt="percentage-up"
     className="w-[10px] h[9px]"
-    src={
-      {
-        "ReactComponent": {
-          "$$typeof": Symbol(react.forward_ref),
-          "render": [Function],
-        },
-        "default": "triangle-up-green.svg",
-      }
-    }
+    src="data:image/svg+xml,%3csvg%20width='10'%20height='10'%20viewBox='0%200%2010%2010'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M4.03034%201.08115C4.4613%200.334701%205.5387%200.334701%205.96967%201.08115L9.84832%207.79918C10.2793%208.54563%209.74058%209.47869%208.87866%209.47869L5%209.47869L1.12134%209.47869C0.259418%209.47869%20-0.279283%208.54563%200.151678%207.79918L4.03034%201.08115Z'%20fill='%2305FFDD'/%3e%3c/svg%3e"
   />
   <p
     className="text-sm font-medium text-percentage_green"

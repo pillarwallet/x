@@ -15,6 +15,6 @@ describe('getNativeAssetForChainId', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

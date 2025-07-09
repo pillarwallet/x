@@ -1,1 +1,0 @@
-var s={},f=/^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;s.validate=function(r){if(!r||r.length>254)return!1;var a=f.test(r);if(!a)return!1;var t=r.split("@");if(t[0].length>64)return!1;var e=t[1].split(".");return!e.some(function(n){return n.length>63})};export{s as e};

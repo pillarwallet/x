@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<BottomMenu /> renders correctly if not authenticated 1`] = `null`;
+exports[`<BottomMenu /> > renders correctly if not authenticated 1`] = `null`;
 
-exports[`<BottomMenu /> renders correctly when authenticated 1`] = `
+exports[`<BottomMenu /> > renders correctly when authenticated 1`] = `
 [
   .c7 {
   display: flex;

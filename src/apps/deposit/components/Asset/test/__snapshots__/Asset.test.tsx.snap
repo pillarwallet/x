@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Asset /> renders correctly and matches snapshot 1`] = `
+exports[`<Asset /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col w-full border border-[#3C3C53] rounded-xl px-6 py-4 mb-4 mt-8 cursor-pointer mt-0"
   data-testid="deposit-asset"
   id="deposit-app-token-asset"
-  onClick={[MockFunction]}
+  onClick={[MockFunction spy]}
 >
   <div
     className="flex justify-between"

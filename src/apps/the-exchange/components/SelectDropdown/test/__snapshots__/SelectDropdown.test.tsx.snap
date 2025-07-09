@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
+exports[`<SelectDropdown /> > renders correctly and matches snapshot 1`] = `
 <div
   className="undefined h-[34px] z-20"
   id="select-chain-dropdown-list-exchange-receive"
 >
   <button
     className="flex justify-between w-full h-full p-2 bg-white rounded-[3px] focus:outline-none"
-    onClick={[MockFunction]}
+    onClick={[MockFunction spy]}
     type="button"
   >
     <p
@@ -22,7 +22,7 @@ exports[`<SelectDropdown /> renders correctly and matches snapshot 1`] = `
     </p>
     <img
       alt="arrow-down"
-      src="arrow-down.png"
+      src="/src/apps/the-exchange/images/arrow-down.png"
     />
   </button>
   <div

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';
@@ -50,9 +51,9 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-jest.mock('../../../../../services/tokensData', () => ({
+vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,
-  chainNameToChainIdTokensData: jest
+  chainNameToChainIdTokensData: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainIdMap = {
@@ -62,7 +63,7 @@ jest.mock('../../../../../services/tokensData', () => ({
 
       return mockChainIdMap[chainName as keyof typeof mockChainIdMap] || null;
     }),
-  chainIdToChainNameTokensData: jest
+  chainIdToChainNameTokensData: vi
     .fn()
     .mockImplementation((chainId: number) => {
       const mockChainNameMap = {
@@ -72,7 +73,7 @@ jest.mock('../../../../../services/tokensData', () => ({
 
       return mockChainNameMap[chainId as keyof typeof mockChainNameMap] || null;
     }),
-  queryTokenData: jest.fn().mockReturnValue([
+  queryTokenData: vi.fn().mockReturnValue([
     {
       id: 1,
       contract: '0x01',
@@ -92,7 +93,7 @@ jest.mock('../../../../../services/tokensData', () => ({
       logo: 'iconMatic.png',
     },
   ]),
-  chainNameDataCompatibility: jest
+  chainNameDataCompatibility: vi
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {

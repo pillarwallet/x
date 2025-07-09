@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenGraphColumn /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col undefined mr-4"
   id="token-atlas-token-graph-column"
@@ -64,15 +64,7 @@ exports[`<TokenGraphColumn /> renders correctly and matches snapshot 1`] = `
         <img
           alt="arrow"
           className="w-[30px] mr-1 mobile:w-3.5 mobile:mb-2 false"
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "arrow-circle-green.svg",
-            }
-          }
+          src="data:image/svg+xml,%3csvg%20width='30'%20height='30'%20viewBox='0%200%2030%2030'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M15%2027.5C21.9036%2027.5%2027.5%2021.9036%2027.5%2015C27.5%208.09644%2021.9036%202.5%2015%202.5C8.09644%202.5%202.5%208.09644%202.5%2015C2.5%2021.9036%208.09644%2027.5%2015%2027.5Z'%20stroke='%236CFF00'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M15%2019.375V11.875'%20stroke='%236CFF00'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M11.25%2014.375L15%2010.625L18.75%2014.375'%20stroke='%236CFF00'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
         />
         <div
           className="flex"

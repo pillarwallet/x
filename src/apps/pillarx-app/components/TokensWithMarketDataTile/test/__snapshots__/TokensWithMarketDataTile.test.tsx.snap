@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
+exports[`<TokensWithMarketDataTile /> > renders and matches snapshot 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
@@ -87,7 +87,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <img
                           alt="copy-token-address"
                           class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
+                          src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                         />
                       </div>
                     </div>
@@ -97,7 +97,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        2mo ago
+                        3mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -250,7 +250,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <img
                           alt="copy-token-address"
                           class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
+                          src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                         />
                       </div>
                     </div>
@@ -260,7 +260,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        2mo ago
+                        3mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -411,7 +411,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           <img
                             alt="copy-token-address"
                             class="w-2.5 h-3"
-                            src="token-market-data-copy.png"
+                            src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                           />
                         </div>
                       </div>
@@ -421,7 +421,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          2mo ago
+                          3mo ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -574,7 +574,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                           <img
                             alt="copy-token-address"
                             class="w-2.5 h-3"
-                            src="token-market-data-copy.png"
+                            src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                           />
                         </div>
                       </div>
@@ -584,7 +584,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <p
                           class="text-sm font-medium font-normal text-white"
                         >
-                          2mo ago
+                          3mo ago
                         </p>
                         <p
                           class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -764,7 +764,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <img
                         alt="copy-token-address"
                         class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
+                        src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                       />
                     </div>
                   </div>
@@ -774,7 +774,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      2mo ago
+                      3mo ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -927,7 +927,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <img
                         alt="copy-token-address"
                         class="w-2.5 h-3"
-                        src="token-market-data-copy.png"
+                        src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                       />
                     </div>
                   </div>
@@ -937,7 +937,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                     <p
                       class="text-sm font-medium font-normal text-white"
                     >
-                      2mo ago
+                      3mo ago
                     </p>
                     <p
                       class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1088,7 +1088,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <img
                           alt="copy-token-address"
                           class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
+                          src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                         />
                       </div>
                     </div>
@@ -1098,7 +1098,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        2mo ago
+                        3mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -1251,7 +1251,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                         <img
                           alt="copy-token-address"
                           class="w-2.5 h-3"
-                          src="token-market-data-copy.png"
+                          src="/src/apps/pillarx-app/images/token-market-data-copy.png"
                         />
                       </div>
                     </div>
@@ -1261,7 +1261,7 @@ exports[`<TokensWithMarketDataTile /> renders and matches snapshot 1`] = `
                       <p
                         class="text-sm font-medium font-normal text-white"
                       >
-                        2mo ago
+                        3mo ago
                       </p>
                       <p
                         class="text-sm font-medium font-normal mobile:hidden text-white"

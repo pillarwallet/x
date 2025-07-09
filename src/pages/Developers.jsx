@@ -131,10 +131,10 @@ const Developers = () => {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-feature-2.png"
+                  poster="https://cdn.pillarx.app/home-feature-2.png"
                 >
                   <source
-                    src="/landing-images/home-feature-2.mp4"
+                    src="https://cdn.pillarx.app/home-feature-2.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -147,10 +147,10 @@ const Developers = () => {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-feature-3.png"
+                  poster="https://cdn.pillarx.app/home-feature-3.png"
                 >
                   <source
-                    src="/landing-images/home-feature-3.mp4"
+                    src="https://cdn.pillarx.app/home-feature-3.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -178,7 +178,7 @@ const Developers = () => {
                           authentication. Ideal for&nbsp;gaming dApps.
                         </p>
                         <img
-                          src="/landing-images/developers-module-1.svg"
+                          src="https://cdn.pillarx.app/developers-module-1.svg"
                           alt=""
                         />
                       </div>
@@ -194,7 +194,7 @@ const Developers = () => {
                           marketplaces.
                         </p>
                         <img
-                          src="/landing-images/developers-module-2.svg"
+                          src="https://cdn.pillarx.app/developers-module-2.svg"
                           alt=""
                         />
                       </div>
@@ -211,7 +211,7 @@ const Developers = () => {
                           distribution of tokens.
                         </p>
                         <img
-                          src="/landing-images/developers-module-3.svg"
+                          src="https://cdn.pillarx.app/developers-module-3.svg"
                           alt=""
                         />
                       </div>
@@ -229,7 +229,7 @@ const Developers = () => {
                           Modules
                         </h3>
                         <img
-                          src="/landing-images/developers-module-icon.svg"
+                          src="https://cdn.pillarx.app/developers-module-icon.svg"
                           alt=""
                         />
                       </a>
@@ -342,7 +342,10 @@ const Developers = () => {
             <div className="developers_choose__list__wrapper">
               <div className="developers_choose__list">
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-1.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-1.svg"
+                    alt=""
+                  />
                   <h3>Seamless Integration</h3>
                   <p>
                     Integrate effortlessly with your projects, reducing
@@ -350,7 +353,10 @@ const Developers = () => {
                   </p>
                 </div>
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-2.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-2.svg"
+                    alt=""
+                  />
                   <h3>Full Account Abstraction</h3>
                   <p>
                     Enjoy the convenience of complete account management without
@@ -358,12 +364,18 @@ const Developers = () => {
                   </p>
                 </div>
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-3.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-3.svg"
+                    alt=""
+                  />
                   <h3>Intuitive User Interface</h3>
                   <p>Implement a pre-built UI that enhances user engagement.</p>
                 </div>
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-4.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-4.svg"
+                    alt=""
+                  />
                   <h3>ERC-7579 Modules</h3>
                   <p>
                     Leverage modular components for session keys, payments,
@@ -371,7 +383,10 @@ const Developers = () => {
                   </p>
                 </div>
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-5.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-5.svg"
+                    alt=""
+                  />
                   <h3>4337 Paymaster</h3>
                   <p>
                     Sponsor user interactions, covering transaction fees and
@@ -379,7 +394,10 @@ const Developers = () => {
                   </p>
                 </div>
                 <div className="developers_choose__list__detail">
-                  <img src="/landing-images/developers-choose-6.svg" alt="" />
+                  <img
+                    src="https://cdn.pillarx.app/developers-choose-6.svg"
+                    alt=""
+                  />
                   <h3>Revenue Sharing</h3>
                   <p>
                     Earn from every transaction and share in advertising
@@ -396,7 +414,7 @@ const Developers = () => {
       <section className="developers_join">
         <div className="container">
           <div className="developers_join__wrapper">
-            <img src="/landing-images/home-logo-px.svg" alt="" />
+            <img src="https://cdn.pillarx.app/home-logo-px.svg" alt="" />
             <p>
               Join the growing community of developers who trust PillarX to
               streamline their Account Abstraction processes and maximize their

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 
 // store
 import { store } from '../../../../../store';
@@ -14,13 +15,13 @@ import { setTimeTab } from '../../../reducer/LeaderboardSlice';
 import LeaderboardTabsButton from '../LeaderboardTabsButton';
 
 describe('<LeaderboardTabsButton />', () => {
-  const useAppSelectorMock = jest.spyOn(reducerHooks, 'useAppSelector');
-  const useAppDispatchMock = jest.spyOn(reducerHooks, 'useAppDispatch');
+  const useAppSelectorMock = vi.spyOn(reducerHooks, 'useAppSelector');
+  const useAppDispatchMock = vi.spyOn(reducerHooks, 'useAppDispatch');
 
-  const mockDispatch = jest.fn();
+  const mockDispatch = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     useAppDispatchMock.mockReturnValue(mockDispatch);
   });
 

@@ -50,7 +50,7 @@ createAppKit({
   adapters: [new Ethers5Adapter()],
   metadata: metadataReownAppKit,
   networks: [mainnet, polygon, base, gnosis, bsc, optimism, arbitrum],
-  projectId: process.env.REACT_APP_REOWN_PROJECT_ID || '',
+  projectId: import.meta.env.VITE_REOWN_PROJECT_ID || '',
   features: {
     swaps: false,
     onramp: false,

@@ -1,4 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // reducer
 import {
@@ -17,22 +21,22 @@ import { PeriodFilterBalance, PeriodFilterPnl } from '../../../utils/portfolio';
 // components
 import WalletPortfolioGraph from '../WalletPortfolioGraph';
 
-jest.mock('../../../hooks/useReducerHooks');
-jest.mock('../../Typography/BodySmall', () => ({
+vi.mock('../../../hooks/useReducerHooks');
+vi.mock('../../Typography/BodySmall', () => ({
   __esModule: true,
   default: function BodySmall({ children }: { children: React.ReactNode }) {
     return <div>{children}</div>;
   },
 }));
 
-jest.mock('../BalancePnlGraph', () => ({
+vi.mock('../BalancePnlGraph', () => ({
   __esModule: true,
   default: function BalancePnlGraph() {
     return <div data-testid="balance-graph">Graph Component</div>;
   },
 }));
 
-jest.mock('../WalletPortfolioGraphButton', () => ({
+vi.mock('../WalletPortfolioGraphButton', () => ({
   __esModule: true,
   default: function WalletPortfolioGraphButton({
     text,
@@ -52,24 +56,23 @@ jest.mock('../WalletPortfolioGraphButton', () => ({
   },
 }));
 
-const mockDispatch = jest.fn();
-(useAppDispatchMock as unknown as jest.Mock).mockReturnValue(mockDispatch);
+const mockDispatch = vi.fn();
+(useAppDispatchMock as unknown as Mock).mockReturnValue(mockDispatch);
 
 describe('WalletPortfolioGraph', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const renderWithState = (selectedBalanceOrPnl: 'balance' | 'pnl') => {
-    (useAppSelectorMock as unknown as jest.Mock).mockImplementation(
-      (selectorFn) =>
-        selectorFn({
-          walletPortfolio: {
-            periodFilter: PeriodFilterBalance.WEEK,
-            periodFilterPnl: PeriodFilterPnl.MONTH,
-            selectedBalanceOrPnl,
-          },
-        })
+    (useAppSelectorMock as unknown as Mock).mockImplementation((selectorFn) =>
+      selectorFn({
+        walletPortfolio: {
+          periodFilter: PeriodFilterBalance.WEEK,
+          periodFilterPnl: PeriodFilterPnl.MONTH,
+          selectedBalanceOrPnl,
+        },
+      })
     );
     render(<WalletPortfolioGraph />);
   };

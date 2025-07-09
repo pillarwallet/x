@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches snapshot 1`] = `
+exports[`<LeftColumnTokenMarketDataRow /> - ETH token row > renders and matches snapshot 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
@@ -31,7 +31,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
             <img
               alt="copy-token-address"
               class="w-2.5 h-3"
-              src="token-market-data-copy.png"
+              src="/src/apps/pillarx-app/images/token-market-data-copy.png"
             />
           </div>
         </div>
@@ -41,7 +41,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           <p
             class="text-sm font-medium font-normal text-white"
           >
-            2mo ago
+            3mo ago
           </p>
           <p
             class="text-sm font-medium font-normal mobile:hidden text-white"
@@ -96,7 +96,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
           <img
             alt="copy-token-address"
             class="w-2.5 h-3"
-            src="token-market-data-copy.png"
+            src="/src/apps/pillarx-app/images/token-market-data-copy.png"
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ exports[`<LeftColumnTokenMarketDataRow /> - ETH token row renders and matches sn
         <p
           class="text-sm font-medium font-normal text-white"
         >
-          2mo ago
+          3mo ago
         </p>
         <p
           class="text-sm font-medium font-normal mobile:hidden text-white"
