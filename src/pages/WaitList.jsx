@@ -65,15 +65,6 @@ const Waitlist = () => {
               <h1>Join PillarX Soft Launch and Collect PX Points!</h1>
               <p>
                 Test the upgraded PillarX experience and collect PX points.
-                <br /> Top participants get a chance to win a share of{' '}
-                <a
-                  href="https://blog.pillarx.app/pillarx-soft-launch-join-unlock-exclusive-rewards/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  the prize pool
-                </a>
-                !
                 <br /> Join the waitlist and keep an eye on your inbox for the
                 access link
               </p>
