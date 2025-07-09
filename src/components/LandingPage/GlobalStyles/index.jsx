@@ -609,7 +609,7 @@ const GlobalStyles = createGlobalStyle`
   
   .home_hero__content {
     position: absolute;
-    transform: translateY(-130%);
+    transform: translateY(-112%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -617,7 +617,7 @@ const GlobalStyles = createGlobalStyle`
 
   @media only screen and (max-width: 767px) {
     .home_hero__content {
-      transform: translateY(-300%);
+      transform: translateY(-240%);
     }
   }
   
@@ -664,7 +664,7 @@ const GlobalStyles = createGlobalStyle`
 
   .home_hero__signup {
     width: 100%;
-    max-width: 75rem;
+    max-width: 78rem;
     background: rgba(94, 0, 255, 0.2);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
@@ -974,7 +974,7 @@ const GlobalStyles = createGlobalStyle`
   
   .home_signup__content h1 {
     font-size: 7rem;
-    max-width: 22ch;
+    max-width: 18ch;
     line-height: 1;
   }
 
