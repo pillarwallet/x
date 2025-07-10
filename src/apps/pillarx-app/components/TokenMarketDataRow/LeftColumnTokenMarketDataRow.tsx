@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
-import { DateTime } from 'luxon';
 import { useEffect, useRef, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
+import { formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
+import { DateTime } from 'luxon';
 
 // types
 import { TokensMarketDataRow } from '../../../../types/api';
@@ -20,10 +20,12 @@ import CopyIcon from '../../images/token-market-data-copy.png';
 
 type LeftColumnTokenMarketDataRowProps = {
   data: TokensMarketDataRow;
+  tileTitle?: string;
 };
 
 const LeftColumnTokenMarketDataRow = ({
   data,
+  tileTitle,
 }: LeftColumnTokenMarketDataRowProps) => {
   const { leftColumn } = data;
   const [copied, setCopied] = useState(false);
@@ -39,21 +41,6 @@ const LeftColumnTokenMarketDataRow = ({
     return undefined;
   }, [copied]);
 
-  const timestampToISO =
-    DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '';
-
-  const ISOToDate = parseISO(timestampToISO);
-
-  let timestamp = isValid(ISOToDate)
-    ? formatDistanceToNowStrict(
-        DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '',
-        { addSuffix: true }
-      )
-    : undefined;
-
-  // Replace long units with shorter units and delete white space before the units
-  timestamp = timestamp && getShorterTimeUnits(timestamp);
-
   useEffect(() => {
     const updateWidth = () => {
       if (divRef.current) {
@@ -68,6 +55,17 @@ const LeftColumnTokenMarketDataRow = ({
       window.removeEventListener('resize', updateWidth);
     };
   }, []);
+
+  // Calculate timestamp/age
+  const timestampToISO = DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '';
+  const ISOToDate = parseISO(timestampToISO);
+  let timestamp = isValid(ISOToDate)
+    ? formatDistanceToNowStrict(
+        DateTime.fromSeconds(leftColumn?.line2?.timestamp || 0).toISO() || '',
+        { addSuffix: true }
+      )
+    : undefined;
+  timestamp = timestamp && getShorterTimeUnits(timestamp);
 
   return (
     <div className="flex flex-col ml-1.5 h-full justify-between">
@@ -117,7 +115,8 @@ const LeftColumnTokenMarketDataRow = ({
         ) : null}
       </div>
       <div className="flex flex-wrap gap-x-2 mobile:gap-x-1.5">
-        {timestamp ? (
+        {/* Conditionally display timestamp if tileTitle contains 'Fresh' */}
+        {tileTitle?.includes('Fresh') && timestamp ? (
           <BodySmall className="font-normal text-white">{timestamp}</BodySmall>
         ) : null}
         {leftColumn?.line2?.volume ? (
