@@ -28,6 +28,7 @@ import ExchangeAction from '../ExchangeAction';
 
 // types
 import { Token } from '../../../../../services/tokensData';
+import * as useOffer from '../../../hooks/useOffer';
 import { SwapOffer } from '../../../utils/types';
 
 const mockTokenAssets: Token[] = [
@@ -132,6 +133,7 @@ vi.mock('@lifi/sdk', () => ({
 
 describe('<ExchangeAction />', () => {
   beforeEach(() => {
+    import.meta.env.VITE_SWAP_FEE_RECEIVER = '0xFEEADDRESS';
     vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
@@ -215,5 +217,59 @@ describe('<ExchangeAction />', () => {
       expect(screen.queryByTestId('loading-circular')).not.toBeInTheDocument();
       expect(screen.getByText('Exchange')).toBeInTheDocument();
     });
+  });
+
+  it('displays fee info when offer is present', async () => {
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockResolvedValue([
+        {
+          to: '0xFEEADDRESS',
+          value: BigInt('1000000000000000'), // 0.001 ETH in wei
+          data: '0x',
+          chainId: 1,
+        },
+      ]),
+      getBestOffer: vi.fn(),
+    });
+
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    act(() => {
+      store.dispatch(setBestOffer(mockBestOffer));
+    });
+    // Wait for fee info to appear
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          (content) =>
+            content.includes('Fee:') &&
+            content.includes('0.001') &&
+            content.includes('ETH')
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('shows an error if getStepTransactions fails', async () => {
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockRejectedValue(new Error('Test error')),
+      getBestOffer: vi.fn(), // Provide a default mock for getBestOffer
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    act(() => {
+      store.dispatch(setBestOffer(mockBestOffer));
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(/unable to prepare the swap/i)
+      ).toBeInTheDocument()
+    );
   });
 });
