@@ -6,32 +6,107 @@ import {
   getRoutes,
   getStepTransaction,
 } from '@lifi/sdk';
-import { parseUnits } from 'ethers/lib/utils';
 import {
   createPublicClient,
   encodeFunctionData,
   erc20Abi,
   formatUnits,
   http,
+  parseUnits,
+  zeroAddress,
 } from 'viem';
 
 // types
 import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
+
+// hooks
+import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // utils
 import {
   Token,
   chainNameToChainIdTokensData,
 } from '../../../services/tokensData';
-import { getNetworkViem } from '../../deposit/utils/blockchain';
+import { isStableCoin } from '../../../utils/blockchain';
+import {
+  getNativeBalance,
+  getNetworkViem,
+} from '../../deposit/utils/blockchain';
 import { processEth } from '../utils/blockchain';
 import {
   getWrappedTokenAddressIfNative,
+  isNativeToken,
   isWrappedToken,
 } from '../utils/wrappedTokens';
 
+// Utility: Convert to wei as bigint
+export const toWei = (amount: string | number, decimals = 18): bigint => {
+  return parseUnits(String(amount), decimals);
+};
+
+// Utility: Extract native token balance from walletPortfolio for a given chainId
+export const getNativeBalanceFromPortfolio = (
+  walletPortfolio: Token[] | undefined,
+  chainId: number
+): string | undefined => {
+  if (!walletPortfolio) return undefined;
+  // Find the native token for the chain (by contract address)
+  const nativeToken = walletPortfolio.find(
+    (token) =>
+      chainNameToChainIdTokensData(token.blockchain) === chainId &&
+      isNativeToken(token.contract)
+  );
+  return nativeToken ? String(nativeToken.balance) : undefined;
+};
+
 const useOffer = () => {
   const { isZeroAddress } = useEtherspotUtils();
+  const { transactionDebugLog } = useTransactionDebugLogger();
+
+  const getNativeFeeForERC20 = async ({
+    tokenAddress,
+    chainId,
+    feeAmount,
+    slippage = 0.03,
+  }: {
+    tokenAddress: string;
+    chainId: number;
+    feeAmount: string;
+    slippage?: number;
+  }) => {
+    try {
+      const feeRouteRequest: RoutesRequest = {
+        fromChainId: chainId,
+        toChainId: chainId,
+        fromTokenAddress: tokenAddress,
+        toTokenAddress: zeroAddress,
+        fromAmount: feeAmount,
+        options: {
+          slippage,
+          bridges: {
+            allow: ['relay'],
+          },
+          exchanges: { allow: ['openocean', 'kyberswap'] },
+        },
+      };
+
+      const result = await getRoutes(feeRouteRequest);
+
+      const route = result.routes?.[0];
+      if (!route) return undefined;
+
+      transactionDebugLog(
+        'Get native fee for ERC20 swap, the route:',
+        route,
+        'the request:',
+        feeRouteRequest
+      );
+      return route;
+    } catch (e) {
+      console.error('Failed to get native fee estimation via LiFi:', e);
+      return undefined;
+    }
+  };
 
   const getBestOffer = async ({
     fromAmount,
@@ -52,12 +127,14 @@ const useOffer = () => {
         fromChainId
       );
 
+      const fromAmountFeeDeducted = Number(fromAmount) * 0.99;
+
       const routesRequest: RoutesRequest = {
         fromChainId,
         toChainId,
         fromTokenAddress: fromTokenAddressWithWrappedCheck,
         toTokenAddress,
-        fromAmount: `${parseUnits(`${fromAmount}`, fromTokenDecimals)}`,
+        fromAmount: `${parseUnits(`${fromAmountFeeDeducted}`, fromTokenDecimals)}`,
         options: {
           slippage,
           bridges: {
@@ -132,7 +209,8 @@ const useOffer = () => {
   const getStepTransactions = async (
     tokenToSwap: Token,
     route: Route,
-    fromAccount: string
+    fromAccount: string,
+    cachedNativeBalance?: string // Optional: pass cached native balance from walletPortfolio
   ): Promise<StepTransaction[]> => {
     const stepTransactions: StepTransaction[] = [];
 
@@ -142,6 +220,104 @@ const useOffer = () => {
         tokenToSwap.contract,
         chainNameToChainIdTokensData(tokenToSwap.blockchain)
       );
+
+    // --- 1% FEE LOGIC ---
+    // Always deduct 1% from the From Token (already done in getBestOffer)
+    const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
+    const feeAmount = BigInt(route.fromAmount) / BigInt(100); // 1%
+    const fromTokenAddress = route.fromToken.address;
+    const fromTokenChainId = route.fromToken.chainId;
+
+    // 1. If From Token is native, transfer 1% directly to fee address
+    if (isZeroAddress(fromTokenAddress)) {
+      const feeStep = {
+        to: feeReceiver,
+        value: feeAmount,
+        data: '0x' as `0x${string}`,
+        chainId: fromTokenChainId,
+      };
+      stepTransactions.push(feeStep);
+      transactionDebugLog('Pushed native fee step:', feeStep);
+    } else if (isStableCoin(fromTokenAddress, fromTokenChainId)) {
+      // 2. If input is stablecoin, push ERC20 transfer transaction
+      const calldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [feeReceiver, feeAmount],
+      });
+      const feeStep = {
+        to: fromTokenAddress,
+        value: BigInt(0),
+        data: calldata,
+        chainId: fromTokenChainId,
+      };
+      stepTransactions.push(feeStep);
+      transactionDebugLog('Pushed stablecoin fee step:', feeStep);
+    } else if (isWrappedToken(fromTokenAddress, fromTokenChainId)) {
+      // 3. If input is a wrapped token, push ERC20 transfer transaction (like stablecoin)
+      const calldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [feeReceiver, feeAmount],
+      });
+      const feeStep = {
+        to: fromTokenAddress,
+        value: BigInt(0),
+        data: calldata,
+        chainId: fromTokenChainId,
+      };
+      stepTransactions.push(feeStep);
+      transactionDebugLog('Pushed wrapped token fee step:', feeStep);
+    } else {
+      // 4. If input is ERC20 non-stable, estimate native equivalent of 1% and transfer that as fee
+      try {
+        const nativeFeeRoute = await getNativeFeeForERC20({
+          tokenAddress: fromTokenAddress,
+          chainId: fromTokenChainId,
+          feeAmount: feeAmount.toString(),
+        });
+        if (nativeFeeRoute && nativeFeeRoute.toAmount) {
+          // Add a 1% buffer to the estimated native fee
+          const estimatedNativeFee = BigInt(nativeFeeRoute.toAmount);
+          const bufferedNativeFee =
+            estimatedNativeFee + estimatedNativeFee / BigInt(100); // +1%
+
+          // Use cachedNativeBalance if provided, else fetch
+          const userNativeBalanceStr =
+            cachedNativeBalance !== undefined
+              ? cachedNativeBalance
+              : await getNativeBalance(fromAccount, fromTokenChainId);
+
+          const userNativeBalance = toWei(userNativeBalanceStr, 18);
+
+          if (userNativeBalance < bufferedNativeFee) {
+            throw new Error(
+              'Insufficient native token balance to pay the fee. Please ensure you have enough native token to cover the fee.'
+            );
+          }
+
+          const feeStep = {
+            to: feeReceiver,
+            value: bufferedNativeFee,
+            data: '0x' as `0x${string}`,
+            chainId: fromTokenChainId,
+          };
+          stepTransactions.push(feeStep);
+          transactionDebugLog(
+            'Pushed ERC20 non-stable fee step (native):',
+            feeStep
+          );
+        } else {
+          throw new Error(
+            'Failed to estimate native fee for ERC20. No route found.'
+          );
+        }
+      } catch (e) {
+        // Rethrow as error for UI to catch
+        throw new Error('Failed to estimate native fee for ERC20.');
+      }
+    }
+    // --- END FEE LOGIC ---
 
     // If wrapping is required, we will add an extra step transaction with
     // a wrapped token deposit first
