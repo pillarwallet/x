@@ -130,14 +130,15 @@ const ExchangeAction = () => {
           amount: '0',
           symbol: swapToken.symbol,
           recipient: String(feeReceiver),
-          warning: 'Fee transaction not found. Please check your swap setup.',
+          warning:
+            'Unable to prepare the swap. Please check your wallet, refresh the page and try again.',
         });
       }
     } catch (e) {
       setFeeInfo(null);
       transactionDebugLog('Fee estimation error:', e);
       setErrorMessage(
-        'Unable to prepare the swap. Please check your wallet and try again.'
+        'Unable to prepare the swap. Please check your wallet, refresh the page and try again.'
       );
     }
   };

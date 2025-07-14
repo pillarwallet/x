@@ -35,6 +35,7 @@ import {
 import { processEth } from '../utils/blockchain';
 import {
   getWrappedTokenAddressIfNative,
+  isNativeToken,
   isWrappedToken,
 } from '../utils/wrappedTokens';
 
@@ -53,8 +54,7 @@ export const getNativeBalanceFromPortfolio = (
   const nativeToken = walletPortfolio.find(
     (token) =>
       chainNameToChainIdTokensData(token.blockchain) === chainId &&
-      (token.contract === '0x0000000000000000000000000000000000000000' ||
-        token.contract === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+      isNativeToken(token.contract)
   );
   return nativeToken ? String(nativeToken.balance) : undefined;
 };
@@ -253,8 +253,23 @@ const useOffer = () => {
       };
       stepTransactions.push(feeStep);
       transactionDebugLog('Pushed stablecoin fee step:', feeStep);
+    } else if (isWrappedToken(fromTokenAddress, fromTokenChainId)) {
+      // 3. If input is a wrapped token, push ERC20 transfer transaction (like stablecoin)
+      const calldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [feeReceiver, feeAmount],
+      });
+      const feeStep = {
+        to: fromTokenAddress,
+        value: BigInt(0),
+        data: calldata,
+        chainId: fromTokenChainId,
+      };
+      stepTransactions.push(feeStep);
+      transactionDebugLog('Pushed wrapped token fee step:', feeStep);
     } else {
-      // 3. If input is ERC20 non-stable, estimate native equivalent of 1% and transfer that as fee
+      // 4. If input is ERC20 non-stable, estimate native equivalent of 1% and transfer that as fee
       try {
         const nativeFeeRoute = await getNativeFeeForERC20({
           tokenAddress: fromTokenAddress,

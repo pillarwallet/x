@@ -1,6 +1,7 @@
 export const NATIVE_TOKEN_ADDRESSES = new Set([
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
   '0x0000000000000000000000000000000000000000',
+  '0x0000000000000000000000000000000000001010',
 ]);
 
 // Not including XDAI below

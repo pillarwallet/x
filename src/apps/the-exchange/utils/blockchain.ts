@@ -21,7 +21,7 @@ export const processEth = (val: BigNumberish, dec: number): number => {
 export const NATIVE_SYMBOLS: Record<number, string> = {
   1: 'ETH',
   100: 'xDAI',
-  137: 'MATIC',
+  137: 'POL',
   10: 'ETH',
   42161: 'ETH',
   56: 'BNB',
@@ -40,7 +40,7 @@ export const isNativeFeeTx = (
   );
 };
 
-// Helper: Detect if a tx is an ERC20 (stablecoin) fee step
+// Helper: Detect if a tx is an ERC20 (stablecoin or wrapped) fee step
 export const isERC20FeeTx = (
   tx: StepTransaction,
   swapToken: Token

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
+import { encodeFunctionData, erc20Abi } from 'viem';
 import { vi } from 'vitest';
 
 // provider
@@ -87,6 +88,8 @@ export const mockBestOffer: SwapOffer = {
   },
 };
 
+const FEE_RECEIVER = '0xfee0000000000000000000000000000000000000';
+
 // Mock hooks and utils
 vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => ({
   _esModule: true,
@@ -133,7 +136,7 @@ vi.mock('@lifi/sdk', () => ({
 
 describe('<ExchangeAction />', () => {
   beforeEach(() => {
-    import.meta.env.VITE_SWAP_FEE_RECEIVER = '0xFEEADDRESS';
+    import.meta.env.VITE_SWAP_FEE_RECEIVER = FEE_RECEIVER;
     vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
@@ -219,11 +222,11 @@ describe('<ExchangeAction />', () => {
     });
   });
 
-  it('displays fee info when offer is present', async () => {
+  it('displays fee info for native token fee', async () => {
     vi.spyOn(useOffer, 'default').mockReturnValue({
       getStepTransactions: vi.fn().mockResolvedValue([
         {
-          to: '0xFEEADDRESS',
+          to: FEE_RECEIVER,
           value: BigInt('1000000000000000'), // 0.001 ETH in wei
           data: '0x',
           chainId: 1,
@@ -240,13 +243,187 @@ describe('<ExchangeAction />', () => {
     act(() => {
       store.dispatch(setBestOffer(mockBestOffer));
     });
-    // Wait for fee info to appear
     await waitFor(() =>
       expect(
         screen.getByText(
           (content) =>
             content.includes('Fee:') &&
             content.includes('0.001') &&
+            content.includes('ETH')
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('displays fee info for stablecoin fee', async () => {
+    // Encode 10 USDC (6 decimals)
+    const usdcAmount = BigInt(10 * 10 ** 6);
+    const usdcData = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [FEE_RECEIVER, usdcAmount],
+    });
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockResolvedValue([
+        {
+          to: '0x02', // stablecoin contract
+          value: BigInt(0),
+          data: usdcData,
+          chainId: 137,
+        },
+      ]),
+      getBestOffer: vi.fn(),
+    });
+    act(() => {
+      store.dispatch(
+        setSwapToken({
+          ...mockTokenAssets[1],
+          contract: '0x02',
+          symbol: 'USDC',
+          decimals: 6,
+        })
+      );
+      store.dispatch(
+        setBestOffer({
+          ...mockBestOffer,
+          offer: {
+            ...mockBestOffer.offer,
+            fromToken: {
+              ...mockBestOffer.offer.fromToken,
+              address: '0x02',
+              symbol: 'USDC',
+              decimals: 6,
+            },
+            fromChainId: 137,
+          },
+        })
+      );
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          (content) =>
+            content.includes('Fee:') &&
+            content.includes('10') &&
+            content.includes('USDC')
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('displays fee info for wrapped token fee', async () => {
+    // Encode 10 WETH (18 decimals)
+    const wethAmount = BigInt(10 * 10 ** 18);
+    const wethData = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [FEE_RECEIVER, wethAmount],
+    });
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockResolvedValue([
+        {
+          to: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH contract
+          value: BigInt(0),
+          data: wethData,
+          chainId: 1,
+        },
+      ]),
+      getBestOffer: vi.fn(),
+    });
+    act(() => {
+      store.dispatch(
+        setSwapToken({
+          ...mockTokenAssets[0],
+          contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+          symbol: 'WETH',
+          decimals: 18,
+        })
+      );
+      store.dispatch(
+        setBestOffer({
+          ...mockBestOffer,
+          offer: {
+            ...mockBestOffer.offer,
+            fromToken: {
+              ...mockBestOffer.offer.fromToken,
+              address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+              symbol: 'WETH',
+              decimals: 18,
+            },
+            fromChainId: 1,
+          },
+        })
+      );
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          (content) =>
+            content.includes('Fee:') &&
+            content.includes('10') &&
+            content.includes('WETH')
+        )
+      ).toBeInTheDocument()
+    );
+  });
+
+  it('displays fee info for non-stable ERC20 fee (native fallback)', async () => {
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockResolvedValue([
+        {
+          to: FEE_RECEIVER,
+          value: BigInt('2000000000000000'), // 0.002 ETH in wei
+          data: '0x',
+          chainId: 1,
+        },
+      ]),
+      getBestOffer: vi.fn(),
+    });
+    act(() => {
+      store.dispatch(
+        setSwapToken({
+          ...mockTokenAssets[0],
+          contract: '0xSOMEERC20',
+          symbol: 'RANDOM',
+        })
+      );
+      store.dispatch(
+        setBestOffer({
+          ...mockBestOffer,
+          offer: {
+            ...mockBestOffer.offer,
+            fromToken: {
+              ...mockBestOffer.offer.fromToken,
+              address: '0xSOMEERC20',
+              symbol: 'RANDOM',
+              decimals: 18,
+            },
+            fromChainId: 1,
+          },
+        })
+      );
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          (content) =>
+            content.includes('Fee:') &&
+            content.includes('0.002') &&
             content.includes('ETH')
         )
       ).toBeInTheDocument()
