@@ -31,7 +31,6 @@ import { isStableCoin } from '../../../utils/blockchain';
 import { getNetworkViem } from '../../deposit/utils/blockchain';
 import {
   getNativeBalanceFromPortfolio,
-  getTokenBalanceFromPortfolio,
   processEth,
   toWei,
 } from '../utils/blockchain';
@@ -192,7 +191,8 @@ const useOffer = () => {
     tokenToSwap: Token,
     route: Route,
     fromAccount: string,
-    userPortfolio: Token[] | undefined
+    userPortfolio: Token[] | undefined,
+    fromAmount: number // Pass the original user input amount
   ): Promise<StepTransaction[]> => {
     const stepTransactions: StepTransaction[] = [];
 
@@ -203,6 +203,12 @@ const useOffer = () => {
         chainNameToChainIdTokensData(tokenToSwap.blockchain)
       );
 
+    // Convert fromAmount (number) to BigInt using token decimals
+    const fromAmountBigInt = parseUnits(
+      String(fromAmount),
+      tokenToSwap.decimals
+    );
+
     // --- 1% FEE LOGIC ---
     // Always deduct 1% from the From Token (already done in getBestOffer)
     // - Native in native
@@ -210,7 +216,8 @@ const useOffer = () => {
     // - Wrapped in wrapped
     // - Non-stable ERC20 in native
     const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
-    const feeAmount = BigInt(route.fromAmount) / BigInt(100); // 1%
+    // Use the original input amount for fee calculation
+    const feeAmount = fromAmountBigInt / BigInt(100); // 1% of input
     const fromTokenChainId = route.fromToken.chainId;
     const userSelectedNative = isNativeToken(tokenToSwap.contract);
     const userSelectedWrapped = isWrappedToken(
@@ -226,44 +233,28 @@ const useOffer = () => {
     // For native: need enough for swap + fee
     // For ERC20: need enough ERC20 for swap
     let userNativeBalance = BigInt(0);
-    let userTokenBalance = BigInt(0);
     try {
-      // Get balances from portfolio
+      // Get native balance from portfolio
       const nativeBalance =
         getNativeBalanceFromPortfolio(userPortfolio, fromTokenChainId) || '0';
       userNativeBalance = toWei(nativeBalance, 18);
-      if (!userSelectedNative) {
-        const tokenBalance =
-          getTokenBalanceFromPortfolio(
-            userPortfolio,
-            tokenToSwap.contract,
-            fromTokenChainId
-          ) || '0';
-        userTokenBalance = BigInt(tokenBalance);
-      }
     } catch (e) {
       throw new Error('Unable to fetch balances for swap.');
     }
 
     // Calculate total required
     let totalNativeRequired = BigInt(0);
-    let totalTokenRequired = BigInt(0);
     if (userSelectedNative) {
       // Native: swap amount + fee
-      totalNativeRequired = BigInt(route.fromAmount) + feeAmount;
+      // Use fromAmountBigInt for total required
+      totalNativeRequired = fromAmountBigInt;
       if (isWrapRequired) {
-        totalNativeRequired += BigInt(route.fromAmount); // wrapping step
+        totalNativeRequired += fromAmountBigInt - feeAmount; // wrapping step uses swap amount
       }
       if (userNativeBalance < totalNativeRequired) {
         throw new Error(
           'Insufficient native token balance to cover swap and fee.'
         );
-      }
-    } else {
-      // ERC20: swap amount
-      totalTokenRequired = BigInt(route.fromAmount);
-      if (userTokenBalance < totalTokenRequired) {
-        throw new Error('Insufficient token balance to cover swap.');
       }
     }
 

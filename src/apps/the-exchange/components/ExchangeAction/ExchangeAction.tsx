@@ -106,7 +106,8 @@ const ExchangeAction = () => {
         swapToken,
         bestOffer.offer,
         walletAddress as `0x${string}`,
-        userPortfolio
+        userPortfolio,
+        amountSwap
       );
 
       transactionDebugLog(
