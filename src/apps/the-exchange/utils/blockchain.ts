@@ -1,10 +1,16 @@
 import { BigNumber, BigNumberish } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils';
-import { decodeFunctionData, erc20Abi } from 'viem';
+import { decodeFunctionData, erc20Abi, parseUnits } from 'viem';
 
 // types
-import { Token } from '../../../services/tokensData';
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../services/tokensData';
 import { StepTransaction } from './types';
+
+// utils
+import { isNativeToken } from './wrappedTokens';
 
 export const processBigNumber = (val: BigNumber): number =>
   Number(val.toString());
@@ -91,4 +97,39 @@ export const getFeeSymbol = (
     return NATIVE_SYMBOLS[chainId] || 'NATIVE';
   }
   return swapToken.symbol;
+};
+
+// Extract ERC20 token balance from walletPortfolio for a given contract and chainId
+export const getTokenBalanceFromPortfolio = (
+  walletPortfolio: Token[] | undefined,
+  contract: string,
+  chainId: number
+): string | undefined => {
+  if (!walletPortfolio) return undefined;
+  const token = walletPortfolio.find(
+    (t) =>
+      t.contract.toLowerCase() === contract.toLowerCase() &&
+      chainNameToChainIdTokensData(t.blockchain) === chainId
+  );
+  return token ? String(token.balance) : undefined;
+};
+
+// Convert to wei as bigint
+export const toWei = (amount: string | number, decimals = 18): bigint => {
+  return parseUnits(String(amount), decimals);
+};
+
+// Extract native token balance from walletPortfolio for a given chainId
+export const getNativeBalanceFromPortfolio = (
+  walletPortfolio: Token[] | undefined,
+  chainId: number
+): string | undefined => {
+  if (!walletPortfolio) return undefined;
+  // Find the native token for the chain (by contract address)
+  const nativeToken = walletPortfolio.find(
+    (token) =>
+      chainNameToChainIdTokensData(token.blockchain) === chainId &&
+      isNativeToken(token.contract)
+  );
+  return nativeToken ? String(nativeToken.balance) : undefined;
 };
