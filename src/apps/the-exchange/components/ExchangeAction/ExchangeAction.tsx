@@ -2,7 +2,7 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatEther } from 'viem';
 
 // services
@@ -16,7 +16,7 @@ import {
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
-import useOffer, { getNativeBalanceFromPortfolio } from '../../hooks/useOffer';
+import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -35,12 +35,6 @@ import NumberText from '../Typography/NumberText';
 
 // images
 import ArrowRight from '../../images/arrow-right.png';
-import {
-  getFeeAmount,
-  getFeeSymbol,
-  isERC20FeeTx,
-  isNativeFeeTx,
-} from '../../utils/blockchain';
 
 const ExchangeAction = () => {
   const bestOffer = useAppSelector(
@@ -57,12 +51,6 @@ const ExchangeAction = () => {
 
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
-  const [feeInfo, setFeeInfo] = useState<{
-    amount: string;
-    symbol: string;
-    recipient: string;
-    warning?: string;
-  } | null>(null);
   const { addToBatch } = useGlobalTransactionsBatch();
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { getStepTransactions } = useOffer();
@@ -72,81 +60,10 @@ const ExchangeAction = () => {
     (state) => state.swap.walletPortfolio as PortfolioData | undefined
   );
 
-  const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
-
   const isNoValidOffer =
     !bestOffer ||
     !bestOffer.tokenAmountToReceive ||
     Number(bestOffer.tokenAmountToReceive) === 0;
-
-  const fetchFeeInfo = async () => {
-    setFeeInfo(null);
-    setErrorMessage('');
-    if (!bestOffer || !swapToken || !walletAddress) return;
-    try {
-      // Extract cached native balance for the relevant chain
-      const nativeBalance = getNativeBalanceFromPortfolio(
-        walletPortfolio
-          ? convertPortfolioAPIResponseToToken(walletPortfolio)
-          : undefined,
-        bestOffer.offer.fromChainId
-      );
-      // Only get the fee transaction, not the whole batch
-      const stepTxs = await getStepTransactions(
-        swapToken,
-        bestOffer.offer,
-        walletAddress,
-        nativeBalance
-      );
-      transactionDebugLog(
-        'Step transactions:',
-        stepTxs,
-        'Fee receiver:',
-        feeReceiver
-      );
-      // Find the fee transfer (to feeReceiver for native, or ERC20 transfer for stablecoin)
-      const feeTx = stepTxs.find(
-        (tx) => isNativeFeeTx(tx, feeReceiver) || isERC20FeeTx(tx, swapToken)
-      );
-      if (feeTx) {
-        const amount = getFeeAmount(feeTx, swapToken, swapToken.decimals);
-        const symbol = getFeeSymbol(
-          feeTx,
-          swapToken,
-          bestOffer.offer.fromChainId
-        );
-        setFeeInfo({
-          amount,
-          symbol,
-          recipient: String(feeReceiver),
-          warning: undefined,
-        });
-      } else {
-        transactionDebugLog(
-          'No fee transaction found in stepTxs for feeReceiver:',
-          feeReceiver
-        );
-        setFeeInfo({
-          amount: '0',
-          symbol: swapToken.symbol,
-          recipient: String(feeReceiver),
-          warning:
-            'Unable to prepare the swap. Please check your wallet, refresh the page and try again.',
-        });
-      }
-    } catch (e) {
-      setFeeInfo(null);
-      transactionDebugLog('Fee estimation error:', e);
-      setErrorMessage(
-        'Unable to prepare the swap. Please check your wallet, refresh the page and try again.'
-      );
-    }
-  };
-
-  useEffect(() => {
-    fetchFeeInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bestOffer, swapToken, walletAddress]);
 
   const getTransactionTitle = (
     index: number,
@@ -181,18 +98,16 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
-      // Extract cached native balance for the relevant chain
-      const nativeBalance = getNativeBalanceFromPortfolio(
-        walletPortfolio
-          ? convertPortfolioAPIResponseToToken(walletPortfolio)
-          : undefined,
-        bestOffer.offer.fromChainId
-      );
+      // Convert walletPortfolio to Token[] for userPortfolio
+      const userPortfolio = walletPortfolio
+        ? convertPortfolioAPIResponseToToken(walletPortfolio)
+        : undefined;
       const stepTransactions = await getStepTransactions(
         swapToken,
         bestOffer.offer,
         walletAddress as `0x${string}`,
-        nativeBalance
+        userPortfolio,
+        amountSwap
       );
 
       transactionDebugLog(
@@ -204,7 +119,6 @@ const ExchangeAction = () => {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
-        setIsAddingToBatch(false);
         return;
       }
 
@@ -238,12 +152,12 @@ const ExchangeAction = () => {
         setShowBatchSendModal(true);
         showSend();
       }
-      setIsAddingToBatch(false);
     } catch (error) {
       transactionDebugLog('Swap batch error:', error);
       setErrorMessage(
         'We were not able to add this to the queue at the moment. Please try again.'
       );
+    } finally {
       setIsAddingToBatch(false);
     }
   };
@@ -276,18 +190,6 @@ const ExchangeAction = () => {
             <Body className="font-normal">{receiveToken?.symbol ?? ''}</Body>
           </div>
         </div>
-        {!isNoValidOffer && feeInfo && (
-          <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-            <BodySmall className="font-normal text-black_grey">
-              Fee: {feeInfo.amount} {feeInfo.symbol}
-            </BodySmall>
-            {feeInfo.warning && (
-              <BodySmall className="text-orange-600 font-normal mt-1">
-                {feeInfo.warning}
-              </BodySmall>
-            )}
-          </div>
-        )}
       </div>
       <div
         id="exchange-action-button"

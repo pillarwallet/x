@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
-import { encodeFunctionData, erc20Abi } from 'viem';
 import { vi } from 'vitest';
 
 // provider
@@ -222,214 +221,6 @@ describe('<ExchangeAction />', () => {
     });
   });
 
-  it('displays fee info for native token fee', async () => {
-    vi.spyOn(useOffer, 'default').mockReturnValue({
-      getStepTransactions: vi.fn().mockResolvedValue([
-        {
-          to: FEE_RECEIVER,
-          value: BigInt('1000000000000000'), // 0.001 ETH in wei
-          data: '0x',
-          chainId: 1,
-        },
-      ]),
-      getBestOffer: vi.fn(),
-    });
-
-    render(
-      <Provider store={store}>
-        <ExchangeAction />
-      </Provider>
-    );
-    act(() => {
-      store.dispatch(setBestOffer(mockBestOffer));
-    });
-    await waitFor(() =>
-      expect(
-        screen.getByText(
-          (content) =>
-            content.includes('Fee:') &&
-            content.includes('0.001') &&
-            content.includes('ETH')
-        )
-      ).toBeInTheDocument()
-    );
-  });
-
-  it('displays fee info for stablecoin fee', async () => {
-    // Encode 10 USDC (6 decimals)
-    const usdcAmount = BigInt(10 * 10 ** 6);
-    const usdcData = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [FEE_RECEIVER, usdcAmount],
-    });
-    vi.spyOn(useOffer, 'default').mockReturnValue({
-      getStepTransactions: vi.fn().mockResolvedValue([
-        {
-          to: '0x02', // stablecoin contract
-          value: BigInt(0),
-          data: usdcData,
-          chainId: 137,
-        },
-      ]),
-      getBestOffer: vi.fn(),
-    });
-    act(() => {
-      store.dispatch(
-        setSwapToken({
-          ...mockTokenAssets[1],
-          contract: '0x02',
-          symbol: 'USDC',
-          decimals: 6,
-        })
-      );
-      store.dispatch(
-        setBestOffer({
-          ...mockBestOffer,
-          offer: {
-            ...mockBestOffer.offer,
-            fromToken: {
-              ...mockBestOffer.offer.fromToken,
-              address: '0x02',
-              symbol: 'USDC',
-              decimals: 6,
-            },
-            fromChainId: 137,
-          },
-        })
-      );
-    });
-    render(
-      <Provider store={store}>
-        <ExchangeAction />
-      </Provider>
-    );
-    await waitFor(() =>
-      expect(
-        screen.getByText(
-          (content) =>
-            content.includes('Fee:') &&
-            content.includes('10') &&
-            content.includes('USDC')
-        )
-      ).toBeInTheDocument()
-    );
-  });
-
-  it('displays fee info for wrapped token fee', async () => {
-    // Encode 10 WETH (18 decimals)
-    const wethAmount = BigInt(10 * 10 ** 18);
-    const wethData = encodeFunctionData({
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [FEE_RECEIVER, wethAmount],
-    });
-    vi.spyOn(useOffer, 'default').mockReturnValue({
-      getStepTransactions: vi.fn().mockResolvedValue([
-        {
-          to: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH contract
-          value: BigInt(0),
-          data: wethData,
-          chainId: 1,
-        },
-      ]),
-      getBestOffer: vi.fn(),
-    });
-    act(() => {
-      store.dispatch(
-        setSwapToken({
-          ...mockTokenAssets[0],
-          contract: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-          symbol: 'WETH',
-          decimals: 18,
-        })
-      );
-      store.dispatch(
-        setBestOffer({
-          ...mockBestOffer,
-          offer: {
-            ...mockBestOffer.offer,
-            fromToken: {
-              ...mockBestOffer.offer.fromToken,
-              address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-              symbol: 'WETH',
-              decimals: 18,
-            },
-            fromChainId: 1,
-          },
-        })
-      );
-    });
-    render(
-      <Provider store={store}>
-        <ExchangeAction />
-      </Provider>
-    );
-    await waitFor(() =>
-      expect(
-        screen.getByText(
-          (content) =>
-            content.includes('Fee:') &&
-            content.includes('10') &&
-            content.includes('WETH')
-        )
-      ).toBeInTheDocument()
-    );
-  });
-
-  it('displays fee info for non-stable ERC20 fee (native fallback)', async () => {
-    vi.spyOn(useOffer, 'default').mockReturnValue({
-      getStepTransactions: vi.fn().mockResolvedValue([
-        {
-          to: FEE_RECEIVER,
-          value: BigInt('2000000000000000'), // 0.002 ETH in wei
-          data: '0x',
-          chainId: 1,
-        },
-      ]),
-      getBestOffer: vi.fn(),
-    });
-    act(() => {
-      store.dispatch(
-        setSwapToken({
-          ...mockTokenAssets[0],
-          contract: '0xSOMEERC20',
-          symbol: 'RANDOM',
-        })
-      );
-      store.dispatch(
-        setBestOffer({
-          ...mockBestOffer,
-          offer: {
-            ...mockBestOffer.offer,
-            fromToken: {
-              ...mockBestOffer.offer.fromToken,
-              address: '0xSOMEERC20',
-              symbol: 'RANDOM',
-              decimals: 18,
-            },
-            fromChainId: 1,
-          },
-        })
-      );
-    });
-    render(
-      <Provider store={store}>
-        <ExchangeAction />
-      </Provider>
-    );
-    await waitFor(() =>
-      expect(
-        screen.getByText(
-          (content) =>
-            content.includes('Fee:') &&
-            content.includes('0.002') &&
-            content.includes('ETH')
-        )
-      ).toBeInTheDocument()
-    );
-  });
-
   it('shows an error if getStepTransactions fails', async () => {
     vi.spyOn(useOffer, 'default').mockReturnValue({
       getStepTransactions: vi.fn().mockRejectedValue(new Error('Test error')),
@@ -443,9 +234,16 @@ describe('<ExchangeAction />', () => {
     act(() => {
       store.dispatch(setBestOffer(mockBestOffer));
     });
+    const exchangeButton = screen
+      .getByText('Exchange')
+      .closest('div') as HTMLDivElement;
+    fireEvent.click(exchangeButton);
+    screen.debug();
     await waitFor(() =>
       expect(
-        screen.getByText(/unable to prepare the swap/i)
+        screen.getByText((content) =>
+          content.includes('We were not able to add this to the queue')
+        )
       ).toBeInTheDocument()
     );
   });
