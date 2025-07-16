@@ -2,13 +2,14 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatEther } from 'viem';
 
 // services
 import {
   Token,
   chainNameToChainIdTokensData,
+  convertPortfolioAPIResponseToToken,
 } from '../../../../services/tokensData';
 
 // hooks
@@ -19,6 +20,7 @@ import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
+import { PortfolioData } from '../../../../types/api';
 import { SwapOffer } from '../../utils/types';
 
 // utils
@@ -54,13 +56,14 @@ const ExchangeAction = () => {
   const { getStepTransactions } = useOffer();
   const walletAddress = useWalletAddress();
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
+  );
 
-  useEffect(() => {
-    setErrorMessage('');
-
-    transactionDebugLog('The Exchange - Offer:', bestOffer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bestOffer]);
+  const isNoValidOffer =
+    !bestOffer ||
+    !bestOffer.tokenAmountToReceive ||
+    Number(bestOffer.tokenAmountToReceive) === 0;
 
   const getTransactionTitle = (
     index: number,
@@ -85,7 +88,7 @@ const ExchangeAction = () => {
       return;
     }
 
-    if (!bestOffer) {
+    if (isNoValidOffer) {
       setErrorMessage(
         'No offer was found! Please try changing the amounts to try again.'
       );
@@ -95,10 +98,16 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
+      // Convert walletPortfolio to Token[] for userPortfolio
+      const userPortfolio = walletPortfolio
+        ? convertPortfolioAPIResponseToToken(walletPortfolio)
+        : undefined;
       const stepTransactions = await getStepTransactions(
         swapToken,
         bestOffer.offer,
-        walletAddress as `0x${string}`
+        walletAddress as `0x${string}`,
+        userPortfolio,
+        amountSwap
       );
 
       transactionDebugLog(
@@ -110,7 +119,6 @@ const ExchangeAction = () => {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
-        setIsAddingToBatch(false);
         return;
       }
 
@@ -144,12 +152,12 @@ const ExchangeAction = () => {
         setShowBatchSendModal(true);
         showSend();
       }
-      setIsAddingToBatch(false);
     } catch (error) {
-      console.error('Something went wrong. Please try again', error);
+      transactionDebugLog('Swap batch error:', error);
       setErrorMessage(
         'We were not able to add this to the queue at the moment. Please try again.'
       );
+    } finally {
       setIsAddingToBatch(false);
     }
   };
@@ -160,7 +168,7 @@ const ExchangeAction = () => {
       className="flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20"
     >
       <div
-        className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}
+        className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${!isNoValidOffer && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}
       >
         <Body className="font-normal">You receive</Body>
         <div className="flex justify-between items-end">
@@ -168,7 +176,9 @@ const ExchangeAction = () => {
             <CircularProgress size={64.5} sx={{ color: '#343434' }} />
           ) : (
             <NumberText className="font-normal text-[43px]">
-              {formatTokenAmount(bestOffer?.tokenAmountToReceive)}
+              {isNoValidOffer
+                ? '0'
+                : formatTokenAmount(bestOffer?.tokenAmountToReceive)}
             </NumberText>
           )}
           <div className="flex gap-1 items-center">
@@ -184,7 +194,7 @@ const ExchangeAction = () => {
       <div
         id="exchange-action-button"
         onClick={onClickToExchange}
-        className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}
+        className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${!isNoValidOffer && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}
       >
         <Body>Exchange</Body>
         {errorMessage && <BodySmall>{errorMessage}</BodySmall>}

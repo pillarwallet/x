@@ -28,6 +28,7 @@ import ExchangeAction from '../ExchangeAction';
 
 // types
 import { Token } from '../../../../../services/tokensData';
+import * as useOffer from '../../../hooks/useOffer';
 import { SwapOffer } from '../../../utils/types';
 
 const mockTokenAssets: Token[] = [
@@ -86,6 +87,8 @@ export const mockBestOffer: SwapOffer = {
   },
 };
 
+const FEE_RECEIVER = '0xfee0000000000000000000000000000000000000';
+
 // Mock hooks and utils
 vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => ({
   _esModule: true,
@@ -132,6 +135,7 @@ vi.mock('@lifi/sdk', () => ({
 
 describe('<ExchangeAction />', () => {
   beforeEach(() => {
+    import.meta.env.VITE_SWAP_FEE_RECEIVER = FEE_RECEIVER;
     vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
@@ -215,5 +219,32 @@ describe('<ExchangeAction />', () => {
       expect(screen.queryByTestId('loading-circular')).not.toBeInTheDocument();
       expect(screen.getByText('Exchange')).toBeInTheDocument();
     });
+  });
+
+  it('shows an error if getStepTransactions fails', async () => {
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockRejectedValue(new Error('Test error')),
+      getBestOffer: vi.fn(), // Provide a default mock for getBestOffer
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    act(() => {
+      store.dispatch(setBestOffer(mockBestOffer));
+    });
+    const exchangeButton = screen
+      .getByText('Exchange')
+      .closest('div') as HTMLDivElement;
+    fireEvent.click(exchangeButton);
+    screen.debug();
+    await waitFor(() =>
+      expect(
+        screen.getByText((content) =>
+          content.includes('We were not able to add this to the queue')
+        )
+      ).toBeInTheDocument()
+    );
   });
 });
