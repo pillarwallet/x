@@ -5,6 +5,7 @@ import { animated, useTransition } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useConnect, useAccount } from 'wagmi';
+import { useNavigate } from 'react-router-dom';
 
 // components
 import Button from '../components/Button';
@@ -18,6 +19,7 @@ const Login = () => {
   const { connectors, connect } = useConnect();
   const { address } = useAccount();
   const [t] = useTranslation();
+  const navigate = useNavigate();
 
   // Get WalletConnect connector
   const walletConnectConnector = connectors.find(
@@ -47,12 +49,22 @@ const Login = () => {
     sessionStorage.setItem('loginPageReloaded', 'true');
   }, [address]);
 
+  // Redirect to passkeys page when wallet is connected
+  useEffect(() => {
+    if (address) {
+      navigate('/passkeys');
+    }
+  }, [address, navigate]);
+
   const logoTransitions = useTransition(true, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
     config: { duration: 500 },
   });
+
+
+
   return (
     <Wrapper>
       {logoTransitions(

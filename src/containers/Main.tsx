@@ -39,6 +39,7 @@ import Loading from '../pages/Loading';
 import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
+import Passkeys from '../pages/Passkeys';
 import Privacy from '../pages/Privacy';
 import Waitlist from '../pages/WaitList';
 import Authorized from './Authorized';
@@ -231,6 +232,10 @@ const AuthLayout = () => {
             path: '/login',
             element: <Navigate to="/" />,
           },
+          {
+            path: '/passkeys',
+            element: <Passkeys />,
+          },
         ],
       },
     ];
@@ -313,6 +318,10 @@ const AuthLayout = () => {
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/passkeys',
+        element: <Passkeys />,
       },
       {
         path: '*',
