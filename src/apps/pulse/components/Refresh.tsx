@@ -1,12 +1,15 @@
 export default function Refresh() {
   return (
-    <button style={{backgroundColor: "black", borderRadius: 10, width: 40, height: 40}}>
+    <button
+      className="flex items-center justify-center w-full h-full bg-[#121116] rounded-[10px]"
+      type="button"
+      aria-label="Refresh"
+    >
       <svg
+        className="w-5 h-5"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         fill="grey"
-        className="size-5"
-        style={{backgroundColor: "#121116", borderRadius: 10, margin: 2}}
       >
         <path
           fillRule="evenodd"
@@ -15,5 +18,5 @@ export default function Refresh() {
         />
       </svg>
     </button>
-  )
+  );
 }

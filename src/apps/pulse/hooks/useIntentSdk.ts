@@ -1,8 +1,9 @@
-import { IntentSdk, MODE, Options } from "@etherspot/intent-sdk";
-import { useWalletAddress } from "@etherspot/transaction-kit";
-import { useEffect, useState } from "react";
-import { createWalletClient, custom, Hex } from "viem";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IntentSdk, Options } from '@etherspot/intent-sdk';
+import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useEffect, useState } from 'react';
+import { createWalletClient, custom, Hex } from 'viem';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 
 export default function useIntentSdk() {
   const accountAddress = useWalletAddress();
@@ -17,12 +18,11 @@ export default function useIntentSdk() {
   const [intentSdk, setIntentSdk] = useState<IntentSdk | null>(null);
 
   useEffect(() => {
-    if(accountAddress && ready && authenticated && walletProvider) {
+    if (accountAddress && ready && authenticated && walletProvider) {
       const options: Options = {
-        bundlerApiKey: process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || "",
-        mode: MODE.testnet,
-        modularAccount: accountAddress as Hex
-      }
+        bundlerApiKey: process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || '',
+        modularAccount: accountAddress as Hex,
+      };
 
       walletProvider.getEthereumProvider().then((provider) => {
         const walletClient = createWalletClient({
@@ -35,5 +35,5 @@ export default function useIntentSdk() {
     }
   }, [accountAddress, ready, authenticated, walletProvider]);
 
-  return {intentSdk};
+  return { intentSdk };
 }

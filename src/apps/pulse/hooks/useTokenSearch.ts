@@ -1,27 +1,28 @@
-import { useEffect, useState } from "react";
-import { useGetSearchTokensQuery } from "../../../services/pillarXApiSearchTokens";
+import { useEffect, useState } from 'react';
+import { useGetSearchTokensQuery } from '../../../services/pillarXApiSearchTokens';
 
 export function useTokenSearch(props: { isBuy: boolean }) {
-  const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText, setDebouncedSearchText] = useState("");
+  const { isBuy } = props;
+  const [searchText, setSearchText] = useState('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState('');
 
-  useEffect(() => {
-    if(props.isBuy) {
+  useEffect((): (() => void) | undefined => {
+    if (isBuy) {
       const handler = setTimeout(() => {
         setDebouncedSearchText(searchText);
       }, 1000);
       return () => clearTimeout(handler);
     }
-  }, [searchText]);
+    return undefined;
+  }, [searchText, isBuy]);
 
   const {
     data: searchData,
     isLoading: isSearchLoading,
     isFetching,
-    error,
   } = useGetSearchTokensQuery(
     {
-      searchInput: debouncedSearchText, 
+      searchInput: debouncedSearchText,
     },
     { skip: !debouncedSearchText }
   );
@@ -32,5 +33,5 @@ export function useTokenSearch(props: { isBuy: boolean }) {
     searchData,
     isSearchLoading,
     isFetching,
-  }
+  };
 }

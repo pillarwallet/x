@@ -101,6 +101,8 @@
     "!src/apps/deposit/**",
     "!src/apps/leaderboard/",
     "!src/apps/leaderboard/**",
+    "!src/apps/pulse/",
+    "!src/apps/pulse/**",
     "public/" // Ignore public folder
   ],
   "settings": {

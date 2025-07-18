@@ -1,10 +1,8 @@
-import AppWrapper from "./components/AppWrapper";
+import AppWrapper from './components/AppWrapper';
 import './styles/tailwindPulse.css';
 
 const App = () => {
-  return <>
-    <AppWrapper />
-  </>;
+  return <AppWrapper />;
 };
 
 export default App;

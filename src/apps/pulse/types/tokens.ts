@@ -1,16 +1,4 @@
-type ParsedToken = {
-  name: string;
-  symbol: string;
-  markrtCap: number;
-  liquidity: number;
-  volume: number;
-  logo: string;
-  price: number;
-  priceChange: number;
-  blockchain: string;
-}
-
-type SelectedToken = {
+export type SelectedToken = {
   name: string;
   symbol: string;
   usdValue: string;
@@ -19,9 +7,9 @@ type SelectedToken = {
   chainId: number;
   decimals: number;
   address: string;
-}
+};
 
-type PayingToken = {
+export type PayingToken = {
   name: string;
   symbol: string;
   logo: string;
@@ -29,4 +17,4 @@ type PayingToken = {
   totalUsd: number;
   totalRaw: string;
   chainId: number;
-}
+};
