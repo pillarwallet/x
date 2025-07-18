@@ -47,6 +47,7 @@ const TokensWithMarketDataTile = ({
               listNumber={index + 1}
               isMiddleNumber={index + 1 === midLength}
               isLastNumber={index + 1 === dataLength}
+              tileTitle={dataTokens?.title?.text}
             />
           ))}
         </div>
@@ -62,6 +63,7 @@ const TokensWithMarketDataTile = ({
                   listNumber={i + 1}
                   isMiddleNumber={i + 1 === midLength}
                   isLastNumber={i + 1 === dataLength}
+                  tileTitle={dataTokens?.title?.text}
                 />
               )}
               {dataTokens?.rows?.slice(midLength, dataTokens.rows.length)[
@@ -77,6 +79,7 @@ const TokensWithMarketDataTile = ({
                   listNumber={i + 1 + midLength}
                   isMiddleNumber={i + 1 === midLength}
                   isLastNumber={i + 1 + midLength === dataLength}
+                  tileTitle={dataTokens?.title?.text}
                 />
               )}
             </div>
