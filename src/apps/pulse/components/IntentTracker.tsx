@@ -14,19 +14,15 @@ interface IntentTrackerProps {
   isBuy: boolean;
 }
 
-const getStatusIndex = (status: "PENDING" | "SHORTLISTING_INITIATED" | "SHORTLISTED" | "EXECUTED") => {
-  if(status === "PENDING")
-    return 0;
-  if(status === "SHORTLISTING_INITIATED")
-    return 1;
-  if(status === "SHORTLISTED")
-    return 2;
-  if(status === "EXECUTED")
-    return 3;
-  if(status === "CLAIMED")
-    return 4;
-  if(status === "RESOURCE_LOCK_RELEASED")
-    return 5;
+const getStatusIndex = (
+  status: 'PENDING' | 'SHORTLISTING_INITIATED' | 'SHORTLISTED' | 'EXECUTED'
+) => {
+  if (status === 'PENDING') return 0;
+  if (status === 'SHORTLISTING_INITIATED') return 1;
+  if (status === 'SHORTLISTED') return 2;
+  if (status === 'EXECUTED') return 3;
+  if (status === 'CLAIMED') return 4;
+  if (status === 'RESOURCE_LOCK_RELEASED') return 5;
   return -1;
 };
 
