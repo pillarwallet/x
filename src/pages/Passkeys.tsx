@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 import Button from '../components/Button';
 
 // services
-import { registerPasskey, authenticateWithPasskey, isPasskeySupported, isPasskeyAvailable } from '../services/passkeys';
+import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySupported, isPasskeyAvailable } from '../services/passkeys';
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
@@ -80,6 +80,31 @@ const Passkeys = () => {
     }
   };
 
+  const handlePasskeySigning = async () => {
+    if (!address) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Create a custom challenge for testing (this would be your transaction data)
+      const customChallenge = `Sign this transaction: ${Date.now()}`;
+      
+      const result = await signWithPasskey(address, customChallenge);
+      if (result.verified) {
+        alert(`Passkey signing successful!\nSigned Challenge: ${result.signedChallenge}\nSignature: ${result.signature}`);
+      } else {
+        alert('Passkey signing failed');
+      }
+    } catch (error) {
+      console.error('Passkey signing error:', error);
+      alert('Passkey signing failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Wrapper>
       <LogoContainer>
@@ -112,11 +137,18 @@ const Passkeys = () => {
                 </Button>
                 <Button 
                   onClick={handlePasskeyAuthentication} 
-                  $last 
                   $fullWidth 
                   disabled={isLoading}
                 >
                   {isLoading ? 'Authenticating...' : 'Login with Passkey'}
+                </Button>
+                <Button 
+                  onClick={handlePasskeySigning} 
+                  $last 
+                  $fullWidth 
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Signing...' : 'Sign with Passkey'}
                 </Button>
               </ButtonContainer>
             ) : (

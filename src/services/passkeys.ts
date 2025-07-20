@@ -81,6 +81,35 @@ export async function authenticateWithPasskey(userId: string): Promise<boolean> 
   }
 }
 
+// Sign a custom challenge with passkey
+export async function signWithPasskey(userId: string, customChallenge: string): Promise<{ verified: boolean; signedChallenge?: string; signature?: string }> {
+  try {
+    // Step 1: Get signing options from server with custom challenge
+    const options = await callFirebaseFunction('sign/options', {
+      userId,
+      customChallenge,
+    });
+
+    // Step 2: Start authentication on the client (same as signing)
+    const credential = await startAuthentication(options);
+
+    // Step 3: Verify signing with server
+    const verification = await callFirebaseFunction('sign/verify', {
+      userId,
+      credential,
+    });
+
+    return {
+      verified: verification.verified === true,
+      signedChallenge: verification.signedChallenge,
+      signature: verification.signature,
+    };
+  } catch (error) {
+    console.error('Passkey signing failed:', error);
+    throw error;
+  }
+}
+
 // Check if passkeys are supported in the current browser
 export function isPasskeySupported(): boolean {
   return window.PublicKeyCredential !== undefined;
