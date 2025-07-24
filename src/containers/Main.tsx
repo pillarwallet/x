@@ -98,6 +98,13 @@ const AuthLayout = () => {
     const isPK =
       (searchURL && searchURLPK) || localStorage.getItem('ACCOUNT_VIA_PK');
 
+    // Debug logs for provider selection
+    console.log('DEBUG: isConnected', isConnected);
+    console.log('DEBUG: authenticated', authenticated);
+    console.log('DEBUG: wallets', wallets);
+    console.log('DEBUG: isPK', isPK);
+    console.log('DEBUG: address', address);
+
     if (isPK) {
       // Private key login: use HTTP provider
       if (searchURL && searchURLPK) {
@@ -188,7 +195,12 @@ const AuthLayout = () => {
       };
 
       updateProvider();
-    } else if (isConnected && address) {
+    } else if (
+      !isPK &&
+      !(authenticated && wallets.length) &&
+      isConnected &&
+      address
+    ) {
       // Direct WalletConnect (wagmi): use wagmi provider ONLY if not PK and not Privy
       const updateProvider = async () => {
         const walletChainId = 1; // default chain id is 1
