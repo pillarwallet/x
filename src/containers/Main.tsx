@@ -98,12 +98,19 @@ const AuthLayout = () => {
     const isPK =
       (searchURL && searchURLPK) || localStorage.getItem('ACCOUNT_VIA_PK');
 
+    // Debug logs for Privy state
+    console.log('DEBUG: Privy ready', ready);
+    console.log('DEBUG: Privy authenticated', authenticated);
+    console.log('DEBUG: Privy user', user);
+    console.log('DEBUG: Privy wallets', wallets);
     // Debug logs for provider selection
     console.log('DEBUG: isConnected', isConnected);
     console.log('DEBUG: authenticated', authenticated);
     console.log('DEBUG: wallets', wallets);
     console.log('DEBUG: isPK', isPK);
     console.log('DEBUG: address', address);
+
+    if (!ready) return; // Wait for Privy to be ready before running provider logic
 
     if (isPK) {
       // Private key login: use HTTP provider
