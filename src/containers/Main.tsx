@@ -17,7 +17,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, useAccount, WagmiProvider } from 'wagmi';
+import { createConfig, useAccount, useConnect, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 
 // theme
@@ -68,6 +68,7 @@ const AuthLayout = () => {
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const { isConnected, address } = useAccount();
+  const { connectors } = useConnect();
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
@@ -188,24 +189,51 @@ const AuthLayout = () => {
 
       updateProvider();
     } else if (isConnected && address) {
-      // Direct WalletConnect (wagmi): use wagmi provider
+      // Direct WalletConnect (wagmi): use wagmi provider ONLY if not PK and not Privy
       const updateProvider = async () => {
         const walletChainId = 1; // default chain id is 1
-        const newProvider = createWalletClient({
-          account: address as `0x${string}`,
-          chain: getNetworkViem(walletChainId),
-          transport: http(),
-        });
-        setProvider(newProvider);
-        const isWithinVisibleChains = visibleChains.some(
-          (chain) => chain.id === walletChainId
+        // Find the active connector (WalletConnect)
+        const walletConnectConnector = connectors.find(
+          (c) => c.id === 'walletConnect'
         );
-        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+        console.log('DEBUG: walletConnectConnector', walletConnectConnector);
+        if (walletConnectConnector) {
+          const providerWagmi = await walletConnectConnector.getProvider();
+          console.log('DEBUG: providerWagmi', providerWagmi);
+          if (
+            providerWagmi &&
+            typeof (providerWagmi as any).request === 'function'
+          ) {
+            console.log('DEBUG: Using WalletConnect provider for viem');
+            const newProvider = createWalletClient({
+              account: address as `0x${string}`,
+              chain: getNetworkViem(walletChainId),
+              transport: custom(providerWagmi as any),
+            });
+            setProvider(newProvider);
+            const isWithinVisibleChains = visibleChains.some(
+              (chain) => chain.id === walletChainId
+            );
+            setChainId(
+              isWithinVisibleChains ? walletChainId : visibleChains[0].id
+            );
+          } else {
+            console.warn(
+              'WalletConnect: connector.getProvider() returned invalid provider',
+              providerWagmi
+            );
+          }
+        } else {
+          console.warn(
+            'WalletConnect: walletConnectConnector not found',
+            connectors
+          );
+        }
       };
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account, authenticated, isConnected, address]);
+  }, [wallets, user, account, authenticated, isConnected, address, connectors]);
 
   /**
    * If all the following variables are truthy within the if
