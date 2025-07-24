@@ -157,6 +157,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
         /* empty */
       }
     }
+
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
