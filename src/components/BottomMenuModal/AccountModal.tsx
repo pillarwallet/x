@@ -150,9 +150,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
-    if (isConnected) {
+    if (isConnected || account) {
       try {
         await disconnect();
+        await logout();
       } catch (e) {
         /* empty */
       }
@@ -161,12 +162,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
-    } else {
-      try {
-        await logout();
-      } catch (e) {
-        /* empty */
-      }
     }
 
     clearDappStorage();
