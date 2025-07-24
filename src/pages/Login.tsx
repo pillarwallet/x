@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useConnect, useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 // components
 import Button from '../components/Button';
 
 // images
-import PillarXLogo from '../assets/images/pillarX_full_white.png';
 import PillarWalletIcon from '../apps/leaderboard/images/pillar-wallet-icon.svg';
+import PillarXLogo from '../assets/images/pillarX_full_white.png';
 
 const Login = () => {
   const { login } = usePrivy();

@@ -79,7 +79,7 @@ vi.mock('@etherspot/modular-sdk');
 vi.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,
   usePrivy: vi.fn(() => ({ authenticated: false })),
-  useWallets: vi.fn(() => ({})),
+  useWallets: vi.fn(() => ({ wallets: [] })),
   useLogout: vi.fn(() => ({ logout: vi.fn() })),
 }));
 
