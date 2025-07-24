@@ -4,6 +4,7 @@ import { animated, useTransition } from '@react-spring/web';
 import { useEffect, useState } from 'react';
 import BigBangStarField from 'react-big-bang-star-field';
 import styled from 'styled-components';
+import { useDisconnect } from 'wagmi';
 import '../styles/landing/tailwind.css';
 
 import PillarXLogoLoading from '../assets/images/pillarX_full_white.png';
@@ -14,6 +15,7 @@ type LoadingProps = {
 
 const Loading = ({ type }: LoadingProps) => {
   const [show, setShow] = useState(true);
+  const { disconnect } = useDisconnect();
   const { logout } = usePrivy();
 
   const logoTransitions = useTransition(show, {
@@ -40,13 +42,14 @@ const Loading = ({ type }: LoadingProps) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const handleLogout = async () => {
+        await disconnect();
         await logout();
       };
       handleLogout();
     }, 15000); // 15 seconds
 
     return () => clearTimeout(timeout);
-  }, [logout]);
+  }, [logout, disconnect]);
 
   return (
     <Wrapper>
