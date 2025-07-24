@@ -94,8 +94,11 @@ const AuthLayout = () => {
   useEffect(() => {
     const searchURL = new URLSearchParams(window.location.search);
     const searchURLPK = searchURL.get('pk');
+    const isPK =
+      (searchURL && searchURLPK) || localStorage.getItem('ACCOUNT_VIA_PK');
 
-    if ((searchURL && searchURLPK) || account || address) {
+    if (isPK) {
+      // Private key login: use HTTP provider
       if (searchURL && searchURLPK) {
         try {
           const privateKeyToAccountAddress = privateKeyToAccount(
@@ -128,7 +131,7 @@ const AuthLayout = () => {
         const walletChainId = 1; // default chain id is 1
 
         const newProvider = createWalletClient({
-          account: (account || address) as `0x${string}`,
+          account: account as `0x${string}`,
           chain: getNetworkViem(walletChainId),
           transport: http(),
         });
@@ -146,9 +149,8 @@ const AuthLayout = () => {
       };
 
       updateProvider();
-    } else {
-      if (!wallets.length) return;
-
+    } else if (authenticated && wallets.length) {
+      // Privy login (MetaMask, WalletConnect, social): use Privy provider
       const updateProvider = async () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let privyEthereumProvider: any;
@@ -185,9 +187,25 @@ const AuthLayout = () => {
       };
 
       updateProvider();
+    } else if (isConnected && address) {
+      // Direct WalletConnect (wagmi): use wagmi provider
+      const updateProvider = async () => {
+        const walletChainId = 1; // default chain id is 1
+        const newProvider = createWalletClient({
+          account: address as `0x${string}`,
+          chain: getNetworkViem(walletChainId),
+          transport: http(),
+        });
+        setProvider(newProvider);
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
+        );
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+      };
+      updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account, address]);
+  }, [wallets, user, account, authenticated, isConnected, address]);
 
   /**
    * If all the following variables are truthy within the if
