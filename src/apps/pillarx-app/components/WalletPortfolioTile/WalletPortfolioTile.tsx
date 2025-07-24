@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { sub } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 
@@ -17,6 +16,7 @@ import {
 } from '../../utils/portfolio';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useDataFetchingState } from '../../hooks/useDataFetchingState';
 
 // reducer
@@ -46,7 +46,7 @@ import WalletPortfolioButtons from '../WalletPortfolioButtons/WalletPortfolioBut
 import WalletPortfolioGraph from '../WalletPortfolioGraph/WalletPortfolioGraph';
 
 const WalletPortfolioTile = () => {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
 

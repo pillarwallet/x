@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Transition } from 'react-transition-group';
 import styled from 'styled-components';
-
-// context
-import { AccountNftsContext } from '../../providers/AccountNftsProvider';
 
 // modals
 import AccountModal from './AccountModal';
@@ -17,7 +14,6 @@ import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 const BottomMenuModal = () => {
   const modalRef = React.useRef<HTMLDivElement>(null);
-  const contextNfts = useContext(AccountNftsContext);
   const { active, activeIndex, hide } = useBottomMenuModal();
 
   const lastValidActiveIndex = React.useRef<number>(activeIndex ?? 0);
@@ -26,18 +22,6 @@ const BottomMenuModal = () => {
     if (activeIndex === null) return;
     lastValidActiveIndex.current = activeIndex ?? 0;
   }, [activeIndex]);
-
-  useEffect(() => {
-    // update nfts and token balances when Account tab is open
-    if (activeIndex === 2) {
-      contextNfts?.data.setUpdateData(true);
-    }
-
-    // stop updating nfts and token balances when Account tab is closed, History or Apps Tabs are open, or no tab is open
-    if (activeIndex === 1 || activeIndex === 3 || activeIndex === null) {
-      contextNfts?.data.setUpdateData(false);
-    }
-  }, [contextNfts?.data, activeIndex]);
 
   return (
     <Transition nodeRef={modalRef} in={!!active} timeout={100}>

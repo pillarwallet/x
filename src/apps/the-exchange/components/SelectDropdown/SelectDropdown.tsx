@@ -1,5 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
-
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
@@ -7,6 +5,7 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 import { setReceiveChain, setSwapChain } from '../../reducer/theExchangeSlice';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
@@ -18,6 +17,8 @@ import Body from '../Typography/Body';
 
 // images
 import ArrowDown from '../../images/arrow-down.png';
+
+// types
 import { ChainType } from '../../utils/types';
 
 type SelectDropdownProps = {
@@ -42,7 +43,7 @@ const SelectDropdown = ({
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const swapChain = useAppSelector(

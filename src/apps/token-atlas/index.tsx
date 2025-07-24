@@ -1,5 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
-
 // styles
 import { useEffect } from 'react';
 import styled from 'styled-components';
@@ -24,6 +22,7 @@ import {
 } from './reducer/tokenAtlasSlice';
 
 // hooks
+import useTransactionKit from '../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
 // utils
@@ -62,7 +61,7 @@ export const App = () => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const selectedToken =

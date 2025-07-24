@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { Element as IconApps } from 'iconsax-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +16,7 @@ import { AppManifest } from '../types';
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
+import useTransactionKit from '../hooks/useTransactionKit';
 
 // services
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
@@ -31,7 +31,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [t] = useTranslation();
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to

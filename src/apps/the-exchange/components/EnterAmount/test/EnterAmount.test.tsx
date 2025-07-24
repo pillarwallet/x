@@ -54,23 +54,6 @@ const mockTokenAssets: Token[] = [
   },
 ];
 
-// Mock transaction-kit hooks being used
-vi.mock('@etherspot/transaction-kit', () => ({
-  __esModule: true,
-  useEtherspotSwaps: vi.fn().mockReturnValue({
-    getOffers: vi.fn().mockResolvedValue([]),
-    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue({}),
-    getQuotes: vi.fn().mockResolvedValue({}),
-  }),
-  useWalletAddress: vi.fn().mockReturnValue({
-    walletAddress: vi.fn(),
-  }),
-  useEtherspotUtils: vi.fn().mockReturnValue({
-    isZeroAddress: vi.fn(),
-    addressesEqual: vi.fn(),
-  }),
-}));
-
 vi.mock('@lifi/sdk', () => ({
   LiFi: vi.fn().mockImplementation(() => ({
     getRoutes: vi.fn().mockResolvedValue({ routes: [] }),

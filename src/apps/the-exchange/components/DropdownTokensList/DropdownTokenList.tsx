@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
@@ -33,6 +32,7 @@ import {
 import { CompatibleChains } from '../../../../utils/blockchain';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -64,7 +64,7 @@ const DropdownTokenList = ({
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(

@@ -1,5 +1,4 @@
 // services
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useMemo, useState } from 'react';
 
 // services
@@ -20,14 +19,15 @@ import { setReceiveToken } from '../../reducer/theExchangeSlice';
 
 // hooks
 import useDeployWallet from '../../../../hooks/useDeployWallet';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
+import { TokenAssetResponse } from '../../../../types/api';
+import { SelectedTokenType } from '../../../token-atlas/types/types';
 import { CardPosition } from '../../utils/types';
 
 // components
-import { TokenAssetResponse } from '../../../../types/api';
-import { SelectedTokenType } from '../../../token-atlas/types/types';
 import EnterAmount from '../EnterAmount/EnterAmount';
 import SelectToken from '../SelectToken/SelectToken';
 
@@ -43,7 +43,7 @@ const SwapReceiveCard = ({
   onClick,
 }: SwapReceiveCardProps) => {
   const dispatch = useAppDispatch();
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const { getWalletDeploymentCost } = useDeployWallet();
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(

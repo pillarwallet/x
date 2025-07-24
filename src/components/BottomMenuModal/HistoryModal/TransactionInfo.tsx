@@ -1,11 +1,11 @@
 /* eslint-disable no-nested-ternary */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 
 // hooks
 import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 // images
 import CopyIcon from '../../../apps/pillarx-app/images/copy-icon.svg';
@@ -21,7 +21,7 @@ const TransactionInfo = () => {
     latestUserOpInfo,
     latestUserOpChainId,
   } = useAccountTransactionHistory();
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   const [copied, setCopied] = useState(false);
 

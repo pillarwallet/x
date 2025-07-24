@@ -1,4 +1,4 @@
-import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import { EtherspotUtils } from '@etherspot/transaction-kit';
 import { sub } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +48,7 @@ const TokenGraphColumn = ({
 }: TokenGraphColumnProps) => {
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
-  const { isZeroAddress } = useEtherspotUtils();
+  const { isZeroAddress } = EtherspotUtils;
   const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined

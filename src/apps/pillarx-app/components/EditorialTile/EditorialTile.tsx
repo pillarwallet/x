@@ -1,9 +1,11 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // types
 import { EditorialDisplay, Projection } from '../../../../types/api';
@@ -28,7 +30,7 @@ const EditorialTile = ({ data, isDataLoading }: EditorialTileProps) => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const [isBrokenMedia, setIsBrokenMedia] = useState<boolean>(false);
   const { meta } = data || {};

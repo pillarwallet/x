@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-syntax */
-import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
-import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
-import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { ethers } from 'ethers';
+import { encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
   arbitrum,
   avalanche,
@@ -14,6 +12,12 @@ import {
   polygon,
   sepolia,
 } from 'viem/chains';
+
+// utils
+import { isNativeToken } from '../apps/the-exchange/utils/wrappedTokens';
+
+// types
+import { TokenListToken } from '../types/blockchain';
 
 // images
 import logoArbitrum from '../assets/images/logo-arbitrum.png';
@@ -150,10 +154,6 @@ export const supportedChains = [
 export const visibleChains = supportedChains.filter((chain) =>
   isTestnet ? chain.testnet : !chain.testnet
 );
-
-export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
-  return nft.name ? nft.name : `${collection.contractName} #${nft.tokenId}`;
-};
 
 export const getLogoForChainId = (chainId: number): string => {
   if (chainId === mainnet.id) {
@@ -353,3 +353,37 @@ export function isStableCoin(address: string, chainId: number): boolean {
   if (!set) return false;
   return set.has(address.toLowerCase());
 }
+
+export const buildTransactionData = ({
+  tokenAddress,
+  recipient,
+  amount,
+  decimals,
+}: {
+  tokenAddress: string;
+  recipient: string;
+  amount: number;
+  decimals: number;
+}) => {
+  if (isNativeToken(tokenAddress)) {
+    // Native token transfer
+    return {
+      to: recipient,
+      value: parseUnits(amount.toString(), decimals),
+      data: '0x',
+    };
+  }
+  // ERC20 transfer
+  return {
+    to: tokenAddress,
+    value: '0',
+    data: encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [
+        recipient as `0x${string}`,
+        parseUnits(amount.toString(), decimals),
+      ],
+    }),
+  };
+};

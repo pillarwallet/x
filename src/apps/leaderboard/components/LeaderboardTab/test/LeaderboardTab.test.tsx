@@ -1,7 +1,6 @@
-import * as TransactionKit from '@etherspot/transaction-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
 // types
 import {
@@ -10,7 +9,10 @@ import {
 } from '../../../../../types/api';
 
 // components
+import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import LeaderboardTab from '../LeaderboardTab';
+
+vi.mock('../../../../../hooks/useTransactionKit');
 
 const mockData: LeaderboardTableData[] = Array.from({ length: 25 }, (_, i) => ({
   addresses: [`0xAddress${i + 1}`],
@@ -21,9 +23,10 @@ const mockData: LeaderboardTableData[] = Array.from({ length: 25 }, (_, i) => ({
   totalGas: (i + 1) * 10,
 }));
 
-const mockWalletAddress = '0xAddress1';
-
 describe('<LeaderboardTab />', () => {
+  const mockWalletAddress = '0xAddress1';
+  const useTransactionKitMock = useTransactionKit as unknown as Mock;
+
   beforeEach(() => {
     // IntersectionObserver isn't available in test environment
     const mockIntersectionObserver = vi.fn();
@@ -34,8 +37,12 @@ describe('<LeaderboardTab />', () => {
     });
     window.IntersectionObserver = mockIntersectionObserver;
 
-    // Default mock for useWalletAddress to undefined
-    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: undefined,
+      kit: {},
+      activeChainId: 1,
+      setActiveChainId: vi.fn(),
+    });
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -73,10 +80,12 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('displays "My rank" section if wallet address is in the data', () => {
-    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(
-      mockWalletAddress
-    );
-
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: mockWalletAddress,
+      kit: {},
+      activeChainId: 1,
+      setActiveChainId: vi.fn(),
+    });
     render(<LeaderboardTab data={mockData} />);
 
     expect(screen.getByText('My rank')).toBeInTheDocument();
@@ -86,8 +95,12 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('does not display "My rank" section if wallet address is not in the data', () => {
-    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue('0xNotInData');
-
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0xNotInData',
+      kit: {},
+      activeChainId: 1,
+      setActiveChainId: vi.fn(),
+    });
     render(<LeaderboardTab data={mockData} />);
 
     expect(screen.queryByText('My rank')).not.toBeInTheDocument();

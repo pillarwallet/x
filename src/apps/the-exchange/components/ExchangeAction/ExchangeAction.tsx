@@ -1,9 +1,7 @@
 /* eslint-disable no-await-in-loop */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
-import { formatEther } from 'viem';
 
 // services
 import {
@@ -16,6 +14,7 @@ import {
 import useBottomMenuModal from '../../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -51,10 +50,10 @@ const ExchangeAction = () => {
 
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isAddingToBatch, setIsAddingToBatch] = useState<boolean>(false);
-  const { addToBatch } = useGlobalTransactionsBatch();
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { getStepTransactions } = useOffer();
-  const walletAddress = useWalletAddress();
+  const { kit, walletAddress } = useTransactionKit();
+  const { setTransactionMetaForName } = useGlobalTransactionsBatch();
   const { transactionDebugLog } = useTransactionDebugLogger();
   const walletPortfolio = useAppSelector(
     (state) => state.swap.walletPortfolio as PortfolioData | undefined
@@ -125,28 +124,40 @@ const ExchangeAction = () => {
       if (stepTransactions.length) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < stepTransactions.length; ++i) {
-          const { value } = stepTransactions[i];
+          const { value, to, data } = stepTransactions[i];
           const bigIntValue = BigNumber.from(value).toBigInt();
-          const integerValue = formatEther(bigIntValue);
 
           transactionDebugLog(
             'The Exchange - Adding transaction to batch:',
             stepTransactions[i]
           );
 
-          addToBatch({
+          // Create transactionName
+          const chainId =
+            chainNameToChainIdTokensData(swapToken?.blockchain) || 0;
+          const transactionName = `tx-${chainId}-${data}`;
+          const batchName = `batch-${chainId}`;
+
+          kit
+            .transaction({
+              chainId,
+              to: to || '',
+              value: bigIntValue,
+              data: data?.toString() ?? '',
+            })
+            .name({ transactionName })
+            .addToBatch({ batchName });
+
+          // Create description using transactionDescription helper
+          const description = `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}`;
+
+          setTransactionMetaForName(transactionName, {
             title: getTransactionTitle(
               i,
               stepTransactions.length,
-              stepTransactions[i].data?.toString() ?? ''
+              data?.toString() ?? ''
             ),
-            description:
-              `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
-              '',
-            chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
-            to: stepTransactions[i].to || '',
-            value: integerValue,
-            data: stepTransactions[i].data?.toString() ?? '',
+            description,
           });
         }
         setShowBatchSendModal(true);

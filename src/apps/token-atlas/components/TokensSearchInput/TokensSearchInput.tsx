@@ -1,10 +1,10 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useState } from 'react';
 
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -39,7 +39,7 @@ const TokensSearchInput = ({ className, onClick }: TokensSearchInputProps) => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
 

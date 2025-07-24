@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { createContext, useMemo } from 'react';
 
-// utils
-import { getObjectHash } from '../utils/common';
+// hooks
+import useTransactionKit from '../hooks/useTransactionKit';
 
 // types
 import { ITransaction } from '../types/blockchain';
@@ -15,13 +15,15 @@ export type IGlobalBatchTransaction = {
 
 export interface IGlobalTransactionsBatchContext {
   data: {
-    transactions: IGlobalBatchTransaction[];
-    addToBatch: (transaction: IGlobalBatchTransaction) => void;
-    removeFromBatch: (transactionId: string) => void;
     walletConnectTxHash: string | undefined;
     setWalletConnectTxHash: React.Dispatch<
       React.SetStateAction<string | undefined>
     >;
+    transactionMeta: Record<string, { title: string; description?: string }>;
+    setTransactionMetaForName: (
+      transactionName: string,
+      meta: { title: string; description?: string }
+    ) => void;
   };
 }
 
@@ -33,37 +35,41 @@ const GlobalTransactionsBatchProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [transactions, setBatches] = React.useState<IGlobalBatchTransaction[]>(
-    []
-  );
   const [walletConnectTxHash, setWalletConnectTxHash] = React.useState<
     string | undefined
   >(undefined);
-
-  const addToBatch = (transaction: IGlobalBatchTransaction) => {
-    setBatches((prev) =>
-      prev.concat({
-        ...transaction,
-        id:
-          transaction.id ||
-          getObjectHash(transaction, +new Date() + Math.random()),
-      })
-    );
+  const [transactionMeta, setTransactionMeta] = React.useState<
+    Record<string, { title: string; description?: string }>
+  >({});
+  const setTransactionMetaForName = (
+    transactionName: string,
+    meta: { title: string; description?: string }
+  ) => {
+    setTransactionMeta((prev) => ({ ...prev, [transactionName]: meta }));
   };
 
-  const removeFromBatch = (transactionId: string) => {
-    setBatches((prev) => prev.filter((tx) => tx.id !== transactionId));
-  };
+  const { kit } = useTransactionKit();
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      const { namedTransactions } = kit.getState();
+      setTransactionMeta((prev) => {
+        const validNames = new Set(Object.keys(namedTransactions));
+        return Object.fromEntries(
+          Object.entries(prev).filter(([name]) => validNames.has(name))
+        );
+      });
+    }, 1000); // check every second if some transactions have been added or removed
+    return () => clearInterval(interval);
+  }, [kit]);
 
   const contextData = useMemo(
     () => ({
-      transactions,
       walletConnectTxHash,
       setWalletConnectTxHash,
-      addToBatch,
-      removeFromBatch,
+      transactionMeta,
+      setTransactionMetaForName,
     }),
-    [transactions, walletConnectTxHash]
+    [walletConnectTxHash, transactionMeta]
   );
 
   return (

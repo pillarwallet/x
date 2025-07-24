@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CssVarsProvider, Tab, TabList, Tabs, tabClasses } from '@mui/joy';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,22 +15,14 @@ import { chainNameToChainIdTokensData } from '../../../services/tokensData';
 import Select from '../Select';
 
 // utils
-import {
-  getChainName,
-  parseNftTitle,
-  visibleChains,
-} from '../../../utils/blockchain';
+import { getChainName, visibleChains } from '../../../utils/blockchain';
 import { formatAmountDisplay } from '../../../utils/number';
 
 // hooks
-import useAccountNfts from '../../../hooks/useAccountNfts';
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 // types
-import {
-  AssetSelectOption,
-  NftAssetSelectOption,
-  TokenAssetSelectOption,
-} from '../../../types';
+import { AssetSelectOption, TokenAssetSelectOption } from '../../../types';
 
 const AssetSelect = ({
   defaultSelectedId,
@@ -45,14 +36,9 @@ const AssetSelect = ({
   const [tokenAssetsOptions, setTokenAssetsOptions] = useState<
     TokenAssetSelectOption[]
   >([]);
-  const [nftAssetsOptions, setNftAssetsOptions] = useState<
-    NftAssetSelectOption[]
-  >([]);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const [isAssetSelected, setIsAssetSelected] = useState(false);
-  const [showNfts, setShowNfts] = useState(false);
-  const walletAddress = useWalletAddress();
-  const nfts = useAccountNfts();
+  const { walletAddress } = useTransactionKit();
   const [t] = useTranslation();
 
   const {
@@ -111,34 +97,6 @@ const AssetSelect = ({
         );
       } else {
         setTokenAssetsOptions([]);
-      }
-
-      if (nfts?.[chainId]?.[walletAddress]?.length) {
-        setNftAssetsOptions(
-          nfts[chainId][walletAddress].reduce(
-            (acc: NftAssetSelectOption[], collection) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              collection.items.forEach((nft: any) => {
-                const optionId = `${chainId}:${collection.contractAddress}:${nft.tokenId}`;
-                acc.push({
-                  type: 'nft',
-                  id: optionId,
-                  title: parseNftTitle(collection, nft),
-                  value: optionId,
-                  isLoadingValue: false,
-                  imageSrc: nft.image,
-                  nft,
-                  collection,
-                  chainId,
-                });
-              });
-              return acc;
-            },
-            []
-          )
-        );
-      } else {
-        setNftAssetsOptions([]);
       }
     })();
 
@@ -223,11 +181,7 @@ const AssetSelect = ({
                 {selectedChainTitle}
               </ChainTitle>
               <CssVarsProvider defaultMode="dark">
-                <Tabs
-                  sx={{ bgcolor: 'transparent', mb: 1 }}
-                  value={showNfts ? 1 : 0}
-                  onChange={(event, value) => setShowNfts(value === 1)}
-                >
+                <Tabs sx={{ bgcolor: 'transparent', mb: 1 }} value={0}>
                   <TabList
                     disableUnderline
                     sx={{
@@ -243,18 +197,16 @@ const AssetSelect = ({
                     tabFlex={1}
                   >
                     <Tab disableIndicator>{t`label.tokens`}</Tab>
-                    <Tab disableIndicator>{t`label.nfts`}</Tab>
                   </TabList>
                 </Tabs>
               </CssVarsProvider>
             </>
           )}
           <Select
-            options={showNfts ? nftAssetsOptions : availableAssetsInWallet}
-            type={showNfts ? 'nft' : 'token'}
+            options={availableAssetsInWallet}
+            type="token"
             defaultSelectedId={defaultSelectedId}
-            hideValue={showNfts}
-            isLoadingOptions={!showNfts && isLoadingAssets}
+            isLoadingOptions={isLoadingAssets}
             onChange={(option) => {
               setIsAssetSelected(true);
               onChange(option as AssetSelectOption);

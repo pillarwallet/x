@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { Provider } from '@reown/appkit-adapter-ethers5';
 import {
   useAppKitAccount,
@@ -9,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { IoMdReturnLeft } from 'react-icons/io';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -33,7 +33,7 @@ const SendAsset = () => {
   const { walletProvider } = useAppKitProvider<Provider>('eip155');
   const [amount, setAmount] = useState<string>('');
   const [nftType, setNftType] = useState<string>('');
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   const dispatch = useAppDispatch();
   const selectedAsset = useAppSelector(
     (state) =>

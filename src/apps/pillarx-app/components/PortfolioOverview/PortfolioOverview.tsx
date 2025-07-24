@@ -1,8 +1,10 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useTranslation } from 'react-i18next';
 
 // utils
 import { getAllUniqueBlockchains } from '../../utils/blockchain';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // types
 import { WalletData, WalletPortfolioData } from '../../../../types/api';
@@ -29,7 +31,7 @@ type PortfolioOverviewProps = {
 
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   const [t] = useTranslation();
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const { data: dataPortlioOverview } = data || {};
   const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
   const { percentage_change: percentageChange = 0 } =

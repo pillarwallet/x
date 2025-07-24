@@ -19,8 +19,8 @@ import { navigationRoute } from '../../navigation';
 
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
-import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
 import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
+import useTransactionKit from '../../hooks/useTransactionKit';
 
 // components
 import BottomMenuModal from '../BottomMenuModal';
@@ -37,8 +37,9 @@ const BottomMenu = () => {
   const [t] = useTranslation();
   const { active, showSend, showApps, showHistory, showAccount, hide } =
     useBottomMenuModal();
-  const { transactions: globalTransactionsBatch } =
-    useGlobalTransactionsBatch();
+  const { kit } = useTransactionKit();
+  const { batches } = kit.getState();
+  const batchCount = Object.keys(batches).length;
   const overlayRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,7 +75,7 @@ const BottomMenu = () => {
     {
       icon: <IconSend />,
       type: 'send',
-      iconNotificationCounter: globalTransactionsBatch.length,
+      iconNotificationCounter: batchCount,
       label: t`menuAction.send`,
       show: showSend,
       color: '#8A77FF',
