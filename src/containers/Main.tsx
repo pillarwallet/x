@@ -17,7 +17,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, useAccount, useConnect, WagmiProvider } from 'wagmi';
+import { createConfig, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 
 // theme
@@ -67,8 +67,6 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
-  const { isConnected, address } = useAccount();
-  const { connectors } = useConnect();
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
@@ -95,8 +93,6 @@ const AuthLayout = () => {
   useEffect(() => {
     const searchURL = new URLSearchParams(window.location.search);
     const searchURLPK = searchURL.get('pk');
-    const isPK =
-      (searchURL && searchURLPK) || localStorage.getItem('ACCOUNT_VIA_PK');
 
     // Debug logs for Privy state
     console.log('DEBUG: Privy ready', ready);
@@ -104,16 +100,13 @@ const AuthLayout = () => {
     console.log('DEBUG: Privy user', user);
     console.log('DEBUG: Privy wallets', wallets);
     // Debug logs for provider selection
-    console.log('DEBUG: isConnected', isConnected);
+    // console.log('DEBUG: isConnected', isConnected);
     console.log('DEBUG: authenticated', authenticated);
     console.log('DEBUG: wallets', wallets);
-    console.log('DEBUG: isPK', isPK);
-    console.log('DEBUG: address', address);
+    // console.log('DEBUG: isPK', isPK);
+    // console.log('DEBUG: address', address);
 
-    if (!ready) return; // Wait for Privy to be ready before running provider logic
-
-    if (isPK) {
-      // Private key login: use HTTP provider
+    if ((searchURL && searchURLPK) || account) {
       if (searchURL && searchURLPK) {
         try {
           const privateKeyToAccountAddress = privateKeyToAccount(
@@ -164,8 +157,8 @@ const AuthLayout = () => {
       };
 
       updateProvider();
-    } else if (authenticated && wallets.length) {
-      // Privy login (MetaMask, WalletConnect, social): use Privy provider
+    } else {
+      if (!wallets.length) return;
       const updateProvider = async () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let privyEthereumProvider: any;
@@ -200,66 +193,17 @@ const AuthLayout = () => {
          */
         setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
       };
-
-      updateProvider();
-    } else if (
-      !isPK &&
-      !(authenticated && wallets.length) &&
-      isConnected &&
-      address
-    ) {
-      // Direct WalletConnect (wagmi): use wagmi provider ONLY if not PK and not Privy
-      const updateProvider = async () => {
-        const walletChainId = 1; // default chain id is 1
-        // Find the active connector (WalletConnect)
-        const walletConnectConnector = connectors.find(
-          (c) => c.id === 'walletConnect'
-        );
-        console.log('DEBUG: walletConnectConnector', walletConnectConnector);
-        if (walletConnectConnector) {
-          const providerWagmi = await walletConnectConnector.getProvider();
-          console.log('DEBUG: providerWagmi', providerWagmi);
-          if (
-            providerWagmi &&
-            typeof (providerWagmi as any).request === 'function'
-          ) {
-            console.log('DEBUG: Using WalletConnect provider for viem');
-            const newProvider = createWalletClient({
-              account: address as `0x${string}`,
-              chain: getNetworkViem(walletChainId),
-              transport: custom(providerWagmi as any),
-            });
-            setProvider(newProvider);
-            const isWithinVisibleChains = visibleChains.some(
-              (chain) => chain.id === walletChainId
-            );
-            setChainId(
-              isWithinVisibleChains ? walletChainId : visibleChains[0].id
-            );
-          } else {
-            console.warn(
-              'WalletConnect: connector.getProvider() returned invalid provider',
-              providerWagmi
-            );
-          }
-        } else {
-          console.warn(
-            'WalletConnect: walletConnectConnector not found',
-            connectors
-          );
-        }
-      };
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account, authenticated, isConnected, address, connectors]);
+  }, [wallets, user, account]);
 
   /**
    * If all the following variables are truthy within the if
    * statement, we can consider this user as logged in and
    * authenticated.
    */
-  if (isAppReady && (isAuthenticated || isConnected) && provider && chainId) {
+  if (isAppReady && isAuthenticated && provider && chainId) {
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.
