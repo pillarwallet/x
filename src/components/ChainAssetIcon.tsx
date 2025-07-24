@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import styled from 'styled-components';
 
 // utils
 import { getLogoForChainId } from '../utils/blockchain';
+
+// types
+import { TokenListToken } from '../types/blockchain';
 
 // images
 import ImageWithFallback from './ImageWithFallback';

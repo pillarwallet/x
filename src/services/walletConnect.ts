@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import { usePrivy } from '@privy-io/react-auth';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
 import { Core } from '@walletconnect/core';
@@ -23,6 +22,7 @@ import {
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../hooks/useGlobalTransactionsBatch';
+import useTransactionKit from '../hooks/useTransactionKit';
 import useWalletConnectModal from '../hooks/useWalletConnectModal';
 import useWalletConnectToast from '../hooks/useWalletConnectToast';
 
@@ -38,8 +38,7 @@ import {
 } from '../utils/walletConnect';
 
 export const useWalletConnect = () => {
-  const wallet = useWalletAddress();
-  const { getSdk } = useEtherspot();
+  const { walletAddress: wallet, kit } = useTransactionKit();
   const [walletKit, setWalletKit] = useState<Client>();
   const [activeSessions, setActiveSessions] =
     useState<Record<string, SessionTypes.Struct>>();
@@ -520,7 +519,7 @@ export const useWalletConnect = () => {
       const chainIdNumber = Number(chainId.replace('eip155:', ''));
       let requestResponse: string | undefined;
 
-      const eSdk = await getSdk();
+      const eSdk = await kit.getSdk(chainIdNumber);
 
       if (request.method === PERSONAL_SIGN) {
         const requestParamsMessage = request.params[0];
@@ -629,7 +628,7 @@ export const useWalletConnect = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, getSdk]
+    [walletKit, kit.getSdk]
   );
 
   const onSessionRequestExpires = useCallback(
@@ -676,7 +675,7 @@ export const useWalletConnect = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, getSdk]
+    [walletKit, kit.getSdk]
   );
 
   useEffect(() => {

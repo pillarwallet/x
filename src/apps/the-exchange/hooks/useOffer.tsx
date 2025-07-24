@@ -1,4 +1,4 @@
-import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import { EtherspotUtils } from '@etherspot/transaction-kit';
 import {
   LiFiStep,
   Route,
@@ -41,7 +41,7 @@ import {
 } from '../utils/wrappedTokens';
 
 const useOffer = () => {
-  const { isZeroAddress } = useEtherspotUtils();
+  const { isZeroAddress } = EtherspotUtils;
   const { transactionDebugLog } = useTransactionDebugLogger();
 
   const getNativeFeeForERC20 = async ({

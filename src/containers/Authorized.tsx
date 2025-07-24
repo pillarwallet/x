@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
@@ -10,9 +9,9 @@ import BottomMenu from '../components/BottomMenu';
 import Loading from '../pages/Loading';
 
 // providers
-import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
+import { EtherspotTransactionKitProvider } from '../providers/EtherspotTransactionKitProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
 import { WalletConnectModalProvider } from '../providers/WalletConnectModalProvider';
@@ -46,33 +45,31 @@ export default function Authorized({
   }
 
   return (
-    <EtherspotTransactionKit
-      provider={provider}
-      chainId={chainId}
-      bundlerApiKey={
-        import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || undefined
-      }
-      dataApiKey={import.meta.env.VITE_ETHERSPOT_DATA_API_KEY || undefined}
+    <EtherspotTransactionKitProvider
+      config={{
+        provider,
+        chainId,
+        bundlerApiKey:
+          import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || undefined,
+      }}
     >
       <AccountTransactionHistoryProvider>
-        <AccountNftsProvider>
-          <GlobalTransactionBatchesProvider>
-            <BottomMenuModalProvider>
-              <SelectedChainsHistoryProvider>
-                <WalletConnectToastProvider>
-                  <WalletConnectModalProvider>
-                    <AuthContentWrapper>
-                      <Outlet />
-                    </AuthContentWrapper>
-                    <BottomMenu />
-                  </WalletConnectModalProvider>
-                </WalletConnectToastProvider>
-              </SelectedChainsHistoryProvider>
-            </BottomMenuModalProvider>
-          </GlobalTransactionBatchesProvider>
-        </AccountNftsProvider>
+        <GlobalTransactionBatchesProvider>
+          <BottomMenuModalProvider>
+            <SelectedChainsHistoryProvider>
+              <WalletConnectToastProvider>
+                <WalletConnectModalProvider>
+                  <AuthContentWrapper>
+                    <Outlet />
+                  </AuthContentWrapper>
+                  <BottomMenu />
+                </WalletConnectModalProvider>
+              </WalletConnectToastProvider>
+            </SelectedChainsHistoryProvider>
+          </BottomMenuModalProvider>
+        </GlobalTransactionBatchesProvider>
       </AccountTransactionHistoryProvider>
-    </EtherspotTransactionKit>
+    </EtherspotTransactionKitProvider>
   );
 }
 

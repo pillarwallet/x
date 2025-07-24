@@ -163,62 +163,46 @@ vi.mock('wagmi/connectors', () => ({
   walletConnect: vi.fn(),
 }));
 
-vi.mock('@etherspot/transaction-kit', () => ({
-  useEtherspotAssets: vi.fn().mockReturnValue({
-    getAssets: async () => etherspotTestAssets,
-    getSupportedAssets: async () => etherspotTestSupportedAssets,
-  }),
-  useWalletAddress: vi
-    .fn()
-    .mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347'),
-  useEtherspotTransactions: vi.fn().mockReturnValue({
-    chainId: 1,
-    batches: [],
-    estimate: async () => [],
-    send: async () => [
-      {
-        sentBatches: [{ userOpHash: '0x123' }],
-        estimatedBatches: [],
-        batches: [],
-      },
-    ],
-    isEstimating: false,
-    isSending: false,
-    containsEstimatingError: false,
-    containsSendingError: false,
-  }),
-  useEtherspotBalances: vi.fn().mockReturnValue({
-    getAccountBalances: async () => [],
-  }),
-  useEtherspotPrices: vi.fn().mockReturnValue({
-    getPrice: async () => undefined,
-    getPrices: async () => [],
-  }),
+vi.mock('@etherspot/transaction-kit', () => {
+  class MockEtherspotTransactionKit {
+    getWalletAddress = vi.fn().mockResolvedValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
+    transaction = vi.fn().mockReturnThis();
+    name = vi.fn().mockReturnThis();
+    batch = vi.fn().mockReturnThis();
+    estimate = vi.fn().mockResolvedValue({ isEstimatedSuccessfully: true });
+    send = vi.fn().mockResolvedValue({ isSentSuccessfully: true });
+    getTransactionHash = vi.fn().mockResolvedValue('0x123');
+    getState = vi.fn().mockReturnValue({});
+    setDebugMode = vi.fn();
+    getProvider = vi.fn();
+    getEtherspotProvider = vi.fn();
+    getSdk = vi.fn();
+    reset = vi.fn();
+  }
 
-  useEtherspotHistory: vi.fn().mockReturnValue({
-    getAccountTransactions: async () => [],
-    getAccountTransaction: async () => undefined,
-    getAccountTransactionStatus: async () => undefined,
-  }),
+  class MockEtherspotUtils {
+    static checksumAddress = vi.fn((address) => address);
+    static verifyEip1271Message = vi.fn().mockResolvedValue(false);
+    static toBigNumber = vi.fn(() => BigInt(1));
+    static parseBigNumber = vi.fn(() => '1');
+    static isZeroAddress = vi.fn(() => false);
+    static addressesEqual = vi.fn(() => true);
+  }
 
-  useEtherspotNfts: vi.fn().mockReturnValue({
-    getAccountNfts: async () => [],
-  }),
+  return {
+    EtherspotTransactionKit: MockEtherspotTransactionKit,
+    EtherspotUtils: MockEtherspotUtils,
+  };
+});
 
-  useEtherspot: vi.fn().mockReturnValue({
-    getSdk: async () => {},
-    getDataService: () => {},
-    provider,
-    chainId: 1,
-  }),
-
-  useEtherspotUtils: vi.fn().mockReturnValue({
-    checksumAddress: () => '0x7F30B1960D5556929B03a0339814fE903c55a347',
-    verifyEip1271Message: async () => false,
-    toBigNumber: () => BigNumber.from('1'),
-    parseBigNumber: () => '0x123',
-    isZeroAddress: () => false,
-    addressesEqual: () => true,
+// Mock useTransactionKit hook to return the context shape
+vi.mock('../hooks/useTransactionKit', () => ({
+  __esModule: true,
+  default: () => ({
+    kit: new (require('@etherspot/transaction-kit').EtherspotTransactionKit)({}),
+    walletAddress: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+    activeChainId: 1,
+    setActiveChainId: vi.fn(),
   }),
 }));
 

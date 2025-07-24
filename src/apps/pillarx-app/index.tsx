@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { setWalletAddresses } from '@hypelab/sdk-react';
 import { useWallets } from '@privy-io/react-auth';
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
@@ -10,6 +9,7 @@ import './styles/tailwindPillarX.css';
 import { Projection } from '../../types/api';
 
 // hooks
+import useTransactionKit from '../../hooks/useTransactionKit';
 import { useRecordPresenceMutation } from '../../services/pillarXApiPresence';
 import { useGetTilesInfoQuery, useRecordProfileMutation } from './api/homeFeed';
 import useRefDimensions from './hooks/useRefDimensions';
@@ -36,7 +36,7 @@ const App = () => {
   const [pageData, setPageData] = useState<Projection[]>([]);
 
   // Import wallets
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   const { wallets: privyWallets } = useWallets();
 
   const scrollPositionRef = useRef<number>(0);

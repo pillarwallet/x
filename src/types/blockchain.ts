@@ -25,3 +25,12 @@ export interface ITransaction {
   data?: string;
   chainId: number;
 }
+
+export interface TokenListToken {
+  address: string;
+  chainId: number;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoURI: string;
+}

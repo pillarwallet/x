@@ -1,12 +1,7 @@
-import { ITransaction } from '@etherspot/transaction-kit';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 // types
 import { AssetSelectOption, SendModalData } from '../types';
-
-// utils
-import { processEth } from '../apps/the-exchange/utils/blockchain';
-import { decodeSendTokenCallData } from './blockchain';
 
 export const getObjectHash = (obj: unknown, salt?: string | number) => {
   const checksum = `${JSON.stringify(obj)}-${salt}`;
@@ -66,16 +61,13 @@ export const getShorterTimeUnits = (formattedDistanceToNowDate: string) => {
 
 export const transactionDescription = (
   selectedAsset: AssetSelectOption | undefined,
-  transaction: ITransaction | undefined,
+  amount: number | undefined,
+  to: string | undefined,
   payload: SendModalData | undefined
 ) => {
   if (selectedAsset?.type === 'token') {
-    if (transaction?.value) {
-      return `${processEth(transaction.value as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${transaction.to.substring(0, 6)}...${transaction.to.substring(transaction.to.length - 5)}`;
-    }
-    if (!transaction?.value && transaction?.data) {
-      const decodedTransferData = decodeSendTokenCallData(transaction.data);
-      return `${processEth(decodedTransferData[1] as BigNumber, selectedAsset.asset.decimals)} ${selectedAsset.asset.symbol} to ${decodedTransferData[0].substring(0, 6)}...${decodedTransferData[0].substring(transaction.to.length - 5)}`;
+    if (amount && to) {
+      return `${amount} ${selectedAsset.asset.symbol} to ${to.substring(0, 6)}...${to.substring(to.length - 5)}`;
     }
   }
 

@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import Fuse from 'fuse.js';
 import { useEffect, useRef, useState } from 'react';
 
@@ -22,6 +21,7 @@ import {
 } from '../../../../services/tokensData';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -48,7 +48,7 @@ const TokenSearchInput = ({
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(

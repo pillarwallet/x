@@ -1,19 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import {
-  EtherspotBatch,
-  EtherspotBatches,
-  EtherspotContractTransaction,
-  EtherspotTokenTransferTransaction,
-  EtherspotTransaction,
-  ISentBatches,
-  useEtherspot,
-  useEtherspotPrices,
-  useEtherspotTransactions,
-  useEtherspotUtils,
-  useWalletAddress,
-} from '@etherspot/transaction-kit';
+import { TransactionEstimateResult } from '@etherspot/transaction-kit';
 import * as Sentry from '@sentry/react';
 import { BigNumber, ethers, utils } from 'ethers';
 import {
@@ -22,10 +10,19 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
+import {
+  Address,
+  encodeFunctionData,
+  erc20Abi,
+  formatUnits,
+  parseUnits,
+} from 'viem';
+
+// api
+import { useGetTokenMarketDataQuery } from '../../../apps/token-atlas/api/token';
 
 // components
 import AssetSelect from '../../Form/AssetSelect';
@@ -36,15 +33,13 @@ import TextInput from '../../Form/TextInput';
 import Card from '../../Text/Card';
 import SendModalBottomButtons from './SendModalBottomButtons';
 
-// providers
-import { AccountNftsContext } from '../../../providers/AccountNftsProvider';
-
 // hooks
 import useAccountTransactionHistory from '../../../hooks/useAccountTransactionHistory';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useDeployWallet from '../../../hooks/useDeployWallet';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 // services
 import {
@@ -57,8 +52,8 @@ import { getUserOperationStatus } from '../../../services/userOpStatus';
 // utils
 import { isNativeToken } from '../../../apps/the-exchange/utils/wrappedTokens';
 import {
+  buildTransactionData,
   getNativeAssetForChainId,
-  isPolygonAssetNative,
   isValidEthereumAddress,
 } from '../../../utils/blockchain';
 import {
@@ -88,6 +83,7 @@ import {
   TokenAssetSelectOption,
 } from '../../../types';
 import { PortfolioData } from '../../../types/api';
+import { ITransaction } from '../../../types/blockchain';
 
 const getAmountLeft = (
   selectedAsset: AssetSelectOption | undefined,
@@ -108,10 +104,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [amount, setAmount] = React.useState<string>('');
   const [selectedAssetPrice, setSelectedAssetPrice] = React.useState<number>(0);
   const [nativeAssetPrice, setNativeAssetPrice] = React.useState<number>(0);
-  const { isZeroAddress } = useEtherspotUtils();
-  const { getPrices } = useEtherspotPrices();
-  const { chainId: etherspotDefaultChainId } = useEtherspot();
-  const { send, batches } = useEtherspotTransactions();
+  const { kit, setActiveChainId } = useTransactionKit();
+  const { setTransactionMetaForName } = useGlobalTransactionsBatch();
   const [isAmountInputAsFiat, setIsAmountInputAsFiat] =
     React.useState<boolean>(false);
   const [isSending, setIsSending] = React.useState<boolean>(false);
@@ -123,10 +117,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [deploymentCost, setDeploymentCost] = React.useState(0);
   const [isDeploymentCostLoading, setIsDeploymentCostLoading] =
     React.useState(true);
-  const accountAddress = useWalletAddress();
-  const { addToBatch, setWalletConnectTxHash } = useGlobalTransactionsBatch();
+  const { walletAddress: accountAddress } = useTransactionKit();
+  const { setWalletConnectTxHash } = useGlobalTransactionsBatch();
   const [pasteClicked, setPasteClicked] = React.useState<boolean>(false);
-  const { getTransactionHash } = useEtherspotTransactions();
   const {
     hide,
     showHistory,
@@ -140,7 +133,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     mode: string;
     token?: string;
   } | null>({ mode: 'sponsor' });
-  const contextNfts = useContext(AccountNftsContext);
   const [selectedPaymasterAddress, setSelectedPaymasterAddress] =
     React.useState<string>('');
   const [selectedFeeAsset, setSelectedFeeAsset] = React.useState<{
@@ -162,6 +154,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     (state) => state.swap.walletPortfolio as PortfolioData | undefined
   );
 
+  const { transactionDebugLog } = useTransactionDebugLogger();
+  const { getWalletDeploymentCost, getGasPrice } = useDeployWallet();
+  const {
+    userOpStatus,
+    setTransactionHash,
+    setUserOpStatus,
+    setLatestUserOpInfo,
+    setLatestUserOpChainId,
+  } = useAccountTransactionHistory();
+
   const {
     data: walletPortfolioData,
     isSuccess: isWalletPortfolioDataSuccess,
@@ -173,6 +175,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     },
     { skip: !accountAddress }
   );
+
+  /**
+   * Import the recordPresence mutation from the
+   * pillarXApiPresence service. We use this to
+   * collect data on what apps are being opened
+   */
+  const [recordPresence] = useRecordPresenceMutation();
 
   useEffect(() => {
     if (walletPortfolioData && isWalletPortfolioDataSuccess) {
@@ -364,62 +373,43 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gasPrice, selectedFeeAsset]);
 
-  const { transactionDebugLog } = useTransactionDebugLogger();
-  const { getWalletDeploymentCost, getGasPrice } = useDeployWallet();
-  const {
-    userOpStatus,
-    setTransactionHash,
-    setUserOpStatus,
-    setLatestUserOpInfo,
-    setLatestUserOpChainId,
-  } = useAccountTransactionHistory();
+  // Fetch native token price for the selected asset's chain
+  const nativeSymbol = selectedAsset
+    ? getNativeAssetForChainId(selectedAsset.chainId).symbol
+    : undefined;
 
-  /**
-   * Import the recordPresence mutation from the
-   * pillarXApiPresence service. We use this to
-   * collect data on what apps are being opened
-   */
-  const [recordPresence] = useRecordPresenceMutation();
+  const { data: tokenData } = useGetTokenMarketDataQuery(
+    {
+      symbol: nativeSymbol,
+      blockchain: selectedAsset ? String(selectedAsset.chainId) : undefined,
+    },
+    { skip: !selectedAsset?.chainId }
+  );
 
   useEffect(() => {
-    if (!isSending) {
-      contextNfts?.data.setUpdateData(true);
-    }
-
-    if (isSending) {
-      contextNfts?.data.setUpdateData(false);
-    }
-  }, [contextNfts?.data, isSending]);
-
-  React.useEffect(() => {
     if (!selectedAsset) return;
-
-    let expired = false;
-
-    (async () => {
-      if (selectedAsset.type !== 'token') return;
-      const [priceNative] = await getPrices(
-        [ethers.constants.AddressZero],
-        selectedAsset.chainId
-      );
-      if (expired) return;
-      if (priceNative?.usd) setNativeAssetPrice(priceNative.usd);
-      if (selectedAsset.asset.price)
-        setSelectedAssetPrice(selectedAsset.asset.price);
-    })();
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      expired = true;
-    };
+    if (selectedAsset.type !== 'token') return;
+    if (
+      tokenData &&
+      tokenData.result &&
+      tokenData.result.data &&
+      tokenData.result.data.price
+    ) {
+      setNativeAssetPrice(tokenData.result.data.price);
+    }
+    if (selectedAsset.asset.price) {
+      setSelectedAssetPrice(selectedAsset.asset.price);
+    } else {
+      setSelectedAssetPrice(0);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset]);
+  }, [selectedAsset, tokenData]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSafetyWarningMessage('');
   }, [selectedAsset, recipient, amount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getDeploymentCost = async () => {
       if (!accountAddress || !selectedAsset?.chainId) return;
       setIsDeploymentCostLoading(true);
@@ -435,17 +425,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountAddress, selectedAsset]);
 
-  const amountInFiat = React.useMemo(() => {
+  const amountInFiat = useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
     return selectedAssetPrice * +(amount || 0);
   }, [amount, selectedAssetPrice]);
 
-  const amountForPrice = React.useMemo(() => {
+  const amountForPrice = useMemo(() => {
     if (selectedAssetPrice === 0) return 0;
     return +(amount || 0) / selectedAssetPrice;
   }, [amount, selectedAssetPrice]);
 
-  const maxAmountAvailable = React.useMemo(() => {
+  const maxAmountAvailable = useMemo(() => {
     if (selectedAsset?.type !== 'token' || !selectedAsset.balance) return 0;
 
     const adjustedBalance = isNativeToken(selectedAsset.asset.contract)
@@ -457,7 +447,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       : adjustedBalance;
   }, [selectedAsset, deploymentCost, isAmountInputAsFiat, selectedAssetPrice]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const addressPasteActionTimeout = setTimeout(() => {
       setPasteClicked(false);
     }, 500);
@@ -481,14 +471,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     (isRegularSendModal && !isTransactionReady) ||
     Number(amount) > maxAmountAvailable;
 
-  const onSend = async (ignoreSafetyWarning?: boolean) => {
-    if (isSendDisabled) {
-      transactionDebugLog(
-        'Another single transaction is being sent, cannot process the sending of this transaction'
-      );
-      return;
-    }
+  const etherspotDefaultChainId = kit.getEtherspotProvider().getChainId();
 
+  const clearUserOpState = () => {
     // remove previously saved userOp for a new one
     localStorage.removeItem('latestUserOpStatus');
     localStorage.removeItem('latestTransactionHash');
@@ -500,10 +485,262 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setUserOpStatus(undefined);
     setLatestUserOpInfo(undefined);
     setLatestUserOpChainId(undefined);
+  };
 
+  const handleEstimation = (estimated: TransactionEstimateResult) => {
+    const estimatedCostBN = estimated.cost;
+    if (estimatedCostBN) {
+      let symbol = '';
+      let decimals = 18;
+      let price = nativeAssetPrice;
+      let estimatedCost = '0';
+      // Determine if using ERC20 gas (gasless/paymaster mode)
+      if (
+        isPaymaster &&
+        paymasterContext?.mode === 'commonerc20' &&
+        selectedFeeAsset
+      ) {
+        symbol = selectedFeeAsset.token?.toUpperCase() || '';
+        decimals = selectedFeeAsset.decimals ?? 18;
+        price = Number(selectedFeeAsset.tokenPrice) || 0;
+        estimatedCost = formatUnits(estimatedCostBN, decimals);
+      } else {
+        // Native token
+        const nativeAsset = getNativeAssetForChainId(
+          estimated.chainId || etherspotDefaultChainId
+        );
+        symbol = nativeAsset.symbol;
+        decimals = nativeAsset.decimals;
+        price = nativeAssetPrice;
+        estimatedCost = formatUnits(estimatedCostBN, decimals);
+      }
+      const costAsFiat = +estimatedCost * price;
+      transactionDebugLog('Transaction estimated cost:', estimatedCost, symbol);
+      setEstimatedCostFormatted(
+        `${formatAmountDisplay(estimatedCost, 0, 6)} ${symbol}`
+      );
+      return costAsFiat;
+    }
+
+    console.warn('Unable to get estimated cost', estimated);
+    setEstimatedCostFormatted('');
+    return 0;
+  };
+
+  const handleError = (message: string) => {
+    setErrorMessage(message);
+    setIsSending(false);
+  };
+
+  // Helper to poll userOp status and handle Sentry, status, etc.
+  function startUserOpPolling({
+    userOpHash,
+    chainIdForTxHash,
+    recipientAddress,
+    amountSent,
+  }: {
+    userOpHash: string;
+    chainIdForTxHash: number;
+    recipientAddress: string;
+    amountSent: number;
+  }) {
+    transactionDebugLog('Polling userOp status for hash:', userOpHash);
+    setLatestUserOpInfo(
+      transactionDescription(
+        selectedAsset,
+        amountSent,
+        recipientAddress,
+        payload
+      )
+    );
+    setLatestUserOpChainId(selectedAsset?.chainId);
+
+    const userOpStatusInterval = 5000; // 5 seconds
+    const maxAttempts = 9; // 9 * 5sec = 45sec
+    let attempts = 0;
+    let sentryCaptured = false;
+
+    const userOperationStatus = setInterval(async () => {
+      attempts += 1;
+      try {
+        const response = await getUserOperationStatus(
+          chainIdForTxHash,
+          userOpHash
+        );
+        transactionDebugLog(`UserOp status attempt ${attempts}`, response);
+
+        const status = response?.status;
+
+        // If OnChain, it means it has been successfully added on chain
+        if (status === 'OnChain' && response?.transaction) {
+          setUserOpStatus('Confirmed');
+          setTransactionHash(response.transaction);
+          transactionDebugLog(
+            'Transaction successfully submitted on chain with transaction hash:',
+            response.transaction
+          );
+          clearInterval(userOperationStatus);
+          return;
+        }
+
+        const sentryPayload = {
+          walletAddress: accountAddress,
+          userOpHash,
+          chainId: chainIdForTxHash,
+          transactionHash: response?.transaction,
+          attempts,
+          status,
+        };
+
+        // Treat status Reverted as Sent until we timeout as this JSON-RPC call
+        // can try again and be successful on Polygon only - known issue
+        if (status === 'Reverted') {
+          if (attempts < maxAttempts) {
+            setUserOpStatus('Sent');
+          } else {
+            setUserOpStatus('Failed');
+            transactionDebugLog(
+              'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
+              response?.transaction
+            );
+
+            // Sentry capturing
+            if (!sentryCaptured) {
+              sentryCaptured = true;
+              // Polygon chain
+              if (chainIdForTxHash === 137) {
+                Sentry.captureMessage(
+                  `Max attempts reached with userOp status "${status}" on Polygon`,
+                  {
+                    level: 'warning',
+                    extra: sentryPayload,
+                  }
+                );
+              } else {
+                // Other chains
+                Sentry.captureException(
+                  `Max attempts reached with userOp status "${status}"`,
+                  {
+                    level: 'error',
+                    extra: sentryPayload,
+                  }
+                );
+              }
+            }
+
+            setTransactionHash(response?.transaction);
+            clearInterval(userOperationStatus);
+          }
+          return;
+        }
+
+        // New, Pending, Submitted => still waiting
+        if (['New', 'Pending'].includes(status)) {
+          setUserOpStatus('Sending');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (['Submitted'].includes(status)) {
+          setUserOpStatus('Sent');
+          transactionDebugLog(
+            `UserOp Status is ${status}. Check transaction hash:`,
+            response?.transaction
+          );
+        }
+
+        if (attempts >= maxAttempts) {
+          clearInterval(userOperationStatus);
+          transactionDebugLog(
+            'Max attempts reached without userOp with OnChain status. Check transaction hash:',
+            response?.transaction
+          );
+          if (userOpStatus !== 'Confirmed') {
+            setUserOpStatus('Failed');
+
+            // Sentry capturing
+            if (!sentryCaptured) {
+              sentryCaptured = true;
+              // Polygon chain
+              if (chainIdForTxHash === 137) {
+                Sentry.captureMessage(
+                  `Max attempts reached with userOp status "${status}" on Polygon`,
+                  {
+                    level: 'warning',
+                    extra: sentryPayload,
+                  }
+                );
+              } else {
+                // Other chains
+                Sentry.captureException(
+                  `Max attempts reached with userOp status "${status}"`,
+                  {
+                    level: 'error',
+                    extra: sentryPayload,
+                  }
+                );
+              }
+            }
+
+            setTransactionHash(response?.transaction);
+          }
+        }
+      } catch (err) {
+        transactionDebugLog('Error getting userOp status:', err);
+        clearInterval(userOperationStatus);
+        setUserOpStatus('Failed');
+
+        // Sentry capturing
+        Sentry.captureException(
+          err instanceof Error ? err.message : 'Error getting userOp status',
+          {
+            extra: {
+              walletAddress: accountAddress,
+              userOpHash,
+              chainId: chainIdForTxHash,
+              attempts,
+            },
+          }
+        );
+      }
+    }, userOpStatusInterval);
+  }
+
+  // Helper to determine if we should use payload transaction
+  const isPayloadTransaction = payload && 'transaction' in payload;
+
+  // Helper to determine if we should use payload batches
+  const isPayloadBatches = payload && 'batches' in payload;
+
+  // If using payload transaction, extract its data
+  const payloadTx = isPayloadTransaction ? payload.transaction : undefined;
+
+  // --- Paymaster logic is only relevant for user-driven (no payload) flows ---
+
+  const onSend = async (ignoreSafetyWarning?: boolean) => {
+    if (isSendDisabled) {
+      transactionDebugLog(
+        'Another single transaction is being sent, cannot process the sending of this transaction'
+      );
+      return;
+    }
+
+    clearUserOpState();
     setIsSending(true);
     setEstimatedCostFormatted('');
     setErrorMessage('');
+    setSafetyWarningMessage('');
+
+    // Compute paymasterDetails only for user-driven flows
+    const paymasterDetails =
+      !isPayloadTransaction && isPaymaster && paymasterContext
+        ? {
+            url: `${paymasterUrl}${queryString}`,
+            context: paymasterContext,
+          }
+        : undefined;
 
     // warning if sending more than half of the balance
     if (
@@ -515,12 +752,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       setSafetyWarningMessage(
         t`warning.transactionSafety.amountMoreThanHalfOfBalance`
       );
-      setIsSending(false);
-      setErrorMessage('');
+      handleError('');
       return;
     }
 
-    if (isPaymaster && paymasterContext?.mode === 'commonerc20') {
+    // Paymaster balance check only for user-driven flows
+    if (
+      !isPayloadTransaction &&
+      isPaymaster &&
+      paymasterContext?.mode === 'commonerc20'
+    ) {
       let amountLeft = 0;
       if (
         selectedAsset?.type === 'token' &&
@@ -537,115 +778,522 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       }
       if (!feeMin) return;
       if (amountLeft < +feeMin) {
-        setErrorMessage(t`error.insufficientBalanceForGasless`);
-        setIsSending(false);
+        handleError(t`error.insufficientBalanceForGasless`);
         return;
       }
     }
 
     transactionDebugLog('Preparing to send transaction');
 
-    let sent: ISentBatches[];
-
     try {
-      sent = await send(undefined, {
-        retryOnFeeTooLow: true,
-        maxRetries: 3,
-        feeMultiplier: 1.2, // 20% increase per retry
+      // --- PAYLOAD: BATCHES FLOW ---
+      if (isPayloadBatches && Array.isArray(payload.batches)) {
+        // Build all batches
+        for (let batchIdx = 0; batchIdx < payload.batches.length; batchIdx++) {
+          const batch = payload.batches[batchIdx];
+          const batchName = `batch-${batch.chainId}`;
+          // Add all transactions in the batch
+          for (let txIdx = 0; txIdx < batch.transactions.length; txIdx++) {
+            const tx = batch.transactions[txIdx];
+            kit
+              .transaction({
+                chainId: batch.chainId,
+                to: tx.to,
+                value:
+                  typeof tx.value === 'bigint'
+                    ? tx.value
+                    : BigInt(tx.value?.toString() || '0'),
+                data: tx.data,
+              })
+              .name({ transactionName: `tx-${batch.chainId}-${txIdx}` })
+              .addToBatch({ batchName });
+          }
+        }
+
+        // Estimate all batches
+        const batchNames = payload.batches.map(
+          (batch) => `batch-${batch.chainId}`
+        );
+        transactionDebugLog('Estimating payload batches:', batchNames);
+        const batchEstimate = await kit.estimateBatches({
+          onlyBatchNames: batchNames,
+        });
+        transactionDebugLog('Payload batches estimated:', batchEstimate);
+
+        if (!batchEstimate.isEstimatedSuccessfully) {
+          handleError('Batch estimation failed');
+          return;
+        }
+
+        // Cost warning and error handling for each batch
+        for (let batchIdx = 0; batchIdx < batchNames.length; batchIdx++) {
+          const batchName = batchNames[batchIdx];
+          const batchEst = batchEstimate.batches[batchName];
+          if (batchEst?.errorMessage) {
+            transactionDebugLog(
+              'Batch estimation error:',
+              batchEst.errorMessage
+            );
+            handleError(batchEst.errorMessage || 'Batch estimation failed');
+            return;
+          }
+          // Check cost warning for the first transfer transaction in the batch
+          const transferTxEstimate = batchEst?.transactions?.[0];
+          if (
+            transferTxEstimate &&
+            transferTxEstimate.cost &&
+            nativeAssetPrice
+          ) {
+            // Always use 18 decimals for ETH/wei conversion
+            const estimatedCost = formatUnits(transferTxEstimate.cost, 18);
+            const costAsFiat = +estimatedCost * nativeAssetPrice;
+            transactionDebugLog(
+              `Batch ${batchName} transfer estimated cost:`,
+              estimatedCost,
+              'Fiat:',
+              costAsFiat
+            );
+            // If amountInFiat is available, check warning
+            if (
+              !ignoreSafetyWarning &&
+              amountInFiat &&
+              costAsFiat > amountInFiat
+            ) {
+              setSafetyWarningMessage(
+                t`warning.transactionSafety.costHigherThanAmount`
+              );
+              setIsSending(false);
+              transactionDebugLog(
+                `Batch ${batchName} cost warning: estimated cost higher than amount`
+              );
+              return;
+            }
+          }
+        }
+
+        // Send all batches
+        transactionDebugLog('Sending payload batches:', batchNames);
+        const batchSend = await kit.sendBatches({
+          onlyBatchNames: batchNames,
+        });
+        transactionDebugLog('Payload batches sent:', batchSend);
+
+        if (!batchSend.isSentSuccessfully) {
+          handleError('Batch send failed');
+          return;
+        }
+
+        // For each sent batch, handle userOpHash, WalletConnect, polling
+        const allUserOpHashes: string[] = [];
+        for (let batchIdx = 0; batchIdx < batchNames.length; batchIdx++) {
+          const batchName = batchNames[batchIdx];
+          const sentBatch = batchSend.batches[batchName];
+          const userOpHash = sentBatch?.userOpHash;
+          if (userOpHash) {
+            allUserOpHashes.push(userOpHash);
+            const chainIdForTxHash = payload.batches[batchIdx].chainId;
+            // WalletConnect: set transaction hash if needed
+            if (
+              payload?.title === 'WalletConnect Approval Request' ||
+              payload?.title === 'WalletConnect Transaction Request'
+            ) {
+              const txHash = await kit.getTransactionHash(
+                userOpHash,
+                chainIdForTxHash
+              );
+              if (!txHash) {
+                setWalletConnectTxHash(undefined);
+              } else {
+                setWalletConnectTxHash(txHash);
+              }
+            }
+
+            startUserOpPolling({
+              userOpHash,
+              chainIdForTxHash,
+              recipientAddress: recipient,
+              amountSent: Number(amount),
+            });
+          }
+        }
+        if (payload.onSent) {
+          payload.onSent(allUserOpHashes);
+        }
+        showHistory();
+        setIsSending(false);
+        return;
+      }
+      // --- PAYLOAD: SINGLE TRANSACTION FLOW ---
+      if (isPayloadTransaction) {
+        // Paymaster logic is not supported for payload flows
+        if (selectedAsset?.type !== 'token') {
+          handleError('Only token transfers are supported in this flow.');
+          return;
+        }
+        const txData = {
+          to: payloadTx?.to || '',
+          value:
+            payloadTx?.value !== undefined ? payloadTx.value.toString() : '0',
+          data: payloadTx?.data || undefined,
+        };
+        const chainIdToUse = payloadTx?.chainId ?? selectedAsset.chainId;
+
+        setActiveChainId(chainIdToUse);
+
+        kit
+          .transaction({
+            chainId: chainIdToUse,
+            to: txData.to,
+            value: txData.value,
+            data: txData.data,
+          })
+          .name({ transactionName: 'tx-single-send' });
+
+        // Estimate (no paymasterDetails)
+        transactionDebugLog('Estimating single payload transaction');
+        const estimated = await kit.estimate();
+        transactionDebugLog('Single payload transaction estimated:', estimated);
+        if (estimated.errorMessage) {
+          handleError(
+            'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
+          );
+          return;
+        }
+
+        const costAsFiat = handleEstimation(estimated);
+        if (
+          !ignoreSafetyWarning &&
+          amountInFiat &&
+          costAsFiat &&
+          costAsFiat > amountInFiat
+        ) {
+          setSafetyWarningMessage(
+            t`warning.transactionSafety.costHigherThanAmount`
+          );
+          setIsSending(false);
+          transactionDebugLog(
+            'Single payload transaction cost warning: estimated cost higher than amount'
+          );
+          return;
+        }
+
+        // Send (no paymasterDetails)
+        transactionDebugLog('Sending single payload transaction');
+        const sent = await kit.send();
+        transactionDebugLog('Single payload transaction sent:', sent);
+        if (sent.errorMessage) {
+          handleError(
+            'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+          );
+          return;
+        }
+
+        const newUserOpHash = sent.userOpHash;
+        transactionDebugLog('Transaction new userOpHash:', newUserOpHash);
+        const chainIdForTxHash =
+          (payloadTx && payloadTx.chainId) ||
+          sent.chainId ||
+          (selectedAsset && 'chainId' in selectedAsset
+            ? selectedAsset.chainId
+            : etherspotDefaultChainId);
+        if (!newUserOpHash) {
+          handleError(t`error.failedToGetTransactionHashReachSupport`);
+          return;
+        }
+        // WalletConnect: set transaction hash if needed
+        if (
+          payload?.title === 'WalletConnect Approval Request' ||
+          payload?.title === 'WalletConnect Transaction Request'
+        ) {
+          const txHash = await kit.getTransactionHash(
+            newUserOpHash,
+            chainIdForTxHash
+          );
+          if (!txHash) {
+            setWalletConnectTxHash(undefined);
+          } else {
+            setWalletConnectTxHash(txHash);
+          }
+        }
+        if (payload?.onSent) {
+          payload.onSent([sent?.userOpHash || '']);
+        }
+
+        // Use helper for polling
+        startUserOpPolling({
+          userOpHash: newUserOpHash,
+          chainIdForTxHash,
+          recipientAddress: recipient,
+          amountSent: Number(amount),
+        });
+        showHistory();
+        setIsSending(false);
+        return;
+      }
+
+      // --- USER INPUT: SINGLE OR BATCH FLOW ---
+      // (No payload)
+      if (
+        !selectedAsset ||
+        selectedAsset.type !== 'token' ||
+        !('asset' in selectedAsset)
+      ) {
+        handleError('Only token transfers are supported in this flow.');
+        return;
+      }
+
+      // --- BATCH FLOW (Paymaster) ---
+      if (isPaymaster && selectedPaymasterAddress && selectedFeeAsset) {
+        const batchName = 'paymaster-batch';
+
+        // 1. Approval transaction
+        kit
+          .transaction({
+            chainId: selectedAsset.chainId,
+            to: selectedFeeAsset.token,
+            value: '0',
+            data: approveData,
+          })
+          .name({ transactionName: 'approve' })
+          .addToBatch({ batchName });
+
+        // 2. Main transfer transaction
+        const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+        const txData = buildTransactionData({
+          tokenAddress: selectedAsset.asset.contract,
+          recipient,
+          amount: Number(valueToSend),
+          decimals: selectedAsset.asset.decimals,
+        });
+        kit
+          .transaction({
+            chainId: selectedAsset.chainId,
+            to: txData.to,
+            value: txData.value,
+            data: txData.data,
+          })
+          .name({ transactionName: 'transfer' })
+          .addToBatch({ batchName });
+
+        // 3. Estimate batch
+        transactionDebugLog('Estimating batch:', batchName);
+        const batchEstimate = await kit.estimateBatches({
+          onlyBatchNames: [batchName],
+          paymasterDetails,
+        });
+        transactionDebugLog('Batch estimated:', batchEstimate);
+
+        if (
+          !batchEstimate.isEstimatedSuccessfully ||
+          batchEstimate.batches[batchName]?.errorMessage
+        ) {
+          transactionDebugLog(
+            'Batch estimation error:',
+            batchEstimate.batches[batchName]?.errorMessage
+          );
+          handleError(
+            batchEstimate.batches[batchName]?.errorMessage ||
+              'Batch estimation failed'
+          );
+          return;
+        }
+
+        // Cost warning for paymaster batch
+        const transferTxEstimate =
+          batchEstimate.batches[batchName]?.transactions[1];
+        if (transferTxEstimate && transferTxEstimate.cost && nativeAssetPrice) {
+          // Always use 18 decimals for ETH/wei conversion
+          const estimatedCost = formatUnits(transferTxEstimate.cost, 18);
+          const costAsFiat = +estimatedCost * nativeAssetPrice;
+          transactionDebugLog(
+            'Batch transfer estimated cost:',
+            estimatedCost,
+            'Fiat:',
+            costAsFiat
+          );
+
+          if (
+            !ignoreSafetyWarning &&
+            amountInFiat &&
+            costAsFiat > amountInFiat
+          ) {
+            setSafetyWarningMessage(
+              t`warning.transactionSafety.costHigherThanAmount`
+            );
+            setIsSending(false);
+            transactionDebugLog(
+              'Batch cost warning: estimated cost higher than amount'
+            );
+            return;
+          }
+        }
+
+        // 4. Send batch
+        transactionDebugLog('Sending batch:', batchName);
+        const batchSend = await kit.sendBatches({
+          onlyBatchNames: [batchName],
+          paymasterDetails,
+        });
+        transactionDebugLog('Batch sent:', batchSend);
+
+        if (
+          !batchSend.isSentSuccessfully ||
+          batchSend.batches[batchName]?.errorMessage
+        ) {
+          transactionDebugLog(
+            'Batch send error:',
+            batchSend.batches[batchName]?.errorMessage
+          );
+          handleError(
+            batchSend.batches[batchName]?.errorMessage || 'Batch send failed'
+          );
+          return;
+        }
+
+        // Extract userOpHash
+        const sentBatch = batchSend.batches[batchName];
+        const userOpHash = sentBatch?.userOpHash;
+
+        transactionDebugLog('Transaction new userOpHash:', userOpHash);
+        const chainIdForTxHash = selectedAsset.chainId;
+        if (!userOpHash) {
+          transactionDebugLog('No userOpHash returned after batch send');
+          setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
+          setIsSending(false);
+          return;
+        }
+
+        // WalletConnect: set transaction hash
+        if (
+          payload?.title === 'WalletConnect Approval Request' ||
+          payload?.title === 'WalletConnect Transaction Request'
+        ) {
+          const txHash = await kit.getTransactionHash(
+            userOpHash,
+            chainIdForTxHash
+          );
+          if (!txHash) {
+            setWalletConnectTxHash(undefined);
+          } else {
+            setWalletConnectTxHash(txHash);
+          }
+        }
+
+        if (payload?.onSent) {
+          payload.onSent([userOpHash || '']);
+        }
+
+        // Use helper for polling
+        startUserOpPolling({
+          userOpHash,
+          chainIdForTxHash,
+          recipientAddress: recipient,
+          amountSent: Number(amount),
+        });
+
+        showHistory();
+        setIsSending(false);
+        return;
+      }
+
+      // --- SINGLE TRANSACTION FLOW (no paymaster) ---
+      const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+      const txData = buildTransactionData({
+        tokenAddress: selectedAsset.asset.contract,
+        recipient,
+        amount: Number(valueToSend),
+        decimals: selectedAsset.asset.decimals,
+      });
+      // Use the correct chainId for the fee payment method
+      const feeChainId = selectedAsset.chainId;
+
+      setActiveChainId(feeChainId);
+
+      kit
+        .transaction({
+          chainId: feeChainId,
+          to: txData.to,
+          value: txData.value !== undefined ? txData.value.toString() : '0',
+          data: txData.data,
+        })
+        .name({ transactionName: 'tx-single-send' });
+
+      transactionDebugLog('Estimating single transaction');
+      const estimated = await kit.estimate();
+      transactionDebugLog('Single transaction estimated:', estimated);
+      if (estimated.errorMessage) {
+        transactionDebugLog(
+          'Single transaction estimation error:',
+          estimated.errorMessage
+        );
+        handleError(
+          'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
+        );
+        return;
+      }
+
+      const costAsFiat = handleEstimation(estimated);
+
+      if (
+        !ignoreSafetyWarning &&
+        amountInFiat &&
+        costAsFiat &&
+        costAsFiat > amountInFiat
+      ) {
+        setSafetyWarningMessage(
+          t`warning.transactionSafety.costHigherThanAmount`
+        );
+        setIsSending(false);
+        transactionDebugLog(
+          'Single transaction cost warning: estimated cost higher than amount'
+        );
+        return;
+      }
+
+      recordPresence({
+        address: accountAddress,
+        action: 'actionSendAsset',
+        value: selectedAsset?.id,
+        data: { ...selectedAsset },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      const errorMes =
-        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.';
-      setErrorMessage(errorMes);
-      setIsSending(false);
-      return;
-    }
+      // Send
+      transactionDebugLog('Sending single transaction');
+      const sent = await kit.send();
 
-    const estimatedCostBN = sent?.[0]?.estimatedBatches?.[0]?.cost;
-    let costAsFiat = 0;
-    if (estimatedCostBN) {
-      const nativeAsset = getNativeAssetForChainId(
-        sent[0].estimatedBatches[0].chainId as number
-      );
-      const estimatedCost = ethers.utils.formatUnits(
-        estimatedCostBN,
-        nativeAsset.decimals
-      );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      costAsFiat = +estimatedCost * nativeAssetPrice;
+      transactionDebugLog('Single transaction sent:', sent);
+      if (sent.errorMessage) {
+        transactionDebugLog(
+          'Single transaction send error:',
+          sent.errorMessage
+        );
+        handleError(
+          'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+        );
+        return;
+      }
 
-      transactionDebugLog('Transaction estimated cost:', estimatedCost);
+      const newUserOpHash = sent.userOpHash;
+      transactionDebugLog('Transaction new userOpHash:', newUserOpHash);
 
-      setEstimatedCostFormatted(
-        `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
-      );
-    } else {
-      console.warn('Unable to get estimated cost', sent);
-    }
+      const chainIdForTxHash =
+        (payloadTx && payloadTx.chainId) || sent.chainId || 1;
 
-    const estimationErrorMessage =
-      sent?.[0]?.estimatedBatches?.[0]?.errorMessage;
-    if (estimationErrorMessage) {
-      setErrorMessage(
-        'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
-      );
-      setIsSending(false);
-      return;
-    }
+      if (!newUserOpHash) {
+        transactionDebugLog(
+          'No userOpHash returned after single transaction send'
+        );
+        setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
+        setIsSending(false);
+        return;
+      }
 
-    // TO DO - reintroduce this warning when Transaction Kit 2.0 is released
-    // // warning if cost in fiat is higher than amount
-    // if (
-    //   !ignoreSafetyWarning &&
-    //   amountInFiat &&
-    //   costAsFiat &&
-    //   costAsFiat > amountInFiat
-    // ) {
-    //   setSafetyWarningMessage(
-    //     t`warning.transactionSafety.costHigherThanAmount`
-    //   );
-    //   setIsSending(false);
-    //   return;
-    // }
-
-    // Record the sending of this asset
-    recordPresence({
-      address: accountAddress,
-      action: 'actionSendAsset',
-      value: selectedAsset?.id,
-      data: {
-        ...selectedAsset,
-      },
-    });
-
-    const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
-    if (sendingErrorMessage) {
-      setErrorMessage(
-        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
-      );
-      setIsSending(false);
-      return;
-    }
-
-    const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
-
-    transactionDebugLog('Transaction new userOpHash:', newUserOpHash);
-
-    const userOpChainId = sent?.[0]?.sentBatches[0]?.chainId;
-
-    const chainIdForTxHash =
-      (payload && 'transaction' in payload && payload.transaction.chainId) ||
-      userOpChainId ||
-      etherspotDefaultChainId;
-
-    if (newUserOpHash) {
+      // WalletConnect: set transaction hash
       if (
         payload?.title === 'WalletConnect Approval Request' ||
         payload?.title === 'WalletConnect Transaction Request'
       ) {
-        const txHash = await getTransactionHash(
+        const txHash = await kit.getTransactionHash(
           newUserOpHash,
           chainIdForTxHash
         );
@@ -656,228 +1304,140 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         }
       }
 
-      const transactionToSend = sent?.[0]?.batches?.[0]?.transactions?.[0];
+      if (payload?.onSent) {
+        // This part may need to be adapted if sent is not an array
+        payload.onSent([sent?.userOpHash || '']);
+      }
 
-      setLatestUserOpInfo(
-        transactionDescription(selectedAsset, transactionToSend, payload)
-      );
+      // Use helper for polling
+      startUserOpPolling({
+        userOpHash: newUserOpHash,
+        chainIdForTxHash,
+        recipientAddress: recipient,
+        amountSent: Number(amount),
+      });
 
-      setLatestUserOpChainId(selectedAsset?.chainId);
-
-      const userOpStatusInterval = 5000; // 5 seconds
-      const maxAttempts = 9; // 9 * 5sec = 45sec
-      let attempts = 0;
-      let sentryCaptured = false;
-
-      const userOperationStatus = setInterval(async () => {
-        attempts += 1;
-        try {
-          const response = await getUserOperationStatus(
-            chainIdForTxHash,
-            newUserOpHash
-          );
-          transactionDebugLog(`UserOp status attempt ${attempts}`, response);
-
-          const status = response?.status;
-
-          // If OnChain, it means it has been successfully added on chain
-          if (status === 'OnChain' && response?.transaction) {
-            setUserOpStatus('Confirmed');
-            setTransactionHash(response.transaction);
-            transactionDebugLog(
-              'Transaction successfully submitted on chain with transaction hash:',
-              response.transaction
-            );
-            clearInterval(userOperationStatus);
-            return;
-          }
-
-          const sentryPayload = {
-            walletAddress: accountAddress,
-            userOpHash: newUserOpHash,
-            chainId: chainIdForTxHash,
-            transactionHash: response?.transaction,
-            attempts,
-            status,
-          };
-
-          // Treat status Reverted as Sent until we timeout as this JSON-RPC call
-          // can try again and be successful on Polygon only - known issue
-          if (status === 'Reverted') {
-            if (attempts < maxAttempts) {
-              setUserOpStatus('Sent');
-            } else {
-              setUserOpStatus('Failed');
-              transactionDebugLog(
-                'UserOp Status remained Reverted after 45 sec timeout. Check transaction hash:',
-                response?.transaction
-              );
-
-              // Sentry capturing
-              if (!sentryCaptured) {
-                sentryCaptured = true;
-                // Polygon chain
-                if (chainIdForTxHash === 137) {
-                  Sentry.captureMessage(
-                    `Max attempts reached with userOp status "${status}" on Polygon`,
-                    {
-                      level: 'warning',
-                      extra: sentryPayload,
-                    }
-                  );
-                } else {
-                  // Other chains
-                  Sentry.captureException(
-                    `Max attempts reached with userOp status "${status}"`,
-                    {
-                      level: 'error',
-                      extra: sentryPayload,
-                    }
-                  );
-                }
-              }
-
-              setTransactionHash(response?.transaction);
-              clearInterval(userOperationStatus);
-            }
-            return;
-          }
-
-          // New, Pending, Submitted => still waiting
-          if (['New', 'Pending'].includes(status)) {
-            setUserOpStatus('Sending');
-            transactionDebugLog(
-              `UserOp Status is ${status}. Check transaction hash:`,
-              response?.transaction
-            );
-          }
-
-          if (['Submitted'].includes(status)) {
-            setUserOpStatus('Sent');
-            transactionDebugLog(
-              `UserOp Status is ${status}. Check transaction hash:`,
-              response?.transaction
-            );
-          }
-
-          if (attempts >= maxAttempts) {
-            clearInterval(userOperationStatus);
-            transactionDebugLog(
-              'Max attempts reached without userOp with OnChain status. Check transaction hash:',
-              response?.transaction
-            );
-            if (userOpStatus !== 'Confirmed') {
-              setUserOpStatus('Failed');
-
-              // Sentry capturing
-              if (!sentryCaptured) {
-                sentryCaptured = true;
-                // Polygon chain
-                if (chainIdForTxHash === 137) {
-                  Sentry.captureMessage(
-                    `Max attempts reached with userOp status "${status}" on Polygon`,
-                    {
-                      level: 'warning',
-                      extra: sentryPayload,
-                    }
-                  );
-                } else {
-                  // Other chains
-                  Sentry.captureException(
-                    `Max attempts reached with userOp status "${status}"`,
-                    {
-                      level: 'error',
-                      extra: sentryPayload,
-                    }
-                  );
-                }
-              }
-
-              setTransactionHash(response?.transaction);
-            }
-          }
-        } catch (err) {
-          transactionDebugLog('Error getting userOp status:', err);
-          clearInterval(userOperationStatus);
-          setUserOpStatus('Failed');
-
-          // Sentry capturing
-          Sentry.captureException(
-            err instanceof Error ? err.message : 'Error getting userOp status',
-            {
-              extra: {
-                walletAddress: accountAddress,
-                userOpHash: newUserOpHash,
-                chainId: chainIdForTxHash,
-                attempts,
-              },
-            }
-          );
-        }
-      }, userOpStatusInterval);
-    }
-
-    if (!newUserOpHash) {
-      setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
+      showHistory();
       setIsSending(false);
-      return;
+    } catch (error: unknown) {
+      handleError(
+        'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+      );
+    } finally {
+      setIsSending(false);
     }
-
-    if (payload?.onSent) {
-      const allUserOpHashes = sent.reduce((hashes: string[], r) => {
-        r.sentBatches.forEach((b) => {
-          if (!b.userOpHash) return;
-          hashes.push(b.userOpHash);
-        });
-        return hashes;
-      }, []);
-      payload.onSent(allUserOpHashes);
-    }
-
-    showHistory();
-    setIsSending(false);
   };
 
+  // Add to batch for user-driven, non-paymaster, non-payload flows
   const onAddToBatch = async () => {
     if (isSendDisabled) return;
     setErrorMessage('');
 
+    // Only allow batching for user-driven, non-paymaster, non-payload-batches flows
     if (isPaymaster) {
       setErrorMessage(t`error.paymasterNotSupported`);
       return;
     }
-
-    const transactionToBatch = batches?.[0]?.batches?.[0]?.transactions?.[0];
-    if (!transactionToBatch) {
-      setErrorMessage(t`error.failedToGetTransactionDataForBatching`);
+    if (isPayloadBatches) {
+      setErrorMessage(t`error.batchingNotSupportedForPayloadBatches`);
       return;
     }
 
-    const chainIdForBatch =
-      (payload && 'transaction' in payload && payload.transaction.chainId) ||
-      selectedAsset?.chainId ||
-      etherspotDefaultChainId;
+    let txData: ITransaction;
+    let chainId: number | undefined;
+    let description = '';
 
-    transactionDebugLog('Adding transaction to batch:', transactionToBatch);
+    if (!payload) {
+      const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+      if (
+        !selectedAsset ||
+        selectedAsset.type !== 'token' ||
+        !('asset' in selectedAsset)
+      ) {
+        setErrorMessage(t`error.invalidAssetForBatching`);
+        return;
+      }
+      const builtTxData = buildTransactionData({
+        tokenAddress: selectedAsset.asset.contract,
+        recipient,
+        amount: Number(valueToSend),
+        decimals: selectedAsset.asset.decimals,
+      });
+      txData = {
+        ...builtTxData,
+        value:
+          typeof builtTxData.value === 'bigint'
+            ? builtTxData.value
+            : String(builtTxData.value ?? ''),
+        chainId: Number(selectedAsset.chainId ?? etherspotDefaultChainId),
+      };
+      chainId = selectedAsset.chainId;
+      description =
+        transactionDescription(
+          selectedAsset,
+          Number(valueToSend),
+          recipient,
+          payload
+        ) || '';
+    } else if (payload && 'transaction' in payload) {
+      // Single payload transaction batching
+      const payloadTxAddToBatch = payload.transaction as ITransaction;
+      txData = {
+        to: payloadTxAddToBatch?.to || '',
+        value:
+          payloadTxAddToBatch?.value !== undefined
+            ? String(payloadTxAddToBatch.value)
+            : '0',
+        data: payloadTxAddToBatch?.data || undefined,
+        chainId:
+          payloadTxAddToBatch?.chainId ||
+          (selectedAsset && selectedAsset.chainId) ||
+          etherspotDefaultChainId,
+      };
+      chainId = txData.chainId;
+      description =
+        payload.description || t`helper.transactionWillBeExecutedByApp`;
+    } else {
+      setErrorMessage(t`error.invalidBatchingScenario`);
+      return;
+    }
 
-    addToBatch({
-      title: payload?.title || t`action.sendAsset`,
-      description:
-        payload?.description ||
-        transactionDescription(selectedAsset, transactionToBatch, payload),
-      chainId: chainIdForBatch,
-      ...transactionToBatch,
+    // Guard: do not add to batch if chainId is undefined
+    if (typeof chainId !== 'number') {
+      setErrorMessage(t`error.invalidChainIdForBatch`);
+      return;
+    }
+
+    // Add to kit batch
+    const batchName = `batch-${chainId}`;
+    const transactionName = `tx-${chainId}-${txData.data}`;
+    kit
+      .transaction({
+        chainId,
+        to: txData.to,
+        value:
+          typeof txData.value === 'bigint'
+            ? txData.value
+            : BigInt(txData.value?.toString() || '0'),
+        data: txData.data,
+      })
+      .name({ transactionName })
+      .addToBatch({ batchName });
+
+    // Associate title and description with this transactionName
+    setTransactionMetaForName(transactionName, {
+      title: t('action.sendAsset'),
+      description,
     });
 
     setShowBatchSendModal(true);
-
-    // hide modal if invoked from hook
     if (payload) hide();
   };
 
   const onCancel = () => {
     setRecipient('');
     setSelectedAsset(undefined);
+    setActiveChainId(undefined);
     setAmount('');
     setSafetyWarningMessage('');
     setErrorMessage('');
@@ -888,8 +1448,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       hide();
     }
   };
-
-  const assetValueToSend = isAmountInputAsFiat ? amountForPrice : amount;
 
   // throw error if both transaction and batches are present in send modal invoked outside menu
   if (payload && 'transaction' in payload && 'batches' in payload) {
@@ -919,6 +1477,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const handleCloseTokenSelect = () => {
     setSelectedAsset(undefined);
+    setActiveChainId(undefined);
     setAmount('');
     setRecipient('');
   };
@@ -964,312 +1523,125 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFeeAsset]);
 
-  const transferFromAbi = {
-    inputs: [
-      { internalType: 'address', name: 'from', type: 'address' },
-      { internalType: 'address', name: 'to', type: 'address' },
-      { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-    ],
-    name: 'transferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  };
-
-  if (payload) {
-    return (
-      <>
+  return (
+    <>
+      {payload && (
         <Card
           title={payload.title}
           content={
             payload.description ?? t`helper.transactionWillBeExecutedByApp`
           }
         />
-        {'transaction' in payload && (
-          <>
-            <EtherspotBatches
-              paymaster={
-                isPaymaster
-                  ? {
-                      url: `${paymasterUrl}${queryString}`,
-                      context: paymasterContext,
-                    }
-                  : undefined
-              }
-              id="batch-1"
-            >
-              <EtherspotBatch chainId={payload.transaction.chainId}>
-                {isPaymaster &&
-                  selectedPaymasterAddress &&
-                  selectedFeeAsset && (
-                    <EtherspotTransaction
-                      to={selectedFeeAsset.token}
-                      data={approveData}
-                    />
-                  )}
-                <EtherspotTransaction
-                  to={payload.transaction.to}
-                  value={payload.transaction.value || '0'}
-                  data={payload.transaction.data || undefined}
-                />
-              </EtherspotBatch>
-            </EtherspotBatches>
-            {feeType.length > 0 && feeAssetOptions.length > 0 && (
-              <>
-                <Label>{t`label.feeType`}</Label>
-                <Select
-                  type="token"
-                  onChange={handleOnChangeFeeAsset}
-                  options={feeType}
-                  defaultSelectedId={feeType[0].id}
-                />
-              </>
-            )}
-            {paymasterContext?.mode === 'commonerc20' &&
-              feeAssetOptions.length > 0 && (
-                <>
-                  <Label>{t`label.selectFeeAsset`}</Label>
-                  <Select
-                    type="token"
-                    onChange={handleOnChange}
-                    options={feeAssetOptions}
-                    defaultSelectedId={feeAssetOptions[0]?.id}
-                  />
-                </>
-              )}
-          </>
-        )}
-        {'batches' in payload && (
-          <EtherspotBatches
-            paymaster={
-              isPaymaster
-                ? {
-                    url: `${paymasterUrl}${queryString}`,
-                    context: paymasterContext,
-                  }
-                : undefined
-            }
-            id="batch-1"
-          >
-            {payload.batches.map((batch, index) => (
-              <EtherspotBatch
-                key={`${batch.chainId}-${index}`}
-                chainId={batch.chainId}
-              >
-                {isPaymaster &&
-                  selectedPaymasterAddress &&
-                  approveData &&
-                  selectedFeeAsset && (
-                    <EtherspotTransaction
-                      to={selectedFeeAsset.token}
-                      data={approveData}
-                    />
-                  )}
-                {batch.transactions.map((transaction, idx) => (
-                  <EtherspotTransaction
-                    key={`${transaction.to}-${idx}`}
-                    to={transaction.to}
-                    value={transaction.value || '0'}
-                    data={transaction.data || undefined}
-                  />
-                ))}
-              </EtherspotBatch>
-            ))}
-          </EtherspotBatches>
-        )}
-        <SendModalBottomButtons
-          onSend={onSend}
-          safetyWarningMessage={safetyWarningMessage}
-          isSendDisabled={isSendDisabled}
-          isSending={isSending}
-          errorMessage={errorMessage}
-          estimatedCostFormatted={estimatedCostFormatted}
-          onAddToBatch={onAddToBatch}
-          allowBatching={!payload.title.includes('WalletConnect')}
-          onCancel={
-            !payload.title.includes('WalletConnect') ? undefined : onCancel
-          }
-        />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <FormGroup>
-        <Label>{t`label.selectAsset`}</Label>
-        <AssetSelect
-          onClose={handleCloseTokenSelect}
-          onChange={setSelectedAsset}
-        />
-      </FormGroup>
-      {selectedAsset?.type === 'token' && (
-        <FormGroup>
-          <Label>{t`label.enterAmount`}</Label>
-          <AmountInputRow id="enter-amount-input-send-modal">
-            <TextInput
-              type="number"
-              value={amount}
-              onValueChange={handleTokenValueChange}
-              disabled={!selectedAsset}
-              placeholder="0.00"
-              rightAddon={
-                <AmountInputRight>
-                  <AmountInputSymbol>
-                    {isAmountInputAsFiat ? 'USD' : selectedAsset.asset.symbol}
-                  </AmountInputSymbol>
-                  {!isDeploymentCostLoading && maxAmountAvailable > 0 && (
-                    <TextInputButton
-                      onClick={() => setAmount(`${maxAmountAvailable}`)}
-                    >
-                      {t`helper.max`}
-                      <span>
-                        <IconFlash size={16} variant="Bold" />
-                      </span>
-                    </TextInputButton>
-                  )}
-                  {selectedAssetPrice !== 0 && (
-                    <TextInputButton
-                      onClick={() =>
-                        setIsAmountInputAsFiat(!isAmountInputAsFiat)
-                      }
-                    >
-                      <ArrangeVerticalIcon size={16} variant="Bold" />
-                    </TextInputButton>
-                  )}
-                </AmountInputRight>
-              }
+      )}
+      {isPayloadTransaction ? null : (
+        <>
+          <FormGroup>
+            <Label>{t`label.selectAsset`}</Label>
+            <AssetSelect
+              onClose={handleCloseTokenSelect}
+              onChange={setSelectedAsset}
             />
-          </AmountInputRow>
-          {selectedAssetPrice !== 0 && (
-            <AmountInputConversion>
-              {isAmountInputAsFiat
-                ? `${formatAmountDisplay(amountForPrice, 0, 6)} ${selectedAsset.asset.symbol}`
-                : `$${formatAmountDisplay(amountInFiat)}`}
-            </AmountInputConversion>
-          )}
-        </FormGroup>
-      )}
-      {selectedAsset && feeType.length > 0 && (
-        <FormGroup>
-          <Label>{t`label.feeType`}</Label>
-          <Select
-            type="token"
-            onChange={handleOnChangeFeeAsset}
-            options={feeType}
-            defaultSelectedId={feeType[0].id}
-          />
-          {paymasterContext?.mode === 'commonerc20' &&
-            feeAssetOptions.length > 0 && (
-              <>
-                <Label>{t`label.selectFeeAsset`}</Label>
-                <Select
-                  type="token"
-                  onChange={handleOnChange}
-                  options={feeAssetOptions}
-                  defaultSelectedId={feeAssetOptions[0]?.id}
-                />
-              </>
-            )}
-        </FormGroup>
-      )}
-      {selectedAsset && (
-        <FormGroup>
-          <Label>{t`label.sendTo`}</Label>
-          <TextInput
-            id="send-to-address-input-send-modal"
-            type="text"
-            value={recipient}
-            onValueChange={setRecipient}
-            placeholder={t`placeholder.enterAddress`}
-            rightAddon={
-              <TextInputButton
-                onClick={
-                  pasteClicked
-                    ? () => setPasteClicked(false)
-                    : onAddressClipboardPasteClick
-                }
-              >
-                {t`action.paste`}
-                <span>
-                  {!pasteClicked && <IconClipboardText size={16} />}
-                  {pasteClicked && <IconClipboardTick size={16} />}
-                </span>
-              </TextInputButton>
-            }
-          />
-        </FormGroup>
-      )}
-      {isTransactionReady && (
-        <EtherspotBatches
-          paymaster={
-            isPaymaster
-              ? {
-                  url: `${paymasterUrl}${queryString}`,
-                  context: paymasterContext,
-                }
-              : undefined
-          }
-          id="batch-1"
-        >
-          <EtherspotBatch chainId={selectedAsset.chainId}>
-            {isPaymaster &&
-              selectedPaymasterAddress &&
-              selectedFeeAsset &&
-              approveData && (
-                <EtherspotTransaction
-                  to={selectedFeeAsset.token}
-                  data={approveData}
-                />
-              )}
-            {selectedAsset?.type === 'nft' && (
-              <EtherspotContractTransaction
-                contractAddress={selectedAsset.collection.contractAddress}
-                methodName="transferFrom"
-                abi={[transferFromAbi]}
-                params={[
-                  accountAddress as string,
-                  recipient,
-                  selectedAsset.nft.tokenId,
-                ]}
-              />
-            )}
-            {selectedAsset?.type === 'token' && (
-              <>
-                {(isZeroAddress(selectedAsset.asset.contract) ||
-                  isPolygonAssetNative(
-                    selectedAsset.asset.contract,
-                    selectedAsset.chainId
-                  )) && (
-                  <EtherspotTransaction
-                    to={recipient}
-                    value={formatAmountDisplay(
-                      assetValueToSend,
-                      0,
-                      selectedAsset.asset.decimals
-                    )}
-                  />
-                )}
-                {!isZeroAddress(selectedAsset.asset.contract) &&
-                  !isPolygonAssetNative(
-                    selectedAsset.asset.contract,
-                    selectedAsset.chainId
-                  ) && (
-                    <EtherspotTokenTransferTransaction
-                      receiverAddress={recipient}
-                      tokenAddress={selectedAsset.asset.contract}
-                      value={formatAmountDisplay(
-                        assetValueToSend,
-                        0,
-                        selectedAsset.asset.decimals
+          </FormGroup>
+          {selectedAsset?.type === 'token' && (
+            <FormGroup>
+              <Label>{t`label.enterAmount`}</Label>
+              <AmountInputRow id="enter-amount-input-send-modal">
+                <TextInput
+                  type="number"
+                  value={amount}
+                  onValueChange={handleTokenValueChange}
+                  disabled={!selectedAsset}
+                  placeholder="0.00"
+                  rightAddon={
+                    <AmountInputRight>
+                      <AmountInputSymbol>
+                        {isAmountInputAsFiat
+                          ? 'USD'
+                          : selectedAsset.asset.symbol}
+                      </AmountInputSymbol>
+                      {!isDeploymentCostLoading && maxAmountAvailable > 0 && (
+                        <TextInputButton
+                          onClick={() => setAmount(`${maxAmountAvailable}`)}
+                        >
+                          {t`helper.max`}
+                          <span>
+                            <IconFlash size={16} variant="Bold" />
+                          </span>
+                        </TextInputButton>
                       )}
-                      tokenDecimals={selectedAsset.asset.decimals}
+                      {selectedAssetPrice !== 0 && (
+                        <TextInputButton
+                          onClick={() =>
+                            setIsAmountInputAsFiat(!isAmountInputAsFiat)
+                          }
+                        >
+                          <ArrangeVerticalIcon size={16} variant="Bold" />
+                        </TextInputButton>
+                      )}
+                    </AmountInputRight>
+                  }
+                />
+              </AmountInputRow>
+              {selectedAssetPrice !== 0 && (
+                <AmountInputConversion>
+                  {isAmountInputAsFiat
+                    ? `${formatAmountDisplay(amountForPrice, 0, 6)} ${selectedAsset.asset.symbol}`
+                    : `$${formatAmountDisplay(amountInFiat)}`}
+                </AmountInputConversion>
+              )}
+            </FormGroup>
+          )}
+          {selectedAsset && feeType.length > 0 && (
+            <FormGroup>
+              <Label>{t`label.feeType`}</Label>
+              <Select
+                type="token"
+                onChange={handleOnChangeFeeAsset}
+                options={feeType}
+                defaultSelectedId={feeType[0].id}
+              />
+              {paymasterContext?.mode === 'commonerc20' &&
+                feeAssetOptions.length > 0 && (
+                  <>
+                    <Label>{t`label.selectFeeAsset`}</Label>
+                    <Select
+                      type="token"
+                      onChange={handleOnChange}
+                      options={feeAssetOptions}
+                      defaultSelectedId={feeAssetOptions[0]?.id}
                     />
-                  )}
-              </>
-            )}
-          </EtherspotBatch>
-        </EtherspotBatches>
+                  </>
+                )}
+            </FormGroup>
+          )}
+          {selectedAsset && (
+            <FormGroup>
+              <Label>{t`label.sendTo`}</Label>
+              <TextInput
+                id="send-to-address-input-send-modal"
+                type="text"
+                value={recipient}
+                onValueChange={setRecipient}
+                placeholder={t`placeholder.enterAddress`}
+                rightAddon={
+                  <TextInputButton
+                    onClick={
+                      pasteClicked
+                        ? () => setPasteClicked(false)
+                        : onAddressClipboardPasteClick
+                    }
+                  >
+                    {t`action.paste`}
+                    <span>
+                      {!pasteClicked && <IconClipboardText size={16} />}
+                      {pasteClicked && <IconClipboardTick size={16} />}
+                    </span>
+                  </TextInputButton>
+                }
+              />
+            </FormGroup>
+          )}
+        </>
       )}
       <SendModalBottomButtons
         onSend={onSend}
@@ -1279,6 +1651,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         errorMessage={errorMessage}
         estimatedCostFormatted={estimatedCostFormatted}
         onAddToBatch={onAddToBatch}
+        onCancel={
+          payload?.title?.includes('WalletConnect') ? onCancel : undefined
+        }
       />
     </>
   );
