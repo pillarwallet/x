@@ -17,7 +17,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, useAccount, WagmiProvider } from 'wagmi';
+import { createConfig, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 
 // theme
@@ -67,7 +67,6 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
-  const { isConnected, address } = useAccount();
   const { account, setAccount } = usePrivateKeyLogin();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
@@ -94,37 +93,8 @@ const AuthLayout = () => {
   useEffect(() => {
     const searchURL = new URLSearchParams(window.location.search);
     const searchURLPK = searchURL.get('pk');
-    // const privyWalletTypes = [
-    //   'metamask',
-    //   'coinbase',
-    //   'rainbow',
-    //   'walletconnect',
-    //   'privy',
-    // ];
-    // const hasPrivyEoaWallet = wallets.some((w) =>
-    //   privyWalletTypes.includes(w.walletClientType)
-    // );
 
-    const hasPrivyEoaWallet = wallets.some(
-      (w) => w.walletClientType === 'metamask'
-    );
-
-    // Debug logs for Privy state
-    console.log('DEBUG: Privy ready', ready);
-    console.log('DEBUG: Privy authenticated', authenticated);
-    console.log('DEBUG: Privy user', user);
-    console.log('DEBUG: Privy wallets', wallets);
-    // Debug logs for provider selection
-    // console.log('DEBUG: isConnected', isConnected);
-    console.log('DEBUG: authenticated', authenticated);
-    console.log('DEBUG: wallets', wallets);
-    console.log('DEBUG: hasPrivyEoaWallet', hasPrivyEoaWallet);
-    console.log('DEBUG: address', address);
-
-    if (
-      ((searchURL && searchURLPK) || account || address) &&
-      !hasPrivyEoaWallet
-    ) {
+    if ((searchURL && searchURLPK) || account) {
       if (searchURL && searchURLPK) {
         try {
           const privateKeyToAccountAddress = privateKeyToAccount(
@@ -157,7 +127,7 @@ const AuthLayout = () => {
         const walletChainId = 1; // default chain id is 1
 
         const newProvider = createWalletClient({
-          account: (account || address) as `0x${string}`,
+          account: account as `0x${string}`,
           chain: getNetworkViem(walletChainId),
           transport: http(),
         });
@@ -214,14 +184,14 @@ const AuthLayout = () => {
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account, address]);
+  }, [wallets, user, account]);
 
   /**
    * If all the following variables are truthy within the if
    * statement, we can consider this user as logged in and
    * authenticated.
    */
-  if (isAppReady && (isAuthenticated || isConnected) && provider && chainId) {
+  if (isAppReady && isAuthenticated && provider && chainId) {
     /**
      * Define our authorized routes for users that are
      * authenticated. There are a few steps here.

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useLogout, usePrivy } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 // components
 import Button from '../components/Button';
@@ -18,24 +18,17 @@ const Login = () => {
   const { connectors, connect } = useConnect();
   const { address } = useAccount();
   const [t] = useTranslation();
-  const { disconnect } = useDisconnect();
-  const { logout } = useLogout();
 
   // Get WalletConnect connector
   const walletConnectConnector = connectors.find(
     ({ id }) => id === 'walletConnect'
   );
 
-  const handlePrivyLogin = async () => {
-    disconnect(); // Disconnect wagmi session if any
-    await login(); // Then login with Privy
-  };
-
-  const handleWalletConnect = async () => {
-    await logout(); // Logout Privy session if any
+  const listenForWalletConnectUri = async () => {
     if (!walletConnectConnector) {
       throw new Error('WalletConnect connector not found');
     }
+
     connect({ connector: walletConnectConnector });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,11 +67,8 @@ const Login = () => {
           )
       )}
       <InsideWrapper>
-        <Button
-          onClick={handlePrivyLogin}
-          $fullWidth
-        >{t`action.getStarted`}</Button>
-        <Button onClick={handleWalletConnect} $last $fullWidth>
+        <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
+        <Button onClick={listenForWalletConnectUri} $last $fullWidth>
           <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
           {t`action.connectPillarWallet`}
         </Button>
