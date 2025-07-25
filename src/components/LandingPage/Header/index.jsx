@@ -75,15 +75,9 @@ const Header = () => {
               </li>
             </ul>
 
-            <a
-              href="https://twitter.com/PX_Web3"
-              target="_blank"
-              rel="noreferrer"
-              className="header__social"
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-            >
-              <img src="https://cdn.pillarx.app/home-x.svg" alt="home-image" />
-            </a>
+            <Link to="/login" className="header__login cta">
+              <span>Log in</span>
+            </Link>
           </nav>
 
           <div

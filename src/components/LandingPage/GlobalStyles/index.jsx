@@ -447,6 +447,19 @@ const GlobalStyles = createGlobalStyle`
     }    
   }
 
+  .header__login {
+    min-width: 13rem;
+    background: var(--white);
+    border-radius: 3rem;
+    padding: 1.3rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .header__login {
+      margin-top: 3rem;
+    }    
+  }
+
   .header__social {
     width: 18rem;
     display: flex;
@@ -664,7 +677,7 @@ const GlobalStyles = createGlobalStyle`
 
   .home_hero__signup {
     width: 100%;
-    max-width: 78rem;
+    max-width: 80rem;
     background: rgba(94, 0, 255, 0.2);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
