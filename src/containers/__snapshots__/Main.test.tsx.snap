@@ -37,14 +37,6 @@ exports[`<Main /> > renders correctly 1`] = `
           </li>
           <li>
             <a
-              className=""
-              href="/waitlist"
-            >
-              Testing Campaign
-            </a>
-          </li>
-          <li>
-            <a
               href="https://blog.pillarx.app/"
             >
               Blog
@@ -52,16 +44,13 @@ exports[`<Main /> > renders correctly 1`] = `
           </li>
         </ul>
         <a
-          className="header__social"
-          href="https://twitter.com/PX_Web3"
+          className="header__login cta plausible-event-name=Login+Nav"
+          href="/login"
           onClick={[Function]}
-          rel="noreferrer"
-          target="_blank"
         >
-          <img
-            alt="home-image"
-            src="https://cdn.pillarx.app/home-x.svg"
-          />
+          <span>
+            Log in
+          </span>
         </a>
       </nav>
       <div
@@ -101,14 +90,14 @@ exports[`<Main /> > renders correctly 1`] = `
           className="home_hero__signup"
         >
           <p>
-            Join PillarX Soft Launch and Collect PX Points! Exclusively For Waitlist Participants & Pillar Users.
+            Trade, manage crypto assets seamlessly across EVM chains, & access secure DeFi — all in one app
           </p>
           <a
-            className="cta plausible-event-name=Waitlist+Home+Hero"
-            href="/waitlist"
+            className="cta plausible-event-name=Login+Home+Hero"
+            href="/login"
           >
             <span>
-              Join the Waitlist!
+              Get started
             </span>
           </a>
         </div>
