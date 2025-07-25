@@ -33,7 +33,7 @@ export default function LandingPage() {
               </p>
               <a
                 href="/login"
-                className="cta plausible-event-name=Waitlist+Home+Hero"
+                className="cta plausible-event-name=Login+Home+Hero"
               >
                 <span>Get started</span>
               </a>

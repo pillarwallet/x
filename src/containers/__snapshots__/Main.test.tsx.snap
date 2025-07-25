@@ -37,14 +37,6 @@ exports[`<Main /> > renders correctly 1`] = `
           </li>
           <li>
             <a
-              className=""
-              href="/waitlist"
-            >
-              Testing Campaign
-            </a>
-          </li>
-          <li>
-            <a
               href="https://blog.pillarx.app/"
             >
               Blog
@@ -52,7 +44,7 @@ exports[`<Main /> > renders correctly 1`] = `
           </li>
         </ul>
         <a
-          className="header__login cta"
+          className="header__login cta plausible-event-name=Login+Nav"
           href="/login"
           onClick={[Function]}
         >
@@ -101,7 +93,7 @@ exports[`<Main /> > renders correctly 1`] = `
             Trade, manage crypto assets seamlessly across EVM chains, & access secure DeFi — all in one app
           </p>
           <a
-            className="cta plausible-event-name=Waitlist+Home+Hero"
+            className="cta plausible-event-name=Login+Home+Hero"
             href="/login"
           >
             <span>

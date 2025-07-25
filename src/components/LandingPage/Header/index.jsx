@@ -62,20 +62,14 @@ const Header = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  reloadDocument
-                  to="/waitlist"
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                >
-                  Testing Campaign
-                </NavLink>
-              </li>
-              <li>
                 <a href="https://blog.pillarx.app/">Blog</a>
               </li>
             </ul>
 
-            <Link to="/login" className="header__login cta">
+            <Link
+              to="/login"
+              className="header__login cta plausible-event-name=Login+Nav"
+            >
               <span>Log in</span>
             </Link>
           </nav>

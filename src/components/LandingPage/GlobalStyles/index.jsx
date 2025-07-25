@@ -448,7 +448,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .header__login {
-    min-width: 13rem;
+    min-width: 18rem;
     background: var(--white);
     border-radius: 3rem;
     padding: 1.3rem;
