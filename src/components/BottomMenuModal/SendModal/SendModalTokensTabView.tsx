@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -156,6 +157,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [approveData, setApproveData] = React.useState<string>('');
   const [gasPrice, setGasPrice] = React.useState<string>();
   const [feeMin, setFeeMin] = React.useState<string>();
+  const [selectedFeeType, setSelectedFeeType] =
+    React.useState<string>('Gasless');
 
   const dispatch = useAppDispatch();
   const walletPortfolio = useAppSelector(
@@ -274,11 +277,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               balance: feeOptions[0].value?.toString(),
             });
             setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
-            setPaymasterContext({
-              mode: 'commonerc20',
-              token: feeOptions[0].asset.contract,
-            });
-            setIsPaymaster(true);
+            if (selectedFeeType === 'Gasless') {
+              setPaymasterContext({
+                mode: 'commonerc20',
+                token: feeOptions[0].asset.contract,
+              });
+              setIsPaymaster(true);
+            }
           } else {
             setIsPaymaster(false);
             setPaymasterContext(null);
@@ -940,6 +945,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   };
 
   const handleOnChangeFeeAsset = (value: SelectOption) => {
+    setSelectedFeeType(value.title);
     if (value.title === 'Gasless') {
       setPaymasterContext({
         mode: 'commonerc20',
@@ -1021,11 +1027,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   type="token"
                   onChange={handleOnChangeFeeAsset}
                   options={feeType}
+                  isLoadingOptions={feeAssetOptions.length === 0}
                   defaultSelectedId={feeType[0].id}
                 />
               </>
             )}
             {paymasterContext?.mode === 'commonerc20' &&
+              selectedFeeType === 'Gasless' &&
               feeAssetOptions.length > 0 && (
                 <>
                   <Label>{t`label.selectFeeAsset`}</Label>
@@ -1157,6 +1165,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             type="token"
             onChange={handleOnChangeFeeAsset}
             options={feeType}
+            isLoadingOptions={feeAssetOptions.length === 0}
             defaultSelectedId={feeType[0].id}
           />
           {paymasterContext?.mode === 'commonerc20' &&
