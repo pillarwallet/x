@@ -1027,6 +1027,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   type="token"
                   onChange={handleOnChangeFeeAsset}
                   options={feeType}
+                  isLoadingOptions={feeAssetOptions.length === 0}
                   defaultSelectedId={feeType[0].id}
                 />
               </>
@@ -1164,6 +1165,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             type="token"
             onChange={handleOnChangeFeeAsset}
             options={feeType}
+            isLoadingOptions={feeAssetOptions.length === 0}
             defaultSelectedId={feeType[0].id}
           />
           {paymasterContext?.mode === 'commonerc20' &&
