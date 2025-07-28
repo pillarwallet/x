@@ -31,6 +31,14 @@ export const App = () => {
     (state) => state.swap.isReceiveOpen as boolean
   );
 
+  // Debug provider setup
+  console.log('Exchange App - Provider debug:', {
+    hasProvider: !!provider,
+    providerType: provider?.constructor?.name,
+    providerAccount: provider?.account,
+    providerChain: provider?.chain?.id
+  });
+
   createConfig({
     integrator: 'PillarX',
     providers: [

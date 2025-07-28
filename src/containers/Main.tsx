@@ -17,7 +17,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, WagmiProvider } from 'wagmi';
+import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 
 // theme
@@ -68,6 +68,7 @@ const AuthLayout = () => {
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const { account, setAccount } = usePrivateKeyLogin();
+  const { connectors } = useConnect();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
@@ -76,6 +77,17 @@ const AuthLayout = () => {
     localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || Boolean(account);
+  
+  // Add debug logging for authentication state
+  console.log('Authentication state debug:', {
+    ready,
+    authenticated,
+    hasUser: !!user,
+    hasWallets: wallets.length > 0,
+    hasAccount: !!account,
+    isAppReady,
+    isAuthenticated
+  });
 
   useEffect(() => {
     if (!authenticated) return;
@@ -146,8 +158,36 @@ const AuthLayout = () => {
 
       updateProvider();
     } else {
-      if (!wallets.length) return;
+      // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
+        // Don't run provider setup if Privy is still initializing
+        if (!ready || !isAuthenticated) {
+          console.log('Privy not ready or not authenticated, skipping provider setup');
+          return;
+        }
+        
+        // Check if we have any wallets (Privy or WalletConnect)
+        const hasWallets = wallets.length > 0;
+        const isWalletConnectConnected = isAuthenticated && !hasWallets;
+        
+        console.log('Provider setup debug:', {
+          isAuthenticated,
+          hasWallets,
+          isWalletConnectConnected,
+          walletsCount: wallets.length,
+          connectorsCount: connectors.length
+        });
+        
+        // If no wallets and not authenticated, return early
+        if (!hasWallets && !isWalletConnectConnected) {
+          console.log('No wallets or WalletConnect connection detected');
+          return;
+        }
+        
+        // If we have Privy wallets, don't try to setup WalletConnect
+        if (hasWallets) {
+          console.log('Privy wallets detected, skipping WalletConnect setup');
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let privyEthereumProvider: any;
 
@@ -158,6 +198,7 @@ const AuthLayout = () => {
         );
 
         if (walletProvider) {
+          // Handle Privy wallet
           privyEthereumProvider = await walletProvider.getEthereumProvider();
 
           const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
@@ -169,22 +210,86 @@ const AuthLayout = () => {
           });
 
           setProvider(newProvider);
+        } else if (isWalletConnectConnected && !hasWallets) {
+          // Handle WalletConnect connection - only if no Privy wallets are present
+          console.log('Attempting to setup WalletConnect provider...');
+          try {
+            // Find the WalletConnect connector
+            const walletConnectConnector = connectors.find(
+              ({ id }) => id === 'walletConnect'
+            );
+
+            console.log('WalletConnect connector found:', !!walletConnectConnector);
+
+            if (walletConnectConnector) {
+              // Get the WalletConnect provider
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const wcProvider: any = await walletConnectConnector.getProvider();
+              
+              console.log('WalletConnect provider obtained:', !!wcProvider);
+              console.log('WalletConnect provider connected:', wcProvider?.connected);
+              
+              // Only proceed if the provider is actually connected
+              if (wcProvider && wcProvider.connected && wcProvider.accounts && wcProvider.accounts.length > 0) {
+                // Get the connected account
+                const accounts = await wcProvider.request({ method: 'eth_accounts' });
+                const account = accounts[0];
+                
+                console.log('WalletConnect account:', account);
+                
+                if (account) {
+                  // Create wallet client with WalletConnect provider
+                  const newProvider = createWalletClient({
+                    account: account as `0x${string}`,
+                    chain: getNetworkViem(1), // Default to mainnet
+                    transport: custom(wcProvider),
+                  });
+
+                  setProvider(newProvider);
+                  setChainId(1); // Default to mainnet
+                  console.log('WalletConnect provider setup successful');
+                  console.log('WalletConnect provider details:', {
+                    account: newProvider.account,
+                    chain: newProvider.chain?.id,
+                    transport: 'custom(wcProvider)'
+                  });
+                  return;
+                } else {
+                  console.log('No WalletConnect account found');
+                }
+              } else {
+                console.log('WalletConnect provider not connected or no accounts');
+              }
+            } else {
+              console.log('WalletConnect connector not found');
+            }
+          } catch (error) {
+            console.error('Error setting up WalletConnect provider:', error);
+          }
         }
 
-        const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-        const isWithinVisibleChains = visibleChains.some(
-          (chain) => chain.id === walletChainId
-        );
-        /**
-         * Sets supported chain ID rather than throw unsupported bundler error.
-         * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
-         */
-        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+        // Set chain ID for Privy wallets or WalletConnect
+        if (wallets.length > 0) {
+          const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+          const isWithinVisibleChains = visibleChains.some(
+            (chain) => chain.id === walletChainId
+          );
+          /**
+           * Sets supported chain ID rather than throw unsupported bundler error.
+           * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+           */
+          setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+        } else if (isWalletConnectConnected && !chainId) {
+          // For WalletConnect, default to mainnet if no chain ID is set
+          setChainId(1);
+        }
       };
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets, user, account]);
+
+
 
   /**
    * If all the following variables are truthy within the if
@@ -337,11 +442,27 @@ const AuthLayout = () => {
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+// Debug: Log WalletConnect configuration
+console.log('WalletConnect: Configuration debug:', {
+  projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+  isMobile,
+  showQrModal: !isMobile,
+  isNewChainsStale: true,
+  metadata: {
+    name: 'PillarX',
+    description: 'PillarX',
+    url: 'https://pillarx.app/',
+    icons: ['https://pillarx.app/favicon.ico'],
+  },
+  environment: import.meta.env.MODE,
+  baseUrl: import.meta.env.BASE_URL
+});
+
 export const config = createConfig({
   chains: [mainnet],
   connectors: [
     walletConnect({
-      projectId: import.meta.env.VITE_WC_ID ?? '',
+      projectId: import.meta.env.VITE_REOWN_PROJECT_ID ?? '',
       showQrModal: !isMobile,
       isNewChainsStale: true,
       metadata: {

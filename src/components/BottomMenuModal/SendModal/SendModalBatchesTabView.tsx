@@ -69,6 +69,13 @@ const SendModalBatchesTabView = () => {
   const accountAddress = useWalletAddress();
   const contextNfts = useContext(AccountNftsContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
+
+  // Debug: Log the provider being used for transactions
+  console.log('SendModal - Provider debug:', {
+    accountAddress,
+    hasSendFunction: !!send,
+    sendFunctionType: send?.constructor?.name
+  });
   const {
     userOpStatus,
     setTransactionHash,
@@ -109,6 +116,13 @@ const SendModalBatchesTabView = () => {
       );
       return;
     }
+
+    // Debug: Log the provider being used for signing
+    console.log('Action Bar - Transaction signing initiated:', {
+      chainId,
+      batchId,
+      providerType: 'WalletConnect' // This will help identify if WalletConnect is being used
+    });
 
     // remove previously saved userOp for a new one
     localStorage.removeItem('latestUserOpStatus');

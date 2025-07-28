@@ -24,19 +24,89 @@ const Login = () => {
     ({ id }) => id === 'walletConnect'
   );
 
+  // Debug: Log available connectors
+  console.log('WalletConnect: Available connectors:', {
+    connectorsCount: connectors.length,
+    connectorIds: connectors.map(c => c.id),
+    connectorNames: connectors.map(c => c.name),
+    walletConnectConnectorFound: !!walletConnectConnector
+  });
+
   const listenForWalletConnectUri = async () => {
+    console.log('WalletConnect: Starting connection process...');
+    console.log('WalletConnect: Environment check:', {
+      isLocalhost: window.location.hostname === 'localhost',
+      hostname: window.location.hostname,
+      port: window.location.port,
+      protocol: window.location.protocol,
+      fullUrl: window.location.href
+    });
+
     if (!walletConnectConnector) {
+      console.error('WalletConnect: Connector not found');
       throw new Error('WalletConnect connector not found');
     }
 
-    connect({ connector: walletConnectConnector });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const provider: any = await walletConnectConnector.getProvider();
-    provider.once('display_uri', (uri: string) => {
-      const encodedURI = encodeURIComponent(uri);
-      window.location.href = `pillarwallet://wc?uri=${encodedURI}`;
+    console.log('WalletConnect: Connector found:', {
+      connectorId: walletConnectConnector.id,
+      connectorName: walletConnectConnector.name,
+      connectorReady: walletConnectConnector.ready
     });
+
+    try {
+      console.log('WalletConnect: Attempting to connect...');
+      connect({ connector: walletConnectConnector });
+      console.log('WalletConnect: Connect call completed');
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const provider: any = await walletConnectConnector.getProvider();
+      console.log('WalletConnect: Provider obtained:', {
+        hasProvider: !!provider,
+        providerType: provider?.constructor?.name,
+        providerConnected: provider?.connected,
+        providerChainId: provider?.chainId
+      });
+
+      if (provider) {
+        console.log('WalletConnect: Setting up display_uri listener...');
+        provider.once('display_uri', (uri: string) => {
+          console.log('WalletConnect: display_uri event received:', {
+            uri: uri.substring(0, 50) + '...',
+            uriLength: uri.length
+          });
+          
+          const encodedURI = encodeURIComponent(uri);
+          const deeplinkUrl = `pillarwallet://wc?uri=${encodedURI}`;
+          console.log('WalletConnect: Deeplink URL:', {
+            deeplinkUrl: deeplinkUrl.substring(0, 100) + '...',
+            encodedURILength: encodedURI.length
+          });
+          
+          console.log('WalletConnect: Redirecting to Pillar Wallet...');
+          window.location.href = deeplinkUrl;
+        });
+
+        // Add additional event listeners for debugging
+        provider.on('connect', (connectInfo: any) => {
+          console.log('WalletConnect: connect event:', connectInfo);
+        });
+
+        provider.on('disconnect', (disconnectInfo: any) => {
+          console.log('WalletConnect: disconnect event:', disconnectInfo);
+        });
+
+        provider.on('error', (error: any) => {
+          console.error('WalletConnect: error event:', error);
+        });
+
+        console.log('WalletConnect: Event listeners set up successfully');
+      } else {
+        console.error('WalletConnect: Failed to get provider');
+      }
+    } catch (error) {
+      console.error('WalletConnect: Error during connection process:', error);
+      throw error;
+    }
   };
 
   useEffect(() => {

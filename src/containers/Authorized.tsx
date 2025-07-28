@@ -33,6 +33,15 @@ export default function Authorized({
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
 
+  // Debug: Log which provider is being used for transactions
+  console.log('Authorized - Provider setup for Action Bar:', {
+    providerType: provider.constructor?.name,
+    providerAccount: provider.account,
+    providerChain: provider.chain?.id,
+    transportType: provider.transport?.constructor?.name,
+    chainId
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowAnimation(false);
