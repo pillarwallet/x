@@ -94,8 +94,10 @@ export const useWalletConnect = () => {
       if (!session) return false;
 
       const wasPrivyLinked = isAddressInSessionViaPrivy(session);
+      console.log('checkAndLogoutIfPrivySession', wasPrivyLinked);
 
       if (wasPrivyLinked && user?.wallet?.address) {
+        console.log('checkAndLogoutIfPrivySession', 'logout');
         handleLogout();
         return true;
       }

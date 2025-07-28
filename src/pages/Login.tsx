@@ -1,28 +1,61 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 // components
 import Button from '../components/Button';
+import DebugPanel from '../components/DebugPanel';
+import ConnectionDebug from '../components/ConnectionDebug';
 
 // images
 import PillarWalletIcon from '../apps/leaderboard/images/pillar-wallet-icon.svg';
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
 
 const Login = () => {
-  const { login } = usePrivy();
-  const { connectors, connect } = useConnect();
-  const { address } = useAccount();
+  const { login, authenticated, user, ready } = usePrivy();
+  const { connectors, connect, isPending, error } = useConnect();
+  const { address, isConnected, isConnecting } = useAccount();
+  const { disconnect } = useDisconnect();
   const [t] = useTranslation();
+  const [debugInfo, setDebugInfo] = useState<any>({});
 
   // Get WalletConnect connector
   const walletConnectConnector = connectors.find(
     ({ id }) => id === 'walletConnect'
   );
+
+  // Update debug info
+  useEffect(() => {
+    setDebugInfo({
+      privy: {
+        authenticated,
+        ready,
+        user: user ? {
+          id: user.id,
+          email: user.email?.address,
+          wallet: user.wallet?.address
+        } : null
+      },
+      wagmi: {
+        address,
+        isConnected,
+        isConnecting,
+        isPending,
+        error: error?.message,
+        connectorsCount: connectors.length,
+        connectorIds: connectors.map(c => c.id),
+        walletConnectConnector: walletConnectConnector ? {
+          id: walletConnectConnector.id,
+          name: walletConnectConnector.name,
+          ready: walletConnectConnector.ready
+        } : null
+      }
+    });
+  }, [authenticated, ready, user, address, isConnected, isConnecting, isPending, error, connectors, walletConnectConnector]);
 
   // Debug: Log available connectors
   console.log('WalletConnect: Available connectors:', {
@@ -123,27 +156,40 @@ const Login = () => {
     leave: { opacity: 0 },
     config: { duration: 500 },
   });
+  
   return (
-    <Wrapper>
-      {logoTransitions(
-        (styles, item) =>
-          item && (
-            <animated.img
-              src={PillarXLogo}
-              alt="pillar-x-logo"
-              className="max-w-[300px] h-auto"
-              style={styles}
-            />
-          )
-      )}
-      <InsideWrapper>
-        <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
-        <Button onClick={listenForWalletConnectUri} $last $fullWidth>
-          <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
-          {t`action.connectPillarWallet`}
-        </Button>
-      </InsideWrapper>
-    </Wrapper>
+    <>
+      <Wrapper>
+        {logoTransitions(
+          (styles, item) =>
+            item && (
+              <animated.img
+                src={PillarXLogo}
+                alt="pillar-x-logo"
+                className="max-w-[300px] h-auto"
+                style={styles}
+              />
+            )
+        )}
+        <InsideWrapper>
+          <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
+          <Button onClick={listenForWalletConnectUri} $last $fullWidth>
+            <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
+            {t`action.connectPillarWallet`}
+          </Button>
+        </InsideWrapper>
+      </Wrapper>
+      
+      {/* Debug Panel */}
+      <DebugPanel title="Connection Debug">
+        <ConnectionDebug 
+          debugInfo={debugInfo} 
+          onDisconnect={() => {
+            if (debugInfo.wagmi?.isConnected) disconnect();
+          }}
+        />
+      </DebugPanel>
+    </>
   );
 };
 
