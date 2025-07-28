@@ -69,6 +69,7 @@ const AuthLayout = () => {
   const { wallets } = useWallets();
   const { account, setAccount } = usePrivateKeyLogin();
   const { connectors } = useConnect();
+  const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
@@ -76,7 +77,7 @@ const AuthLayout = () => {
     !!localStorage.getItem('privy:token') ||
     localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
-  const isAuthenticated = authenticated || Boolean(account);
+  const isAuthenticated = authenticated || Boolean(account) || wagmiIsConnected;
   
   // Add debug logging for authentication state
   console.log('Authentication state debug:', {
@@ -85,6 +86,7 @@ const AuthLayout = () => {
     hasUser: !!user,
     hasWallets: wallets.length > 0,
     hasAccount: !!account,
+    wagmiIsConnected,
     isAppReady,
     isAuthenticated
   });
@@ -160,25 +162,26 @@ const AuthLayout = () => {
     } else {
       // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
-        // Don't run provider setup if Privy is still initializing
-        if (!ready || !isAuthenticated) {
-          console.log('Privy not ready or not authenticated, skipping provider setup');
+        // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
+        if (!ready && !wagmiIsConnected) {
+          console.log('Privy not ready and WalletConnect not connected, skipping provider setup');
           return;
         }
         
         // Check if we have any wallets (Privy or WalletConnect)
         const hasWallets = wallets.length > 0;
-        const isWalletConnectConnected = isAuthenticated && !hasWallets;
+        const isWalletConnectConnected = wagmiIsConnected && !hasWallets;
         
         console.log('Provider setup debug:', {
           isAuthenticated,
           hasWallets,
           isWalletConnectConnected,
+          wagmiIsConnected,
           walletsCount: wallets.length,
           connectorsCount: connectors.length
         });
         
-        // If no wallets and not authenticated, return early
+        // If no wallets and not connected via WalletConnect, return early
         if (!hasWallets && !isWalletConnectConnected) {
           console.log('No wallets or WalletConnect connection detected');
           return;
@@ -287,7 +290,7 @@ const AuthLayout = () => {
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account]);
+  }, [wallets, user, account, wagmiIsConnected]);
 
 
 
