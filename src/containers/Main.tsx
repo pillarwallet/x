@@ -79,7 +79,7 @@ const AuthLayout = () => {
     localStorage.getItem('ACCOUNT_VIA_PK');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || Boolean(account) || wagmiIsConnected;
-  
+
   // Sentry context for authentication state
   useEffect(() => {
     Sentry.setContext('authentication_state', {
@@ -101,7 +101,7 @@ const AuthLayout = () => {
         category: 'authentication',
         message: 'User authenticated',
         level: 'info',
-        data: { 
+        data: {
           authenticated,
           hasAccount: !!account,
           wagmiIsConnected,
@@ -109,17 +109,27 @@ const AuthLayout = () => {
         },
       });
     }
-  }, [ready, authenticated, user, account, wagmiIsConnected, isAppReady, isAuthenticated, previouslyAuthenticated, wallets.length]);
+  }, [
+    ready,
+    authenticated,
+    user,
+    account,
+    wagmiIsConnected,
+    isAppReady,
+    isAuthenticated,
+    previouslyAuthenticated,
+    wallets.length,
+  ]);
 
   useEffect(() => {
     if (!authenticated) return;
     sessionStorage.setItem('loginPageReloaded', 'false');
-    
+
     Sentry.addBreadcrumb({
       category: 'authentication',
       message: 'Privy authentication detected',
       level: 'info',
-      data: { 
+      data: {
         hasUser: !!user,
         walletsCount: wallets.length,
       },
@@ -136,7 +146,7 @@ const AuthLayout = () => {
    */
   useEffect(() => {
     const providerSetupId = `provider_setup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Start Sentry transaction for provider setup
     const transaction = Sentry.startTransaction({
       name: 'provider_setup',
@@ -164,7 +174,7 @@ const AuthLayout = () => {
         category: 'authentication',
         message: 'Private key authentication detected',
         level: 'info',
-        data: { 
+        data: {
           providerSetupId,
           hasSearchURLPK: !!searchURLPK,
           hasAccount: !!account,
@@ -192,12 +202,12 @@ const AuthLayout = () => {
 
             // Replace the current history state with the updated URL
             window.history.replaceState(null, '', URLWithPK.toString());
-            
+
             Sentry.addBreadcrumb({
               category: 'authentication',
               message: 'Private key account set successfully',
               level: 'info',
-              data: { 
+              data: {
                 providerSetupId,
                 accountAddress: privateKeyToAccountAddress.address,
               },
@@ -206,7 +216,7 @@ const AuthLayout = () => {
         } catch (e) {
           console.error(e);
           localStorage.removeItem('ACCOUNT_VIA_PK');
-          
+
           Sentry.captureException(e, {
             tags: {
               component: 'authentication',
@@ -243,16 +253,18 @@ const AuthLayout = () => {
          * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
          */
         setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-        
+
         Sentry.addBreadcrumb({
           category: 'authentication',
           message: 'Private key provider setup completed',
           level: 'info',
-          data: { 
+          data: {
             providerSetupId,
             walletChainId,
             isWithinVisibleChains,
-            finalChainId: isWithinVisibleChains ? walletChainId : visibleChains[0].id,
+            finalChainId: isWithinVisibleChains
+              ? walletChainId
+              : visibleChains[0].id,
           },
         });
       };
@@ -262,31 +274,31 @@ const AuthLayout = () => {
       // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
         // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
-        if (!ready && !wagmiIsConnected) {          
+        if (!ready && !wagmiIsConnected) {
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Provider setup skipped - not ready',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               ready,
               wagmiIsConnected,
             },
           });
-          
+
           transaction.finish();
           return;
         }
-        
+
         // Check if we have any wallets (Privy or WalletConnect)
         const hasWallets = wallets.length > 0;
         const isWalletConnectConnected = wagmiIsConnected && !hasWallets;
-        
+
         Sentry.addBreadcrumb({
           category: 'authentication',
           message: 'Provider setup debug info',
           level: 'info',
-          data: { 
+          data: {
             providerSetupId,
             isAuthenticated,
             hasWallets,
@@ -296,31 +308,31 @@ const AuthLayout = () => {
             connectorsCount: connectors.length,
           },
         });
-        
+
         // If no wallets and not connected via WalletConnect, return early
         if (!hasWallets && !isWalletConnectConnected) {
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'No wallets or WalletConnect connection detected',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               hasWallets,
               isWalletConnectConnected,
             },
           });
-          
+
           transaction.finish();
           return;
         }
-        
+
         // If we have Privy wallets, don't try to setup WalletConnect
-        if (hasWallets) {          
+        if (hasWallets) {
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Privy wallets detected, skipping WalletConnect setup',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               walletsCount: wallets.length,
             },
@@ -341,7 +353,7 @@ const AuthLayout = () => {
             category: 'authentication',
             message: 'Setting up Privy wallet provider',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               walletAddress: walletProvider.address,
               chainId: walletProvider.chainId,
@@ -359,12 +371,12 @@ const AuthLayout = () => {
           });
 
           setProvider(newProvider);
-          
+
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Privy wallet provider setup completed',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               walletAddress: walletProvider.address,
               walletChainId,
@@ -372,73 +384,79 @@ const AuthLayout = () => {
             },
           });
         } else if (isWalletConnectConnected && !hasWallets) {
-          // Handle WalletConnect connection - only if no Privy wallets are present          
+          // Handle WalletConnect connection - only if no Privy wallets are present
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Attempting to setup WalletConnect provider',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               hasWallets,
               isWalletConnectConnected,
             },
           });
-          
+
           try {
             // Find the WalletConnect connector
             const walletConnectConnector = connectors.find(
               ({ id }) => id === 'walletConnect'
             );
-            
+
             Sentry.addBreadcrumb({
               category: 'authentication',
               message: 'WalletConnect connector search result',
               level: 'info',
-              data: { 
+              data: {
                 providerSetupId,
                 connectorFound: !!walletConnectConnector,
                 connectorsCount: connectors.length,
-                connectorIds: connectors.map(c => c.id),
+                connectorIds: connectors.map((c) => c.id),
               },
             });
 
             if (walletConnectConnector) {
               // Get the WalletConnect provider
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const wcProvider: any = await walletConnectConnector.getProvider();
-              
+              const wcProvider: any =
+                await walletConnectConnector.getProvider();
+
               Sentry.addBreadcrumb({
                 category: 'authentication',
                 message: 'WalletConnect provider obtained',
                 level: 'info',
-                data: { 
+                data: {
                   providerSetupId,
                   hasProvider: !!wcProvider,
                   providerConnected: wcProvider?.connected,
                   hasAccounts: wcProvider?.accounts?.length > 0,
                 },
               });
-              
-              // Only proceed if the provider is actually connected
-              if (wcProvider && wcProvider.connected && wcProvider.accounts && wcProvider.accounts.length > 0) {
-                // Get the connected account
-                const accounts = await wcProvider.request({ method: 'eth_accounts' });
-                const account = accounts[0];
-                
 
-                
+              // Only proceed if the provider is actually connected
+              if (
+                wcProvider &&
+                wcProvider.connected &&
+                wcProvider.accounts &&
+                wcProvider.accounts.length > 0
+              ) {
+                // Get the connected account
+                const accounts = await wcProvider.request({
+                  method: 'eth_accounts',
+                });
+                const wcAccount = accounts[0];
+
                 Sentry.addBreadcrumb({
                   category: 'authentication',
                   message: 'WalletConnect account retrieved',
                   level: 'info',
-                  data: { 
+                  data: {
                     providerSetupId,
-                    hasAccount: !!account,
-                    accountAddress: account,
+                    hasAccount: !!wcAccount,
+                    accountAddress: wcAccount,
                     accountsCount: accounts.length,
                   },
                 });
-                
+
                 if (account) {
                   // Create wallet client with WalletConnect provider
                   const newProvider = createWalletClient({
@@ -449,64 +467,48 @@ const AuthLayout = () => {
 
                   setProvider(newProvider);
                   setChainId(1); // Default to mainnet
-                  
+
                   Sentry.addBreadcrumb({
                     category: 'authentication',
                     message: 'WalletConnect provider setup successful',
                     level: 'info',
-                    data: { 
+                    data: {
                       providerSetupId,
                       account: newProvider.account,
                       chainId: newProvider.chain?.id,
                       transport: 'custom(wcProvider)',
                     },
                   });
-                  
-                  Sentry.captureMessage('WalletConnect provider setup completed successfully', {
-                    level: 'info',
-                    tags: {
-                      component: 'authentication',
-                      action: 'walletconnect_setup_success',
-                      providerSetupId,
-                    },
-                    contexts: {
-                      walletconnect_success: {
+
+                  Sentry.captureMessage(
+                    'WalletConnect provider setup completed successfully',
+                    {
+                      level: 'info',
+                      tags: {
+                        component: 'authentication',
+                        action: 'walletconnect_setup_success',
                         providerSetupId,
-                        account: newProvider.account,
-                        chainId: newProvider.chain?.id,
-                        transport: 'custom(wcProvider)',
                       },
-                    },
-                  });
-                  
+                      contexts: {
+                        walletconnect_success: {
+                          providerSetupId,
+                          account: newProvider.account,
+                          chainId: newProvider.chain?.id,
+                          transport: 'custom(wcProvider)',
+                        },
+                      },
+                    }
+                  );
+
                   transaction.finish();
                   return;
-                } else {
-                  
-                  Sentry.captureMessage('No WalletConnect account found', {
-                    level: 'warning',
-                    tags: {
-                      component: 'authentication',
-                      action: 'walletconnect_no_account',
-                      providerSetupId,
-                    },
-                    contexts: {
-                      walletconnect_error: {
-                        providerSetupId,
-                        hasProvider: !!wcProvider,
-                        providerConnected: wcProvider?.connected,
-                        accountsCount: wcProvider?.accounts?.length || 0,
-                      },
-                    },
-                  });
                 }
-              } else {
-                
-                Sentry.captureMessage('WalletConnect provider not connected or no accounts', {
+
+                Sentry.captureMessage('No WalletConnect account found', {
                   level: 'warning',
                   tags: {
                     component: 'authentication',
-                    action: 'walletconnect_not_connected',
+                    action: 'walletconnect_no_account',
                     providerSetupId,
                   },
                   contexts: {
@@ -514,13 +516,32 @@ const AuthLayout = () => {
                       providerSetupId,
                       hasProvider: !!wcProvider,
                       providerConnected: wcProvider?.connected,
-                      hasAccounts: wcProvider?.accounts?.length > 0,
+                      accountsCount: wcProvider?.accounts?.length || 0,
                     },
                   },
                 });
+              } else {
+                Sentry.captureMessage(
+                  'WalletConnect provider not connected or no accounts',
+                  {
+                    level: 'warning',
+                    tags: {
+                      component: 'authentication',
+                      action: 'walletconnect_not_connected',
+                      providerSetupId,
+                    },
+                    contexts: {
+                      walletconnect_error: {
+                        providerSetupId,
+                        hasProvider: !!wcProvider,
+                        providerConnected: wcProvider?.connected,
+                        hasAccounts: wcProvider?.accounts?.length > 0,
+                      },
+                    },
+                  }
+                );
               }
             } else {
-              
               Sentry.captureMessage('WalletConnect connector not found', {
                 level: 'error',
                 tags: {
@@ -532,14 +553,14 @@ const AuthLayout = () => {
                   walletconnect_error: {
                     providerSetupId,
                     connectorsCount: connectors.length,
-                    connectorIds: connectors.map(c => c.id),
+                    connectorIds: connectors.map((c) => c.id),
                   },
                 },
               });
             }
           } catch (error) {
             console.error('Error setting up WalletConnect provider:', error);
-            
+
             Sentry.captureException(error, {
               tags: {
                 component: 'authentication',
@@ -568,42 +589,44 @@ const AuthLayout = () => {
            * Sets supported chain ID rather than throw unsupported bundler error.
            * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
            */
-          setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-          
+          setChainId(
+            isWithinVisibleChains ? walletChainId : visibleChains[0].id
+          );
+
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Chain ID set for Privy wallets',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               walletChainId,
               isWithinVisibleChains,
-              finalChainId: isWithinVisibleChains ? walletChainId : visibleChains[0].id,
+              finalChainId: isWithinVisibleChains
+                ? walletChainId
+                : visibleChains[0].id,
             },
           });
         } else if (isWalletConnectConnected && !chainId) {
           // For WalletConnect, default to mainnet if no chain ID is set
           setChainId(1);
-          
+
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Chain ID set for WalletConnect',
             level: 'info',
-            data: { 
+            data: {
               providerSetupId,
               finalChainId: 1,
             },
           });
         }
-        
+
         transaction.finish();
       };
       updateProvider();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets, user, account, wagmiIsConnected]);
-
-
 
   /**
    * If all the following variables are truthy within the if
@@ -620,7 +643,7 @@ const AuthLayout = () => {
       category: 'authentication',
       message: 'User authenticated - setting up authorized routes',
       level: 'info',
-      data: { 
+      data: {
         isAppReady,
         isAuthenticated,
         hasProvider: !!provider,
@@ -740,12 +763,12 @@ const AuthLayout = () => {
      * not authenticated. This is simpler as most of the
      * website is locked out.
      */
-    
+
     Sentry.addBreadcrumb({
       category: 'authentication',
       message: 'User not authenticated - setting up unauthorized routes',
       level: 'info',
-      data: { 
+      data: {
         isAppReady,
         isAuthenticated,
         isRootPage,
@@ -814,12 +837,12 @@ const AuthLayout = () => {
    * component until a re-render is triggered by the useEffect
    * above.
    */
-  
+
   Sentry.addBreadcrumb({
     category: 'authentication',
     message: 'Showing loading state - waiting for authentication',
     level: 'info',
-    data: { 
+    data: {
       isAppReady,
       isAuthenticated,
       hasProvider: !!provider,
@@ -831,13 +854,11 @@ const AuthLayout = () => {
       wagmiIsConnected,
     },
   });
-  
+
   return <Loading type="wait" />;
 };
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-
 
 export const config = createConfig({
   chains: [mainnet],

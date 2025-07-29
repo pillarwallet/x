@@ -152,13 +152,22 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
     }
-    
+
     // Use comprehensive logout for both Privy and WAGMI
-    await logout();
-    
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // If an error - display an alert box to the user
+      // eslint-disable-next-line no-alert
+      alert(
+        'Error during logout - this could just be a temporary issue. Please try again or clear your browser cache for this website to logout.'
+      );
+    }
+
     // Clear any stored data
     clearDappStorage();
-    
+
     // Navigate to home
     navigate('/');
 
@@ -639,7 +648,5 @@ const Tooltip = styled(Tippy)`
 Tooltip.defaultProps = {
   delay: [1000, 0],
 };
-
-
 
 export default AccountModal;

@@ -19,14 +19,14 @@ export const useComprehensiveLogout = () => {
         console.error('Error disconnecting from WAGMI:', e);
       }
     }
-    
+
     // Then logout from Privy
     try {
       await privyLogout();
     } catch (e) {
       console.error('Error during Privy logout:', e);
     }
-    
+
     // Clear any stored data
     try {
       localStorage.removeItem('ACCOUNT_VIA_PK');
@@ -37,4 +37,4 @@ export const useComprehensiveLogout = () => {
   };
 
   return { logout };
-}; 
+};

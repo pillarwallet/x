@@ -46,16 +46,23 @@ const SendModalBottomButtons = ({
       userAgent: navigator.userAgent,
       timestamp: new Date().toISOString(),
     });
-  }, [isSendDisabled, isSending, errorMessage, safetyWarningMessage, allowBatching, estimatedCostFormatted]);
+  }, [
+    isSendDisabled,
+    isSending,
+    errorMessage,
+    safetyWarningMessage,
+    allowBatching,
+    estimatedCostFormatted,
+  ]);
 
   const handleSendClick = (ignoreSafetyWarning?: boolean) => {
     const buttonId = ignoreSafetyWarning ? 'send_anyway' : 'send';
-    
+
     Sentry.addBreadcrumb({
       category: 'send_buttons',
       message: 'Send button clicked',
       level: 'info',
-      data: { 
+      data: {
         buttonId,
         ignoreSafetyWarning,
         isSendDisabled,
@@ -73,7 +80,7 @@ const SendModalBottomButtons = ({
       category: 'send_buttons',
       message: 'Add to batch button clicked',
       level: 'info',
-      data: { 
+      data: {
         isSendDisabled,
         isSending,
         hasError: !!errorMessage,
@@ -88,7 +95,7 @@ const SendModalBottomButtons = ({
       category: 'send_buttons',
       message: 'Cancel button clicked',
       level: 'info',
-      data: { 
+      data: {
         isSendDisabled,
         isSending,
         hasError: !!errorMessage,

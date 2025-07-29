@@ -2,124 +2,36 @@ import React from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 
-interface ConnectionDebugProps {
-  debugInfo: {
-    privy?: {
-      authenticated?: boolean;
-      ready?: boolean;
-      user?: {
-        id?: string;
-        email?: string;
-        wallet?: string;
-      } | null;
-    };
-    wagmi?: {
-      address?: string;
-      isConnected?: boolean;
-      isConnecting?: boolean;
-      isPending?: boolean;
-      error?: string;
-      connectorsCount?: number;
-      connectorIds?: string[];
-      walletConnectConnector?: {
-        id?: string;
-        name?: string;
-        ready?: boolean;
-      } | null;
-    };
+export interface DebugInfo {
+  privy?: {
+    authenticated?: boolean;
+    ready?: boolean;
+    user?: {
+      id?: string;
+      email?: string;
+      wallet?: string;
+    } | null;
   };
-  onDisconnect?: () => void;
+  wagmi?: {
+    address?: string;
+    isConnected?: boolean;
+    isConnecting?: boolean;
+    isPending?: boolean;
+    error?: string;
+    connectorsCount?: number;
+    connectorIds?: string[];
+    walletConnectConnector?: {
+      id?: string;
+      name?: string;
+      ready?: boolean;
+    } | null;
+  };
 }
 
-const ConnectionDebug: React.FC<ConnectionDebugProps> = ({ debugInfo, onDisconnect }) => {
-  return (
-    <DebugContainer>
-      <DebugSection>
-        <DebugSubtitle>Privy Status:</DebugSubtitle>
-        <DebugItem>
-          <strong>Authenticated:</strong> {debugInfo.privy?.authenticated ? '✅ Yes' : '❌ No'}
-        </DebugItem>
-        <DebugItem>
-          <strong>Ready:</strong> {debugInfo.privy?.ready ? '✅ Yes' : '❌ No'}
-        </DebugItem>
-        {debugInfo.privy?.user && (
-          <>
-            <DebugItem>
-              <strong>User ID:</strong> {debugInfo.privy.user.id}
-            </DebugItem>
-            <DebugItem>
-              <strong>Email:</strong> {debugInfo.privy.user.email || 'N/A'}
-            </DebugItem>
-            <DebugItem>
-              <strong>Wallet Address:</strong> {debugInfo.privy.user.wallet || 'N/A'}
-            </DebugItem>
-          </>
-        )}
-      </DebugSection>
-
-      <DebugSection>
-        <DebugSubtitle>WAGMI Status:</DebugSubtitle>
-        <DebugItem>
-          <strong>Connected:</strong> {debugInfo.wagmi?.isConnected ? '✅ Yes' : '❌ No'}
-        </DebugItem>
-        <DebugItem>
-          <strong>Connecting:</strong> {debugInfo.wagmi?.isConnecting ? '🔄 Yes' : '❌ No'}
-        </DebugItem>
-        <DebugItem>
-          <strong>Pending:</strong> {debugInfo.wagmi?.isPending ? '⏳ Yes' : '❌ No'}
-        </DebugItem>
-        <DebugItem>
-          <strong>Address:</strong> {debugInfo.wagmi?.address || 'N/A'}
-        </DebugItem>
-        {debugInfo.wagmi?.error && (
-          <DebugItem>
-            <strong>Error:</strong> <ErrorText>{debugInfo.wagmi.error}</ErrorText>
-          </DebugItem>
-        )}
-      </DebugSection>
-
-      <DebugSection>
-        <DebugSubtitle>WalletConnect Connector:</DebugSubtitle>
-        <DebugItem>
-          <strong>Connectors Found:</strong> {debugInfo.wagmi?.connectorsCount || 0}
-        </DebugItem>
-        <DebugItem>
-          <strong>Connector IDs:</strong> {debugInfo.wagmi?.connectorIds?.join(', ') || 'None'}
-        </DebugItem>
-        {debugInfo.wagmi?.walletConnectConnector ? (
-          <>
-            <DebugItem>
-              <strong>WalletConnect ID:</strong> {debugInfo.wagmi.walletConnectConnector.id}
-            </DebugItem>
-            <DebugItem>
-              <strong>WalletConnect Name:</strong> {debugInfo.wagmi.walletConnectConnector.name}
-            </DebugItem>
-            <DebugItem>
-              <strong>WalletConnect Ready:</strong> {debugInfo.wagmi.walletConnectConnector.ready ? '✅ Yes' : '❌ No'}
-            </DebugItem>
-          </>
-        ) : (
-          <DebugItem>
-            <strong>WalletConnect Connector:</strong> <ErrorText>Not Found</ErrorText>
-          </DebugItem>
-        )}
-      </DebugSection>
-
-      {/* Disconnect button for testing */}
-      {(debugInfo.wagmi?.isConnected || debugInfo.privy?.authenticated) && onDisconnect && (
-        <DebugSection>
-          <DebugSubtitle>Actions:</DebugSubtitle>
-          <Button 
-            onClick={onDisconnect} 
-            style={{marginTop: '10px', backgroundColor: '#ff4444'}}
-          >
-            Disconnect WAGMI
-          </Button>
-        </DebugSection>
-      )}
-    </DebugContainer>
-  );
-};
+interface ConnectionDebugProps {
+  debugInfo: DebugInfo;
+  onDisconnect?: () => void;
+}
 
 const DebugContainer = styled.div`
   color: #fff;
@@ -153,4 +65,112 @@ const ErrorText = styled.span`
   color: #ff4444;
 `;
 
-export default ConnectionDebug; 
+const ConnectionDebug: React.FC<ConnectionDebugProps> = ({
+  debugInfo,
+  onDisconnect,
+}) => {
+  return (
+    <DebugContainer>
+      <DebugSection>
+        <DebugSubtitle>Privy Status:</DebugSubtitle>
+        <DebugItem>
+          <strong>Authenticated:</strong>{' '}
+          {debugInfo.privy?.authenticated ? '✅ Yes' : '❌ No'}
+        </DebugItem>
+        <DebugItem>
+          <strong>Ready:</strong> {debugInfo.privy?.ready ? '✅ Yes' : '❌ No'}
+        </DebugItem>
+        {debugInfo.privy?.user && (
+          <>
+            <DebugItem>
+              <strong>User ID:</strong> {debugInfo.privy.user.id}
+            </DebugItem>
+            <DebugItem>
+              <strong>Email:</strong> {debugInfo.privy.user.email || 'N/A'}
+            </DebugItem>
+            <DebugItem>
+              <strong>Wallet Address:</strong>{' '}
+              {debugInfo.privy.user.wallet || 'N/A'}
+            </DebugItem>
+          </>
+        )}
+      </DebugSection>
+
+      <DebugSection>
+        <DebugSubtitle>WAGMI Status:</DebugSubtitle>
+        <DebugItem>
+          <strong>Connected:</strong>{' '}
+          {debugInfo.wagmi?.isConnected ? '✅ Yes' : '❌ No'}
+        </DebugItem>
+        <DebugItem>
+          <strong>Connecting:</strong>{' '}
+          {debugInfo.wagmi?.isConnecting ? '🔄 Yes' : '❌ No'}
+        </DebugItem>
+        <DebugItem>
+          <strong>Pending:</strong>{' '}
+          {debugInfo.wagmi?.isPending ? '⏳ Yes' : '❌ No'}
+        </DebugItem>
+        <DebugItem>
+          <strong>Address:</strong> {debugInfo.wagmi?.address || 'N/A'}
+        </DebugItem>
+        {debugInfo.wagmi?.error && (
+          <DebugItem>
+            <strong>Error:</strong>{' '}
+            <ErrorText>{debugInfo.wagmi.error}</ErrorText>
+          </DebugItem>
+        )}
+      </DebugSection>
+
+      <DebugSection>
+        <DebugSubtitle>WalletConnect Connector:</DebugSubtitle>
+        <DebugItem>
+          <strong>Connectors Found:</strong>{' '}
+          {debugInfo.wagmi?.connectorsCount || 0}
+        </DebugItem>
+        <DebugItem>
+          <strong>Connector IDs:</strong>{' '}
+          {debugInfo.wagmi?.connectorIds?.join(', ') || 'None'}
+        </DebugItem>
+        {debugInfo.wagmi?.walletConnectConnector ? (
+          <>
+            <DebugItem>
+              <strong>WalletConnect ID:</strong>{' '}
+              {debugInfo.wagmi.walletConnectConnector.id}
+            </DebugItem>
+            <DebugItem>
+              <strong>WalletConnect Name:</strong>{' '}
+              {debugInfo.wagmi.walletConnectConnector.name}
+            </DebugItem>
+            <DebugItem>
+              <strong>WalletConnect Ready:</strong>{' '}
+              {debugInfo.wagmi.walletConnectConnector.ready
+                ? '✅ Yes'
+                : '❌ No'}
+            </DebugItem>
+          </>
+        ) : (
+          <DebugItem>
+            <strong>WalletConnect Connector:</strong>{' '}
+            <ErrorText>Not Found</ErrorText>
+          </DebugItem>
+        )}
+      </DebugSection>
+
+      {/* Disconnect button for testing */}
+      {(debugInfo.wagmi?.isConnected || debugInfo.privy?.authenticated) &&
+        onDisconnect && (
+          <DebugSection>
+            <DebugSubtitle>Actions:</DebugSubtitle>
+            <Button
+              onClick={onDisconnect}
+              style={{ marginTop: '10px', backgroundColor: '#ff4444' }}
+            >
+              Disconnect WAGMI
+            </Button>
+          </DebugSection>
+        )}
+    </DebugContainer>
+  );
+};
+
+export default ConnectionDebug;

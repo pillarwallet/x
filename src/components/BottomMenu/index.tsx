@@ -68,10 +68,10 @@ const BottomMenu = () => {
     };
 
     checkDebugMode();
-    
+
     // Listen for storage changes
     window.addEventListener('storage', checkDebugMode);
-    
+
     // Also check on focus in case localStorage was changed in another tab
     window.addEventListener('focus', checkDebugMode);
 
@@ -245,7 +245,7 @@ const MenuItem = styled.div`
 const Wrapper = styled.div<{ $isDebugMode?: boolean }>`
   margin: 0 auto;
   position: fixed;
-  bottom: ${({ $isDebugMode }) => $isDebugMode ? '42px' : '22px'};
+  bottom: ${({ $isDebugMode }) => ($isDebugMode ? '42px' : '22px')};
   left: 50%;
   z-index: 100;
   width: 338px;

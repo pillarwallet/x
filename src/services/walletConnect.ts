@@ -19,7 +19,7 @@ import {
   hexToBigInt,
   isAddressEqual,
 } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount } from 'wagmi';
 import * as Sentry from '@sentry/react';
 
 // hooks
@@ -57,9 +57,9 @@ export const useWalletConnect = () => {
   } = useBottomMenuModal();
   const { showToast } = useWalletConnectToast();
   const { showModal, hideModal } = useWalletConnectModal();
-  const { logout, user } = usePrivy();
+  const { user } = usePrivy();
   const { isConnected } = useAccount();
-  const { disconnect: wagmiDisconnect } = useDisconnect();
+
   const { logout: comprehensiveLogout } = useComprehensiveLogout();
   const { walletConnectTxHash, setWalletConnectTxHash } =
     useGlobalTransactionsBatch();
@@ -92,11 +92,22 @@ export const useWalletConnect = () => {
       userAgent: navigator.userAgent,
       timestamp: new Date().toISOString(),
     });
-  }, [wallet, walletKit, activeSessions, isLoadingConnect, isLoadingDisconnect, isLoadingDisconnectAll, user, isConnected, walletConnectTxHash, walletConnectPayload]);
+  }, [
+    wallet,
+    walletKit,
+    activeSessions,
+    isLoadingConnect,
+    isLoadingDisconnect,
+    isLoadingDisconnectAll,
+    user,
+    isConnected,
+    walletConnectTxHash,
+    walletConnectPayload,
+  ]);
 
   const handleLogout = async () => {
     const logoutId = `walletconnect_logout_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Start Sentry transaction for logout
     const transaction = Sentry.startTransaction({
       name: 'walletconnect_logout',
@@ -116,25 +127,25 @@ export const useWalletConnect = () => {
       category: 'walletconnect',
       message: 'WalletConnect logout initiated',
       level: 'info',
-      data: { 
+      data: {
         logoutId,
         hasUser: !!user,
         isConnected,
         activeSessionsCount: Object.keys(activeSessions || {}).length,
       },
     });
-    
+
     try {
       // Use comprehensive logout for both Privy and WAGMI
       await comprehensiveLogout();
-      
+
       Sentry.addBreadcrumb({
         category: 'walletconnect',
         message: 'Comprehensive logout completed',
         level: 'info',
         data: { logoutId },
       });
-      
+
       Sentry.captureMessage('WalletConnect logout completed successfully', {
         level: 'info',
         tags: {
@@ -151,7 +162,7 @@ export const useWalletConnect = () => {
           },
         },
       });
-      
+
       // Reload the page to ensure clean state
       window.location.reload();
     } catch (error) {
@@ -170,7 +181,7 @@ export const useWalletConnect = () => {
           },
         },
       });
-      
+
       // Still reload the page even if logout fails
       window.location.reload();
     } finally {
@@ -213,7 +224,7 @@ export const useWalletConnect = () => {
   // WalletConnect initialisation
   const initWalletKit = useCallback(async () => {
     const initId = `walletkit_init_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Start Sentry transaction for WalletKit initialization
     const transaction = Sentry.startTransaction({
       name: 'walletkit_initialization',
@@ -233,7 +244,7 @@ export const useWalletConnect = () => {
       category: 'walletconnect',
       message: 'Starting WalletKit initialization',
       level: 'info',
-      data: { 
+      data: {
         initId,
         projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
       },
@@ -262,17 +273,17 @@ export const useWalletConnect = () => {
       });
 
       setWalletKit(walletKitInit);
-      
+
       Sentry.addBreadcrumb({
         category: 'walletconnect',
         message: 'WalletKit initialization completed',
         level: 'info',
-        data: { 
+        data: {
           initId,
           hasWalletKit: !!walletKitInit,
         },
       });
-      
+
       Sentry.captureMessage('WalletKit initialization completed successfully', {
         level: 'info',
         tags: {
@@ -284,11 +295,13 @@ export const useWalletConnect = () => {
           walletkit_init_success: {
             initId,
             hasWalletKit: !!walletKitInit,
-            projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+            projectId: import.meta.env.VITE_REOWN_PROJECT_ID
+              ? 'SET'
+              : 'NOT_SET',
           },
         },
       });
-      
+
       transaction.finish();
     } catch (error) {
       Sentry.captureException(error, {
@@ -301,11 +314,13 @@ export const useWalletConnect = () => {
           walletkit_init_error: {
             initId,
             error: error instanceof Error ? error.message : String(error),
-            projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+            projectId: import.meta.env.VITE_REOWN_PROJECT_ID
+              ? 'SET'
+              : 'NOT_SET',
           },
         },
       });
-      
+
       transaction.finish();
       throw error;
     }
@@ -353,7 +368,7 @@ export const useWalletConnect = () => {
 
   const getTransactionHash = async (): Promise<string | undefined> => {
     const txHashId = `get_tx_hash_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Start Sentry transaction for transaction hash retrieval
     const transaction = Sentry.startTransaction({
       name: 'get_transaction_hash',
@@ -373,7 +388,7 @@ export const useWalletConnect = () => {
       category: 'walletconnect',
       message: 'Starting transaction hash retrieval',
       level: 'info',
-      data: { 
+      data: {
         txHashId,
         hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
         hasWalletConnectPayload: !!walletConnectPayloadRef.current,
@@ -382,10 +397,9 @@ export const useWalletConnect = () => {
 
     const timeout = Date.now() + 180 * 1000; // 3 min timeout to leave enough time for the user to send the transaction and receive the hash
     let attempts = 0;
-    
     while (!walletConnectTxHashRef.current && Date.now() < timeout) {
-      attempts++;
-      
+      attempts += 1;
+
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 2000);
       });
@@ -396,13 +410,13 @@ export const useWalletConnect = () => {
           category: 'walletconnect',
           message: 'Transaction hash received successfully',
           level: 'info',
-          data: { 
+          data: {
             txHashId,
             attempts,
             txHash: walletConnectTxHashRef.current,
           },
         });
-        
+
         Sentry.captureMessage('Transaction hash retrieved successfully', {
           level: 'info',
           tags: {
@@ -419,7 +433,7 @@ export const useWalletConnect = () => {
             },
           },
         });
-        
+
         transaction.finish();
         return walletConnectTxHashRef.current;
       }
@@ -429,39 +443,42 @@ export const useWalletConnect = () => {
           category: 'walletconnect',
           message: 'WalletConnect payload cleared during hash retrieval',
           level: 'warning',
-          data: { 
+          data: {
             txHashId,
             attempts,
           },
         });
-        
-        Sentry.captureMessage('WalletConnect payload cleared during hash retrieval', {
-          level: 'warning',
-          tags: {
-            component: 'walletconnect',
-            action: 'tx_hash_payload_cleared',
-            txHashId,
-          },
-          contexts: {
-            tx_hash_payload_cleared: {
+
+        Sentry.captureMessage(
+          'WalletConnect payload cleared during hash retrieval',
+          {
+            level: 'warning',
+            tags: {
+              component: 'walletconnect',
+              action: 'tx_hash_payload_cleared',
               txHashId,
-              attempts,
-              timeElapsed: Date.now() - (timeout - 180000),
             },
-          },
-        });
-        
+            contexts: {
+              tx_hash_payload_cleared: {
+                txHashId,
+                attempts,
+                timeElapsed: Date.now() - (timeout - 180000),
+              },
+            },
+          }
+        );
+
         transaction.finish();
         return undefined;
       }
-      
+
       // Log progress every 10 attempts
       if (attempts % 10 === 0) {
         Sentry.addBreadcrumb({
           category: 'walletconnect',
           message: 'Transaction hash retrieval in progress',
           level: 'info',
-          data: { 
+          data: {
             txHashId,
             attempts,
             timeElapsed: Date.now() - (timeout - 180000),
@@ -471,7 +488,7 @@ export const useWalletConnect = () => {
     }
 
     console.error('Transaction timeout: no transaction hash received.');
-    
+
     Sentry.captureMessage('Transaction hash retrieval timeout', {
       level: 'error',
       tags: {
@@ -495,7 +512,7 @@ export const useWalletConnect = () => {
 
     // reset txHash to undefined
     setWalletConnectTxHash(undefined);
-    
+
     transaction.finish();
     return undefined;
   };
@@ -514,7 +531,7 @@ export const useWalletConnect = () => {
   const connect = useCallback(
     async (copiedUri: string) => {
       const connectId = `walletconnect_connect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Start Sentry transaction for WalletConnect connection
       const transaction = Sentry.startTransaction({
         name: 'walletconnect_connect',
@@ -536,7 +553,7 @@ export const useWalletConnect = () => {
         category: 'walletconnect',
         message: 'Starting WalletConnect connection',
         level: 'info',
-        data: { 
+        data: {
           connectId,
           hasWalletKit: !!walletKit,
           uriLength: copiedUri.length,
@@ -546,7 +563,7 @@ export const useWalletConnect = () => {
       if (!walletKit) {
         try {
           await initWalletKit();
-          
+
           Sentry.addBreadcrumb({
             category: 'walletconnect',
             message: 'WalletKit initialized during connection',
@@ -555,7 +572,7 @@ export const useWalletConnect = () => {
           });
         } catch (e: any) {
           console.error('Error initialising Wallet Kit:', e.message);
-          
+
           Sentry.captureException(e, {
             tags: {
               component: 'walletconnect',
@@ -570,13 +587,13 @@ export const useWalletConnect = () => {
               },
             },
           });
-          
+
           showToast({
             title: 'WalletConnect error',
             subtitle:
               'Something went wrong with WalletConnect, please try again.',
           });
-          
+
           transaction.finish();
           return;
         }
@@ -584,14 +601,14 @@ export const useWalletConnect = () => {
 
       try {
         setIsLoadingConnect(true);
-        
+
         Sentry.addBreadcrumb({
           category: 'walletconnect',
           message: 'Initiating WalletConnect pairing',
           level: 'info',
           data: { connectId },
         });
-        
+
         const peerWalletConnect = await walletKit?.core.pairing.pair({
           uri: copiedUri,
         });
@@ -600,7 +617,7 @@ export const useWalletConnect = () => {
           category: 'walletconnect',
           message: 'WalletConnect pairing completed',
           level: 'info',
-          data: { 
+          data: {
             connectId,
             hasPeerWalletConnect: !!peerWalletConnect,
             topic: peerWalletConnect?.topic,
@@ -622,19 +639,19 @@ export const useWalletConnect = () => {
             category: 'walletconnect',
             message: 'WalletConnect session found',
             level: 'info',
-            data: { 
+            data: {
               connectId,
               sessionName: session.peer?.metadata?.name,
               sessionIcons: session.peer?.metadata?.icons?.length,
             },
           });
-          
+
           showToast({
             title: `${session.peer?.metadata?.name || 'Unnamed App'}`,
             subtitle: 'Connected via WalletConnect',
             image: `${session.peer?.metadata?.icons[0]}`,
           });
-          
+
           Sentry.captureMessage('WalletConnect connection successful', {
             level: 'info',
             tags: {
@@ -652,21 +669,24 @@ export const useWalletConnect = () => {
             },
           });
         } else {
-          Sentry.captureMessage('WalletConnect session not found after pairing', {
-            level: 'warning',
-            tags: {
-              component: 'walletconnect',
-              action: 'connect_session_not_found',
-              connectId,
-            },
-            contexts: {
-              walletconnect_connect_warning: {
+          Sentry.captureMessage(
+            'WalletConnect session not found after pairing',
+            {
+              level: 'warning',
+              tags: {
+                component: 'walletconnect',
+                action: 'connect_session_not_found',
                 connectId,
-                topic: peerWalletConnect?.topic,
-                hasPeerWalletConnect: !!peerWalletConnect,
               },
-            },
-          });
+              contexts: {
+                walletconnect_connect_warning: {
+                  connectId,
+                  topic: peerWalletConnect?.topic,
+                  hasPeerWalletConnect: !!peerWalletConnect,
+                },
+              },
+            }
+          );
         }
       } catch (e) {
         Sentry.captureException(e, {
@@ -683,7 +703,7 @@ export const useWalletConnect = () => {
             },
           },
         });
-        
+
         if (`${e}`.includes('Missing or invalid')) {
           showToast({
             title: 'WalletConnect',
@@ -719,7 +739,7 @@ export const useWalletConnect = () => {
   const disconnectSession = useCallback(
     async (topic: string) => {
       const disconnectId = `walletconnect_disconnect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Start Sentry transaction for session disconnection
       const transaction = Sentry.startTransaction({
         name: 'walletconnect_disconnect_session',
@@ -739,7 +759,7 @@ export const useWalletConnect = () => {
         category: 'walletconnect',
         message: 'Starting WalletConnect session disconnection',
         level: 'info',
-        data: { 
+        data: {
           disconnectId,
           topic,
           hasWalletKit: !!walletKit,
@@ -749,7 +769,7 @@ export const useWalletConnect = () => {
       if (!walletKit) {
         try {
           await initWalletKit();
-          
+
           Sentry.addBreadcrumb({
             category: 'walletconnect',
             message: 'WalletKit initialized during disconnection',
@@ -758,7 +778,7 @@ export const useWalletConnect = () => {
           });
         } catch (e: any) {
           console.error('Error initialising Wallet Kit:', e.message);
-          
+
           Sentry.captureException(e, {
             tags: {
               component: 'walletconnect',
@@ -774,13 +794,13 @@ export const useWalletConnect = () => {
               },
             },
           });
-          
+
           showToast({
             title: 'WalletConnect error',
             subtitle:
               'Something went wrong with WalletConnect, please try again.',
           });
-          
+
           transaction.finish();
           return;
         }
@@ -793,7 +813,7 @@ export const useWalletConnect = () => {
         category: 'walletconnect',
         message: 'Session data retrieved for disconnection',
         level: 'info',
-        data: { 
+        data: {
           disconnectId,
           dAppName,
           hasSessionData: !!sessionData,
@@ -803,14 +823,14 @@ export const useWalletConnect = () => {
 
       try {
         setIsLoadingDisconnect(true);
-        
+
         Sentry.addBreadcrumb({
           category: 'walletconnect',
           message: 'Initiating WalletConnect session disconnection',
           level: 'info',
           data: { disconnectId, topic },
         });
-        
+
         await walletKit?.disconnectSession({
           topic,
           reason: getSdkError('USER_DISCONNECTED'),
@@ -834,26 +854,29 @@ export const useWalletConnect = () => {
         setActiveSessions(updatedSessions);
 
         checkAndLogoutIfPrivySession(sessionData);
-        
-        Sentry.captureMessage('WalletConnect session disconnection successful', {
-          level: 'info',
-          tags: {
-            component: 'walletconnect',
-            action: 'disconnect_success',
-            disconnectId,
-          },
-          contexts: {
-            walletconnect_disconnect_success: {
+
+        Sentry.captureMessage(
+          'WalletConnect session disconnection successful',
+          {
+            level: 'info',
+            tags: {
+              component: 'walletconnect',
+              action: 'disconnect_success',
               disconnectId,
-              topic,
-              dAppName,
-              hasSessionData: !!sessionData,
             },
-          },
-        });
+            contexts: {
+              walletconnect_disconnect_success: {
+                disconnectId,
+                topic,
+                dAppName,
+                hasSessionData: !!sessionData,
+              },
+            },
+          }
+        );
       } catch (error: any) {
         console.error('Error disconnecting session:', error.message);
-        
+
         Sentry.captureException(error, {
           tags: {
             component: 'walletconnect',
@@ -870,7 +893,7 @@ export const useWalletConnect = () => {
             },
           },
         });
-        
+
         showToast({
           title: dAppName,
           subtitle: 'Error while disconnecting session. Please try again.',

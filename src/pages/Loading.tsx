@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 // images
-import PillarXLogoLoading from '../assets/images/pillarX_full_white.png';
-
-// components
 import BigBangStarField from 'react-big-bang-star-field';
+import PillarXLogoLoading from '../assets/images/pillarX_full_white.png';
 
 // utils
 import { useComprehensiveLogout } from '../utils/logout';
