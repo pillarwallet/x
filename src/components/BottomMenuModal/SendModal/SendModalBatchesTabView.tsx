@@ -70,12 +70,6 @@ const SendModalBatchesTabView = () => {
   const contextNfts = useContext(AccountNftsContext);
   const { transactionDebugLog } = useTransactionDebugLogger();
 
-  // Debug: Log the provider being used for transactions
-  console.log('SendModal - Provider debug:', {
-    accountAddress,
-    hasSendFunction: !!send,
-    sendFunctionType: send?.constructor?.name
-  });
   const {
     userOpStatus,
     setTransactionHash,
@@ -153,13 +147,6 @@ const SendModalBatchesTabView = () => {
       transaction.finish();
       return;
     }
-
-    // Debug: Log the provider being used for signing
-    console.log('Action Bar - Transaction signing initiated:', {
-      chainId,
-      batchId,
-      providerType: 'WalletConnect' // This will help identify if WalletConnect is being used
-    });
 
     Sentry.addBreadcrumb({
       category: 'send_flow',

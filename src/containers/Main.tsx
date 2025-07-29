@@ -80,18 +80,6 @@ const AuthLayout = () => {
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || Boolean(account) || wagmiIsConnected;
   
-  // Add debug logging for authentication state
-  console.log('Authentication state debug:', {
-    ready,
-    authenticated,
-    hasUser: !!user,
-    hasWallets: wallets.length > 0,
-    hasAccount: !!account,
-    wagmiIsConnected,
-    isAppReady,
-    isAuthenticated
-  });
-
   // Sentry context for authentication state
   useEffect(() => {
     Sentry.setContext('authentication_state', {
@@ -274,9 +262,7 @@ const AuthLayout = () => {
       // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
         // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
-        if (!ready && !wagmiIsConnected) {
-          console.log('Privy not ready and WalletConnect not connected, skipping provider setup');
-          
+        if (!ready && !wagmiIsConnected) {          
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Provider setup skipped - not ready',
@@ -296,15 +282,6 @@ const AuthLayout = () => {
         const hasWallets = wallets.length > 0;
         const isWalletConnectConnected = wagmiIsConnected && !hasWallets;
         
-        console.log('Provider setup debug:', {
-          isAuthenticated,
-          hasWallets,
-          isWalletConnectConnected,
-          wagmiIsConnected,
-          walletsCount: wallets.length,
-          connectorsCount: connectors.length
-        });
-        
         Sentry.addBreadcrumb({
           category: 'authentication',
           message: 'Provider setup debug info',
@@ -322,8 +299,6 @@ const AuthLayout = () => {
         
         // If no wallets and not connected via WalletConnect, return early
         if (!hasWallets && !isWalletConnectConnected) {
-          console.log('No wallets or WalletConnect connection detected');
-          
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'No wallets or WalletConnect connection detected',
@@ -340,9 +315,7 @@ const AuthLayout = () => {
         }
         
         // If we have Privy wallets, don't try to setup WalletConnect
-        if (hasWallets) {
-          console.log('Privy wallets detected, skipping WalletConnect setup');
-          
+        if (hasWallets) {          
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Privy wallets detected, skipping WalletConnect setup',
@@ -399,9 +372,7 @@ const AuthLayout = () => {
             },
           });
         } else if (isWalletConnectConnected && !hasWallets) {
-          // Handle WalletConnect connection - only if no Privy wallets are present
-          console.log('Attempting to setup WalletConnect provider...');
-          
+          // Handle WalletConnect connection - only if no Privy wallets are present          
           Sentry.addBreadcrumb({
             category: 'authentication',
             message: 'Attempting to setup WalletConnect provider',
@@ -418,8 +389,6 @@ const AuthLayout = () => {
             const walletConnectConnector = connectors.find(
               ({ id }) => id === 'walletConnect'
             );
-
-            console.log('WalletConnect connector found:', !!walletConnectConnector);
             
             Sentry.addBreadcrumb({
               category: 'authentication',
@@ -437,9 +406,6 @@ const AuthLayout = () => {
               // Get the WalletConnect provider
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const wcProvider: any = await walletConnectConnector.getProvider();
-              
-              console.log('WalletConnect provider obtained:', !!wcProvider);
-              console.log('WalletConnect provider connected:', wcProvider?.connected);
               
               Sentry.addBreadcrumb({
                 category: 'authentication',
@@ -459,7 +425,7 @@ const AuthLayout = () => {
                 const accounts = await wcProvider.request({ method: 'eth_accounts' });
                 const account = accounts[0];
                 
-                console.log('WalletConnect account:', account);
+
                 
                 Sentry.addBreadcrumb({
                   category: 'authentication',
@@ -483,12 +449,6 @@ const AuthLayout = () => {
 
                   setProvider(newProvider);
                   setChainId(1); // Default to mainnet
-                  console.log('WalletConnect provider setup successful');
-                  console.log('WalletConnect provider details:', {
-                    account: newProvider.account,
-                    chain: newProvider.chain?.id,
-                    transport: 'custom(wcProvider)'
-                  });
                   
                   Sentry.addBreadcrumb({
                     category: 'authentication',
@@ -522,7 +482,6 @@ const AuthLayout = () => {
                   transaction.finish();
                   return;
                 } else {
-                  console.log('No WalletConnect account found');
                   
                   Sentry.captureMessage('No WalletConnect account found', {
                     level: 'warning',
@@ -542,7 +501,6 @@ const AuthLayout = () => {
                   });
                 }
               } else {
-                console.log('WalletConnect provider not connected or no accounts');
                 
                 Sentry.captureMessage('WalletConnect provider not connected or no accounts', {
                   level: 'warning',
@@ -562,7 +520,6 @@ const AuthLayout = () => {
                 });
               }
             } else {
-              console.log('WalletConnect connector not found');
               
               Sentry.captureMessage('WalletConnect connector not found', {
                 level: 'error',
@@ -880,21 +837,7 @@ const AuthLayout = () => {
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-// Debug: Log WalletConnect configuration
-console.log('WalletConnect: Configuration debug:', {
-  projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
-  isMobile,
-  showQrModal: !isMobile,
-  isNewChainsStale: true,
-  metadata: {
-    name: 'PillarX',
-    description: 'PillarX',
-    url: 'https://pillarx.app/',
-    icons: ['https://pillarx.app/favicon.ico'],
-  },
-  environment: import.meta.env.MODE,
-  baseUrl: import.meta.env.BASE_URL
-});
+
 
 export const config = createConfig({
   chains: [mainnet],

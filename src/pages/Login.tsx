@@ -58,82 +58,41 @@ const Login = () => {
     });
   }, [authenticated, ready, user, address, isConnected, isConnecting, isPending, error, connectors, walletConnectConnector]);
 
-  // Debug: Log available connectors
-  console.log('WalletConnect: Available connectors:', {
-    connectorsCount: connectors.length,
-    connectorIds: connectors.map(c => c.id),
-    connectorNames: connectors.map(c => c.name),
-    walletConnectConnectorFound: !!walletConnectConnector
-  });
+
 
   const listenForWalletConnectUri = async () => {
-    console.log('WalletConnect: Starting connection process...');
-    console.log('WalletConnect: Environment check:', {
-      isLocalhost: window.location.hostname === 'localhost',
-      hostname: window.location.hostname,
-      port: window.location.port,
-      protocol: window.location.protocol,
-      fullUrl: window.location.href
-    });
 
     if (!walletConnectConnector) {
       console.error('WalletConnect: Connector not found');
       throw new Error('WalletConnect connector not found');
     }
 
-    console.log('WalletConnect: Connector found:', {
-      connectorId: walletConnectConnector.id,
-      connectorName: walletConnectConnector.name,
-      connectorReady: walletConnectConnector.ready
-    });
-
     try {
-      console.log('WalletConnect: Attempting to connect...');
       connect({ connector: walletConnectConnector });
-      console.log('WalletConnect: Connect call completed');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const provider: any = await walletConnectConnector.getProvider();
-      console.log('WalletConnect: Provider obtained:', {
-        hasProvider: !!provider,
-        providerType: provider?.constructor?.name,
-        providerConnected: provider?.connected,
-        providerChainId: provider?.chainId
-      });
 
       if (provider) {
-        console.log('WalletConnect: Setting up display_uri listener...');
-        provider.once('display_uri', (uri: string) => {
-          console.log('WalletConnect: display_uri event received:', {
-            uri: uri.substring(0, 50) + '...',
-            uriLength: uri.length
+        // Event listener for display_uri
+          provider.once('display_uri', (uri: string) => {
+            const encodedURI = encodeURIComponent(uri);
+            const deeplinkUrl = `pillarwallet://wc?uri=${encodedURI}`;
+            window.location.href = deeplinkUrl;
           });
-          
-          const encodedURI = encodeURIComponent(uri);
-          const deeplinkUrl = `pillarwallet://wc?uri=${encodedURI}`;
-          console.log('WalletConnect: Deeplink URL:', {
-            deeplinkUrl: deeplinkUrl.substring(0, 100) + '...',
-            encodedURILength: encodedURI.length
+
+          // Add additional event listeners for debugging
+          provider.on('connect', (connectInfo: any) => {
+            // Event listener for connect
           });
-          
-          console.log('WalletConnect: Redirecting to Pillar Wallet...');
-          window.location.href = deeplinkUrl;
-        });
 
-        // Add additional event listeners for debugging
-        provider.on('connect', (connectInfo: any) => {
-          console.log('WalletConnect: connect event:', connectInfo);
-        });
+          provider.on('disconnect', (disconnectInfo: any) => {
+            // Event listener for disconnect
+          });
 
-        provider.on('disconnect', (disconnectInfo: any) => {
-          console.log('WalletConnect: disconnect event:', disconnectInfo);
-        });
-
-        provider.on('error', (error: any) => {
-          console.error('WalletConnect: error event:', error);
-        });
-
-        console.log('WalletConnect: Event listeners set up successfully');
+          provider.on('error', (error: any) => {
+            console.error('WalletConnect: error event:', error);
+          });
       } else {
         console.error('WalletConnect: Failed to get provider');
       }
@@ -157,7 +116,6 @@ const Login = () => {
       const timer = setTimeout(() => {
         const pressDuration = Date.now() - logoPressStart;
         if (pressDuration >= 5000) { // 5 seconds
-          console.log('Debug mode activated via long press');
           localStorage.setItem('debug_connections', 'true');
           window.location.reload();
         }

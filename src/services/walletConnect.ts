@@ -123,8 +123,6 @@ export const useWalletConnect = () => {
         activeSessionsCount: Object.keys(activeSessions || {}).length,
       },
     });
-
-    console.log('WalletConnect logout initiated - cleaning up all connections...');
     
     try {
       // Use comprehensive logout for both Privy and WAGMI
@@ -201,10 +199,8 @@ export const useWalletConnect = () => {
       if (!session) return false;
 
       const wasPrivyLinked = isAddressInSessionViaPrivy(session);
-      console.log('checkAndLogoutIfPrivySession', wasPrivyLinked);
 
       if (wasPrivyLinked && user?.wallet?.address) {
-        console.log('checkAndLogoutIfPrivySession', 'logout');
         handleLogout();
         return true;
       }

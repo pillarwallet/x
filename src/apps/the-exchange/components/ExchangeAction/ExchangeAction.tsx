@@ -115,15 +115,6 @@ const ExchangeAction = () => {
         stepTransactions
       );
 
-      // Debug: Log WalletConnect transaction preparation
-      console.log('Exchange App - WalletConnect transaction preparation:', {
-        walletAddress,
-        swapToken: swapToken.symbol,
-        receiveToken: receiveToken.symbol,
-        amountSwap,
-        stepTransactionsCount: stepTransactions.length
-      });
-
       if (!stepTransactions.length) {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'

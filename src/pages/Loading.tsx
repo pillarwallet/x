@@ -44,7 +44,6 @@ const Loading = ({ type }: LoadingProps) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const handleLogout = async () => {
-        console.log('Auto logout initiated - cleaning up all connections...');
         await logout();
       };
       handleLogout();
