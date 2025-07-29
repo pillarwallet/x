@@ -19,6 +19,7 @@ import {
   hexToBigInt,
   isAddressEqual,
 } from 'viem';
+import { useAccount, useDisconnect } from 'wagmi';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -37,6 +38,9 @@ import {
   getWalletAddressesFromSession,
 } from '../utils/walletConnect';
 
+// utils
+import { useComprehensiveLogout } from '../utils/logout';
+
 export const useWalletConnect = () => {
   const wallet = useWalletAddress();
   const { getSdk } = useEtherspot();
@@ -53,6 +57,9 @@ export const useWalletConnect = () => {
   const { showToast } = useWalletConnectToast();
   const { showModal, hideModal } = useWalletConnectModal();
   const { logout, user } = usePrivy();
+  const { isConnected } = useAccount();
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { logout: comprehensiveLogout } = useComprehensiveLogout();
   const { walletConnectTxHash, setWalletConnectTxHash } =
     useGlobalTransactionsBatch();
   const [isLoadingDisconnectAll, setIsLoadingDisconnectAll] =
@@ -69,7 +76,12 @@ export const useWalletConnect = () => {
   const prevSessionsRef = useRef<Record<string, SessionTypes.Struct>>({});
 
   const handleLogout = async () => {
-    await logout();
+    console.log('WalletConnect logout initiated - cleaning up all connections...');
+    
+    // Use comprehensive logout for both Privy and WAGMI
+    await comprehensiveLogout();
+    
+    // Reload the page to ensure clean state
     window.location.reload();
   };
 
@@ -274,7 +286,7 @@ export const useWalletConnect = () => {
     [walletKit, initWalletKit, showToast, getSessionFromTopic]
   );
 
-  const disconnect = useCallback(
+  const disconnectSession = useCallback(
     async (topic: string) => {
       if (!walletKit) {
         try {
@@ -714,7 +726,7 @@ export const useWalletConnect = () => {
 
   return {
     connect,
-    disconnect,
+    disconnect: disconnectSession,
     disconnectAllSessions,
     activeSessions,
     isLoadingConnect,
