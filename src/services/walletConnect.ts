@@ -20,6 +20,7 @@ import {
   isAddressEqual,
 } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
+import * as Sentry from '@sentry/react';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -75,14 +76,108 @@ export const useWalletConnect = () => {
 
   const prevSessionsRef = useRef<Record<string, SessionTypes.Struct>>({});
 
+  // Sentry context for WalletConnect state
+  useEffect(() => {
+    Sentry.setContext('walletconnect_state', {
+      hasWallet: !!wallet,
+      hasWalletKit: !!walletKit,
+      activeSessionsCount: Object.keys(activeSessions || {}).length,
+      isLoadingConnect,
+      isLoadingDisconnect,
+      isLoadingDisconnectAll,
+      hasUser: !!user,
+      isConnected,
+      hasWalletConnectTxHash: !!walletConnectTxHash,
+      hasWalletConnectPayload: !!walletConnectPayload,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    });
+  }, [wallet, walletKit, activeSessions, isLoadingConnect, isLoadingDisconnect, isLoadingDisconnectAll, user, isConnected, walletConnectTxHash, walletConnectPayload]);
+
   const handleLogout = async () => {
+    const logoutId = `walletconnect_logout_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Start Sentry transaction for logout
+    const transaction = Sentry.startTransaction({
+      name: 'walletconnect_logout',
+      op: 'authentication',
+    });
+
+    Sentry.setContext('walletconnect_logout', {
+      logoutId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      hasUser: !!user,
+      isConnected,
+      activeSessionsCount: Object.keys(activeSessions || {}).length,
+    });
+
+    Sentry.addBreadcrumb({
+      category: 'walletconnect',
+      message: 'WalletConnect logout initiated',
+      level: 'info',
+      data: { 
+        logoutId,
+        hasUser: !!user,
+        isConnected,
+        activeSessionsCount: Object.keys(activeSessions || {}).length,
+      },
+    });
+
     console.log('WalletConnect logout initiated - cleaning up all connections...');
     
-    // Use comprehensive logout for both Privy and WAGMI
-    await comprehensiveLogout();
-    
-    // Reload the page to ensure clean state
-    window.location.reload();
+    try {
+      // Use comprehensive logout for both Privy and WAGMI
+      await comprehensiveLogout();
+      
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'Comprehensive logout completed',
+        level: 'info',
+        data: { logoutId },
+      });
+      
+      Sentry.captureMessage('WalletConnect logout completed successfully', {
+        level: 'info',
+        tags: {
+          component: 'walletconnect',
+          action: 'logout_success',
+          logoutId,
+        },
+        contexts: {
+          walletconnect_logout_success: {
+            logoutId,
+            hasUser: !!user,
+            isConnected,
+            activeSessionsCount: Object.keys(activeSessions || {}).length,
+          },
+        },
+      });
+      
+      // Reload the page to ensure clean state
+      window.location.reload();
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: {
+          component: 'walletconnect',
+          action: 'logout_error',
+          logoutId,
+        },
+        contexts: {
+          walletconnect_logout_error: {
+            logoutId,
+            error: error instanceof Error ? error.message : String(error),
+            hasUser: !!user,
+            isConnected,
+          },
+        },
+      });
+      
+      // Still reload the page even if logout fails
+      window.location.reload();
+    } finally {
+      transaction.finish();
+    }
   };
 
   // useCallback to check if one of the walletConnect session
@@ -121,22 +216,104 @@ export const useWalletConnect = () => {
 
   // WalletConnect initialisation
   const initWalletKit = useCallback(async () => {
-    const core = new Core({
-      projectId: import.meta.env.VITE_REOWN_PROJECT_ID,
+    const initId = `walletkit_init_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Start Sentry transaction for WalletKit initialization
+    const transaction = Sentry.startTransaction({
+      name: 'walletkit_initialization',
+      op: 'walletconnect',
     });
 
-    const walletKitInit = await WalletKit.init({
-      core,
-      metadata: {
-        name: 'PillarX',
-        description: 'PillarX',
-        url: 'https://pillarx.app/',
-        icons: ['https://pillarx.app/favicon.ico'],
+    Sentry.setContext('walletkit_init', {
+      initId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+      hasWallet: !!wallet,
+      hasUser: !!user,
+    });
+
+    Sentry.addBreadcrumb({
+      category: 'walletconnect',
+      message: 'Starting WalletKit initialization',
+      level: 'info',
+      data: { 
+        initId,
+        projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
       },
     });
 
-    setWalletKit(walletKitInit);
-  }, []);
+    try {
+      const core = new Core({
+        projectId: import.meta.env.VITE_REOWN_PROJECT_ID,
+      });
+
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'WalletConnect Core created',
+        level: 'info',
+        data: { initId },
+      });
+
+      const walletKitInit = await WalletKit.init({
+        core,
+        metadata: {
+          name: 'PillarX',
+          description: 'PillarX',
+          url: 'https://pillarx.app/',
+          icons: ['https://pillarx.app/favicon.ico'],
+        },
+      });
+
+      setWalletKit(walletKitInit);
+      
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'WalletKit initialization completed',
+        level: 'info',
+        data: { 
+          initId,
+          hasWalletKit: !!walletKitInit,
+        },
+      });
+      
+      Sentry.captureMessage('WalletKit initialization completed successfully', {
+        level: 'info',
+        tags: {
+          component: 'walletconnect',
+          action: 'walletkit_init_success',
+          initId,
+        },
+        contexts: {
+          walletkit_init_success: {
+            initId,
+            hasWalletKit: !!walletKitInit,
+            projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+          },
+        },
+      });
+      
+      transaction.finish();
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: {
+          component: 'walletconnect',
+          action: 'walletkit_init_error',
+          initId,
+        },
+        contexts: {
+          walletkit_init_error: {
+            initId,
+            error: error instanceof Error ? error.message : String(error),
+            projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+          },
+        },
+      });
+      
+      transaction.finish();
+      throw error;
+    }
+  }, [wallet, user]);
 
   useEffect(() => {
     if (walletKit) return;
@@ -179,30 +356,151 @@ export const useWalletConnect = () => {
   }, [walletConnectPayload]);
 
   const getTransactionHash = async (): Promise<string | undefined> => {
+    const txHashId = `get_tx_hash_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Start Sentry transaction for transaction hash retrieval
+    const transaction = Sentry.startTransaction({
+      name: 'get_transaction_hash',
+      op: 'walletconnect',
+    });
+
+    Sentry.setContext('get_transaction_hash', {
+      txHashId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
+      hasWalletConnectPayload: !!walletConnectPayloadRef.current,
+      timeout: 180000, // 3 minutes
+    });
+
+    Sentry.addBreadcrumb({
+      category: 'walletconnect',
+      message: 'Starting transaction hash retrieval',
+      level: 'info',
+      data: { 
+        txHashId,
+        hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
+        hasWalletConnectPayload: !!walletConnectPayloadRef.current,
+      },
+    });
+
     const timeout = Date.now() + 180 * 1000; // 3 min timeout to leave enough time for the user to send the transaction and receive the hash
+    let attempts = 0;
+    
     while (!walletConnectTxHashRef.current && Date.now() < timeout) {
+      attempts++;
+      
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 2000);
       });
 
       // Use the latest value from the ref
       if (walletConnectTxHashRef.current) {
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'Transaction hash received successfully',
+          level: 'info',
+          data: { 
+            txHashId,
+            attempts,
+            txHash: walletConnectTxHashRef.current,
+          },
+        });
+        
+        Sentry.captureMessage('Transaction hash retrieved successfully', {
+          level: 'info',
+          tags: {
+            component: 'walletconnect',
+            action: 'tx_hash_success',
+            txHashId,
+          },
+          contexts: {
+            tx_hash_success: {
+              txHashId,
+              attempts,
+              txHash: walletConnectTxHashRef.current,
+              timeElapsed: Date.now() - (timeout - 180000),
+            },
+          },
+        });
+        
+        transaction.finish();
         return walletConnectTxHashRef.current;
       }
 
       if (!walletConnectPayloadRef.current) {
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'WalletConnect payload cleared during hash retrieval',
+          level: 'warning',
+          data: { 
+            txHashId,
+            attempts,
+          },
+        });
+        
+        Sentry.captureMessage('WalletConnect payload cleared during hash retrieval', {
+          level: 'warning',
+          tags: {
+            component: 'walletconnect',
+            action: 'tx_hash_payload_cleared',
+            txHashId,
+          },
+          contexts: {
+            tx_hash_payload_cleared: {
+              txHashId,
+              attempts,
+              timeElapsed: Date.now() - (timeout - 180000),
+            },
+          },
+        });
+        
+        transaction.finish();
         return undefined;
+      }
+      
+      // Log progress every 10 attempts
+      if (attempts % 10 === 0) {
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'Transaction hash retrieval in progress',
+          level: 'info',
+          data: { 
+            txHashId,
+            attempts,
+            timeElapsed: Date.now() - (timeout - 180000),
+          },
+        });
       }
     }
 
     console.error('Transaction timeout: no transaction hash received.');
+    
+    Sentry.captureMessage('Transaction hash retrieval timeout', {
+      level: 'error',
+      tags: {
+        component: 'walletconnect',
+        action: 'tx_hash_timeout',
+        txHashId,
+      },
+      contexts: {
+        tx_hash_timeout: {
+          txHashId,
+          attempts,
+          timeElapsed: 180000,
+          hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
+          hasWalletConnectPayload: !!walletConnectPayloadRef.current,
+        },
+      },
+    });
 
     // close send modal
     hide();
 
     // reset txHash to undefined
     setWalletConnectTxHash(undefined);
-
+    
+    transaction.finish();
     return undefined;
   };
 
@@ -219,23 +517,98 @@ export const useWalletConnect = () => {
 
   const connect = useCallback(
     async (copiedUri: string) => {
+      const connectId = `walletconnect_connect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Start Sentry transaction for WalletConnect connection
+      const transaction = Sentry.startTransaction({
+        name: 'walletconnect_connect',
+        op: 'walletconnect',
+      });
+
+      Sentry.setContext('walletconnect_connect', {
+        connectId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        hasWalletKit: !!walletKit,
+        hasWallet: !!wallet,
+        hasUser: !!user,
+        uriLength: copiedUri.length,
+        uriStartsWith: copiedUri.substring(0, 20),
+      });
+
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'Starting WalletConnect connection',
+        level: 'info',
+        data: { 
+          connectId,
+          hasWalletKit: !!walletKit,
+          uriLength: copiedUri.length,
+        },
+      });
+
       if (!walletKit) {
         try {
           await initWalletKit();
+          
+          Sentry.addBreadcrumb({
+            category: 'walletconnect',
+            message: 'WalletKit initialized during connection',
+            level: 'info',
+            data: { connectId },
+          });
         } catch (e: any) {
           console.error('Error initialising Wallet Kit:', e.message);
+          
+          Sentry.captureException(e, {
+            tags: {
+              component: 'walletconnect',
+              action: 'connect_init_error',
+              connectId,
+            },
+            contexts: {
+              walletconnect_connect_error: {
+                connectId,
+                error: e.message,
+                hasWalletKit: !!walletKit,
+              },
+            },
+          });
+          
           showToast({
             title: 'WalletConnect error',
             subtitle:
               'Something went wrong with WalletConnect, please try again.',
           });
+          
+          transaction.finish();
+          return;
         }
       }
 
       try {
         setIsLoadingConnect(true);
+        
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'Initiating WalletConnect pairing',
+          level: 'info',
+          data: { connectId },
+        });
+        
         const peerWalletConnect = await walletKit?.core.pairing.pair({
           uri: copiedUri,
+        });
+
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'WalletConnect pairing completed',
+          level: 'info',
+          data: { 
+            connectId,
+            hasPeerWalletConnect: !!peerWalletConnect,
+            topic: peerWalletConnect?.topic,
+          },
         });
 
         // Update activeSessions after pairing
@@ -249,13 +622,72 @@ export const useWalletConnect = () => {
 
         const session = getSessionFromTopic(peerWalletConnect?.topic || '');
         if (session) {
+          Sentry.addBreadcrumb({
+            category: 'walletconnect',
+            message: 'WalletConnect session found',
+            level: 'info',
+            data: { 
+              connectId,
+              sessionName: session.peer?.metadata?.name,
+              sessionIcons: session.peer?.metadata?.icons?.length,
+            },
+          });
+          
           showToast({
             title: `${session.peer?.metadata?.name || 'Unnamed App'}`,
             subtitle: 'Connected via WalletConnect',
             image: `${session.peer?.metadata?.icons[0]}`,
           });
+          
+          Sentry.captureMessage('WalletConnect connection successful', {
+            level: 'info',
+            tags: {
+              component: 'walletconnect',
+              action: 'connect_success',
+              connectId,
+            },
+            contexts: {
+              walletconnect_connect_success: {
+                connectId,
+                sessionName: session.peer?.metadata?.name,
+                sessionIcons: session.peer?.metadata?.icons?.length,
+                topic: peerWalletConnect?.topic,
+              },
+            },
+          });
+        } else {
+          Sentry.captureMessage('WalletConnect session not found after pairing', {
+            level: 'warning',
+            tags: {
+              component: 'walletconnect',
+              action: 'connect_session_not_found',
+              connectId,
+            },
+            contexts: {
+              walletconnect_connect_warning: {
+                connectId,
+                topic: peerWalletConnect?.topic,
+                hasPeerWalletConnect: !!peerWalletConnect,
+              },
+            },
+          });
         }
       } catch (e) {
+        Sentry.captureException(e, {
+          tags: {
+            component: 'walletconnect',
+            action: 'connect_error',
+            connectId,
+          },
+          contexts: {
+            walletconnect_connect_error: {
+              connectId,
+              error: e instanceof Error ? e.message : String(e),
+              errorString: `${e}`,
+            },
+          },
+        });
+        
         if (`${e}`.includes('Missing or invalid')) {
           showToast({
             title: 'WalletConnect',
@@ -280,36 +712,119 @@ export const useWalletConnect = () => {
               'Something went wrong. Please make sure you are using a valid connection.',
           });
         }
+      } finally {
+        setIsLoadingConnect(false);
+        transaction.finish();
       }
-      setIsLoadingConnect(false);
     },
-    [walletKit, initWalletKit, showToast, getSessionFromTopic]
+    [walletKit, initWalletKit, showToast, getSessionFromTopic, wallet, user]
   );
 
   const disconnectSession = useCallback(
     async (topic: string) => {
+      const disconnectId = `walletconnect_disconnect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Start Sentry transaction for session disconnection
+      const transaction = Sentry.startTransaction({
+        name: 'walletconnect_disconnect_session',
+        op: 'walletconnect',
+      });
+
+      Sentry.setContext('walletconnect_disconnect', {
+        disconnectId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        topic,
+        hasWalletKit: !!walletKit,
+        hasUser: !!user,
+      });
+
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'Starting WalletConnect session disconnection',
+        level: 'info',
+        data: { 
+          disconnectId,
+          topic,
+          hasWalletKit: !!walletKit,
+        },
+      });
+
       if (!walletKit) {
         try {
           await initWalletKit();
+          
+          Sentry.addBreadcrumb({
+            category: 'walletconnect',
+            message: 'WalletKit initialized during disconnection',
+            level: 'info',
+            data: { disconnectId },
+          });
         } catch (e: any) {
           console.error('Error initialising Wallet Kit:', e.message);
+          
+          Sentry.captureException(e, {
+            tags: {
+              component: 'walletconnect',
+              action: 'disconnect_init_error',
+              disconnectId,
+            },
+            contexts: {
+              walletconnect_disconnect_error: {
+                disconnectId,
+                error: e.message,
+                topic,
+                hasWalletKit: !!walletKit,
+              },
+            },
+          });
+          
           showToast({
             title: 'WalletConnect error',
             subtitle:
               'Something went wrong with WalletConnect, please try again.',
           });
+          
+          transaction.finish();
+          return;
         }
       }
 
       const sessionData = getSessionFromTopic(topic);
-
       const dAppName = sessionData?.peer?.metadata?.name ?? 'dApp';
+
+      Sentry.addBreadcrumb({
+        category: 'walletconnect',
+        message: 'Session data retrieved for disconnection',
+        level: 'info',
+        data: { 
+          disconnectId,
+          dAppName,
+          hasSessionData: !!sessionData,
+          sessionIcons: sessionData?.peer?.metadata?.icons?.length,
+        },
+      });
 
       try {
         setIsLoadingDisconnect(true);
+        
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'Initiating WalletConnect session disconnection',
+          level: 'info',
+          data: { disconnectId, topic },
+        });
+        
         await walletKit?.disconnectSession({
           topic,
           reason: getSdkError('USER_DISCONNECTED'),
+        });
+
+        Sentry.addBreadcrumb({
+          category: 'walletconnect',
+          message: 'WalletConnect session disconnection completed',
+          level: 'info',
+          data: { disconnectId, topic },
         });
 
         showToast({
@@ -323,20 +838,56 @@ export const useWalletConnect = () => {
         setActiveSessions(updatedSessions);
 
         checkAndLogoutIfPrivySession(sessionData);
+        
+        Sentry.captureMessage('WalletConnect session disconnection successful', {
+          level: 'info',
+          tags: {
+            component: 'walletconnect',
+            action: 'disconnect_success',
+            disconnectId,
+          },
+          contexts: {
+            walletconnect_disconnect_success: {
+              disconnectId,
+              topic,
+              dAppName,
+              hasSessionData: !!sessionData,
+            },
+          },
+        });
       } catch (error: any) {
         console.error('Error disconnecting session:', error.message);
+        
+        Sentry.captureException(error, {
+          tags: {
+            component: 'walletconnect',
+            action: 'disconnect_error',
+            disconnectId,
+          },
+          contexts: {
+            walletconnect_disconnect_error: {
+              disconnectId,
+              error: error.message,
+              topic,
+              dAppName,
+              hasSessionData: !!sessionData,
+            },
+          },
+        });
+        
         showToast({
           title: dAppName,
           subtitle: 'Error while disconnecting session. Please try again.',
           image: `${sessionData?.peer?.metadata?.icons[0]}`,
         });
+      } finally {
+        setIsLoadingDisconnect(false);
+        transaction.finish();
       }
-
-      setIsLoadingDisconnect(false);
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, getSessionFromTopic, initWalletKit, showToast]
+    [walletKit, getSessionFromTopic, initWalletKit, showToast, user]
   );
 
   const disconnectAllSessions = useCallback(async () => {

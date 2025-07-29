@@ -109,11 +109,48 @@ const SendModalBatchesTabView = () => {
   }, [contextNfts?.data, anyChainSending]);
 
   const onSend = async (chainId: number, batchId: string) => {
+    const sendId = `send_batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Start Sentry transaction for batch send flow
+    const transaction = Sentry.startTransaction({
+      name: 'send_batch_transaction',
+      op: 'send',
+    });
+
+    Sentry.setContext('send_batch', {
+      sendId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      chainId,
+      batchId,
+      isSending: isSending[chainId],
+      groupedTransactionsCount: groupedTransactionsByChainId[chainId]?.length || 0,
+    });
+
     if (isSending[chainId]) {
       transactionDebugLog(
         'Another batch is being sent, cannot process the sending of this batch:',
         batchId
       );
+      
+      Sentry.captureMessage('Batch send disabled - another batch in progress', {
+        level: 'warning',
+        tags: {
+          component: 'send_flow',
+          action: 'batch_send_disabled',
+          sendId,
+        },
+        contexts: {
+          batch_send_disabled: {
+            sendId,
+            chainId,
+            batchId,
+            isSending: isSending[chainId],
+          },
+        },
+      });
+      
+      transaction.finish();
       return;
     }
 
@@ -122,6 +159,13 @@ const SendModalBatchesTabView = () => {
       chainId,
       batchId,
       providerType: 'WalletConnect' // This will help identify if WalletConnect is being used
+    });
+
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Starting batch send transaction',
+      level: 'info',
+      data: { sendId, chainId, batchId },
     });
 
     // remove previously saved userOp for a new one
@@ -145,6 +189,19 @@ const SendModalBatchesTabView = () => {
         feeMultiplier: 1.2, // 20% increase per retry
       });
 
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Batch transaction sent successfully',
+        level: 'info',
+        data: { 
+          sendId,
+          chainId,
+          batchId,
+          sentBatchesCount: sent?.length || 0,
+          estimatedBatchesCount: sent?.[0]?.estimatedBatches?.length || 0,
+        },
+      });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMes =
@@ -152,6 +209,24 @@ const SendModalBatchesTabView = () => {
       console.warn('Final send() failed after retries:', errorMes);
       setErrorMessage((prev) => ({ ...prev, [chainId]: errorMes }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
+      
+      Sentry.captureException(error, {
+        tags: {
+          component: 'send_flow',
+          action: 'batch_send_error',
+          sendId,
+        },
+        contexts: {
+          batch_send_error: {
+            sendId,
+            chainId,
+            batchId,
+            error: error instanceof Error ? error.message : String(error),
+          },
+        },
+      });
+      
+      transaction.finish();
       return;
     }
 
@@ -171,8 +246,38 @@ const SendModalBatchesTabView = () => {
         ...prev,
         [chainId]: `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`,
       }));
+      
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Batch transaction cost estimated',
+        level: 'info',
+        data: { 
+          sendId,
+          chainId,
+          batchId,
+          estimatedCost,
+          nativeAssetSymbol: nativeAsset.symbol,
+        },
+      });
     } else {
       console.warn('Unable to get estimated cost', sent);
+      
+      Sentry.captureMessage('Unable to get batch estimated cost', {
+        level: 'warning',
+        tags: {
+          component: 'send_flow',
+          action: 'batch_no_estimated_cost',
+          sendId,
+        },
+        contexts: {
+          batch_no_estimated_cost: {
+            sendId,
+            chainId,
+            batchId,
+            sentData: sent,
+          },
+        },
+      });
     }
 
     const estimationErrorMessage =
@@ -184,6 +289,25 @@ const SendModalBatchesTabView = () => {
           'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.',
       }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
+      
+      Sentry.captureMessage('Batch estimation error during send', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'batch_estimation_error',
+          sendId,
+        },
+        contexts: {
+          batch_estimation_error: {
+            sendId,
+            chainId,
+            batchId,
+            errorMessage: estimationErrorMessage,
+          },
+        },
+      });
+      
+      transaction.finish();
       return;
     }
 
@@ -195,6 +319,25 @@ const SendModalBatchesTabView = () => {
           'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.',
       }));
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
+      
+      Sentry.captureMessage('Batch sending error during send', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'batch_sending_error',
+          sendId,
+        },
+        contexts: {
+          batch_sending_error: {
+            sendId,
+            chainId,
+            batchId,
+            errorMessage: sendingErrorMessage,
+          },
+        },
+      });
+      
+      transaction.finish();
       return;
     }
 
@@ -202,9 +345,35 @@ const SendModalBatchesTabView = () => {
 
     transactionDebugLog('Transaction batch new userOpHash:', newUserOpHash);
 
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'UserOp hash received for batch',
+      level: 'info',
+      data: { sendId, chainId, batchId, userOpHash: newUserOpHash },
+    });
+
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending((prev) => ({ ...prev, [chainId]: false }));
+      
+      Sentry.captureMessage('Failed to get UserOp hash for batch', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'batch_no_userop_hash',
+          sendId,
+        },
+        contexts: {
+          batch_no_userop_hash: {
+            sendId,
+            chainId,
+            batchId,
+            groupedTransactionsCount: groupedTransactionsByChainId[chainId]?.length || 0,
+          },
+        },
+      });
+      
+      transaction.finish();
       return;
     }
 
@@ -216,6 +385,13 @@ const SendModalBatchesTabView = () => {
     const maxAttempts = 9; // 9 * 5sec = 45sec
     let attempts = 0;
     let sentryCaptured = false;
+
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Starting UserOp status monitoring for batch',
+      level: 'info',
+      data: { sendId, chainId, batchId, maxAttempts, interval: userOpStatusInterval },
+    });
 
     const userOperationStatus = setInterval(async () => {
       attempts += 1;
@@ -232,7 +408,28 @@ const SendModalBatchesTabView = () => {
             'Transaction successfully submitted on chain with transaction hash:',
             response.transaction
           );
+          
+          Sentry.captureMessage('Batch transaction confirmed on chain', {
+            level: 'info',
+            tags: {
+              component: 'send_flow',
+              action: 'batch_transaction_confirmed',
+              sendId,
+            },
+            contexts: {
+              batch_transaction_confirmed: {
+                sendId,
+                chainId,
+                batchId,
+                userOpHash: newUserOpHash,
+                transactionHash: response.transaction,
+                attempts,
+              },
+            },
+          });
+          
           clearInterval(userOperationStatus);
+          transaction.finish();
           return;
         }
 
@@ -281,6 +478,7 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
             clearInterval(userOperationStatus);
+            transaction.finish();
           }
           return;
         }
@@ -336,6 +534,7 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
           }
+          transaction.finish();
         }
       } catch (err) {
         transactionDebugLog('Error getting userOp status:', err);
@@ -354,6 +553,7 @@ const SendModalBatchesTabView = () => {
             },
           }
         );
+        transaction.finish();
       }
     }, userOpStatusInterval);
 
@@ -362,12 +562,46 @@ const SendModalBatchesTabView = () => {
     );
     setIsSending((prev) => ({ ...prev, [chainId]: false }));
     showHistory();
+    
+    Sentry.captureMessage('Batch send transaction completed successfully', {
+      level: 'info',
+      tags: {
+        component: 'send_flow',
+        action: 'batch_send_success',
+        sendId,
+      },
+      contexts: {
+        batch_send_success: {
+          sendId,
+          chainId,
+          batchId,
+          estimatedCost: estimatedCostBN ? ethers.utils.formatUnits(estimatedCostBN, 18) : null,
+          groupedTransactionsCount: groupedTransactionsByChainId[chainId]?.length || 0,
+        },
+      },
+    });
+    
+    transaction.finish();
   };
 
   // To remove one transaction the entire batch needs to be rebuilt by
   // removing all transactions then re-adding all transactions minus
   // the one that has been deleted
   const removeOneTransaction = (transactionId: string, chainId: number) => {
+    const removeId = `remove_transaction_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Removing single transaction from batch',
+      level: 'info',
+      data: { 
+        removeId,
+        transactionId,
+        chainId,
+        chainTransactionsCount: globalTransactionsBatch.filter(tx => tx.chainId === chainId).length,
+      },
+    });
+
     // All transactions for this chain
     const chainTransactions = globalTransactionsBatch.filter(
       (tx) => tx.chainId === chainId
@@ -384,6 +618,24 @@ const SendModalBatchesTabView = () => {
         if (tx.id !== transactionId) {
           addToBatch(tx);
         }
+      });
+      
+      Sentry.captureMessage('Single transaction removed from batch', {
+        level: 'info',
+        tags: {
+          component: 'send_flow',
+          action: 'remove_single_transaction',
+          removeId,
+        },
+        contexts: {
+          remove_single_transaction: {
+            removeId,
+            transactionId,
+            chainId,
+            originalCount: chainTransactions.length,
+            remainingCount: chainTransactions.length - 1,
+          },
+        },
       });
     }, 0);
   };
@@ -416,9 +668,21 @@ const SendModalBatchesTabView = () => {
             </TransactionCount>
             <ToggleButton
               $expanded={!!expanded[+chainId]}
-              onClick={() =>
-                setExpanded((prev) => ({ ...prev, [chainId]: !prev[+chainId] }))
-              }
+              onClick={() => {
+                const newExpandedState = !expanded[+chainId];
+                setExpanded((prev) => ({ ...prev, [chainId]: newExpandedState }));
+                
+                Sentry.addBreadcrumb({
+                  category: 'send_flow',
+                  message: 'Batch expansion toggled',
+                  level: 'info',
+                  data: { 
+                    chainId: +chainId,
+                    newExpandedState,
+                    transactionCount: groupedTransactionsByChainId[+chainId].length,
+                  },
+                });
+              }}
             >
               <ArrowRightIcon size={15} />
             </ToggleButton>
@@ -443,12 +707,24 @@ const SendModalBatchesTabView = () => {
                         }
                       >
                         <RemoveButton
-                          onClick={() =>
+                          onClick={() => {
+                            Sentry.addBreadcrumb({
+                              category: 'send_flow',
+                              message: 'Remove transaction button clicked',
+                              level: 'info',
+                              data: { 
+                                transactionId: transaction.id,
+                                chainId: +chainId,
+                                transactionTitle: transaction.title,
+                                transactionTo: transaction.to,
+                              },
+                            });
+                            
                             removeOneTransaction(
                               transaction.id as string,
                               +chainId
-                            )
-                          }
+                            );
+                          }}
                         >
                           <TrashIcon size={15} />
                         </RemoveButton>
@@ -466,9 +742,37 @@ const SendModalBatchesTabView = () => {
             <Button
               id="delete-queue-button-batch-send-modal"
               onClick={() => {
+                const chainTransactionsCount = groupedTransactionsByChainId[+chainId].length;
+                
+                Sentry.addBreadcrumb({
+                  category: 'send_flow',
+                  message: 'Delete queue button clicked',
+                  level: 'info',
+                  data: { 
+                    chainId: +chainId,
+                    chainTransactionsCount,
+                    chainName: getChainName(+chainId),
+                  },
+                });
+                
                 groupedTransactionsByChainId[+chainId].forEach((transaction) =>
                   removeFromBatch(transaction.id as string)
                 );
+                
+                Sentry.captureMessage('Batch queue deleted', {
+                  level: 'info',
+                  tags: {
+                    component: 'send_flow',
+                    action: 'delete_batch_queue',
+                  },
+                  contexts: {
+                    delete_batch_queue: {
+                      chainId: +chainId,
+                      chainName: getChainName(+chainId),
+                      deletedTransactionsCount: chainTransactionsCount,
+                    },
+                  },
+                });
               }}
               disabled={anyChainSending}
               $fullWidth
@@ -479,7 +783,23 @@ const SendModalBatchesTabView = () => {
             </Button>
             <Button
               id="send-button-batch-send-modal"
-              onClick={() => onSend(+chainId, `batch-${chainId}`)}
+              onClick={() => {
+                const chainTransactionsCount = groupedTransactionsByChainId[+chainId].length;
+                
+                Sentry.addBreadcrumb({
+                  category: 'send_flow',
+                  message: 'Send batch button clicked',
+                  level: 'info',
+                  data: { 
+                    chainId: +chainId,
+                    chainTransactionsCount,
+                    chainName: getChainName(+chainId),
+                    anyChainSending,
+                  },
+                });
+                
+                onSend(+chainId, `batch-${chainId}`);
+              }}
               disabled={anyChainSending}
               $fullWidth
               $small
