@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -99,6 +100,26 @@ const getAmountLeft = (
   return selectedAssetBalance - +(amount || 0);
 };
 
+const getAssetSymbol = (
+  selectedAsset: AssetSelectOption | undefined
+): string => {
+  if (!selectedAsset) return '';
+  if (selectedAsset.type === 'token') {
+    return selectedAsset.asset.symbol;
+  }
+  return selectedAsset.collection.contractName;
+};
+
+const getAssetContract = (
+  selectedAsset: AssetSelectOption | undefined
+): string => {
+  if (!selectedAsset) return '';
+  if (selectedAsset.type === 'token') {
+    return selectedAsset.asset.contract;
+  }
+  return selectedAsset.collection.contractAddress;
+};
+
 const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [t] = useTranslation();
   const [recipient, setRecipient] = React.useState<string>('');
@@ -156,6 +177,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [approveData, setApproveData] = React.useState<string>('');
   const [gasPrice, setGasPrice] = React.useState<string>();
   const [feeMin, setFeeMin] = React.useState<string>();
+  const [selectedFeeType, setSelectedFeeType] =
+    React.useState<string>('Gasless');
 
   const dispatch = useAppDispatch();
   const walletPortfolio = useAppSelector(
@@ -274,11 +297,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               balance: feeOptions[0].value?.toString(),
             });
             setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
-            setPaymasterContext({
-              mode: 'commonerc20',
-              token: feeOptions[0].asset.contract,
-            });
-            setIsPaymaster(true);
+            if (selectedFeeType === 'Gasless') {
+              setPaymasterContext({
+                mode: 'commonerc20',
+                token: feeOptions[0].asset.contract,
+              });
+              setIsPaymaster(true);
+            }
           } else {
             setIsPaymaster(false);
             setPaymasterContext(null);
@@ -482,12 +507,75 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     Number(amount) > maxAmountAvailable;
 
   const onSend = async (ignoreSafetyWarning?: boolean) => {
+    const sendId = `send_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Start Sentry transaction for send flow
+    const transaction = Sentry.startTransaction({
+      name: 'send_token_transaction',
+      op: 'send',
+    });
+
+    Sentry.setContext('send_token', {
+      sendId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      selectedAsset: selectedAsset
+        ? {
+            id: selectedAsset.id,
+            type: selectedAsset.type,
+            symbol: getAssetSymbol(selectedAsset),
+            contract: getAssetContract(selectedAsset),
+            balance:
+              selectedAsset.type === 'token'
+                ? selectedAsset.balance
+                : undefined,
+            chainId: selectedAsset.chainId,
+          }
+        : null,
+      amount,
+      recipient,
+      ignoreSafetyWarning,
+      isSendDisabled,
+      isTransactionReady,
+      isPaymaster,
+    });
+
     if (isSendDisabled) {
       transactionDebugLog(
         'Another single transaction is being sent, cannot process the sending of this transaction'
       );
+
+      Sentry.captureMessage('Send disabled - another transaction in progress', {
+        level: 'warning',
+        tags: {
+          component: 'send_flow',
+          action: 'send_disabled',
+          sendId,
+        },
+        contexts: {
+          send_disabled: {
+            sendId,
+            isSending,
+            isTransactionReady,
+            isSendDisabled,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
+
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Starting token send transaction',
+      level: 'info',
+      data: {
+        sendId,
+        selectedAsset: getAssetSymbol(selectedAsset),
+        amount,
+      },
+    });
 
     // remove previously saved userOp for a new one
     localStorage.removeItem('latestUserOpStatus');
@@ -517,6 +605,25 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       );
       setIsSending(false);
       setErrorMessage('');
+
+      Sentry.captureMessage('Safety warning - amount more than half balance', {
+        level: 'warning',
+        tags: {
+          component: 'send_flow',
+          action: 'safety_warning',
+          sendId,
+        },
+        contexts: {
+          safety_warning: {
+            sendId,
+            amount,
+            balance: selectedAsset.balance,
+            threshold: selectedAsset.balance / 2,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
 
@@ -539,11 +646,38 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       if (amountLeft < +feeMin) {
         setErrorMessage(t`error.insufficientBalanceForGasless`);
         setIsSending(false);
+
+        Sentry.captureMessage('Insufficient balance for gasless transaction', {
+          level: 'error',
+          tags: {
+            component: 'send_flow',
+            action: 'insufficient_balance_gasless',
+            sendId,
+          },
+          contexts: {
+            insufficient_balance: {
+              sendId,
+              amountLeft,
+              feeMin,
+              selectedAsset: selectedAsset?.id,
+              selectedFeeAsset: selectedFeeAsset?.token,
+            },
+          },
+        });
+
+        transaction.setStatus('ok');
         return;
       }
     }
 
     transactionDebugLog('Preparing to send transaction');
+
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Preparing to send transaction',
+      level: 'info',
+      data: { sendId },
+    });
 
     let sent: ISentBatches[];
 
@@ -554,12 +688,42 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         feeMultiplier: 1.2, // 20% increase per retry
       });
 
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Transaction sent successfully',
+        level: 'info',
+        data: {
+          sendId,
+          sentBatchesCount: sent?.length || 0,
+          estimatedBatchesCount: sent?.[0]?.estimatedBatches?.length || 0,
+        },
+      });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMes =
         'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.';
       setErrorMessage(errorMes);
       setIsSending(false);
+
+      Sentry.captureException(error, {
+        tags: {
+          component: 'send_flow',
+          action: 'send_error',
+          sendId,
+        },
+        contexts: {
+          send_error: {
+            sendId,
+            error: error instanceof Error ? error.message : String(error),
+            selectedAsset: getAssetSymbol(selectedAsset),
+            amount,
+            recipient,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
 
@@ -581,8 +745,35 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       setEstimatedCostFormatted(
         `${formatAmountDisplay(estimatedCost, 0, 6)} ${nativeAsset.symbol}`
       );
+
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Transaction cost estimated',
+        level: 'info',
+        data: {
+          sendId,
+          estimatedCost,
+          nativeAssetSymbol: nativeAsset.symbol,
+          costAsFiat,
+        },
+      });
     } else {
       console.warn('Unable to get estimated cost', sent);
+
+      Sentry.captureMessage('Unable to get estimated cost', {
+        level: 'warning',
+        tags: {
+          component: 'send_flow',
+          action: 'no_estimated_cost',
+          sendId,
+        },
+        contexts: {
+          no_estimated_cost: {
+            sendId,
+            sentData: sent,
+          },
+        },
+      });
     }
 
     const estimationErrorMessage =
@@ -592,6 +783,25 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         'Something went wrong while estimating the asset transfer. Please try again later. If the problem persists, contact the PillarX team for support.'
       );
       setIsSending(false);
+
+      Sentry.captureMessage('Estimation error during send', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'estimation_error',
+          sendId,
+        },
+        contexts: {
+          estimation_error: {
+            sendId,
+            errorMessage: estimationErrorMessage,
+            selectedAsset: selectedAsset?.id,
+            amount,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
 
@@ -620,18 +830,51 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       },
     });
 
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'Asset presence recorded',
+      level: 'info',
+      data: { sendId, selectedAsset: selectedAsset?.id },
+    });
+
     const sendingErrorMessage = sent?.[0]?.sentBatches?.[0]?.errorMessage;
     if (sendingErrorMessage) {
       setErrorMessage(
         'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
       );
       setIsSending(false);
+
+      Sentry.captureMessage('Sending error during send', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'sending_error',
+          sendId,
+        },
+        contexts: {
+          sending_error: {
+            sendId,
+            errorMessage: sendingErrorMessage,
+            selectedAsset: selectedAsset?.id,
+            amount,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
 
     const newUserOpHash = sent?.[0]?.sentBatches[0]?.userOpHash;
 
     transactionDebugLog('Transaction new userOpHash:', newUserOpHash);
+
+    Sentry.addBreadcrumb({
+      category: 'send_flow',
+      message: 'UserOp hash received',
+      level: 'info',
+      data: { sendId, userOpHash: newUserOpHash },
+    });
 
     const userOpChainId = sent?.[0]?.sentBatches[0]?.chainId;
 
@@ -645,14 +888,47 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         payload?.title === 'WalletConnect Approval Request' ||
         payload?.title === 'WalletConnect Transaction Request'
       ) {
+        Sentry.addBreadcrumb({
+          category: 'send_flow',
+          message: 'Processing WalletConnect transaction',
+          level: 'info',
+          data: { sendId, payloadTitle: payload?.title },
+        });
+
         const txHash = await getTransactionHash(
           newUserOpHash,
           chainIdForTxHash
         );
         if (!txHash) {
           setWalletConnectTxHash(undefined);
+
+          Sentry.captureMessage(
+            'Failed to get WalletConnect transaction hash',
+            {
+              level: 'warning',
+              tags: {
+                component: 'send_flow',
+                action: 'walletconnect_no_txhash',
+                sendId,
+              },
+              contexts: {
+                walletconnect_error: {
+                  sendId,
+                  userOpHash: newUserOpHash,
+                  chainId: chainIdForTxHash,
+                },
+              },
+            }
+          );
         } else {
           setWalletConnectTxHash(txHash);
+
+          Sentry.addBreadcrumb({
+            category: 'send_flow',
+            message: 'WalletConnect transaction hash received',
+            level: 'info',
+            data: { sendId, txHash },
+          });
         }
       }
 
@@ -668,6 +944,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       const maxAttempts = 9; // 9 * 5sec = 45sec
       let attempts = 0;
       let sentryCaptured = false;
+
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Starting UserOp status monitoring',
+        level: 'info',
+        data: { sendId, maxAttempts, interval: userOpStatusInterval },
+      });
 
       const userOperationStatus = setInterval(async () => {
         attempts += 1;
@@ -688,7 +971,27 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               'Transaction successfully submitted on chain with transaction hash:',
               response.transaction
             );
+
+            Sentry.captureMessage('Transaction confirmed on chain', {
+              level: 'info',
+              tags: {
+                component: 'send_flow',
+                action: 'transaction_confirmed',
+                sendId,
+              },
+              contexts: {
+                transaction_confirmed: {
+                  sendId,
+                  userOpHash: newUserOpHash,
+                  chainId: chainIdForTxHash,
+                  transactionHash: response.transaction,
+                  attempts,
+                },
+              },
+            });
+
             clearInterval(userOperationStatus);
+            transaction.setStatus('ok');
             return;
           }
 
@@ -739,6 +1042,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
               setTransactionHash(response?.transaction);
               clearInterval(userOperationStatus);
+              transaction.setStatus('ok');
             }
             return;
           }
@@ -795,6 +1099,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
               setTransactionHash(response?.transaction);
             }
+            transaction.setStatus('ok');
           }
         } catch (err) {
           transactionDebugLog('Error getting userOp status:', err);
@@ -813,6 +1118,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               },
             }
           );
+          transaction.setStatus('ok');
         }
       }, userOpStatusInterval);
     }
@@ -820,6 +1126,25 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (!newUserOpHash) {
       setErrorMessage(t`error.failedToGetTransactionHashReachSupport`);
       setIsSending(false);
+
+      Sentry.captureMessage('Failed to get UserOp hash', {
+        level: 'error',
+        tags: {
+          component: 'send_flow',
+          action: 'no_userop_hash',
+          sendId,
+        },
+        contexts: {
+          no_userop_hash: {
+            sendId,
+            selectedAsset: selectedAsset?.id,
+            amount,
+            recipient,
+          },
+        },
+      });
+
+      transaction.setStatus('ok');
       return;
     }
 
@@ -832,10 +1157,45 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         return hashes;
       }, []);
       payload.onSent(allUserOpHashes);
+
+      Sentry.addBreadcrumb({
+        category: 'send_flow',
+        message: 'Payload onSent callback executed',
+        level: 'info',
+        data: { sendId, userOpHashesCount: allUserOpHashes.length },
+      });
     }
 
     showHistory();
     setIsSending(false);
+
+    Sentry.captureMessage('Token send transaction completed successfully', {
+      level: 'info',
+      tags: {
+        component: 'send_flow',
+        action: 'send_success',
+        sendId,
+      },
+      contexts: {
+        send_success: {
+          sendId,
+          selectedAsset: selectedAsset?.id,
+          amount: selectedAsset?.value,
+          recipient,
+          estimatedCost: estimatedCostBN
+            ? ethers.utils.formatUnits(estimatedCostBN, 18)
+            : null,
+          isPaymaster,
+          paymasterContext,
+          feeType,
+          feeAssetOptions,
+          selectedFeeAsset,
+          selectedPaymasterAddress,
+        },
+      },
+    });
+
+    transaction.setStatus('ok');
   };
 
   const onAddToBatch = async () => {
@@ -940,6 +1300,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   };
 
   const handleOnChangeFeeAsset = (value: SelectOption) => {
+    setSelectedFeeType(value.title);
     if (value.title === 'Gasless') {
       setPaymasterContext({
         mode: 'commonerc20',
@@ -1021,11 +1382,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   type="token"
                   onChange={handleOnChangeFeeAsset}
                   options={feeType}
+                  isLoadingOptions={feeAssetOptions.length === 0}
                   defaultSelectedId={feeType[0].id}
                 />
               </>
             )}
             {paymasterContext?.mode === 'commonerc20' &&
+              selectedFeeType === 'Gasless' &&
               feeAssetOptions.length > 0 && (
                 <>
                   <Label>{t`label.selectFeeAsset`}</Label>
@@ -1157,6 +1520,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             type="token"
             onChange={handleOnChangeFeeAsset}
             options={feeType}
+            isLoadingOptions={feeAssetOptions.length === 0}
             defaultSelectedId={feeType[0].id}
           />
           {paymasterContext?.mode === 'commonerc20' &&
