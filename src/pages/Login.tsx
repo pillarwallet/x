@@ -22,6 +22,7 @@ const Login = () => {
   const { disconnect } = useDisconnect();
   const [t] = useTranslation();
   const [debugInfo, setDebugInfo] = useState<any>({});
+  const [logoPressStart, setLogoPressStart] = useState<number | null>(null);
 
   // Get WalletConnect connector
   const walletConnectConnector = connectors.find(
@@ -150,6 +151,34 @@ const Login = () => {
     sessionStorage.setItem('loginPageReloaded', 'true');
   }, [address]);
 
+  // Long press handler for debug mode
+  useEffect(() => {
+    if (logoPressStart) {
+      const timer = setTimeout(() => {
+        const pressDuration = Date.now() - logoPressStart;
+        if (pressDuration >= 5000) { // 5 seconds
+          console.log('Debug mode activated via long press');
+          localStorage.setItem('debug_connections', 'true');
+          window.location.reload();
+        }
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [logoPressStart]);
+
+  const handleLogoMouseDown = () => {
+    setLogoPressStart(Date.now());
+  };
+
+  const handleLogoMouseUp = () => {
+    setLogoPressStart(null);
+  };
+
+  const handleLogoMouseLeave = () => {
+    setLogoPressStart(null);
+  };
+
   const logoTransitions = useTransition(true, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -168,6 +197,12 @@ const Login = () => {
                 alt="pillar-x-logo"
                 className="max-w-[300px] h-auto"
                 style={styles}
+                onMouseDown={handleLogoMouseDown}
+                onMouseUp={handleLogoMouseUp}
+                onMouseLeave={handleLogoMouseLeave}
+                onTouchStart={handleLogoMouseDown}
+                onTouchEnd={handleLogoMouseUp}
+                onTouchCancel={handleLogoMouseLeave}
               />
             )
         )}
