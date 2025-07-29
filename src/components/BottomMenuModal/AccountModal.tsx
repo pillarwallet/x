@@ -2,7 +2,6 @@
 import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useLogout } from '@privy-io/react-auth';
 import Tippy from '@tippyjs/react';
 import Avatar from 'boring-avatars';
 import {
@@ -20,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -36,6 +34,7 @@ import {
   visibleChains,
 } from '../../utils/blockchain';
 import { formatAmountDisplay } from '../../utils/number';
+import { useComprehensiveLogout } from '../../utils/logout';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
@@ -56,10 +55,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const accountAddress = useWalletAddress();
   const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
-  const { logout } = useLogout();
   const [t] = useTranslation();
-  const { isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { logout } = useComprehensiveLogout();
 
   const nfts = useAccountNfts();
   const [showNfts, setShowNfts] = React.useState(false);
@@ -150,32 +147,35 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
-    if (isConnected) {
-      try {
-        await disconnect();
-      } catch (e) {
-        /* empty */
-      }
-    }
+    // Handle private key logout
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
-    } else {
-      try {
-        await logout();
-      } catch (e) {
-        /* empty */
-      }
     }
 
+    // Use comprehensive logout for both Privy and WAGMI
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // If an error - display an alert box to the user
+      // eslint-disable-next-line no-alert
+      alert(
+        'Error during logout - this could just be a temporary issue. Please try again or clear your browser cache for this website to logout.'
+      );
+    }
+
+    // Clear any stored data
     clearDappStorage();
+
+    // Navigate to home
     navigate('/');
 
-    // Time to logout and redirect route
+    // Reload the page after a short delay to ensure clean state
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate, disconnect]);
+  }, [account, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {

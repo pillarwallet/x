@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useEffect, useState } from 'react';
-import BigBangStarField from 'react-big-bang-star-field';
 import styled from 'styled-components';
-import '../styles/landing/tailwind.css';
 
+// images
+import BigBangStarField from 'react-big-bang-star-field';
 import PillarXLogoLoading from '../assets/images/pillarX_full_white.png';
+
+// utils
+import { useComprehensiveLogout } from '../utils/logout';
 
 type LoadingProps = {
   type: 'enter' | 'wait';
@@ -14,7 +16,7 @@ type LoadingProps = {
 
 const Loading = ({ type }: LoadingProps) => {
   const [show, setShow] = useState(true);
-  const { logout } = usePrivy();
+  const { logout } = useComprehensiveLogout();
 
   const logoTransitions = useTransition(show, {
     from: { opacity: 0 },

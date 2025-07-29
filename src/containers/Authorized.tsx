@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { WalletClient } from 'viem';
+import { useAccount, useConnect } from 'wagmi';
+import { usePrivy } from '@privy-io/react-auth';
 
 // components
 import BottomMenu from '../components/BottomMenu';
 import Loading from '../pages/Loading';
+import DebugPanel from '../components/DebugPanel';
+import ConnectionDebug, { DebugInfo } from '../components/ConnectionDebug';
 
 // providers
 import AccountNftsProvider from '../providers/AccountNftsProvider';
@@ -32,6 +36,17 @@ export default function Authorized({
   chainId: number;
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
+
+  // Get hooks for debug info
+  const { authenticated, ready, user } = usePrivy();
+  const { connectors, isPending, error } = useConnect();
+  const { address, isConnected, isConnecting } = useAccount();
+
+  // Get WalletConnect connector
+  const walletConnectConnector = connectors.find(
+    ({ id }) => id === 'walletConnect'
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,6 +55,50 @@ export default function Authorized({
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Update debug info
+  useEffect(() => {
+    setDebugInfo({
+      privy: {
+        authenticated,
+        ready,
+        user: user
+          ? {
+              id: user.id,
+              email: user.email?.address,
+              wallet: user.wallet?.address,
+            }
+          : null,
+      },
+      wagmi: {
+        address,
+        isConnected,
+        isConnecting,
+        isPending,
+        error: error?.message,
+        connectorsCount: connectors.length,
+        connectorIds: connectors.map((c) => c.id),
+        walletConnectConnector: walletConnectConnector
+          ? {
+              id: walletConnectConnector.id,
+              name: walletConnectConnector.name,
+              ready: Boolean(walletConnectConnector.ready),
+            }
+          : null,
+      },
+    });
+  }, [
+    authenticated,
+    ready,
+    user,
+    address,
+    isConnected,
+    isConnecting,
+    isPending,
+    error,
+    connectors,
+    walletConnectConnector,
+  ]);
 
   if (showAnimation) {
     return <Loading type="enter" />;
@@ -65,6 +124,19 @@ export default function Authorized({
                       <Outlet />
                     </AuthContentWrapper>
                     <BottomMenu />
+
+                    {/* Debug Panel - shown when debug_connections is enabled */}
+                    {localStorage.getItem('debug_connections') === 'true' && (
+                      <DebugPanel title="Connection Debug">
+                        <ConnectionDebug
+                          debugInfo={debugInfo}
+                          onDisconnect={() => {
+                            // This will be handled by the comprehensive logout utility
+                            // when the user logs out through the normal flow
+                          }}
+                        />
+                      </DebugPanel>
+                    )}
                   </WalletConnectModalProvider>
                 </WalletConnectToastProvider>
               </SelectedChainsHistoryProvider>
