@@ -10,6 +10,7 @@ vi.mock('@sentry/react', () => ({
   addBreadcrumb: vi.fn(),
   startTransaction: vi.fn(() => ({
     finish: vi.fn(),
+    setStatus: vi.fn(),
   })),
   captureException: vi.fn(),
   captureMessage: vi.fn(),

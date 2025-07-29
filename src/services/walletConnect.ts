@@ -135,6 +135,8 @@ export const useWalletConnect = () => {
       },
     });
 
+    let logoutError: Error | null = null;
+
     try {
       // Use comprehensive logout for both Privy and WAGMI
       await comprehensiveLogout();
@@ -166,6 +168,8 @@ export const useWalletConnect = () => {
       // Reload the page to ensure clean state
       window.location.reload();
     } catch (error) {
+      logoutError = error instanceof Error ? error : new Error(String(error));
+
       Sentry.captureException(error, {
         tags: {
           component: 'walletconnect',
@@ -175,7 +179,7 @@ export const useWalletConnect = () => {
         contexts: {
           walletconnect_logout_error: {
             logoutId,
-            error: error instanceof Error ? error.message : String(error),
+            error: logoutError.message,
             hasUser: !!user,
             isConnected,
           },
@@ -185,7 +189,7 @@ export const useWalletConnect = () => {
       // Still reload the page even if logout fails
       window.location.reload();
     } finally {
-      transaction.setStatus('ok');
+      transaction.setStatus(logoutError ? 'internal_error' : 'ok');
     }
   };
 
@@ -321,7 +325,7 @@ export const useWalletConnect = () => {
         },
       });
 
-      transaction.setStatus('ok');
+      transaction.setStatus('internal_error');
       throw error;
     }
   }, [wallet, user]);
