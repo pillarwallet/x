@@ -562,7 +562,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -623,7 +623,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -665,7 +665,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           },
         });
 
-        transaction.finish();
+        transaction.setStatus('ok');
         return;
       }
     }
@@ -723,7 +723,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -801,7 +801,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -861,7 +861,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -991,7 +991,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             });
 
             clearInterval(userOperationStatus);
-            transaction.finish();
+            transaction.setStatus('ok');
             return;
           }
 
@@ -1042,7 +1042,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
               setTransactionHash(response?.transaction);
               clearInterval(userOperationStatus);
-              transaction.finish();
+              transaction.setStatus('ok');
             }
             return;
           }
@@ -1099,7 +1099,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
               setTransactionHash(response?.transaction);
             }
-            transaction.finish();
+            transaction.setStatus('ok');
           }
         } catch (err) {
           transactionDebugLog('Error getting userOp status:', err);
@@ -1118,7 +1118,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               },
             }
           );
-          transaction.finish();
+          transaction.setStatus('ok');
         }
       }, userOpStatusInterval);
     }
@@ -1144,7 +1144,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -1195,7 +1195,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       },
     });
 
-    transaction.finish();
+    transaction.setStatus('ok');
   };
 
   const onAddToBatch = async () => {

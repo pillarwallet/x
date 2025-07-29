@@ -286,7 +286,7 @@ const AuthLayout = () => {
             },
           });
 
-          transaction.finish();
+          transaction.setStatus('ok');
           return;
         }
 
@@ -322,7 +322,7 @@ const AuthLayout = () => {
             },
           });
 
-          transaction.finish();
+          transaction.setStatus('ok');
           return;
         }
 
@@ -457,10 +457,10 @@ const AuthLayout = () => {
                   },
                 });
 
-                if (account) {
+                if (wcAccount) {
                   // Create wallet client with WalletConnect provider
                   const newProvider = createWalletClient({
-                    account: account as `0x${string}`,
+                    account: wcAccount as `0x${string}`,
                     chain: getNetworkViem(1), // Default to mainnet
                     transport: custom(wcProvider),
                   });
@@ -500,7 +500,7 @@ const AuthLayout = () => {
                     }
                   );
 
-                  transaction.finish();
+                  transaction.setStatus('ok');
                   return;
                 }
 
@@ -621,7 +621,7 @@ const AuthLayout = () => {
           });
         }
 
-        transaction.finish();
+        transaction.setStatus('ok');
       };
       updateProvider();
     }

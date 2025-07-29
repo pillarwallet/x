@@ -185,7 +185,7 @@ export const useWalletConnect = () => {
       // Still reload the page even if logout fails
       window.location.reload();
     } finally {
-      transaction.finish();
+      transaction.setStatus('ok');
     }
   };
 
@@ -302,7 +302,7 @@ export const useWalletConnect = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
     } catch (error) {
       Sentry.captureException(error, {
         tags: {
@@ -321,7 +321,7 @@ export const useWalletConnect = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       throw error;
     }
   }, [wallet, user]);
@@ -434,7 +434,7 @@ export const useWalletConnect = () => {
           },
         });
 
-        transaction.finish();
+        transaction.setStatus('ok');
         return walletConnectTxHashRef.current;
       }
 
@@ -468,7 +468,7 @@ export const useWalletConnect = () => {
           }
         );
 
-        transaction.finish();
+        transaction.setStatus('ok');
         return undefined;
       }
 
@@ -513,7 +513,7 @@ export const useWalletConnect = () => {
     // reset txHash to undefined
     setWalletConnectTxHash(undefined);
 
-    transaction.finish();
+    transaction.setStatus('ok');
     return undefined;
   };
 
@@ -594,7 +594,7 @@ export const useWalletConnect = () => {
               'Something went wrong with WalletConnect, please try again.',
           });
 
-          transaction.finish();
+          transaction.setStatus('ok');
           return;
         }
       }
@@ -730,7 +730,7 @@ export const useWalletConnect = () => {
         }
       } finally {
         setIsLoadingConnect(false);
-        transaction.finish();
+        transaction.setStatus('ok');
       }
     },
     [walletKit, initWalletKit, showToast, getSessionFromTopic, wallet, user]
@@ -801,7 +801,7 @@ export const useWalletConnect = () => {
               'Something went wrong with WalletConnect, please try again.',
           });
 
-          transaction.finish();
+          transaction.setStatus('ok');
           return;
         }
       }
@@ -901,7 +901,7 @@ export const useWalletConnect = () => {
         });
       } finally {
         setIsLoadingDisconnect(false);
-        transaction.finish();
+        transaction.setStatus('ok');
       }
     },
 

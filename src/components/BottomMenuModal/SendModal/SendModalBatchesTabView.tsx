@@ -145,7 +145,7 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -214,7 +214,7 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -295,7 +295,7 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -325,7 +325,7 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -362,7 +362,7 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.finish();
+      transaction.setStatus('ok');
       return;
     }
 
@@ -424,7 +424,7 @@ const SendModalBatchesTabView = () => {
           });
 
           clearInterval(userOperationStatus);
-          transaction.finish();
+          transaction.setStatus('ok');
           return;
         }
 
@@ -473,7 +473,7 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
             clearInterval(userOperationStatus);
-            transaction.finish();
+            transaction.setStatus('ok');
           }
           return;
         }
@@ -529,7 +529,7 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
           }
-          transaction.finish();
+          transaction.setStatus('ok');
         }
       } catch (err) {
         transactionDebugLog('Error getting userOp status:', err);
@@ -548,7 +548,7 @@ const SendModalBatchesTabView = () => {
             },
           }
         );
-        transaction.finish();
+        transaction.setStatus('ok');
       }
     }, userOpStatusInterval);
 
@@ -579,7 +579,7 @@ const SendModalBatchesTabView = () => {
       },
     });
 
-    transaction.finish();
+    transaction.setStatus('ok');
   };
 
   // To remove one transaction the entire batch needs to be rebuilt by
