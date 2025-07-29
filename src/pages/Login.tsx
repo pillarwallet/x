@@ -181,14 +181,16 @@ const Login = () => {
       </Wrapper>
       
       {/* Debug Panel */}
-      <DebugPanel title="Connection Debug">
-        <ConnectionDebug 
-          debugInfo={debugInfo} 
-          onDisconnect={() => {
-            if (debugInfo.wagmi?.isConnected) disconnect();
-          }}
-        />
-      </DebugPanel>
+      {localStorage.getItem('debug_connections') === 'true' && (
+        <DebugPanel title="Connection Debug">
+          <ConnectionDebug 
+            debugInfo={debugInfo} 
+            onDisconnect={() => {
+              if (debugInfo.wagmi?.isConnected) disconnect();
+            }}
+          />
+        </DebugPanel>
+      )}
     </>
   );
 };
