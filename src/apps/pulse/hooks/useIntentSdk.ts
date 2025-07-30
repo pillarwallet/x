@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IntentSdk, Options } from '@etherspot/intent-sdk';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useState } from 'react';
@@ -29,6 +28,7 @@ export default function useIntentSdk() {
           account: walletProvider.address as Hex,
           transport: custom(provider),
         });
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         const sdk = new IntentSdk(walletClient as any, options);
         setIntentSdk(sdk);
       });

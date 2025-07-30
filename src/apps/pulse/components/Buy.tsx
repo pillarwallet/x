@@ -18,11 +18,14 @@ import useIntentSdk from '../hooks/useIntentSdk';
 import { getLogoForChainId } from '../../../utils/blockchain';
 import RandomAvatar from '../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import { PayingToken, SelectedToken } from '../types/tokens';
+import useModularSdk from '../hooks/useModularSdk';
+import { getChainName } from '../utils/constants';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   token: SelectedToken | null;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
+  payingTokens: PayingToken[];
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
   setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>;
   setExpressIntentResponse: Dispatch<
@@ -97,6 +100,43 @@ function getDispensableAssets(
   return [[], [], []];
 }
 
+function getButtonText(
+  isLoading: boolean,
+  isInstalling: boolean,
+  isFetching: boolean,
+  areModulesInstalled: boolean | undefined,
+  selectedToken: SelectedToken | null,
+  debouncedUsdAmount: string,
+  payingToken?: PayingToken
+) {
+  if (areModulesInstalled === false && payingToken && !isInstalling) {
+    return (
+      <div className="flex items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
+    );
+  }
+  const usdAmount = parseFloat(debouncedUsdAmount);
+  const tokenUsdValue = selectedToken?.usdValue
+    ? Number(selectedToken.usdValue)
+    : 0;
+
+  let tokenAmount = '';
+  if (!Number.isNaN(usdAmount) && usdAmount > 0 && tokenUsdValue > 0) {
+    tokenAmount = (usdAmount / tokenUsdValue).toFixed(4);
+  }
+
+  return isLoading || isInstalling || isFetching ? (
+    <div className="flex items-center justify-center">
+      <TailSpin color="#FFFFFF" height={15} width={15} />
+    </div>
+  ) : (
+    <div>
+      {selectedToken?.symbol
+        ? `Buy ${tokenAmount} ${selectedToken.symbol}`
+        : 'Buy'}
+    </div>
+  );
+}
+
 export default function Buy(props: BuyProps) {
   const {
     setExpressIntentResponse: setExInResp,
@@ -105,16 +145,25 @@ export default function Buy(props: BuyProps) {
     setSearching,
     token,
     walletPortfolioData,
+    payingTokens,
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
   const { intentSdk } = useIntentSdk();
+  const { areModulesInstalled, isInstalling, installModules, isFetching } =
+    useModularSdk({
+      payingTokens,
+    });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
   const accountAddress = useWalletAddress();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
+  const [dispensableAssets, setDispensableAssets] = useState<
+    DispensableAsset[]
+  >([]);
+  const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -124,12 +173,22 @@ export default function Buy(props: BuyProps) {
     }
   };
 
-  const handleBuySubmit = () => {
-    setExInResp(expressIntentResponse);
-    setPreviewBuy(true);
+  const handleBuySubmit = async () => {
+    if (!areModulesInstalled) {
+      await installModules();
+    } else {
+      setExInResp(expressIntentResponse);
+      setPreviewBuy(true);
+    }
   };
 
   const isDisabled = () => {
+    if (isInstalling || isFetching) {
+      return true;
+    }
+    if (!areModulesInstalled && payingTokens.length > 0) {
+      return false;
+    }
     return (
       isLoading ||
       !token ||
@@ -142,13 +201,45 @@ export default function Buy(props: BuyProps) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!usdAmount || !Number.isNaN(parseFloat(usdAmount))) {
+      if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
+        setNoEnoughLiquidity(false);
         setDebouncedUsdAmount(usdAmount);
+        const [dAssets, pChains, pTokens] = getDispensableAssets(
+          usdAmount,
+          walletPortfolioData?.result.data
+        );
+        if (
+          pChains.length === 0 ||
+          dAssets.length === 0 ||
+          pTokens.length === 0
+        ) {
+          setNoEnoughLiquidity(true);
+          return;
+        }
+        if (
+          payingTokens.length > 0 &&
+          pTokens[0].chainId === payingTokens[0].chainId &&
+          pTokens[0].name === payingTokens[0].name &&
+          pTokens[0].symbol === payingTokens[0].symbol
+        ) {
+          setDispensableAssets(dAssets);
+          setPermittedChains(pChains);
+        } else {
+          setDispensableAssets(dAssets);
+          setPermittedChains(pChains);
+          setPayingTokens(pTokens);
+        }
       }
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [usdAmount]);
+  }, [
+    usdAmount,
+    setPayingTokens,
+    walletPortfolioData?.result.data,
+    dispensableAssets.length,
+    payingTokens,
+  ]);
 
   useEffect(() => {
     const manageIntent = async (input: string) => {
@@ -159,8 +250,6 @@ export default function Buy(props: BuyProps) {
         accountAddress &&
         intentSdk
       ) {
-        const [dispensableAssets, permittedChains, payingTokens] =
-          getDispensableAssets(input, walletPortfolioData?.result.data);
         if (dispensableAssets.length === 0 && permittedChains.length === 0) {
           setNoEnoughLiquidity(true);
           return;
@@ -202,13 +291,10 @@ export default function Buy(props: BuyProps) {
         } catch (error) {
           console.error('express intent failed:: ', error);
         }
-        setPayingTokens(payingTokens);
         setIsLoading(false);
-      } else {
-        setPayingTokens([]);
       }
     };
-    if (debouncedUsdAmount) {
+    if (debouncedUsdAmount && areModulesInstalled) {
       manageIntent(debouncedUsdAmount);
     }
   }, [
@@ -218,6 +304,10 @@ export default function Buy(props: BuyProps) {
     setPayingTokens,
     token,
     walletPortfolioData?.result.data,
+    payingTokens,
+    areModulesInstalled,
+    dispensableAssets,
+    permittedChains,
   ]);
 
   return (
@@ -598,15 +688,14 @@ export default function Buy(props: BuyProps) {
           }}
           type="button"
         >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <TailSpin color="#FFFFFF" height={15} width={15} />
-            </div>
-          ) : token?.symbol ? (
-            `Buy ${parseFloat(debouncedUsdAmount) > 0 ? (Number(debouncedUsdAmount) / Number(token?.usdValue)).toFixed(4) : ''}
-            ${token?.symbol}`
-          ) : (
-            'Buy'
+          {getButtonText(
+            isLoading,
+            isInstalling,
+            isFetching,
+            areModulesInstalled,
+            token,
+            debouncedUsdAmount,
+            payingTokens.length > 0 ? payingTokens[0] : undefined
           )}
         </button>
       </div>

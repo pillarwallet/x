@@ -1,5 +1,5 @@
 import { PairResponse, TokenAssetResponse } from '../../../types/api';
-import { MOBULA_CHAIN_NAMES } from './constants';
+import { MOBULA_CHAIN_NAMES, MobulaChainNames } from './constants';
 
 export type Asset = {
   name: string;
@@ -12,13 +12,20 @@ export type Asset = {
   chain: string;
   decimals: number;
   contract: string;
+  priceChange24h: number | null;
 };
 
-export function parseAssetData(asset: TokenAssetResponse): Asset[] {
+export function parseAssetData(
+  asset: TokenAssetResponse,
+  chains: MobulaChainNames
+): Asset[] {
   const result: Asset[] = [];
   const { blockchains, contracts, decimals } = asset;
   for (let i = 0; i < blockchains.length; i += 1) {
-    if (MOBULA_CHAIN_NAMES.includes(blockchains[i])) {
+    if (
+      MOBULA_CHAIN_NAMES.includes(blockchains[i]) &&
+      (chains === MobulaChainNames.All || chains === blockchains[i])
+    ) {
       result.push({
         name: asset.name,
         symbol: asset.symbol,
@@ -30,6 +37,7 @@ export function parseAssetData(asset: TokenAssetResponse): Asset[] {
         chain: blockchains[i],
         decimals: decimals[i],
         contract: contracts[i],
+        priceChange24h: asset.price_change_24h,
       });
     }
   }
@@ -53,6 +61,7 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
         chain: blockchains[i],
         decimals: decimals[i],
         contract: contracts[i],
+        priceChange24h: asset.price_change_24h,
       });
     }
   }
@@ -60,13 +69,14 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
 }
 
 export function parseSearchData(
-  searchData: TokenAssetResponse[] | PairResponse[]
+  searchData: TokenAssetResponse[] | PairResponse[],
+  chains: MobulaChainNames
 ) {
   const assets: Asset[] = [];
   const markets: Asset[] = [];
   searchData.forEach((item) => {
     if (item.type === 'asset') {
-      assets.push(...parseAssetData(item as TokenAssetResponse));
+      assets.push(...parseAssetData(item as TokenAssetResponse, chains));
     } else if (item.type === 'token') {
       assets.push(...parseTokenData(item as TokenAssetResponse));
     }

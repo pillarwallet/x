@@ -4,10 +4,12 @@ import { isAddress } from 'viem';
 import Search from './Search';
 import HomeScreen from './HomeScreen';
 import { SelectedToken } from '../types/tokens';
+import { MobulaChainNames } from '../utils/constants';
 
 export default function AppWrapper() {
   const [searching, setSearching] = useState(false);
   const [isBuy, setIsBuy] = useState(true);
+  const [chains, setChains] = useState<MobulaChainNames>(MobulaChainNames.All);
   const [buyToken, setBuyToken] = useState<SelectedToken | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sellToken, setSellToken] = useState<SelectedToken | null>(null);
@@ -33,6 +35,8 @@ export default function AppWrapper() {
       isBuy={isBuy}
       setBuyToken={setBuyToken}
       setSellToken={setSellToken}
+      chains={chains}
+      setChains={setChains}
     />
   ) : (
     <HomeScreen

@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useGetSearchTokensQuery } from '../../../services/pillarXApiSearchTokens';
+import { getChainId, MobulaChainNames } from '../utils/constants';
 
-export function useTokenSearch(props: { isBuy: boolean }) {
+export function useTokenSearch(props: {
+  isBuy: boolean;
+  chains: MobulaChainNames;
+}) {
   const { isBuy } = props;
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
@@ -23,6 +27,7 @@ export function useTokenSearch(props: { isBuy: boolean }) {
   } = useGetSearchTokensQuery(
     {
       searchInput: debouncedSearchText,
+      filterBlockchains: getChainId(props.chains),
     },
     { skip: !debouncedSearchText }
   );

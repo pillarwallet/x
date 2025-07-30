@@ -180,6 +180,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 setSearching={setSearching}
                 token={buyToken}
                 walletPortfolioData={walletPortfolioData}
+                payingTokens={payingTokens}
                 setPreviewBuy={setPreviewBuy}
                 setPayingTokens={setPayingTokens}
                 setExpressIntentResponse={setExpressIntentResponse}
