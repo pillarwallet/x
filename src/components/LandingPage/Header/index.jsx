@@ -62,28 +62,16 @@ const Header = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  reloadDocument
-                  to="/waitlist"
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                >
-                  Testing Campaign
-                </NavLink>
-              </li>
-              <li>
                 <a href="https://blog.pillarx.app/">Blog</a>
               </li>
             </ul>
 
-            <a
-              href="https://twitter.com/PX_Web3"
-              target="_blank"
-              rel="noreferrer"
-              className="header__social"
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
+            <Link
+              to="/login"
+              className="header__login cta plausible-event-name=Login+Nav"
             >
-              <img src="https://cdn.pillarx.app/home-x.svg" alt="home-image" />
-            </a>
+              <span>Log in</span>
+            </Link>
           </nav>
 
           <div
