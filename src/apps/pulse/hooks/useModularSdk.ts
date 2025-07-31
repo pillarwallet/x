@@ -87,6 +87,7 @@ export default function useModularSdk(props: ModularSdkProps) {
         .catch((err) => {
           console.error('err:: ', err);
           setIsFetching(false);
+          setAreModulesInstalled(false);
         });
     }
   }, [modularSdk, payingTokens, areModulesInstalled]);
