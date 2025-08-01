@@ -188,8 +188,21 @@ const Login = () => {
             )
         )}
         <InsideWrapper>
-          <Button onClick={() => {trackEvent('Login Page Get Started'); login();}} $fullWidth>{t`action.getStarted`}</Button>
-          <Button onClick={() => {trackEvent('Login Page Connect Pillar Wallet'); listenForWalletConnectUri();}} $last $fullWidth>
+          <Button
+            onClick={() => {
+              trackEvent('Login Page Get Started');
+              login();
+            }}
+            $fullWidth
+          >{t`action.getStarted`}</Button>
+          <Button
+            onClick={() => {
+              trackEvent('Login Page Connect Pillar Wallet');
+              listenForWalletConnectUri();
+            }}
+            $last
+            $fullWidth
+          >
             <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
             {t`action.connectPillarWallet`}
           </Button>
