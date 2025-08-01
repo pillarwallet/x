@@ -182,8 +182,8 @@ const Login = () => {
             )
         )}
         <InsideWrapper>
-          <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
-          <Button onClick={listenForWalletConnectUri} $last $fullWidth>
+          <Button onClick={login} $fullWidth className="plausible-event-name=Login+Get+Started">{t`action.getStarted`}</Button>
+          <Button onClick={listenForWalletConnectUri} $last $fullWidth className="plausible-event-name=Login+Connect+Pillar+Wallet">
             <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
             {t`action.connectPillarWallet`}
           </Button>
