@@ -6,6 +6,31 @@ import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
 
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+  setContext: vi.fn(),
+  addBreadcrumb: vi.fn(),
+  startTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setStatus: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
+  })),
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+  withScope: vi.fn((callback) => callback({
+    setLevel: vi.fn(),
+    setTag: vi.fn(),
+    setExtra: vi.fn(),
+  })),
+}));
+
+// Mock Sentry utility functions
+vi.mock('../../../utils/sentry', () => ({
+  logUserInteraction: vi.fn(),
+  addExchangeBreadcrumb: vi.fn(),
+}));
+
 // reducer
 import {
   setAmountReceive,
