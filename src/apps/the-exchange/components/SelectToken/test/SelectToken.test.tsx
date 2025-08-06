@@ -24,11 +24,13 @@ vi.mock('@sentry/react', () => ({
   })),
   captureException: vi.fn(),
   captureMessage: vi.fn(),
-  withScope: vi.fn((callback) => callback({
-    setLevel: vi.fn(),
-    setTag: vi.fn(),
-    setExtra: vi.fn(),
-  })),
+  withScope: vi.fn((callback) =>
+    callback({
+      setLevel: vi.fn(),
+      setTag: vi.fn(),
+      setExtra: vi.fn(),
+    })
+  ),
 }));
 
 // Mock Sentry utility functions

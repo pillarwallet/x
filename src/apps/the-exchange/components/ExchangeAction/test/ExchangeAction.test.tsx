@@ -6,25 +6,6 @@ import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { store } from '../../../../../store';
 
-// Mock Sentry
-vi.mock('@sentry/react', () => ({
-  setContext: vi.fn(),
-  addBreadcrumb: vi.fn(),
-  startTransaction: vi.fn(() => ({
-    finish: vi.fn(),
-    setStatus: vi.fn(),
-    setTag: vi.fn(),
-    setData: vi.fn(),
-  })),
-  captureException: vi.fn(),
-  captureMessage: vi.fn(),
-  withScope: vi.fn((callback) => callback({
-    setLevel: vi.fn(),
-    setTag: vi.fn(),
-    setExtra: vi.fn(),
-  })),
-}));
-
 // reducer
 import {
   setAmountReceive,
@@ -49,6 +30,27 @@ import ExchangeAction from '../ExchangeAction';
 import { Token } from '../../../../../services/tokensData';
 import * as useOffer from '../../../hooks/useOffer';
 import { SwapOffer } from '../../../utils/types';
+
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+  setContext: vi.fn(),
+  addBreadcrumb: vi.fn(),
+  startTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setStatus: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
+  })),
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+  withScope: vi.fn((callback) =>
+    callback({
+      setLevel: vi.fn(),
+      setTag: vi.fn(),
+      setExtra: vi.fn(),
+    })
+  ),
+}));
 
 const mockTokenAssets: Token[] = [
   {
