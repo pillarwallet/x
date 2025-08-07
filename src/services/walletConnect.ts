@@ -42,6 +42,18 @@ import {
 // utils
 import { useComprehensiveLogout } from '../utils/logout';
 
+// Helper function to capture Sentry events with context
+const captureWithContext = (
+  contextName: string,
+  contextData: Record<string, unknown>,
+  captureFn: () => void
+) => {
+  Sentry.withScope((scope) => {
+    scope.setContext(contextName, contextData);
+    captureFn();
+  });
+};
+
 export const useWalletConnect = () => {
   const wallet = useWalletAddress();
   const { getSdk } = useEtherspot();
@@ -109,11 +121,6 @@ export const useWalletConnect = () => {
     const logoutId = `walletconnect_logout_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for logout
-    const transaction = Sentry.startTransaction({
-      name: 'walletconnect_logout',
-      op: 'authentication',
-    });
-
     Sentry.setContext('walletconnect_logout', {
       logoutId,
       timestamp: new Date().toISOString(),
@@ -188,8 +195,6 @@ export const useWalletConnect = () => {
 
       // Still reload the page even if logout fails
       window.location.reload();
-    } finally {
-      transaction.setStatus(logoutError ? 'internal_error' : 'ok');
     }
   };
 
@@ -230,18 +235,15 @@ export const useWalletConnect = () => {
     const initId = `walletkit_init_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for WalletKit initialization
-    const transaction = Sentry.startTransaction({
-      name: 'walletkit_initialization',
-      op: 'walletconnect',
-    });
-
-    Sentry.setContext('walletkit_init', {
-      initId,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
-      hasWallet: !!wallet,
-      hasUser: !!user,
+    Sentry.withScope((scope) => {
+      scope.setContext('walletkit_init', {
+        initId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        projectId: import.meta.env.VITE_REOWN_PROJECT_ID ? 'SET' : 'NOT_SET',
+        hasWallet: !!wallet,
+        hasUser: !!user,
+      });
     });
 
     Sentry.addBreadcrumb({
@@ -306,7 +308,7 @@ export const useWalletConnect = () => {
         },
       });
 
-      transaction.setStatus('ok');
+      // Transaction completed successfully
     } catch (error) {
       Sentry.captureException(error, {
         tags: {
@@ -324,8 +326,6 @@ export const useWalletConnect = () => {
           },
         },
       });
-
-      transaction.setStatus('internal_error');
       throw error;
     }
   }, [wallet, user]);
@@ -374,19 +374,14 @@ export const useWalletConnect = () => {
     const txHashId = `get_tx_hash_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for transaction hash retrieval
-    const transaction = Sentry.startTransaction({
-      name: 'get_transaction_hash',
-      op: 'walletconnect',
-    });
-
-    Sentry.setContext('get_transaction_hash', {
+    const contextData = {
       txHashId,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
       hasWalletConnectPayload: !!walletConnectPayloadRef.current,
       timeout: 180000, // 3 minutes
-    });
+    };
 
     Sentry.addBreadcrumb({
       category: 'walletconnect',
@@ -421,24 +416,29 @@ export const useWalletConnect = () => {
           },
         });
 
-        Sentry.captureMessage('Transaction hash retrieved successfully', {
-          level: 'info',
-          tags: {
-            component: 'walletconnect',
-            action: 'tx_hash_success',
-            txHashId,
-          },
-          contexts: {
-            tx_hash_success: {
+        const currentAttempts = attempts;
+        const currentTxHash = walletConnectTxHashRef.current;
+        const currentTimeElapsed = Date.now() - (timeout - 180000);
+
+        captureWithContext('get_transaction_hash', contextData, () => {
+          Sentry.captureMessage('Transaction hash retrieved successfully', {
+            level: 'info',
+            tags: {
+              component: 'walletconnect',
+              action: 'tx_hash_success',
               txHashId,
-              attempts,
-              txHash: walletConnectTxHashRef.current,
-              timeElapsed: Date.now() - (timeout - 180000),
             },
-          },
+            contexts: {
+              tx_hash_success: {
+                txHashId,
+                attempts: currentAttempts,
+                txHash: currentTxHash,
+                timeElapsed: currentTimeElapsed,
+              },
+            },
+          });
         });
 
-        transaction.setStatus('ok');
         return walletConnectTxHashRef.current;
       }
 
@@ -472,7 +472,6 @@ export const useWalletConnect = () => {
           }
         );
 
-        transaction.setStatus('ok');
         return undefined;
       }
 
@@ -517,7 +516,6 @@ export const useWalletConnect = () => {
     // reset txHash to undefined
     setWalletConnectTxHash(undefined);
 
-    transaction.setStatus('ok');
     return undefined;
   };
 
@@ -537,20 +535,17 @@ export const useWalletConnect = () => {
       const connectId = `walletconnect_connect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       // Start Sentry transaction for WalletConnect connection
-      const transaction = Sentry.startTransaction({
-        name: 'walletconnect_connect',
-        op: 'walletconnect',
-      });
-
-      Sentry.setContext('walletconnect_connect', {
-        connectId,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        hasWalletKit: !!walletKit,
-        hasWallet: !!wallet,
-        hasUser: !!user,
-        uriLength: copiedUri.length,
-        uriStartsWith: copiedUri.substring(0, 20),
+      Sentry.withScope((scope) => {
+        scope.setContext('walletconnect_connect', {
+          connectId,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          hasWalletKit: !!walletKit,
+          hasWallet: !!wallet,
+          hasUser: !!user,
+          uriLength: copiedUri.length,
+          uriStartsWith: copiedUri.substring(0, 20),
+        });
       });
 
       Sentry.addBreadcrumb({
@@ -598,7 +593,6 @@ export const useWalletConnect = () => {
               'Something went wrong with WalletConnect, please try again.',
           });
 
-          transaction.setStatus('ok');
           return;
         }
       }
@@ -734,7 +728,6 @@ export const useWalletConnect = () => {
         }
       } finally {
         setIsLoadingConnect(false);
-        transaction.setStatus('ok');
       }
     },
     [walletKit, initWalletKit, showToast, getSessionFromTopic, wallet, user]
@@ -745,18 +738,15 @@ export const useWalletConnect = () => {
       const disconnectId = `walletconnect_disconnect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       // Start Sentry transaction for session disconnection
-      const transaction = Sentry.startTransaction({
-        name: 'walletconnect_disconnect_session',
-        op: 'walletconnect',
-      });
-
-      Sentry.setContext('walletconnect_disconnect', {
-        disconnectId,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        topic,
-        hasWalletKit: !!walletKit,
-        hasUser: !!user,
+      Sentry.withScope((scope) => {
+        scope.setContext('walletconnect_disconnect', {
+          disconnectId,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          topic,
+          hasWalletKit: !!walletKit,
+          hasUser: !!user,
+        });
       });
 
       Sentry.addBreadcrumb({
@@ -805,7 +795,6 @@ export const useWalletConnect = () => {
               'Something went wrong with WalletConnect, please try again.',
           });
 
-          transaction.setStatus('ok');
           return;
         }
       }
@@ -905,7 +894,6 @@ export const useWalletConnect = () => {
         });
       } finally {
         setIsLoadingDisconnect(false);
-        transaction.setStatus('ok');
       }
     },
 

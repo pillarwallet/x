@@ -19,6 +19,15 @@ import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebug
 import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
+// utils
+import {
+  logSwapOperation,
+  logExchangeError,
+  logUserInteraction,
+  addExchangeBreadcrumb,
+  startExchangeTransaction,
+} from '../../utils/sentry';
+
 // types
 import { PortfolioData } from '../../../../types/api';
 import { SwapOffer } from '../../utils/types';
@@ -81,22 +90,70 @@ const ExchangeAction = () => {
   };
 
   const onClickToExchange = async () => {
+    const transaction = startExchangeTransaction(
+      'exchange_click',
+      {
+        isOfferLoading,
+        isNoValidOffer,
+        bestOffer: bestOffer ? 'available' : 'not_available',
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+      },
+      walletAddress
+    );
+
     setErrorMessage('');
 
+    // Log user interaction
+    logUserInteraction('exchange_button_clicked', {
+      isOfferLoading,
+      isNoValidOffer,
+      bestOffer: bestOffer ? 'available' : 'not_available',
+      swapToken: swapToken?.symbol,
+      receiveToken: receiveToken?.symbol,
+      amountSwap,
+      walletAddress,
+    });
+
+    addExchangeBreadcrumb('Exchange button clicked', 'user_interaction', {
+      isOfferLoading,
+      isNoValidOffer,
+      walletAddress,
+    });
+
     if (isOfferLoading) {
+      logSwapOperation('exchange_loading_error', {
+        error: 'Please wait until the offer is found.',
+        walletAddress,
+      });
       setErrorMessage('Please wait until the offer is found.');
+      transaction.finish();
       return;
     }
 
     if (isNoValidOffer) {
+      logSwapOperation('exchange_no_offer_error', {
+        error:
+          'No offer was found! Please try changing the amounts to try again.',
+        walletAddress,
+      });
       setErrorMessage(
         'No offer was found! Please try changing the amounts to try again.'
       );
+      transaction.finish();
       return;
     }
 
     try {
       setIsAddingToBatch(true);
+
+      addExchangeBreadcrumb('Getting step transactions', 'exchange', {
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+        walletAddress,
+      });
 
       // Convert walletPortfolio to Token[] for userPortfolio
       const userPortfolio = walletPortfolio
@@ -115,14 +172,36 @@ const ExchangeAction = () => {
         stepTransactions
       );
 
+      logSwapOperation('step_transactions_retrieved', {
+        stepTransactionsCount: stepTransactions.length,
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+        walletAddress,
+      });
+
       if (!stepTransactions.length) {
+        logSwapOperation('no_step_transactions', {
+          error:
+            'We were not able to add this to the queue at the moment. Please try again.',
+          walletAddress,
+        });
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
+        transaction.finish();
         return;
       }
 
       if (stepTransactions.length) {
+        logSwapOperation('adding_transactions_to_batch', {
+          transactionCount: stepTransactions.length,
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        });
+
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < stepTransactions.length; ++i) {
           const { value } = stepTransactions[i];
@@ -132,6 +211,18 @@ const ExchangeAction = () => {
           transactionDebugLog(
             'The Exchange - Adding transaction to batch:',
             stepTransactions[i]
+          );
+
+          addExchangeBreadcrumb(
+            `Adding transaction ${i + 1}/${stepTransactions.length} to batch`,
+            'exchange',
+            {
+              transactionIndex: i,
+              totalTransactions: stepTransactions.length,
+              value: integerValue,
+              to: stepTransactions[i].to,
+              walletAddress,
+            }
           );
 
           addToBatch({
@@ -149,16 +240,43 @@ const ExchangeAction = () => {
             data: stepTransactions[i].data?.toString() ?? '',
           });
         }
+
+        logSwapOperation('batch_modal_opened', {
+          transactionCount: stepTransactions.length,
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        });
+
         setShowBatchSendModal(true);
         showSend();
       }
     } catch (error) {
+      const exchangeErrorMessage =
+        error instanceof Error ? error.message : String(error);
+      logExchangeError(
+        exchangeErrorMessage,
+        {
+          operation: 'exchange_click',
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        },
+        {
+          component: 'ExchangeAction',
+          method: 'onClickToExchange',
+        }
+      );
+
       transactionDebugLog('Swap batch error:', error);
       setErrorMessage(
         'We were not able to add this to the queue at the moment. Please try again.'
       );
     } finally {
       setIsAddingToBatch(false);
+      transaction.finish();
     }
   };
 

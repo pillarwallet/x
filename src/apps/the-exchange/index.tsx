@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEtherspot } from '@etherspot/transaction-kit';
+import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import { EVM, createConfig } from '@lifi/sdk';
 import { Chain, WalletClient, createWalletClient, http } from 'viem';
+import { useEffect } from 'react';
 
 // styles
 import styled from 'styled-components';
@@ -12,6 +13,11 @@ import { useAppSelector } from './hooks/useReducerHooks';
 
 // utils
 import { supportedChains } from '../../utils/blockchain';
+import {
+  initSentryForExchange,
+  logExchangeEvent,
+  addExchangeBreadcrumb,
+} from './utils/sentry';
 
 // components
 import CardsSwap from './components/CardsSwap/CardsSwap';
@@ -24,6 +30,7 @@ import XBackground from './images/x-background.svg';
 
 export const App = () => {
   const { provider } = useEtherspot();
+  const walletAddress = useWalletAddress();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
@@ -31,22 +38,82 @@ export const App = () => {
     (state) => state.swap.isReceiveOpen as boolean
   );
 
+  // Initialize Sentry for the-exchange app
+  useEffect(() => {
+    initSentryForExchange();
+
+    // Log app initialization
+    logExchangeEvent(
+      'The Exchange app initialized',
+      'info',
+      {
+        walletAddress,
+        isSwapOpen,
+        isReceiveOpen,
+      },
+      {
+        component: 'App',
+        action: 'initialization',
+      }
+    );
+
+    addExchangeBreadcrumb('The Exchange app loaded', 'app', {
+      walletAddress,
+      timestamp: new Date().toISOString(),
+    });
+  }, [walletAddress, isSwapOpen, isReceiveOpen]);
+
   createConfig({
     integrator: 'PillarX',
     providers: [
       EVM({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         getWalletClient: async () => provider as any,
-        switchChain: async (chainId) =>
+        switchChain: async (chainId) => {
+          // Log chain switching
+          logExchangeEvent(
+            'Chain switching initiated',
+            'info',
+            {
+              walletAddress,
+              chainId,
+              currentChain: supportedChains.find(
+                (chain) => chain.id === chainId
+              ),
+            },
+            {
+              component: 'App',
+              action: 'chain_switch',
+            }
+          );
+
           // Switch chain by creating a new wallet client
-          createWalletClient({
+          const newWalletClient = createWalletClient({
             account: (provider as WalletClient).account,
             chain: supportedChains.find(
               (chain) => chain.id === chainId
             ) as Chain,
             transport: http(),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          }) as any,
+          }) as any;
+
+          // Log successful chain switch
+          logExchangeEvent(
+            'Chain switching completed',
+            'info',
+            {
+              walletAddress,
+              chainId,
+              newChain: supportedChains.find((chain) => chain.id === chainId),
+            },
+            {
+              component: 'App',
+              action: 'chain_switch_success',
+            }
+          );
+
+          return newWalletClient;
+        },
       }),
     ],
     apiKey: import.meta.env.VITE_LIFI_API_KEY,

@@ -106,11 +106,6 @@ const SendModalBatchesTabView = () => {
     const sendId = `send_batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for batch send flow
-    const transaction = Sentry.startTransaction({
-      name: 'send_batch_transaction',
-      op: 'send',
-    });
-
     Sentry.setContext('send_batch', {
       sendId,
       timestamp: new Date().toISOString(),
@@ -145,7 +140,6 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.setStatus('ok');
       return;
     }
 
@@ -214,7 +208,6 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.setStatus('ok');
       return;
     }
 
@@ -295,7 +288,6 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.setStatus('ok');
       return;
     }
 
@@ -325,7 +317,6 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.setStatus('ok');
       return;
     }
 
@@ -362,7 +353,6 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      transaction.setStatus('ok');
       return;
     }
 
@@ -424,7 +414,6 @@ const SendModalBatchesTabView = () => {
           });
 
           clearInterval(userOperationStatus);
-          transaction.setStatus('ok');
           return;
         }
 
@@ -473,7 +462,6 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
             clearInterval(userOperationStatus);
-            transaction.setStatus('ok');
           }
           return;
         }
@@ -529,7 +517,6 @@ const SendModalBatchesTabView = () => {
 
             setTransactionHash(response?.transaction);
           }
-          transaction.setStatus('ok');
         }
       } catch (err) {
         transactionDebugLog('Error getting userOp status:', err);
@@ -548,7 +535,6 @@ const SendModalBatchesTabView = () => {
             },
           }
         );
-        transaction.setStatus('ok');
       }
     }, userOpStatusInterval);
 
@@ -578,8 +564,6 @@ const SendModalBatchesTabView = () => {
         },
       },
     });
-
-    transaction.setStatus('ok');
   };
 
   // To remove one transaction the entire batch needs to be rebuilt by

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import Plausible from 'plausible-tracker';
 
 // components
 import Button from '../components/Button';
@@ -14,6 +15,11 @@ import ConnectionDebug, { DebugInfo } from '../components/ConnectionDebug';
 // images
 import PillarWalletIcon from '../apps/leaderboard/images/pillar-wallet-icon.svg';
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
+
+// Plausible Domain Config
+const { trackEvent } = Plausible({
+  domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN,
+});
 
 const Login = () => {
   const { login, authenticated, user, ready } = usePrivy();
@@ -182,8 +188,21 @@ const Login = () => {
             )
         )}
         <InsideWrapper>
-          <Button onClick={login} $fullWidth>{t`action.getStarted`}</Button>
-          <Button onClick={listenForWalletConnectUri} $last $fullWidth>
+          <Button
+            onClick={() => {
+              trackEvent('Login Page Get Started');
+              login();
+            }}
+            $fullWidth
+          >{t`action.getStarted`}</Button>
+          <Button
+            onClick={() => {
+              trackEvent('Login Page Connect Pillar Wallet');
+              listenForWalletConnectUri();
+            }}
+            $last
+            $fullWidth
+          >
             <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
             {t`action.connectPillarWallet`}
           </Button>
