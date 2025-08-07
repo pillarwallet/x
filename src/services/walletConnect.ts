@@ -42,6 +42,18 @@ import {
 // utils
 import { useComprehensiveLogout } from '../utils/logout';
 
+// Helper function to capture Sentry events with context
+const captureWithContext = (
+  contextName: string,
+  contextData: Record<string, unknown>,
+  captureFn: () => void
+) => {
+  Sentry.withScope((scope) => {
+    scope.setContext(contextName, contextData);
+    captureFn();
+  });
+};
+
 export const useWalletConnect = () => {
   const wallet = useWalletAddress();
   const { getSdk } = useEtherspot();
@@ -78,21 +90,19 @@ export const useWalletConnect = () => {
 
   // Sentry context for WalletConnect state
   useEffect(() => {
-    Sentry.withScope((scope) => {
-      scope.setContext('walletconnect_state', {
-        hasWallet: !!wallet,
-        hasWalletKit: !!walletKit,
-        activeSessionsCount: Object.keys(activeSessions || {}).length,
-        isLoadingConnect,
-        isLoadingDisconnect,
-        isLoadingDisconnectAll,
-        hasUser: !!user,
-        isConnected,
-        hasWalletConnectTxHash: !!walletConnectTxHash,
-        hasWalletConnectPayload: !!walletConnectPayload,
-        userAgent: navigator.userAgent,
-        timestamp: new Date().toISOString(),
-      });
+    Sentry.setContext('walletconnect_state', {
+      hasWallet: !!wallet,
+      hasWalletKit: !!walletKit,
+      activeSessionsCount: Object.keys(activeSessions || {}).length,
+      isLoadingConnect,
+      isLoadingDisconnect,
+      isLoadingDisconnectAll,
+      hasUser: !!user,
+      isConnected,
+      hasWalletConnectTxHash: !!walletConnectTxHash,
+      hasWalletConnectPayload: !!walletConnectPayload,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
     });
   }, [
     wallet,
@@ -111,15 +121,13 @@ export const useWalletConnect = () => {
     const logoutId = `walletconnect_logout_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for logout
-    Sentry.withScope((scope) => {
-      scope.setContext('walletconnect_logout', {
-        logoutId,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        hasUser: !!user,
-        isConnected,
-        activeSessionsCount: Object.keys(activeSessions || {}).length,
-      });
+    Sentry.setContext('walletconnect_logout', {
+      logoutId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      hasUser: !!user,
+      isConnected,
+      activeSessionsCount: Object.keys(activeSessions || {}).length,
     });
 
     Sentry.addBreadcrumb({
@@ -366,16 +374,14 @@ export const useWalletConnect = () => {
     const txHashId = `get_tx_hash_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for transaction hash retrieval
-    Sentry.withScope((scope) => {
-      scope.setContext('get_transaction_hash', {
-        txHashId,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
-        hasWalletConnectPayload: !!walletConnectPayloadRef.current,
-        timeout: 180000, // 3 minutes
-      });
-    });
+    const contextData = {
+      txHashId,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      hasWalletConnectTxHash: !!walletConnectTxHashRef.current,
+      hasWalletConnectPayload: !!walletConnectPayloadRef.current,
+      timeout: 180000, // 3 minutes
+    };
 
     Sentry.addBreadcrumb({
       category: 'walletconnect',
@@ -410,21 +416,27 @@ export const useWalletConnect = () => {
           },
         });
 
-        Sentry.captureMessage('Transaction hash retrieved successfully', {
-          level: 'info',
-          tags: {
-            component: 'walletconnect',
-            action: 'tx_hash_success',
-            txHashId,
-          },
-          contexts: {
-            tx_hash_success: {
+        const currentAttempts = attempts;
+        const currentTxHash = walletConnectTxHashRef.current;
+        const currentTimeElapsed = Date.now() - (timeout - 180000);
+
+        captureWithContext('get_transaction_hash', contextData, () => {
+          Sentry.captureMessage('Transaction hash retrieved successfully', {
+            level: 'info',
+            tags: {
+              component: 'walletconnect',
+              action: 'tx_hash_success',
               txHashId,
-              attempts,
-              txHash: walletConnectTxHashRef.current,
-              timeElapsed: Date.now() - (timeout - 180000),
             },
-          },
+            contexts: {
+              tx_hash_success: {
+                txHashId,
+                attempts: currentAttempts,
+                txHash: currentTxHash,
+                timeElapsed: currentTimeElapsed,
+              },
+            },
+          });
         });
 
         return walletConnectTxHashRef.current;
