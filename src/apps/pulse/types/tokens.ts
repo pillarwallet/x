@@ -18,3 +18,15 @@ export type PayingToken = {
   totalRaw: string;
   chainId: number;
 };
+
+export enum SearchType {
+  Fresh = 'Fresh',
+  Trending = 'Trending',
+  TopGainers = 'Top Gainers',
+  MyHoldings = 'My Holdings',
+}
+
+export enum SortType {
+  Up = 'Up',
+  Down = 'Down',
+}

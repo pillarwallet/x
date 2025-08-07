@@ -159,6 +159,12 @@ export type TokensMarketDataRow = {
       transactionCount?: string;
     };
   };
+  meta?: {
+    tokenData: {
+      decimals: number;
+      marketCap?: number;
+    };
+  };
 };
 
 export type TokensMarketData = {

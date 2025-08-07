@@ -1,5 +1,16 @@
-import { PairResponse, TokenAssetResponse } from '../../../types/api';
-import { MOBULA_CHAIN_NAMES, MobulaChainNames } from './constants';
+/* eslint-disable no-restricted-syntax */
+import {
+  PairResponse,
+  Projection,
+  TokenAssetResponse,
+  TokensMarketData,
+} from '../../../types/api';
+import {
+  getChainName,
+  MOBULA_CHAIN_NAMES,
+  MobulaChainNames,
+} from './constants';
+import { parseNumberString } from './number';
 
 export type Asset = {
   name: string;
@@ -13,6 +24,7 @@ export type Asset = {
   decimals: number;
   contract: string;
   priceChange24h: number | null;
+  timestamp?: number;
 };
 
 export function parseAssetData(
@@ -83,4 +95,37 @@ export function parseSearchData(
   });
 
   return { assets, markets };
+}
+
+export function parseFreshAndTrendingTokens(
+  projections: Projection[]
+): Asset[] {
+  const res: Asset[] = [];
+  for (const projection of projections) {
+    const chainId = projection.id.split('-')[1];
+    const { rows } = projection.data as TokensMarketData;
+    if (rows) {
+      for (const j of rows) {
+        res.push({
+          chain: getChainName(+chainId),
+          contract: j.leftColumn?.line1?.copyLink || '',
+          decimals: j.meta?.tokenData.decimals || 18,
+          liquidity: parseNumberString(
+            j.leftColumn?.line2?.liquidity || '0.00K'
+          ),
+          logo: j.leftColumn?.token?.primaryImage || null,
+          name: j.leftColumn?.line1?.text1 || '',
+          price: Number(j.rightColumn?.line1?.price || 0),
+          priceChange24h:
+            Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
+            (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
+          symbol: j.leftColumn?.line1?.text2 || '',
+          volume: parseNumberString(j.leftColumn?.line2?.volume || '0.00K'),
+          mCap: j.meta?.tokenData.marketCap || 0,
+          timestamp: j.leftColumn?.line2?.timestamp,
+        });
+      }
+    }
+  }
+  return res;
 }
