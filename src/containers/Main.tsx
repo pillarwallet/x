@@ -612,7 +612,6 @@ const AuthLayout = () => {
             },
           });
         }
-
       };
       updateProvider();
     }
