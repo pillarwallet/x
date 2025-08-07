@@ -40,6 +40,24 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
   release: sentryReleaseTag,
+  // Only send error-level events to Sentry
+  beforeSend(event, hint) {
+    // Only send events with error level or higher
+    if (event.level && event.level !== 'error' && event.level !== 'fatal') {
+      return null; // Drop the event
+    }
+    
+    // Also filter out info and warning level messages
+    if (event.level === 'info' || event.level === 'warning') {
+      return null; // Drop the event
+    }
+    
+    return event;
+  },
+  // Set default level to error
+  defaultTags: {
+    level: 'error',
+  },
 });
 
 if (typeof window !== 'undefined')
