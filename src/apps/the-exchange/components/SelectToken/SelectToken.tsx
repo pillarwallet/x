@@ -1,9 +1,12 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+
 // types
 import { CardPosition } from '../../utils/types';
 
 // utils
 import { getChainName } from '../../../../utils/blockchain';
 import { limitDigits } from '../../../token-atlas/utils/converters';
+import { logUserInteraction, addExchangeBreadcrumb } from '../../utils/sentry';
 
 // components
 import Body from '../Typography/Body';
@@ -30,10 +33,38 @@ const SelectToken = ({
   tokenPrice,
   onClick,
 }: SelectTokenProps) => {
+  const walletAddress = useWalletAddress();
+
+  const handleClick = () => {
+    logUserInteraction('token_selected', {
+      type,
+      tokenName,
+      tokenChain,
+      tokenBalance,
+      tokenPrice,
+      walletAddress,
+    });
+
+    addExchangeBreadcrumb(
+      `Token selected: ${tokenName || type}`,
+      'user_interaction',
+      {
+        type,
+        tokenName,
+        tokenChain,
+        walletAddress,
+      }
+    );
+
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <div
       id="select-token-info-exchange"
-      onClick={onClick}
+      onClick={handleClick}
       className="flex justify-between items-start mb-4"
     >
       <div className="flex w-full flex-col">

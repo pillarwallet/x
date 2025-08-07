@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 
 // reducer
 import {
@@ -24,6 +25,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
 import { formatExponential } from '../../../../utils/number';
+import {
+  logUserInteraction,
+  logExchangeError,
+  addExchangeBreadcrumb,
+} from '../../utils/sentry';
 
 // types
 import { CardPosition, SwapOffer } from '../../utils/types';
@@ -54,6 +60,7 @@ const EnterAmount = ({
   deploymentCost,
 }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
+  const walletAddress = useWalletAddress();
   const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
   const amountReceive = useAppSelector(
     (state) => state.swap.amountReceive as number
@@ -118,6 +125,13 @@ const EnterAmount = ({
 
   // Gets the best swap offer
   const getOffer = async () => {
+    addExchangeBreadcrumb('Getting best swap offer', 'offer', {
+      amountSwap,
+      swapToken: swapToken?.symbol,
+      receiveToken: receiveToken?.symbol,
+      walletAddress,
+    });
+
     const params = {
       fromAmount: amountSwap ?? 0,
       fromTokenAddress: swapToken?.contract ?? '',
@@ -130,6 +144,19 @@ const EnterAmount = ({
     };
 
     const offer = await getBestOffer(params).catch((e) => {
+      logExchangeError(
+        e,
+        {
+          operation: 'get_best_offer',
+          params,
+          walletAddress,
+        },
+        {
+          component: 'EnterAmount',
+          method: 'getOffer',
+        }
+      );
+
       console.error(
         'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
         e
@@ -139,8 +166,15 @@ const EnterAmount = ({
 
     if (offer && Object.keys(offer as SwapOffer).length && receiveToken) {
       dispatch(setAmountReceive(offer?.tokenAmountToReceive));
+      addExchangeBreadcrumb('Best offer received', 'offer', {
+        offer: offer?.tokenAmountToReceive,
+        walletAddress,
+      });
     } else {
       setIsNoOffer(true);
+      addExchangeBreadcrumb('No offer available', 'offer', {
+        walletAddress,
+      });
     }
 
     dispatch(setIsOfferLoading(false));
@@ -194,12 +228,27 @@ const EnterAmount = ({
     const { value } = e.target;
     setInputValue(value);
 
+    logUserInteraction('token_amount_changed', {
+      type,
+      value,
+      tokenSymbol,
+      tokenBalance,
+      deploymentCost,
+      walletAddress,
+    });
+
     if (type === CardPosition.SWAP && swapToken) {
       dispatch(setAmountSwap(Number(value)));
     }
 
     if (tokenBalance && Number(value) > tokenBalance - (deploymentCost ?? 0)) {
       dispatch(setIsAboveLimit(true));
+      addExchangeBreadcrumb('Amount above limit', 'validation', {
+        value,
+        tokenBalance,
+        deploymentCost,
+        walletAddress,
+      });
     }
     if (tokenBalance && Number(value) <= tokenBalance - (deploymentCost ?? 0)) {
       dispatch(setIsAboveLimit(false));

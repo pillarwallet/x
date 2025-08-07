@@ -31,6 +31,27 @@ import { Token } from '../../../../../services/tokensData';
 import * as useOffer from '../../../hooks/useOffer';
 import { SwapOffer } from '../../../utils/types';
 
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+  setContext: vi.fn(),
+  addBreadcrumb: vi.fn(),
+  startTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setStatus: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
+  })),
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+  withScope: vi.fn((callback) =>
+    callback({
+      setLevel: vi.fn(),
+      setTag: vi.fn(),
+      setExtra: vi.fn(),
+    })
+  ),
+}));
+
 const mockTokenAssets: Token[] = [
   {
     id: 1,
@@ -130,6 +151,19 @@ vi.mock('@lifi/sdk', () => ({
   LiFi: vi.fn().mockImplementation(() => ({
     getRoutes: vi.fn().mockResolvedValue({ routes: [] }),
     getStepTransaction: vi.fn().mockResolvedValue({}),
+  })),
+}));
+
+// Mock Sentry utility functions
+vi.mock('../../../utils/sentry', () => ({
+  logSwapOperation: vi.fn(),
+  logExchangeError: vi.fn(),
+  logUserInteraction: vi.fn(),
+  addExchangeBreadcrumb: vi.fn(),
+  startExchangeTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
   })),
 }));
 

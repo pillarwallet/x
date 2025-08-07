@@ -1,4 +1,7 @@
-import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import {
+  useEtherspotUtils,
+  useWalletAddress,
+} from '@etherspot/transaction-kit';
 import {
   LiFiStep,
   Route,
@@ -39,10 +42,17 @@ import {
   isNativeToken,
   isWrappedToken,
 } from '../utils/wrappedTokens';
+import {
+  logOfferOperation,
+  logExchangeError,
+  addExchangeBreadcrumb,
+  startExchangeTransaction,
+} from '../utils/sentry';
 
 const useOffer = () => {
   const { isZeroAddress } = useEtherspotUtils();
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const walletAddress = useWalletAddress();
 
   const getNativeFeeForERC20 = async ({
     tokenAddress,
@@ -55,7 +65,26 @@ const useOffer = () => {
     feeAmount: string;
     slippage?: number;
   }) => {
+    startExchangeTransaction(
+      'get_native_fee',
+      {
+        tokenAddress,
+        chainId,
+        feeAmount,
+        slippage,
+      },
+      walletAddress
+    );
+
     try {
+      addExchangeBreadcrumb('Getting native fee for ERC20', 'offer', {
+        tokenAddress,
+        chainId,
+        feeAmount,
+        slippage,
+        walletAddress,
+      });
+
       const feeRouteRequest: RoutesRequest = {
         fromChainId: chainId,
         toChainId: chainId,
@@ -74,7 +103,16 @@ const useOffer = () => {
       const result = await getRoutes(feeRouteRequest);
 
       const route = result.routes?.[0];
-      if (!route) return undefined;
+      if (!route) {
+        logOfferOperation('native_fee_no_route', {
+          tokenAddress,
+          chainId,
+          feeAmount,
+          slippage,
+          walletAddress,
+        });
+        return undefined;
+      }
 
       transactionDebugLog(
         'Get native fee for ERC20 swap, the route:',
@@ -82,8 +120,35 @@ const useOffer = () => {
         'the request:',
         feeRouteRequest
       );
+
+      logOfferOperation('native_fee_success', {
+        tokenAddress,
+        chainId,
+        feeAmount,
+        slippage,
+        route,
+        walletAddress,
+      });
+
       return route;
     } catch (e) {
+      const error = e instanceof Error ? e : new Error(String(e));
+      logExchangeError(
+        error,
+        {
+          operation: 'get_native_fee',
+          tokenAddress,
+          chainId,
+          feeAmount,
+          slippage,
+          walletAddress,
+        },
+        {
+          component: 'useOffer',
+          method: 'getNativeFeeForERC20',
+        }
+      );
+
       console.error('Failed to get native fee estimation via LiFi:', e);
       return undefined;
     }
