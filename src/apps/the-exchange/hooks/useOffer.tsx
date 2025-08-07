@@ -65,7 +65,7 @@ const useOffer = () => {
     feeAmount: string;
     slippage?: number;
   }) => {
-    const transaction = startExchangeTransaction(
+    startExchangeTransaction(
       'get_native_fee',
       {
         tokenAddress,
@@ -130,7 +130,6 @@ const useOffer = () => {
         walletAddress,
       });
 
-      transaction.finish();
       return route;
     } catch (e) {
       const error = e instanceof Error ? e : new Error(String(e));
@@ -150,7 +149,6 @@ const useOffer = () => {
         }
       );
 
-      transaction.finish();
       console.error('Failed to get native fee estimation via LiFi:', e);
       return undefined;
     }

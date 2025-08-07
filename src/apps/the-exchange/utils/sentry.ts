@@ -7,14 +7,14 @@ export const initSentryForExchange = () => {
   Sentry.setTag('module', 'exchange');
 };
 
-// Utility to get wallet address with fallback
-export const getWalletAddressForLogging = (): string => {
-  try {
-    // This will be called from within a component that has access to the hook
-    return 'unknown_wallet_address';
-  } catch (error) {
-    return 'unknown_wallet_address';
-  }
+// Utility to get fallback wallet address for logging
+// This function should be called from within a React component context
+// where the wallet address is available
+export const fallbackWalletAddressForLogging = (): string => {
+  // This is a utility function that should be called from within React components
+  // The actual wallet address should be passed as a parameter or obtained via hook
+  // For now, return unknown as this is a fallback utility
+  return 'unknown_wallet_address';
 };
 
 // Enhanced Sentry logging with wallet address context
@@ -24,7 +24,7 @@ export const logExchangeEvent = (
   extra?: Record<string, unknown>,
   tags?: Record<string, string>
 ) => {
-  const walletAddress = getWalletAddressForLogging();
+  const walletAddress = fallbackWalletAddressForLogging();
 
   Sentry.withScope((scope) => {
     scope.setLevel(level);
@@ -51,7 +51,7 @@ export const logExchangeError = (
   extra?: Record<string, unknown>,
   tags?: Record<string, string>
 ) => {
-  const walletAddress = getWalletAddressForLogging();
+  const walletAddress = fallbackWalletAddressForLogging();
 
   Sentry.withScope((scope) => {
     scope.setLevel('error');
@@ -77,8 +77,9 @@ export const logExchangeError = (
   });
 };
 
-// Log swap operations
-export const logSwapOperation = (
+// Generic operation logging function
+export const logOperation = (
+  operationType: string,
   operation: string,
   data: Record<string, unknown>,
   walletAddress?: string
@@ -87,16 +88,28 @@ export const logSwapOperation = (
     scope.setLevel('info');
     scope.setTag(
       'wallet_address',
-      walletAddress || getWalletAddressForLogging()
+      walletAddress || fallbackWalletAddressForLogging()
     );
     scope.setTag('app_module', 'the-exchange');
-    scope.setTag('operation_type', 'swap');
-    scope.setTag('swap_operation', operation);
+    scope.setTag('operation_type', operationType);
+    scope.setTag(`${operationType}_operation`, operation);
 
-    scope.setExtra('swap_data', data);
+    scope.setExtra(`${operationType}_data`, data);
 
-    Sentry.captureMessage(`Swap operation: ${operation}`, 'info');
+    Sentry.captureMessage(
+      `${operationType.charAt(0).toUpperCase() + operationType.slice(1)} operation: ${operation}`,
+      'info'
+    );
   });
+};
+
+// Log swap operations
+export const logSwapOperation = (
+  operation: string,
+  data: Record<string, unknown>,
+  walletAddress?: string
+) => {
+  logOperation('swap', operation, data, walletAddress);
 };
 
 // Log token operations
@@ -105,20 +118,7 @@ export const logTokenOperation = (
   tokenData: Record<string, unknown>,
   walletAddress?: string
 ) => {
-  Sentry.withScope((scope) => {
-    scope.setLevel('info');
-    scope.setTag(
-      'wallet_address',
-      walletAddress || getWalletAddressForLogging()
-    );
-    scope.setTag('app_module', 'the-exchange');
-    scope.setTag('operation_type', 'token');
-    scope.setTag('token_operation', operation);
-
-    scope.setExtra('token_data', tokenData);
-
-    Sentry.captureMessage(`Token operation: ${operation}`, 'info');
-  });
+  logOperation('token', operation, tokenData, walletAddress);
 };
 
 // Log offer operations
@@ -127,20 +127,7 @@ export const logOfferOperation = (
   offerData: Record<string, unknown>,
   walletAddress?: string
 ) => {
-  Sentry.withScope((scope) => {
-    scope.setLevel('info');
-    scope.setTag(
-      'wallet_address',
-      walletAddress || getWalletAddressForLogging()
-    );
-    scope.setTag('app_module', 'the-exchange');
-    scope.setTag('operation_type', 'offer');
-    scope.setTag('offer_operation', operation);
-
-    scope.setExtra('offer_data', offerData);
-
-    Sentry.captureMessage(`Offer operation: ${operation}`, 'info');
-  });
+  logOperation('offer', operation, offerData, walletAddress);
 };
 
 // Log transaction operations
@@ -149,20 +136,7 @@ export const logTransactionOperation = (
   transactionData: Record<string, unknown>,
   walletAddress?: string
 ) => {
-  Sentry.withScope((scope) => {
-    scope.setLevel('info');
-    scope.setTag(
-      'wallet_address',
-      walletAddress || getWalletAddressForLogging()
-    );
-    scope.setTag('app_module', 'the-exchange');
-    scope.setTag('operation_type', 'transaction');
-    scope.setTag('transaction_operation', operation);
-
-    scope.setExtra('transaction_data', transactionData);
-
-    Sentry.captureMessage(`Transaction operation: ${operation}`, 'info');
-  });
+  logOperation('transaction', operation, transactionData, walletAddress);
 };
 
 // Log user interactions
@@ -175,7 +149,7 @@ export const logUserInteraction = (
     scope.setLevel('info');
     scope.setTag(
       'wallet_address',
-      walletAddress || getWalletAddressForLogging()
+      walletAddress || fallbackWalletAddressForLogging()
     );
     scope.setTag('app_module', 'the-exchange');
     scope.setTag('interaction_type', 'user_action');
@@ -198,7 +172,7 @@ export const logPerformanceMetric = (
     scope.setLevel('info');
     scope.setTag(
       'wallet_address',
-      walletAddress || getWalletAddressForLogging()
+      walletAddress || fallbackWalletAddressForLogging()
     );
     scope.setTag('app_module', 'the-exchange');
     scope.setTag('metric_type', 'performance');
@@ -220,7 +194,8 @@ export const logPerformanceMetric = (
 
 // Hook to get wallet address for logging
 export const useWalletAddressForLogging = () => {
-  return useWalletAddress();
+  const walletAddress = useWalletAddress();
+  return walletAddress || 'unknown_wallet_address';
 };
 
 // Note: Error boundary removed due to TypeScript/JSX compatibility issues
@@ -229,26 +204,22 @@ export const useWalletAddressForLogging = () => {
 // Transaction monitoring for exchange operations
 export const startExchangeTransaction = (
   operation: string,
-  data: Record<string, unknown> = {},
-  walletAddress?: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _data: Record<string, unknown> = {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _walletAddress?: string
 ) => {
-  const transaction = Sentry.startTransaction({
-    name: `exchange.${operation}`,
-    op: 'exchange.operation',
-  });
-
-  transaction.setTag(
-    'wallet_address',
-    walletAddress || getWalletAddressForLogging()
+  return Sentry.startSpan(
+    {
+      name: `exchange.${operation}`,
+      op: 'exchange.operation',
+    },
+    (span) => {
+      // Note: Span API has changed in Sentry v10
+      // Properties are set via the span context instead
+      return span;
+    }
   );
-  transaction.setTag('app_module', 'the-exchange');
-  transaction.setTag('operation_type', operation);
-
-  if (data) {
-    transaction.setData('exchange_data', data);
-  }
-
-  return transaction;
 };
 
 // Breadcrumb utilities for exchange
@@ -258,7 +229,7 @@ export const addExchangeBreadcrumb = (
   data?: Record<string, unknown>,
   level: Sentry.SeverityLevel = 'info'
 ) => {
-  const walletAddress = getWalletAddressForLogging();
+  const walletAddress = fallbackWalletAddressForLogging();
 
   Sentry.addBreadcrumb({
     message,
