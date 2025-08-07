@@ -148,11 +148,6 @@ const AuthLayout = () => {
     const providerSetupId = `provider_setup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start Sentry transaction for provider setup
-    const transaction = Sentry.startTransaction({
-      name: 'provider_setup',
-      op: 'authentication',
-    });
-
     Sentry.setContext('provider_setup', {
       providerSetupId,
       timestamp: new Date().toISOString(),
@@ -286,7 +281,6 @@ const AuthLayout = () => {
             },
           });
 
-          transaction.setStatus('ok');
           return;
         }
 
@@ -322,7 +316,6 @@ const AuthLayout = () => {
             },
           });
 
-          transaction.setStatus('ok');
           return;
         }
 
@@ -500,7 +493,6 @@ const AuthLayout = () => {
                     }
                   );
 
-                  transaction.setStatus('ok');
                   return;
                 }
 
@@ -621,7 +613,6 @@ const AuthLayout = () => {
           });
         }
 
-        transaction.setStatus('ok');
       };
       updateProvider();
     }
