@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isAddress } from 'viem';
-import Search from './Search';
+import Search from '../Search/Search';
 import HomeScreen from './HomeScreen';
-import { SelectedToken } from '../types/tokens';
-import { MobulaChainNames } from '../utils/constants';
+import { SelectedToken } from '../../types/tokens';
+import { MobulaChainNames } from '../../utils/constants';
 
 export default function AppWrapper() {
   const [searching, setSearching] = useState(false);

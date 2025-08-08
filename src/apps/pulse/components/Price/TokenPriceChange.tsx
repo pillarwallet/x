@@ -1,33 +1,11 @@
-export function formatTokenPriceDisplay(value: number): JSX.Element {
-  const fixed = value.toFixed(10);
-  const parts = fixed.split('.');
-
-  if (!parts[1]) {
-    return <p style={{ fontSize: 13, fontWeight: 400 }}>${value.toFixed(5)}</p>;
-  }
-
-  const decimals = parts[1];
-  const firstNonZeroIndex = decimals.search(/[^0]/);
-
-  if (value >= 0.01 || firstNonZeroIndex < 2) {
-    return <p style={{ fontSize: 13, fontWeight: 400 }}>${value.toFixed(5)}</p>;
-  }
-
-  const leadingZerosCount = firstNonZeroIndex;
-  const significantDigits = decimals.slice(
-    firstNonZeroIndex,
-    firstNonZeroIndex + 4
-  );
-
-  return (
-    <p style={{ fontSize: 13, fontWeight: 400 }}>
-      $0.0<sub>{leadingZerosCount}</sub>
-      {significantDigits}
-    </p>
-  );
+export interface TokenPriceChangeProps {
+  value: number;
 }
 
-export function formatPriceChangeDisplay(value: number): JSX.Element {
+export default function TokenPriceChange(
+  props: TokenPriceChangeProps
+): JSX.Element {
+  const { value } = props;
   const green = (
     <svg
       width="6"

@@ -1,4 +1,4 @@
-import { SortType } from '../types/tokens';
+import { SortType } from '../../types/tokens';
 
 export interface SortProps {
   sortType?: SortType;

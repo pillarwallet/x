@@ -1,4 +1,4 @@
-import AppWrapper from './components/AppWrapper';
+import AppWrapper from './components/App/AppWrapper';
 import './styles/tailwindPulse.css';
 
 const App = () => {

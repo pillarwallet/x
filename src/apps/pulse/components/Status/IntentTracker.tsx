@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { Hex } from 'viem';
-import Esc from './Esc';
-import useIntentSdk from '../hooks/useIntentSdk';
+import Esc from '../Misc/Esc';
+import useIntentSdk from '../../hooks/useIntentSdk';
 import TransactionStatus from './TxStatus';
-import RandomAvatar from '../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import { SelectedToken } from '../types/tokens';
+import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import { SelectedToken } from '../../types/tokens';
 
 interface IntentTrackerProps {
   closePreview: () => void;
@@ -218,7 +218,10 @@ export default function IntentTracker(props: IntentTrackerProps) {
                     : ''
                 }
                 completed={getStatusIndex(bid?.bidStatus) >= 3}
-                txHash={bid?.executedTransactions?.[0]?.transactionHash}
+                txHash={
+                  bid?.executionResult?.executedTransactions?.[0]
+                    ?.transactionHash
+                }
               />
             </div>
           </div>

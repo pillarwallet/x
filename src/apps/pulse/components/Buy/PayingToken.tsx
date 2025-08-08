@@ -1,5 +1,5 @@
-import { getLogoForChainId } from '../../../utils/blockchain';
-import { PayingToken as PayingTokenType } from '../types/tokens';
+import { getLogoForChainId } from '../../../../utils/blockchain';
+import { PayingToken as PayingTokenType } from '../../types/tokens';
 
 interface PayingTokenProps {
   payingToken: PayingTokenType;

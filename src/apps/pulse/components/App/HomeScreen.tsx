@@ -1,13 +1,14 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import Buy from './Buy';
-import Sell from './Sell';
-import { useGetWalletPortfolioQuery } from '../../../services/pillarXApiWalletPortfolio';
-import PreviewBuy from './PreviewBuy';
-import { PayingToken, SelectedToken } from '../types/tokens';
-import Refresh from './Refresh';
-import Settings from './Settings';
+import Buy from '../Buy/Buy';
+import Sell from '../Sell/Sell';
+import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
+import PreviewBuy from '../Buy/PreviewBuy';
+import { PayingToken, SelectedToken } from '../../types/tokens';
+import Refresh from '../Misc/Refresh';
+import Settings from '../Misc/Settings';
+import SearchIcon from '../../assets/seach-icon.svg';
 
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -62,19 +63,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             type="button"
           >
             <span style={{ marginLeft: 10 }}>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+              <img src={SearchIcon} alt="search-icon" />
             </span>
             <div className="flex-1 w-fit" style={{ color: 'grey' }}>
               Search by token or paste address

@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { Asset } from '../utils/parseSearchData';
-import RandomAvatar from '../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import { getLogoForChainId } from '../../../utils/blockchain';
-import { chainNameToChainIdTokensData } from '../../../services/tokensData';
-import {
-  formatPriceChangeDisplay,
-  formatTokenPriceDisplay,
-} from '../utils/price';
-import { SearchType, SortType } from '../types/tokens';
-import { formatElapsedTime } from '../utils/time';
+import { Asset } from '../../utils/parseSearchData';
+import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import { getLogoForChainId } from '../../../../utils/blockchain';
+import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
+import { SearchType, SortType } from '../../types/tokens';
+import { formatElapsedTime } from '../../utils/time';
 import Sort from './Sort';
-import { formatBigNumber } from '../utils/number';
+import { formatBigNumber } from '../../utils/number';
+import TokenPrice from '../Price/TokenPrice';
+import TokenPriceChange from '../Price/TokenPriceChange';
 
 export interface TokenListProps {
   assets: Asset[];
@@ -239,9 +237,11 @@ export default function TokenList(props: TokenListProps) {
                 </div>
               </div>
               <div className="flex flex-col ml-auto mr-2.5">
-                <div>{formatTokenPriceDisplay(item.price ?? 0)}</div>
+                <div>
+                  <TokenPrice value={item.price || 0} />
+                </div>
                 <div className="ml-auto">
-                  {formatPriceChangeDisplay(item.priceChange24h ?? 0)}
+                  <TokenPriceChange value={item.priceChange24h || 0} />
                 </div>
               </div>
             </button>
