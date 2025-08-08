@@ -2,7 +2,7 @@
 import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import { EVM, createConfig } from '@lifi/sdk';
 import { Chain, WalletClient, createWalletClient, http } from 'viem';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // styles
 import styled from 'styled-components';
@@ -38,6 +38,9 @@ export const App = () => {
     (state) => state.swap.isReceiveOpen as boolean
   );
 
+  // Use ref to track if config has been initialized
+  const configInitialized = useRef(false);
+
   // Initialize Sentry for the-exchange app
   useEffect(() => {
     initSentryForExchange();
@@ -63,61 +66,106 @@ export const App = () => {
     });
   }, [walletAddress, isSwapOpen, isReceiveOpen]);
 
-  createConfig({
-    integrator: 'PillarX',
-    providers: [
-      EVM({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        getWalletClient: async () => provider as any,
-        switchChain: async (chainId) => {
-          // Log chain switching
-          logExchangeEvent(
-            'Chain switching initiated',
-            'info',
-            {
-              walletAddress,
-              chainId,
-              currentChain: supportedChains.find(
-                (chain) => chain.id === chainId
-              ),
-            },
-            {
-              component: 'App',
-              action: 'chain_switch',
-            }
-          );
+  // Initialize LiFi config only once when provider is available
+  useEffect(() => {
+    if (!provider || configInitialized.current) {
+      return;
+    }
 
-          // Switch chain by creating a new wallet client
-          const newWalletClient = createWalletClient({
-            account: (provider as WalletClient).account,
-            chain: supportedChains.find(
-              (chain) => chain.id === chainId
-            ) as Chain,
-            transport: http(),
+    try {
+      createConfig({
+        integrator: 'PillarX',
+        providers: [
+          EVM({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          }) as any;
+            getWalletClient: async () => provider as any,
+            switchChain: async (chainId) => {
+              // Log chain switching
+              logExchangeEvent(
+                'Chain switching initiated',
+                'info',
+                {
+                  walletAddress,
+                  chainId,
+                  currentChain: supportedChains.find(
+                    (chain) => chain.id === chainId
+                  ),
+                },
+                {
+                  component: 'App',
+                  action: 'chain_switch',
+                }
+              );
 
-          // Log successful chain switch
-          logExchangeEvent(
-            'Chain switching completed',
-            'info',
-            {
-              walletAddress,
-              chainId,
-              newChain: supportedChains.find((chain) => chain.id === chainId),
+              try {
+                // Switch chain by creating a new wallet client
+                const newWalletClient = createWalletClient({
+                  account: (provider as WalletClient).account,
+                  chain: supportedChains.find(
+                    (chain) => chain.id === chainId
+                  ) as Chain,
+                  transport: http(),
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                }) as any;
+
+                // Log successful chain switch
+                logExchangeEvent(
+                  'Chain switching completed',
+                  'info',
+                  {
+                    walletAddress,
+                    chainId,
+                    newChain: supportedChains.find(
+                      (chain) => chain.id === chainId
+                    ),
+                  },
+                  {
+                    component: 'App',
+                    action: 'chain_switch_success',
+                  }
+                );
+
+                return newWalletClient;
+              } catch (error) {
+                logExchangeEvent(
+                  'Chain switching failed',
+                  'error',
+                  {
+                    walletAddress,
+                    chainId,
+                    error:
+                      error instanceof Error ? error.message : String(error),
+                  },
+                  {
+                    component: 'App',
+                    action: 'chain_switch_error',
+                  }
+                );
+                throw error;
+              }
             },
-            {
-              component: 'App',
-              action: 'chain_switch_success',
-            }
-          );
+          }),
+        ],
+        apiKey: import.meta.env.VITE_LIFI_API_KEY,
+      });
 
-          return newWalletClient;
+      configInitialized.current = true;
+    } catch (error) {
+      console.error('Failed to initialize LiFi config:', error);
+      logExchangeEvent(
+        'LiFi config initialization failed',
+        'error',
+        {
+          walletAddress,
+          error: error instanceof Error ? error.message : String(error),
         },
-      }),
-    ],
-    apiKey: import.meta.env.VITE_LIFI_API_KEY,
-  });
+        {
+          component: 'App',
+          action: 'config_init_error',
+        }
+      );
+    }
+  }, [provider, walletAddress]);
 
   return (
     <Wrapper>

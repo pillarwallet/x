@@ -164,8 +164,6 @@ const useOffer = () => {
     toTokenDecimals,
     slippage,
   }: SwapType): Promise<SwapOffer | undefined> => {
-    let selectedOffer: SwapOffer;
-
     try {
       // Replace native token with wrapped if needed
       const fromTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
@@ -202,22 +200,24 @@ const useOffer = () => {
           return receiveAmountA > receiveAmountB ? a : b;
         });
 
-        selectedOffer = {
+        const selectedOffer: SwapOffer = {
           tokenAmountToReceive: processEth(bestOffer.toAmount, toTokenDecimals),
           offer: bestOffer as Route,
         };
 
         return selectedOffer;
       }
+
+      // Return undefined instead of empty object when no routes found
+      return undefined;
     } catch (e) {
       console.error(
         'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
         e
       );
-      return {} as SwapOffer;
+      // Return undefined instead of empty object on error
+      return undefined;
     }
-
-    return {} as SwapOffer;
   };
 
   const isAllowanceSet = async ({
