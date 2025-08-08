@@ -232,6 +232,17 @@ const useOffer = () => {
     chainId: number;
   }) => {
     if (isZeroAddress(tokenAddress)) return undefined;
+
+    // Validate inputs
+    if (!owner || !spender || !tokenAddress) {
+      console.warn('Invalid inputs for allowance check:', {
+        owner,
+        spender,
+        tokenAddress,
+      });
+      return undefined;
+    }
+
     try {
       const publicClient = createPublicClient({
         chain: getNetworkViem(chainId),
@@ -281,6 +292,12 @@ const useOffer = () => {
     // - Wrapped in wrapped
     // - Non-stable ERC20 in native
     const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
+
+    // Validate fee receiver address
+    if (!feeReceiver) {
+      throw new Error('Fee receiver address is not configured');
+    }
+
     // Use the original input amount for fee calculation
     const feeAmount = fromAmountBigInt / BigInt(100); // 1% of input
     const fromTokenChainId = route.fromToken.chainId;
@@ -343,6 +360,11 @@ const useOffer = () => {
         feeStep
       );
     } else if (userSelectedStable) {
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
       // Stablecoin fee
       const calldata = encodeFunctionData({
         abi: erc20Abi,
@@ -361,6 +383,11 @@ const useOffer = () => {
         feeStep
       );
     } else if (userSelectedWrapped) {
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
       // Wrapped token fee
       const calldata = encodeFunctionData({
         abi: erc20Abi,
@@ -379,6 +406,11 @@ const useOffer = () => {
         feeStep
       );
     } else {
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
       // Non-stable, non-wrapped ERC20: estimate native equivalent
       try {
         const nativeFeeRoute = await getNativeFeeForERC20({
@@ -449,12 +481,17 @@ const useOffer = () => {
         // Only require approval for ERC20 tokens (never for native tokens, including special addresses like POL/MATIC)
         const isTokenNative = isNativeToken(step.action.fromToken.address);
 
+        // Validate required addresses before proceeding
+        if (!step.action.fromToken.address) {
+          throw new Error('Token address is undefined in step');
+        }
+
         const isAllowance = isTokenNative
           ? undefined // Native tokens never require approval
           : // eslint-disable-next-line no-await-in-loop
             await isAllowanceSet({
               owner: fromAccount,
-              spender: step.estimate.approvalAddress,
+              spender: step.estimate.approvalAddress || '',
               tokenAddress: step.action.fromToken.address,
               chainId: step.action.fromChainId,
             });
@@ -470,6 +507,13 @@ const useOffer = () => {
         // Here we are checking if this is not a native/gas token and if the allowance
         // is not set, then we manually add an approve transaction
         if (!isTokenNative && !isEnoughAllowance) {
+          // Validate approval address before using it
+          if (!step.estimate.approvalAddress) {
+            throw new Error(
+              'Approval address is undefined for non-native token'
+            );
+          }
+
           // We encode the callData for the approve transaction
           const calldata = encodeFunctionData({
             abi: [
@@ -538,6 +582,11 @@ const useOffer = () => {
 
         const { to, data, value, gasLimit, gasPrice, chainId, type } =
           updatedStep.transactionRequest;
+
+        // Validate the 'to' address before adding to stepTransactions
+        if (!to) {
+          throw new Error('Transaction "to" address is undefined');
+        }
 
         stepTransactions.push({
           to,
