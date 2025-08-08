@@ -77,7 +77,12 @@ export const getFeeAmount = (
         abi: erc20Abi,
         data: tx.data || '0x',
       });
-      if (decoded.args && Array.isArray(decoded.args) && decoded.args.length > 1 && typeof decoded.args[1] === 'bigint') {
+      if (
+        decoded.args &&
+        Array.isArray(decoded.args) &&
+        decoded.args.length > 1 &&
+        typeof decoded.args[1] === 'bigint'
+      ) {
         return formatUnits(decoded.args[1], decimals);
       }
     } catch (e) {
