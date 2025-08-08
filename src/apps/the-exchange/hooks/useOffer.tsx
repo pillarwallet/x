@@ -160,10 +160,13 @@ const useOffer = () => {
       );
 
       /**
-       * Step 2: Apply fee deduction
-       * Deduct 1% fee from the input amount to account for our platform fee
+       * Step 2: Apply fee deduction using BigInt arithmetic
+       * Convert to wei first, then apply 1% fee deduction using integer math
+       * This prevents precision loss for large amounts or tokens with many decimals
        */
-      const fromAmountFeeDeducted = Number(fromAmount) * 0.99;
+      const fromAmountInWei = parseUnits(String(fromAmount), fromTokenDecimals);
+      const feeDeduction = fromAmountInWei / BigInt(100); // 1% fee
+      const fromAmountFeeDeducted = fromAmountInWei - feeDeduction;
 
       /**
        * Step 3: Create route request for LiFi
@@ -174,7 +177,7 @@ const useOffer = () => {
         toChainId,
         fromTokenAddress: fromTokenAddressWithWrappedCheck,
         toTokenAddress,
-        fromAmount: `${parseUnits(`${fromAmountFeeDeducted}`, fromTokenDecimals)}`,
+        fromAmount: fromAmountFeeDeducted.toString(),
         options: {
           slippage,
           bridges: {
