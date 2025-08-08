@@ -36,7 +36,8 @@ export const getWrappedTokenAddressIfNative = (
 ): string => {
   if (isNativeToken(tokenAddress)) {
     const wrappedAddress = WRAPPED_NATIVE_TOKEN_ADDRESSES[chainId];
-    // fallback to token address in the case of XDAI token
+    // Return the original token address if no wrapped version is available
+    // This handles cases like XDAI or other chains without wrapped versions
     return wrappedAddress || tokenAddress;
   }
   return tokenAddress;
