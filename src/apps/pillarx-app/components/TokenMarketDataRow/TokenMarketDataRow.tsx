@@ -14,12 +14,14 @@ type TokenMarketDataRowProps = {
   listNumber: number;
   isLastNumber: boolean;
   isMiddleNumber: boolean;
+  tileTitle?: string;
 };
 const TokenMarketDataRow = ({
   data,
   listNumber,
   isLastNumber,
   isMiddleNumber,
+  tileTitle,
 }: TokenMarketDataRowProps) => {
   const navigate = useNavigate();
   return (
@@ -40,7 +42,7 @@ const TokenMarketDataRow = ({
           tokenName={data.leftColumn?.line1?.text2}
         />
         <div className="min-w-0 overflow-hidden">
-          <LeftColumnTokenMarketDataRow data={data} />
+          <LeftColumnTokenMarketDataRow data={data} tileTitle={tileTitle} />
         </div>
       </div>
       <div className="flex-shrink-0 flex items-end justify-end">
