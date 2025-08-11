@@ -23,6 +23,7 @@ import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // utils
+import useTransactionKit from '../../../hooks/useTransactionKit';
 import {
   Token,
   chainNameToChainIdTokensData,
@@ -35,6 +36,10 @@ import {
   toWei,
 } from '../utils/blockchain';
 import {
+  addExchangeBreadcrumb,
+  startExchangeTransaction,
+} from '../utils/sentry';
+import {
   getWrappedTokenAddressIfNative,
   isNativeToken,
   isWrappedToken,
@@ -43,7 +48,13 @@ import {
 const useOffer = () => {
   const { isZeroAddress } = EtherspotUtils;
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const { walletAddress } = useTransactionKit();
 
+  /**
+   * Get native fee estimation for ERC20 tokens
+   * This function calculates how much native token (ETH, MATIC, etc.) is needed
+   * to pay for gas fees when swapping ERC20 tokens
+   */
   const getNativeFeeForERC20 = async ({
     tokenAddress,
     chainId,
@@ -55,7 +66,30 @@ const useOffer = () => {
     feeAmount: string;
     slippage?: number;
   }) => {
+    startExchangeTransaction(
+      'get_native_fee',
+      {
+        tokenAddress,
+        chainId,
+        feeAmount,
+        slippage,
+      },
+      walletAddress
+    );
+
     try {
+      addExchangeBreadcrumb('Getting native fee for ERC20', 'offer', {
+        tokenAddress,
+        chainId,
+        feeAmount,
+        slippage,
+        walletAddress,
+      });
+
+      /**
+       * Create route request to find the best path for converting
+       * the ERC20 token to native token for fee payment
+       */
       const feeRouteRequest: RoutesRequest = {
         fromChainId: chainId,
         toChainId: chainId,
@@ -72,23 +106,36 @@ const useOffer = () => {
       };
 
       const result = await getRoutes(feeRouteRequest);
+      const { routes } = result;
 
-      const route = result.routes?.[0];
-      if (!route) return undefined;
+      const allOffers = routes as Route[];
 
-      transactionDebugLog(
-        'Get native fee for ERC20 swap, the route:',
-        route,
-        'the request:',
-        feeRouteRequest
-      );
-      return route;
+      if (allOffers.length) {
+        /**
+         * Find the best offer by comparing receive amounts
+         * The best offer is the one that gives the most native tokens
+         */
+        const bestOffer = allOffers.reduce((a, b) => {
+          const receiveAmountA = processEth(a.toAmount, 18);
+          const receiveAmountB = processEth(b.toAmount, 18);
+          return receiveAmountA > receiveAmountB ? a : b;
+        });
+
+        return bestOffer;
+      }
+
+      return undefined;
     } catch (e) {
       console.error('Failed to get native fee estimation via LiFi:', e);
       return undefined;
     }
   };
 
+  /**
+   * Get the best swap offer for a given token pair
+   * This function finds the optimal route for swapping one token to another
+   * across different exchanges and bridges
+   */
   const getBestOffer = async ({
     fromAmount,
     fromTokenAddress,
@@ -99,23 +146,36 @@ const useOffer = () => {
     toTokenDecimals,
     slippage,
   }: SwapType): Promise<SwapOffer | undefined> => {
-    let selectedOffer: SwapOffer;
-
     try {
-      // Replace native token with wrapped if needed
+      /**
+       * Step 1: Handle wrapped token conversion
+       * Replace native token addresses with their wrapped equivalents
+       * This is required for some DEX aggregators
+       */
       const fromTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
         fromTokenAddress,
         fromChainId
       );
 
-      const fromAmountFeeDeducted = Number(fromAmount) * 0.99;
+      /**
+       * Step 2: Apply fee deduction using BigInt arithmetic
+       * Convert to wei first, then apply 1% fee deduction using integer math
+       * This prevents precision loss for large amounts or tokens with many decimals
+       */
+      const fromAmountInWei = parseUnits(String(fromAmount), fromTokenDecimals);
+      const feeDeduction = fromAmountInWei / BigInt(100); // 1% fee
+      const fromAmountFeeDeducted = fromAmountInWei - feeDeduction;
 
+      /**
+       * Step 3: Create route request for LiFi
+       * This request includes all necessary parameters for finding swap routes
+       */
       const routesRequest: RoutesRequest = {
         fromChainId,
         toChainId,
         fromTokenAddress: fromTokenAddressWithWrappedCheck,
         toTokenAddress,
-        fromAmount: `${parseUnits(`${fromAmountFeeDeducted}`, fromTokenDecimals)}`,
+        fromAmount: fromAmountFeeDeducted.toString(),
         options: {
           slippage,
           bridges: {
@@ -131,30 +191,40 @@ const useOffer = () => {
       const allOffers = routes as Route[];
 
       if (allOffers.length) {
+        /**
+         * Step 4: Find the best offer
+         * Compare all available routes and select the one with the highest output
+         */
         const bestOffer = allOffers.reduce((a, b) => {
           const receiveAmountA = processEth(a.toAmount, toTokenDecimals);
           const receiveAmountB = processEth(b.toAmount, toTokenDecimals);
           return receiveAmountA > receiveAmountB ? a : b;
         });
 
-        selectedOffer = {
+        const selectedOffer: SwapOffer = {
           tokenAmountToReceive: processEth(bestOffer.toAmount, toTokenDecimals),
           offer: bestOffer as Route,
         };
 
         return selectedOffer;
       }
+
+      // Return undefined instead of empty object when no routes found
+      return undefined;
     } catch (e) {
       console.error(
         'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
         e
       );
-      return {} as SwapOffer;
+      // Return undefined instead of empty object on error
+      return undefined;
     }
-
-    return {} as SwapOffer;
   };
 
+  /**
+   * Check if token allowance is set for a specific spender
+   * This function verifies if the wallet has approved a contract to spend tokens
+   */
   const isAllowanceSet = async ({
     owner,
     spender,
@@ -167,6 +237,17 @@ const useOffer = () => {
     chainId: number;
   }) => {
     if (isZeroAddress(tokenAddress)) return undefined;
+
+    // Validate inputs
+    if (!owner || !spender || !tokenAddress) {
+      console.warn('Invalid inputs for allowance check:', {
+        owner,
+        spender,
+        tokenAddress,
+      });
+      return undefined;
+    }
+
     try {
       const publicClient = createPublicClient({
         chain: getNetworkViem(chainId),
@@ -187,6 +268,11 @@ const useOffer = () => {
     }
   };
 
+  /**
+   * Build step transactions for a swap
+   * This function creates the sequence of transactions needed to execute a swap
+   * including fee payments, approvals, and the actual swap
+   */
   const getStepTransactions = async (
     tokenToSwap: Token,
     route: Route,
@@ -196,6 +282,10 @@ const useOffer = () => {
   ): Promise<StepTransaction[]> => {
     const stepTransactions: StepTransaction[] = [];
 
+    /**
+     * Step 1: Determine if wrapping is required
+     * Check if we need to wrap native tokens before swapping
+     */
     const isWrapRequired =
       isWrappedToken(route.fromToken.address, route.fromToken.chainId) &&
       !isWrappedToken(
@@ -209,13 +299,17 @@ const useOffer = () => {
       tokenToSwap.decimals
     );
 
-    // --- 1% FEE LOGIC ---
-    // Always deduct 1% from the From Token (already done in getBestOffer)
-    // - Native in native
-    // - Stablecoin in stablecoin
-    // - Wrapped in wrapped
-    // - Non-stable ERC20 in native
+    /**
+     * Step 2: Fee calculation and validation
+     * Calculate 1% platform fee and validate fee receiver address
+     */
     const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
+
+    // Validate fee receiver address
+    if (!feeReceiver) {
+      throw new Error('Fee receiver address is not configured');
+    }
+
     // Use the original input amount for fee calculation
     const feeAmount = fromAmountBigInt / BigInt(100); // 1% of input
     const fromTokenChainId = route.fromToken.chainId;
@@ -229,9 +323,10 @@ const useOffer = () => {
       fromTokenChainId
     );
 
-    // --- BALANCE CHECKS ---
-    // For native: need enough for swap + fee
-    // For ERC20: need enough ERC20 for swap
+    /**
+     * Step 3: Balance checks
+     * Verify user has sufficient balance for swap and fees
+     */
     let userNativeBalance = BigInt(0);
     try {
       // Get native balance from portfolio
@@ -258,12 +353,10 @@ const useOffer = () => {
       }
     }
 
-    // --- FEE STEP ---
-    // The following logic ensures the fee is always taken in the correct asset:
-    // - If user selected native: fee is sent as native
-    // - If user selected stablecoin: fee is sent as stablecoin ERC20
-    // - If user selected wrapped: fee is sent as wrapped ERC20
-    // - If user selected non-stable ERC20: fee is estimated and sent as native
+    /**
+     * Step 4: Fee transaction creation
+     * Create the appropriate fee transaction based on token type
+     */
     if (userSelectedNative) {
       // Always treat as native fee if user selected native
       const feeStep = {
@@ -278,6 +371,11 @@ const useOffer = () => {
         feeStep
       );
     } else if (userSelectedStable) {
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
       // Stablecoin fee
       const calldata = encodeFunctionData({
         abi: erc20Abi,
@@ -296,6 +394,11 @@ const useOffer = () => {
         feeStep
       );
     } else if (userSelectedWrapped) {
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
       // Wrapped token fee
       const calldata = encodeFunctionData({
         abi: erc20Abi,
@@ -314,7 +417,16 @@ const useOffer = () => {
         feeStep
       );
     } else {
-      // Non-stable, non-wrapped ERC20: estimate native equivalent
+      // Validate token contract address
+      if (!tokenToSwap.contract) {
+        throw new Error('Token contract address is undefined');
+      }
+
+      /**
+       * Non-stable, non-wrapped ERC20: estimate native equivalent
+       * For regular ERC20 tokens, we need to estimate how much native token
+       * is equivalent to our fee amount
+       */
       try {
         const nativeFeeRoute = await getNativeFeeForERC20({
           tokenAddress: tokenToSwap.contract,
@@ -351,10 +463,12 @@ const useOffer = () => {
         throw new Error('Failed to estimate native fee for ERC20.');
       }
     }
-    // --- END FEE LOGIC ---
 
-    // If wrapping is required, we will add an extra step transaction with
-    // a wrapped token deposit first
+    /**
+     * Step 5: Wrap transaction (if required)
+     * If the route requires wrapped tokens but user has native tokens,
+     * add a wrapping transaction
+     */
     if (isWrapRequired) {
       const wrapCalldata = encodeFunctionData({
         abi: [
@@ -377,6 +491,10 @@ const useOffer = () => {
       });
     }
 
+    /**
+     * Step 6: Process route steps
+     * Handle each step in the swap route, including approvals and swaps
+     */
     try {
       // eslint-disable-next-line no-restricted-syntax
       for (const step of route.steps) {
@@ -384,12 +502,17 @@ const useOffer = () => {
         // Only require approval for ERC20 tokens (never for native tokens, including special addresses like POL/MATIC)
         const isTokenNative = isNativeToken(step.action.fromToken.address);
 
+        // Validate required addresses before proceeding
+        if (!step.action.fromToken.address) {
+          throw new Error('Token address is undefined in step');
+        }
+
         const isAllowance = isTokenNative
           ? undefined // Native tokens never require approval
           : // eslint-disable-next-line no-await-in-loop
             await isAllowanceSet({
               owner: fromAccount,
-              spender: step.estimate.approvalAddress,
+              spender: step.estimate.approvalAddress || '',
               tokenAddress: step.action.fromToken.address,
               chainId: step.action.fromChainId,
             });
@@ -405,6 +528,13 @@ const useOffer = () => {
         // Here we are checking if this is not a native/gas token and if the allowance
         // is not set, then we manually add an approve transaction
         if (!isTokenNative && !isEnoughAllowance) {
+          // Validate approval address before using it
+          if (!step.estimate.approvalAddress) {
+            throw new Error(
+              'Approval address is undefined for non-native token'
+            );
+          }
+
           // We encode the callData for the approve transaction
           const calldata = encodeFunctionData({
             abi: [
@@ -474,12 +604,29 @@ const useOffer = () => {
         const { to, data, value, gasLimit, gasPrice, chainId, type } =
           updatedStep.transactionRequest;
 
+        // Validate the 'to' address before adding to stepTransactions
+        if (!to) {
+          throw new Error('Transaction "to" address is undefined');
+        }
+
+        // Handle bigint conversions properly for values from LiFi SDK
+        const valueBigInt =
+          typeof value === 'bigint' ? value : BigInt(String(value || 0));
+        const gasLimitBigInt =
+          typeof gasLimit === 'bigint'
+            ? gasLimit
+            : BigInt(String(gasLimit || 0));
+        const gasPriceBigInt =
+          typeof gasPrice === 'bigint'
+            ? gasPrice
+            : BigInt(String(gasPrice || 0));
+
         stepTransactions.push({
           to,
           data: data as `0x${string}`,
-          value: BigInt(`${value}`),
-          gasLimit: BigInt(`${gasLimit}`),
-          gasPrice: BigInt(`${gasPrice}`),
+          value: valueBigInt,
+          gasLimit: gasLimitBigInt,
+          gasPrice: gasPriceBigInt,
           chainId,
           type,
         });
