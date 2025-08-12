@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenInfoColumn /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-10 undefined"
   id="token-atlas-token-info-column"
@@ -14,7 +14,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
       <img
         alt="token-audit-icon"
         className="w-3.5 h-4"
-        src="token-audit-icon.png"
+        src="/src/apps/token-atlas/images/token-audit-icon.png"
       />
       <p
         className="text-[9px] font-semibold font-normal"
@@ -39,7 +39,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         <img
           alt="token sniffer-logo"
           className="w-[18px] h-[18px]"
-          src="token-sniffer-logo.png"
+          src="/src/apps/token-atlas/images/token-sniffer-logo.png"
         />
         <p
           className="text-[9px] font-semibold font-normal"
@@ -49,15 +49,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         <img
           alt="external-link-icon"
           className="w-3 h-3"
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "external-link-audit.svg",
-            }
-          }
+          src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4.125%201H3C1.89543%201%201%201.89543%201%203V9C1%2010.1046%201.89543%2011%203%2011H9C10.1046%2011%2011%2010.1046%2011%209V7.875'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'/%3e%3cpath%20d='M6%206L11%201M11%201V4.75M11%201H7.25'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
         />
       </a>
       <a
@@ -69,7 +61,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         <img
           alt="go plus-logo"
           className="w-[18px] h-[18px]"
-          src="go-plus-logo.png"
+          src="/src/apps/token-atlas/images/go-plus-logo.png"
         />
         <p
           className="text-[9px] font-semibold font-normal"
@@ -79,15 +71,7 @@ exports[`<TokenInfoColumn /> renders correctly and matches snapshot 1`] = `
         <img
           alt="external-link-icon"
           className="w-3 h-3"
-          src={
-            {
-              "ReactComponent": {
-                "$$typeof": Symbol(react.forward_ref),
-                "render": [Function],
-              },
-              "default": "external-link-audit.svg",
-            }
-          }
+          src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4.125%201H3C1.89543%201%201%201.89543%201%203V9C1%2010.1046%201.89543%2011%203%2011H9C10.1046%2011%2011%2010.1046%2011%209V7.875'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'/%3e%3cpath%20d='M6%206L11%201M11%201V4.75M11%201H7.25'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
         />
       </a>
     </div>

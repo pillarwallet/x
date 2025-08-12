@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenListItem /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex justify-between items-end border-b py-4 border-b-black_grey group group-hover:border-b-black_grey/[.6] cursor-pointer"
   data-testid="token-list-item"
-  onClick={[MockFunction]}
+  onClick={[MockFunction spy]}
 >
   <div
     className="flex items-center"
@@ -28,7 +28,7 @@ exports[`<TokenListItem /> renders correctly and matches snapshot 1`] = `
         <img
           alt="chain-logo"
           className="w-full h-full object-fill rounded-full grayscale false"
-          src="logo-ethereum.png"
+          src="/src/assets/images/logo-ethereum.png"
         />
       </div>
     </div>

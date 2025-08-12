@@ -207,7 +207,7 @@ describe('<SendModal />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     rendered.unmount();
   });
 });

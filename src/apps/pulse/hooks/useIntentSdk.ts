@@ -19,7 +19,7 @@ export default function useIntentSdk() {
   useEffect(() => {
     if (accountAddress && ready && authenticated && walletProvider) {
       const options: Options = {
-        bundlerApiKey: process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || '',
+        bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || '',
         modularAccount: accountAddress as Hex,
       };
 

@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
 import TokenCard from '../TokenCard';
 
 describe('<TokenCard />', () => {
-  const mockOnClick = jest.fn();
+  const mockOnClick = vi.fn();
 
   const defaultProps = {
     tokenLogo: 'token-logo.png',
@@ -17,7 +18,7 @@ describe('<TokenCard />', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {

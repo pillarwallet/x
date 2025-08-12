@@ -1,79 +1,203 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensVerticalList /> renders correctly and matches snapshot for left position 1`] = `
+exports[`<TokensVerticalList /> > renders correctly and matches snapshot for left position 1`] = `
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pr-10 border-r-[3px] border-[#1F1D23]"
 >
-  <HorizontalToken
-    isLast={false}
+  <div
+    className="flex w-full justify-between py-5 cursor-pointer border-b border-[#1F1D23] mobile:border-[#27262F] false"
     onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x1",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={1}
-    tokenLogo="logoA.png"
-    tokenName="Token A"
-    tokenSymbol="TKA"
-  />
-  <HorizontalToken
-    isLast={true}
+  >
+    <div
+      className="flex items-center"
+    >
+      <p
+        className="text-sm font-medium text-purple_light mr-[18px]"
+      >
+        0
+        1
+      </p>
+      <div
+        className="relative w-[50px] h-[50px] rounded-full mr-3.5"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          data-testid="horizontal-token-logo"
+          onError={[Function]}
+          src="logoA.png"
+        />
+        <div
+          className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/3 translate-y-1/3"
+        >
+          <img
+            alt="logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
+      <div
+        className="flex flex-col"
+      >
+        Body
+        <p
+          className="text-sm font-medium text-purple_light"
+        >
+          Token A
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col items-center"
+    />
+  </div>
+  <div
+    className="flex w-full justify-between py-5 cursor-pointer false false"
     onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x2",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={2}
-    tokenLogo="logoB.png"
-    tokenName="Token B"
-    tokenSymbol="TKB"
-  />
+  >
+    <div
+      className="flex items-center"
+    >
+      <p
+        className="text-sm font-medium text-purple_light mr-[18px]"
+      >
+        0
+        2
+      </p>
+      <div
+        className="relative w-[50px] h-[50px] rounded-full mr-3.5"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          data-testid="horizontal-token-logo"
+          onError={[Function]}
+          src="logoB.png"
+        />
+        <div
+          className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/3 translate-y-1/3"
+        >
+          <img
+            alt="logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
+      <div
+        className="flex flex-col"
+      >
+        Body
+        <p
+          className="text-sm font-medium text-purple_light"
+        >
+          Token B
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col items-center"
+    />
+  </div>
 </div>
 `;
 
-exports[`<TokensVerticalList /> renders correctly and matches snapshot for right position 1`] = `
+exports[`<TokensVerticalList /> > renders correctly and matches snapshot for right position 1`] = `
 <div
   className="flex flex-col flex-1 mobile:p-0 mobile:border-0 pl-10"
 >
-  <HorizontalToken
-    isLast={false}
+  <div
+    className="flex w-full justify-between py-5 cursor-pointer border-b border-[#1F1D23] mobile:border-[#27262F] false"
     onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x1",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={4}
-    tokenLogo="logoA.png"
-    tokenName="Token A"
-    tokenSymbol="TKA"
-  />
-  <HorizontalToken
-    isLast={true}
+  >
+    <div
+      className="flex items-center"
+    >
+      <p
+        className="text-sm font-medium text-purple_light mr-[18px]"
+      >
+        0
+        4
+      </p>
+      <div
+        className="relative w-[50px] h-[50px] rounded-full mr-3.5"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          data-testid="horizontal-token-logo"
+          onError={[Function]}
+          src="logoA.png"
+        />
+        <div
+          className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/3 translate-y-1/3"
+        >
+          <img
+            alt="logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
+      <div
+        className="flex flex-col"
+      >
+        Body
+        <p
+          className="text-sm font-medium text-purple_light"
+        >
+          Token A
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col items-center"
+    />
+  </div>
+  <div
+    className="flex w-full justify-between py-5 cursor-pointer false false"
     onClick={[Function]}
-    tokenChains={
-      [
-        {
-          "address": "0x2",
-          "blockchain": "Ethereum",
-        },
-      ]
-    }
-    tokenIndex={5}
-    tokenLogo="logoB.png"
-    tokenName="Token B"
-    tokenSymbol="TKB"
-  />
+  >
+    <div
+      className="flex items-center"
+    >
+      <p
+        className="text-sm font-medium text-purple_light mr-[18px]"
+      >
+        0
+        5
+      </p>
+      <div
+        className="relative w-[50px] h-[50px] rounded-full mr-3.5"
+      >
+        <img
+          alt="token-logo"
+          className="w-full h-full object-fill rounded-full"
+          data-testid="horizontal-token-logo"
+          onError={[Function]}
+          src="logoB.png"
+        />
+        <div
+          className="absolute bottom-0 right-0 w-6 h-6 rounded-full overflow-hidden border-[1px] bg-white border-container_grey transform translate-x-1/3 translate-y-1/3"
+        >
+          <img
+            alt="logo"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
+      <div
+        className="flex flex-col"
+      >
+        Body
+        <p
+          className="text-sm font-medium text-purple_light"
+        >
+          Token B
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col items-center"
+    />
+  </div>
 </div>
 `;

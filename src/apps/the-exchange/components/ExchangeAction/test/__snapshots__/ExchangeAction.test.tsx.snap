@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<ExchangeAction /> renders correctly and matches snapshot 1`] = `
+exports[`<ExchangeAction /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20"
   id="exchange-action"
@@ -19,7 +19,7 @@ exports[`<ExchangeAction /> renders correctly and matches snapshot 1`] = `
       <h1
         className="text-black_grey font-normal text-[43px]"
       >
-        0.00000000
+        0
       </h1>
       <div
         className="flex gap-1 items-center"
@@ -67,7 +67,7 @@ exports[`<ExchangeAction /> renders correctly and matches snapshot 1`] = `
     <img
       alt="arrow-right"
       className="w-5 h-5"
-      src="arrow-right.png"
+      src="/src/apps/the-exchange/images/arrow-right.png"
     />
   </div>
 </div>

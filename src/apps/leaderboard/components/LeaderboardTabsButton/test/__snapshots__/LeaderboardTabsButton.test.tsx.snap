@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<LeaderboardTabsButton /> matches snapshot 1`] = `
+exports[`<LeaderboardTabsButton /> > matches snapshot 1`] = `
 <div>
   <div
     class="flex w-fit p-1 bg-[#121116] rounded-[10px]"

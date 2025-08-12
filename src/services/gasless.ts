@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
 import { constants } from 'ethers';
 
-import { Token } from './tokensData';
 import { isPolygonAssetNative } from '../utils/blockchain';
+import { Token } from './tokensData';
 
 export type Paymasters = {
   gasToken: string;
@@ -26,7 +26,7 @@ export const getAllGaslessPaymasters = async (
 ): Promise<Paymasters[] | null> => {
   try {
     const res = await fetch(
-      `${process.env.REACT_APP_PAYMASTER_URL}/getAllCommonERC20PaymasterAddress`,
+      `${import.meta.env.VITE_PAYMASTER_URL}/getAllCommonERC20PaymasterAddress`,
       {
         method: 'POST',
         body: JSON.stringify({}),

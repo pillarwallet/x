@@ -40,8 +40,11 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const [recordPresence] = useRecordPresenceMutation();
 
   React.useEffect(() => {
-    const loadedApps = loadApps(allowed);
-    setApps(loadedApps);
+    const fetchApps = async () => {
+      const loadedApps = loadApps(allowed);
+      setApps(await loadedApps);
+    };
+    fetchApps();
   }, [allowed]);
 
   return (

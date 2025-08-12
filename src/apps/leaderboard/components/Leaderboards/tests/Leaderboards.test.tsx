@@ -1,20 +1,23 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // components
 import SkeletonLoader from '../../../../../components/SkeletonLoader';
 import LeaderboardTab from '../../LeaderboardTab/LeaderboardTab';
 import Leaderboards from '../Leaderboards';
 
-jest.mock('../../LeaderboardTab/LeaderboardTab', () =>
-  jest.fn(() => <div>LeaderboardTab Mock</div>)
-);
-jest.mock('../../../../../components/SkeletonLoader', () =>
-  jest.fn(() => <div>SkeletonLoader Mock</div>)
-);
+vi.mock('../../LeaderboardTab/LeaderboardTab', () => ({
+  __esModule: true,
+  default: vi.fn(() => <div>LeaderboardTab Mock</div>),
+}));
+vi.mock('../../../../../components/SkeletonLoader', () => ({
+  __esModule: true,
+  default: vi.fn(() => <div>SkeletonLoader Mock</div>),
+}));
 
 describe('Leaderboards Component', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders 3 SkeletonLoader components when loading', () => {

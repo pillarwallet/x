@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // components
 import TokenResultCard from '../TokenResultCard';
 
-const mockOnClick = jest.fn();
+const mockOnClick = vi.fn();
 const mockTokenName = 'Ethereum';
 const mockTokenSymbol = 'ETH';
 const mockTokenChain = 'Ethereum';
@@ -12,7 +13,7 @@ const mockTokenLogo = 'https://example.com/logo.png';
 
 describe('<TokenResultCard />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {

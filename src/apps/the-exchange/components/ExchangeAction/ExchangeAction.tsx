@@ -2,13 +2,14 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatEther } from 'viem';
 
 // services
 import {
   Token,
   chainNameToChainIdTokensData,
+  convertPortfolioAPIResponseToToken,
 } from '../../../../services/tokensData';
 
 // hooks
@@ -18,7 +19,17 @@ import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebug
 import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
+// utils
+import {
+  logSwapOperation,
+  logExchangeError,
+  logUserInteraction,
+  addExchangeBreadcrumb,
+  startExchangeTransaction,
+} from '../../utils/sentry';
+
 // types
+import { PortfolioData } from '../../../../types/api';
 import { SwapOffer } from '../../utils/types';
 
 // utils
@@ -54,13 +65,14 @@ const ExchangeAction = () => {
   const { getStepTransactions } = useOffer();
   const walletAddress = useWalletAddress();
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const walletPortfolio = useAppSelector(
+    (state) => state.swap.walletPortfolio as PortfolioData | undefined
+  );
 
-  useEffect(() => {
-    setErrorMessage('');
-
-    transactionDebugLog('The Exchange - Offer:', bestOffer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bestOffer]);
+  const isNoValidOffer =
+    !bestOffer ||
+    !bestOffer.tokenAmountToReceive ||
+    Number(bestOffer.tokenAmountToReceive) === 0;
 
   const getTransactionTitle = (
     index: number,
@@ -77,15 +89,86 @@ const ExchangeAction = () => {
     return 'Swap assets';
   };
 
+  /**
+   * Execute the swap transaction
+   * This function handles the entire swap process including validation,
+   * transaction building, and batch submission
+   */
   const onClickToExchange = async () => {
+    startExchangeTransaction(
+      'exchange_click',
+      {
+        isOfferLoading,
+        isNoValidOffer,
+        bestOffer: bestOffer ? 'available' : 'not_available',
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+      },
+      walletAddress
+    );
+
     setErrorMessage('');
 
+    // Log user interaction
+    logUserInteraction('exchange_button_clicked', {
+      isOfferLoading,
+      isNoValidOffer,
+      bestOffer: bestOffer ? 'available' : 'not_available',
+      swapToken: swapToken?.symbol,
+      receiveToken: receiveToken?.symbol,
+      amountSwap,
+      walletAddress,
+    });
+
+    addExchangeBreadcrumb('Exchange button clicked', 'user_interaction', {
+      isOfferLoading,
+      isNoValidOffer,
+      walletAddress,
+    });
+
+    /**
+     * Step 1: Validate required data before proceeding
+     * Ensure all necessary data is available before attempting the swap
+     */
+    if (!swapToken || !receiveToken) {
+      const errorMsg = 'Please select both tokens before proceeding.';
+      logSwapOperation('exchange_missing_tokens_error', {
+        error: errorMsg,
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        walletAddress,
+      });
+      setErrorMessage(errorMsg);
+      return;
+    }
+
+    if (amountSwap <= 0) {
+      const errorMsg = 'Please enter a valid amount to swap.';
+      logSwapOperation('exchange_invalid_amount_error', {
+        error: errorMsg,
+        amountSwap,
+        walletAddress,
+      });
+      setErrorMessage(errorMsg);
+      return;
+    }
+
     if (isOfferLoading) {
+      logSwapOperation('exchange_loading_error', {
+        error: 'Please wait until the offer is found.',
+        walletAddress,
+      });
       setErrorMessage('Please wait until the offer is found.');
       return;
     }
 
-    if (!bestOffer) {
+    if (isNoValidOffer) {
+      logSwapOperation('exchange_no_offer_error', {
+        error:
+          'No offer was found! Please try changing the amounts to try again.',
+        walletAddress,
+      });
       setErrorMessage(
         'No offer was found! Please try changing the amounts to try again.'
       );
@@ -95,9 +178,32 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
+      addExchangeBreadcrumb('Getting step transactions', 'exchange', {
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+        walletAddress,
+      });
+
+      /**
+       * Step 2: Convert wallet portfolio data
+       * Transform the portfolio data into the format expected by the transaction builder
+       */
+      const userPortfolio = walletPortfolio
+        ? convertPortfolioAPIResponseToToken(walletPortfolio)
+        : undefined;
+
+      /**
+       * Step 3: Build transaction steps
+       * Get the sequence of transactions needed to execute the swap
+       * This includes fee payments, approvals, and the actual swap
+       */
       const stepTransactions = await getStepTransactions(
+        swapToken,
         bestOffer.offer,
-        walletAddress as `0x${string}`
+        walletAddress as `0x${string}`,
+        userPortfolio,
+        amountSwap
       );
 
       transactionDebugLog(
@@ -105,50 +211,148 @@ const ExchangeAction = () => {
         stepTransactions
       );
 
-      if (!stepTransactions.length) {
+      logSwapOperation('step_transactions_retrieved', {
+        stepTransactionsCount: stepTransactions.length,
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        amountSwap,
+        walletAddress,
+      });
+
+      if (!stepTransactions || stepTransactions.length === 0) {
+        logSwapOperation('no_step_transactions', {
+          error:
+            'We were not able to add this to the queue at the moment. Please try again.',
+          walletAddress,
+        });
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
-        setIsAddingToBatch(false);
         return;
       }
 
       if (stepTransactions.length) {
+        logSwapOperation('adding_transactions_to_batch', {
+          transactionCount: stepTransactions.length,
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        });
+
+        /**
+         * Step 4: Add transactions to batch
+         * Process each transaction step and add it to the batch for execution
+         */
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < stepTransactions.length; ++i) {
-          const { value } = stepTransactions[i];
-          const bigIntValue = BigNumber.from(value).toBigInt();
+          const transactionData = stepTransactions[i];
+
+          // Validate transaction data
+          if (!transactionData.to) {
+            throw new Error(`Transaction ${i + 1} is missing 'to' address`);
+          }
+
+          /**
+           * Handle bigint conversion properly
+           * Ensure values are properly converted for the batch system
+           */
+          const { value } = transactionData;
+
+          // Handle bigint conversion properly
+          let bigIntValue: bigint;
+          if (typeof value === 'bigint') {
+            // If value is already a native bigint, use it directly
+            bigIntValue = value;
+          } else if (value) {
+            // If value exists but is not a bigint, convert it
+            bigIntValue = BigNumber.from(value).toBigInt();
+          } else {
+            // If value is undefined/null, use 0
+            bigIntValue = BigInt(0);
+          }
+
           const integerValue = formatEther(bigIntValue);
 
           transactionDebugLog(
             'The Exchange - Adding transaction to batch:',
-            stepTransactions[i]
+            transactionData
           );
 
+          addExchangeBreadcrumb(
+            `Adding transaction ${i + 1}/${stepTransactions.length} to batch`,
+            'exchange',
+            {
+              transactionIndex: i,
+              totalTransactions: stepTransactions.length,
+              value: integerValue,
+              to: transactionData.to,
+              walletAddress,
+            }
+          );
+
+          /**
+           * Add transaction to batch with proper metadata
+           * Each transaction includes title, description, and execution parameters
+           */
           addToBatch({
             title: getTransactionTitle(
               i,
               stepTransactions.length,
-              stepTransactions[i].data?.toString() ?? ''
+              transactionData.data?.toString() ?? ''
             ),
             description:
               `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
               '',
             chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
-            to: stepTransactions[i].to || '',
+            to: transactionData.to,
             value: integerValue,
-            data: stepTransactions[i].data?.toString() ?? '',
+            data: transactionData.data?.toString() ?? '',
           });
         }
+
+        /**
+         * Step 5: Open batch modal
+         * Show the batch modal to user for transaction review and execution
+         */
+        logSwapOperation('batch_modal_opened', {
+          transactionCount: stepTransactions.length,
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        });
+
         setShowBatchSendModal(true);
         showSend();
       }
-      setIsAddingToBatch(false);
     } catch (error) {
-      console.error('Something went wrong. Please try again', error);
+      /**
+       * Error handling for transaction execution
+       * Log the error and provide user-friendly error message
+       */
+      const exchangeErrorMessage =
+        error instanceof Error ? error.message : String(error);
+      logExchangeError(
+        exchangeErrorMessage,
+        {
+          operation: 'exchange_click',
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        },
+        {
+          component: 'ExchangeAction',
+          method: 'onClickToExchange',
+        }
+      );
+
+      transactionDebugLog('Swap batch error:', error);
       setErrorMessage(
         'We were not able to add this to the queue at the moment. Please try again.'
       );
+    } finally {
       setIsAddingToBatch(false);
     }
   };
@@ -159,7 +363,7 @@ const ExchangeAction = () => {
       className="flex flex-col w-full tablet:max-w-[420px] desktop:max-w-[420px] mb-20"
     >
       <div
-        className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}
+        className={`flex flex-col gap-4 rounded-t-[3px] p-4 border-b border-black_grey ${!isNoValidOffer && !isOfferLoading ? 'bg-white' : 'bg-white/[.6]'}`}
       >
         <Body className="font-normal">You receive</Body>
         <div className="flex justify-between items-end">
@@ -167,7 +371,9 @@ const ExchangeAction = () => {
             <CircularProgress size={64.5} sx={{ color: '#343434' }} />
           ) : (
             <NumberText className="font-normal text-[43px]">
-              {formatTokenAmount(bestOffer?.tokenAmountToReceive)}
+              {isNoValidOffer
+                ? '0'
+                : formatTokenAmount(bestOffer?.tokenAmountToReceive)}
             </NumberText>
           )}
           <div className="flex gap-1 items-center">
@@ -183,7 +389,7 @@ const ExchangeAction = () => {
       <div
         id="exchange-action-button"
         onClick={onClickToExchange}
-        className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${bestOffer?.tokenAmountToReceive && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}
+        className={`flex gap-4 rounded-b-[3px] p-4 gap-2 items-center ${!isNoValidOffer && !isOfferLoading ? 'bg-white cursor-pointer' : 'bg-white/[.6]'}`}
       >
         <Body>Exchange</Body>
         {errorMessage && <BodySmall>{errorMessage}</BodySmall>}

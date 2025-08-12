@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Main /> renders correctly 1`] = `
+exports[`<Main /> > renders correctly 1`] = `
 <div>
   <header
     className="header "
@@ -37,14 +37,6 @@ exports[`<Main /> renders correctly 1`] = `
           </li>
           <li>
             <a
-              className=""
-              href="/waitlist"
-            >
-              Testing Campaign
-            </a>
-          </li>
-          <li>
-            <a
               href="https://blog.pillarx.app/"
             >
               Blog
@@ -52,16 +44,13 @@ exports[`<Main /> renders correctly 1`] = `
           </li>
         </ul>
         <a
-          className="header__social"
-          href="https://twitter.com/PX_Web3"
+          className="header__login cta plausible-event-name=Login+Nav"
+          href="/login"
           onClick={[Function]}
-          rel="noreferrer"
-          target="_blank"
         >
-          <img
-            alt="home-image"
-            src="https://cdn.pillarx.app/home-x.svg"
-          />
+          <span>
+            Log in
+          </span>
         </a>
       </nav>
       <div
@@ -101,14 +90,14 @@ exports[`<Main /> renders correctly 1`] = `
           className="home_hero__signup"
         >
           <p>
-            Earn PX points and get a chance to share the $1,000 prize pool!
+            Trade, manage crypto assets seamlessly across EVM chains, & access secure DeFi — all in one app
           </p>
           <a
-            className="cta plausible-event-name=Waitlist+Home+Hero"
-            href="/waitlist"
+            className="cta plausible-event-name=Login+Home+Hero"
+            href="/login"
           >
             <span>
-              Join the Waitlist!
+              Get started
             </span>
           </a>
         </div>
@@ -419,16 +408,40 @@ exports[`<Main /> renders correctly 1`] = `
       <div
         className="footer__wrapper"
       >
-        <a
-          href="https://twitter.com/PX_Web3"
-          rel="noreferrer"
-          target="_blank"
+        <div
+          className="footer__links"
         >
-          <img
-            alt="home-image"
-            src="https://cdn.pillarx.app/home-x.svg"
-          />
-        </a>
+          <a
+            href="/privacy-policy"
+            onClick={[Function]}
+          >
+            Privacy Policy
+          </a>
+        </div>
+        <div
+          className="footer__socials"
+        >
+          <a
+            href="https://x.com/PX_Web3"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="x-image"
+              src="https://cdn.pillarx.app/home-x.svg"
+            />
+          </a>
+          <a
+            href="https://t.me/+WmZpena91_dlNDhk"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              alt="home-image"
+              src="https://cdn.pillarx.app/social-telegram.svg"
+            />
+          </a>
+        </div>
       </div>
     </div>
   </footer>

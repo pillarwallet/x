@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenGraph /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenGraph /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0"
   id="token-atlas-token-graph"

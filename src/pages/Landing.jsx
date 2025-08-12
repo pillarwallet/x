@@ -28,13 +28,14 @@ export default function LandingPage() {
             </div>
             <div className="home_hero__signup">
               <p>
-                Earn PX points and get a chance to share the $1,000 prize pool!
+                Trade, manage crypto assets seamlessly across EVM chains, &
+                access secure DeFi — all in one app
               </p>
               <a
-                href="/waitlist"
-                className="cta plausible-event-name=Waitlist+Home+Hero"
+                href="/login"
+                className="cta plausible-event-name=Login+Home+Hero"
               >
-                <span>Join the Waitlist!</span>
+                <span>Get started</span>
               </a>
             </div>
           </div>

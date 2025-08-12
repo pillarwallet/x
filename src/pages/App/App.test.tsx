@@ -6,6 +6,10 @@ import renderer, {
   act,
 } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // theme
 import { defaultTheme } from '../../theme';
@@ -52,7 +56,7 @@ describe.skip('<App />', () => {
   });
 
   it('successfully loads app by identifier', async () => {
-    (axios.get as jest.Mock).mockImplementation(() =>
+    (axios.get as Mock).mockImplementation(() =>
       Promise.resolve({ data: { apps: [{ id: 'sign-message' }] } })
     );
 
@@ -95,6 +99,6 @@ describe.skip('<App />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });

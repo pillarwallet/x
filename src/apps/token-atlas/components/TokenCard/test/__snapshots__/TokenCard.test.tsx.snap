@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokenCard /> renders correctly and matches snapshot 1`] = `
+exports[`<TokenCard /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col relative w-[108px] h-[125px] bg-medium_grey rounded-lg px-4 pb-4 pt-6 items-center justify-center cursor-pointer"
   data-testid="token-card"
   id="token-atlas-token-card"
-  onClick={[MockFunction]}
+  onClick={[MockFunction spy]}
 >
   <img
     alt="chain-logo"

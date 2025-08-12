@@ -1,10 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
+
+// types
+import type { Mock } from 'vitest';
 
 // services
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
-
-// utils
 
 // reducer
 import * as reducerHooks from '../../../hooks/useReducerHooks';
@@ -16,19 +18,19 @@ import PrimeTokensBalance from '../PrimeTokensBalance';
 import { store } from '../../../../../store';
 import { PortfolioData } from '../../../../../types/api';
 
-jest.mock('../../../../../services/pillarXApiWalletPortfolio');
-jest.mock('../../../../../utils/number');
+vi.mock('../../../../../services/pillarXApiWalletPortfolio');
+vi.mock('../../../../../utils/number');
 
 describe('<PrimeTokensBalance />', () => {
-  const useAppSelectorMock = jest.spyOn(reducerHooks, 'useAppSelector');
+  const useAppSelectorMock = vi.spyOn(reducerHooks, 'useAppSelector');
 
-  const mockGetPrimeAssetsWithBalances = jest.spyOn(
+  const mockGetPrimeAssetsWithBalances = vi.spyOn(
     portfolioService,
     'getPrimeAssetsWithBalances'
-  ) as jest.Mock;
+  ) as Mock;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {

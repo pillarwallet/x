@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<PointsInfo /> renders correctly and matches snapshot 1`] = `
+exports[`<PointsInfo /> > renders correctly and matches snapshot 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<NumberText /> renders correctly 1`] = `
+exports[`<NumberText /> > renders correctly 1`] = `
 [
   <h1
     className="text-black_grey undefined"

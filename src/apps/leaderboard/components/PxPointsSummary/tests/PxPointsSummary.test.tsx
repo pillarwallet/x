@@ -1,7 +1,9 @@
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // types
+import type { Mock } from 'vitest';
 import {
   LeaderboardRankChange,
   LeaderboardTableData,
@@ -10,33 +12,33 @@ import {
 // components
 import PxPointsSummary from '../PxPointsSummary';
 
-jest.mock('@etherspot/transaction-kit', () => ({
-  useWalletAddress: jest.fn(),
+vi.mock('@etherspot/transaction-kit', () => ({
+  useWalletAddress: vi.fn(),
 }));
 
 // mock subcomponents
-jest.mock('../../PointsCards/GasNewDropCard', () => ({
+vi.mock('../../PointsCards/GasNewDropCard', () => ({
   __esModule: true,
   default: function GasNewDropCard() {
     return <div>GasNewDropCard</div>;
   },
 }));
 
-jest.mock('../../PointsCards/OverviewPointsCard', () => ({
+vi.mock('../../PointsCards/OverviewPointsCard', () => ({
   __esModule: true,
   default: function OverviewPointsCard() {
     return <div>OverviewPointsCard</div>;
   },
 }));
 
-jest.mock('../../PointsCards/PointsCard', () => ({
+vi.mock('../../PointsCards/PointsCard', () => ({
   __esModule: true,
   default: function PointsCard(props: { title: string }) {
     return <div>{props.title} PointsCard</div>;
   },
 }));
 
-jest.mock('../../Typography/BodySmall', () => ({
+vi.mock('../../Typography/BodySmall', () => ({
   __esModule: true,
   default: function BodySmall(props: { children: React.ReactNode }) {
     return <div>{props.children}</div>;
@@ -111,7 +113,7 @@ describe('<PxPointsSummary />', () => {
   ];
 
   beforeEach(() => {
-    (useWalletAddress as jest.Mock).mockReturnValue(mockWallet);
+    (useWalletAddress as Mock).mockReturnValue(mockWallet);
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -183,7 +185,7 @@ describe('<PxPointsSummary />', () => {
   });
 
   it('handles no wallet address gracefully', () => {
-    (useWalletAddress as jest.Mock).mockReturnValue(undefined);
+    (useWalletAddress as Mock).mockReturnValue(undefined);
 
     render(
       <PxPointsSummary

@@ -28,7 +28,7 @@ import { useState } from 'react';
 
 const Form = () => {
   // Plausible Custom Event
-  const domain = process.env.REACT_APP_PLAUSIBLE_DOMAIN;
+  const domain = import.meta.env.VITE_PLAUSIBLE_DOMAIN;
   const { trackEvent } = Plausible({
     domain,
   });

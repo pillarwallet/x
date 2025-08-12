@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<TokensHorizontalTile /> displays loading skeleton when data is loading 1`] = `null`;
+exports[`<TokensHorizontalTile /> > displays loading skeleton when data is loading 1`] = `null`;
 
-exports[`<TokensHorizontalTile /> renders correctly and matches snapshot 1`] = `
+exports[`<TokensHorizontalTile /> > renders correctly and matches snapshot 1`] = `
 <div>
   <div
     className="flex bg-container_grey rounded-3xl flex-col px-10 pt-[30px] pb-5 tablet:p-5 mobile:p-0 mobile:bg-[#1F1D23]"

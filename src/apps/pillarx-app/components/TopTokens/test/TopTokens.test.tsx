@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 
 // services
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
@@ -10,10 +12,10 @@ import * as reducerHooks from '../../../hooks/useReducerHooks';
 // components
 import TopTokens from '../TopTokens';
 
-jest.mock('../../../hooks/useReducerHooks');
-jest.mock('../../../../../services/pillarXApiWalletPortfolio');
+vi.mock('../../../hooks/useReducerHooks');
+vi.mock('../../../../../services/pillarXApiWalletPortfolio');
 
-const useAppSelectorMock = reducerHooks.useAppSelector as unknown as jest.Mock;
+const useAppSelectorMock = reducerHooks.useAppSelector as unknown as Mock;
 
 describe('TopTokens component', () => {
   const mockWalletPortfolio = {
@@ -53,7 +55,7 @@ describe('TopTokens component', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -132,9 +134,9 @@ describe('TopTokens component', () => {
       })
     );
 
-    (
-      portfolioService.getTopNonPrimeAssetsAcrossChains as jest.Mock
-    ).mockReturnValue([]);
+    (portfolioService.getTopNonPrimeAssetsAcrossChains as Mock).mockReturnValue(
+      []
+    );
 
     render(
       <MemoryRouter>
@@ -157,9 +159,9 @@ describe('TopTokens component', () => {
       })
     );
 
-    (
-      portfolioService.getTopNonPrimeAssetsAcrossChains as jest.Mock
-    ).mockReturnValue(mockWalletPortfolio.assets);
+    (portfolioService.getTopNonPrimeAssetsAcrossChains as Mock).mockReturnValue(
+      mockWalletPortfolio.assets
+    );
 
     render(
       <MemoryRouter>

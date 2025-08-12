@@ -2,7 +2,6 @@
 import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
 import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
 import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useLogout } from '@privy-io/react-auth';
 import Tippy from '@tippyjs/react';
 import Avatar from 'boring-avatars';
 import {
@@ -20,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { Chain } from 'viem';
-import { useAccount, useDisconnect } from 'wagmi';
 
 // components
 import FormTabSelect from '../Form/FormTabSelect';
@@ -36,6 +34,7 @@ import {
   visibleChains,
 } from '../../utils/blockchain';
 import { formatAmountDisplay } from '../../utils/number';
+import { useComprehensiveLogout } from '../../utils/logout';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
@@ -56,10 +55,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const accountAddress = useWalletAddress();
   const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
-  const { logout } = useLogout();
   const [t] = useTranslation();
-  const { address: wcAddress } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { logout } = useComprehensiveLogout();
 
   const nfts = useAccountNfts();
   const [showNfts, setShowNfts] = React.useState(false);
@@ -150,25 +147,35 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
+    // Handle private key logout
     if (account) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
-    } else {
-      logout();
     }
 
-    if (wcAddress) {
-      await disconnect();
+    // Use comprehensive logout for both Privy and WAGMI
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // If an error - display an alert box to the user
+      // eslint-disable-next-line no-alert
+      alert(
+        'Error during logout - this could just be a temporary issue. Please try again or clear your browser cache for this website to logout.'
+      );
     }
 
+    // Clear any stored data
     clearDappStorage();
+
+    // Navigate to home
     navigate('/');
 
-    // Time to logout and redirect route
+    // Reload the page after a short delay to ensure clean state
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate, disconnect]);
+  }, [account, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {
@@ -317,77 +324,79 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                 />
               </>
             )}
-            {groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
-              const logoUrl = asset.asset.logo;
-              const tokenChainsCount = chains.length;
+            {!tokensLoading &&
+              groupedTokens.length > 0 &&
+              groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
+                const logoUrl = asset.asset.logo;
+                const tokenChainsCount = chains.length;
 
-              return (
-                <TokenItem
-                  id={`token-item-${symbol}-account-modal`}
-                  key={`${symbol}-${asset.asset.id}`}
-                >
-                  <TokenTotals id="token-totals-account-modal">
-                    {!hideImage && logoUrl ? (
-                      <img
-                        src={logoUrl}
-                        alt={symbol}
-                        onError={() => setHideImage(true)}
-                      />
-                    ) : (
-                      <div className="h-6 w-6">
-                        <RandomAvatar
-                          name={asset.asset.name}
-                          isRound
-                          variant="marble"
-                        />
-                      </div>
-                    )}
-                    <p>
-                      {formatAmountDisplay(totalBalance)}{' '}
-                      <TokenSymbol>{symbol}</TokenSymbol>
-                    </p>
-                    <TokenTotalsRight>
-                      <IconHierarchy
-                        size={13}
-                        color={theme.color.icon.cardIcon}
-                        variant="Bold"
-                      />
-                      <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
-                      <VerticalDivider />
-                      <ToggleButton
-                        $expanded={expanded[`${symbol}-${asset.asset.id}`]}
-                        onClick={() =>
-                          setExpanded((prev) => ({
-                            ...prev,
-                            [`${symbol}-${asset.asset.id}`]:
-                              !prev[`${symbol}-${asset.asset.id}`],
-                          }))
-                        }
-                      >
-                        <ArrowRightIcon size={15} />
-                      </ToggleButton>
-                    </TokenTotalsRight>
-                  </TokenTotals>
-                  <TokenChainsWrapper
-                    id="token-chains-account-modal"
-                    $visible={expanded[`${symbol}-${asset.asset.id}`]}
+                return (
+                  <TokenItem
+                    id={`token-item-${symbol}-account-modal`}
+                    key={`${symbol}-${asset.asset.id}`}
                   >
-                    {chains.map(({ balance, chain, address }) => {
-                      return (
-                        <TokenItemChain
-                          key={`${symbol}-${chain.id}-${address}`}
-                          id={`action-bar-account-token-${symbol}-${chain.id}`}
+                    <TokenTotals id="token-totals-account-modal">
+                      {!hideImage && logoUrl ? (
+                        <img
+                          src={logoUrl}
+                          alt={symbol}
+                          onError={() => setHideImage(true)}
+                        />
+                      ) : (
+                        <div className="h-6 w-6">
+                          <RandomAvatar
+                            name={asset.asset.name}
+                            isRound
+                            variant="marble"
+                          />
+                        </div>
+                      )}
+                      <p>
+                        {formatAmountDisplay(totalBalance)}{' '}
+                        <TokenSymbol>{symbol}</TokenSymbol>
+                      </p>
+                      <TokenTotalsRight>
+                        <IconHierarchy
+                          size={13}
+                          color={theme.color.icon.cardIcon}
+                          variant="Bold"
+                        />
+                        <TokenChainsCount>{tokenChainsCount}</TokenChainsCount>
+                        <VerticalDivider />
+                        <ToggleButton
+                          $expanded={expanded[`${symbol}-${asset.asset.id}`]}
+                          onClick={() =>
+                            setExpanded((prev) => ({
+                              ...prev,
+                              [`${symbol}-${asset.asset.id}`]:
+                                !prev[`${symbol}-${asset.asset.id}`],
+                            }))
+                          }
                         >
-                          <ChainIcon src={getLogoForChainId(chain.id)} />
-                          <p>{getChainName(Number(chain.id))}</p>
-                          <p>{formatAmountDisplay(balance)}</p>
-                        </TokenItemChain>
-                      );
-                    })}
-                  </TokenChainsWrapper>
-                </TokenItem>
-              );
-            })}
+                          <ArrowRightIcon size={15} />
+                        </ToggleButton>
+                      </TokenTotalsRight>
+                    </TokenTotals>
+                    <TokenChainsWrapper
+                      id="token-chains-account-modal"
+                      $visible={expanded[`${symbol}-${asset.asset.id}`]}
+                    >
+                      {chains.map(({ balance, chain, address }) => {
+                        return (
+                          <TokenItemChain
+                            key={`${symbol}-${chain.id}-${address}`}
+                            id={`action-bar-account-token-${symbol}-${chain.id}`}
+                          >
+                            <ChainIcon src={getLogoForChainId(chain.id)} />
+                            <p>{getChainName(Number(chain.id))}</p>
+                            <p>{formatAmountDisplay(balance)}</p>
+                          </TokenItemChain>
+                        );
+                      })}
+                    </TokenChainsWrapper>
+                  </TokenItem>
+                );
+              })}
           </>
         )}
       </TabContent>

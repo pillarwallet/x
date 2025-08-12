@@ -1,11 +1,53 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
-import { TextDecoder, TextEncoder } from 'util';
+// Polyfill for TextEncoder and TextDecoder MUST be at the very top
+// This must be done before any other imports that might use TextEncoder/TextDecoder
 
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
+// Create proper polyfills for TextEncoder and TextDecoder
+if (typeof globalThis.TextEncoder === 'undefined') {
+  const {
+    TextEncoder: NodeTextEncoder,
+    TextDecoder: NodeTextDecoder,
+  } = require('util');
+
+  // Create wrapper classes that match the Web API
+  class TextEncoderPolyfill {
+    readonly encoding = 'utf-8';
+
+    encode(input = ''): Uint8Array {
+      return new NodeTextEncoder().encode(input);
+    }
+  }
+
+  class TextDecoderPolyfill {
+    readonly encoding: string;
+    readonly fatal: boolean;
+    readonly ignoreBOM: boolean;
+
+    constructor(
+      encoding = 'utf-8',
+      options: { fatal?: boolean; ignoreBOM?: boolean } = {}
+    ) {
+      this.encoding = encoding;
+      this.fatal = options.fatal || false;
+      this.ignoreBOM = options.ignoreBOM || false;
+    }
+
+    decode(input?: any, options: { stream?: boolean } = {}): string {
+      return new NodeTextDecoder(this.encoding, {
+        fatal: this.fatal,
+        ignoreBOM: this.ignoreBOM,
+      }).decode(input, options);
+    }
+  }
+
+  globalThis.TextEncoder = TextEncoderPolyfill as any;
+  globalThis.TextDecoder = TextDecoderPolyfill as any;
+  (global as any).TextEncoder = TextEncoderPolyfill;
+  (global as any).TextDecoder = TextDecoderPolyfill;
+}
+
+import React from 'react';
+
 import '@testing-library/jest-dom';
 import { BigNumber } from 'ethers';
 import 'jest-styled-components';
@@ -16,32 +58,29 @@ import { goerli } from 'viem/chains';
 // mocking matchMedia for slick carousel
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 });
 
-// polyfill for TextEncoder and TextDecoder for jsdom environment (viem dep related)
-Object.assign(global, { TextDecoder, TextEncoder });
+vi.mock('@firebase/app');
+vi.mock('@firebase/analytics');
+vi.mock('axios');
+vi.mock('@etherspot/data-utils');
+vi.mock('@etherspot/modular-sdk');
 
-jest.mock('@firebase/app');
-jest.mock('@firebase/analytics');
-jest.mock('axios');
-jest.mock('@etherspot/data-utils');
-jest.mock('@etherspot/modular-sdk');
-
-jest.mock('@privy-io/react-auth', () => ({
+vi.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,
-  usePrivy: jest.fn(() => ({ authenticated: false })),
-  useWallets: jest.fn(() => ({})),
-  useLogout: jest.fn(() => ({ logout: jest.fn() })),
+  usePrivy: vi.fn(() => ({ authenticated: false })),
+  useWallets: vi.fn(() => ({ wallets: [] })),
+  useLogout: vi.fn(() => ({ logout: vi.fn() })),
 }));
 
 export const etherspotTestAssets = [
@@ -107,31 +146,32 @@ const provider = createWalletClient({
   transport: http('http://localhost:8545'),
 });
 
-jest.mock('wagmi', () => ({
-  createConfig: jest.fn(),
-  http: jest.fn(),
+vi.mock('wagmi', () => ({
+  createConfig: vi.fn(),
+  http: vi.fn(),
   mainnet: { id: 1, name: 'mainnet' },
-  useAccount: jest.fn().mockReturnValue({
+  useAccount: vi.fn().mockReturnValue({
     address: '0x',
+    isConnected: false,
   }),
-  useDisconnect: jest.fn().mockReturnValue({
-    disconnect: jest.fn(),
+  useDisconnect: vi.fn().mockReturnValue({
+    disconnect: vi.fn(),
   }),
 }));
 
-jest.mock('wagmi/connectors', () => ({
-  walletConnect: jest.fn(),
+vi.mock('wagmi/connectors', () => ({
+  walletConnect: vi.fn(),
 }));
 
-jest.mock('@etherspot/transaction-kit', () => ({
-  useEtherspotAssets: jest.fn().mockReturnValue({
+vi.mock('@etherspot/transaction-kit', () => ({
+  useEtherspotAssets: vi.fn().mockReturnValue({
     getAssets: async () => etherspotTestAssets,
     getSupportedAssets: async () => etherspotTestSupportedAssets,
   }),
-  useWalletAddress: jest
+  useWalletAddress: vi
     .fn()
     .mockReturnValue('0x7F30B1960D5556929B03a0339814fE903c55a347'),
-  useEtherspotTransactions: jest.fn().mockReturnValue({
+  useEtherspotTransactions: vi.fn().mockReturnValue({
     chainId: 1,
     batches: [],
     estimate: async () => [],
@@ -147,32 +187,32 @@ jest.mock('@etherspot/transaction-kit', () => ({
     containsEstimatingError: false,
     containsSendingError: false,
   }),
-  useEtherspotBalances: jest.fn().mockReturnValue({
+  useEtherspotBalances: vi.fn().mockReturnValue({
     getAccountBalances: async () => [],
   }),
-  useEtherspotPrices: jest.fn().mockReturnValue({
+  useEtherspotPrices: vi.fn().mockReturnValue({
     getPrice: async () => undefined,
     getPrices: async () => [],
   }),
 
-  useEtherspotHistory: jest.fn().mockReturnValue({
+  useEtherspotHistory: vi.fn().mockReturnValue({
     getAccountTransactions: async () => [],
     getAccountTransaction: async () => undefined,
     getAccountTransactionStatus: async () => undefined,
   }),
 
-  useEtherspotNfts: jest.fn().mockReturnValue({
+  useEtherspotNfts: vi.fn().mockReturnValue({
     getAccountNfts: async () => [],
   }),
 
-  useEtherspot: jest.fn().mockReturnValue({
+  useEtherspot: vi.fn().mockReturnValue({
     getSdk: async () => {},
     getDataService: () => {},
     provider,
     chainId: 1,
   }),
 
-  useEtherspotUtils: jest.fn().mockReturnValue({
+  useEtherspotUtils: vi.fn().mockReturnValue({
     checksumAddress: () => '0x7F30B1960D5556929B03a0339814fE903c55a347',
     verifyEip1271Message: async () => false,
     toBigNumber: () => BigNumber.from('1'),
@@ -182,4 +222,4 @@ jest.mock('@etherspot/transaction-kit', () => ({
   }),
 }));
 
-process.env.REACT_APP_PRIVY_APP_ID = 'test';
+import.meta.env.VITE_PRIVY_APP_ID = 'test';

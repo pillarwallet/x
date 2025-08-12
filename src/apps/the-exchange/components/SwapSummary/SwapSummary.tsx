@@ -1,3 +1,6 @@
+import { useWalletAddress } from '@etherspot/transaction-kit';
+import { useEffect } from 'react';
+
 // hooks
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
@@ -7,6 +10,7 @@ import { SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
+import { logSwapOperation, addExchangeBreadcrumb } from '../../utils/sentry';
 
 // components
 import BodySmall from '../Typography/BodySmall';
@@ -15,6 +19,7 @@ import BodySmall from '../Typography/BodySmall';
 import ArrowRightLight from '../../images/arrow-right-light.png';
 
 const SwapSummary = () => {
+  const walletAddress = useWalletAddress();
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(
     (state) => state.swap.receiveToken as Token
@@ -32,6 +37,49 @@ const SwapSummary = () => {
   const isOfferLoading = useAppSelector(
     (state) => state.swap.isOfferLoading as boolean
   );
+
+  // Log swap summary when it changes
+  useEffect(() => {
+    if (
+      swapToken &&
+      receiveToken &&
+      amountSwap &&
+      amountReceive &&
+      bestOffer &&
+      !isOfferLoading
+    ) {
+      const exchangeRate = amountReceive / amountSwap || 0;
+      const usdPerToken = usdPriceSwapToken || 0;
+
+      logSwapOperation('swap_summary_updated', {
+        swapToken: swapToken.symbol,
+        receiveToken: receiveToken.symbol,
+        amountSwap,
+        amountReceive,
+        exchangeRate,
+        usdPerToken,
+        walletAddress,
+      });
+
+      addExchangeBreadcrumb('Swap summary updated', 'swap', {
+        swapToken: swapToken.symbol,
+        receiveToken: receiveToken.symbol,
+        amountSwap,
+        amountReceive,
+        exchangeRate,
+        walletAddress,
+      });
+    }
+  }, [
+    swapToken,
+    receiveToken,
+    amountSwap,
+    amountReceive,
+    bestOffer,
+    isOfferLoading,
+    usdPriceSwapToken,
+    walletAddress,
+  ]);
 
   if (
     !swapToken ||

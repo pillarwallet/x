@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // types
 import { LeaderboardRankChange } from '../../../../../types/api';
@@ -7,7 +8,7 @@ import { LeaderboardRankChange } from '../../../../../types/api';
 // components
 import UserInfo from '../UserInfo';
 
-jest.mock('../../RandomAvatar/RandomAvatar', () => ({
+vi.mock('../../RandomAvatar/RandomAvatar', () => ({
   __esModule: true,
   default: function MockAvatar() {
     return <div data-testid="mock-avatar">Avatar</div>;
@@ -23,11 +24,11 @@ describe('<UserInfo />', () => {
   const walletAddress = '0x1234567890abcdef1234567890abcdef12345678';
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('renders correctly and matches snapshot', () => {

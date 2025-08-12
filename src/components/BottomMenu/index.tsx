@@ -7,11 +7,12 @@ import {
   Send2 as IconSend,
   Wallet2 as IconWallet,
 } from 'iconsax-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 // navigation
 import { navigationRoute } from '../../navigation';
@@ -29,6 +30,7 @@ import { animation } from '../../theme';
 
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
+  const { isConnected } = useAccount();
   const { account } = usePrivateKeyLogin();
   const navLocation = useLocation();
   const navigate = useNavigate();
@@ -38,6 +40,7 @@ const BottomMenu = () => {
   const { transactions: globalTransactionsBatch } =
     useGlobalTransactionsBatch();
   const overlayRef = React.useRef<HTMLDivElement>(null);
+  const [isDebugMode, setIsDebugMode] = useState(false);
 
   useEffect(() => {
     const localRef = overlayRef.current;
@@ -58,7 +61,27 @@ const BottomMenu = () => {
     };
   }, [overlayRef, hide]);
 
-  if (!authenticated && !account) return null;
+  // Monitor debug mode changes
+  useEffect(() => {
+    const checkDebugMode = () => {
+      setIsDebugMode(localStorage.getItem('debug_connections') === 'true');
+    };
+
+    checkDebugMode();
+
+    // Listen for storage changes
+    window.addEventListener('storage', checkDebugMode);
+
+    // Also check on focus in case localStorage was changed in another tab
+    window.addEventListener('focus', checkDebugMode);
+
+    return () => {
+      window.removeEventListener('storage', checkDebugMode);
+      window.removeEventListener('focus', checkDebugMode);
+    };
+  }, []);
+
+  if (!authenticated && !account && !isConnected) return null;
 
   const isHomeActive =
     active === null && navLocation.pathname === navigationRoute.home;
@@ -102,7 +125,7 @@ const BottomMenu = () => {
 
   return (
     <>
-      <Wrapper id="bottom-menu">
+      <Wrapper id="bottom-menu" $isDebugMode={isDebugMode}>
         <BottomMenuModal />
         <MainMenuItems $modalVisible={!!active}>
           {menuItems.map((item, index) => {
@@ -219,10 +242,10 @@ const MenuItem = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $isDebugMode?: boolean }>`
   margin: 0 auto;
   position: fixed;
-  bottom: 22px;
+  bottom: ${({ $isDebugMode }) => ($isDebugMode ? '42px' : '22px')};
   left: 50%;
   z-index: 100;
   width: 338px;

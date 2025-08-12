@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
+exports[`<SelectChainDropdown /> > renders correctly and matches snapshot 1`] = `
 <div
   className="relative undefined"
   data-testid="select-chain-dropdown"
@@ -19,15 +19,7 @@ exports[`<SelectChainDropdown /> renders correctly and matches snapshot 1`] = `
     <img
       alt="arrow-down"
       className="transform "
-      src={
-        {
-          "ReactComponent": {
-            "$$typeof": Symbol(react.forward_ref),
-            "render": [Function],
-          },
-          "default": "arrow-down.svg",
-        }
-      }
+      src="data:image/svg+xml,%3csvg%20width='14'%20height='14'%20viewBox='0%200%2014%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M11.6199%205.22083L7.81655%209.02417C7.36738%209.47333%206.63238%209.47333%206.18322%209.02417L2.37988%205.22083'%20stroke='%23A3A3A3'%20stroke-width='2'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
     />
   </button>
 </div>

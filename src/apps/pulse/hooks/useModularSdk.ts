@@ -48,7 +48,7 @@ export default function useModularSdk(props: ModularSdkProps) {
         chainId: payingTokens[0].chainId,
         bundlerProvider: new EtherspotBundler(
           chainId,
-          process.env.REACT_APP_ETHERSPOT_BUNDLER_API_KEY || ''
+          import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''
         ),
       };
 

@@ -1,6 +1,7 @@
 import { act, render, RenderResult } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
 
 // components
 import Select from '.';
@@ -63,7 +64,7 @@ describe('<Select />', () => {
   it('responds once clicked', async () => {
     const user = userEvent.setup();
 
-    const onChange = jest.fn();
+    const onChange = vi.fn();
 
     await act(async () => {
       rendered = render(

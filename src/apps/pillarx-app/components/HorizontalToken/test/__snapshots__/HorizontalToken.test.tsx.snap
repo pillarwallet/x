@@ -1,18 +1,18 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<HorizontalToken /> renders correctly and matches snapshot 1`] = `
+exports[`<HorizontalToken /> > renders correctly and matches snapshot 1`] = `
 <div
   className="flex w-full justify-between py-5 cursor-pointer border-b border-[#1F1D23] mobile:border-[#27262F] false"
 >
   <div
     className="flex items-center"
   >
-    <BodySmall
-      className="text-purple_light mr-[18px]"
+    <p
+      className="text-sm font-medium text-purple_light mr-[18px]"
     >
       0
       1
-    </BodySmall>
+    </p>
     <div
       className="relative w-[50px] h-[50px] rounded-full mr-3.5"
     >
@@ -27,26 +27,19 @@ exports[`<HorizontalToken /> renders correctly and matches snapshot 1`] = `
     <div
       className="flex flex-col"
     >
-      <Body>
-        TNS
-      </Body>
-      <BodySmall
-        className="text-purple_light"
+      Body Mock
+      <p
+        className="text-sm font-medium text-purple_light"
       >
         Token Name
-      </BodySmall>
+      </p>
     </div>
   </div>
   <div
     className="flex flex-col items-center"
   >
-    <Body>
-      $
-      123.4567
-    </Body>
-    <TokensPercentage
-      percentage={12.34}
-    />
+    Body Mock
+    TokensPercentage Mock
   </div>
 </div>
 `;

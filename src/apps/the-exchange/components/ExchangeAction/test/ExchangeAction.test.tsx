@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer, { act } from 'react-test-renderer';
+import { vi } from 'vitest';
 
 // provider
 import { Provider } from 'react-redux';
@@ -27,7 +28,29 @@ import ExchangeAction from '../ExchangeAction';
 
 // types
 import { Token } from '../../../../../services/tokensData';
+import * as useOffer from '../../../hooks/useOffer';
 import { SwapOffer } from '../../../utils/types';
+
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+  setContext: vi.fn(),
+  addBreadcrumb: vi.fn(),
+  startTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setStatus: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
+  })),
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+  withScope: vi.fn((callback) =>
+    callback({
+      setLevel: vi.fn(),
+      setTag: vi.fn(),
+      setExtra: vi.fn(),
+    })
+  ),
+}));
 
 const mockTokenAssets: Token[] = [
   {
@@ -85,42 +108,69 @@ export const mockBestOffer: SwapOffer = {
   },
 };
 
+const FEE_RECEIVER = '0xfee0000000000000000000000000000000000000';
+
 // Mock hooks and utils
-jest.mock('../../../../../hooks/useGlobalTransactionsBatch', () => () => ({
-  addToBatch: jest.fn(),
+vi.mock('../../../../../hooks/useGlobalTransactionsBatch', () => ({
+  _esModule: true,
+  default: vi.fn(() => ({
+    addToBatch: vi.fn(),
+  })),
 }));
-jest.mock('../../../../../hooks/useBottomMenuModal', () => () => ({
-  showSend: jest.fn(),
-}));
-jest.mock('@etherspot/transaction-kit', () => ({
+vi.mock('../../../../../hooks/useBottomMenuModal', () => {
+  return {
+    _esModule: true,
+    default: vi.fn(() => ({
+      open: vi.fn(),
+      close: vi.fn(),
+      isOpen: false, // Default value for isOpen
+    })),
+  };
+});
+
+vi.mock('@etherspot/transaction-kit', () => ({
   useEtherspotSwaps: () => ({
-    prepareCrossChainOfferTransactions: jest.fn().mockResolvedValue([]),
+    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue([]),
   }),
-  useEtherspotUtils: jest.fn().mockReturnValue({
-    isZeroAddress: jest.fn(),
+  useEtherspotUtils: vi.fn().mockReturnValue({
+    isZeroAddress: vi.fn(),
   }),
-  useWalletAddress: jest.fn().mockReturnValue({
-    walletAddress: jest.fn(),
+  useWalletAddress: vi.fn().mockReturnValue({
+    walletAddress: vi.fn(),
   }),
 }));
-jest.mock('../../../utils/converters', () => ({
-  hasThreeZerosAfterDecimal: jest.fn((num) => num % 1 === 0),
-  formatTokenAmount: jest.fn((amount) => {
+vi.mock('../../../utils/converters', () => ({
+  hasThreeZerosAfterDecimal: vi.fn((num) => num % 1 === 0),
+  formatTokenAmount: vi.fn((amount) => {
     if (amount === undefined) return '0.00000000';
     return Number(amount).toFixed(8);
   }),
 }));
 
-jest.mock('@lifi/sdk', () => ({
-  LiFi: jest.fn().mockImplementation(() => ({
-    getRoutes: jest.fn().mockResolvedValue({ routes: [] }),
-    getStepTransaction: jest.fn().mockResolvedValue({}),
+vi.mock('@lifi/sdk', () => ({
+  LiFi: vi.fn().mockImplementation(() => ({
+    getRoutes: vi.fn().mockResolvedValue({ routes: [] }),
+    getStepTransaction: vi.fn().mockResolvedValue({}),
+  })),
+}));
+
+// Mock Sentry utility functions
+vi.mock('../../../utils/sentry', () => ({
+  logSwapOperation: vi.fn(),
+  logExchangeError: vi.fn(),
+  logUserInteraction: vi.fn(),
+  addExchangeBreadcrumb: vi.fn(),
+  startExchangeTransaction: vi.fn(() => ({
+    finish: vi.fn(),
+    setTag: vi.fn(),
+    setData: vi.fn(),
   })),
 }));
 
 describe('<ExchangeAction />', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    import.meta.env.VITE_SWAP_FEE_RECEIVER = FEE_RECEIVER;
+    vi.clearAllMocks();
     act(() => {
       store.dispatch(setIsSwapOpen(false));
       store.dispatch(setIsReceiveOpen(false));
@@ -203,5 +253,32 @@ describe('<ExchangeAction />', () => {
       expect(screen.queryByTestId('loading-circular')).not.toBeInTheDocument();
       expect(screen.getByText('Exchange')).toBeInTheDocument();
     });
+  });
+
+  it('shows an error if getStepTransactions fails', async () => {
+    vi.spyOn(useOffer, 'default').mockReturnValue({
+      getStepTransactions: vi.fn().mockRejectedValue(new Error('Test error')),
+      getBestOffer: vi.fn(), // Provide a default mock for getBestOffer
+    });
+    render(
+      <Provider store={store}>
+        <ExchangeAction />
+      </Provider>
+    );
+    act(() => {
+      store.dispatch(setBestOffer(mockBestOffer));
+    });
+    const exchangeButton = screen
+      .getByText('Exchange')
+      .closest('div') as HTMLDivElement;
+    fireEvent.click(exchangeButton);
+    screen.debug();
+    await waitFor(() =>
+      expect(
+        screen.getByText((content) =>
+          content.includes('We were not able to add this to the queue')
+        )
+      ).toBeInTheDocument()
+    );
   });
 });
