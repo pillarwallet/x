@@ -19,7 +19,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@etherspot/data-utils": "^1.1.1",
-    "@etherspot/intent-sdk": "^1.0.0-alpha.7",
+    "@etherspot/intent-sdk": "^1.0.0-alpha.8",
     "@etherspot/modular-sdk": "^6.1.1",
     "@etherspot/transaction-kit": "^1.1.1",
     "@hypelab/sdk-react": "^1.0.4",

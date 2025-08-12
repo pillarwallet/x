@@ -1,4 +1,5 @@
 export const STABLE_CURRENCIES = [
+  { chainId: 1, address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' },
   { chainId: 10, address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85' }, // USDC on Optimism
   { chainId: 137, address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359' }, // USDC on Polygon
   { chainId: 8453, address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' }, // USDC on Base

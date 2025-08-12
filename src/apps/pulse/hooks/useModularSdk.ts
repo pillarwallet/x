@@ -110,7 +110,12 @@ export default function useModularSdk(props: ModularSdkProps) {
           })
           .catch((err) => {
             console.error('err:: ', err);
+            setIsInstalling(false);
           });
+      })
+      .catch((err) => {
+        console.error('Installation failed:: ', err);
+        setIsInstalling(false);
       });
   };
 

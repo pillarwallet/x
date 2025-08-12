@@ -384,6 +384,7 @@ export default function Buy(props: BuyProps) {
         {['10', '20', '50', '100', 'MAX'].map((item) => {
           return (
             <div
+              key={item}
               className="flex"
               style={{
                 backgroundColor: 'black',

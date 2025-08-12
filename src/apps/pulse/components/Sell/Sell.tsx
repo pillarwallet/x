@@ -17,6 +17,7 @@ export default function Sell() {
         {['$10', '$20', '$50', '$100', 'MAX'].map((item) => {
           return (
             <div
+              key={item}
               className="flex"
               style={{
                 backgroundColor: 'black',
@@ -48,7 +49,10 @@ export default function Sell() {
         className="flex bg-deep_purple-A700"
         style={{ margin: 10, width: 422, height: 50, borderRadius: 10 }}
       >
-        <button className="flex-1 items-center justify-center" type="button">
+        <button
+          className="flex flex-1 items-center justify-center"
+          type="button"
+        >
           Sell
         </button>
       </div>

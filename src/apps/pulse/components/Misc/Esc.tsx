@@ -14,13 +14,11 @@ export default function Esc(props: CloseProps) {
         width: 40,
         height: 40,
       }}
-      onClick={() => {
-        closePreview();
-      }}
+      onClick={closePreview}
       type="button"
-      aria-label="Save"
+      aria-label="Close"
     >
-      <img src={EscIcon} alt="esc-icon" />
+      <img src={EscIcon} alt="" aria-hidden="true" />
     </button>
   );
 }

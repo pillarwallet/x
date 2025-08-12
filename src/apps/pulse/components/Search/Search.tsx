@@ -50,7 +50,7 @@ export default function Search(props: SearchProps) {
   const { setSearching, isBuy, setBuyToken, setSellToken, chains, setChains } =
     props;
   const { searchText, setSearchText, searchData, isFetching } = useTokenSearch({
-    isBuy: true,
+    isBuy: true, // TODO: use isBuy props after sell integration.
     chains,
   });
   const [searchType, setSearchType] = useState<SearchType>();
@@ -253,6 +253,7 @@ export default function Search(props: SearchProps) {
             (item, index) => {
               return (
                 <div
+                  key={item}
                   className="flex"
                   style={{
                     backgroundColor: 'black',

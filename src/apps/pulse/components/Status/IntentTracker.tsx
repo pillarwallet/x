@@ -15,7 +15,13 @@ interface IntentTrackerProps {
 }
 
 const getStatusIndex = (
-  status: 'PENDING' | 'SHORTLISTING_INITIATED' | 'SHORTLISTED' | 'EXECUTED'
+  status:
+    | 'PENDING'
+    | 'SHORTLISTING_INITIATED'
+    | 'SHORTLISTED'
+    | 'EXECUTED'
+    | 'CLAIMED'
+    | 'RESOURCE_LOCK_RELEASED'
 ) => {
   if (status === 'PENDING') return 0;
   if (status === 'SHORTLISTING_INITIATED') return 1;

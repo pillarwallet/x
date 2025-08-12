@@ -4,14 +4,19 @@ import { Hex } from 'viem';
 import { PortfolioData } from '../../../types/api';
 import { PayingToken } from '../types/tokens';
 import { STABLE_CURRENCIES } from '../constants/tokens';
+import { bigIntPow } from './number';
 
 export function getDesiredAssetValue(
   input: string,
   decimals: number,
   usdValue: string
 ): bigint {
-  const value = Number(parseFloat(input)) / Number(parseFloat(usdValue));
-  return BigInt(Math.ceil(Number(value.toFixed(6))) * 10 ** decimals);
+  const usd = parseFloat(input);
+  const price = parseFloat(usdValue);
+  if (Number.isNaN(usd) || Number.isNaN(price) || price <= 0) return BigInt(0);
+  const multiplier = bigIntPow(BigInt(10), BigInt(decimals));
+  const tokens = BigInt(Math.ceil((usd / price) * Number(multiplier)));
+  return tokens;
 }
 
 export function getDispensableAssets(
@@ -44,12 +49,16 @@ export function getDispensableAssets(
               asset: tokenItem.address as Hex,
               chainId: BigInt(tokenItem.chainId),
               maxValue: BigInt(
-                Math.ceil(
-                  Number(
-                    (Number(Number(input).toFixed(6)) / price).toPrecision(6)
-                  ) *
-                    10 ** token.decimals
-                )
+                (BigInt(
+                  Math.ceil(
+                    Number(
+                      (Number(Number(input).toFixed(6)) / price).toPrecision(6)
+                    ) *
+                      10 ** 6
+                  )
+                ) *
+                  bigIntPow(BigInt(10), BigInt(token.decimals))) /
+                  BigInt(10 ** 6)
               ),
             },
           ],

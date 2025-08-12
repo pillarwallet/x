@@ -1,5 +1,8 @@
 export function formatBigNumber(num: number): string {
-  if (num > 0 && num < 1_000_000) {
+  if (num < 1_000) {
+    return num.toString();
+  }
+  if (num < 1_000_000) {
     return `${(num / 1_000).toFixed(3).replace(/\.?0+$/, '')}K`;
   }
   if (num >= 1_000_000 && num < 1_000_000_000) {
@@ -33,4 +36,18 @@ export function parseNumberString(input: string): number {
       break;
   }
   return value;
+}
+
+export function bigIntPow(base: bigint, exponent: bigint): bigint {
+  let result = BigInt(1);
+  while (exponent > BigInt(0)) {
+    if (exponent % BigInt(2) === BigInt(1)) {
+      result *= base;
+    }
+    // eslint-disable-next-line no-param-reassign
+    base *= base;
+    // eslint-disable-next-line no-param-reassign
+    exponent /= BigInt(2);
+  }
+  return result;
 }

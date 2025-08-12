@@ -131,7 +131,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             }}
           >
             {payingTokens.map((item) => (
-              <PayingToken payingToken={item} />
+              <PayingToken payingToken={item} key={item.name} />
             ))}
           </div>
 

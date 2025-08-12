@@ -121,6 +121,7 @@ export default function TokenList(props: TokenListProps) {
         {assets.map((item) => {
           return (
             <button
+              key={item.contract || item.symbol}
               className="flex w-full"
               style={{
                 height: 36,
