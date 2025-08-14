@@ -4,7 +4,7 @@ import {
   ExpressIntentResponse,
   UserIntent,
 } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import { Hex } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { WalletPortfolioMobulaResponse } from '../../../../types/api';
 import useIntentSdk from '../../hooks/useIntentSdk';
@@ -135,7 +135,7 @@ export default function Buy(props: BuyProps) {
             deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
             desiredAssets: [
               {
-                asset: token.address as Hex,
+                asset: getAddress(token.address) as Hex,
                 chainId: BigInt(token.chainId),
                 value: getDesiredAssetValue(
                   input,
@@ -145,20 +145,11 @@ export default function Buy(props: BuyProps) {
               },
             ],
             dispensableAssets,
-            maxGas: BigInt(6000000),
-            permittedChains,
             slippagePercentage: 5,
           },
           intentHash:
             '0x000000000000000000000000000000000000000000000000000000000000000',
-          core: {
-            permittedAccounts: [
-              {
-                account: accountAddress as Hex,
-                chainId: BigInt(token.chainId),
-              },
-            ],
-          },
+          account: accountAddress as Hex,
         };
         setIsLoading(true);
         try {
