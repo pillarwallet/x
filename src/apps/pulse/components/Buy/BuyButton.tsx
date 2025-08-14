@@ -49,7 +49,7 @@ export interface BuyButtonProps {
   debouncedUsdAmount: string;
   payingTokens: PayingToken[];
   handleBuySubmit: () => Promise<void>;
-  expressIntentResponse: ExpressIntentResponse | null;
+  expressIntentResponse: ExpressIntentResponse | null | { error: string };
   usdAmount: string;
   notEnoughLiquidity: boolean;
 }
@@ -81,7 +81,8 @@ export default function BuyButton(props: BuyButtonProps) {
       !token ||
       !(parseFloat(usdAmount) > 0) ||
       !expressIntentResponse ||
-      expressIntentResponse?.bids?.length === 0 ||
+      !!(expressIntentResponse as { error: string }).error ||
+      (expressIntentResponse as ExpressIntentResponse)?.bids?.length === 0 ||
       notEnoughLiquidity
     );
   };

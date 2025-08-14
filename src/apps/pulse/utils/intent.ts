@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import { DispensableAsset } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import { Hex } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { PortfolioData } from '../../../types/api';
 import { PayingToken } from '../types/tokens';
 import { STABLE_CURRENCIES } from '../constants/tokens';
@@ -46,7 +46,7 @@ export function getDispensableAssets(
         return [
           [
             {
-              asset: tokenItem.address as Hex,
+              asset: getAddress(tokenItem.address) as Hex,
               chainId: BigInt(tokenItem.chainId),
               maxValue: BigInt(
                 (BigInt(
