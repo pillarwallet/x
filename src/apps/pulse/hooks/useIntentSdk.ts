@@ -1,11 +1,13 @@
 import { IntentSdk, Options } from '@etherspot/intent-sdk';
-import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useEffect, useState } from 'react';
-import { createWalletClient, custom, Hex } from 'viem';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useEffect, useState } from 'react';
+import { Hex, createWalletClient, custom } from 'viem';
+
+// hooks
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 export default function useIntentSdk() {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
 

@@ -1,22 +1,24 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   DispensableAsset,
   ExpressIntentResponse,
   UserIntent,
 } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Hex, getAddress } from 'viem';
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { WalletPortfolioMobulaResponse } from '../../../../types/api';
-import useIntentSdk from '../../hooks/useIntentSdk';
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import { PayingToken, SelectedToken } from '../../types/tokens';
-import useModularSdk from '../../hooks/useModularSdk';
-import BuyButton from './BuyButton';
-import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
+import useIntentSdk from '../../hooks/useIntentSdk';
+import useModularSdk from '../../hooks/useModularSdk';
+import { PayingToken, SelectedToken } from '../../types/tokens';
+import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
+import BuyButton from './BuyButton';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -51,7 +53,7 @@ export default function Buy(props: BuyProps) {
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [dispensableAssets, setDispensableAssets] = useState<
     DispensableAsset[]

@@ -1,14 +1,16 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import Buy from '../Buy/Buy';
-import Sell from '../Sell/Sell';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
-import PreviewBuy from '../Buy/PreviewBuy';
+import SearchIcon from '../../assets/seach-icon.svg';
 import { PayingToken, SelectedToken } from '../../types/tokens';
+import Buy from '../Buy/Buy';
+import PreviewBuy from '../Buy/PreviewBuy';
 import Refresh from '../Misc/Refresh';
 import Settings from '../Misc/Settings';
-import SearchIcon from '../../assets/seach-icon.svg';
+import Sell from '../Sell/Sell';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -19,7 +21,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen(props: HomeScreenProps) {
   const { buyToken, isBuy, setIsBuy, setSearching } = props;
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const [expressIntentResponse, setExpressIntentResponse] =
