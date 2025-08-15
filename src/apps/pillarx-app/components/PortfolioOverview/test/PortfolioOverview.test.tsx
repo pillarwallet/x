@@ -1,14 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 
+// test utils
+import { TestWrapper } from '../../../../../test-utils/testUtils';
+
 // types
 import { WalletData } from '../../../../../types/api';
 
 // components
-import BottomMenuModalProvider from '../../../../../providers/BottomMenuModalProvider';
-import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTransactionsBatchProvider';
-import { WalletConnectModalProvider } from '../../../../../providers/WalletConnectModalProvider';
-import { WalletConnectToastProvider } from '../../../../../providers/WalletConnectToastProvider';
 import PortfolioOverview from '../PortfolioOverview';
 
 const mockData: WalletData = {
@@ -43,18 +42,9 @@ describe('<PortfolioOverview />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <BottomMenuModalProvider>
-          <GlobalTransactionsBatchProvider>
-            <WalletConnectToastProvider>
-              <WalletConnectModalProvider>
-                <PortfolioOverview
-                  data={mockData}
-                  isDataLoading={mockLoading}
-                />
-              </WalletConnectModalProvider>
-            </WalletConnectToastProvider>
-          </GlobalTransactionsBatchProvider>
-        </BottomMenuModalProvider>
+        <TestWrapper>
+          <PortfolioOverview data={mockData} isDataLoading={mockLoading} />
+        </TestWrapper>
       )
       .toJSON();
 
@@ -64,15 +54,9 @@ describe('<PortfolioOverview />', () => {
   it('displays loading skeleton when data is loading', () => {
     const tree = renderer
       .create(
-        <BottomMenuModalProvider>
-          <GlobalTransactionsBatchProvider>
-            <WalletConnectToastProvider>
-              <WalletConnectModalProvider>
-                <PortfolioOverview data={undefined} isDataLoading />
-              </WalletConnectModalProvider>
-            </WalletConnectToastProvider>
-          </GlobalTransactionsBatchProvider>
-        </BottomMenuModalProvider>
+        <TestWrapper>
+          <PortfolioOverview data={undefined} isDataLoading />
+        </TestWrapper>
       )
       .toJSON();
 
@@ -81,15 +65,9 @@ describe('<PortfolioOverview />', () => {
 
   it('renders data correctly when not loading', () => {
     render(
-      <BottomMenuModalProvider>
-        <GlobalTransactionsBatchProvider>
-          <WalletConnectToastProvider>
-            <WalletConnectModalProvider>
-              <PortfolioOverview data={mockData} isDataLoading={false} />
-            </WalletConnectModalProvider>
-          </WalletConnectToastProvider>
-        </GlobalTransactionsBatchProvider>
-      </BottomMenuModalProvider>
+      <TestWrapper>
+        <PortfolioOverview data={mockData} isDataLoading={false} />
+      </TestWrapper>
     );
 
     expect(screen.getByText('$1000.00')).toBeInTheDocument();
@@ -101,37 +79,23 @@ describe('<PortfolioOverview />', () => {
 
   it('calculates percentage change correctly', () => {
     render(
-      <BottomMenuModalProvider>
-        <GlobalTransactionsBatchProvider>
-          <WalletConnectToastProvider>
-            <WalletConnectModalProvider>
-              <PortfolioOverview data={mockData} isDataLoading={false} />
-            </WalletConnectModalProvider>
-          </WalletConnectToastProvider>
-        </GlobalTransactionsBatchProvider>
-      </BottomMenuModalProvider>
+      <TestWrapper>
+        <PortfolioOverview data={mockData} isDataLoading={false} />
+      </TestWrapper>
     );
 
-    expect(
-      screen.getByText(
-        `${mockData.data.total_pnl_history?.['24h']?.percentage_change.toFixed(2)}%`
-      )
-    ).toBeInTheDocument();
+    expect(screen.getByText('1.00%')).toBeInTheDocument();
   });
 
   it('handles no data state correctly', () => {
     render(
-      <BottomMenuModalProvider>
-        <GlobalTransactionsBatchProvider>
-          <WalletConnectToastProvider>
-            <WalletConnectModalProvider>
-              <PortfolioOverview data={mockNoData} isDataLoading={false} />
-            </WalletConnectModalProvider>
-          </WalletConnectToastProvider>
-        </GlobalTransactionsBatchProvider>
-      </BottomMenuModalProvider>
+      <TestWrapper>
+        <PortfolioOverview data={mockNoData} isDataLoading={false} />
+      </TestWrapper>
     );
 
+    expect(screen.queryByText('$1000.00')).not.toBeInTheDocument();
+    expect(screen.queryByText('1.00%')).not.toBeInTheDocument();
     expect(screen.getByText('$0')).toBeInTheDocument();
     expect(screen.queryByText('tokens')).not.toBeInTheDocument();
     expect(screen.queryByText('chains')).not.toBeInTheDocument();

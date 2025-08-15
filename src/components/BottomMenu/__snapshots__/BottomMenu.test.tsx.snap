@@ -1,0 +1,450 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<BottomMenu /> > renders correctly if not authenticated 1`] = `null`;
+
+exports[`<BottomMenu /> > renders correctly when authenticated 1`] = `
+[
+  .c7 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c7::-webkit-scrollbar {
+  display: none;
+}
+
+.c8 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c8::-webkit-scrollbar {
+  display: none;
+}
+
+.c6 {
+  width: 100%;
+  min-height: 30vh;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c6::-webkit-scrollbar {
+  display: none;
+}
+
+.c5 {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.c5::-webkit-scrollbar {
+  display: none;
+}
+
+.c1 {
+  overflow: hidden;
+}
+
+.c2 {
+  transition: 100ms linear;
+  transform: translateY(1000px);
+  display: none;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+  width: 100%;
+  position: relative;
+}
+
+.c3 {
+  align-self: flex-start;
+  transform: translateX(calc(0 * -336px));
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: start;
+}
+
+.c4 {
+  width: 336px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 31px 20px 20px;
+  overflow: hidden;
+  max-height: 50vh;
+}
+
+.c9 {
+  background: rgba(255, 255, 255, 0.4);
+  height: 4px;
+  width: 40px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  top: 14px;
+  left: 148px;
+}
+
+.c14 {
+  display: none;
+  margin-left: 10px;
+}
+
+.c16 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #8A77FF;
+  width: 20px;
+}
+
+.c17 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #77FFF9;
+  width: 20px;
+}
+
+.c18 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #D5FF48;
+  width: 20px;
+}
+
+.c19 {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  height: 3px;
+  background: #3699FF;
+  width: 20px;
+}
+
+.c12 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #89888b;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  letter-spacing: -0.5px;
+  font-size: 14px;
+  user-select: none;
+  padding: 0 7px;
+  height: 100%;
+}
+
+.c12.active .c15 {
+  display: block;
+}
+
+.c12:first-child {
+  margin-left: 17px;
+}
+
+.c12:last-child {
+  margin-right: 17px;
+}
+
+.c0 {
+  margin: 0 auto;
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  z-index: 100;
+  width: 338px;
+  transform: translateX(-50%);
+  border: 1px solid #363439;
+  background: rgba(18, 15, 23, 0.70);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+}
+
+.c10 {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  height: 45px;
+  width: 100%;
+}
+
+.c10:not(.c10:hover) .c11.active,
+.c10 .c11:hover {
+  color: #fff;
+  padding: 0 15px;
+  margin: 0;
+}
+
+.c10:not(.c10:hover) .c11.active .c15,
+.c10 .c11:hover .c15 {
+  width: 32px;
+  transform: translateX(calc(-50% + 5px));
+}
+
+.c10:not(.c10:hover) .c11.active .c13,
+.c10 .c11:hover .c13 {
+  display: block;
+}
+
+<div
+    className="c0"
+    id="bottom-menu"
+  >
+    <div
+      className="c1"
+    >
+      <div
+        className="c2"
+      >
+        <div
+          className="c3"
+        >
+          <div
+            className="c4"
+          >
+            <div
+              className="c5"
+            />
+          </div>
+          <div
+            className="c4"
+          >
+            <div
+              className="c6"
+            />
+          </div>
+          <div
+            className="c4"
+          >
+            <div
+              className="c7"
+            />
+          </div>
+          <div
+            className="c4"
+          >
+            <div
+              className="c8"
+            />
+          </div>
+        </div>
+        <div
+          className="c9"
+          onClick={[Function]}
+        />
+      </div>
+    </div>
+    <div
+      className="c10"
+    >
+      <div
+        className="c11 c12 active"
+        id="menu-item-Home"
+        onClick={[Function]}
+      >
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9.02 2.84-5.39 4.2C2.73 7.74 2 9.23 2 10.36v7.41c0 2.32 1.89 4.22 4.21 4.22h11.58c2.32 0 4.21-1.9 4.21-4.21V10.5c0-1.21-.81-2.76-1.8-3.45l-6.18-4.33c-1.4-.98-3.65-.93-5 .12ZM12 17.99v-3"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c13 c14"
+        >
+          Home
+        </span>
+      </div>
+      <div
+        className="c11 c12"
+        id="menu-item-Send"
+        onClick={[Function]}
+      >
+        <div
+          className="c15 c16"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m7.4 6.32 8.49-2.83c3.81-1.27 5.88.81 4.62 4.62l-2.83 8.49c-1.9 5.71-5.02 5.71-6.92 0l-.84-2.52-2.52-.84c-5.71-1.9-5.71-5.01 0-6.92ZM10.11 13.65l3.58-3.59"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c13 c14"
+        >
+          Send
+        </span>
+      </div>
+      <div
+        className="c11 c12"
+        id="menu-item-History"
+        onClick={[Function]}
+      >
+        <div
+          className="c15 c17"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.73 19.7c.82-.88 2.07-.81 2.79.15l1.01 1.35c.81 1.07 2.12 1.07 2.93 0l1.01-1.35c.72-.96 1.97-1.03 2.79-.15 1.78 1.9 3.23 1.27 3.23-1.39V7.04C20.5 3.01 19.56 2 15.78 2H8.22C4.44 2 3.5 3.01 3.5 7.04V18.3c0 2.67 1.46 3.29 3.23 1.4ZM8 7h8M9 11h6"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c13 c14"
+        >
+          History
+        </span>
+      </div>
+      <div
+        className="c11 c12"
+        id="menu-item-Account"
+        onClick={[Function]}
+      >
+        <div
+          className="c15 c18"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M13 9H7M22 10.97v2.06c0 .55-.44 1-1 1.02h-1.96c-1.08 0-2.07-.79-2.16-1.87-.06-.63.18-1.22.6-1.63.37-.38.88-.6 1.44-.6H21c.56.02 1 .47 1 1.02Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M17.48 10.55c-.42.41-.66 1-.6 1.63.09 1.08 1.08 1.87 2.16 1.87H21v1.45c0 3-2 5-5 5H7c-3 0-5-2-5-5v-7c0-2.72 1.64-4.62 4.19-4.94.26-.04.53-.06.81-.06h9c.26 0 .51.01.75.05C19.33 3.85 21 5.76 21 8.5v1.45h-2.08c-.56 0-1.07.22-1.44.6Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c13 c14"
+        >
+          Account
+        </span>
+      </div>
+      <div
+        className="c11 c12"
+        id="menu-item-Apps"
+        onClick={[Function]}
+      >
+        <div
+          className="c15 c19"
+        />
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10.5 19.9V4.1c0-1.5-.64-2.1-2.23-2.1H4.23C2.64 2 2 2.6 2 4.1v15.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1ZM22 10.9V4.1c0-1.5-.64-2.1-2.23-2.1h-4.04c-1.59 0-2.23.6-2.23 2.1v6.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1ZM22 19.9v-1.8c0-1.5-.64-2.1-2.23-2.1h-4.04c-1.59 0-2.23.6-2.23 2.1v1.8c0 1.5.64 2.1 2.23 2.1h4.04c1.59 0 2.23-.6 2.23-2.1Z"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+          />
+        </svg>
+        <span
+          className="c13 c14"
+        >
+          Apps
+        </span>
+      </div>
+    </div>
+  </div>,
+  .c0 {
+  position: fixed;
+  z-index: 98;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: 100ms linear;
+  backdrop-filter: blur(0px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 114px;
+  overflow: hidden;
+}
+
+<div
+    className="c0"
+  />,
+]
+`;

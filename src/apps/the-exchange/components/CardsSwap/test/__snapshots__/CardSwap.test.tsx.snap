@@ -1,0 +1,126 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<CardsSwap /> > Rendering and Snapshot > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex w-full justify-center"
+>
+  <div
+    className="flex w-full gap-4 desktop:gap-8 justify-center"
+    data-testid="swap-receive-cards"
+  >
+    <div
+      className="flex flex-col w-full cursor-pointer min-h-[200px] h-full justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-light_green"
+      data-testid="select-token-card"
+      id="swap-receive-card-exchange"
+      onClick={[Function]}
+    >
+      <div
+        className="flex justify-between items-start mb-4"
+        id="select-token-info-exchange"
+        onClick={[Function]}
+      >
+        <div
+          className="flex w-full flex-col"
+        >
+          <p
+            className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
+          >
+            SWAP
+          </p>
+          <p
+            className="text-base font-medium text-black_grey font-normal capitalize"
+          >
+            On Ethereum
+          </p>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-1 group"
+        id="enter-amount-exchange"
+      >
+        <p
+          className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
+        />
+        <input
+          className="text-black_grey font-normal !text-3xl outline-none focus:outline-none focus:ring-0 focus:bg-[#292D32]/[.05] focus:border-b focus:border-b-black_grey group-hover:bg-[#292D32]/[.05] group-hover:border-b group-hover:border-b-black_grey"
+          data-testid="enter-amount-input"
+          id="input-enter-amount-exchange"
+          onChange={[Function]}
+          placeholder="0"
+          step="any"
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          type="number"
+          value=""
+        />
+        <div
+          className="flex justify-between"
+        >
+          <p
+            className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
+          >
+            $
+            0.00
+          </p>
+          <img
+            alt="Send"
+            src="/src/apps/the-exchange/images/send-arrow.png"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex flex-col w-full cursor-pointer min-h-[200px] h-full justify-between rounded-lg p-4 desktop:h-[230px] desktop:max-w-[306px] bg-purple"
+      data-testid="select-token-card"
+      id="swap-receive-card-exchange"
+      onClick={[Function]}
+    >
+      <div
+        className="flex justify-between items-start mb-4"
+        id="select-token-info-exchange"
+        onClick={[Function]}
+      >
+        <div
+          className="flex w-full flex-col"
+        >
+          <p
+            className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
+          >
+            RECEIVE
+          </p>
+          <p
+            className="text-base font-medium text-black_grey font-normal capitalize"
+          >
+            On Ethereum
+          </p>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-1 group"
+        id="enter-amount-exchange"
+      >
+        <p
+          className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4] font-normal"
+        />
+        <div
+          className="flex justify-between"
+        >
+          <p
+            className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
+          >
+            $
+            0.00
+          </p>
+          <img
+            alt="Receive"
+            src="/src/apps/the-exchange/images/receive-arrow.png"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

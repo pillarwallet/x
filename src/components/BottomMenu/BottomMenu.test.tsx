@@ -46,7 +46,6 @@ describe('<BottomMenu />', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    store.replaceReducer(() => ({}));
     addMiddleware(pillarXApiTransactionsHistory);
   });
 
@@ -57,7 +56,6 @@ describe('<BottomMenu />', () => {
       rendered = renderer.create(
         <Provider store={store}>
           <BrowserRouter>
-            {/* <EtherspotTransactionKit provider={provider}> */}
             <AccountTransactionHistoryProvider>
               <ThemeProvider theme={defaultTheme}>
                 <LanguageProvider>
@@ -73,7 +71,6 @@ describe('<BottomMenu />', () => {
                 </LanguageProvider>
               </ThemeProvider>
             </AccountTransactionHistoryProvider>
-            {/* </EtherspotTransactionKit> */}
           </BrowserRouter>
         </Provider>
       );

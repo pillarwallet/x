@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TokensSlider /> > renders correctly and matches snapshot when loading 1`] = `
+.c0 {
+  height: 125px;
+  width: 108px;
+  animation: hLhBjP 1s linear infinite alternate;
+  border-radius: 9px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+<div
+  className="flex flex-col overflow-x-scroll"
+  data-testid="token-slider-loader"
+  id="token-atlas-token-slider-loading"
+>
+  <p
+    className="text-[13px] font-semibold text-white_light_grey mb-4"
+  >
+    Trending tokens
+  </p>
+  <div
+    className="flex"
+  >
+    <div
+      className="flex gap-4 mb-4"
+    >
+      <div
+        className="c0"
+      />
+      <div
+        className="c0"
+      />
+      <div
+        className="c0"
+      />
+      <div
+        className="c0"
+      />
+      <div
+        className="c0"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -46,10 +46,22 @@ if (typeof globalThis.TextEncoder === 'undefined') {
   (global as any).TextDecoder = TextDecoderPolyfill;
 }
 
+// Crypto polyfill for Node.js environment
+if (typeof globalThis.crypto === 'undefined') {
+  const crypto = require('crypto');
+  globalThis.crypto = {
+    getRandomValues: (arr: Uint8Array) => {
+      const bytes = crypto.randomBytes(arr.length);
+      arr.set(bytes);
+      return arr;
+    },
+    subtle: {} as any,
+  } as any;
+}
+
 import React from 'react';
 
 import '@testing-library/jest-dom';
-import { BigNumber } from 'ethers';
 import 'jest-styled-components';
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -70,11 +82,34 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// Mock window.scrollTo
+Object.defineProperty(window, 'scrollTo', {
+  writable: true,
+  value: vi.fn(),
+});
+
 vi.mock('@firebase/app');
 vi.mock('@firebase/analytics');
 vi.mock('axios');
 vi.mock('@etherspot/data-utils');
 vi.mock('@etherspot/modular-sdk');
+
+// Mock the problematic @etherspot/modular-sdk more thoroughly
+vi.mock('@etherspot/modular-sdk', () => ({
+  default: {
+    EtherspotSDK: vi.fn().mockImplementation(() => ({
+      init: vi.fn().mockResolvedValue(true),
+      getAccount: vi.fn().mockResolvedValue({
+        address: '0x7F30B1960D5556929B03a0339814fE903c55a347',
+      }),
+    })),
+    ERC4337Utils: {
+      getAccountAddress: vi
+        .fn()
+        .mockResolvedValue('0x7F30B1960D5556929B03a0339814fE903c55a347'),
+    },
+  },
+}));
 
 vi.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -165,7 +200,9 @@ vi.mock('wagmi/connectors', () => ({
 
 vi.mock('@etherspot/transaction-kit', () => {
   class MockEtherspotTransactionKit {
-    getWalletAddress = vi.fn().mockResolvedValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
+    getWalletAddress = vi
+      .fn()
+      .mockResolvedValue('0x7F30B1960D5556929B03a0339814fE903c55a347');
     transaction = vi.fn().mockReturnThis();
     name = vi.fn().mockReturnThis();
     batch = vi.fn().mockReturnThis();
@@ -195,15 +232,102 @@ vi.mock('@etherspot/transaction-kit', () => {
   };
 });
 
-// Mock useTransactionKit hook to return the context shape
-vi.mock('../hooks/useTransactionKit', () => ({
-  __esModule: true,
-  default: () => ({
-    kit: new (require('@etherspot/transaction-kit').EtherspotTransactionKit)({}),
-    walletAddress: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-    activeChainId: 1,
-    setActiveChainId: vi.fn(),
-  }),
+// Mock useTransactionKit hook globally
+vi.mock(
+  '../hooks/useTransactionKit',
+  () => import('../../__mocks__/useTransactionKit')
+);
+
+// Mock EtherspotTransactionKitProvider globally
+vi.mock(
+  '../providers/EtherspotTransactionKitProvider',
+  () => import('../../__mocks__/EtherspotTransactionKitProvider')
+);
+
+// Mock WalletConnectToastProvider
+vi.mock('../providers/WalletConnectToastProvider', () => ({
+  WalletConnectToastProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
+  WalletConnectToastContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => children,
+  },
+}));
+
+// Mock useWalletConnectToast hook
+vi.mock('../hooks/useWalletConnectToast', () => ({
+  default: vi.fn(() => ({
+    showToast: vi.fn(),
+    hideToast: vi.fn(),
+    isToastVisible: false,
+  })),
+}));
+
+// Mock WalletConnectModalProvider
+vi.mock('../providers/WalletConnectModalProvider', () => ({
+  WalletConnectModalProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
+  WalletConnectModalContext: {
+    Provider: ({ children }: { children: React.ReactNode }) => children,
+  },
+}));
+
+// Mock useWalletConnectModal hook
+vi.mock('../hooks/useWalletConnectModal', () => ({
+  default: vi.fn(() => ({
+    showModal: vi.fn(),
+    hideModal: vi.fn(),
+    isModalVisible: false,
+  })),
+}));
+
+// Mock chart.js to prevent chart context errors
+vi.mock('chart.js', () => ({
+  Chart: {
+    register: vi.fn(),
+  },
+  ChartJS: {
+    register: vi.fn(),
+  },
+  registerables: [],
+  LineElement: vi.fn(),
+  PointElement: vi.fn(),
+  CategoryScale: vi.fn(),
+  LinearScale: vi.fn(),
+  TimeScale: vi.fn(),
+  Title: vi.fn(),
+  Tooltip: vi.fn(),
+  Legend: vi.fn(),
+  Filler: vi.fn(),
+  register: vi.fn(),
+}));
+
+// Mock react-chartjs-2 to render a canvas element
+vi.mock('react-chartjs-2', () => {
+  console.log('react-chartjs-2 mock applied');
+  return {
+    Line: ({ data, options, ...props }: any) => {
+      console.log('Line component rendered with props:', props);
+      // Create a mock canvas element using React.createElement
+      const React = require('react');
+      const canvas = React.createElement('canvas', {
+        'data-testid': props['data-testid'] || 'price-graph',
+        width: '300',
+        height: '150',
+        role: 'img',
+        ...props,
+      });
+
+      return canvas;
+    },
+  };
+});
+
+// Mock tokensData service
+vi.mock('../../../services/tokensData', () => ({
+  chainNameDataCompatibility: vi.fn((chainName) => chainName),
+  chainNameToChainIdTokensData: vi.fn((chainName) => 1),
+  chainNameFromViemToMobula: vi.fn((chainName) => chainName),
+  chainIdToChainNameTokensData: vi.fn((chainId) => 'Ethereum'),
 }));
 
 import.meta.env.VITE_PRIVY_APP_ID = 'test';
