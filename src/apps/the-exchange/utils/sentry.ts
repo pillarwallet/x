@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 // Sentry configuration for the-exchange app
 export const initSentryForExchange = () => {
@@ -194,7 +194,7 @@ export const logPerformanceMetric = (
 
 // Hook to get wallet address for logging
 export const useWalletAddressForLogging = () => {
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   return walletAddress || 'unknown_wallet_address';
 };
 

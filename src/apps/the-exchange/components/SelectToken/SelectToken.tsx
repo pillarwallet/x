@@ -1,4 +1,4 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // types
 import { CardPosition } from '../../utils/types';
@@ -6,7 +6,7 @@ import { CardPosition } from '../../utils/types';
 // utils
 import { getChainName } from '../../../../utils/blockchain';
 import { limitDigits } from '../../../token-atlas/utils/converters';
-import { logUserInteraction, addExchangeBreadcrumb } from '../../utils/sentry';
+import { addExchangeBreadcrumb, logUserInteraction } from '../../utils/sentry';
 
 // components
 import Body from '../Typography/Body';
@@ -33,7 +33,7 @@ const SelectToken = ({
   tokenPrice,
   onClick,
 }: SelectTokenProps) => {
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   const handleClick = () => {
     logUserInteraction('token_selected', {
