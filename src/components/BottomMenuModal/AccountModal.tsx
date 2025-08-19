@@ -254,7 +254,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                     {!failedImages.has(asset.asset.id) && asset.asset.logo ? (
                       <img
                         src={asset.asset.logo}
-                        alt={symbol}
+                        alt={asset.asset.name}
                         onError={() =>
                           setFailedImages(
                             (prev) =>
