@@ -143,11 +143,7 @@ const PxPointsSummary = ({
             title="Trading"
             icon={TradingIcon}
             background="bg-percentage_green/[.05]"
-            points={calculateFinalPxPoints(
-              myAllTimeTrading.entry?.totalPoints || 0,
-              myAllTimeTrading.entry?.finalPxPointsAwardEligible,
-              timeTab
-            )}
+            points={myAllTimeTrading.entry?.totalPoints}
             rank={
               myAllTimeTrading.index !== -1
                 ? myAllTimeTrading.index + 1
