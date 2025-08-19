@@ -21,7 +21,7 @@ describe('Leaderboards Component', () => {
   });
 
   it('renders 3 SkeletonLoader components when loading', () => {
-    render(<Leaderboards isLoading isError={false} isSuccess={false} />);
+    render(<Leaderboards isLoading isError={false} isSuccess={false} timeTab="all" />);
 
     expect(SkeletonLoader).toHaveBeenCalledTimes(3);
     expect(screen.getAllByText('SkeletonLoader Mock')).toHaveLength(3);
@@ -35,6 +35,7 @@ describe('Leaderboards Component', () => {
         isError
         isSuccess={false}
         errorMessage={customError}
+        timeTab="all"
       />
     );
 
@@ -42,7 +43,7 @@ describe('Leaderboards Component', () => {
   });
 
   it('renders default error message if errorMessage not provided', () => {
-    render(<Leaderboards isLoading={false} isError isSuccess={false} />);
+    render(<Leaderboards isLoading={false} isError isSuccess={false} timeTab="all" />);
 
     expect(
       screen.getByText('Failed to load data. Please try again later.')
@@ -63,11 +64,12 @@ describe('Leaderboards Component', () => {
         isError={false}
         isSuccess
         data={mockData}
+        timeTab="all"
       />
     );
 
     expect(screen.getByText('LeaderboardTab Mock')).toBeInTheDocument();
-    expect(LeaderboardTab).toHaveBeenCalledWith({ data: mockData }, {});
+    expect(LeaderboardTab).toHaveBeenCalledWith({ data: mockData, timeTab: 'all' }, {});
   });
 
   it('renders noDataMessage when success but no data', () => {
@@ -79,6 +81,7 @@ describe('Leaderboards Component', () => {
         isSuccess
         data={[]}
         noDataMessage={customNoData}
+        timeTab="all"
       />
     );
 
@@ -87,7 +90,7 @@ describe('Leaderboards Component', () => {
 
   it('renders default noDataMessage when none provided', () => {
     render(
-      <Leaderboards isLoading={false} isError={false} isSuccess data={[]} />
+      <Leaderboards isLoading={false} isError={false} isSuccess data={[]} timeTab="all" />
     );
 
     expect(screen.getByText('No available data.')).toBeInTheDocument();
@@ -95,7 +98,7 @@ describe('Leaderboards Component', () => {
 
   it('renders null if no matching state', () => {
     const { container } = render(
-      <Leaderboards isLoading={false} isError={false} isSuccess={false} />
+      <Leaderboards isLoading={false} isError={false} isSuccess={false} timeTab="all" />
     );
 
     expect(container.firstChild).toBeNull();
