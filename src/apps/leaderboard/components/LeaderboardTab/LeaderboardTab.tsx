@@ -17,7 +17,11 @@ import { formatAmountDisplay } from '../../../../utils/number';
 /**
  * Calculate final PX points by adding bonus points if eligible
  */
-const calculateFinalPxPoints = (basePoints: number, finalPxPointsAwardEligible?: boolean, timeTab: 'all' | 'weekly' = 'all'): number => {
+const calculateFinalPxPoints = (
+  basePoints: number,
+  finalPxPointsAwardEligible?: boolean,
+  timeTab: 'all' | 'weekly' = 'all'
+): number => {
   if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
     return basePoints + 200;
   }
@@ -124,7 +128,13 @@ const LeaderboardTab = ({ data, timeTab }: LeaderboardTabProps) => {
                 <div className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end">
                   <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white">
                     {formatAmountDisplay(
-                      Math.floor(calculateFinalPxPoints(myRankData.totalPoints, myRankData.finalPxPointsAwardEligible, timeTab)) || 0
+                      Math.floor(
+                        calculateFinalPxPoints(
+                          myRankData.totalPoints,
+                          myRankData.finalPxPointsAwardEligible,
+                          timeTab
+                        )
+                      ) || 0
                     )}
                   </p>
                   <p className="font-normal text-sm text-white">PX</p>
@@ -179,7 +189,13 @@ const LeaderboardTab = ({ data, timeTab }: LeaderboardTabProps) => {
                 <div className="flex text-right desktop:gap-[14px] tablet:gap-[14px] mobile:gap-1 items-baseline justify-end">
                   <p className="font-normal desktop:text-[22px] tablet:text-[22px] mobile:text-sm text-white">
                     {formatAmountDisplay(
-                      Math.floor(calculateFinalPxPoints(result.totalPoints, result.finalPxPointsAwardEligible, timeTab)) || 0
+                      Math.floor(
+                        calculateFinalPxPoints(
+                          result.totalPoints,
+                          result.finalPxPointsAwardEligible,
+                          timeTab
+                        )
+                      ) || 0
                     )}{' '}
                   </p>
                   <p className="font-normal text-sm text-white">PX</p>

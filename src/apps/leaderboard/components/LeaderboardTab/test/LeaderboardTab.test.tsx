@@ -39,7 +39,9 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer.create(<LeaderboardTab data={mockData} timeTab="all" />).toJSON();
+    const tree = renderer
+      .create(<LeaderboardTab data={mockData} timeTab="all" />)
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 

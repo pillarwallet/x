@@ -117,7 +117,8 @@ export const useLeaderboardData = () => {
             addresses: [currentUserData.address],
             completedSwap: currentUserData.completedSwap || false,
             rankChange,
-            finalPxPointsAwardEligible: currentUserData.finalPxPointsAwardEligible,
+            finalPxPointsAwardEligible:
+              currentUserData.finalPxPointsAwardEligible,
           };
         });
 

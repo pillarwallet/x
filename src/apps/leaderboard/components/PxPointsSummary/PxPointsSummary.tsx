@@ -18,7 +18,11 @@ import BodySmall from '../Typography/BodySmall';
 /**
  * Calculate final PX points by adding bonus points if eligible
  */
-const calculateFinalPxPoints = (basePoints: number, finalPxPointsAwardEligible?: boolean, timeTab: 'all' | 'weekly' = 'all'): number => {
+const calculateFinalPxPoints = (
+  basePoints: number,
+  finalPxPointsAwardEligible?: boolean,
+  timeTab: 'all' | 'weekly' = 'all'
+): number => {
   if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
     return basePoints + 200;
   }
@@ -122,7 +126,11 @@ const PxPointsSummary = ({
               title="Migration"
               icon={MigrationIcon}
               background="bg-percentage_red/[.05]"
-              points={calculateFinalPxPoints(myAllTimeMigration.entry?.totalPoints || 0, myAllTimeMigration.entry?.finalPxPointsAwardEligible, timeTab)}
+              points={calculateFinalPxPoints(
+                myAllTimeMigration.entry?.totalPoints || 0,
+                myAllTimeMigration.entry?.finalPxPointsAwardEligible,
+                timeTab
+              )}
               rank={
                 myAllTimeMigration.index !== -1
                   ? myAllTimeMigration.index + 1
@@ -135,7 +143,11 @@ const PxPointsSummary = ({
             title="Trading"
             icon={TradingIcon}
             background="bg-percentage_green/[.05]"
-                          points={calculateFinalPxPoints(myAllTimeTrading.entry?.totalPoints || 0, myAllTimeTrading.entry?.finalPxPointsAwardEligible, timeTab)}
+            points={calculateFinalPxPoints(
+              myAllTimeTrading.entry?.totalPoints || 0,
+              myAllTimeTrading.entry?.finalPxPointsAwardEligible,
+              timeTab
+            )}
             rank={
               myAllTimeTrading.index !== -1
                 ? myAllTimeTrading.index + 1
