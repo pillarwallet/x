@@ -75,11 +75,13 @@ const SelectDropdown = ({
           chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:sourceChainSelect',
-        value: { chainId: option },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:sourceChainSelect',
+          value: { chainId: option },
+        });
+      }
     }
     if (isReceiveOpen) {
       dispatch(
@@ -88,11 +90,13 @@ const SelectDropdown = ({
           chainName: option === 0 ? 'all' : getChainName(option),
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:destinationChainSelect',
-        value: { chainId: option },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:destinationChainSelect',
+          value: { chainId: option },
+        });
+      }
     }
     onSelect();
   };

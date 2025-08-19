@@ -88,7 +88,20 @@ const SendModalBatchesTabView = () => {
   const anyChainSending = Object.values(isSending).some((s) => s);
 
   const onSend = async (chainId: number, batchName: string) => {
-    if (isSending[chainId]) return;
+    if (isSending[chainId]) {
+      const chainName = getChainName(chainId);
+      setErrorMessage((prev) => ({
+        ...prev,
+        [chainId]: t('error.batchAlreadyInProgressWithChain', { chainName }),
+      }));
+
+      transactionDebugLog(
+        'Batch send blocked - another batch already in progress on this chain:',
+        { chainId, batchName, isSending: isSending[chainId] }
+      );
+
+      return;
+    }
 
     const sendId = `send_batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -552,7 +565,17 @@ const SendModalBatchesTabView = () => {
         },
       });
     } catch (e) {
-      // Ignore if batch does not exist
+      console.error('Failed to remove batch:', e);
+
+      const batchTransactions = batches[batchName];
+      const chainId = batchTransactions?.[0]?.chainId;
+      if (typeof chainId === 'number') {
+        setErrorMessage((prev) => ({
+          ...prev,
+          [chainId]: t`error.failedToRemoveBatch`,
+        }));
+      }
+
       Sentry.captureMessage('Failed to remove batch', {
         level: 'warning',
         tags: {
@@ -611,7 +634,17 @@ const SendModalBatchesTabView = () => {
         },
       });
     } catch (e) {
-      // Ignore if already removed
+      console.error('Failed to remove single transaction:', e);
+
+      const batchTransactions = batches[batchName];
+      const chainId = batchTransactions?.[0]?.chainId;
+      if (typeof chainId === 'number') {
+        setErrorMessage((prev) => ({
+          ...prev,
+          [chainId]: t`error.failedToRemoveTransaction`,
+        }));
+      }
+
       Sentry.captureMessage('Failed to remove single transaction', {
         level: 'warning',
         tags: {

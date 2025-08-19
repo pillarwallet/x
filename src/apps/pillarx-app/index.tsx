@@ -101,13 +101,15 @@ const App = () => {
         });
         return newApiData;
       });
-      recordPresence({
-        address: walletAddress,
-        action: 'app:feed:navigate',
-        value: {
-          pageNumber: page,
-        },
-      });
+      if (walletAddress) {
+        recordPresence({
+          address: walletAddress,
+          action: 'app:feed:navigate',
+          value: {
+            pageNumber: page,
+          },
+        });
+      }
       setIsLoadingNextPage(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -32,5 +32,5 @@ export interface TokenListToken {
   name: string;
   symbol: string;
   decimals: number;
-  logoURI: string;
+  logoURI?: string;
 }

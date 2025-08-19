@@ -55,7 +55,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
   const [copied, setCopied] = React.useState(false);
-  const [hideImage, setHideImage] = React.useState(false);
+  const [failedImages, setFailedImages] = React.useState<Set<number>>(
+    new Set()
+  );
 
   const {
     data: walletPortfolioData,
@@ -241,7 +243,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
           {!tokensLoading &&
             groupedTokens.length > 0 &&
             groupedTokens.map(({ asset, totalBalance, chains, symbol }) => {
-              const logoUrl = asset.asset.logo;
               const tokenChainsCount = chains.length;
 
               return (
@@ -250,11 +251,16 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                   key={`${symbol}-${asset.asset.id}`}
                 >
                   <TokenTotals id="token-totals-account-modal">
-                    {!hideImage && logoUrl ? (
+                    {!failedImages.has(asset.asset.id) && asset.asset.logo ? (
                       <img
-                        src={logoUrl}
+                        src={asset.asset.logo}
                         alt={symbol}
-                        onError={() => setHideImage(true)}
+                        onError={() =>
+                          setFailedImages(
+                            (prev) =>
+                              new Set(Array.from(prev).concat(asset.asset.id))
+                          )
+                        }
                       />
                     ) : (
                       <div className="h-6 w-6">

@@ -365,25 +365,51 @@ export const buildTransactionData = ({
   amount: number;
   decimals: number;
 }) => {
-  if (isNativeToken(tokenAddress)) {
-    // Native token transfer
-    return {
-      to: recipient,
-      value: parseUnits(amount.toString(), decimals),
-      data: '0x',
-    };
+  // Validate recipient address
+  if (!recipient || !isValidEthereumAddress(recipient)) {
+    throw new Error('Invalid recipient address');
   }
-  // ERC20 transfer
-  return {
-    to: tokenAddress,
-    value: '0',
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [
-        recipient as `0x${string}`,
-        parseUnits(amount.toString(), decimals),
-      ],
-    }),
-  };
+
+  // Validate amount
+  if (amount <= 0 || !Number.isFinite(amount) || Number.isNaN(amount)) {
+    throw new Error('Invalid amount: must be a positive finite number');
+  }
+
+  // Validate decimals
+  if (decimals < 0 || decimals > 18 || !Number.isInteger(decimals)) {
+    throw new Error('Invalid decimals: must be an integer between 0 and 18');
+  }
+
+  // Validate token address (for ERC20 tokens)
+  if (!isNativeToken(tokenAddress) && !isValidEthereumAddress(tokenAddress)) {
+    throw new Error('Invalid token address');
+  }
+
+  try {
+    if (isNativeToken(tokenAddress)) {
+      // Native token transfer
+      return {
+        to: recipient,
+        value: parseUnits(amount.toString(), decimals),
+        data: '0x',
+      };
+    }
+    // ERC20 transfer
+    return {
+      to: tokenAddress,
+      value: '0',
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'transfer',
+        args: [
+          recipient as `0x${string}`,
+          parseUnits(amount.toString(), decimals),
+        ],
+      }),
+    };
+  } catch (error) {
+    throw new Error(
+      `Failed to build transaction data: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
 };

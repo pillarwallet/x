@@ -3,7 +3,13 @@ import {
   EtherspotTransactionKit,
   EtherspotTransactionKitConfig,
 } from '@etherspot/transaction-kit';
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 export interface EtherspotTransactionKitContextType {
   data: {
@@ -29,6 +35,7 @@ export const EtherspotTransactionKitProvider: React.FC<
     config.chainId
   );
   const [walletAddress, setWalletAddress] = useState<string>();
+  const kitRef = useRef<EtherspotTransactionKit | null>(null);
 
   // If activeChainId is provided, override the chainId in config
   // Setting an activeChainId will allow the kit to use the correct chain for single transaction management
@@ -40,10 +47,40 @@ export const EtherspotTransactionKitProvider: React.FC<
     }),
     [config, activeChainId]
   );
-  const kit = useMemo(
-    () => new EtherspotTransactionKit(kitConfig),
-    [kitConfig]
-  );
+
+  const kit = useMemo(() => {
+    const newKit = new EtherspotTransactionKit(kitConfig);
+    kitRef.current = newKit;
+    return newKit;
+  }, [kitConfig]);
+
+  // Update the kit's configuration when activeChainId changes
+  useEffect(() => {
+    if (activeChainId !== undefined && kitRef.current) {
+      const currentKitChainId = kitRef.current
+        .getEtherspotProvider()
+        .getChainId();
+      if (activeChainId !== currentKitChainId) {
+        // Update the kit's configuration with the new chain ID
+        kitRef.current
+          .getEtherspotProvider()
+          .updateConfig({ chainId: activeChainId });
+
+        // Clear the kit's cache to ensure fresh SDK instances for the new chain
+        kitRef.current.getEtherspotProvider().clearAllCaches();
+
+        // Reset the kit's state to avoid any chain-specific state pollution
+        kitRef.current.reset();
+
+        // Update wallet address for the new chain
+        const updateWalletAddress = async () => {
+          const address = await kitRef.current?.getWalletAddress();
+          if (address) setWalletAddress(address);
+        };
+        updateWalletAddress();
+      }
+    }
+  }, [activeChainId]);
 
   useEffect(() => {
     const init = async () => {

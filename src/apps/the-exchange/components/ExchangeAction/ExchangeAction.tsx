@@ -299,6 +299,9 @@ const ExchangeAction = () => {
           // Create transactionName
           const chainId =
             chainNameToChainIdTokensData(swapToken?.blockchain) || 0;
+          if (chainId === 0) {
+            throw new Error(`Invalid chain: ${swapToken?.blockchain}`);
+          }
           const transactionName = `tx-${chainId}-${data}`;
           const batchName = `batch-${chainId}`;
 

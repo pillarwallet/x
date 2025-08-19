@@ -19,6 +19,7 @@ import {
   encodeFunctionData,
   erc20Abi,
   formatUnits,
+  isAddress,
   parseUnits,
 } from 'viem';
 
@@ -1228,8 +1229,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           handleError('Only token transfers are supported in this flow.');
           return;
         }
+
+        if (!payloadTx?.to || !isAddress(payloadTx.to)) {
+          handleError(
+            'Invalid or missing recipient address in payload transaction.'
+          );
+          return;
+        }
+
         const txData = {
-          to: payloadTx?.to || '',
+          to: payloadTx.to,
           value:
             payloadTx?.value !== undefined ? payloadTx.value.toString() : '0',
           data: payloadTx?.data || undefined,
@@ -1771,12 +1780,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         return;
       }
 
-      recordPresence({
-        address: accountAddress,
-        action: 'actionSendAsset',
-        value: selectedAsset?.id,
-        data: { ...selectedAsset },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'actionSendAsset',
+          value: selectedAsset?.id,
+          data: { ...selectedAsset },
+        });
+      }
 
       Sentry.addBreadcrumb({
         category: 'send_flow',
@@ -2136,6 +2147,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setAmount('');
     setRecipient('');
   };
+
+  // Update active chain ID when asset is selected
+  useEffect(() => {
+    if (selectedAsset?.chainId) {
+      setActiveChainId(selectedAsset.chainId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAsset?.chainId]);
 
   const handleOnChange = (value: SelectOption) => {
     const tokenOption = feeAssetOptions.filter(

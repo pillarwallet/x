@@ -80,11 +80,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
               onClick={() => {
                 hide();
                 // Fire (and forget) the recordPresence mutation
-                recordPresence({
-                  address: accountAddress,
-                  action: 'appOpened',
-                  value: appId,
-                });
+                if (accountAddress) {
+                  recordPresence({
+                    address: accountAddress,
+                    action: 'appOpened',
+                    value: appId,
+                  });
+                }
                 setIsAnimated(true);
                 // eslint-disable-next-line prefer-template
                 navigate('/' + appId);

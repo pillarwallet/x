@@ -29,11 +29,13 @@ const HeaderSearch = () => {
 
   const handleSearchOpen = async () => {
     dispatch(setIsSearchTokenModalOpen(true));
-    recordPresence({
-      address: accountAddress,
-      action: 'app:tokenAtlas:searchOpen',
-      value: 'SEARCH_OPEN',
-    });
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:searchOpen',
+        value: 'SEARCH_OPEN',
+      });
+    }
   };
 
   return (

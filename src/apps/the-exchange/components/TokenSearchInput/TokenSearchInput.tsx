@@ -187,7 +187,7 @@ const TokenSearchInput = ({
 
   // Record presence of the debouncedSearchText when it changes
   useEffect(() => {
-    if (debouncedSearchText !== '') {
+    if (debouncedSearchText !== '' && accountAddress) {
       recordPresence({
         address: accountAddress,
         action: 'app:theExchange:search',

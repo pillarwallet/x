@@ -108,8 +108,7 @@ export default function Authorized({
       config={{
         provider,
         chainId,
-        bundlerApiKey:
-          import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || undefined,
+        bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
       }}
     >
       <AccountTransactionHistoryProvider>

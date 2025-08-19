@@ -1,9 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import renderer, { act } from 'react-test-renderer';
+import renderer from 'react-test-renderer';
 import { vi } from 'vitest';
 
 // test utils
 import { ExchangeTestWrapper } from '../../../../../test-utils/testUtils';
+
+// store
+import { store } from '../../../../../store';
 
 // reducer
 import {
@@ -91,20 +94,18 @@ vi.mock('@lifi/sdk', () => ({
 describe('<EnterAmount />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    act(() => {
-      setIsSwapOpen(false);
-      setIsReceiveOpen(false);
-      setSwapChain({ chainId: 1, chainName: 'Ethereum' });
-      setReceiveChain({ chainId: 137, chainName: 'Polygon' });
-      setSwapToken(mockTokenAssets[0]);
-      setReceiveToken(mockTokenAssets[1]);
-      setAmountSwap(0.1);
-      setAmountReceive(10);
-      setBestOffer(undefined);
-      setSearchTokenResult([]);
-      setIsOfferLoading(false);
-      setUsdPriceSwapToken(0.1);
-    });
+    store.dispatch(setIsSwapOpen(false));
+    store.dispatch(setIsReceiveOpen(false));
+    store.dispatch(setSwapChain({ chainId: 1, chainName: 'Ethereum' }));
+    store.dispatch(setReceiveChain({ chainId: 137, chainName: 'Polygon' }));
+    store.dispatch(setSwapToken(mockTokenAssets[0]));
+    store.dispatch(setReceiveToken(mockTokenAssets[1]));
+    store.dispatch(setAmountSwap(0.1));
+    store.dispatch(setAmountReceive(10));
+    store.dispatch(setBestOffer(undefined));
+    store.dispatch(setSearchTokenResult([]));
+    store.dispatch(setIsOfferLoading(false));
+    store.dispatch(setUsdPriceSwapToken(0.1));
   });
 
   it('renders correctly and matches snapshot', () => {

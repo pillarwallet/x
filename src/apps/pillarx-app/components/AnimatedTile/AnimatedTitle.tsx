@@ -36,7 +36,7 @@ const AnimatedTile = ({
   });
 
   useEffect(() => {
-    if (animationComplete) {
+    if (animationComplete && accountAddress) {
       recordPresence({
         address: accountAddress,
         action: 'app:feed:viewTile',

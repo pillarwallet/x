@@ -1,6 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import { vi } from 'vitest';
+
+// store
+import { store } from '../../../../../store';
 
 // test utils
 import { ExchangeTestWrapper } from '../../../../../test-utils/testUtils';
@@ -135,19 +138,19 @@ describe('<CardsSwap />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset store state to initial values
-    setAmountSwap(0);
-    setAmountReceive(0);
-    setBestOffer(undefined);
-    setIsOfferLoading(false);
-    setIsSwapOpen(false);
-    setIsReceiveOpen(false);
-    setSwapChain(mockChains.ethereum);
-    setReceiveChain(mockChains.polygon);
-    setSwapToken(mockTokenAssets[0]);
-    setReceiveToken(mockTokenAssets[1]);
-    setSearchTokenResult([]);
-    setUsdPriceSwapToken(0.1);
-    setUsdPriceReceiveToken(100);
+    store.dispatch(setAmountSwap(0));
+    store.dispatch(setAmountReceive(0));
+    store.dispatch(setBestOffer(undefined));
+    store.dispatch(setIsOfferLoading(false));
+    store.dispatch(setIsSwapOpen(false));
+    store.dispatch(setIsReceiveOpen(false));
+    store.dispatch(setSwapChain(mockChains.ethereum));
+    store.dispatch(setReceiveChain(mockChains.polygon));
+    store.dispatch(setSwapToken(mockTokenAssets[0]));
+    store.dispatch(setReceiveToken(mockTokenAssets[1]));
+    store.dispatch(setSearchTokenResult([]));
+    store.dispatch(setUsdPriceSwapToken(0.1));
+    store.dispatch(setUsdPriceReceiveToken(100));
   });
 
   describe('Rendering and Snapshot', () => {
@@ -191,16 +194,20 @@ describe('<CardsSwap />', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('shows swap and receive cards with correct text', () => {
+    it('shows swap and receive cards with correct token labels', () => {
       render(
         <ExchangeTestWrapper>
           <CardsSwap />
         </ExchangeTestWrapper>
       );
 
-      // Should show both SWAP and RECEIVE cards
-      expect(screen.getByText('SWAP')).toBeInTheDocument();
-      expect(screen.getByText('RECEIVE')).toBeInTheDocument();
+      // Should show both token labels scoped per card
+      const tokenCards = screen.getAllByTestId('select-token-card');
+      expect(within(tokenCards[0]).getByText('Ether')).toBeInTheDocument();
+      // This uses a more specific selector for POL to avoid ambiguity
+      expect(
+        within(tokenCards[1]).getByText('POL', { selector: 'p.text-base' })
+      ).toBeInTheDocument();
     });
   });
 
@@ -297,8 +304,8 @@ describe('<CardsSwap />', () => {
       ];
 
       testCases.forEach(({ swapToken, receiveToken }) => {
-        setSwapToken(swapToken);
-        setReceiveToken(receiveToken);
+        store.dispatch(setSwapToken(swapToken));
+        store.dispatch(setReceiveToken(receiveToken));
 
         const { unmount } = render(
           <ExchangeTestWrapper>

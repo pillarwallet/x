@@ -30,7 +30,7 @@ exports[`<EnterAmount /> > renders correctly and matches snapshot 1`] = `
       className="text-xs font-normal text-black_grey group-hover:text-black_grey/[.4]"
     >
       $
-      0.00
+      0.01
     </p>
     <img
       alt="Send"

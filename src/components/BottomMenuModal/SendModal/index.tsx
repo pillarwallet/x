@@ -15,7 +15,7 @@ import { SendModalData } from '../../../types';
 
 // hooks
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
-import useTransactionKit from '../../../hooks/useTransactionKit';
+import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 
 interface SendModalProps extends React.PropsWithChildren {
   isContentVisible?: boolean; // for animation purpose to not render rest of content and return main wrapper only
@@ -26,9 +26,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const wrapperRef = React.useRef(null);
   const { showBatchSendModal, setShowBatchSendModal } = useBottomMenuModal();
   const [t] = useTranslation();
-  const { kit } = useTransactionKit();
-  const { batches } = kit.getState();
-  const totalBatchCount = Object.keys(batches).length;
+  const { batchCount: totalBatchCount } = useGlobalTransactionsBatch();
 
   if (!isContentVisible) {
     return <Wrapper />;

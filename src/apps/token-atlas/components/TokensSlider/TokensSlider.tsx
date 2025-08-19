@@ -72,11 +72,13 @@ const TokensSlider = () => {
 
   // Debounced recordPresence function with 2-second delay
   const debouncedTokenTrendingScroll = _.debounce(() => {
-    recordPresence({
-      address: accountAddress,
-      action: 'app:tokenAtlas:trendingScroll',
-      value: 'TRENDING_SCROLL',
-    });
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:trendingScroll',
+        value: 'TRENDING_SCROLL',
+      });
+    }
   }, 2000);
 
   // Handle the scroll event

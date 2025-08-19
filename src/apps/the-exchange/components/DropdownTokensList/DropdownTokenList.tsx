@@ -137,16 +137,18 @@ const DropdownTokenList = ({
           chainName: token.blockchain,
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:sourceTokenSelect',
-        value: {
-          chainId: chainNameToChainIdTokensData(token.blockchain),
-          address: token.contract,
-          symbol: token.symbol,
-          name: token.name,
-        },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:sourceTokenSelect',
+          value: {
+            chainId: chainNameToChainIdTokensData(token.blockchain),
+            address: token.contract,
+            symbol: token.symbol,
+            name: token.name,
+          },
+        });
+      }
       dispatch(setSearchTokenResult(undefined));
       dispatch(setIsSwapOpen(false));
     } else {
@@ -157,16 +159,18 @@ const DropdownTokenList = ({
           chainName: token.blockchain,
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:destinationTokenSelect',
-        value: {
-          chainId: chainNameToChainIdTokensData(token.blockchain),
-          address: token.contract,
-          symbol: token.symbol,
-          name: token.name,
-        },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:destinationTokenSelect',
+          value: {
+            chainId: chainNameToChainIdTokensData(token.blockchain),
+            address: token.contract,
+            symbol: token.symbol,
+            name: token.name,
+          },
+        });
+      }
       dispatch(setSearchTokenResult(undefined));
       dispatch(setIsReceiveOpen(false));
     }
