@@ -248,11 +248,11 @@ export const calculateFinalPxPoints = (
   if (activeTab === 'trading' && timeTab === 'all') {
     return basePoints;
   }
-  
+
   // Add bonus points only if timeTab is 'all' and eligible
   if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
     return basePoints + 200;
   }
-  
+
   return basePoints;
 };

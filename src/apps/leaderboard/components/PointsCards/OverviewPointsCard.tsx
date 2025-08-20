@@ -97,9 +97,7 @@ const OverviewPointsCard = ({
             {myWeeklyMerged.index === -1
               ? '-'
               : formatAmountDisplay(
-                  Math.floor(
-                    myWeeklyMerged.entry?.totalPoints || 0
-                  )
+                  Math.floor(myWeeklyMerged.entry?.totalPoints || 0)
                 )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>

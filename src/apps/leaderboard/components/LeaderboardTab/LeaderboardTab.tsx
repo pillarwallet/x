@@ -15,8 +15,6 @@ import { formatAmountDisplay } from '../../../../utils/number';
 import Body from '../Typography/Body';
 import UserInfo from '../UserInfo/UserInfo';
 
-
-
 type LeaderboardTabProps = {
   data: LeaderboardTableData[];
   timeTab: 'all' | 'weekly';
