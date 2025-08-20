@@ -29,6 +29,7 @@ describe('OverviewPointsCard', () => {
       <OverviewPointsCard
         myAllTimeMerged={{ entry: myAllTimeMergedMock, index: 4 }}
         myWeeklyMerged={{ entry: myWeeklyMergedMock, index: 9 }}
+        timeTab="all"
       />
     );
     expect(container).toMatchSnapshot();
@@ -39,6 +40,7 @@ describe('OverviewPointsCard', () => {
       <OverviewPointsCard
         myAllTimeMerged={{ entry: undefined, index: -1 }}
         myWeeklyMerged={{ entry: undefined, index: -1 }}
+        timeTab="all"
       />
     );
     expect(container).toMatchSnapshot();
@@ -49,6 +51,7 @@ describe('OverviewPointsCard', () => {
       <OverviewPointsCard
         myAllTimeMerged={{ entry: myAllTimeMergedMock, index: 0 }}
         myWeeklyMerged={{ entry: myWeeklyMergedMock, index: 2 }}
+        timeTab="all"
       />
     );
 
@@ -69,6 +72,7 @@ describe('OverviewPointsCard', () => {
       <OverviewPointsCard
         myAllTimeMerged={{ entry: undefined, index: -1 }}
         myWeeklyMerged={{ entry: undefined, index: -1 }}
+        timeTab="all"
       />
     );
 
