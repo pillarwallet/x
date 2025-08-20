@@ -1,0 +1,13 @@
+/* Gas Tank App Specific Styles */
+.gas-tank-app {
+  background: #0a0a0a;
+  min-height: 100vh;
+  color: white;
+}
+
+/* Responsive overrides for gas tank */
+@media (max-width: 768px) {
+  .gas-tank-app {
+    padding: 16px;
+  }
+}

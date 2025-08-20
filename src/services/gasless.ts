@@ -11,6 +11,11 @@ export type Paymasters = {
   paymasterAddress: string;
 };
 
+interface ChainBalance {
+  chainId: string;
+  balance: string;
+}
+
 export const GasConsumptions = {
   native: 510000,
   native_arb: 910000,
@@ -51,6 +56,38 @@ export const getAllGaslessPaymasters = async (
     return null;
   } catch (err) {
     console.error(err);
+    return null;
+  }
+};
+
+export const getGasTankBalance = async (
+  walletAddress: string
+): Promise<number | null> => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/pillarx-staging/us-central1/paymaster/getGasTankBalance?sender=${walletAddress}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch gas tank balance: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const balances: ChainBalance[] = Object.values(data.balance || {});
+    // Get cumalative balance for all chains
+    const total = balances.reduce((sum, chainBalance) => {
+      const balance = parseFloat(chainBalance.balance) || 0;
+      return sum + balance;
+    }, 0);
+    return total;
+  } catch (error) {
+    console.error('Error fetching gas tank balance:', error);
     return null;
   }
 };
