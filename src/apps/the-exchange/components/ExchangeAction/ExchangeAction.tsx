@@ -308,7 +308,7 @@ const ExchangeAction = () => {
           kit
             .transaction({
               chainId,
-              to: to || '',
+              to: to as `0x${string}`,
               value: bigIntValue,
               data: data?.toString() ?? '',
             })

@@ -354,6 +354,17 @@ export function isStableCoin(address: string, chainId: number): boolean {
   return set.has(address.toLowerCase());
 }
 
+// Simple utility to safely convert values to BigInt
+export const safeBigIntConversion = (value: unknown): bigint => {
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'string' && value.includes('.')) return BigInt(0); // Skip decimal strings
+  try {
+    return BigInt(String(value || 0));
+  } catch {
+    return BigInt(0);
+  }
+};
+
 export const buildTransactionData = ({
   tokenAddress,
   recipient,
@@ -386,27 +397,65 @@ export const buildTransactionData = ({
   }
 
   try {
+    // Ensure amount is properly formatted as a string with appropriate precision
+    const amountString = amount.toFixed(decimals);
+
     if (isNativeToken(tokenAddress)) {
       // Native token transfer
-      return {
-        to: recipient,
-        value: parseUnits(amount.toString(), decimals),
-        data: '0x',
-      };
+      try {
+        const parsedValue = parseUnits(amountString, decimals);
+        // Ensure the parsed value is a valid bigint
+        if (typeof parsedValue !== 'bigint') {
+          throw new Error(`parseUnits returned invalid value: ${parsedValue}`);
+        }
+        return {
+          to: recipient,
+          value: parsedValue,
+          data: '0x',
+        };
+      } catch (parseError) {
+        console.error(
+          'parseUnits error:',
+          parseError,
+          'amountString:',
+          amountString,
+          'decimals:',
+          decimals
+        );
+        throw new Error(
+          `Failed to parse units: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+        );
+      }
     }
     // ERC20 transfer
-    return {
-      to: tokenAddress,
-      value: '0',
-      data: encodeFunctionData({
-        abi: erc20Abi,
-        functionName: 'transfer',
-        args: [
-          recipient as `0x${string}`,
-          parseUnits(amount.toString(), decimals),
-        ],
-      }),
-    };
+    try {
+      const parsedAmount = parseUnits(amountString, decimals);
+      // Ensure the parsed amount is a valid bigint
+      if (typeof parsedAmount !== 'bigint') {
+        throw new Error(`parseUnits returned invalid value: ${parsedAmount}`);
+      }
+      return {
+        to: tokenAddress,
+        value: '0',
+        data: encodeFunctionData({
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [recipient as `0x${string}`, parsedAmount],
+        }),
+      };
+    } catch (parseError) {
+      console.error(
+        'parseUnits error:',
+        parseError,
+        'amountString:',
+        amountString,
+        'decimals:',
+        decimals
+      );
+      throw new Error(
+        `Failed to parse units: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+      );
+    }
   } catch (error) {
     throw new Error(
       `Failed to build transaction data: ${error instanceof Error ? error.message : 'Unknown error'}`

@@ -11,6 +11,7 @@ import {
   ClipboardTick as IconClipboardTick,
   Flash as IconFlash,
 } from 'iconsax-react';
+import { isNaN } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -57,6 +58,7 @@ import {
   buildTransactionData,
   getNativeAssetForChainId,
   isValidEthereumAddress,
+  safeBigIntConversion,
 } from '../../../utils/blockchain';
 import {
   pasteFromClipboard,
@@ -976,10 +978,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               .transaction({
                 chainId: batch.chainId,
                 to: tx.to,
-                value:
-                  typeof tx.value === 'bigint'
-                    ? tx.value
-                    : BigInt(tx.value?.toString() || '0'),
+                value: safeBigIntConversion(tx.value),
                 data: tx.data,
               })
               .name({ transactionName: `tx-${batch.chainId}-${txIdx}` })
@@ -1008,13 +1007,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             contexts: {
               estimation_error: {
                 sendId,
-                errorMessage: 'Batch estimation failed',
-                selectedAsset: selectedAsset?.id,
+                errorMessage: 'Batch payload estimation failed',
                 amount,
               },
             },
           });
-          handleError('Batch estimation failed');
+          handleError('Batch payload estimation failed');
           return;
         }
 
@@ -1038,12 +1036,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 estimation_error: {
                   sendId,
                   errorMessage: batchEst.errorMessage,
-                  selectedAsset: selectedAsset?.id,
                   amount,
                 },
               },
             });
-            handleError(batchEst.errorMessage || 'Batch estimation failed');
+            handleError(
+              batchEst.errorMessage || 'Batch payload estimation failed'
+            );
             return;
           }
           // Check cost warning for the first transfer transaction in the batch
@@ -1113,13 +1112,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             contexts: {
               sending_error: {
                 sendId,
-                errorMessage: 'Batch send failed',
-                selectedAsset: selectedAsset?.id,
+                errorMessage: 'Batch payload send failed',
                 amount,
               },
             },
           });
-          handleError('Batch send failed');
+          handleError('Batch payload send failed');
           return;
         }
 
@@ -1225,10 +1223,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       // --- PAYLOAD: SINGLE TRANSACTION FLOW ---
       if (isPayloadTransaction) {
         // Paymaster logic is not supported for payload flows
-        if (selectedAsset?.type !== 'token') {
-          handleError('Only token transfers are supported in this flow.');
-          return;
-        }
 
         if (!payloadTx?.to || !isAddress(payloadTx.to)) {
           handleError(
@@ -1237,15 +1231,45 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           return;
         }
 
+        // Convert decimal value to wei if it's a decimal string
+        const valueToUse = (() => {
+          if (payloadTx?.value === undefined) return '0';
+
+          const valueStr = payloadTx.value.toString();
+
+          // If it's already a numeric string without decimals, assume it's in wei
+          if (!valueStr.includes('.') && !isNaN(Number(valueStr))) {
+            return valueStr;
+          }
+
+          // Convert decimal value to wei using parseUnits
+          try {
+            return parseUnits(valueStr, 18).toString();
+          } catch {
+            return '0';
+          }
+        })();
+
         const txData = {
           to: payloadTx.to,
-          value:
-            payloadTx?.value !== undefined ? payloadTx.value.toString() : '0',
+          value: valueToUse,
           data: payloadTx?.data || undefined,
         };
-        const chainIdToUse = payloadTx?.chainId ?? selectedAsset.chainId;
+        const chainIdToUse = payloadTx?.chainId;
 
         setActiveChainId(chainIdToUse);
+
+        // Directly update the kit's configuration for immediate use
+        try {
+          kit.getEtherspotProvider().updateConfig({ chainId: chainIdToUse });
+        } catch {
+          // Silently handle configuration update errors
+        }
+
+        // Wait a moment for the configuration to take effect
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500);
+        });
 
         kit
           .transaction({
@@ -1254,7 +1278,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             value: txData.value,
             data: txData.data,
           })
-          .name({ transactionName: 'tx-single-send' });
+          .name({ transactionName: 'tx-payload-single-send' });
 
         // Estimate (no paymasterDetails)
         transactionDebugLog('Estimating single payload transaction');
@@ -1272,7 +1296,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               estimation_error: {
                 sendId,
                 errorMessage: estimated.errorMessage,
-                selectedAsset: selectedAsset?.id,
                 amount,
               },
             },
@@ -1302,22 +1325,48 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
         // Send (no paymasterDetails)
         transactionDebugLog('Sending single payload transaction');
-        const sent = await kit.send();
-        transactionDebugLog('Single payload transaction sent:', sent);
-        if (sent.errorMessage) {
-          Sentry.captureMessage('Sending error during send', {
-            level: 'error',
+        let sent;
+        try {
+          sent = await kit.send();
+          transactionDebugLog('Single payload transaction sent:', sent);
+
+          if (sent.errorMessage) {
+            Sentry.captureMessage('Sending error during send', {
+              level: 'error',
+              tags: {
+                component: 'send_flow',
+                action: 'sending_error',
+                sendId,
+              },
+              contexts: {
+                sending_error: {
+                  sendId,
+                  errorMessage: sent.errorMessage,
+                  amount,
+                },
+              },
+            });
+            handleError(
+              'Something went wrong while sending the assets, please try again later. If the problem persists, contact the PillarX team for support.'
+            );
+            return;
+          }
+        } catch (sendError) {
+          Sentry.captureException(sendError, {
             tags: {
               component: 'send_flow',
-              action: 'sending_error',
+              action: 'kit_send_error',
               sendId,
             },
             contexts: {
-              sending_error: {
+              kit_send_error: {
                 sendId,
-                errorMessage: sent.errorMessage,
-                selectedAsset: selectedAsset?.id,
+                error:
+                  sendError instanceof Error
+                    ? sendError.message
+                    : String(sendError),
                 amount,
+                recipient,
               },
             },
           });
@@ -1332,9 +1381,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         const chainIdForTxHash =
           (payloadTx && payloadTx.chainId) ||
           sent.chainId ||
-          (selectedAsset && 'chainId' in selectedAsset
-            ? selectedAsset.chainId
-            : etherspotDefaultChainId);
+          etherspotDefaultChainId;
         if (!newUserOpHash) {
           Sentry.captureMessage('Failed to get UserOp hash', {
             level: 'error',
@@ -1346,7 +1393,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             contexts: {
               no_userop_hash: {
                 sendId,
-                selectedAsset: selectedAsset?.id,
                 amount,
                 recipient,
               },
@@ -1385,8 +1431,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             setWalletConnectTxHash(txHash);
           }
         }
-        if (payload?.onSent) {
-          payload.onSent([sent?.userOpHash || '']);
+        if (payload?.onSent && sent) {
+          payload.onSent([sent.userOpHash || '']);
         }
 
         // Use helper for polling
@@ -1643,33 +1689,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           data: { sendId, userOpHash },
         });
 
-        // WalletConnect: set transaction hash
-        if (
-          payload?.title === 'WalletConnect Approval Request' ||
-          payload?.title === 'WalletConnect Transaction Request'
-        ) {
-          Sentry.addBreadcrumb({
-            category: 'send_flow',
-            message: 'Processing WalletConnect transaction',
-            level: 'info',
-            data: { sendId, payloadTitle: payload?.title },
-          });
-
-          const txHash = await kit.getTransactionHash(
-            userOpHash,
-            chainIdForTxHash
-          );
-          if (!txHash) {
-            setWalletConnectTxHash(undefined);
-          } else {
-            setWalletConnectTxHash(txHash);
-          }
-        }
-
-        if (payload?.onSent) {
-          payload.onSent([userOpHash || '']);
-        }
-
         // Use helper for polling
         startUserOpPolling({
           userOpHash,
@@ -1877,60 +1896,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         data: { sendId, userOpHash: newUserOpHash },
       });
 
-      // WalletConnect: set transaction hash
-      if (
-        payload?.title === 'WalletConnect Approval Request' ||
-        payload?.title === 'WalletConnect Transaction Request'
-      ) {
-        Sentry.addBreadcrumb({
-          category: 'send_flow',
-          message: 'Processing WalletConnect transaction',
-          level: 'info',
-          data: { sendId, payloadTitle: payload?.title },
-        });
-
-        const txHash = await kit.getTransactionHash(
-          newUserOpHash,
-          chainIdForTxHash
-        );
-        if (!txHash) {
-          setWalletConnectTxHash(undefined);
-
-          Sentry.captureMessage(
-            'Failed to get WalletConnect transaction hash',
-            {
-              level: 'warning',
-              tags: {
-                component: 'send_flow',
-                action: 'walletconnect_no_txhash',
-                sendId,
-              },
-              contexts: {
-                walletconnect_error: {
-                  sendId,
-                  userOpHash: newUserOpHash,
-                  chainId: chainIdForTxHash,
-                },
-              },
-            }
-          );
-        } else {
-          setWalletConnectTxHash(txHash);
-
-          Sentry.addBreadcrumb({
-            category: 'send_flow',
-            message: 'WalletConnect transaction hash received',
-            level: 'info',
-            data: { sendId, txHash },
-          });
-        }
-      }
-
-      if (payload?.onSent) {
-        // This part may need to be adapted if sent is not an array
-        payload.onSent([sent?.userOpHash || '']);
-      }
-
       // Use helper for polling
       startUserOpPolling({
         userOpHash: newUserOpHash,
@@ -1999,13 +1964,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (isSendDisabled) return;
     setErrorMessage('');
 
-    // Only allow batching for user-driven, non-paymaster, non-payload-batches flows
+    // Only allow batching for user-driven, non-paymaster, non-payload flows
     if (isPaymaster) {
       setErrorMessage(t`error.paymasterNotSupported`);
       return;
     }
     if (isPayloadBatches) {
       setErrorMessage(t`error.batchingNotSupportedForPayloadBatches`);
+      return;
+    }
+    // Prevent batching for WalletConnect flows
+    if (payload?.title?.includes('WalletConnect')) {
+      setErrorMessage(t`error.batchingNotSupportedForWalletConnect`);
       return;
     }
 
@@ -2081,10 +2051,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       .transaction({
         chainId,
         to: txData.to,
-        value:
-          typeof txData.value === 'bigint'
-            ? txData.value
-            : BigInt(txData.value?.toString() || '0'),
+        value: safeBigIntConversion(txData.value),
         data: txData.data,
       })
       .name({ transactionName })
@@ -2325,7 +2292,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         isSending={isSending}
         errorMessage={errorMessage}
         estimatedCostFormatted={estimatedCostFormatted}
-        onAddToBatch={onAddToBatch}
+        onAddToBatch={
+          payload?.title?.includes('WalletConnect') ? undefined : onAddToBatch
+        }
         onCancel={
           payload?.title?.includes('WalletConnect') ? onCancel : undefined
         }
