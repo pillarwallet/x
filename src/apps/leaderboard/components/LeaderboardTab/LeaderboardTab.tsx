@@ -7,26 +7,15 @@ import {
   LeaderboardTableData,
 } from '../../../../types/api';
 
+// utils
+import { calculateFinalPxPoints } from '../../utils';
+import { formatAmountDisplay } from '../../../../utils/number';
+
 // components
 import Body from '../Typography/Body';
 import UserInfo from '../UserInfo/UserInfo';
 
-// utils
-import { formatAmountDisplay } from '../../../../utils/number';
 
-/**
- * Calculate final PX points by adding bonus points if eligible
- */
-const calculateFinalPxPoints = (
-  basePoints: number,
-  finalPxPointsAwardEligible?: boolean,
-  timeTab: 'all' | 'weekly' = 'all'
-): number => {
-  if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
-    return basePoints + 200;
-  }
-  return basePoints;
-};
 
 type LeaderboardTabProps = {
   data: LeaderboardTableData[];
@@ -132,7 +121,8 @@ const LeaderboardTab = ({ data, timeTab }: LeaderboardTabProps) => {
                         calculateFinalPxPoints(
                           myRankData.totalPoints,
                           myRankData.finalPxPointsAwardEligible,
-                          timeTab
+                          timeTab,
+                          'trading'
                         )
                       ) || 0
                     )}
@@ -193,7 +183,8 @@ const LeaderboardTab = ({ data, timeTab }: LeaderboardTabProps) => {
                         calculateFinalPxPoints(
                           result.totalPoints,
                           result.finalPxPointsAwardEligible,
-                          timeTab
+                          timeTab,
+                          'migration'
                         )
                       ) || 0
                     )}{' '}

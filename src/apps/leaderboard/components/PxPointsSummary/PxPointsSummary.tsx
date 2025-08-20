@@ -3,6 +3,9 @@ import { useWalletAddress } from '@etherspot/transaction-kit';
 // types
 import { LeaderboardTableData } from '../../../../types/api';
 
+// utils
+import { calculateFinalPxPoints } from '../../utils';
+
 // images
 import LotteryTicketIcon from '../../images/lottery-qualified-icon.png';
 import MigrationIcon from '../../images/migration-icon.svg';
@@ -14,20 +17,6 @@ import GasNewDropCard from '../PointsCards/GasNewDropCard';
 import OverviewPointsCard from '../PointsCards/OverviewPointsCard';
 import PointsCard from '../PointsCards/PointsCard';
 import BodySmall from '../Typography/BodySmall';
-
-/**
- * Calculate final PX points by adding bonus points if eligible
- */
-const calculateFinalPxPoints = (
-  basePoints: number,
-  finalPxPointsAwardEligible?: boolean,
-  timeTab: 'all' | 'weekly' = 'all'
-): number => {
-  if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
-    return basePoints + 200;
-  }
-  return basePoints;
-};
 
 type PxPointsSummaryProps = {
   allTimeTradingData: LeaderboardTableData[] | undefined;
@@ -129,7 +118,8 @@ const PxPointsSummary = ({
               points={calculateFinalPxPoints(
                 myAllTimeMigration.entry?.totalPoints || 0,
                 myAllTimeMigration.entry?.finalPxPointsAwardEligible,
-                timeTab
+                timeTab,
+                'migration'
               )}
               rank={
                 myAllTimeMigration.index !== -1

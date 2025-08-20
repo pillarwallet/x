@@ -3,6 +3,7 @@ import { LeaderboardTableData } from '../../../../types/api';
 
 // utils
 import { formatAmountDisplay } from '../../../../utils/number';
+import { calculateFinalPxPoints } from '../../utils';
 
 // images
 import CurrentRankIcon from '../../images/current-rank-icon.svg';
@@ -12,20 +13,6 @@ import WeeklyRankIcon from '../../images/weekly-rank-icon.svg';
 
 // components
 import BodySmall from '../Typography/BodySmall';
-
-/**
- * Calculate final PX points by adding bonus points if eligible
- */
-const calculateFinalPxPoints = (
-  basePoints: number,
-  finalPxPointsAwardEligible?: boolean,
-  timeTab: 'all' | 'weekly' = 'all'
-): number => {
-  if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
-    return basePoints + 200;
-  }
-  return basePoints;
-};
 
 type OverviewPointsCardProps = {
   myAllTimeMerged: { entry: LeaderboardTableData | undefined; index: number };
@@ -58,7 +45,8 @@ const OverviewPointsCard = ({
                     calculateFinalPxPoints(
                       myAllTimeMerged.entry?.totalPoints || 0,
                       myAllTimeMerged.entry?.finalPxPointsAwardEligible,
-                      timeTab
+                      timeTab,
+                      'migration'
                     )
                   )
                 )}{' '}
@@ -110,11 +98,7 @@ const OverviewPointsCard = ({
               ? '-'
               : formatAmountDisplay(
                   Math.floor(
-                    calculateFinalPxPoints(
-                      myWeeklyMerged.entry?.totalPoints || 0,
-                      myWeeklyMerged.entry?.finalPxPointsAwardEligible,
-                      timeTab
-                    )
+                    myWeeklyMerged.entry?.totalPoints || 0
                   )
                 )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
