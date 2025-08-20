@@ -373,7 +373,7 @@ export const buildTransactionData = ({
 }: {
   tokenAddress: string;
   recipient: string;
-  amount: number;
+  amount: string | bigint;
   decimals: number;
 }) => {
   // Validate recipient address
@@ -382,8 +382,17 @@ export const buildTransactionData = ({
   }
 
   // Validate amount
-  if (amount <= 0 || !Number.isFinite(amount) || Number.isNaN(amount)) {
-    throw new Error('Invalid amount: must be a positive finite number');
+  if (typeof amount === 'string') {
+    if (!amount || amount === '0' || amount === '0.0' || amount === '0.00') {
+      throw new Error('Invalid amount: must be a positive value');
+    }
+    if (Number.isNaN(Number(amount)) || Number(amount) <= 0) {
+      throw new Error('Invalid amount: must be a positive valid number');
+    }
+  } else if (typeof amount === 'bigint') {
+    if (amount <= BigInt(0)) {
+      throw new Error('Invalid amount: must be a positive value');
+    }
   }
 
   // Validate decimals
@@ -398,7 +407,8 @@ export const buildTransactionData = ({
 
   try {
     // Ensure amount is properly formatted as a string with appropriate precision
-    const amountString = amount.toFixed(decimals);
+    const amountString =
+      typeof amount === 'string' ? amount : amount.toString();
 
     if (isNativeToken(tokenAddress)) {
       // Native token transfer

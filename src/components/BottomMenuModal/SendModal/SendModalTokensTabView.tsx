@@ -1231,6 +1231,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           return;
         }
 
+        // TO DO - review this logic
         // Convert decimal value to wei if it's a decimal string
         const valueToUse = (() => {
           if (payloadTx?.value === undefined) return '0';
@@ -1260,11 +1261,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         setActiveChainId(chainIdToUse);
 
         // Directly update the kit's configuration for immediate use
-        try {
-          kit.getEtherspotProvider().updateConfig({ chainId: chainIdToUse });
-        } catch {
-          // Silently handle configuration update errors
-        }
+        kit.getEtherspotProvider().updateConfig({ chainId: chainIdToUse });
 
         // Wait a moment for the configuration to take effect
         await new Promise((resolve) => {
@@ -1501,11 +1498,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           .addToBatch({ batchName });
 
         // 2. Main transfer transaction
-        const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+        const valueToSend = isAmountInputAsFiat
+          ? amountForPrice.toString()
+          : amount;
         const txData = buildTransactionData({
           tokenAddress: selectedAsset.asset.contract,
           recipient,
-          amount: Number(valueToSend),
+          amount: valueToSend,
           decimals: selectedAsset.asset.decimals,
         });
         kit
@@ -1730,11 +1729,13 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       }
 
       // --- SINGLE TRANSACTION FLOW (no paymaster) ---
-      const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+      const valueToSend = isAmountInputAsFiat
+        ? amountForPrice.toString()
+        : amount;
       const txData = buildTransactionData({
         tokenAddress: selectedAsset.asset.contract,
         recipient,
-        amount: Number(valueToSend),
+        amount: valueToSend,
         decimals: selectedAsset.asset.decimals,
       });
       // Use the correct chainId for the fee payment method
@@ -1984,7 +1985,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     let description = '';
 
     if (!payload) {
-      const valueToSend = isAmountInputAsFiat ? amountForPrice : amount;
+      const valueToSend = isAmountInputAsFiat
+        ? amountForPrice.toString()
+        : amount;
       if (
         !selectedAsset ||
         selectedAsset.type !== 'token' ||
@@ -1996,7 +1999,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       const builtTxData = buildTransactionData({
         tokenAddress: selectedAsset.asset.contract,
         recipient,
-        amount: Number(valueToSend),
+        amount: valueToSend,
         decimals: selectedAsset.asset.decimals,
       });
       txData = {
@@ -2011,7 +2014,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       description =
         transactionDescription(
           selectedAsset,
-          Number(valueToSend),
+          parseFloat(valueToSend),
           recipient,
           payload
         ) || '';
