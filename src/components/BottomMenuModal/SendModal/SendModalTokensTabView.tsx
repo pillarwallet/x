@@ -227,20 +227,23 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     walletPortfolioDataError,
   ]);
 
-  const feeTypeOptions = [
-    {
-      id: 'Gasless',
-      title: 'Gasless',
-      type: 'token',
-      value: '',
-    },
-    {
-      id: 'Native Token',
-      title: 'Native Token',
-      type: 'token',
-      value: '',
-    },
-  ];
+  const feeTypeOptions = React.useMemo(
+    () => [
+      {
+        id: 'Gasless',
+        title: 'Gasless',
+        type: 'token',
+        value: '',
+      },
+      {
+        id: 'Native Token',
+        title: 'Native Token',
+        type: 'token',
+        value: '',
+      },
+    ],
+    []
+  );
 
   const [feeType, setFeeType] = React.useState(feeTypeOptions);
 
@@ -248,6 +251,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (!walletPortfolio) return;
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
     if (!selectedAsset) return;
+
+    // Reset paymaster context when asset changes to ensure clean state
+    setPaymasterContext(null);
+    setIsPaymaster(false);
+
     setQueryString(`?chainId=${selectedAsset.chainId}`);
     getAllGaslessPaymasters(selectedAsset.chainId, tokens).then(
       (paymasterObject) => {
@@ -309,13 +317,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               balance: feeOptions[0].value?.toString(),
             });
             setSelectedPaymasterAddress(feeOptions[0].id.split('-')[2]);
-            if (selectedFeeType === 'Gasless') {
-              setPaymasterContext({
-                mode: 'commonerc20',
-                token: feeOptions[0].asset.contract,
-              });
-              setIsPaymaster(true);
-            }
+
+            // Reset fee type when switching assets to ensure consistent state
+            setSelectedFeeType('Gasless');
+            setPaymasterContext({
+              mode: 'commonerc20',
+              token: feeOptions[0].asset.contract,
+            });
+            setIsPaymaster(true);
           } else {
             setIsPaymaster(false);
             setPaymasterContext(null);
@@ -331,7 +340,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset, walletPortfolio]);
+  }, [selectedAsset?.id, selectedAsset?.chainId, walletPortfolio]);
 
   const setApprovalData = async (gasCost: number) => {
     if (selectedFeeAsset && gasPrice && gasCost) {
@@ -2114,47 +2123,41 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setRecipient('');
   };
 
-  const handleOnChange = (value: SelectOption) => {
-    const tokenOption = feeAssetOptions.filter(
-      (option) => option.id === value.id
-    )[0] as TokenAssetSelectOption;
-    const values = value.id.split('-');
-    const tokenAddress = values[0];
-    setSelectedFeeAsset({
-      token: tokenAddress,
-      decimals: Number(values[3]) ?? 18,
-      tokenPrice: tokenOption.asset.price?.toString(),
-      balance: tokenOption.value?.toString(),
-    });
-    const paymasterAddress = value.id.split('-')[2];
-    setSelectedPaymasterAddress(paymasterAddress);
-  };
-
-  const handleOnChangeFeeAsset = (value: SelectOption) => {
-    setSelectedFeeType(value.title);
-    if (value.title === 'Gasless') {
-      setPaymasterContext({
-        mode: 'commonerc20',
-        token: selectedFeeAsset?.token,
+  const handleOnChange = React.useCallback(
+    (value: SelectOption) => {
+      const tokenOption = feeAssetOptions.filter(
+        (option) => option.id === value.id
+      )[0] as TokenAssetSelectOption;
+      const values = value.id.split('-');
+      const tokenAddress = values[0];
+      setSelectedFeeAsset({
+        token: tokenAddress,
+        decimals: Number(values[3]) ?? 18,
+        tokenPrice: tokenOption.asset.price?.toString(),
+        balance: tokenOption.value?.toString(),
       });
-      setIsPaymaster(true);
-    } else {
-      setPaymasterContext(null);
-      setIsPaymaster(false);
-    }
-  };
+      const paymasterAddress = value.id.split('-')[2];
+      setSelectedPaymasterAddress(paymasterAddress);
+    },
+    [feeAssetOptions]
+  );
 
-  useEffect(() => {
-    if (!selectedFeeAsset) return;
-    if (isPaymaster && paymasterContext?.mode === 'commonerc20') {
-      setPaymasterContext({
-        mode: 'commonerc20',
-        token: selectedFeeAsset.token,
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFeeAsset]);
+  const handleOnChangeFeeAsset = React.useCallback(
+    (value: SelectOption) => {
+      setSelectedFeeType(value.title);
+      if (value.title === 'Gasless') {
+        setPaymasterContext({
+          mode: 'commonerc20',
+          token: selectedFeeAsset?.token,
+        });
+        setIsPaymaster(true);
+      } else {
+        setPaymasterContext(null);
+        setIsPaymaster(false);
+      }
+    },
+    [selectedFeeAsset?.token]
+  );
 
   return (
     <>
@@ -2231,9 +2234,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 type="token"
                 onChange={handleOnChangeFeeAsset}
                 options={feeType}
-                defaultSelectedId={feeType[0].id}
+                defaultSelectedId={feeType[0]?.id}
               />
               {paymasterContext?.mode === 'commonerc20' &&
+                selectedFeeType === 'Gasless' &&
                 feeAssetOptions.length > 0 && (
                   <>
                     <Label>{t`label.selectFeeAsset`}</Label>
