@@ -1258,15 +1258,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         };
         const chainIdToUse = payloadTx?.chainId;
 
+        // Set the active chain context for this transaction
+        // This ensures the transaction is built and sent on the correct chain
         setActiveChainId(chainIdToUse);
-
-        // Directly update the kit's configuration for immediate use
-        kit.getEtherspotProvider().updateConfig({ chainId: chainIdToUse });
-
-        // Wait a moment for the configuration to take effect
-        await new Promise((resolve) => {
-          setTimeout(resolve, 500);
-        });
 
         kit
           .transaction({
@@ -1741,8 +1735,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       // Use the correct chainId for the fee payment method
       const feeChainId = selectedAsset.chainId;
 
+      // Set the active chain context for this transaction
+      // This ensures the transaction is built and sent on the correct chain
       setActiveChainId(feeChainId);
-
       kit
         .transaction({
           chainId: feeChainId,
@@ -2073,6 +2068,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const onCancel = () => {
     setRecipient('');
     setSelectedAsset(undefined);
+    // Clear the active chain context
     setActiveChainId(undefined);
     setAmount('');
     setSafetyWarningMessage('');
@@ -2117,14 +2113,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setAmount('');
     setRecipient('');
   };
-
-  // Update active chain ID when asset is selected
-  useEffect(() => {
-    if (selectedAsset?.chainId) {
-      setActiveChainId(selectedAsset.chainId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset?.chainId]);
 
   const handleOnChange = (value: SelectOption) => {
     const tokenOption = feeAssetOptions.filter(

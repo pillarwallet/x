@@ -67,7 +67,8 @@ const SendModalBatchesTabView = () => {
   const triggerUpdate = () => forceUpdate((n) => n + 1);
 
   // Get batches from kit state
-  const { batches } = kit.getState();
+  const kitState = kit.getState();
+  const { batches } = kitState;
 
   // Group batches by chainId
   const groupedBatchesByChainId = React.useMemo(() => {

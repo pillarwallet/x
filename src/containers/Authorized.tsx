@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { usePrivy } from '@privy-io/react-auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { WalletClient } from 'viem';
@@ -99,18 +99,22 @@ export default function Authorized({
     walletConnectConnector,
   ]);
 
+  // Memoize the config to prevent unnecessary kit recreation
+  const kitConfig = useMemo(
+    () => ({
+      provider,
+      chainId,
+      bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
+    }),
+    [provider, chainId]
+  );
+
   if (showAnimation) {
     return <Loading type="enter" />;
   }
 
   return (
-    <EtherspotTransactionKitProvider
-      config={{
-        provider,
-        chainId,
-        bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
-      }}
-    >
+    <EtherspotTransactionKitProvider config={kitConfig}>
       <AccountTransactionHistoryProvider>
         <GlobalTransactionBatchesProvider>
           <BottomMenuModalProvider>

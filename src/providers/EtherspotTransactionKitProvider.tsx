@@ -54,34 +54,6 @@ export const EtherspotTransactionKitProvider: React.FC<
     return newKit;
   }, [kitConfig]);
 
-  // Update the kit's configuration when activeChainId changes
-  useEffect(() => {
-    if (activeChainId !== undefined && kitRef.current) {
-      const currentKitChainId = kitRef.current
-        .getEtherspotProvider()
-        .getChainId();
-      if (activeChainId !== currentKitChainId) {
-        // Update the kit's configuration with the new chain ID
-        kitRef.current
-          .getEtherspotProvider()
-          .updateConfig({ chainId: activeChainId });
-
-        // Clear the kit's cache to ensure fresh SDK instances for the new chain
-        kitRef.current.getEtherspotProvider().clearAllCaches();
-
-        // Reset the kit's state to avoid any chain-specific state pollution
-        kitRef.current.reset();
-
-        // Update wallet address for the new chain
-        const updateWalletAddress = async () => {
-          const address = await kitRef.current?.getWalletAddress();
-          if (address) setWalletAddress(address);
-        };
-        updateWalletAddress();
-      }
-    }
-  }, [activeChainId]);
-
   useEffect(() => {
     const init = async () => {
       const address = await kit.getWalletAddress();
