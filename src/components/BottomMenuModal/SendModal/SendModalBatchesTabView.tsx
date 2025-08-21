@@ -930,6 +930,7 @@ const BatchesButtons = styled.div`
   align-content: center;
   justify-content: space-between;
   gap: 9px;
+  margin-top: 8px;
 
   & > * {
     margin-bottom: 0;
