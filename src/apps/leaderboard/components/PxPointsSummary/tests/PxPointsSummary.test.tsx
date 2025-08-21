@@ -128,6 +128,7 @@ describe('<PxPointsSummary />', () => {
         mergedAllTimeData={mergedAllTimeDataMock}
         mergedWeeklyTimeData={mergedWeeklyTimeDataMock}
         isUserInMigrationData
+        timeTab="all"
       />
     );
 
@@ -142,6 +143,7 @@ describe('<PxPointsSummary />', () => {
         mergedAllTimeData={mergedAllTimeDataMock}
         mergedWeeklyTimeData={mergedWeeklyTimeDataMock}
         isUserInMigrationData
+        timeTab="all"
       />
     );
 
@@ -161,6 +163,7 @@ describe('<PxPointsSummary />', () => {
         mergedAllTimeData={mergedAllTimeDataMock}
         mergedWeeklyTimeData={mergedWeeklyTimeDataMock}
         isUserInMigrationData={false}
+        timeTab="all"
       />
     );
 
@@ -182,6 +185,7 @@ describe('<PxPointsSummary />', () => {
         mergedAllTimeData={mergedAllTimeDataMock}
         mergedWeeklyTimeData={newMergedWeeklyTimeDataMock}
         isUserInMigrationData={false}
+        timeTab="all"
       />
     );
 
@@ -203,6 +207,7 @@ describe('<PxPointsSummary />', () => {
         mergedAllTimeData={[]}
         mergedWeeklyTimeData={[]}
         isUserInMigrationData={false}
+        timeTab="all"
       />
     );
 

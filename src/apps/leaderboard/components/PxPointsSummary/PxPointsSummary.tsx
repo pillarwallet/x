@@ -4,6 +4,9 @@ import useTransactionKit from '../../../../hooks/useTransactionKit';
 // types
 import { LeaderboardTableData } from '../../../../types/api';
 
+// utils
+import { calculateFinalPxPoints } from '../../utils';
+
 // images
 import LotteryTicketIcon from '../../images/lottery-qualified-icon.png';
 import MigrationIcon from '../../images/migration-icon.svg';
@@ -22,6 +25,7 @@ type PxPointsSummaryProps = {
   mergedAllTimeData: LeaderboardTableData[] | undefined;
   mergedWeeklyTimeData: LeaderboardTableData[] | undefined;
   isUserInMigrationData: boolean;
+  timeTab: 'all' | 'weekly';
 };
 
 const PxPointsSummary = ({
@@ -30,6 +34,7 @@ const PxPointsSummary = ({
   mergedAllTimeData,
   mergedWeeklyTimeData,
   isUserInMigrationData,
+  timeTab,
 }: PxPointsSummaryProps) => {
   const { walletAddress } = useTransactionKit();
 
@@ -99,6 +104,7 @@ const PxPointsSummary = ({
           <OverviewPointsCard
             myAllTimeMerged={myAllTimeMerged}
             myWeeklyMerged={myWeeklyMerged}
+            timeTab={timeTab}
           />
         </div>
 
@@ -110,7 +116,12 @@ const PxPointsSummary = ({
               title="Migration"
               icon={MigrationIcon}
               background="bg-percentage_red/[.05]"
-              points={myAllTimeMigration.entry?.totalPoints}
+              points={calculateFinalPxPoints(
+                myAllTimeMigration.entry?.totalPoints || 0,
+                myAllTimeMigration.entry?.finalPxPointsAwardEligible,
+                timeTab,
+                'migration'
+              )}
               rank={
                 myAllTimeMigration.index !== -1
                   ? myAllTimeMigration.index + 1

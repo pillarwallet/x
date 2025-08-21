@@ -46,18 +46,20 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer.create(<LeaderboardTab data={mockData} />).toJSON();
+    const tree = renderer
+      .create(<LeaderboardTab data={mockData} timeTab="all" />)
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it('displays initial 10 items', () => {
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     expect(screen.getAllByTestId('leaderboard-user-data')).toHaveLength(10);
   });
 
   it('loads more items when clicking "Loading more"', () => {
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     const loadMoreDiv = screen.getByText(/Loading more/i);
     fireEvent.click(loadMoreDiv);
@@ -70,7 +72,7 @@ describe('<LeaderboardTab />', () => {
   });
 
   it('hides "Loading more" when all items are displayed', () => {
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     const loadMoreDiv = screen.getByText(/Loading more/i);
     fireEvent.click(loadMoreDiv); // Loading more to 20
@@ -86,7 +88,7 @@ describe('<LeaderboardTab />', () => {
       activeChainId: 1,
       setActiveChainId: vi.fn(),
     });
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     expect(screen.getByText('My rank')).toBeInTheDocument();
     expect(
@@ -101,13 +103,13 @@ describe('<LeaderboardTab />', () => {
       activeChainId: 1,
       setActiveChainId: vi.fn(),
     });
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     expect(screen.queryByText('My rank')).not.toBeInTheDocument();
   });
 
   it('hides the "Loading more" when all items are visible and no more data is available', () => {
-    render(<LeaderboardTab data={mockData} />);
+    render(<LeaderboardTab data={mockData} timeTab="all" />);
 
     const loadMoreDiv = screen.getByText(/Loading more/i);
     fireEvent.click(loadMoreDiv);

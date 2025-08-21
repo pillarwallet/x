@@ -479,6 +479,7 @@ export type PointsResult = {
   swapTxFeesUsd?: PointsChainData;
   completedSwap?: boolean;
   transactionHistory?: PointsTransactionHistoryItem;
+  finalPxPointsAwardEligible?: boolean;
 };
 
 export type PointsResultsData = {
@@ -870,4 +871,5 @@ export type LeaderboardTableData = {
   rankChange?: LeaderboardRankChange;
   source?: string | undefined;
   newDropTime?: number;
+  finalPxPointsAwardEligible?: boolean;
 };
