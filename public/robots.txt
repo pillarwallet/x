@@ -1,7 +1,17 @@
 # https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Disallow: /
 
-# AdsBot crawlers must be named explicitly
+# Allow Googlebot
+User-agent: Googlebot
+Disallow:
+
+# Allow AdsBot (for Google Ads landing page checks)
 User-agent: AdsBot-Google
+Disallow:
+
+# Allow Google Search Console’s testing tool
+User-agent: Google-InspectionTool
+Disallow:
+
+# Block everyone
+User-agent: *
 Disallow: /
