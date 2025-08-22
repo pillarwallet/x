@@ -38,10 +38,8 @@ describe('<LeaderboardTab />', () => {
     window.IntersectionObserver = mockIntersectionObserver;
 
     useTransactionKitMock.mockReturnValue({
-      walletAddress: undefined,
+      walletAddress: '0x1234567890123456789012345678901234567890',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
   });
 
@@ -85,8 +83,6 @@ describe('<LeaderboardTab />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: mockWalletAddress,
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
     render(<LeaderboardTab data={mockData} timeTab="all" />);
 
@@ -100,8 +96,6 @@ describe('<LeaderboardTab />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0xNotInData',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
     render(<LeaderboardTab data={mockData} timeTab="all" />);
 

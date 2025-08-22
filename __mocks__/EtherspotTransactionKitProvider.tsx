@@ -7,8 +7,7 @@ export interface EtherspotTransactionKitContextType {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     kit: any; // Mock kit object
     walletAddress: string | undefined;
-    activeChainId: number | undefined;
-    setActiveChainId: React.Dispatch<React.SetStateAction<number | undefined>>;
+    setWalletAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   };
 }
 
@@ -20,8 +19,7 @@ export const EtherspotTransactionKitContext =
         getWalletAddress: () => Promise.resolve('0xMockWalletAddress'),
       },
       walletAddress: '0xMockWalletAddress',
-      activeChainId: 1,
-      setActiveChainId: () => {},
+      setWalletAddress: () => {},
     },
   });
 
@@ -38,8 +36,7 @@ export const EtherspotTransactionKitProvider: React.FC<{
             getWalletAddress: () => Promise.resolve('0xMockWalletAddress'),
           },
           walletAddress: '0xMockWalletAddress',
-          activeChainId: 1,
-          setActiveChainId: () => {},
+          setWalletAddress: () => {},
         },
       }}
     >

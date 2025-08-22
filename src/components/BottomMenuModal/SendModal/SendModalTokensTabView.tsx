@@ -128,7 +128,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [amount, setAmount] = React.useState<string>('');
   const [selectedAssetPrice, setSelectedAssetPrice] = React.useState<number>(0);
   const [nativeAssetPrice, setNativeAssetPrice] = React.useState<number>(0);
-  const { kit, setActiveChainId } = useTransactionKit();
+  const { kit } = useTransactionKit();
   const { setTransactionMetaForName } = useGlobalTransactionsBatch();
   const [isAmountInputAsFiat, setIsAmountInputAsFiat] =
     React.useState<boolean>(false);
@@ -1267,15 +1267,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         };
         const chainIdToUse = payloadTx?.chainId;
 
-        // Set the active chain context for this transaction
-        // This ensures the transaction is built and sent on the correct chain
-        setActiveChainId(chainIdToUse);
-
         kit
           .transaction({
             chainId: chainIdToUse,
             to: txData.to,
-            value: txData.value,
+            value: safeBigIntConversion(txData.value),
             data: txData.data,
           })
           .name({ transactionName: 'tx-payload-single-send' });
@@ -1744,9 +1740,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       // Use the correct chainId for the fee payment method
       const feeChainId = selectedAsset.chainId;
 
-      // Set the active chain context for this transaction
-      // This ensures the transaction is built and sent on the correct chain
-      setActiveChainId(feeChainId);
       kit
         .transaction({
           chainId: feeChainId,
@@ -2077,8 +2070,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const onCancel = () => {
     setRecipient('');
     setSelectedAsset(undefined);
-    // Clear the active chain context
-    setActiveChainId(undefined);
     setAmount('');
     setSafetyWarningMessage('');
     setErrorMessage('');
@@ -2118,7 +2109,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
   const handleCloseTokenSelect = () => {
     setSelectedAsset(undefined);
-    setActiveChainId(undefined);
     setAmount('');
     setRecipient('');
   };

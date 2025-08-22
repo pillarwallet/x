@@ -5,14 +5,25 @@ const useTransactionKit = vi.fn(() => ({
     getState: vi.fn(() => ({
       namedTransactions: {},
       batches: {},
+      isEstimating: false,
+      isSending: false,
+      containsSendingError: false,
+      containsEstimatingError: false,
     })),
+    getEtherspotProvider: vi.fn(() => ({
+      getChainId: vi.fn(() => 1),
+    })),
+    transaction: vi.fn(() => ({
+      name: vi.fn(() => ({
+        estimate: vi.fn(() => Promise.resolve({})),
+        send: vi.fn(() => Promise.resolve({})),
+      })),
+    })),
+    estimateBatches: vi.fn(() => Promise.resolve({})),
+    sendBatches: vi.fn(() => Promise.resolve({})),
   },
-  getProvider: vi.fn(() => ({
-    request: vi.fn(async () => null),
-  })),
-  walletAddress: '0x7F30B1960D5556929B03a0339814fE903c55a347',
-  activeChainId: 1,
-  setActiveChainId: vi.fn(),
+  walletAddress: '0x1234567890123456789012345678901234567890',
+  setWalletAddress: vi.fn(),
 }));
 
 export default useTransactionKit;

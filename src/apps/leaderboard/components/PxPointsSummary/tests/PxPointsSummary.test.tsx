@@ -9,8 +9,8 @@ import {
 } from '../../../../../types/api';
 
 // components
-import PxPointsSummary from '../PxPointsSummary';
 import useTransactionKit from '../../../../../hooks/useTransactionKit';
+import PxPointsSummary from '../PxPointsSummary';
 
 // mock subcomponents
 vi.mock('../../PointsCards/GasNewDropCard', () => ({
@@ -115,8 +115,6 @@ describe('<PxPointsSummary />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: mockWallet,
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
   });
 
@@ -196,8 +194,6 @@ describe('<PxPointsSummary />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: undefined,
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     render(

@@ -15,8 +15,7 @@ export interface EtherspotTransactionKitContextType {
   data: {
     kit: EtherspotTransactionKit;
     walletAddress: string | undefined;
-    activeChainId: number | undefined;
-    setActiveChainId: React.Dispatch<React.SetStateAction<number | undefined>>;
+    setWalletAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   };
 }
 
@@ -31,35 +30,30 @@ interface EtherspotTransactionKitProviderProps {
 export const EtherspotTransactionKitProvider: React.FC<
   EtherspotTransactionKitProviderProps
 > = ({ config, children }) => {
-  const [activeChainId, setActiveChainId] = useState<number | undefined>(
-    config.chainId
-  );
   const [walletAddress, setWalletAddress] = useState<string>();
   const kitRef = useRef<EtherspotTransactionKit | null>(null);
 
-  // If activeChainId is provided, override the chainId in config
-  // Setting an activeChainId will allow the kit to use the correct chain for single transaction management
-  // For batches management, the chainId will be set based on the transactions being added to the batch
-  const kitConfig = useMemo(
-    () => ({
-      ...config,
-      chainId: activeChainId ?? config.chainId,
-    }),
-    [config, activeChainId]
-  );
-
+  // Create kit with config
   const kit = useMemo(() => {
-    const newKit = new EtherspotTransactionKit(kitConfig);
+    const newKit = new EtherspotTransactionKit(config);
     kitRef.current = newKit;
     return newKit;
-  }, [kitConfig]);
+  }, [config]);
 
+  // Get wallet address when kit changes
   useEffect(() => {
-    const init = async () => {
-      const address = await kit.getWalletAddress();
-      if (address) setWalletAddress(address);
+    const getWalletAddress = async () => {
+      if (kit) {
+        try {
+          const address = await kit.getWalletAddress();
+          setWalletAddress(address);
+        } catch (error) {
+          console.error('Failed to get wallet address:', error);
+        }
+      }
     };
-    init();
+
+    getWalletAddress();
   }, [kit]);
 
   const contextData = useMemo(
@@ -67,10 +61,8 @@ export const EtherspotTransactionKitProvider: React.FC<
       walletAddress,
       setWalletAddress,
       kit,
-      activeChainId,
-      setActiveChainId,
     }),
-    [walletAddress, kit, activeChainId]
+    [walletAddress, kit]
   );
 
   return (

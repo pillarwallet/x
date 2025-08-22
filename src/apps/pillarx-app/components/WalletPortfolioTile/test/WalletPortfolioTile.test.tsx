@@ -75,8 +75,6 @@ describe('<WalletPortfolioTile />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x1234',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     // Mock useDataFetchingState
@@ -137,8 +135,6 @@ describe('<WalletPortfolioTile />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: undefined,
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     render(<WalletPortfolioTile />);

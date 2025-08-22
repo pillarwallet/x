@@ -40,8 +40,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
   });
 
@@ -57,8 +55,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     const { container } = render(<ReceiveModal />);
@@ -72,8 +68,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
     render(<ReceiveModal />);
 
@@ -89,8 +83,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: undefined,
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
     render(<ReceiveModal />);
 
@@ -106,8 +98,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
@@ -134,8 +124,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0xabc',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     render(<ReceiveModal />);
@@ -151,8 +139,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
@@ -177,8 +163,6 @@ describe('<ReceiveModal />', () => {
     useTransactionKitMock.mockReturnValue({
       walletAddress: '0x123',
       kit: {},
-      activeChainId: 1,
-      setActiveChainId: vi.fn(),
     });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
