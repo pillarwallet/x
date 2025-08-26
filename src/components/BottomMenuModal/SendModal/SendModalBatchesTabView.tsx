@@ -942,6 +942,7 @@ const Cost = styled.div`
   text-align: center;
   color: ${({ theme }) => theme.color.text.formLabel};
   font-size: 12px;
+  margin-top: 8px;
 `;
 
 export default SendModalBatchesTabView;
