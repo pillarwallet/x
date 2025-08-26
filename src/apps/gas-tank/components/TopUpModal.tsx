@@ -17,7 +17,7 @@ import { PortfolioToken, chainNameToChainIdTokensData } from '../../../services/
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import { useAppDispatch, useAppSelector } from '../hooks/useReducerHooks';
-import useOffer from '../hooks/useOffer';
+import useOffer, { USDC_ADDRESSES } from '../hooks/useOffer';
 
 // redux
 import { setWalletPortfolio } from '../reducer/gasTankSlice';
@@ -44,6 +44,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   const [selectedToken, setSelectedToken] = useState<PortfolioToken | null>(
     null
   );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
@@ -84,14 +85,23 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     walletPortfolioDataError,
   ]);
 
+  useEffect(() => {
+    setErrorMsg(null);
+  }, [selectedToken]);
+
   const handleTopUp = async () => {
     if (!selectedToken || !amount || !walletAddress) return;
+
+    if (USDC_ADDRESSES[chainNameToChainIdTokensData(selectedToken.blockchain)] === undefined) {
+      setErrorMsg('Gas Tank is not supported on the selected token\'s chain.');
+      return;
+    }
 
     setIsProcessing(true);
 
     try {
       // Check if token is USDC
-      const isUSDC = selectedToken.symbol.toUpperCase() === 'USDC';
+      const isUSDC = selectedToken.contract === USDC_ADDRESSES[chainNameToChainIdTokensData(selectedToken.blockchain)];
 
       let receiveSwapAmount = amount;
 
@@ -106,6 +116,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             slippage: 0.03,
           });
           if (!bestOffer) {
+            setErrorMsg('No best offer found for the swap. Please try a different token or amount.');
             console.warn('No best offer found for swap');
             return;
           }
@@ -136,7 +147,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             addToBatch({
               title: `Swap to USDC ${index + 1}/${swapTransactions.length}`,
               description: `Convert ${amount} ${selectedToken.symbol} to USDC for Gas Tank`,
-              to: tx.to,
+              to: tx.to || '',
               value: integerValue,
               data: tx.data,
               chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
@@ -148,6 +159,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
           console.warn(
             'Failed to get swap route. Please try a different token or amount.'
           );
+          setErrorMsg('Failed to get swap route. Please try a different token or amount.');
           setIsProcessing(false);
           return;
         }
@@ -165,7 +177,11 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to get deposit transaction');
+        const errorText = await response.text();
+        console.error('Error fetching transaction data:', errorText);
+        setErrorMsg('Failed to fetch transaction data. Please try again with different token or amount.');
+        setIsProcessing(false);
+        return;
       }
 
       const transactionData = await response.json();
@@ -173,7 +189,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
 
       // Add transactions to batch
       if (Array.isArray(transactionData.result)) {
-        transactionData.result.forEach((tx, index) => {
+        transactionData.result.forEach((tx: {value?: string, to: string, data?: string}, index: number) => {
           const value = tx.value || '0';
           // Handle bigint conversion properly
           let bigIntValue: bigint;
@@ -238,6 +254,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   };
 
   const handleAmountChange = (value: string) => {
+    setErrorMsg(null);
     // Only allow numeric input
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
@@ -246,6 +263,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
 
   const getMaxAmount = () => {
     if (!selectedToken) return '0';
+    setErrorMsg(null);
     return formatTokenAmount(selectedToken.balance);
   };
 
@@ -316,7 +334,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
                   value={amount}
                   onChange={(e) => handleAmountChange(e.target.value)}
                 />
-                <MaxButton onClick={() => setAmount(getMaxAmount())}>
+                <MaxButton onClick={() => setAmount(getMaxAmount() || '')}>
                   MAX
                 </MaxButton>
               </AmountContainer>
@@ -333,6 +351,9 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             }
           >
             {(() => {
+              if (errorMsg) {
+                return errorMsg;
+              }
               if (isProcessing) {
                 return (
                   <>

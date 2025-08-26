@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 
-// Sentry configuration for the-exchange app
-export const initSentryForExchange = () => {
+// Sentry configuration for gas-tank app
+export const initSentryForGasTank = () => {
   Sentry.setTag('app', 'gas-tank');
   Sentry.setTag('module', 'gasTank');
 };
@@ -29,7 +29,7 @@ export const logExchangeEvent = (
   Sentry.withScope((scope) => {
     scope.setLevel(level);
     scope.setTag('wallet_address', walletAddress);
-    scope.setTag('app_module', 'the-exchange');
+    scope.setTag('app_module', 'gasTank');
 
     if (tags) {
       Object.entries(tags).forEach(([key, value]) => {
@@ -38,7 +38,7 @@ export const logExchangeEvent = (
     }
 
     if (extra) {
-      scope.setExtra('exchange_data', extra);
+      scope.setExtra('extraData: ', extra);
     }
 
     Sentry.captureMessage(message);
@@ -56,7 +56,7 @@ export const logExchangeError = (
   Sentry.withScope((scope) => {
     scope.setLevel('error');
     scope.setTag('wallet_address', walletAddress);
-    scope.setTag('app_module', 'the-exchange');
+    scope.setTag('app_module', 'gasTank');
     scope.setTag('error_type', 'exchange_error');
 
     if (tags) {
@@ -90,7 +90,7 @@ export const logOperation = (
       'wallet_address',
       walletAddress || fallbackWalletAddressForLogging()
     );
-    scope.setTag('app_module', 'the-exchange');
+    scope.setTag('app_module', 'gasTank');
     scope.setTag('operation_type', operationType);
     scope.setTag(`${operationType}_operation`, operation);
 
@@ -151,7 +151,7 @@ export const logUserInteraction = (
       'wallet_address',
       walletAddress || fallbackWalletAddressForLogging()
     );
-    scope.setTag('app_module', 'the-exchange');
+    scope.setTag('app_module', 'gasTank');
     scope.setTag('interaction_type', 'user_action');
     scope.setTag('user_interaction', interaction);
 
@@ -238,7 +238,7 @@ export const addExchangeBreadcrumb = (
     data: {
       ...data,
       wallet_address: walletAddress,
-      app_module: 'the-exchange',
+      app_module: 'gasTank',
     },
   });
 };
