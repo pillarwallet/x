@@ -108,7 +108,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
 
     try {
       // Check if token is USDC
-      const isUSDC = selectedToken.contract === USDC_ADDRESSES[chainNameToChainIdTokensData(selectedToken.blockchain)];
+      const isUSDC = selectedToken.contract.toLowerCase() === USDC_ADDRESSES[chainNameToChainIdTokensData(selectedToken.blockchain)].toLowerCase();
 
       let receiveSwapAmount = amount;
 
