@@ -65,7 +65,7 @@ export const getGasTankBalance = async (
 ): Promise<number | null> => {
   try {
     const response = await fetch(
-      `http://localhost:5000/pillarx-staging/us-central1/paymaster/getGasTankBalance?sender=${walletAddress}`,
+      `${import.meta.env.VITE_PAYMASTER_URL}/getGasTankBalance?sender=${walletAddress}`,
       {
         method: 'GET',
         headers: {
