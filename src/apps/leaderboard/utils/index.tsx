@@ -7,7 +7,7 @@ import {
 
 /**
  * Get the current week based on the current date
- * If goes after the 4 migration weeks it will return null
+ * If goes after the last migration week it will return the last week number
  */
 function getCurrentMigrationWeek(): number | null {
   const now = new Date();
@@ -16,13 +16,18 @@ function getCurrentMigrationWeek(): number | null {
   if (now >= new Date(2025, 5, 10) && now < new Date(2025, 5, 17)) return 2;
   if (now >= new Date(2025, 5, 17) && now < new Date(2025, 5, 24)) return 3;
   if (now >= new Date(2025, 5, 24) && now < new Date(2025, 6, 1)) return 4;
+  if (now >= new Date(2025, 6, 1) && now < new Date(2025, 6, 8)) return 5;
+  if (now >= new Date(2025, 6, 8) && now < new Date(2025, 6, 15)) return 6;
+  if (now >= new Date(2025, 6, 15) && now < new Date(2025, 6, 22)) return 7;
+  if (now >= new Date(2025, 6, 22) && now < new Date(2025, 6, 29)) return 8;
 
-  return null;
+  // If migration is over, always return the last week
+  return 8;
 }
 
 /**
  * Get the current migration week data week based on the migration week
- * If goes after the 4 migration weeks it will return undefined
+ * If goes after the last migration week it will return the last week data
  */
 export const getCurrentWeekMigrationData = (
   usersMigrationEntries: MigrationEntry[]
@@ -65,7 +70,7 @@ export const getCurrentWeekMigrationData = (
 
 /**
  * Get the last migration week data week based on the migration week
- * If goes after the 4 migration weeks it will return undefined
+ * If goes after the last migration week it will return the last week data
  */
 export const getLastWeekMigrationData = (
   usersMigrationEntries: MigrationEntry[]
@@ -228,4 +233,26 @@ export const getMergeLeaderboardMigrationDataByAddresses = (
   });
 
   return mergedData.sort((a, b) => b.totalPoints - a.totalPoints);
+};
+
+/**
+ * Calculate final PX points by adding bonus points if eligible
+ */
+export const calculateFinalPxPoints = (
+  basePoints: number,
+  finalPxPointsAwardEligible?: boolean,
+  timeTab: 'all' | 'weekly' = 'all',
+  activeTab?: 'trading' | 'migration'
+): number => {
+  // If activeTab is 'trading' and timeTab is 'all', don't add bonus points
+  if (activeTab === 'trading' && timeTab === 'all') {
+    return basePoints;
+  }
+
+  // Add bonus points only if timeTab is 'all' and eligible
+  if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
+    return basePoints + 200;
+  }
+
+  return basePoints;
 };

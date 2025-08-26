@@ -3,6 +3,7 @@ import { LeaderboardTableData } from '../../../../types/api';
 
 // utils
 import { formatAmountDisplay } from '../../../../utils/number';
+import { calculateFinalPxPoints } from '../../utils';
 
 // images
 import CurrentRankIcon from '../../images/current-rank-icon.svg';
@@ -16,10 +17,12 @@ import BodySmall from '../Typography/BodySmall';
 type OverviewPointsCardProps = {
   myAllTimeMerged: { entry: LeaderboardTableData | undefined; index: number };
   myWeeklyMerged: { entry: LeaderboardTableData | undefined; index: number };
+  timeTab: 'all' | 'weekly';
 };
 const OverviewPointsCard = ({
   myAllTimeMerged,
   myWeeklyMerged,
+  timeTab,
 }: OverviewPointsCardProps) => {
   return (
     <div className="flex flex-col w-full h-full rounded-[10px] bg-purple_medium/[.05] p-3 gap-3">
@@ -38,7 +41,14 @@ const OverviewPointsCard = ({
             {myAllTimeMerged.index === -1
               ? '-'
               : formatAmountDisplay(
-                  Math.floor(myAllTimeMerged.entry?.totalPoints || 0)
+                  Math.floor(
+                    calculateFinalPxPoints(
+                      myAllTimeMerged.entry?.totalPoints || 0,
+                      myAllTimeMerged.entry?.finalPxPointsAwardEligible,
+                      timeTab,
+                      'migration'
+                    )
+                  )
                 )}{' '}
             <span className="font-semibold text-white/[.5]">PX</span>
           </BodySmall>

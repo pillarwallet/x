@@ -102,7 +102,10 @@
     "!src/apps/deposit/**",
     "!src/apps/leaderboard/",
     "!src/apps/leaderboard/**",
-    "public/" // Ignore public folder
+    "!src/apps/pulse/",
+    "!src/apps/pulse/**",
+    "public/", // Ignore public folder
+    "vite.config.js"
   ],
   "settings": {
     "import/resolver": {

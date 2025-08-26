@@ -69,6 +69,7 @@ export const useLeaderboardData = () => {
       totalGas: result.totalTxFeesUsd || 0,
       addresses: [result.address],
       newDropTime: result.pointsUpdatedAt || 0,
+      finalPxPointsAwardEligible: result.finalPxPointsAwardEligible,
     }));
   }, [allTimeQuery.data]);
 
@@ -116,6 +117,8 @@ export const useLeaderboardData = () => {
             addresses: [currentUserData.address],
             completedSwap: currentUserData.completedSwap || false,
             rankChange,
+            finalPxPointsAwardEligible:
+              currentUserData.finalPxPointsAwardEligible,
           };
         });
 

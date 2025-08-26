@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash';
 import { useState } from 'react';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 
 // reducer
 import {
@@ -16,6 +17,9 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 // types
 import { CardPosition } from '../../utils/types';
 
+// utils
+import { logUserInteraction, addExchangeBreadcrumb } from '../../utils/sentry';
+
 // components
 import DropdownTokenList from '../DropdownTokensList/DropdownTokenList';
 import SwapReceiveCard from '../SwapReceiveCard/SwapReceiveCard';
@@ -30,6 +34,7 @@ type CardPositionType = {
 
 const CardsSwap = () => {
   const dispatch = useAppDispatch();
+  const walletAddress = useWalletAddress();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );
@@ -47,6 +52,16 @@ const CardsSwap = () => {
 
   // swapCards allow the user to switch between Swap and Receive cards
   const swapCardsAction = () => {
+    logUserInteraction('swap_cards_switched', {
+      previousPosition: cardPosition,
+      walletAddress,
+    });
+
+    addExchangeBreadcrumb('Cards switched', 'user_interaction', {
+      previousPosition: cardPosition,
+      walletAddress,
+    });
+
     setCardPosition((prevPosition) => ({
       swap: prevPosition.receive,
       receive: prevPosition.swap,
@@ -55,6 +70,20 @@ const CardsSwap = () => {
 
   // handleOpenTokenList opens the list for selecting tokens
   const handleOpenTokenList = async (position: CardPosition) => {
+    logUserInteraction('token_list_opened', {
+      position,
+      walletAddress,
+    });
+
+    addExchangeBreadcrumb(
+      `Token list opened for ${position}`,
+      'user_interaction',
+      {
+        position,
+        walletAddress,
+      }
+    );
+
     dispatch(setSearchTokenResult(undefined));
 
     if (position === CardPosition.SWAP) {

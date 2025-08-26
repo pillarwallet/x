@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.join(__dirname, 'src/apps'),
+      'crypto': 'crypto-browserify'
     },
   },
   test: {

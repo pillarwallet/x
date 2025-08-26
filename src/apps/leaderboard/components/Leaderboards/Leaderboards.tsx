@@ -13,6 +13,7 @@ interface LeaderboardsProps {
   data?: LeaderboardTableData[];
   errorMessage?: string;
   noDataMessage?: string;
+  timeTab: 'all' | 'weekly';
 }
 
 const Leaderboards = ({
@@ -22,6 +23,7 @@ const Leaderboards = ({
   data,
   errorMessage = 'Failed to load data. Please try again later.',
   noDataMessage = 'No available data.',
+  timeTab,
 }: LeaderboardsProps) => {
   // Loading State
   if (isLoading) {
@@ -46,7 +48,7 @@ const Leaderboards = ({
 
   // Success State with Data
   if (isSuccess && data && data.length > 0) {
-    return <LeaderboardTab data={data} />;
+    return <LeaderboardTab data={data} timeTab={timeTab} />;
   }
 
   // Success State but No Data
