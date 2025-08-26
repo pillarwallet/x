@@ -33,8 +33,8 @@ import {
   truncateAddress,
   visibleChains,
 } from '../../utils/blockchain';
-import { formatAmountDisplay } from '../../utils/number';
 import { useComprehensiveLogout } from '../../utils/logout';
+import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
 import useAccountNfts from '../../hooks/useAccountNfts';
@@ -339,7 +339,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
                       {!hideImage && logoUrl ? (
                         <img
                           src={logoUrl}
-                          alt={symbol}
+                          alt={asset.asset.name}
                           onError={() => setHideImage(true)}
                         />
                       ) : (

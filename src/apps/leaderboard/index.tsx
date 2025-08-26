@@ -153,6 +153,7 @@ const App = () => {
         mergedAllTimeData={mergedAllTimeData}
         mergedWeeklyTimeData={mergedWeeklyTimeData}
         isUserInMigrationData={isUserInMigrationData}
+        timeTab={timeTab}
       />
 
       <div className="flex flex-col bg-container_grey desktop:px-6 desktop:pt-6 tablet:px-6 tablet:pt-6 mobile:p-4 pb-12 rounded-2xl mt-3">
@@ -208,6 +209,7 @@ const App = () => {
             data={weeklyTradingData}
             errorMessage="Failed to load weekly trading data. Please try again later."
             noDataMessage="No available leaderboard data for this week."
+            timeTab={timeTab}
           />
         )}
 
@@ -220,6 +222,7 @@ const App = () => {
             data={allTimeTradingData}
             errorMessage="Failed to load all-time trading data. Please try again later."
             noDataMessage="No available leaderboard data."
+            timeTab={timeTab}
           />
         )}
 
@@ -234,6 +237,7 @@ const App = () => {
               data={allTimeMigrationData}
               errorMessage="Failed to load migration data. Please try again later."
               noDataMessage="No available migration data."
+              timeTab={timeTab}
             />
           )}
 
@@ -248,6 +252,7 @@ const App = () => {
               data={weeklyMigrationData}
               errorMessage="Failed to load weekly migration data. Please try again later."
               noDataMessage="No available migration data for this week."
+              timeTab={timeTab}
             />
           )}
 
@@ -260,6 +265,7 @@ const App = () => {
             data={mergedAllTimeData}
             errorMessage="Failed to load leaderboard data. Please try again later."
             noDataMessage="No available leaderboard data."
+            timeTab={timeTab}
           />
         )}
 
@@ -272,6 +278,7 @@ const App = () => {
             data={mergedWeeklyTimeData}
             errorMessage="Failed to load weekly leaderboard data. Please try again later."
             noDataMessage="No available leaderboard data for this week."
+            timeTab={timeTab}
           />
         )}
       </div>

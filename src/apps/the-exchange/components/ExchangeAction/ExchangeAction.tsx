@@ -89,8 +89,13 @@ const ExchangeAction = () => {
     return 'Swap assets';
   };
 
+  /**
+   * Execute the swap transaction
+   * This function handles the entire swap process including validation,
+   * transaction building, and batch submission
+   */
   const onClickToExchange = async () => {
-    const transaction = startExchangeTransaction(
+    startExchangeTransaction(
       'exchange_click',
       {
         isOfferLoading,
@@ -122,13 +127,39 @@ const ExchangeAction = () => {
       walletAddress,
     });
 
+    /**
+     * Step 1: Validate required data before proceeding
+     * Ensure all necessary data is available before attempting the swap
+     */
+    if (!swapToken || !receiveToken) {
+      const errorMsg = 'Please select both tokens before proceeding.';
+      logSwapOperation('exchange_missing_tokens_error', {
+        error: errorMsg,
+        swapToken: swapToken?.symbol,
+        receiveToken: receiveToken?.symbol,
+        walletAddress,
+      });
+      setErrorMessage(errorMsg);
+      return;
+    }
+
+    if (amountSwap <= 0) {
+      const errorMsg = 'Please enter a valid amount to swap.';
+      logSwapOperation('exchange_invalid_amount_error', {
+        error: errorMsg,
+        amountSwap,
+        walletAddress,
+      });
+      setErrorMessage(errorMsg);
+      return;
+    }
+
     if (isOfferLoading) {
       logSwapOperation('exchange_loading_error', {
         error: 'Please wait until the offer is found.',
         walletAddress,
       });
       setErrorMessage('Please wait until the offer is found.');
-      transaction.finish();
       return;
     }
 
@@ -141,7 +172,6 @@ const ExchangeAction = () => {
       setErrorMessage(
         'No offer was found! Please try changing the amounts to try again.'
       );
-      transaction.finish();
       return;
     }
 
@@ -155,10 +185,19 @@ const ExchangeAction = () => {
         walletAddress,
       });
 
-      // Convert walletPortfolio to Token[] for userPortfolio
+      /**
+       * Step 2: Convert wallet portfolio data
+       * Transform the portfolio data into the format expected by the transaction builder
+       */
       const userPortfolio = walletPortfolio
         ? convertPortfolioAPIResponseToToken(walletPortfolio)
         : undefined;
+
+      /**
+       * Step 3: Build transaction steps
+       * Get the sequence of transactions needed to execute the swap
+       * This includes fee payments, approvals, and the actual swap
+       */
       const stepTransactions = await getStepTransactions(
         swapToken,
         bestOffer.offer,
@@ -180,7 +219,7 @@ const ExchangeAction = () => {
         walletAddress,
       });
 
-      if (!stepTransactions.length) {
+      if (!stepTransactions || stepTransactions.length === 0) {
         logSwapOperation('no_step_transactions', {
           error:
             'We were not able to add this to the queue at the moment. Please try again.',
@@ -189,7 +228,6 @@ const ExchangeAction = () => {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
-        transaction.finish();
         return;
       }
 
@@ -202,15 +240,43 @@ const ExchangeAction = () => {
           walletAddress,
         });
 
+        /**
+         * Step 4: Add transactions to batch
+         * Process each transaction step and add it to the batch for execution
+         */
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < stepTransactions.length; ++i) {
-          const { value } = stepTransactions[i];
-          const bigIntValue = BigNumber.from(value).toBigInt();
+          const transactionData = stepTransactions[i];
+
+          // Validate transaction data
+          if (!transactionData.to) {
+            throw new Error(`Transaction ${i + 1} is missing 'to' address`);
+          }
+
+          /**
+           * Handle bigint conversion properly
+           * Ensure values are properly converted for the batch system
+           */
+          const { value } = transactionData;
+
+          // Handle bigint conversion properly
+          let bigIntValue: bigint;
+          if (typeof value === 'bigint') {
+            // If value is already a native bigint, use it directly
+            bigIntValue = value;
+          } else if (value) {
+            // If value exists but is not a bigint, convert it
+            bigIntValue = BigNumber.from(value).toBigInt();
+          } else {
+            // If value is undefined/null, use 0
+            bigIntValue = BigInt(0);
+          }
+
           const integerValue = formatEther(bigIntValue);
 
           transactionDebugLog(
             'The Exchange - Adding transaction to batch:',
-            stepTransactions[i]
+            transactionData
           );
 
           addExchangeBreadcrumb(
@@ -220,27 +286,35 @@ const ExchangeAction = () => {
               transactionIndex: i,
               totalTransactions: stepTransactions.length,
               value: integerValue,
-              to: stepTransactions[i].to,
+              to: transactionData.to,
               walletAddress,
             }
           );
 
+          /**
+           * Add transaction to batch with proper metadata
+           * Each transaction includes title, description, and execution parameters
+           */
           addToBatch({
             title: getTransactionTitle(
               i,
               stepTransactions.length,
-              stepTransactions[i].data?.toString() ?? ''
+              transactionData.data?.toString() ?? ''
             ),
             description:
               `${amountSwap} ${swapToken.symbol} on ${swapToken.blockchain.toUpperCase()} to ${bestOffer.tokenAmountToReceive} ${receiveToken.symbol} on ${receiveToken.blockchain.toUpperCase()}` ||
               '',
             chainId: chainNameToChainIdTokensData(swapToken?.blockchain) || 0,
-            to: stepTransactions[i].to || '',
+            to: transactionData.to,
             value: integerValue,
-            data: stepTransactions[i].data?.toString() ?? '',
+            data: transactionData.data?.toString() ?? '',
           });
         }
 
+        /**
+         * Step 5: Open batch modal
+         * Show the batch modal to user for transaction review and execution
+         */
         logSwapOperation('batch_modal_opened', {
           transactionCount: stepTransactions.length,
           swapToken: swapToken?.symbol,
@@ -253,6 +327,10 @@ const ExchangeAction = () => {
         showSend();
       }
     } catch (error) {
+      /**
+       * Error handling for transaction execution
+       * Log the error and provide user-friendly error message
+       */
       const exchangeErrorMessage =
         error instanceof Error ? error.message : String(error);
       logExchangeError(
@@ -276,7 +354,6 @@ const ExchangeAction = () => {
       );
     } finally {
       setIsAddingToBatch(false);
-      transaction.finish();
     }
   };
 

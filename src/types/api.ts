@@ -159,6 +159,12 @@ export type TokensMarketDataRow = {
       transactionCount?: string;
     };
   };
+  meta?: {
+    tokenData: {
+      decimals: number;
+      marketCap?: number;
+    };
+  };
 };
 
 export type TokensMarketData = {
@@ -473,6 +479,7 @@ export type PointsResult = {
   swapTxFeesUsd?: PointsChainData;
   completedSwap?: boolean;
   transactionHistory?: PointsTransactionHistoryItem;
+  finalPxPointsAwardEligible?: boolean;
 };
 
 export type PointsResultsData = {
@@ -557,6 +564,7 @@ export type TokenAssetResponse = {
   volume?: number; // Asset-specific
   twitter?: string | null; // Asset-specific
   website?: string | null; // Asset-specific
+  price_change_24h: number | null;
 };
 
 export type PairResponse = {
@@ -863,4 +871,5 @@ export type LeaderboardTableData = {
   rankChange?: LeaderboardRankChange;
   source?: string | undefined;
   newDropTime?: number;
+  finalPxPointsAwardEligible?: boolean;
 };

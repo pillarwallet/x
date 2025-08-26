@@ -234,3 +234,25 @@ export const getMergeLeaderboardMigrationDataByAddresses = (
 
   return mergedData.sort((a, b) => b.totalPoints - a.totalPoints);
 };
+
+/**
+ * Calculate final PX points by adding bonus points if eligible
+ */
+export const calculateFinalPxPoints = (
+  basePoints: number,
+  finalPxPointsAwardEligible?: boolean,
+  timeTab: 'all' | 'weekly' = 'all',
+  activeTab?: 'trading' | 'migration'
+): number => {
+  // If activeTab is 'trading' and timeTab is 'all', don't add bonus points
+  if (activeTab === 'trading' && timeTab === 'all') {
+    return basePoints;
+  }
+
+  // Add bonus points only if timeTab is 'all' and eligible
+  if (timeTab === 'all' && finalPxPointsAwardEligible === true) {
+    return basePoints + 200;
+  }
+
+  return basePoints;
+};
