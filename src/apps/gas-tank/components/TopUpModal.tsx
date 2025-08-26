@@ -17,7 +17,7 @@ import { PortfolioToken, chainNameToChainIdTokensData } from '../../../services/
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import { useAppDispatch, useAppSelector } from '../hooks/useReducerHooks';
-import useOffer, { USDC_ADDRESSES } from '../hooks/useOffer';
+import useOffer from '../hooks/useOffer';
 
 // redux
 import { setWalletPortfolio } from '../reducer/gasTankSlice';
@@ -33,6 +33,13 @@ interface TopUpModalProps {
   onClose: () => void;
   onSuccess?: () => void;
 }
+
+const USDC_ADDRESSES: { [chainId: number]: string } = {
+  137: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', // Polygon
+  42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', // Arbitrum
+  10: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', // Optimism
+  // Add more chains as needed
+};
 
 const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   const paymasterUrl = import.meta.env.VITE_PAYMASTER_URL;
@@ -263,8 +270,12 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
 
   const getMaxAmount = () => {
     if (!selectedToken) return '0';
-    setErrorMsg(null);
     return formatTokenAmount(selectedToken.balance);
+  };
+
+  const handleMaxClick = () => {
+    setErrorMsg(null);
+    setAmount(getMaxAmount() || '');
   };
 
   if (!isOpen) return null;
@@ -334,7 +345,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
                   value={amount}
                   onChange={(e) => handleAmountChange(e.target.value)}
                 />
-                <MaxButton onClick={() => setAmount(getMaxAmount() || '')}>
+                <MaxButton onClick={handleMaxClick}>
                   MAX
                 </MaxButton>
               </AmountContainer>

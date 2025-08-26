@@ -25,7 +25,7 @@ export const App = () => {
 
     // Log app initialization
     logExchangeEvent(
-      'The Exchange app initialized',
+      'Gas Tank app initialized',
       'info',
       {
         walletAddress,
@@ -36,7 +36,7 @@ export const App = () => {
       }
     );
 
-    addExchangeBreadcrumb('The Exchange app loaded', 'app', {
+    addExchangeBreadcrumb('Gas Tank app loaded', 'app', {
       walletAddress,
       timestamp: new Date().toISOString(),
     });
