@@ -53,7 +53,13 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
           setIsLoading(false);
           return;
         }
-        setAllowed(data?.map((app: ApiAllowedApp) => app.appId));
+        const allowedAppIds =
+          data?.map((app: ApiAllowedApp) => app.appId) || [];
+
+        // Add gas-tank app for development
+        allowedAppIds.push('gas-tank');
+
+        setAllowed(allowedAppIds);
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
       }
