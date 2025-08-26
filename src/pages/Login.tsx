@@ -3,6 +3,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { animated, useTransition } from '@react-spring/web';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import Plausible from 'plausible-tracker';
@@ -26,6 +27,7 @@ const Login = () => {
   const { connectors, connect, isPending, error } = useConnect();
   const { address, isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
+  const navigate = useNavigate();
   const [t] = useTranslation();
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
   const [logoPressStart, setLogoPressStart] = useState<number | null>(null);
@@ -160,6 +162,28 @@ const Login = () => {
     setLogoPressStart(null);
   };
 
+  const handlePasskeysNavigation = () => {
+    if (!address && !isConnected) {
+      // If no wallet is connected, try to connect first
+      if (walletConnectConnector) {
+        listenForWalletConnectUri().then(() => {
+          // After connection attempt, navigate to passkeys
+          navigate('/passkeys');
+        }).catch((error) => {
+          console.error('Failed to connect wallet before navigating to passkeys:', error);
+          // Navigate anyway, passkeys page will handle wallet requirement
+          navigate('/passkeys');
+        });
+      } else {
+        // No WalletConnect available, navigate anyway
+        navigate('/passkeys');
+      }
+    } else {
+      // Wallet already connected, navigate directly
+      navigate('/passkeys');
+    }
+  };
+
   const logoTransitions = useTransition(true, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -200,12 +224,19 @@ const Login = () => {
               trackEvent('Login Page Connect Pillar Wallet');
               listenForWalletConnectUri();
             }}
-            $last
             $fullWidth
           >
             <img src={PillarWalletIcon} alt="pillar-wallet-icon" />
             {t`action.connectPillarWallet`}
           </Button>
+          <PasskeysLink
+            onClick={() => {
+              trackEvent('Login Page Navigate to Passkeys');
+              handlePasskeysNavigation();
+            }}
+          >
+            Manage Passkeys
+          </PasskeysLink>
         </InsideWrapper>
       </Wrapper>
 
@@ -242,6 +273,27 @@ const InsideWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+const PasskeysLink = styled.button`
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 20px;
+  padding: 10px;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+  }
+
+  &:focus {
+    outline: none;
+    color: #ffffff;
+  }
 `;
 
 export default Login;
