@@ -19,7 +19,6 @@ import BottomMenu from '.';
 import { defaultTheme } from '../../theme';
 
 // providers
-import AccountNftsProvider from '../../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../../providers/AccountTransactionHistoryProvider';
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
@@ -47,7 +46,6 @@ describe('<BottomMenu />', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    store.replaceReducer(() => ({}));
     addMiddleware(pillarXApiTransactionsHistory);
   });
 
@@ -58,25 +56,21 @@ describe('<BottomMenu />', () => {
       rendered = renderer.create(
         <Provider store={store}>
           <BrowserRouter>
-            {/* <EtherspotTransactionKit provider={provider}> */}
             <AccountTransactionHistoryProvider>
-              <AccountNftsProvider>
-                <ThemeProvider theme={defaultTheme}>
-                  <LanguageProvider>
-                    <GlobalTransactionsBatchProvider>
-                      <PrivateKeyLoginProvider>
-                        <BottomMenuModalProvider>
-                          <SelectedChainsHistoryProvider>
-                            <BottomMenu />
-                          </SelectedChainsHistoryProvider>
-                        </BottomMenuModalProvider>
-                      </PrivateKeyLoginProvider>
-                    </GlobalTransactionsBatchProvider>
-                  </LanguageProvider>
-                </ThemeProvider>
-              </AccountNftsProvider>
+              <ThemeProvider theme={defaultTheme}>
+                <LanguageProvider>
+                  <GlobalTransactionsBatchProvider>
+                    <PrivateKeyLoginProvider>
+                      <BottomMenuModalProvider>
+                        <SelectedChainsHistoryProvider>
+                          <BottomMenu />
+                        </SelectedChainsHistoryProvider>
+                      </BottomMenuModalProvider>
+                    </PrivateKeyLoginProvider>
+                  </GlobalTransactionsBatchProvider>
+                </LanguageProvider>
+              </ThemeProvider>
             </AccountTransactionHistoryProvider>
-            {/* </EtherspotTransactionKit> */}
           </BrowserRouter>
         </Provider>
       );

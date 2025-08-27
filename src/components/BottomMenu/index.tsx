@@ -37,8 +37,7 @@ const BottomMenu = () => {
   const [t] = useTranslation();
   const { active, showSend, showApps, showHistory, showAccount, hide } =
     useBottomMenuModal();
-  const { transactions: globalTransactionsBatch } =
-    useGlobalTransactionsBatch();
+  const { batchCount } = useGlobalTransactionsBatch();
   const overlayRef = React.useRef<HTMLDivElement>(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
 
@@ -95,7 +94,7 @@ const BottomMenu = () => {
     {
       icon: <IconSend />,
       type: 'send',
-      iconNotificationCounter: globalTransactionsBatch.length,
+      iconNotificationCounter: batchCount,
       label: t`menuAction.send`,
       show: showSend,
       color: '#8A77FF',

@@ -1,8 +1,9 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import * as Sentry from '@sentry/react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 // components
 import Button from '../../Button';
@@ -112,7 +113,7 @@ const SendModalBottomButtons = ({
       )}
       {!!errorMessage && <Alert>{`${t`label.error`}: ${errorMessage}`}</Alert>}
       <ButtonsWrapper>
-        {allowBatching ? (
+        {onAddToBatch ? (
           <Button
             id="add-to-batch-button-send-modal"
             disabled={isSendDisabled}
@@ -123,7 +124,7 @@ const SendModalBottomButtons = ({
           >
             {t`action.addToBatch`}
           </Button>
-        ) : (
+        ) : onCancel ? (
           <Button
             id="cancel-button-send-modal"
             disabled={isSendDisabled}
@@ -134,7 +135,7 @@ const SendModalBottomButtons = ({
           >
             {t`action.cancel`}
           </Button>
-        )}
+        ) : null}
         <Button
           id="send-button-send-modal"
           disabled={isSendDisabled}

@@ -1,4 +1,5 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // types
 import { LeaderboardTableData } from '../../../../types/api';
@@ -35,7 +36,7 @@ const PxPointsSummary = ({
   isUserInMigrationData,
   timeTab,
 }: PxPointsSummaryProps) => {
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   const findMatchingEntry = (data?: LeaderboardTableData[]) => {
     if (!walletAddress || !data) return { entry: undefined, index: -1 };

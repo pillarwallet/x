@@ -1,5 +1,7 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useRef, useState } from 'react';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // types
 import {
@@ -23,7 +25,7 @@ type LeaderboardTabProps = {
 const LeaderboardTab = ({ data, timeTab }: LeaderboardTabProps) => {
   const [visibleCount, setVisibleCount] = useState(10);
   const loadMoreRef = useRef(null);
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 10);

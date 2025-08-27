@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
-import { useEffect, useState } from 'react';
+import { usePrivy } from '@privy-io/react-auth';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { WalletClient } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
-import { usePrivy } from '@privy-io/react-auth';
 
 // components
 import BottomMenu from '../components/BottomMenu';
-import Loading from '../pages/Loading';
-import DebugPanel from '../components/DebugPanel';
 import ConnectionDebug, { DebugInfo } from '../components/ConnectionDebug';
+import DebugPanel from '../components/DebugPanel';
+import Loading from '../pages/Loading';
 
 // providers
-import AccountNftsProvider from '../providers/AccountNftsProvider';
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
+import { EtherspotTransactionKitProvider } from '../providers/EtherspotTransactionKitProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
 import { WalletConnectModalProvider } from '../providers/WalletConnectModalProvider';
@@ -100,51 +99,52 @@ export default function Authorized({
     walletConnectConnector,
   ]);
 
+  // Memoize the config to prevent unnecessary kit recreation
+  const kitConfig = useMemo(
+    () => ({
+      provider,
+      chainId,
+      bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
+    }),
+    [provider, chainId]
+  );
+
   if (showAnimation) {
     return <Loading type="enter" />;
   }
 
   return (
-    <EtherspotTransactionKit
-      provider={provider}
-      chainId={chainId}
-      bundlerApiKey={
-        import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || undefined
-      }
-      dataApiKey={import.meta.env.VITE_ETHERSPOT_DATA_API_KEY || undefined}
-    >
+    <EtherspotTransactionKitProvider config={kitConfig}>
       <AccountTransactionHistoryProvider>
-        <AccountNftsProvider>
-          <GlobalTransactionBatchesProvider>
-            <BottomMenuModalProvider>
-              <SelectedChainsHistoryProvider>
-                <WalletConnectToastProvider>
-                  <WalletConnectModalProvider>
-                    <AuthContentWrapper>
-                      <Outlet />
-                    </AuthContentWrapper>
-                    <BottomMenu />
+        <GlobalTransactionBatchesProvider>
+          <BottomMenuModalProvider>
+            <SelectedChainsHistoryProvider>
+              <WalletConnectToastProvider>
+                <WalletConnectModalProvider>
+                  <AuthContentWrapper>
+                    <Outlet />
+                  </AuthContentWrapper>
+                  <BottomMenu />
 
-                    {/* Debug Panel - shown when debug_connections is enabled */}
-                    {localStorage.getItem('debug_connections') === 'true' && (
-                      <DebugPanel title="Connection Debug">
-                        <ConnectionDebug
-                          debugInfo={debugInfo}
-                          onDisconnect={() => {
-                            // This will be handled by the comprehensive logout utility
-                            // when the user logs out through the normal flow
-                          }}
-                        />
-                      </DebugPanel>
-                    )}
-                  </WalletConnectModalProvider>
-                </WalletConnectToastProvider>
-              </SelectedChainsHistoryProvider>
-            </BottomMenuModalProvider>
-          </GlobalTransactionBatchesProvider>
-        </AccountNftsProvider>
+                  {/* Debug Panel - shown when debug_connections is enabled */}
+                  {localStorage.getItem('debug_connections') === 'true' && (
+                    <DebugPanel title="Connection Debug">
+                      <ConnectionDebug
+                        debugInfo={debugInfo}
+                        onDisconnect={() => {
+                          // This will be handled by the comprehensive logout utility
+                          // when the user logs out through the normal flow
+                        }}
+                      />
+                    </DebugPanel>
+                  )}
+                </WalletConnectModalProvider>
+              </WalletConnectToastProvider>
+            </SelectedChainsHistoryProvider>
+          </BottomMenuModalProvider>
+        </GlobalTransactionBatchesProvider>
       </AccountTransactionHistoryProvider>
-    </EtherspotTransactionKit>
+    </EtherspotTransactionKitProvider>
   );
 }
 

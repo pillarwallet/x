@@ -1,172 +1,324 @@
-import { TransactionStatuses } from '@etherspot/data-utils/dist/cjs/sdk/data/constants';
-import * as TransactionKit from '@etherspot/transaction-kit';
-import { renderHook, waitFor } from '@testing-library/react';
+import {
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import React from 'react';
-import { polygon } from 'viem/chains';
 import { vi } from 'vitest';
-
-// services
-import * as dappLocalStorage from '../../services/dappLocalStorage';
 
 // providers
 import AccountTransactionHistoryProvider, {
   AccountTransactionHistoryContext,
 } from '../AccountTransactionHistoryProvider';
 
-const accountAddress = '0x7F30B1960D5556929B03a0339814fE903c55a347';
+describe('AccountTransactionHistoryProvider', () => {
+  const TestComponent = () => {
+    const context = React.useContext(AccountTransactionHistoryContext);
 
-// Skipping due to this being removed in an upcoming version of
-// TransactionKit
-describe.skip('AccountTransactionHistoryProvider', () => {
-  const accountTransactionsMock = [
-    {
-      transactionHash: '0x1',
-      userOpHash: '0x1a',
-      sender: accountAddress,
-      value: 0,
-      success: TransactionStatuses.Completed,
-      timestamp: 1630000000,
-    },
-    {
-      transactionHash: '0x2',
-      userOpHash: '0x2a',
-      sender: accountAddress,
-      value: 0,
-      success: TransactionStatuses.Pending,
-      timestamp: 1640000000,
-    },
-  ];
+    if (!context) return <div>No context</div>;
 
-  const accountHistoryMock = {
-    [accountAddress]: accountTransactionsMock,
+    return (
+      <div>
+        <div data-testid="user-op-status">
+          {context.data.userOpStatus || 'undefined'}
+        </div>
+        <div data-testid="transaction-hash">
+          {context.data.transactionHash || 'undefined'}
+        </div>
+        <div data-testid="latest-user-op-info">
+          {context.data.latestUserOpInfo || 'undefined'}
+        </div>
+        <div data-testid="latest-user-op-chain-id">
+          {context.data.latestUserOpChainId || 'undefined'}
+        </div>
+        <button
+          data-testid="set-sending"
+          type="button"
+          onClick={() => context.data.setUserOpStatus('Sending')}
+        >
+          Set Sending
+        </button>
+        <button
+          data-testid="set-sent"
+          type="button"
+          onClick={() => context.data.setUserOpStatus('Sent')}
+        >
+          Set Sent
+        </button>
+        <button
+          data-testid="set-confirmed"
+          type="button"
+          onClick={() => context.data.setUserOpStatus('Confirmed')}
+        >
+          Set Confirmed
+        </button>
+        <button
+          data-testid="set-failed"
+          type="button"
+          onClick={() => context.data.setUserOpStatus('Failed')}
+        >
+          Set Failed
+        </button>
+        <button
+          data-testid="set-transaction-hash"
+          type="button"
+          onClick={() => context.data.setTransactionHash('0x123...')}
+        >
+          Set Transaction Hash
+        </button>
+        <button
+          data-testid="set-latest-user-op-info"
+          type="button"
+          onClick={() =>
+            context.data.setLatestUserOpInfo('Transaction submitted')
+          }
+        >
+          Set Latest User Op Info
+        </button>
+        <button
+          data-testid="set-latest-user-op-chain-id"
+          type="button"
+          onClick={() => context.data.setLatestUserOpChainId(1)}
+        >
+          Set Latest User Op Chain ID
+        </button>
+      </div>
+    );
   };
 
-  let wrapper: React.FC;
-  let mockGetAccountTransactions: vi.mock;
-  let returnLongerHistory: boolean = false;
+  const wrapper = ({ children }: React.PropsWithChildren) => (
+    <AccountTransactionHistoryProvider>
+      {children}
+    </AccountTransactionHistoryProvider>
+  );
 
   beforeEach(() => {
-    returnLongerHistory = false;
+    vi.clearAllMocks();
+  });
 
-    wrapper = ({ children }: React.PropsWithChildren) => (
+  it('renders children without crashing', () => {
+    render(
       <AccountTransactionHistoryProvider>
-        {children}
+        <div data-testid="test-child">Test Child</div>
       </AccountTransactionHistoryProvider>
     );
 
-    mockGetAccountTransactions = vi
-      .fn()
-      .mockImplementation((walletAddress: string, chainId: number) => {
-        if (chainId === polygon.id && walletAddress === accountAddress) {
-          return returnLongerHistory
-            ? accountTransactionsMock.concat({
-                transactionHash: '0x3',
-                userOpHash: '0x3a',
-                sender: accountAddress,
-                value: 0,
-                success: TransactionStatuses.Completed,
-                timestamp: 1650000000,
-              })
-            : accountTransactionsMock;
-        }
-        return [];
-      });
-
-    vi.spyOn(TransactionKit, 'useEtherspotHistory').mockReturnValue({
-      getAccountTransactions: mockGetAccountTransactions,
-      getAccountTransaction: vi.fn(),
-      getAccountTransactionStatus: vi.fn(),
-    });
-
-    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(
-      accountAddress
-    );
-    vi.spyOn(dappLocalStorage, 'getJsonItem').mockReturnValue({});
+    expect(screen.getByTestId('test-child')).toBeInTheDocument();
   });
 
-  it('initializes with empty history', () => {
+  it('provides context with initial undefined values', () => {
+    render(<TestComponent />, { wrapper });
+
+    expect(screen.getByTestId('user-op-status')).toHaveTextContent('undefined');
+    expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+      'undefined'
+    );
+    expect(screen.getByTestId('latest-user-op-info')).toHaveTextContent(
+      'undefined'
+    );
+    expect(screen.getByTestId('latest-user-op-chain-id')).toHaveTextContent(
+      'undefined'
+    );
+  });
+
+  it('updates userOpStatus when setUserOpStatus is called', async () => {
+    render(<TestComponent />, { wrapper });
+
+    // Initially undefined
+    expect(screen.getByTestId('user-op-status')).toHaveTextContent('undefined');
+
+    // Set to Sending
+    await act(async () => {
+      screen.getByTestId('set-sending').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent('Sending');
+    });
+
+    // Set to Sent
+    await act(async () => {
+      screen.getByTestId('set-sent').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent('Sent');
+    });
+
+    // Set to Confirmed
+    await act(async () => {
+      screen.getByTestId('set-confirmed').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent(
+        'Confirmed'
+      );
+    });
+
+    // Set to Failed
+    await act(async () => {
+      screen.getByTestId('set-failed').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent('Failed');
+    });
+  });
+
+  it('updates transactionHash when setTransactionHash is called', async () => {
+    render(<TestComponent />, { wrapper });
+
+    // Initially undefined
+    expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+      'undefined'
+    );
+
+    // Set transaction hash
+    await act(async () => {
+      screen.getByTestId('set-transaction-hash').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+        '0x123...'
+      );
+    });
+  });
+
+  it('updates latestUserOpInfo when setLatestUserOpInfo is called', async () => {
+    render(<TestComponent />, { wrapper });
+
+    // Initially undefined
+    expect(screen.getByTestId('latest-user-op-info')).toHaveTextContent(
+      'undefined'
+    );
+
+    // Set latest user op info
+    await act(async () => {
+      screen.getByTestId('set-latest-user-op-info').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('latest-user-op-info')).toHaveTextContent(
+        'Transaction submitted'
+      );
+    });
+  });
+
+  it('updates latestUserOpChainId when setLatestUserOpChainId is called', async () => {
+    render(<TestComponent />, { wrapper });
+
+    // Initially undefined
+    expect(screen.getByTestId('latest-user-op-chain-id')).toHaveTextContent(
+      'undefined'
+    );
+
+    // Set latest user op chain ID
+    await act(async () => {
+      screen.getByTestId('set-latest-user-op-chain-id').click();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('latest-user-op-chain-id')).toHaveTextContent(
+        '1'
+      );
+    });
+  });
+
+  it('provides context data structure correctly', () => {
     const { result } = renderHook(
       () => React.useContext(AccountTransactionHistoryContext),
       { wrapper }
     );
-    expect(result.current?.data.history).toEqual({});
+
+    expect(result.current).toBeDefined();
+    expect(result.current?.data).toBeDefined();
+    expect(result.current?.data.userOpStatus).toBeUndefined();
+    expect(result.current?.data.transactionHash).toBeUndefined();
+    expect(result.current?.data.latestUserOpInfo).toBeUndefined();
+    expect(result.current?.data.latestUserOpChainId).toBeUndefined();
+    expect(typeof result.current?.data.setUserOpStatus).toBe('function');
+    expect(typeof result.current?.data.setTransactionHash).toBe('function');
+    expect(typeof result.current?.data.setLatestUserOpInfo).toBe('function');
+    expect(typeof result.current?.data.setLatestUserOpChainId).toBe('function');
   });
 
-  it('updates history', async () => {
-    const { result } = renderHook(
-      () => React.useContext(AccountTransactionHistoryContext),
-      { wrapper }
-    );
+  it('maintains state between re-renders', async () => {
+    const { rerender } = render(<TestComponent />, { wrapper });
 
-    result.current?.data.setUpdateData(true);
-
-    await waitFor(async () => {
-      expect(result.current?.data.history).toEqual({
-        [polygon.id]: accountHistoryMock,
-      });
+    // Set some values
+    await act(async () => {
+      screen.getByTestId('set-sending').click();
     });
 
-    expect(mockGetAccountTransactions).toHaveBeenCalled();
-  });
-
-  it('does not update history when wallet address is not set', async () => {
-    vi.spyOn(TransactionKit, 'useWalletAddress').mockReturnValue(undefined);
-
-    const { result } = renderHook(
-      () => React.useContext(AccountTransactionHistoryContext),
-      { wrapper }
-    );
-
-    expect(result.current?.data.history).toEqual({});
-  });
-
-  it('calls onHistoryUpdated when history change', async () => {
-    vi.useFakeTimers();
-
-    const onHistoryUpdated = vi.fn();
-
-    const { result } = renderHook(
-      () => React.useContext(AccountTransactionHistoryContext),
-      {
-        wrapper: ({ children }) => (
-          <AccountTransactionHistoryProvider>
-            <AccountTransactionHistoryContext.Consumer>
-              {(value) => {
-                if (!value) return children;
-                // eslint-disable-next-line no-param-reassign
-                value.listenerRef.current.onHistoryUpdated = onHistoryUpdated;
-                return children;
-              }}
-            </AccountTransactionHistoryContext.Consumer>
-          </AccountTransactionHistoryProvider>
-        ),
-      }
-    );
-
-    result.current?.data.setUpdateData(true);
-
-    await waitFor(async () => {
-      expect(result.current?.data.history).not.toEqual({});
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent('Sending');
     });
 
-    expect(
-      result.current?.data.history[polygon.id][accountAddress].length
-    ).toBe(2);
-
-    returnLongerHistory = true;
-
-    vi.runAllTimers();
-
-    await waitFor(async () => {
-      expect(
-        result.current?.data.history[polygon.id][accountAddress].length
-      ).toBe(3);
+    await act(async () => {
+      screen.getByTestId('set-transaction-hash').click();
     });
 
-    expect(onHistoryUpdated).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+        '0x123...'
+      );
+    });
+
+    // Re-render
+    rerender(<TestComponent />);
+
+    // Verify values are maintained
+    expect(screen.getByTestId('user-op-status')).toHaveTextContent('Sending');
+    expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+      '0x123...'
+    );
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
+  it('handles multiple state updates correctly', async () => {
+    render(<TestComponent />, { wrapper });
+
+    // Set multiple values
+    await act(async () => {
+      screen.getByTestId('set-sending').click();
+    });
+
+    await act(async () => {
+      screen.getByTestId('set-transaction-hash').click();
+    });
+
+    await act(async () => {
+      screen.getByTestId('set-latest-user-op-info').click();
+    });
+
+    await act(async () => {
+      screen.getByTestId('set-latest-user-op-chain-id').click();
+    });
+
+    // Verify all values are set correctly
+    await waitFor(() => {
+      expect(screen.getByTestId('user-op-status')).toHaveTextContent('Sending');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('transaction-hash')).toHaveTextContent(
+        '0x123...'
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('latest-user-op-info')).toHaveTextContent(
+        'Transaction submitted'
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('latest-user-op-chain-id')).toHaveTextContent(
+        '1'
+      );
+    });
   });
 });

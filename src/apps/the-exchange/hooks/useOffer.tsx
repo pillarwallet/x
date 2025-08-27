@@ -1,7 +1,4 @@
-import {
-  useEtherspotUtils,
-  useWalletAddress,
-} from '@etherspot/transaction-kit';
+import { EtherspotUtils } from '@etherspot/transaction-kit';
 import {
   LiFiStep,
   Route,
@@ -26,6 +23,7 @@ import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // utils
+import useTransactionKit from '../../../hooks/useTransactionKit';
 import {
   Token,
   chainNameToChainIdTokensData,
@@ -38,19 +36,19 @@ import {
   toWei,
 } from '../utils/blockchain';
 import {
+  addExchangeBreadcrumb,
+  startExchangeTransaction,
+} from '../utils/sentry';
+import {
   getWrappedTokenAddressIfNative,
   isNativeToken,
   isWrappedToken,
 } from '../utils/wrappedTokens';
-import {
-  addExchangeBreadcrumb,
-  startExchangeTransaction,
-} from '../utils/sentry';
 
 const useOffer = () => {
-  const { isZeroAddress } = useEtherspotUtils();
+  const { isZeroAddress } = EtherspotUtils;
   const { transactionDebugLog } = useTransactionDebugLogger();
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   /**
    * Get native fee estimation for ERC20 tokens

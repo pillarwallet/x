@@ -2,9 +2,8 @@ import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import renderer from 'react-test-renderer';
 
-// provider
-import { Provider } from 'react-redux';
-import { store } from '../../../../../store';
+// test utils
+import { TestWrapper } from '../../../../../test-utils/testUtils';
 
 // types
 import {
@@ -46,9 +45,9 @@ describe('<EditorialTile />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <Provider store={store}>
+        <TestWrapper>
           <EditorialTile data={mockDataEditorial} isDataLoading={false} />
-        </Provider>
+        </TestWrapper>
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
@@ -56,9 +55,9 @@ describe('<EditorialTile />', () => {
 
   it('renders correctly with all the given data', () => {
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataEditorial} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.getByText('Editorial title')).toBeInTheDocument();
@@ -77,9 +76,9 @@ describe('<EditorialTile />', () => {
 
   it('renders image media correctly', () => {
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataEditorial} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     const img = screen.getByTestId('editorial-tile-image');
@@ -104,9 +103,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataWithVideo} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     const img = screen.queryByTestId('editorial-tile-image');
@@ -131,9 +130,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataWithAudio} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     const img = screen.queryByTestId('editorial-tile-image');
@@ -158,9 +157,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataWithoutMedia} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     const img = screen.queryByTestId('editorial-tile-image');
@@ -185,12 +184,12 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile
           data={mockDataWithoutAttribution}
           isDataLoading={false}
         />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.queryByText('Youtube')).toBeNull();
@@ -209,9 +208,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={invalidMediaData} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
     const img = screen.queryByTestId('editorial-tile-image');
     const video = screen.queryByTestId('editorial-tile-video');
@@ -224,9 +223,9 @@ describe('<EditorialTile />', () => {
 
   it('renders nothing when data is undefined', () => {
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={undefined} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
@@ -242,9 +241,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataWithoutDisplay} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
@@ -262,9 +261,9 @@ describe('<EditorialTile />', () => {
     };
 
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataWithEmptyDisplay} isDataLoading={false} />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();
@@ -272,9 +271,9 @@ describe('<EditorialTile />', () => {
 
   it('renders nothing when isDataLoading is true', () => {
     render(
-      <Provider store={store}>
+      <TestWrapper>
         <EditorialTile data={mockDataEditorial} isDataLoading />
-      </Provider>
+      </TestWrapper>
     );
 
     expect(screen.queryByTestId('editorial-tile')).not.toBeInTheDocument();

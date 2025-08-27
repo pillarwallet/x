@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresen
 import { useGetTrendingTokensQuery } from '../../api/token';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -39,7 +39,7 @@ const TokensSlider = () => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -72,11 +72,13 @@ const TokensSlider = () => {
 
   // Debounced recordPresence function with 2-second delay
   const debouncedTokenTrendingScroll = _.debounce(() => {
-    recordPresence({
-      address: accountAddress,
-      action: 'app:tokenAtlas:trendingScroll',
-      value: 'TRENDING_SCROLL',
-    });
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:trendingScroll',
+        value: 'TRENDING_SCROLL',
+      });
+    }
   }, 2000);
 
   // Handle the scroll event
