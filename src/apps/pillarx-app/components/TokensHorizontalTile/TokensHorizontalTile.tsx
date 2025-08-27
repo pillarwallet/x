@@ -1,4 +1,4 @@
-import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import { EtherspotUtils } from '@etherspot/transaction-kit';
 import { createRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +27,7 @@ const TokensHorizontalTile = ({
   isDataLoading,
 }: TokensHorizontalTileProps) => {
   const navigate = useNavigate();
-  const { isZeroAddress } = useEtherspotUtils();
+  const { isZeroAddress } = EtherspotUtils;
   const [tokenHorizontalWidth, setTokenHorizontalWidth] = useState<number>(0);
   const { data: dataTokens, meta } = data || {};
   const dataTokensHorizontal = dataTokens as TokenData[] | undefined;

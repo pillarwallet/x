@@ -50,7 +50,11 @@
     "cannotBatchBatchedTransactions": "Cannot batch batched transactions",
     "insufficientBalanceForGasless": "Insufficient balance for gasless transaction",
     "paymasterNotSupported": "Gasless action for add to batch is not available at the moment",
-    "failedWalletPortfolio": "Failed to get wallet balances"
+    "failedWalletPortfolio": "Failed to get wallet balances",
+    "failedToRemoveBatch": "Failed to remove batch. Please try again.",
+    "failedToRemoveTransaction": "Failed to remove transaction. Please try again.",
+    "batchAlreadyInProgress": "A batch is already being processed on this network. Please wait for it to complete.",
+    "batchAlreadyInProgressWithChain": "A batch is already being processed on {{chainName}}. Please wait for it to complete."
   },
   "warning": {
     "transactionSafety": {

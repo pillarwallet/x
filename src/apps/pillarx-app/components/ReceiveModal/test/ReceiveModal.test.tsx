@@ -1,4 +1,3 @@
-import * as transactionKit from '@etherspot/transaction-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
@@ -10,6 +9,7 @@ import * as reducerHooks from '../../../hooks/useReducerHooks';
 import * as walletSlice from '../../../reducer/WalletPortfolioSlice';
 
 // components
+import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import ReceiveModal from '../ReceiveModal';
 
 vi.mock('../../../../../utils/blockchain', () => {
@@ -25,19 +25,22 @@ vi.mock('../../../../../utils/blockchain', () => {
 });
 
 vi.mock('../../../hooks/useReducerHooks');
-vi.mock('@etherspot/transaction-kit', () => ({
-  useWalletAddress: vi.fn(),
-}));
+vi.mock('../../../../../hooks/useTransactionKit');
 
 describe('<ReceiveModal />', () => {
   const useAppSelectorMock = reducerHooks.useAppSelector as unknown as Mock;
   const useAppDispatchMock = reducerHooks.useAppDispatch as unknown as Mock;
+  const useTransactionKitMock = useTransactionKit as unknown as Mock;
 
   const mockDispatch = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     useAppDispatchMock.mockReturnValue(mockDispatch);
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -49,7 +52,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: false } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
 
     const { container } = render(<ReceiveModal />);
     expect(container.firstChild).toBeNull();
@@ -59,8 +65,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
-
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
     render(<ReceiveModal />);
 
     expect(screen.getByText(/Receive/i)).toBeInTheDocument();
@@ -72,8 +80,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue(undefined);
-
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: undefined,
+      kit: {},
+    });
     render(<ReceiveModal />);
 
     expect(
@@ -85,7 +95,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,
@@ -108,7 +121,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0xabc');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0xabc',
+      kit: {},
+    });
 
     render(<ReceiveModal />);
 
@@ -120,7 +136,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,
@@ -141,7 +160,10 @@ describe('<ReceiveModal />', () => {
     useAppSelectorMock.mockImplementation((cb) =>
       cb({ walletPortfolio: { isReceiveModalOpen: true } })
     );
-    (transactionKit.useWalletAddress as Mock).mockReturnValue('0x123');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x123',
+      kit: {},
+    });
 
     const setIsReceiveModalOpenSpy = vi.spyOn(
       walletSlice,

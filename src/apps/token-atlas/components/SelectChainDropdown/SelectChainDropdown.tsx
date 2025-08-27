@@ -1,9 +1,8 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
-
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -41,7 +40,7 @@ const SelectChainDropdown = ({
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const isSelectChainDropdownOpen = useAppSelector(
@@ -70,11 +69,13 @@ const SelectChainDropdown = ({
         chainName: option === 0 ? 'all' : getChainName(option),
       })
     );
-    recordPresence({
-      address: accountAddress,
-      action: 'app:tokenAtlas:chainSelect',
-      value: { chainId: option },
-    });
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:chainSelect',
+        value: { chainId: option },
+      });
+    }
     dispatch(setIsSelectChainDropdownOpen(false));
     dispatch(setIsAllChainsVisible(false));
   };

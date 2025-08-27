@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // reducer
 import {
@@ -26,9 +26,9 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 // utils
 import { formatExponential } from '../../../../utils/number';
 import {
-  logUserInteraction,
-  logExchangeError,
   addExchangeBreadcrumb,
+  logExchangeError,
+  logUserInteraction,
 } from '../../utils/sentry';
 
 // types
@@ -60,7 +60,7 @@ const EnterAmount = ({
   deploymentCost,
 }: EnterAmountProps) => {
   const dispatch = useAppDispatch();
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   const amountSwap = useAppSelector((state) => state.swap.amountSwap as number);
   const amountReceive = useAppSelector(
     (state) => state.swap.amountReceive as number

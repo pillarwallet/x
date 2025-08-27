@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect, useRef, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
@@ -14,6 +13,9 @@ import {
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+
 // images
 import CopyIcon from '../../images/token-market-data-copy.png';
 
@@ -23,7 +25,7 @@ import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
 const ReceiveModal = () => {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const dispatch = useAppDispatch();
   const isReceiveModalOpen = useAppSelector(
     (state) => state.walletPortfolio.isReceiveModalOpen as boolean

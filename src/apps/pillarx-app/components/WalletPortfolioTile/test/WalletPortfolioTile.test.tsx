@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as transactionKit from '@etherspot/transaction-kit';
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
 // servuces
 import * as historyHooks from '../../../../../services/pillarXApiWalletHistory';
 import * as apiHooks from '../../../../../services/pillarXApiWalletPortfolio';
 
 // hooks
+import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import * as fetchStateHook from '../../../hooks/useDataFetchingState';
 
 // reducer
@@ -49,8 +49,11 @@ vi.mock('../../TopTokens/TopTokens', () => ({
   },
 }));
 
+vi.mock('../../../../../hooks/useTransactionKit');
+
 describe('<WalletPortfolioTile />', () => {
   const dispatch = vi.fn();
+  const useTransactionKitMock = useTransactionKit as unknown as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -69,7 +72,10 @@ describe('<WalletPortfolioTile />', () => {
         })
     );
 
-    vi.spyOn(transactionKit, 'useWalletAddress').mockReturnValue('0x1234');
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: '0x1234',
+      kit: {},
+    });
 
     // Mock useDataFetchingState
     vi.spyOn(fetchStateHook, 'useDataFetchingState').mockImplementation(
@@ -126,7 +132,10 @@ describe('<WalletPortfolioTile />', () => {
   });
 
   it('skips rendering parts if no wallet address', () => {
-    vi.spyOn(transactionKit, 'useWalletAddress').mockReturnValue(undefined);
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: undefined,
+      kit: {},
+    });
 
     render(<WalletPortfolioTile />);
 

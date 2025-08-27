@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
@@ -33,6 +32,7 @@ import {
 import { CompatibleChains } from '../../../../utils/blockchain';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 
 // types
@@ -64,7 +64,7 @@ const DropdownTokenList = ({
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
   const isSwapOpen = useAppSelector(
@@ -137,16 +137,18 @@ const DropdownTokenList = ({
           chainName: token.blockchain,
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:sourceTokenSelect',
-        value: {
-          chainId: chainNameToChainIdTokensData(token.blockchain),
-          address: token.contract,
-          symbol: token.symbol,
-          name: token.name,
-        },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:sourceTokenSelect',
+          value: {
+            chainId: chainNameToChainIdTokensData(token.blockchain),
+            address: token.contract,
+            symbol: token.symbol,
+            name: token.name,
+          },
+        });
+      }
       dispatch(setSearchTokenResult(undefined));
       dispatch(setIsSwapOpen(false));
     } else {
@@ -157,16 +159,18 @@ const DropdownTokenList = ({
           chainName: token.blockchain,
         })
       );
-      recordPresence({
-        address: accountAddress,
-        action: 'app:theExchange:destinationTokenSelect',
-        value: {
-          chainId: chainNameToChainIdTokensData(token.blockchain),
-          address: token.contract,
-          symbol: token.symbol,
-          name: token.name,
-        },
-      });
+      if (accountAddress) {
+        recordPresence({
+          address: accountAddress,
+          action: 'app:theExchange:destinationTokenSelect',
+          value: {
+            chainId: chainNameToChainIdTokensData(token.blockchain),
+            address: token.contract,
+            symbol: token.symbol,
+            name: token.name,
+          },
+        });
+      }
       dispatch(setSearchTokenResult(undefined));
       dispatch(setIsReceiveOpen(false));
     }

@@ -7,9 +7,17 @@ exports[`<TokenGraph /> > renders correctly and matches snapshot 1`] = `
 >
   <canvas
     data-testid="price-graph"
-    height={150}
+    height="150"
+    plugins={
+      [
+        {
+          "beforeDatasetDraw": [Function],
+          "id": "horizontalDottedLine",
+        },
+      ]
+    }
     role="img"
-    width={300}
+    width="300"
   />
 </div>
 `;

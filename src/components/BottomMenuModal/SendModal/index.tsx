@@ -26,8 +26,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
   const wrapperRef = React.useRef(null);
   const { showBatchSendModal, setShowBatchSendModal } = useBottomMenuModal();
   const [t] = useTranslation();
-  const { transactions: globalTransactionsBatch } =
-    useGlobalTransactionsBatch();
+  const { batchCount: totalBatchCount } = useGlobalTransactionsBatch();
 
   if (!isContentVisible) {
     return <Wrapper />;
@@ -46,7 +45,7 @@ const SendModal = ({ isContentVisible, payload }: SendModalProps) => {
               {
                 title: t`title.batches`,
                 icon: <IconLayers size={20} />,
-                notificationText: `${globalTransactionsBatch.length}`,
+                notificationText: `${totalBatchCount}`,
               },
             ]}
             onChange={(index) => setShowBatchSendModal(index === 1)}

@@ -125,7 +125,7 @@ exports[`<PortfolioOverview /> > renders correctly and matches snapshot 1`] = `
               d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
               fill="#C20D90"
               filter="url(#filter_:r0:)"
-              transform="translate(4 4) rotate(276 40 40) scale(1.4)"
+              transform="translate(0 0) rotate(176 40 40) scale(1.2)"
             />
             <path
               d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
@@ -136,7 +136,7 @@ exports[`<PortfolioOverview /> > renders correctly and matches snapshot 1`] = `
                   "mixBlendMode": "overlay",
                 }
               }
-              transform="translate(6 -6) rotate(54 40 40) scale(1.4)"
+              transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
             />
           </g>
           <defs>
@@ -165,9 +165,9 @@ exports[`<PortfolioOverview /> > renders correctly and matches snapshot 1`] = `
       <p
         className="text-base font-medium undefined"
       >
-        0x7F30
+        0x1234
         ...
-        5a347
+        67890
       </p>
       <div
         className="w-4 h-4"
@@ -236,7 +236,7 @@ exports[`<PortfolioOverview /> > renders correctly and matches snapshot 1`] = `
       <p
         className="text-base font-medium text-purple_light mb-2"
       >
-        title.totalBalance
+        Total balance
       </p>
       <div
         className="flex gap-4 items-end"
