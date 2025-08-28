@@ -1,30 +1,35 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import React, {
-  useState,
-  useRef,
-  useEffect,
   Dispatch,
   SetStateAction,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { TailSpin } from 'react-loader-spinner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isAddress } from 'viem';
+import {
+  Token,
+  chainNameToChainIdTokensData,
+} from '../../../../services/tokensData';
+import { PortfolioData } from '../../../../types/api';
+import { isTestnet } from '../../../../utils/blockchain';
+import SearchIcon from '../../assets/seach-icon.svg';
 import { useTokenSearch } from '../../hooks/useTokenSearch';
-import Close from '../Misc/Close';
+import { SearchType, SelectedToken } from '../../types/tokens';
+import { MobulaChainNames, getChainId } from '../../utils/constants';
 import {
   Asset,
   parseFreshAndTrendingTokens,
   parseSearchData,
 } from '../../utils/parseSearchData';
-import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
-import { SearchType, SelectedToken } from '../../types/tokens';
+import Close from '../Misc/Close';
 import Refresh from '../Misc/Refresh';
-import ChainSelectButton from './ChainSelect';
-import { getChainId, MobulaChainNames } from '../../utils/constants';
 import ChainOverlay from './ChainOverlay';
+import ChainSelectButton from './ChainSelect';
+import PortfolioTokenList from './PortfolioTokenList';
 import TokenList from './TokenList';
-import { isTestnet } from '../../../../utils/blockchain';
-import SearchIcon from '../../assets/seach-icon.svg';
 
 interface SearchProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -33,6 +38,9 @@ interface SearchProps {
   setSellToken: Dispatch<SetStateAction<SelectedToken | null>>;
   chains: MobulaChainNames;
   setChains: Dispatch<SetStateAction<MobulaChainNames>>;
+  walletPortfolioData?: PortfolioData;
+  walletPortfolioLoading?: boolean;
+  walletPortfolioError?: boolean;
 }
 
 const overlayStyling = {
@@ -46,11 +54,19 @@ const overlayStyling = {
   zIndex: 2000,
 };
 
-export default function Search(props: SearchProps) {
-  const { setSearching, isBuy, setBuyToken, setSellToken, chains, setChains } =
-    props;
+export default function Search({
+  setSearching,
+  isBuy,
+  setBuyToken,
+  setSellToken,
+  chains,
+  setChains,
+  walletPortfolioData,
+  walletPortfolioLoading,
+  walletPortfolioError,
+}: SearchProps) {
   const { searchText, setSearchText, searchData, isFetching } = useTokenSearch({
-    isBuy: true, // TODO: use isBuy props after sell integration.
+    isBuy,
     chains,
   });
   const [searchType, setSearchType] = useState<SearchType>();
@@ -98,7 +114,12 @@ export default function Search(props: SearchProps) {
     if (isAddress(tokenAddress || '')) {
       setSearchText(tokenAddress!);
     }
-  }, [query, setSearchText]);
+
+    // This auto-select MyHoldings filter when on sell screen
+    if (!isBuy) {
+      setSearchType(SearchType.MyHoldings);
+    }
+  }, [query, setSearchText, isBuy]);
 
   useEffect(() => {
     if (searchType) {
@@ -120,6 +141,12 @@ export default function Search(props: SearchProps) {
 
   const handleClose = () => {
     setSearchText('');
+    // It resets search type to MyHoldings if on sell screen
+    if (!isBuy) {
+      setSearchType(SearchType.MyHoldings);
+    } else {
+      setSearchType(undefined);
+    }
     setSearching(false);
     removeQueryParams();
   };
@@ -132,20 +159,37 @@ export default function Search(props: SearchProps) {
     setSearchText('');
   };
 
-  const handleTokenSelect = (item: Asset) => {
+  const handleTokenSelect = (item: Asset | Token) => {
     if (isBuy) {
-      setBuyToken({
-        name: item.name,
-        symbol: item.symbol,
-        logo: item.logo ?? '',
-        usdValue: item.price
-          ? item.price.toFixed(6)
-          : Number.parseFloat('0').toFixed(6),
-        dailyPriceChange: -0.02,
-        chainId: chainNameToChainIdTokensData(item.chain),
-        decimals: item.decimals,
-        address: item.contract,
-      });
+      // Asset type
+      if ('chain' in item) {
+        setBuyToken({
+          name: item.name,
+          symbol: item.symbol,
+          logo: item.logo ?? '',
+          usdValue: item.price
+            ? item.price.toFixed(6)
+            : Number.parseFloat('0').toFixed(6),
+          dailyPriceChange: -0.02,
+          chainId: chainNameToChainIdTokensData(item.chain),
+          decimals: item.decimals,
+          address: item.contract,
+        });
+      } else {
+        // Token type
+        setBuyToken({
+          name: item.name,
+          symbol: item.symbol,
+          logo: item.logo ?? '',
+          usdValue: item.price
+            ? item.price.toFixed(6)
+            : Number.parseFloat('0').toFixed(6),
+          dailyPriceChange: -0.02,
+          chainId: chainNameToChainIdTokensData(item.blockchain),
+          decimals: item.decimals,
+          address: item.contract,
+        });
+      }
     } else {
       setSellToken({
         name: 'USDC',
@@ -159,79 +203,50 @@ export default function Search(props: SearchProps) {
       });
     }
     setSearchText('');
+    // This keeps MyHoldings filter active when on sell screen
+    if (!isBuy) {
+      setSearchType(SearchType.MyHoldings);
+    }
     setSearching(false);
     removeQueryParams();
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen"
-      style={{ backgroundColor: 'black' }}
-    >
-      <div className="flex flex-col w-full max-w-[446px] min-h-[204px] max-h-[706px] bg-[#121116] rounded-[10px] overflow-y-auto">
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <div className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]">
         <div className="flex w-full">
-          <div
-            className="flex items-center justify-center w-3/4"
-            style={{
-              border: '2px solid #1E1D24',
-              height: 40,
-              backgroundColor: '#121116',
-              borderRadius: 10,
-              margin: 10,
-            }}
-          >
-            <span style={{ marginLeft: 10 }}>
+          <div className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]">
+            <span className="ml-2.5">
               <img src={SearchIcon} alt="search-icon" />
             </span>
             <input
               ref={inputRef}
               type="text"
-              className="flex-1 w-fit"
-              style={{
-                marginLeft: 15,
-                fontWeight: 400,
-                fontSize: 12,
-                color: 'grey',
-              }}
+              className="flex-1 w-fit ml-4 font-normal text-xs text-gray-500"
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
-                setSearchType(undefined);
+                // Only clear search type if on buy screen AND not on My Holdings
+                if (isBuy && searchType !== SearchType.MyHoldings) {
+                  setSearchType(undefined);
+                }
                 setParsedAssets(undefined);
               }}
             />
             {(searchText.length > 0 && isFetching) || isLoading ? (
-              <div style={{ marginRight: 10 }}>
+              <div className="mr-2.5">
                 <TailSpin color="#FFFFFF" height={20} width={20} />
               </div>
             ) : (
               <Close onClose={handleClose} />
             )}
           </div>
-          <div
-            style={{
-              marginTop: 10,
-              width: 40,
-              height: 40,
-              backgroundColor: 'black',
-              borderRadius: 10,
-              padding: '2px 2px 4px 2px',
-            }}
-          >
+          <div className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5">
             <Refresh />
           </div>
           <div
             ref={chainButtonRef}
-            style={{
-              marginLeft: 5,
-              marginTop: 10,
-              width: 40,
-              height: 40,
-              backgroundColor: 'black',
-              borderRadius: 10,
-              padding: '2px 2px 4px 2px',
-              position: 'relative',
-            }}
+            className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
             onClick={() => {
               const rect = chainButtonRef?.current?.getBoundingClientRect();
               setShowChainOverlay(true);
@@ -248,54 +263,56 @@ export default function Search(props: SearchProps) {
         </div>
 
         {/* Trending, Fresh, TopGainers, MyHoldings */}
-        <div className="flex">
-          {['🔥 Trending', '🌱 Fresh', '🚀 Top Gainers', '💰My Holdings'].map(
-            (item, index) => {
-              return (
-                <div
-                  key={item}
-                  className="flex"
-                  style={{
-                    backgroundColor: 'black',
-                    marginLeft: 10,
-                    width: 100,
-                    height: 40,
-                    borderRadius: 10,
+        <div className="flex gap-1.5">
+          {(isBuy
+            ? ['🔥 Trending', '🌱 Fresh', '🚀 Top Gainers', '💰My Holdings']
+            : ['💰My Holdings']
+          ).map((item, index) => {
+            // For sell screen, always map to MyHoldings index (3)
+            const actualIndex = isBuy ? index : 3;
+            return (
+              <div
+                key={item}
+                className="flex bg-black w-[100px] h-10 rounded-[10px]"
+                style={{ width: isBuy ? 100 : 200 }}
+              >
+                <button
+                  className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${
+                    searchType && item.includes(searchType)
+                      ? 'bg-[#2E2A4A]'
+                      : 'bg-[#1E1D24]'
+                  }`}
+                  type="button"
+                  onClick={() => {
+                    handleSearchTypeChange(actualIndex);
                   }}
                 >
-                  <button
-                    className="flex-1 items-center justify-center"
-                    style={{
-                      backgroundColor:
-                        searchType && item.includes(searchType)
-                          ? '#2E2A4A'
-                          : '#121116',
-                      borderRadius: 10,
-                      margin: 2,
-                      marginBottom: 4,
-                      color: 'grey',
-                    }}
-                    type="button"
-                    onClick={() => {
-                      handleSearchTypeChange(index);
-                    }}
+                  <p
+                    className={`text-xs font-normal text-center ${
+                      searchType && item.includes(searchType)
+                        ? 'text-white'
+                        : 'text-white opacity-50'
+                    }`}
                   >
-                    <p style={{ fontSize: 12 }}>{item}</p>
-                  </button>
-                </div>
-              );
-            }
-          )}
+                    {item}
+                  </p>
+                </button>
+              </div>
+            );
+          })}
         </div>
-        {!searchText && parsedAssets === undefined && (
-          <div
-            className="flex items-center justify-center"
-            style={{ margin: 50 }}
-          >
-            <p style={{ color: 'grey' }}>Search by token or paste address...</p>
-          </div>
-        )}
-        {searchText && list?.assets && (
+        {!searchText &&
+          parsedAssets === undefined &&
+          searchType !== SearchType.MyHoldings && (
+            <div className="flex items-center justify-center m-[50px]">
+              <p className="text-gray-500">
+                Search by token or paste address...
+              </p>
+            </div>
+          )}
+
+        {/* Show search results only when NOT on My Holdings */}
+        {searchText && list?.assets && searchType !== SearchType.MyHoldings && (
           <div className="flex flex-col">
             <TokenList
               assets={list.assets}
@@ -304,12 +321,25 @@ export default function Search(props: SearchProps) {
             />
           </div>
         )}
-        {parsedAssets && (
+        {parsedAssets && searchType !== SearchType.MyHoldings && (
           <div className="flex flex-col">
             <TokenList
               assets={parsedAssets}
               handleTokenSelect={handleTokenSelect}
               searchType={searchType}
+            />
+          </div>
+        )}
+
+        {/* Show My Holdings portfolio data (filtered by search if applicable) */}
+        {searchType === SearchType.MyHoldings && (
+          <div className="flex flex-col">
+            <PortfolioTokenList
+              walletPortfolioData={walletPortfolioData}
+              handleTokenSelect={handleTokenSelect}
+              isLoading={walletPortfolioLoading}
+              isError={walletPortfolioError}
+              searchText={searchText}
             />
           </div>
         )}

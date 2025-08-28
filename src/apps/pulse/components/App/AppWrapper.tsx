@@ -5,6 +5,8 @@ import Search from '../Search/Search';
 import HomeScreen from './HomeScreen';
 import { SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
+import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 export default function AppWrapper() {
   const [searching, setSearching] = useState(false);
@@ -13,6 +15,17 @@ export default function AppWrapper() {
   const [buyToken, setBuyToken] = useState<SelectedToken | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sellToken, setSellToken] = useState<SelectedToken | null>(null);
+
+  const { walletAddress: accountAddress } = useTransactionKit();
+
+  const {
+    data: walletPortfolioData,
+    isLoading: walletPortfolioLoading,
+    error: walletPortfolioError,
+  } = useGetWalletPortfolioQuery(
+    { wallet: accountAddress || '', isPnl: false },
+    { skip: !accountAddress }
+  );
 
   const useQuery = () => {
     const { search } = useLocation();
@@ -37,6 +50,9 @@ export default function AppWrapper() {
       setSellToken={setSellToken}
       chains={chains}
       setChains={setChains}
+      walletPortfolioData={walletPortfolioData?.result?.data}
+      walletPortfolioLoading={walletPortfolioLoading}
+      walletPortfolioError={!!walletPortfolioError}
     />
   ) : (
     <HomeScreen
