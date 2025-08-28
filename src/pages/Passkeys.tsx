@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnectors } from 'wagmi';
+import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
 
 // components
 import Button from '../components/Button';
@@ -11,13 +12,62 @@ import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySup
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
+import { createWalletClient, custom, http } from 'viem';
+import { getNetworkViem } from '../apps/deposit/utils/blockchain';
+import { privateKeyToAccount } from 'viem/accounts';
 
 const Passkeys = () => {
   const { address } = useAccount();
+  const connectors = useConnectors();
   const [t] = useTranslation();
   const [isPasskeySupportedState, setIsPasskeySupportedState] = useState(false);
   const [isPasskeyAvailableState, setIsPasskeyAvailableState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [eAddress, setEAddress] = useState("");
+  const [modularSdk, setModularSdk] = useState<ModularSdk | null>(null);
+
+  /**
+   * As soon as an address is connected we need to 
+   * instantiate the ModularSdk with the connector
+   */
+
+  useEffect(() => {
+
+    const initModularSdk = async () => {
+      if (connectors && address) {
+
+        // Find the WalletConnect connector
+        const walletConnectConnector = connectors.find(
+          (connector) => connector.id === 'walletConnect'
+        );
+
+        if (walletConnectConnector) {
+          const provider: any = await walletConnectConnector.getProvider();
+
+          console.log('Provider', provider);
+        
+          const modularSdk = new ModularSdk(createWalletClient({
+            account: privateKeyToAccount(''),
+            chain: getNetworkViem(1),
+            transport: http(),
+          }), {
+            chainId: 1,
+            bundlerProvider: new EtherspotBundler(
+              1,
+              "",
+            ),
+          });
+
+          console.log('ModularSdk initialized', modularSdk);
+          const etherspotAddress = await modularSdk.getCounterFactualAddress();
+          setEAddress(etherspotAddress);
+          setModularSdk(modularSdk);
+        }
+      }
+    }
+
+    initModularSdk();
+  }, [connectors, address]);
 
   // Check passkey support on component mount
   useEffect(() => {
@@ -105,6 +155,31 @@ const Passkeys = () => {
     }
   };
 
+  const handleInstallPasskeyValidator = async () => {
+    // set your module address
+    const moduleAddress = "0x1e02Ff20b604C2B2809193917Ea22D8602126837";
+
+    try {
+      console.log('Installing passkey validator with module address:', moduleAddress);
+      const uoHash = await modularSdk?.installModule(MODULE_TYPE.VALIDATOR, moduleAddress)
+
+      console.log(`UserOpHash: ${uoHash}`);
+
+      // get transaction hash...
+      console.log('Waiting for transaction...');
+      let userOpsReceipt = null;
+      const timeout = Date.now() + 10000; // 10 seconds timeout
+      while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+        await sleep(2);
+        userOpsReceipt = await modularSdk?.getUserOpReceipt(uoHash || '');
+      }
+      console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+    } catch (error) {
+      console.error('Passkey validator installation error:', error);
+      alert('Passkey validator installation failed. Please try again.');
+    } 
+  };
+
   return (
     <Wrapper>
       <LogoContainer>
@@ -116,6 +191,8 @@ const Passkeys = () => {
       </LogoContainer>
       <ContentWrapper>
         <Title>Passkey Management</Title>
+        <p>Connected address: {address}</p>
+        <p>Etherspot address: {eAddress}</p>
         <Description>
           Set up and manage your passkeys for secure authentication.
         </Description>
@@ -144,11 +221,17 @@ const Passkeys = () => {
                 </Button>
                 <Button 
                   onClick={handlePasskeySigning} 
-                  $last 
                   $fullWidth 
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing...' : 'Sign with Passkey'}
+                </Button>
+                <Button
+                  onClick={handleInstallPasskeyValidator} 
+                  $last 
+                  $fullWidth 
+                >
+                  Install Passkey Validator
                 </Button>
               </ButtonContainer>
             ) : (
