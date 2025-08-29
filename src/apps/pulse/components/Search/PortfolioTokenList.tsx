@@ -3,16 +3,17 @@ import { TailSpin } from 'react-loader-spinner';
 // types
 import { PortfolioData } from '../../../../types/api';
 
-// services
+// utils
 import { convertPortfolioAPIResponseToToken } from '../../../../services/pillarXApiWalletPortfolio';
 import {
-  Token,
   chainNameToChainIdTokensData,
+  Token,
 } from '../../../../services/tokensData';
-
-// utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import { limitDigitsNumber } from '../../../../utils/number';
+
+// constants
+import { STABLE_CURRENCIES } from '../../constants/tokens';
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -33,6 +34,43 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
     isError,
     searchText,
   } = props;
+
+  const isStableCurrency = (token: Token) => {
+    const chainId = chainNameToChainIdTokensData(token.blockchain);
+    return STABLE_CURRENCIES.some(
+      (stable) =>
+        stable.chainId === chainId &&
+        stable.address.toLowerCase() === token.contract.toLowerCase()
+    );
+  };
+
+  // Filter out stable currencies and apply search filter
+  const getFilteredPortfolioTokens = () => {
+    if (!walletPortfolioData?.assets) return [];
+
+    let tokens = convertPortfolioAPIResponseToToken(walletPortfolioData)
+      .filter((token) => !isStableCurrency(token))
+      .sort((a: Token, b: Token) => {
+        const balanceUSDA = (a.price || 0) * (a.balance || 0);
+        const balanceUSDB = (b.price || 0) * (b.balance || 0);
+        return balanceUSDB - balanceUSDA; // Sort by highest USD value first
+      });
+
+    // Apply search filter if searchText is provided
+    if (searchText && searchText.trim()) {
+      const searchLower = searchText.toLowerCase();
+      tokens = tokens.filter(
+        (token: Token) =>
+          token.symbol.toLowerCase().includes(searchLower) ||
+          token.name.toLowerCase().includes(searchLower) ||
+          token.contract.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return tokens;
+  };
+
+  const portfolioTokens = getFilteredPortfolioTokens();
 
   // Loading state
   if (isLoading) {
@@ -66,26 +104,6 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
         </p>
       </div>
     );
-  }
-
-  let portfolioTokens = convertPortfolioAPIResponseToToken(
-    walletPortfolioData
-  ).sort((a, b) => {
-    const balanceUSDA = (a.price || 0) * (a.balance || 0);
-    const balanceUSDB = (b.price || 0) * (b.balance || 0);
-    return balanceUSDB - balanceUSDA; // Sort by highest USD value
-  });
-
-  // Filter portfolio tokens based on search text if provided
-  if (searchText && searchText.trim()) {
-    const searchLower = searchText.toLowerCase().trim();
-    portfolioTokens = portfolioTokens.filter((token) => {
-      return (
-        token.symbol?.toLowerCase().includes(searchLower) ||
-        token.name?.toLowerCase().includes(searchLower) ||
-        token.contract?.toLowerCase().includes(searchLower)
-      );
-    });
   }
 
   // Empty portfolio state (either no tokens or no search results)

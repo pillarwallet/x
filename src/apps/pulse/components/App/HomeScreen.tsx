@@ -15,12 +15,13 @@ import useTransactionKit from '../../../../hooks/useTransactionKit';
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   buyToken: SelectedToken | null;
+  sellToken: SelectedToken | null;
   isBuy: boolean;
   setIsBuy: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function HomeScreen(props: HomeScreenProps) {
-  const { buyToken, isBuy, setIsBuy, setSearching } = props;
+  const { buyToken, sellToken, isBuy, setIsBuy, setSearching } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
@@ -177,7 +178,11 @@ export default function HomeScreen(props: HomeScreenProps) {
                 setExpressIntentResponse={setExpressIntentResponse}
               />
             ) : (
-              <Sell />
+              <Sell
+                setSearching={setSearching}
+                token={sellToken}
+                walletPortfolioData={walletPortfolioData}
+              />
             )}
           </div>
         </>

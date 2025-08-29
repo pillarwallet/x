@@ -191,16 +191,29 @@ export default function Search({
         });
       }
     } else {
-      setSellToken({
-        name: 'USDC',
-        symbol: 'USDC',
-        logo: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',
-        usdValue: '0.9998',
+      const sellTokenData = {
+        name: item.name,
+        symbol: item.symbol,
+        logo: item.logo ?? '',
+        usdValue: item.price
+          ? item.price.toFixed(6)
+          : Number.parseFloat('0').toFixed(6),
         dailyPriceChange: -0.02,
-        chainId: 84532,
-        decimals: 6,
-        address: '0x4de0Bb9BA339b16bdc4ac845dedF65a00d63213A',
-      });
+        decimals: item.decimals,
+        address: item.contract,
+      };
+
+      if ('chain' in item) {
+        setSellToken({
+          ...sellTokenData,
+          chainId: chainNameToChainIdTokensData(item.chain),
+        });
+      } else {
+        setSellToken({
+          ...sellTokenData,
+          chainId: chainNameToChainIdTokensData(item.blockchain),
+        });
+      }
     }
     setSearchText('');
     // This keeps MyHoldings filter active when on sell screen
@@ -266,15 +279,25 @@ export default function Search({
         <div className="flex gap-1.5">
           {(isBuy
             ? ['🔥 Trending', '🌱 Fresh', '🚀 Top Gainers', '💰My Holdings']
-            : ['💰My Holdings']
+            : ['My Holdings']
           ).map((item, index) => {
             // For sell screen, always map to MyHoldings index (3)
             const actualIndex = isBuy ? index : 3;
+
+            if (!isBuy) {
+              return (
+                <div key={item} className="flex items-center">
+                  <p className="text-[13px] font-normal text-white tracking-[-0.26px]">
+                    {item}
+                  </p>
+                </div>
+              );
+            }
+
             return (
               <div
                 key={item}
                 className="flex bg-black w-[100px] h-10 rounded-[10px]"
-                style={{ width: isBuy ? 100 : 200 }}
               >
                 <button
                   className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${

@@ -58,6 +58,7 @@ export default function AppWrapper() {
     <HomeScreen
       setSearching={setSearching}
       buyToken={buyToken}
+      sellToken={sellToken}
       isBuy={isBuy}
       setIsBuy={setIsBuy}
     />
