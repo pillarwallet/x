@@ -41,16 +41,16 @@ const UniversalGasTank = () => {
         {(() => {
           if (isBalanceLoading) {
             return (
-              <LoadingBalance>
-                <CircularProgress size={24} style={{ color: '#8b5cf6' }} />
+                <LoadingBalance>
+                <CircularProgress size={24} className="gas-tank-loading-spinner" />
                 <span>Loading balance...</span>
-              </LoadingBalance>
+                </LoadingBalance>
             );
           }
           if (balanceError) {
             return (
               <ErrorBalance>
-                <span>Error loading balance</span>
+                <span>Sorry, we had an issue loading your balance. Try pressing the retry button.</span>
                 <RetryButton onClick={refetch}>Retry</RetryButton>
               </ErrorBalance>
             );

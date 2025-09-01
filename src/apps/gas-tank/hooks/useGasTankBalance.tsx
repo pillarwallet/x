@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useWalletAddress } from '@etherspot/transaction-kit';
+import { logExchangeError } from '../utils/sentry';
 
 interface ChainBalance {
   chainId: string;
@@ -30,11 +31,18 @@ const useGasTankBalance = (): UseGasTankBalanceReturn => {
 
   const fetchGasTankBalance = useCallback(async () => {
     if (!walletAddress) {
+      setError(null);
       setTotalBalance(0);
       setChainBalances([]);
       return;
     }
 
+    if (!paymasterUrl) {
+      setError('Paymaster URL is not configured');
+      setTotalBalance(0);
+      setChainBalances([]);
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -70,6 +78,7 @@ const useGasTankBalance = (): UseGasTankBalanceReturn => {
       const errorMessage =
         err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
+      logExchangeError(errorMessage, { "error": err }, { component: 'useGasTankBalance', action: 'failed_to_fetch_gas_tank_balance' });
       console.error('Error fetching gas tank balance:', err);
 
       // Set default values on error
@@ -78,7 +87,7 @@ const useGasTankBalance = (): UseGasTankBalanceReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [walletAddress]);
+  }, [walletAddress, paymasterUrl]);
 
   // Initial fetch and when wallet address changes
   useEffect(() => {

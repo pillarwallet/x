@@ -39,6 +39,7 @@ import {
 } from '../utils/wrappedTokens';
 import {
   addExchangeBreadcrumb,
+  logExchangeError,
   startExchangeTransaction,
 } from '../utils/sentry';
 
@@ -113,6 +114,7 @@ const useOffer = () => {
       return undefined;
     } catch (e) {
       console.error('Failed to get native fee estimation via LiFi:', e);
+      logExchangeError('Failed to get native fee estimation via LiFi', { "error": e }, { component: 'useOffer', action: 'failed_to_get_native_fee_estimation' });
       return undefined;
     }
   };
@@ -200,6 +202,7 @@ const useOffer = () => {
         'Sorry, an error occurred while trying to fetch the best swap offer. Please try again.',
         e
       );
+      logExchangeError('Failed to get best swap offer via LiFi', { "error": e }, { component: 'useOffer', action: 'failed_to_get_best_swap_offer' });
       // Return undefined instead of empty object on error
       return undefined;
     }
@@ -248,6 +251,7 @@ const useOffer = () => {
       return allowance === BigInt(0) ? undefined : allowance;
     } catch (error) {
       console.error('Failed to check token allowance:', error);
+      logExchangeError('Failed to check token allowance', { "error": error }, { component: 'useOffer', action: 'failed_to_check_token_allowance' });
       return undefined;
     }
   };
@@ -274,10 +278,13 @@ const useOffer = () => {
       route.fromToken.chainId
     );
 
-    // Convert fromAmount (number) to BigInt using token decimals
+    // Convert fromAmount (number) to BigInt using the correct token decimals
+    const decimals = typeof route.fromToken.decimals === 'number' && route.fromToken.decimals > 0
+      ? route.fromToken.decimals
+      : 18; // fallback to 18 if undefined or invalid
     const fromAmountBigInt = parseUnits(
       String(fromAmount),
-      6 // Assuming USDC has 6 decimals
+      decimals
     );
 
     /**
@@ -288,6 +295,7 @@ const useOffer = () => {
 
     // Validate fee receiver address
     if (!feeReceiver) {
+      logExchangeError('Fee receiver address is not configured', { "error": 'Fee receiver address is not configured' }, { component: 'useOffer', action: 'fee_receiver_address_not_configured' });
       throw new Error('Fee receiver address is not configured');
     }
 
@@ -302,6 +310,7 @@ const useOffer = () => {
         getNativeBalanceFromPortfolio(userPortfolio, fromTokenChainId) || '0';
       userNativeBalance = toWei(nativeBalance, 18);
     } catch (e) {
+      logExchangeError('Failed to fetch balances for swap', { "error": e }, { component: 'useOffer', action: 'failed_to_fetch_balances_for_swap' });
       throw new Error('Unable to fetch balances for swap.');
     }
 
@@ -482,6 +491,11 @@ const useOffer = () => {
         });
       }
     } catch (error) {
+      logExchangeError(
+        'Failed to get step transactions:',
+        { "error": error },
+        { component: 'useOffer', action: 'failed_to_get_step_transactions' }
+      );
       console.error('Failed to get step transactions:', error);
       throw error; // Re-throw so the UI can handle it
     }

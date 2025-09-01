@@ -182,6 +182,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [selectedFeeType, setSelectedFeeType] =
     React.useState<string>('Native Token');
   const [gasTankBalance, setGasTankBalance] = React.useState<number>(0);
+  const [fetchingBalances, setFetchingBalances] = React.useState(false);
+  const [defaultSelectedFeeTypeId, setDefaultSelectedFeeTypeId] =
+    React.useState<string>('Gas Tank Paymaster');
 
   const dispatch = useAppDispatch();
   const walletPortfolio = useAppSelector(
@@ -233,9 +236,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     if (!walletPortfolio) return;
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolio);
     if (!selectedAsset) return;
+    setFetchingBalances(true);
     getGasTankBalance(accountAddress ?? '').then((res) => {
       feeTypeOptions.push({
-        id: 'GasTankPaymaster',
+        id: 'Gas Tank Paymaster',
         title: 'Gas Tank Paymaster',
         type: 'token',
         value: '',
@@ -243,22 +247,26 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       if (res) {
         setGasTankBalance(res);
         if (res > 0) {
-          feeTypeOptions.reverse();
           setFeeType(feeTypeOptions);
           setIsPaymaster(true);
           setPaymasterContext({
             mode: 'gasTankPaymaster',
           });
           setSelectedFeeType('Gas Tank Paymaster');
+          setFetchingBalances(false);
         } else {
           setIsPaymaster(false);
           setPaymasterContext(null);
           setSelectedFeeType('Native Token');
+          setDefaultSelectedFeeTypeId('Native Token');
+          setFetchingBalances(false);
         }
       } else {
         setIsPaymaster(false);
+        setFetchingBalances(false);
         setPaymasterContext(null);
         setSelectedFeeType('Native Token');
+        setDefaultSelectedFeeTypeId('Native Token');
       }
     });
     setQueryString(`?chainId=${selectedAsset.chainId}`);
@@ -334,7 +342,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                 token: feeOptions[0].asset.contract,
               });
               setIsPaymaster(true);
-              feeTypeOptions.reverse();
+              setDefaultSelectedFeeTypeId('Gasless');
             }
             setFeeType(feeTypeOptions);
           } else {
@@ -1403,9 +1411,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                   options={feeType}
                   isLoadingOptions={
                     feeAssetOptions.length === 0 &&
-                    selectedFeeType !== 'Gas Tank Paymaster'
+                    fetchingBalances &&
+                    defaultSelectedFeeTypeId === selectedFeeType
                   }
-                  defaultSelectedId={feeType[0].id}
+                  defaultSelectedId={defaultSelectedFeeTypeId}
                 />
               </>
             )}
@@ -1543,11 +1552,8 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             type="token"
             onChange={handleOnChangeFeeAsset}
             options={feeType}
-            isLoadingOptions={
-              feeAssetOptions.length === 0 &&
-              selectedFeeType !== 'Gas Tank Paymaster'
-            }
-            defaultSelectedId={feeType[0].id}
+            isLoadingOptions={feeAssetOptions.length === 0 && fetchingBalances}
+            defaultSelectedId={defaultSelectedFeeTypeId}
           />
           {paymasterContext?.mode === 'commonerc20' &&
             feeAssetOptions.length > 0 && (

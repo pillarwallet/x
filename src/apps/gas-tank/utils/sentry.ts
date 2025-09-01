@@ -7,14 +7,17 @@ export const initSentryForGasTank = () => {
   Sentry.setTag('module', 'gasTank');
 };
 
+let globalWalletAddress: string | null = null;
+
+export const setGlobalWalletAddress = (address: string) => {
+  globalWalletAddress = address;
+};
+
 // Utility to get fallback wallet address for logging
 // This function should be called from within a React component context
 // where the wallet address is available
 export const fallbackWalletAddressForLogging = (): string => {
-  // This is a utility function that should be called from within React components
-  // The actual wallet address should be passed as a parameter or obtained via hook
-  // For now, return unknown as this is a fallback utility
-  return 'unknown_wallet_address';
+  return globalWalletAddress || 'unknown_wallet_address';
 };
 
 // Enhanced Sentry logging with wallet address context

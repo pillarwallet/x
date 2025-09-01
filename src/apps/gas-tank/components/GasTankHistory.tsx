@@ -74,7 +74,7 @@ const GasTankHistory = () => {
     },
   ]);
 
-  const sortedHistory = historyData.sort(
+  const sortedHistory = [...historyData].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 

@@ -11,3 +11,7 @@
     padding: 16px;
   }
 }
+
+.gas-tank-loading-spinner {
+  color: #8b5cf6 !important;
+}

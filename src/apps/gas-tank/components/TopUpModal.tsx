@@ -3,7 +3,7 @@ import { useWalletAddress } from '@etherspot/transaction-kit';
 import { CircularProgress } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { BigNumber } from 'ethers';
-import { formatEther } from 'viem';
+import { formatEther, isAddress } from 'viem';
 import styled from 'styled-components';
 
 // services
@@ -27,6 +27,8 @@ import { formatTokenAmount } from '../utils/converters';
 
 // types
 import { PortfolioData } from '../../../types/api';
+import { logExchangeError, logExchangeEvent } from '../utils/sentry';
+import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 interface TopUpModalProps {
   isOpen: boolean;
@@ -55,6 +57,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   const [amount, setAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   const walletPortfolio = useAppSelector(
     (state) => state.swap.walletPortfolio as PortfolioData | undefined
@@ -81,6 +84,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     }
     if (!isWalletPortfolioDataSuccess || walletPortfolioDataError) {
       if (walletPortfolioDataError) {
+        logExchangeError('Failed to fetch wallet portfolio', { "error": walletPortfolioDataError }, { component: 'TopUpModal', action: 'failed_to_fetch_wallet_portfolio' });
         console.error(walletPortfolioDataError);
       }
       dispatch(setWalletPortfolio(undefined));
@@ -103,6 +107,20 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       setErrorMsg('Gas Tank is not supported on the selected token\'s chain.');
       return;
     }
+    // Validate paymaster URL
+    if (!paymasterUrl) {
+      setErrorMsg('Service unavailable. Please try again later.');
+      return;
+    }
+
+    // Validate amount
+    const n = Number(amount);
+    if (!Number.isFinite(n) || n <= 0 || n > (selectedToken.balance ?? 0)) {
+      setErrorMsg('Enter a valid amount within your balance.');
+      return;
+    }
+    // Reset error if valid
+    setErrorMsg(null);
 
     setIsProcessing(true);
 
@@ -123,6 +141,8 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             slippage: 0.03,
           });
           if (!bestOffer) {
+            logExchangeError('No best offer found for swap', {}, { component: 'TopUpModal', action: 'no_best_offer_found' });
+            setIsProcessing(false);
             setErrorMsg('No best offer found for the swap. Please try a different token or amount.');
             console.warn('No best offer found for swap');
             return;
@@ -151,10 +171,16 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             }
   
             const integerValue = formatEther(bigIntValue);
+            if (!tx.to || !isAddress(tx.to)) {
+              setErrorMsg('Invalid transaction target for swap route. Please try again.');
+              logExchangeEvent('Invalid tx.to in swap step', 'error', { tx }, { component: 'TopUpModal', action: 'invalid_tx_to' });
+              setIsProcessing(false);
+              return;
+            }
             addToBatch({
               title: `Swap to USDC ${index + 1}/${swapTransactions.length}`,
               description: `Convert ${amount} ${selectedToken.symbol} to USDC for Gas Tank`,
-              to: tx.to || '',
+              to: tx.to,
               value: integerValue,
               data: tx.data,
               chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
@@ -166,6 +192,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
           console.warn(
             'Failed to get swap route. Please try a different token or amount.'
           );
+          logExchangeError('Failed to get swap route', { "error": swapError }, { component: 'TopUpModal', action: 'failed_to_get_swap_route' });
           setErrorMsg('Failed to get swap route. Please try a different token or amount.');
           setIsProcessing(false);
           return;
@@ -186,13 +213,14 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error fetching transaction data:', errorText);
+        logExchangeError('Failed to fetch transaction data', { "error": errorText }, { component: 'TopUpModal', action: 'failed_to_fetch_transaction_data' });
         setErrorMsg('Failed to fetch transaction data. Please try again with different token or amount.');
         setIsProcessing(false);
         return;
       }
 
       const transactionData = await response.json();
-      console.log('Transaction data:', transactionData);
+      transactionDebugLog('Gas Tank Top-up transaction data', transactionData);
 
       // Add transactions to batch
       if (Array.isArray(transactionData.result)) {
@@ -255,6 +283,8 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     } catch (error) {
       console.error('Error processing top-up:', error);
       console.warn('Failed to process top-up. Please try again.');
+      logExchangeError('Failed to process top-up', { "error": error }, { component: 'TopUpModal', action: 'failed_to_process_top_up' });
+      setErrorMsg('Failed to process top-up. Please try again.');
     } finally {
       setIsProcessing(false);
     }
