@@ -8,13 +8,14 @@ import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } 
 import Button from '../components/Button';
 
 // services
-import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySupported, isPasskeyAvailable } from '../services/passkeys';
+import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySupported, isPasskeyAvailable, getPasskeyPublicKey, getPasskeyDetails } from '../services/passkeys';
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
-import { createWalletClient, custom, http } from 'viem';
+import { createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { privateKeyToAccount } from 'viem/accounts';
+import { ethers } from 'ethers';
 
 const Passkeys = () => {
   const { address } = useAccount();
@@ -25,6 +26,19 @@ const Passkeys = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [eAddress, setEAddress] = useState("");
   const [modularSdk, setModularSdk] = useState<ModularSdk | null>(null);
+  const [publicKey, setPublicKey] = useState("");
+  const [credentialId, setCredentialId] = useState("");
+
+  // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
+  function getXYCoordinates(publicKeyBase64: string) {
+    const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
+    let b = Array.from(publicKeyBuffer);
+    b = b.slice(-128)
+    const x = b.slice(0,32)
+    const y = b.slice(-32)
+
+    return { x, y };
+  }
 
   /**
    * As soon as an address is connected we need to 
@@ -42,19 +56,37 @@ const Passkeys = () => {
         );
 
         if (walletConnectConnector) {
-          const provider: any = await walletConnectConnector.getProvider();
+          const wcProvider: any = await walletConnectConnector.getProvider();
 
-          console.log('Provider', provider);
-        
-          const modularSdk = new ModularSdk(createWalletClient({
+          console.log('wcProvider', wcProvider);
+
+          /**
+           * createWalletClient({
             account: privateKeyToAccount(''),
             chain: getNetworkViem(1),
             transport: http(),
-          }), {
+          }
+           */
+
+          /**
+           *      const newProvider = createWalletClient({
+                    account: wcAccount as `0x${string}`,
+                    chain: getNetworkViem(1), // Default to mainnet
+                    transport: custom(wcProvider),
+                  });
+           */
+          
+          const newProvider = createWalletClient({
+            account: address as `0x${string}`,
+            chain: getNetworkViem(1), // Default to mainnet
+            transport: custom(wcProvider),
+          });
+
+          const modularSdk = new ModularSdk(newProvider, {
             chainId: 1,
             bundlerProvider: new EtherspotBundler(
               1,
-              "",
+              "eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6ImUwNDExNTU3MjM3NzQ3MzY5MTAyN2YwZjM0NzBmNDVhIiwiaCI6Im11cm11cjEyOCJ9"
             ),
           });
 
@@ -155,30 +187,111 @@ const Passkeys = () => {
     }
   };
 
-  const handleInstallPasskeyValidator = async () => {
-    // set your module address
-    const moduleAddress = "0x1e02Ff20b604C2B2809193917Ea22D8602126837";
+      const handleInstallPasskeyValidator = async () => {
+       if (!publicKey || !credentialId) {
+         alert('Please get your passkey details first by clicking "Get Public Key"');
+         return;
+       }
+   
+       try {
+          // set your module address
+          // https://www.npmjs.com/package/@zerodev/passkey-validator?activeTab=code
+          const moduleAddress = "0xbA45a2BFb8De3D24cA9D7F1B551E14dFF5d690Fd";
 
-    try {
-      console.log('Installing passkey validator with module address:', moduleAddress);
-      const uoHash = await modularSdk?.installModule(MODULE_TYPE.VALIDATOR, moduleAddress)
+         console.log('Installing passkey validator with module address:', moduleAddress);
+         console.log('Using credential ID:', credentialId);
+ 
+         const { x, y } = getXYCoordinates(publicKey);
 
-      console.log(`UserOpHash: ${uoHash}`);
+         // Example values to encode
+         const pubKeyX = BigInt('0x' + Buffer.from(x).toString('hex'))           // replace with your uint256 value
+         const pubKeyY = BigInt('0x' + Buffer.from(y).toString('hex'))           // replace with your uint256 value
+         const authenticatorIdHash = '0x' + Buffer.from(credentialId).toString('hex') // 32-byte hex string
+         const authenticatorIdBigInt = BigInt('0x' + Buffer.from(credentialId).toString('hex'))  
+         
+          console.log('pubKeyX', pubKeyX);
+          console.log('pubKeyY', pubKeyY);
+          console.log('authenticatorIdHash', authenticatorIdHash);
+          console.log('authenticatorIdBigInt', authenticatorIdBigInt);
+   
 
-      // get transaction hash...
-      console.log('Waiting for transaction...');
-      let userOpsReceipt = null;
-      const timeout = Date.now() + 10000; // 10 seconds timeout
-      while ((userOpsReceipt == null) && (Date.now() < timeout)) {
-        await sleep(2);
-        userOpsReceipt = await modularSdk?.getUserOpReceipt(uoHash || '');
-      }
-      console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
-    } catch (error) {
-      console.error('Passkey validator installation error:', error);
-      alert('Passkey validator installation failed. Please try again.');
-    } 
-  };
+      
+          // The ABI parameter description for your use case.
+          // Structs in Solidity map to 'tuple' types.
+          const abiParameters = [
+            {
+              type: "tuple",
+              components: [
+                { type: "uint256" },
+                { type: "uint256" },
+              ]
+            },
+            { type: "bytes32" }
+          ]
+
+          console.log('pubKeyX', pubKeyX);
+          console.log('pubKeyY', pubKeyY);
+          console.log('credentialId', credentialId);
+
+          // const encodedAbiParameters = encodeAbiParameters(abiParameters, [
+          //   {pubKeyX: pubKeyX, pubKeyY: pubKeyY},
+          //   credentialId
+          // ])
+
+          const initData = ethers.utils.defaultAbiCoder.encode(
+            [
+              "tuple(uint256 pubKeyX, uint256 pubKeyY)",
+              "bytes32"
+            ],
+            [
+              [pubKeyX, pubKeyY],
+              ethers.utils.formatBytes32String(credentialId)
+            ]);
+
+      console.log('initData', initData);
+ 
+       const uoHash = await modularSdk?.installModule(MODULE_TYPE.VALIDATOR, moduleAddress, initData);
+ 
+       console.log(`UserOpHash: ${uoHash}`);
+ 
+       // get transaction hash...
+       console.log('Waiting for transaction...');
+       let userOpsReceipt = null;
+       const timeout = Date.now() + 60000; // 60 seconds timeout
+       while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+         await sleep(2);
+         userOpsReceipt = await modularSdk?.getUserOpReceipt(uoHash || '');
+       }
+       console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+     } catch (error) {
+       console.error('Passkey validator installation error:', error);
+       alert('Passkey validator installation failed. Please try again.');
+     } 
+   };
+
+   const handleGetPublicKey = async () => {
+     if (!address) {
+       alert('Please connect your wallet first');
+       return;
+     }
+
+     setIsLoading(true);
+     try {
+       const passkeyDetails = await getPasskeyDetails(address);
+       if (passkeyDetails) {
+         setPublicKey(passkeyDetails.publicKey);
+         setCredentialId(passkeyDetails.credentialId);
+         alert(`Passkey details retrieved successfully!\nPublic Key: ${passkeyDetails.publicKey}\nCredential ID: ${passkeyDetails.credentialId}`);
+       } else {
+         alert('No passkey found for this address');
+       }
+     } catch (error) {
+       console.error('Failed to get passkey details:', error);
+       alert('Failed to retrieve passkey details. Please try again.');
+     } finally {
+       setIsLoading(false);
+     }
+   };
 
   return (
     <Wrapper>
@@ -193,6 +306,8 @@ const Passkeys = () => {
         <Title>Passkey Management</Title>
         <p>Connected address: {address}</p>
         <p>Etherspot address: {eAddress}</p>
+        {publicKey && <p>Public Key: {publicKey}</p>}
+        {credentialId && <p>Credential ID: {credentialId}</p>}
         <Description>
           Set up and manage your passkeys for secure authentication.
         </Description>
@@ -228,10 +343,17 @@ const Passkeys = () => {
                 </Button>
                 <Button
                   onClick={handleInstallPasskeyValidator} 
-                  $last 
                   $fullWidth 
                 >
                   Install Passkey Validator
+                </Button>
+                <Button
+                  onClick={handleGetPublicKey} 
+                  $last 
+                  $fullWidth 
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Getting Public Key...' : 'Get Public Key'}
                 </Button>
               </ButtonContainer>
             ) : (

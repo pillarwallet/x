@@ -127,4 +127,39 @@ export async function isPasskeyAvailable(): Promise<boolean> {
     console.error('Error checking passkey availability:', error);
     return false;
   }
+}
+
+// Get the public key for a user's passkey
+export async function getPasskeyPublicKey(userId: string): Promise<string | null> {
+  try {
+    const result = await callFirebaseFunction('publickey', {
+      userId,
+    });
+    
+    return result.publicKey || null;
+  } catch (error) {
+    console.error('Failed to get passkey public key:', error);
+    return null;
+  }
+}
+
+// Get both public key and credential ID for a user's passkey
+export async function getPasskeyDetails(userId: string): Promise<{ publicKey: string; credentialId: string } | null> {
+  try {
+    const result = await callFirebaseFunction('publickey', {
+      userId,
+    });
+    
+    if (result.publicKey && result.credentialId) {
+      return {
+        publicKey: result.publicKey,
+        credentialId: result.credentialId
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Failed to get passkey details:', error);
+    return null;
+  }
 } 
