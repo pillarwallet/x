@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
-import { toWebAuthnAccount } from 'viem/account-abstraction'
+import { toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
 
 
 // components
@@ -14,9 +14,10 @@ import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySup
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
-import { createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, toBytes, toHex } from 'viem';
+import { createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { ethers } from 'ethers';
+import { mainnet } from 'viem/chains';
 
 const Passkeys = () => {
   const { address } = useAccount();
@@ -30,6 +31,12 @@ const Passkeys = () => {
   const [publicKey, setPublicKey] = useState("");
   const [credentialId, setCredentialId] = useState("");
   const [username, setUsername] = useState("");
+  const [webAuthnAccount, setWebAuthnAccount] = useState<WebAuthnAccount | null>(null);
+
+  const publicClient = createPublicClient({ 
+    chain: mainnet,
+    transport: http()
+  })
 
   // Generate random alphanumeric username
   const generateRandomUsername = (): string => {
@@ -117,6 +124,8 @@ const Passkeys = () => {
       const success = await authenticateWithPasskey(username);
       if (success) {
         alert('Passkey authentication successful!');
+
+        getSenderAddress();
       } else {
         alert('Passkey authentication failed');
       }
@@ -127,6 +136,46 @@ const Passkeys = () => {
       setIsLoading(false);
     }
   };
+
+  /**
+   * Determine what the sender address will be
+   */
+  const getSenderAddress = async () => {
+    if (!username) {
+      alert('Please set a username first');
+      return;
+    }
+    
+    const { x, y } = getXYCoordinates(publicKey);
+    console.log('x', x);
+    console.log('y', y);
+    console.log('username', username);
+
+    // Use viem to call a simulation on the getSenderAddress function
+    // of the entry point 0.7 contract on ethereum mainnet
+    const senderAddress = await publicClient.simulateContract({
+      account: null,
+      address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
+      abi: [
+        {
+          inputs: [
+            { internalType: "bytes", name: "passkeyId", type: "bytes" },
+          ],
+          name: "getSenderAddress",
+          outputs: [],
+          stateMutability: "vinonpayableew",
+          type: "function",
+        },
+      ],
+      functionName: "getSenderAddress",
+      args: [`${Buffer.from(x).toString('hex')}${Buffer.from(y).toString('hex')}${Buffer.from(username).toString('hex')}`],
+    }).catch((error) => {
+      console.error('Error simulating contract:', error);
+      return null;
+    });
+
+    console.log('senderAddress', senderAddress);
+  }
 
   const handlePasskeySigning = async () => {
     if (!address) {
@@ -236,14 +285,14 @@ const Passkeys = () => {
    };
 
    const handleGetPublicKey = async () => {
-     if (!address) {
+     if (!username) {
        alert('Please connect your wallet first');
        return;
      }
 
      setIsLoading(true);
      try {
-       const passkeyDetails = await getPasskeyDetails(address);
+       const passkeyDetails = await getPasskeyDetails(username);
        if (passkeyDetails) {
          setPublicKey(passkeyDetails.publicKey);
          setCredentialId(passkeyDetails.credentialId);
@@ -292,7 +341,7 @@ const Passkeys = () => {
           Set up and manage your passkeys for secure authentication.
         </Description>
         
-        {!address ? (
+        {!username ? (
           <WalletRequired>
             <p>Please connect your wallet to manage passkeys.</p>
           </WalletRequired>
