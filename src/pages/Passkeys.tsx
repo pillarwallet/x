@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
+import { toWebAuthnAccount } from 'viem/account-abstraction'
+
 
 // components
 import Button from '../components/Button';
@@ -14,7 +16,6 @@ import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySup
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
 import { createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
-import { privateKeyToAccount } from 'viem/accounts';
 import { ethers } from 'ethers';
 
 const Passkeys = () => {
@@ -28,6 +29,18 @@ const Passkeys = () => {
   const [modularSdk, setModularSdk] = useState<ModularSdk | null>(null);
   const [publicKey, setPublicKey] = useState("");
   const [credentialId, setCredentialId] = useState("");
+  const [username, setUsername] = useState("");
+
+  // Generate random alphanumeric username
+  const generateRandomUsername = (): string => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const length = 12; // Generate 12 character username
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  };
 
   // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
   function getXYCoordinates(publicKeyBase64: string) {
@@ -40,66 +53,19 @@ const Passkeys = () => {
     return { x, y };
   }
 
-  /**
-   * As soon as an address is connected we need to 
-   * instantiate the ModularSdk with the connector
-   */
-
+  // Generate and store random username if not exists
   useEffect(() => {
-
-    const initModularSdk = async () => {
-      if (connectors && address) {
-
-        // Find the WalletConnect connector
-        const walletConnectConnector = connectors.find(
-          (connector) => connector.id === 'walletConnect'
-        );
-
-        if (walletConnectConnector) {
-          const wcProvider: any = await walletConnectConnector.getProvider();
-
-          console.log('wcProvider', wcProvider);
-
-          /**
-           * createWalletClient({
-            account: privateKeyToAccount(''),
-            chain: getNetworkViem(1),
-            transport: http(),
-          }
-           */
-
-          /**
-           *      const newProvider = createWalletClient({
-                    account: wcAccount as `0x${string}`,
-                    chain: getNetworkViem(1), // Default to mainnet
-                    transport: custom(wcProvider),
-                  });
-           */
-          
-          const newProvider = createWalletClient({
-            account: address as `0x${string}`,
-            chain: getNetworkViem(1), // Default to mainnet
-            transport: custom(wcProvider),
-          });
-
-          const modularSdk = new ModularSdk(newProvider, {
-            chainId: 1,
-            bundlerProvider: new EtherspotBundler(
-              1,
-              "eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6ImUwNDExNTU3MjM3NzQ3MzY5MTAyN2YwZjM0NzBmNDVhIiwiaCI6Im11cm11cjEyOCJ9"
-            ),
-          });
-
-          console.log('ModularSdk initialized', modularSdk);
-          const etherspotAddress = await modularSdk.getCounterFactualAddress();
-          setEAddress(etherspotAddress);
-          setModularSdk(modularSdk);
-        }
-      }
+    const existingUsername = localStorage.getItem('username');
+    if (!existingUsername) {
+      const randomUsername = generateRandomUsername();
+      setUsername(randomUsername);
+      localStorage.setItem('username', randomUsername);
+      console.log('Generated and stored random username:', randomUsername);
+    } else {
+      console.log('Existing username found:', existingUsername);
+      setUsername(existingUsername);
     }
-
-    initModularSdk();
-  }, [connectors, address]);
+  }, []);
 
   // Check passkey support on component mount
   useEffect(() => {
@@ -119,14 +85,14 @@ const Passkeys = () => {
   }, []);
 
   const handlePasskeyRegistration = async () => {
-    if (!address) {
-      alert('Please connect your wallet first');
+    if (!username) {
+      alert('Please set a username first');
       return;
     }
 
     setIsLoading(true);
     try {
-      const success = await registerPasskey(address, `user_${address.slice(0, 8)}`);
+      const success = await registerPasskey(username, `PillarX User: ${username}`);
       if (success) {
         alert('Passkey registration successful!');
       } else {
@@ -141,14 +107,14 @@ const Passkeys = () => {
   };
 
   const handlePasskeyAuthentication = async () => {
-    if (!address) {
+    if (!username) {
       alert('Please connect your wallet first');
       return;
     }
 
     setIsLoading(true);
     try {
-      const success = await authenticateWithPasskey(address);
+      const success = await authenticateWithPasskey(username);
       if (success) {
         alert('Passkey authentication successful!');
       } else {
@@ -281,6 +247,20 @@ const Passkeys = () => {
        if (passkeyDetails) {
          setPublicKey(passkeyDetails.publicKey);
          setCredentialId(passkeyDetails.credentialId);
+
+         const publicKeyAsHex = `0x${Buffer.from(passkeyDetails.publicKey, 'base64').toString('hex')}`;
+
+         const webAuthnAccount = toWebAuthnAccount({
+          credential: {
+            id: passkeyDetails.credentialId,
+            publicKey: publicKeyAsHex as `0x${string}`,
+          },
+          rpId: 'localhost',
+         });
+
+         console.log('passkeyDetails publicKey', publicKeyAsHex);
+         console.log('webAuthnAccount', webAuthnAccount);
+
          alert(`Passkey details retrieved successfully!\nPublic Key: ${passkeyDetails.publicKey}\nCredential ID: ${passkeyDetails.credentialId}`);
        } else {
          alert('No passkey found for this address');
@@ -304,7 +284,7 @@ const Passkeys = () => {
       </LogoContainer>
       <ContentWrapper>
         <Title>Passkey Management</Title>
-        <p>Connected address: {address}</p>
+        <p>Username: {username}</p>
         <p>Etherspot address: {eAddress}</p>
         {publicKey && <p>Public Key: {publicKey}</p>}
         {credentialId && <p>Credential ID: {credentialId}</p>}
