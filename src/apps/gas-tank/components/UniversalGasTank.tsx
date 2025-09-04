@@ -2,21 +2,32 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { CircularProgress } from '@mui/material';
+import { useWalletAddress } from '@etherspot/transaction-kit';
 
 // components
 import TopUpModal from './TopUpModal';
 
 // hooks
 import useGasTankBalance from '../hooks/useGasTankBalance';
+import { useGasTankHistory } from './GasTankHistory'; // import the hook
 
 const UniversalGasTank = () => {
+  const walletAddress = useWalletAddress();
   const {
     totalBalance,
     isLoading: isBalanceLoading,
     error: balanceError,
     refetch,
   } = useGasTankBalance();
-  const [totalSpend] = useState(82.97);
+
+  // Use the custom hook to get totalSpend from history
+  const {
+    totalSpend = 0,
+    loading: isHistoryLoading,
+    error: historyError,
+    refetch: refetchHistory,
+  } = useGasTankHistory(walletAddress);
+
   const [showTopUpModal, setShowTopUpModal] = useState(false);
 
   const handleTopUp = () => {
@@ -68,7 +79,11 @@ const UniversalGasTank = () => {
 
       <SpendInfo>
         <SpendLabel>Total Spend:</SpendLabel>
-        <SpendAmount>${totalSpend}</SpendAmount>
+        <SpendAmount>
+          {isHistoryLoading || historyError
+            ? '$0.00'
+            : `$${totalSpend.toFixed(2)}`}
+        </SpendAmount>
       </SpendInfo>
 
       <DetailedDescription>

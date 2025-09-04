@@ -250,6 +250,62 @@ function formatTokenValue(amount: string): string {
   return formatUnits(BigInt(amount), 6);
 }
 
+/**
+ * Custom hook to fetch and expose gas tank history and total spend.
+ */
+export function useGasTankHistory(walletAddress: string | undefined) {
+  const [historyData, setHistoryData] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  // Calculate total spend (sum of all Spend amounts)
+  const totalSpend = historyData
+    .filter((entry) => entry.type === 'Spend')
+    .reduce((acc, entry) => acc + Number(entry.amount.replace(/[^0-9.-]+/g, '')), 0);
+
+  const fetchHistory = () => {
+    if (!walletAddress) return;
+    setLoading(true);
+    setError(false);
+    fetch(`${API_URL}/getGasTankHistory?sender=${walletAddress}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const entries: HistoryEntry[] = (data.history || []).map((item: any, idx: number) => {
+          const isDeposit = item.transactionType === 'Deposit';
+          return {
+            id: String(idx + 1),
+            date: formatTimestamp(item.timestamp),
+            type: isDeposit ? 'Top-up' : 'Spend',
+            amount: formatAmount(item.amount, isDeposit),
+            token: {
+              symbol: 'USDC',
+              value: formatTokenValue(item.amount),
+              icon: isDeposit ? '🔵' : '🔴',
+            },
+          };
+        });
+        setHistoryData(entries);
+      })
+      .catch(() => {
+        setHistoryData([]);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
+
+  return { historyData, loading, error, totalSpend, refetch: fetchHistory };
+}
+
 // Styled-components for layout and table styling
 
 const Loading = styled.div`
