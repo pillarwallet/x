@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
+import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
@@ -23,12 +24,17 @@ import { SelectedToken } from '../../types/tokens';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 
+// context
+import { useLoading } from '../../contexts/LoadingContext';
+import { useRefresh } from '../../contexts/RefreshContext';
+
 interface PreviewSellProps {
   closePreview: () => void;
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
+  onRefresh?: () => void;
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -38,12 +44,15 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     walletPortfolioData,
+    onRefresh,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const { getUSDCAddress, executeSell, error } = useRelaySell();
   const { transactionDebugLog } = useTransactionDebugLogger();
+  const { setRefreshPreviewSellCallback, isRefreshing } = useRefresh();
+  const { isQuoteLoading } = useLoading();
 
   useEffect(() => {
     if (isCopied) {
@@ -85,6 +94,18 @@ const PreviewSell = (props: PreviewSellProps) => {
   const userTokenBalance = getTokenBalance();
 
   const usdcAddress = getUSDCAddress(sellToken?.chainId || 0);
+
+  // Refresh function for PreviewSell component
+  const refreshPreviewSellData = useCallback(async () => {
+    if (onRefresh) {
+      await onRefresh();
+    }
+  }, [onRefresh]);
+
+  // Register refresh callback
+  useEffect(() => {
+    setRefreshPreviewSellCallback(() => refreshPreviewSellData);
+  }, [setRefreshPreviewSellCallback, refreshPreviewSellData]);
 
   const detailsEntry = (
     lhs: string,
@@ -169,7 +190,13 @@ const PreviewSell = (props: PreviewSellProps) => {
               padding: '2px 2px 4px 2px',
             }}
           >
-            <Refresh />
+            <Refresh
+              onClick={refreshPreviewSellData}
+              isLoading={isQuoteLoading || isRefreshing}
+              disabled={
+                !sellToken || !tokenAmount || isQuoteLoading || isRefreshing
+              }
+            />
           </div>
 
           <div
@@ -288,12 +315,20 @@ const PreviewSell = (props: PreviewSellProps) => {
           </div>
         </div>
         <div className="flex flex-col justify-center text-right">
-          <div className="text-xs font-normal text-white">
-            {usdcAmountFormatted}
-          </div>
-          <div className="text-xs font-normal text-white/50">
-            ${usdcAmount.toFixed(2)}
-          </div>
+          {isQuoteLoading ? (
+            <div className="flex items-center justify-end">
+              <TailSpin color="#FFFFFF" height={15} width={15} />
+            </div>
+          ) : (
+            <>
+              <div className="text-xs font-normal text-white">
+                {usdcAmountFormatted}
+              </div>
+              <div className="text-xs font-normal text-white/50">
+                ${usdcAmount.toFixed(2)}
+              </div>
+            </>
+          )}
         </div>
       </div>
 

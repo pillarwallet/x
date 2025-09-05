@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isAddress } from 'viem';
-import Search from '../Search/Search';
-import HomeScreen from './HomeScreen';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
+import { LoadingProvider } from '../../contexts/LoadingContext';
+import { RefreshProvider } from '../../contexts/RefreshContext';
 import { SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
-import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
-import useTransactionKit from '../../../../hooks/useTransactionKit';
+import Search from '../Search/Search';
+import HomeScreen from './HomeScreen';
 
 export default function AppWrapper() {
   const [searching, setSearching] = useState(false);
@@ -42,25 +44,31 @@ export default function AppWrapper() {
     }
   }, [setSearching, query]);
 
-  return searching ? (
-    <Search
-      setSearching={setSearching}
-      isBuy={isBuy}
-      setBuyToken={setBuyToken}
-      setSellToken={setSellToken}
-      chains={chains}
-      setChains={setChains}
-      walletPortfolioData={walletPortfolioData?.result?.data}
-      walletPortfolioLoading={walletPortfolioLoading}
-      walletPortfolioError={!!walletPortfolioError}
-    />
-  ) : (
-    <HomeScreen
-      setSearching={setSearching}
-      buyToken={buyToken}
-      sellToken={sellToken}
-      isBuy={isBuy}
-      setIsBuy={setIsBuy}
-    />
+  return (
+    <LoadingProvider>
+      <RefreshProvider>
+        {searching ? (
+          <Search
+            setSearching={setSearching}
+            isBuy={isBuy}
+            setBuyToken={setBuyToken}
+            setSellToken={setSellToken}
+            chains={chains}
+            setChains={setChains}
+            walletPortfolioData={walletPortfolioData?.result?.data}
+            walletPortfolioLoading={walletPortfolioLoading}
+            walletPortfolioError={!!walletPortfolioError}
+          />
+        ) : (
+          <HomeScreen
+            setSearching={setSearching}
+            buyToken={buyToken}
+            sellToken={sellToken}
+            isBuy={isBuy}
+            setIsBuy={setIsBuy}
+          />
+        )}
+      </RefreshProvider>
+    </LoadingProvider>
   );
 }

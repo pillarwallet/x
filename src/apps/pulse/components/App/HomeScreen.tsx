@@ -20,6 +20,10 @@ import Sell from '../Sell/Sell';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { SellOffer } from '../../hooks/useRelaySell';
 
+// context
+import { useLoading } from '../../contexts/LoadingContext';
+import { useRefresh } from '../../contexts/RefreshContext';
+
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   buyToken: SelectedToken | null;
@@ -31,6 +35,8 @@ interface HomeScreenProps {
 export default function HomeScreen(props: HomeScreenProps) {
   const { buyToken, sellToken, isBuy, setIsBuy, setSearching } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
+  const { refreshSell, isRefreshing } = useRefresh();
+  const { isQuoteLoading } = useLoading();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
@@ -74,6 +80,7 @@ export default function HomeScreen(props: HomeScreenProps) {
           sellOffer={sellOffer}
           tokenAmount={tokenAmount}
           walletPortfolioData={walletPortfolioData}
+          onRefresh={refreshSell}
         />
       );
     }
@@ -179,7 +186,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                   padding: '2px 2px 4px 2px',
                 }}
               >
-                <Refresh />
+                <Refresh
+                  onClick={isBuy ? undefined : refreshSell}
+                  isLoading={isBuy ? false : isQuoteLoading || isRefreshing}
+                  disabled={
+                    isBuy ||
+                    isQuoteLoading ||
+                    isRefreshing ||
+                    (!buyToken && !sellToken)
+                  }
+                />
               </div>
 
               <div

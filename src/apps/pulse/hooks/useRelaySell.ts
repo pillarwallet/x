@@ -17,6 +17,9 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 import useTransactionKit from '../../../hooks/useTransactionKit';
 import useRelaySdk from './useRelaySdk';
 
+// context
+import { useLoading } from '../contexts/LoadingContext';
+
 // constants
 import { STABLE_CURRENCIES } from '../constants/tokens';
 
@@ -56,6 +59,7 @@ export default function useRelaySell() {
   const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { transactionDebugLog } = useTransactionDebugLogger();
   const { isZeroAddress } = EtherspotUtils;
+  const { setQuoteLoading } = useLoading();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -148,6 +152,7 @@ export default function useRelaySell() {
       }
 
       setIsLoading(true);
+      setQuoteLoading(true);
       setError(null);
 
       try {
@@ -237,8 +242,10 @@ export default function useRelaySell() {
         return null;
       } finally {
         setIsLoading(false);
+        setQuoteLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isInitialized, accountAddress]
   );
 

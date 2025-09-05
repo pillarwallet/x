@@ -24,6 +24,9 @@ import SellButton from './SellButton';
 // hooks
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
+// context
+import { useRefresh } from '../../contexts/RefreshContext';
+
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   token: SelectedToken | null;
@@ -50,6 +53,7 @@ const Sell = (props: SellProps) => {
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
 
   const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
+  const { setRefreshSellCallback } = useRefresh();
 
   const fetchSellOffer = useCallback(async () => {
     if (
@@ -139,6 +143,19 @@ const Sell = (props: SellProps) => {
   useEffect(() => {
     fetchSellOffer();
   }, [fetchSellOffer]);
+
+  // Refresh function for Sell component
+  const refreshSellData = useCallback(async () => {
+    if (debouncedTokenAmount && token && isInitialized) {
+      // Re-trigger the getBestSellOffer call by calling fetchSellOffer directly
+      await fetchSellOffer();
+    }
+  }, [debouncedTokenAmount, token, isInitialized, fetchSellOffer]);
+
+  // Register refresh callback
+  useEffect(() => {
+    setRefreshSellCallback(() => refreshSellData);
+  }, [setRefreshSellCallback, refreshSellData]);
 
   return (
     <>
