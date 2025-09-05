@@ -287,7 +287,7 @@ export default function Search({
             if (!isBuy) {
               return (
                 <div key={item} className="flex items-center">
-                  <p className="text-[13px] font-normal text-white tracking-[-0.26px]">
+                  <p className="text-[13px] font-normal text-white tracking-[-0.26px] px-3">
                     {item}
                   </p>
                 </div>

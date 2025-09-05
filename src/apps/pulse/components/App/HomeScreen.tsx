@@ -1,16 +1,24 @@
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
 import { Dispatch, SetStateAction, useState } from 'react';
+
+// services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
-import SearchIcon from '../../assets/seach-icon.svg';
+
+// types
 import { PayingToken, SelectedToken } from '../../types/tokens';
+
+// components
+import SearchIcon from '../../assets/seach-icon.svg';
 import Buy from '../Buy/Buy';
 import PreviewBuy from '../Buy/PreviewBuy';
 import Refresh from '../Misc/Refresh';
 import Settings from '../Misc/Settings';
+import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { SellOffer } from '../../hooks/useRelaySell';
 
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -24,12 +32,21 @@ export default function HomeScreen(props: HomeScreenProps) {
   const { buyToken, sellToken, isBuy, setIsBuy, setSearching } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const [previewBuy, setPreviewBuy] = useState(false);
+  const [previewSell, setPreviewSell] = useState(false);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
+  const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
+  const [tokenAmount, setTokenAmount] = useState<string>('');
 
   const closePreviewBuy = () => {
     setPreviewBuy(false);
+  };
+
+  const closePreviewSell = () => {
+    setPreviewSell(false);
+    setSellOffer(null);
+    setTokenAmount('');
   };
 
   const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
@@ -37,156 +54,179 @@ export default function HomeScreen(props: HomeScreenProps) {
     { skip: !accountAddress }
   );
 
-  return (
-    <div
-      className="flex flex-col items-center justify-center min-h-screen"
-      style={{ backgroundColor: 'black' }}
-    >
-      {previewBuy ? (
+  const renderPreview = () => {
+    if (previewBuy) {
+      return (
         <PreviewBuy
           closePreview={closePreviewBuy}
           buyToken={buyToken}
           payingTokens={payingTokens}
           expressIntentResponse={expressIntentResponse}
         />
-      ) : (
-        <>
-          <button
-            className="flex items-center justify-center"
-            style={{
-              border: '2px solid #1E1D24',
-              width: 446,
-              height: 40,
-              backgroundColor: '#121116',
-              borderRadius: 10,
-            }}
-            onClick={() => {
-              setSearching(true);
-            }}
-            type="button"
-          >
-            <span style={{ marginLeft: 10 }}>
-              <img src={SearchIcon} alt="search-icon" />
-            </span>
-            <div className="flex-1 w-fit" style={{ color: 'grey' }}>
-              Search by token or paste address
+      );
+    }
+
+    if (previewSell) {
+      return (
+        <PreviewSell
+          closePreview={closePreviewSell}
+          sellToken={sellToken}
+          sellOffer={sellOffer}
+          tokenAmount={tokenAmount}
+          walletPortfolioData={walletPortfolioData}
+        />
+      );
+    }
+
+    return (
+      <>
+        <button
+          className="flex items-center justify-center"
+          style={{
+            border: '2px solid #1E1D24',
+            width: 446,
+            height: 40,
+            backgroundColor: '#121116',
+            borderRadius: 10,
+          }}
+          onClick={() => {
+            setSearching(true);
+          }}
+          type="button"
+        >
+          <span style={{ marginLeft: 10 }}>
+            <img src={SearchIcon} alt="search-icon" />
+          </span>
+          <div className="flex-1 w-fit" style={{ color: 'grey' }}>
+            Search by token or paste address
+          </div>
+        </button>
+        <div
+          className="flex flex-col"
+          style={{
+            border: '2px solid #1E1D24',
+            width: 446,
+            height: 264,
+            backgroundColor: '#121116',
+            borderRadius: 10,
+            marginTop: 40,
+          }}
+        >
+          {/* buy/sell, refresh, settings */}
+          <div className="flex">
+            <div
+              className="flex"
+              style={{
+                width: 318,
+                height: 40,
+                backgroundColor: 'black',
+                borderRadius: 10,
+                marginTop: 10,
+                marginLeft: 10,
+              }}
+            >
+              <button
+                className="flex-1"
+                style={
+                  isBuy
+                    ? {
+                        backgroundColor: '#121116',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
+                    : {
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
+                }
+                onClick={() => setIsBuy(true)}
+                type="button"
+              >
+                <p className="text-center">Buy</p>
+              </button>
+              <button
+                className="flex-1 items-center justify-center"
+                style={
+                  !isBuy
+                    ? {
+                        backgroundColor: '#121116',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
+                    : {
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
+                }
+                onClick={() => setIsBuy(false)}
+                type="button"
+              >
+                <p className="text-center">Sell</p>
+              </button>
             </div>
-          </button>
-          <div
-            className="flex flex-col"
-            style={{
-              border: '2px solid #1E1D24',
-              width: 446,
-              height: 264,
-              backgroundColor: '#121116',
-              borderRadius: 10,
-              marginTop: 40,
-            }}
-          >
-            {/* buy/sell, refresh, settings */}
-            <div className="flex">
+            <div className="flex" style={{ marginTop: 10 }}>
               <div
-                className="flex"
                 style={{
-                  width: 318,
-                  height: 40,
+                  marginLeft: 12,
                   backgroundColor: 'black',
                   borderRadius: 10,
-                  marginTop: 10,
-                  marginLeft: 10,
+                  width: 40,
+                  height: 40,
+                  padding: '2px 2px 4px 2px',
                 }}
               >
-                <button
-                  className="flex-1"
-                  style={
-                    isBuy
-                      ? {
-                          backgroundColor: '#121116',
-                          borderRadius: 10,
-                          margin: 4,
-                        }
-                      : {
-                          backgroundColor: 'black',
-                          borderRadius: 10,
-                          margin: 4,
-                          color: 'grey',
-                        }
-                  }
-                  onClick={() => setIsBuy(true)}
-                  type="button"
-                >
-                  <p className="text-center">Buy</p>
-                </button>
-                <button
-                  className="flex-1 items-center justify-center"
-                  style={
-                    !isBuy
-                      ? {
-                          backgroundColor: '#121116',
-                          borderRadius: 10,
-                          margin: 4,
-                        }
-                      : {
-                          backgroundColor: 'black',
-                          borderRadius: 10,
-                          margin: 4,
-                          color: 'grey',
-                        }
-                  }
-                  onClick={() => setIsBuy(false)}
-                  type="button"
-                >
-                  <p className="text-center">Sell</p>
-                </button>
+                <Refresh />
               </div>
-              <div className="flex" style={{ marginTop: 10 }}>
-                <div
-                  style={{
-                    marginLeft: 12,
-                    backgroundColor: 'black',
-                    borderRadius: 10,
-                    width: 40,
-                    height: 40,
-                    padding: '2px 2px 4px 2px',
-                  }}
-                >
-                  <Refresh />
-                </div>
 
-                <div
-                  style={{
-                    marginLeft: 12,
-                    backgroundColor: 'black',
-                    borderRadius: 10,
-                    width: 40,
-                    height: 40,
-                    padding: '2px 2px 4px 2px',
-                  }}
-                >
-                  <Settings />
-                </div>
+              <div
+                style={{
+                  marginLeft: 12,
+                  backgroundColor: 'black',
+                  borderRadius: 10,
+                  width: 40,
+                  height: 40,
+                  padding: '2px 2px 4px 2px',
+                }}
+              >
+                <Settings />
               </div>
             </div>
-            {isBuy ? (
-              <Buy
-                setSearching={setSearching}
-                token={buyToken}
-                walletPortfolioData={walletPortfolioData}
-                payingTokens={payingTokens}
-                setPreviewBuy={setPreviewBuy}
-                setPayingTokens={setPayingTokens}
-                setExpressIntentResponse={setExpressIntentResponse}
-              />
-            ) : (
-              <Sell
-                setSearching={setSearching}
-                token={sellToken}
-                walletPortfolioData={walletPortfolioData}
-              />
-            )}
           </div>
-        </>
-      )}
+          {isBuy ? (
+            <Buy
+              setSearching={setSearching}
+              token={buyToken}
+              walletPortfolioData={walletPortfolioData}
+              payingTokens={payingTokens}
+              setPreviewBuy={setPreviewBuy}
+              setPayingTokens={setPayingTokens}
+              setExpressIntentResponse={setExpressIntentResponse}
+            />
+          ) : (
+            <Sell
+              setSearching={setSearching}
+              token={sellToken}
+              walletPortfolioData={walletPortfolioData}
+              setPreviewSell={setPreviewSell}
+              setSellOffer={setSellOffer}
+              setTokenAmount={setTokenAmount}
+            />
+          )}
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center min-h-screen"
+      style={{ backgroundColor: 'black' }}
+    >
+      {renderPreview()}
     </div>
   );
 }

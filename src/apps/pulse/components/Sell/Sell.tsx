@@ -1,5 +1,11 @@
 import { parseInt } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 // types
 import { WalletPortfolioMobulaResponse } from '../../../../types/api';
@@ -13,37 +19,91 @@ import { limitDigitsNumber } from '../../../../utils/number';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WarningIcon from '../../assets/warning.svg';
+import SellButton from './SellButton';
+
+// hooks
+import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   token: SelectedToken | null;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
+  setPreviewSell: Dispatch<SetStateAction<boolean>>;
+  setSellOffer: Dispatch<SetStateAction<SellOffer | null>>;
+  setTokenAmount: Dispatch<SetStateAction<string>>;
 }
 
 const Sell = (props: SellProps) => {
-  const { setSearching, token, walletPortfolioData } = props;
+  const {
+    setSearching,
+    token,
+    walletPortfolioData,
+    setPreviewSell,
+    setSellOffer,
+    setTokenAmount: setParentTokenAmount,
+  } = props;
   const [tokenAmount, setTokenAmount] = useState<string>('');
+  const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
+  const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
+  const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
+
+  const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
+
+  const fetchSellOffer = useCallback(async () => {
+    if (
+      debouncedTokenAmount &&
+      token &&
+      isInitialized &&
+      parseFloat(debouncedTokenAmount) > 0 &&
+      !notEnoughLiquidity
+    ) {
+      setIsLoadingOffer(true);
+      try {
+        const offer = await getBestSellOffer({
+          fromAmount: debouncedTokenAmount,
+          fromTokenAddress: token.address,
+          fromChainId: token.chainId,
+          fromTokenDecimals: token.decimals,
+        });
+        setLocalSellOffer(offer);
+      } catch (error) {
+        console.error('Failed to fetch sell offer:', error);
+        setLocalSellOffer(null);
+      } finally {
+        setIsLoadingOffer(false);
+      }
+    } else if (!debouncedTokenAmount || parseFloat(debouncedTokenAmount) <= 0) {
+      setLocalSellOffer(null);
+      setIsLoadingOffer(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedTokenAmount, token, isInitialized, notEnoughLiquidity]);
 
   // Get the user's balance for the selected token
   const getTokenBalance = () => {
-    if (!token || !walletPortfolioData?.result?.data?.assets) return 0;
+    try {
+      if (!token || !walletPortfolioData?.result?.data?.assets) return 0;
 
-    // Find the asset in the portfolio
-    const assetData = walletPortfolioData.result.data.assets.find(
-      (asset) => asset.asset.symbol === token.symbol
-    );
+      // Find the asset in the portfolio
+      const assetData = walletPortfolioData.result.data.assets.find(
+        (asset) => asset.asset.symbol === token.symbol
+      );
 
-    if (!assetData) return 0;
+      if (!assetData) return 0;
 
-    // Find the contract balance for the specific token address
-    const contractBalance = assetData.contracts_balances.find(
-      (contract) =>
-        contract.address.toLowerCase() === token.address.toLowerCase()
-    );
-
-    return contractBalance?.balance || 0;
+      // Find the contract balance for the specific token address and chain
+      const contractBalance = assetData.contracts_balances.find(
+        (contract) =>
+          contract.address.toLowerCase() === token.address.toLowerCase() &&
+          contract.chainId === `evm:${token.chainId}`
+      );
+      return contractBalance?.balance || 0;
+    } catch (error) {
+      console.error('Error getting token balance:', error);
+      return 0;
+    }
   };
 
   const tokenBalance = getTokenBalance();
@@ -53,6 +113,7 @@ const Sell = (props: SellProps) => {
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setTokenAmount(input);
+      setParentTokenAmount(input);
 
       if (input && token) {
         const inputAmount = parseFloat(input);
@@ -62,6 +123,22 @@ const Sell = (props: SellProps) => {
       }
     }
   };
+
+  // Debounce token amount changes to fetch sell offers
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (tokenAmount && !Number.isNaN(parseFloat(tokenAmount))) {
+        setDebouncedTokenAmount(tokenAmount);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [tokenAmount]);
+
+  // Fetch sell offer when debounced amount changes
+  useEffect(() => {
+    fetchSellOffer();
+  }, [fetchSellOffer]);
 
   return (
     <>
@@ -156,13 +233,13 @@ const Sell = (props: SellProps) => {
         </div>
         <div className="flex justify-between m-2.5">
           <div className="flex">
-            {notEnoughLiquidity && (
+            {(notEnoughLiquidity || relayError) && (
               <>
                 <div className="flex items-center justify-center">
                   <img src={WarningIcon} alt="warning" />
                 </div>
                 <div className="underline text-[#FF366C] text-xs ml-1.5">
-                  Not enough liquidity
+                  {relayError || 'Not enough liquidity'}
                 </div>
               </>
             )}
@@ -211,10 +288,16 @@ const Sell = (props: SellProps) => {
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
-                      setTokenAmount(tokenBalance.toFixed(6));
+                      const amount = tokenBalance.toFixed(6);
+                      setTokenAmount(amount);
+                      setParentTokenAmount(amount);
                     } else {
-                      const amount = (tokenBalance * percentage) / 100;
-                      setTokenAmount(amount.toFixed(6));
+                      const amount = (
+                        (tokenBalance * percentage) /
+                        100
+                      ).toFixed(6);
+                      setTokenAmount(amount);
+                      setParentTokenAmount(amount);
                     }
                   }
                 }}
@@ -230,21 +313,16 @@ const Sell = (props: SellProps) => {
 
       {/* sell button */}
       <div className="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5">
-        <button
-          className="flex flex-1 items-center justify-center rounded-[10px] text-white text-base font-medium disabled:opacity-50"
-          style={{
-            backgroundColor: '#121116',
-          }}
-          type="button"
-          disabled={
-            !token ||
-            !tokenAmount ||
-            parseFloat(tokenAmount) <= 0 ||
-            notEnoughLiquidity
-          }
-        >
-          Sell
-        </button>
+        <SellButton
+          token={token}
+          tokenAmount={tokenAmount}
+          notEnoughLiquidity={notEnoughLiquidity}
+          setPreviewSell={setPreviewSell}
+          setSellOffer={setSellOffer}
+          sellOffer={sellOffer}
+          isLoadingOffer={isLoadingOffer}
+          isInitialized={isInitialized}
+        />
       </div>
     </>
   );
