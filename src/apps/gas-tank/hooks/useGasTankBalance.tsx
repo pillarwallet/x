@@ -94,6 +94,18 @@ const useGasTankBalance = (): UseGasTankBalanceReturn => {
     fetchGasTankBalance();
   }, [fetchGasTankBalance]);
 
+  // Auto-refresh every 30 seconds when component is active
+  useEffect(() => {
+    if (!walletAddress) return;
+
+    const interval = setInterval(() => {
+      fetchGasTankBalance();
+    }, 30000); // 30 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [walletAddress, fetchGasTankBalance]);
+
   return {
     totalBalance,
     chainBalances,

@@ -540,9 +540,17 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
                           <ChainName>{token.blockchain}</ChainName>
                         </TokenDetails>
                       </TokenInfo>
-                      <TokenBalance>
-                        {formatTokenAmount(token.balance)}
-                      </TokenBalance>
+                      <TokenBalanceContainer>
+                        <TokenBalance>
+                          {formatTokenAmount(token.balance)}
+                        </TokenBalance>
+                        <TokenBalanceUSD>
+                          {(() => {
+                            const usdValue = (token.balance || 0) * (token.price || 0);
+                            return usdValue < 0.01 ? '<$0.01' : `$${usdValue.toFixed(2)}`;
+                          })()}
+                        </TokenBalanceUSD>
+                      </TokenBalanceContainer>
                     </TokenItem>
                   ))}
                 </TokenList>
@@ -566,7 +574,10 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
               </AmountContainer>
               {selectedToken && amount && !isNaN(Number(amount)) && Number(amount) > 0 && (
                 <BalanceInfo>
-                  ${(Number(amount) * (selectedToken.price || 0)).toFixed(2)} 
+                  {(() => {
+                    const usdValue = Number(amount) * (selectedToken.price || 0);
+                    return usdValue < 0.01 ? '<$0.01' : `$${usdValue.toFixed(2)}`;
+                  })()}
                 </BalanceInfo>
               )}
               <BalanceInfo>
@@ -700,6 +711,45 @@ const TokenList = styled.div`
   overflow-y: auto;
   border: 1px solid #333;
   border-radius: 12px;
+
+  /* Custom scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+
+  &:hover {
+    scrollbar-color: #7c3aed #2a2a2a;
+  }
+
+  /* WebKit scrollbar styles */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+    transition: background 0.3s ease, opacity 0.3s ease;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #7c3aed;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #8b5cf6;
+  }
+
+  /* Auto-hide behavior */
+  &:not(:hover)::-webkit-scrollbar-thumb {
+    opacity: 0;
+    transition: opacity 0.5s ease 1s;
+  }
 `;
 
 const TokenItem = styled.div<{ $isSelected: boolean }>`
@@ -759,6 +809,19 @@ const ChainName = styled.div`
 const TokenBalance = styled.div`
   color: #ffffff;
   font-weight: 600;
+`;
+
+const TokenBalanceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+`;
+
+const TokenBalanceUSD = styled.div`
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 400;
 `;
 
 const AmountContainer = styled.div`

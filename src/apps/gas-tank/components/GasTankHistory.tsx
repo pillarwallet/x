@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { formatUnits } from 'viem';
@@ -46,7 +46,7 @@ const GasTankHistory = () => {
    * Fetches history data from the REST API and updates state.
    * Handles error and loading states.
    */
-  const fetchHistory = () => {
+  const fetchHistory = useCallback(() => {
     if (!walletAddress) return;
     setLoading(true);
     setError(false); // Reset error before fetching
@@ -80,13 +80,24 @@ const GasTankHistory = () => {
         setError(true); // Set error on failure
       })
       .finally(() => setLoading(false));
-  };
+  }, [walletAddress]);
 
   // Fetch history on wallet address change
   useEffect(() => {
     fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [fetchHistory]);
+
+  // Auto-refresh every 30 seconds when component is active
+  useEffect(() => {
+    if (!walletAddress) return;
+
+    const interval = setInterval(() => {
+      fetchHistory();
+    }, 30000); // 30 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [walletAddress, fetchHistory]);
 
   /**
    * Returns the sort icon for a given column key.
@@ -345,6 +356,45 @@ const Title = styled.h2`
 const TableWrapper = styled.div`
   max-height: 340px;
   overflow-y: auto;
+
+  /* Custom scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+
+  &:hover {
+    scrollbar-color: #7c3aed #2a2a2a;
+  }
+
+  /* WebKit scrollbar styles */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+    transition: background 0.3s ease, opacity 0.3s ease;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #7c3aed;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #8b5cf6;
+  }
+
+  /* Auto-hide behavior */
+  &:not(:hover)::-webkit-scrollbar-thumb {
+    opacity: 0;
+    transition: opacity 0.5s ease 1s;
+  }
 `;
 
 const Table = styled.div`
