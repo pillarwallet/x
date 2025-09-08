@@ -39,6 +39,8 @@ import SendAsset from './components/SendAsset/SendAsset';
 // images
 import PillarXLogo from './images/logo512.png';
 
+const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
+
 const metadataReownAppKit = {
   name: 'PillarX',
   description: 'PillarX App',
@@ -46,10 +48,17 @@ const metadataReownAppKit = {
   icons: [PillarXLogo],
 };
 
+const allNetworks = [mainnet, polygon, base, gnosis, bsc, optimism, arbitrum];
+
 createAppKit({
   adapters: [new Ethers5Adapter()],
   metadata: metadataReownAppKit,
-  networks: [mainnet, polygon, base, gnosis, bsc, optimism, arbitrum],
+  networks: (isGnosisEnabled
+    ? allNetworks
+    : allNetworks.filter((n) => n.id !== gnosis.id)) as [
+    typeof mainnet,
+    ...(typeof mainnet)[],
+  ],
   projectId: import.meta.env.VITE_REOWN_PROJECT_ID || '',
   features: {
     swaps: false,
