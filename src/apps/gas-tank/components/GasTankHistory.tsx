@@ -258,10 +258,7 @@ export function useGasTankHistory(walletAddress: string | undefined) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // Calculate total spend (sum of all Spend amounts)
-  const totalSpend = historyData
-    .filter((entry) => entry.type === 'Spend')
-    .reduce((acc, entry) => acc + Number(entry.amount.replace(/[^0-9.-]+/g, '')), 0);
+  const [totalSpend, setTotalSpend] = useState(0);
 
   const fetchHistory = () => {
     if (!walletAddress) return;
@@ -290,6 +287,11 @@ export function useGasTankHistory(walletAddress: string | undefined) {
           };
         });
         setHistoryData(entries);
+        // Calculate total spend (sum of all Spend amounts)
+        const totalSpendCal = entries
+          .filter((entry) => entry.type === 'Spend')
+          .reduce((acc, entry) => acc + Number(entry.amount.replace(/[^0-9.-]+/g, '')), 0);
+        setTotalSpend(Math.abs(totalSpendCal));
       })
       .catch(() => {
         setHistoryData([]);

@@ -57,6 +57,13 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   const [amount, setAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
+  const [showSwapConfirmation, setShowSwapConfirmation] = useState(false);
+  const [swapDetails, setSwapDetails] = useState<{
+    receiveAmount: string;
+    bestOffer: any;
+    swapTransactions: any[];
+  } | null>(null);
+  const [swapAmountUsdPrice, setSwapAmountUsdPrice] = useState(0);
   const { transactionDebugLog } = useTransactionDebugLogger();
 
   const walletPortfolio = useAppSelector(
@@ -154,39 +161,17 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
             Number(amount),
           );
 
-          // Add swap transactions to batch
-          swapTransactions.forEach((tx, index) => {
-            const value = tx.value || '0';
-            // Handle bigint conversion properly
-            let bigIntValue: bigint;
-            if (typeof value === 'bigint') {
-              // If value is already a native bigint, use it directly
-              bigIntValue = value;
-            } else if (value) {
-              // If value exists but is not a bigint, convert it
-              bigIntValue = BigNumber.from(value).toBigInt();
-            } else {
-              // If value is undefined/null, use 0
-              bigIntValue = BigInt(0);
-            }
-  
-            const integerValue = formatEther(bigIntValue);
-            if (!tx.to || !isAddress(tx.to)) {
-              setErrorMsg('Invalid transaction target for swap route. Please try again.');
-              logExchangeEvent('Invalid tx.to in swap step', 'error', { tx }, { component: 'TopUpModal', action: 'invalid_tx_to' });
-              setIsProcessing(false);
-              return;
-            }
-            addToBatch({
-              title: `Swap to USDC ${index + 1}/${swapTransactions.length}`,
-              description: `Convert ${amount} ${selectedToken.symbol} to USDC for Gas Tank`,
-              to: tx.to,
-              value: integerValue,
-              data: tx.data,
-              chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
-            });
-          });
           receiveSwapAmount = bestOffer.tokenAmountToReceive.toString();
+
+          // Show swap confirmation UI and pause execution
+          setSwapDetails({
+            receiveAmount: receiveSwapAmount,
+            bestOffer,
+            swapTransactions
+          });
+          setShowSwapConfirmation(true);
+          setIsProcessing(false);
+          return;
         } catch (swapError) {
           console.error('Error getting swap transactions:', swapError);
           console.warn(
@@ -296,6 +281,11 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
+    let tokenUsdPrice = 0;
+    if (selectedToken) {
+      tokenUsdPrice = Number(value) * (selectedToken.price ?? 0);
+    }
+    setSwapAmountUsdPrice(tokenUsdPrice);
   };
 
   const getMaxAmount = () => {
@@ -308,7 +298,202 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     setAmount(getMaxAmount() || '');
   };
 
+  const handleConfirmSwap = async () => {
+    if (!swapDetails || !selectedToken || !walletAddress) return;
+
+    setIsProcessing(true);
+    setShowSwapConfirmation(false);
+
+    try {
+      // Add swap transactions to batch
+      swapDetails.swapTransactions.forEach((tx, index) => {
+        const value = tx.value || '0';
+        // Handle bigint conversion properly
+        let bigIntValue: bigint;
+        if (typeof value === 'bigint') {
+          // If value is already a native bigint, use it directly
+          bigIntValue = value;
+        } else if (value) {
+          // If value exists but is not a bigint, convert it
+          bigIntValue = BigNumber.from(value).toBigInt();
+        } else {
+          // If value is undefined/null, use 0
+          bigIntValue = BigInt(0);
+        }
+
+        const integerValue = formatEther(bigIntValue);
+        if (!tx.to || !isAddress(tx.to)) {
+          setErrorMsg('Invalid transaction target for swap route. Please try again.');
+          logExchangeEvent('Invalid tx.to in swap step', 'error', { tx }, { component: 'TopUpModal', action: 'invalid_tx_to' });
+          setIsProcessing(false);
+          return;
+        }
+        addToBatch({
+          title: `Swap to USDC ${index + 1}/${swapDetails.swapTransactions.length}`,
+          description: `Convert ${amount} ${selectedToken.symbol} to USDC for Gas Tank`,
+          to: tx.to,
+          value: integerValue,
+          data: tx.data,
+          chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
+        });
+      });
+
+      // Continue with the paymaster API call for USDC deposits
+      const response = await fetch(
+        `${paymasterUrl}/getTransactionForDeposit?chainId=${chainNameToChainIdTokensData(selectedToken.blockchain)}&amount=${swapDetails.receiveAmount}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error fetching transaction data:', errorText);
+        logExchangeError('Failed to fetch transaction data', { "error": errorText }, { component: 'TopUpModal', action: 'failed_to_fetch_transaction_data' });
+        setErrorMsg('Failed to fetch transaction data. Please try again with different token or amount.');
+        setIsProcessing(false);
+        return;
+      }
+
+      const transactionData = await response.json();
+      transactionDebugLog('Gas Tank Top-up transaction data', transactionData);
+
+      // Add transactions to batch
+      if (Array.isArray(transactionData.result)) {
+        transactionData.result.forEach((tx: {value?: string, to: string, data?: string}, index: number) => {
+          const value = tx.value || '0';
+          // Handle bigint conversion properly
+          let bigIntValue: bigint;
+          if (typeof value === 'bigint') {
+            // If value is already a native bigint, use it directly
+            bigIntValue = value;
+          } else if (value) {
+            // If value exists but is not a bigint, convert it
+            bigIntValue = BigNumber.from(value).toBigInt();
+          } else {
+            // If value is undefined/null, use 0
+            bigIntValue = BigInt(0);
+          }
+
+          const integerValue = formatEther(bigIntValue);
+          addToBatch({
+            title: `Gas Tank Top-up ${index + 1}/${transactionData.result.length}`,
+            description: `Add ${amount} ${selectedToken.symbol} to Gas Tank`,
+            to: tx.to,
+            value: integerValue,
+            data: tx.data,
+            chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
+          });
+        });
+      } else {
+        const value = transactionData.result.value || '0';
+        // Handle bigint conversion properly
+        let bigIntValue: bigint;
+        if (typeof value === 'bigint') {
+          // If value is already a native bigint, use it directly
+          bigIntValue = value;
+        } else if (value) {
+          // If value exists but is not a bigint, convert it
+          bigIntValue = BigNumber.from(value).toBigInt();
+        } else {
+          // If value is undefined/null, use 0
+          bigIntValue = BigInt(0);
+        }
+
+        const integerValue = formatEther(bigIntValue);
+        // Single transaction
+        addToBatch({
+          title: 'Gas Tank Top-up',
+          description: `Add ${amount} ${selectedToken.symbol} to Gas Tank`,
+          to: transactionData.result.to,
+          value: integerValue,
+          data: transactionData.result.data,
+          chainId: chainNameToChainIdTokensData(selectedToken.blockchain),
+        });
+      }
+
+      // Show the send modal with the batched transactions
+      setShowBatchSendModal(true);
+      showSend();
+      onSuccess?.();
+    } catch (error) {
+      console.error('Error processing top-up:', error);
+      console.warn('Failed to process top-up. Please try again.');
+      logExchangeError('Failed to process top-up', { "error": error }, { component: 'TopUpModal', action: 'failed_to_process_top_up' });
+      setErrorMsg('Failed to process top-up. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCancelSwap = () => {
+    setShowSwapConfirmation(false);
+    setSwapDetails(null);
+  };
+
   if (!isOpen) return null;
+
+  // Swap Confirmation Modal
+  if (showSwapConfirmation && swapDetails && selectedToken) {
+    return (
+      <Overlay>
+        <ModalContainer>
+          <Header>
+            <Title>Confirm Swap</Title>
+            <CloseButton onClick={handleCancelSwap}>✕</CloseButton>
+          </Header>
+
+          <Content>
+            <SwapConfirmationContainer>
+              <SwapDetailsSection>
+                <SwapTitle>Swap Summary</SwapTitle>
+                <SwapDetail>
+                  <SwapLabel>From:</SwapLabel>
+                  <SwapValue>{amount} {selectedToken.symbol}</SwapValue>
+                </SwapDetail>
+                <SwapDetail>
+                  <SwapLabel>To:</SwapLabel>
+                  <SwapValue>{formatTokenAmount(Number(swapDetails.receiveAmount))} USDC</SwapValue>
+                </SwapDetail>
+                <SwapDetail>
+                  <SwapLabel>On:</SwapLabel>
+                  <SwapValue>{selectedToken.blockchain}</SwapValue>
+                </SwapDetail>
+              </SwapDetailsSection>
+
+              <WarningBox>
+                <WarningText>
+                  This swap will be executed first, then the USDC will be added to your Gas Tank.
+                </WarningText>
+              </WarningBox>
+
+              <ButtonContainer>
+                <CancelButton onClick={handleCancelSwap}>
+                  Cancel
+                </CancelButton>
+                <ConfirmButton 
+                  onClick={handleConfirmSwap}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <CircularProgress size={16} color="inherit" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm Swap'
+                  )}
+                </ConfirmButton>
+              </ButtonContainer>
+            </SwapConfirmationContainer>
+          </Content>
+        </ModalContainer>
+      </Overlay>
+    );
+  }
 
   return (
     <Overlay>
@@ -379,6 +564,11 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
                   MAX
                 </MaxButton>
               </AmountContainer>
+              {selectedToken && amount && !isNaN(Number(amount)) && Number(amount) > 0 && (
+                <BalanceInfo>
+                  ${(Number(amount) * (selectedToken.price || 0)).toFixed(2)} 
+                </BalanceInfo>
+              )}
               <BalanceInfo>
                 Available: {getMaxAmount()} {selectedToken.symbol}
               </BalanceInfo>
@@ -596,6 +786,18 @@ const AmountInput = styled.input`
   }
 `;
 
+const UsdPriceDisplay = styled.div`
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #9ca3af;
+  font-size: 16px;
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+`;
+
 const MaxButton = styled.button`
   background: #7c3aed;
   color: white;
@@ -620,6 +822,114 @@ const BalanceInfo = styled.div`
 
 const TopUpButton = styled.button`
   width: 100%;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const SwapConfirmationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const SwapDetailsSection = styled.div`
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #444;
+`;
+
+const SwapTitle = styled.h3`
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+`;
+
+const SwapDetail = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const SwapLabel = styled.div`
+  color: #9ca3af;
+  font-size: 14px;
+`;
+
+const SwapValue = styled.div`
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+`;
+
+const WarningBox = styled.div`
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+`;
+
+const WarningText = styled.p`
+  color: #fbbf24;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const CancelButton = styled.button`
+  flex: 1;
+  background: transparent;
+  color: #9ca3af;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #2a2a2a;
+    color: #ffffff;
+    border-color: #666;
+  }
+`;
+
+const ConfirmButton = styled.button`
+  flex: 1;
   background: linear-gradient(135deg, #7c3aed, #a855f7);
   color: white;
   border: none;
