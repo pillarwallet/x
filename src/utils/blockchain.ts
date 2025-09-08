@@ -38,6 +38,9 @@ export const isTestnet = (() => {
   return storedIsTestnet === 'true';
 })();
 
+export const isGnosisEnabled =
+  import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
+
 export const isValidEthereumAddress = (
   address: string | undefined
 ): boolean => {
@@ -88,7 +91,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
-  if (chainId === gnosis.id) {
+  if (isGnosisEnabled && chainId === gnosis.id) {
     nativeAsset.name = 'XDAI';
     nativeAsset.symbol = 'XDAI';
     nativeAsset.logoURI =
@@ -140,7 +143,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   return nativeAsset;
 };
 
-export const supportedChains = [
+const allSupportedChains = [
   mainnet,
   polygon,
   gnosis,
@@ -150,6 +153,10 @@ export const supportedChains = [
   arbitrum,
   sepolia,
 ];
+
+export const supportedChains = allSupportedChains.filter(
+  (chain) => isGnosisEnabled || chain.id !== 100
+);
 
 export const visibleChains = supportedChains.filter((chain) =>
   isTestnet ? chain.testnet : !chain.testnet
@@ -164,7 +171,7 @@ export const getLogoForChainId = (chainId: number): string => {
     return logoPolygon;
   }
 
-  if (chainId === gnosis.id) {
+  if (isGnosisEnabled && chainId === gnosis.id) {
     return logoGnosis;
   }
 
@@ -224,7 +231,9 @@ export const getBlockScan = (chain: number, isAddress: boolean = false) => {
     case 8453:
       return `https://basescan.org/${isAddress ? 'address' : 'tx'}/`;
     case 100:
-      return `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`;
+      return isGnosisEnabled
+        ? `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`
+        : '';
     case 56:
       return `https://bscscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 10:
@@ -245,7 +254,7 @@ export const getBlockScanName = (chain: number) => {
     case 8453:
       return 'Basescan';
     case 100:
-      return 'Gnosisscan';
+      return isGnosisEnabled ? 'Gnosisscan' : '';
     case 56:
       return 'Bscscan';
     case 10:
@@ -266,7 +275,7 @@ export const getChainName = (chain: number) => {
     case 8453:
       return 'Base';
     case 100:
-      return 'Gnosis';
+      return isGnosisEnabled ? 'Gnosis' : `${chain}`;
     case 56:
       return 'BNB Smart Chain';
     case 10:
@@ -278,7 +287,7 @@ export const getChainName = (chain: number) => {
   }
 };
 
-export const CompatibleChains = [
+const allCompatibleChains = [
   {
     chainId: 1,
     chainName: 'Ethereum',
@@ -309,7 +318,11 @@ export const CompatibleChains = [
   },
 ];
 
-const STABLECOIN_ADDRESSES: Record<number, Set<string>> = {
+export const CompatibleChains = allCompatibleChains.filter(
+  (chain) => isGnosisEnabled || chain.chainId !== 100
+);
+
+const allStablecoinAddresses: Record<number, Set<string>> = {
   1: new Set([
     // Ethereum mainnet
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
@@ -346,6 +359,12 @@ const STABLECOIN_ADDRESSES: Record<number, Set<string>> = {
     '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
   ]),
 };
+
+const STABLECOIN_ADDRESSES = Object.fromEntries(
+  Object.entries(allStablecoinAddresses).filter(
+    ([chainId]) => isGnosisEnabled || chainId !== '100'
+  )
+) as Record<number, Set<string>>;
 
 export function isStableCoin(address: string, chainId: number): boolean {
   if (!address || !chainId) return false;

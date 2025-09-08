@@ -1,8 +1,10 @@
 import { PrimeAssetType } from '../../../types/api';
 
+const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
+
 export const PAGE_LIMIT: number = 4;
 
-export const PRIME_ASSETS_MOBULA: PrimeAssetType[] = [
+const allPrimeAssetsMobula: PrimeAssetType[] = [
   { name: 'Ethereum', symbol: 'ETH' },
   { name: 'XDAI', symbol: 'XDAI' },
   { name: 'USDC', symbol: 'USDC' },
@@ -14,3 +16,7 @@ export const PRIME_ASSETS_MOBULA: PrimeAssetType[] = [
   { name: 'BNB', symbol: 'BNB' },
   { name: 'Dai', symbol: 'DAI' },
 ];
+
+export const PRIME_ASSETS_MOBULA = allPrimeAssetsMobula.filter(
+  (asset) => isGnosisEnabled || asset.name !== 'XDAI'
+);

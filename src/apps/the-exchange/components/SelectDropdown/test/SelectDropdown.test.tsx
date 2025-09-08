@@ -59,7 +59,6 @@ vi.mock('../../../../../services/tokensData', () => ({
     .fn()
     .mockImplementation((chainName: string) => {
       const mockChainMap = {
-        XDAI: 'Gnosis',
         'BNB Smart Chain (BEP20)': 'BNB Smart Chain',
         Optimistic: 'Optimism',
         Arbitrum: 'Arbitrum',

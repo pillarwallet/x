@@ -10,6 +10,7 @@ import {
 import { StepTransaction } from './types';
 
 // utils
+import { isGnosisEnabled } from '../../../utils/blockchain';
 import { isNativeToken } from './wrappedTokens';
 
 export const processBigNumber = (val: BigNumber): number =>
@@ -23,8 +24,7 @@ export const processEth = (val: BigNumberish, dec: number): number => {
   return +parseFloat(formatUnits(val as BigNumberish, dec));
 };
 
-// Utility: get native token symbol for a chain
-export const NATIVE_SYMBOLS: Record<number, string> = {
+const allNativeSymbols: Record<number, string> = {
   1: 'ETH',
   100: 'xDAI',
   137: 'POL',
@@ -33,6 +33,12 @@ export const NATIVE_SYMBOLS: Record<number, string> = {
   56: 'BNB',
   8453: 'ETH',
 };
+
+export const NATIVE_SYMBOLS = Object.fromEntries(
+  Object.entries(allNativeSymbols).filter(
+    ([chainId]) => isGnosisEnabled || chainId !== '100'
+  )
+) as Record<number, string>;
 
 // Helper: Detect if a tx is a native fee step
 export const isNativeFeeTx = (
