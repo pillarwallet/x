@@ -1,5 +1,5 @@
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 // services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
@@ -30,10 +30,18 @@ interface HomeScreenProps {
   sellToken: SelectedToken | null;
   isBuy: boolean;
   setIsBuy: Dispatch<SetStateAction<boolean>>;
+  refetchWalletPortfolio: () => void;
 }
 
 export default function HomeScreen(props: HomeScreenProps) {
-  const { buyToken, sellToken, isBuy, setIsBuy, setSearching } = props;
+  const {
+    buyToken,
+    sellToken,
+    isBuy,
+    setIsBuy,
+    setSearching,
+    refetchWalletPortfolio,
+  } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { refreshSell, isRefreshing } = useRefresh();
   const { isQuoteLoading } = useLoading();
@@ -44,6 +52,10 @@ export default function HomeScreen(props: HomeScreenProps) {
     useState<ExpressIntentResponse | null>(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
+
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([refetchWalletPortfolio(), refreshSell()]);
+  }, [refetchWalletPortfolio, refreshSell]);
 
   const closePreviewBuy = () => {
     setPreviewBuy(false);
@@ -57,7 +69,10 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
-    { skip: !accountAddress }
+    {
+      skip: !accountAddress,
+      refetchOnFocus: false,
+    }
   );
 
   const renderPreview = () => {
@@ -80,7 +95,7 @@ export default function HomeScreen(props: HomeScreenProps) {
           sellOffer={sellOffer}
           tokenAmount={tokenAmount}
           walletPortfolioData={walletPortfolioData}
-          onRefresh={refreshSell}
+          onRefresh={handleRefresh}
         />
       );
     }
@@ -187,7 +202,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 }}
               >
                 <Refresh
-                  onClick={isBuy ? undefined : refreshSell}
+                  onClick={isBuy ? undefined : handleRefresh}
                   isLoading={isBuy ? false : isQuoteLoading || isRefreshing}
                   disabled={
                     isBuy ||

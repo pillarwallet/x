@@ -131,13 +131,27 @@ const Sell = (props: SellProps) => {
   // Debounce token amount changes to fetch sell offers
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (tokenAmount && !Number.isNaN(parseFloat(tokenAmount))) {
-        setDebouncedTokenAmount(tokenAmount);
-      }
+      // Always update debouncedTokenAmount, even if empty
+      // This ensures clearing input properly clears the offer
+      setDebouncedTokenAmount(tokenAmount);
     }, 1000);
 
     return () => clearTimeout(timer);
   }, [tokenAmount]);
+
+  // Recalculate liquidity when token, balance, or amount changes
+  useEffect(() => {
+    if (tokenAmount && tokenAmount.trim() !== '') {
+      const inputAmount = parseFloat(tokenAmount);
+      if (!Number.isNaN(inputAmount)) {
+        setNotEnoughLiquidity(inputAmount > tokenBalance);
+      } else {
+        setNotEnoughLiquidity(false);
+      }
+    } else {
+      setNotEnoughLiquidity(false);
+    }
+  }, [token, tokenBalance, tokenAmount]);
 
   // Fetch sell offer when debounced amount changes
   useEffect(() => {
@@ -154,7 +168,7 @@ const Sell = (props: SellProps) => {
 
   // Register refresh callback
   useEffect(() => {
-    setRefreshSellCallback(() => refreshSellData);
+    setRefreshSellCallback(refreshSellData);
   }, [setRefreshSellCallback, refreshSellData]);
 
   return (

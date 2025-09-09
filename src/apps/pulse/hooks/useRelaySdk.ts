@@ -48,6 +48,10 @@ export default function useRelaySdk() {
         console.error('Failed to initialize Relay SDK:', error);
         setIsInitialized(false);
       }
+    } else {
+      // Reset state when account disconnects
+      setRelayClient(undefined);
+      setIsInitialized(false);
     }
   }, [accountAddress]);
 

@@ -5,7 +5,6 @@ import {
   createPublicClient,
   encodeFunctionData,
   erc20Abi,
-  formatUnits,
   http,
   parseUnits,
 } from 'viem';
@@ -476,8 +475,7 @@ export default function useRelaySell() {
             });
 
             const isEnoughAllowance = isAllowance
-              ? formatUnits(isAllowance, token.decimals) >=
-                formatUnits(fromAmountBigInt, token.decimals)
+              ? isAllowance >= fromAmountBigInt
               : undefined;
 
             if (!isEnoughAllowance) {
@@ -561,8 +559,7 @@ export default function useRelaySell() {
             });
 
             const isEnoughAllowance = isAllowance
-              ? formatUnits(isAllowance, token.decimals) >=
-                formatUnits(fromAmountBigInt, token.decimals)
+              ? isAllowance >= fromAmountBigInt
               : undefined;
 
             if (!isEnoughAllowance) {
@@ -908,6 +905,10 @@ export default function useRelaySell() {
     }
   };
 
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   return {
     getUSDCAddress,
     getBestSellOffer,
@@ -916,5 +917,6 @@ export default function useRelaySell() {
     isLoading,
     error,
     isInitialized,
+    clearError,
   };
 }

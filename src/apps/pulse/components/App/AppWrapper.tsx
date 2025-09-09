@@ -24,9 +24,13 @@ export default function AppWrapper() {
     data: walletPortfolioData,
     isLoading: walletPortfolioLoading,
     error: walletPortfolioError,
+    refetch: refetchWalletPortfolio,
   } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
-    { skip: !accountAddress }
+    {
+      skip: !accountAddress,
+      refetchOnFocus: false,
+    }
   );
 
   const useQuery = () => {
@@ -66,6 +70,7 @@ export default function AppWrapper() {
             sellToken={sellToken}
             isBuy={isBuy}
             setIsBuy={setIsBuy}
+            refetchWalletPortfolio={refetchWalletPortfolio}
           />
         )}
       </RefreshProvider>

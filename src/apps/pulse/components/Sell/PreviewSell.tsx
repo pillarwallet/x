@@ -49,7 +49,7 @@ const PreviewSell = (props: PreviewSellProps) => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
-  const { getUSDCAddress, executeSell, error } = useRelaySell();
+  const { getUSDCAddress, executeSell, error, clearError } = useRelaySell();
   const { transactionDebugLog } = useTransactionDebugLogger();
   const { setRefreshPreviewSellCallback, isRefreshing } = useRefresh();
   const { isQuoteLoading } = useLoading();
@@ -65,6 +65,13 @@ const PreviewSell = (props: PreviewSellProps) => {
 
     return undefined;
   }, [isCopied]);
+
+  // Clear errors when amount, token, or quote props change
+  useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [tokenAmount, sellToken, sellOffer, clearError, error]);
 
   // Get the user's balance for the selected token
   const getTokenBalance = () => {
@@ -104,7 +111,7 @@ const PreviewSell = (props: PreviewSellProps) => {
 
   // Register refresh callback
   useEffect(() => {
-    setRefreshPreviewSellCallback(() => refreshPreviewSellData);
+    setRefreshPreviewSellCallback(refreshPreviewSellData);
   }, [setRefreshPreviewSellCallback, refreshPreviewSellData]);
 
   const detailsEntry = (
@@ -138,6 +145,11 @@ const PreviewSell = (props: PreviewSellProps) => {
   const handleConfirmSell = async () => {
     if (!sellToken || !sellOffer) return;
 
+    // Clear any existing errors before attempting to execute
+    if (error) {
+      clearError();
+    }
+
     setIsExecuting(true);
     setTxHash(null); // Reset previous transaction hash
 
@@ -160,7 +172,10 @@ const PreviewSell = (props: PreviewSellProps) => {
   if (!sellToken || !sellOffer) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black">
-        <div className="text-white text-lg">Invalid data</div>
+        <div className="text-white text-lg">
+          No offer was found. Please check the token and the inpu amount and try
+          again.
+        </div>
         <button
           type="button"
           onClick={closePreview}
@@ -274,7 +289,7 @@ const PreviewSell = (props: PreviewSellProps) => {
         <div className="flex items-center">
           <div className="relative inline-block mr-2">
             <div className="w-8 h-8 overflow-hidden rounded-full flex items-center justify-center bg-[#2775CA]">
-              <span className="text-white font-bold text-sm">US</span>
+              <span className="text-white font-bold text-sm">USD</span>
             </div>
             <img
               src={getLogoForChainId(sellToken?.chainId)}
@@ -368,10 +383,10 @@ const PreviewSell = (props: PreviewSellProps) => {
       <div className="flex w-full h-[50px] rounded-[10px] bg-black">
         <button
           className={`flex items-center justify-center w-full rounded-[10px] m-0.5 ${
-            isExecuting || error ? 'bg-[#121116]' : 'bg-[#8A77FF]'
+            isExecuting ? 'bg-[#121116]' : 'bg-[#8A77FF]'
           }`}
           onClick={handleConfirmSell}
-          disabled={isExecuting || !!error}
+          disabled={isExecuting}
           type="submit"
         >
           {isExecuting ? (
