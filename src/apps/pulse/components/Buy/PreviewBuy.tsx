@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
 import { useState } from 'react';
-import Esc from '../Misc/Esc';
-import PayingToken from './PayingToken';
-import Refresh from '../Misc/Refresh';
-import useIntentSdk from '../../hooks/useIntentSdk';
-import IntentTracker from '../Status/IntentTracker';
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import {
-  SelectedToken,
-  PayingToken as PayingTokenType,
-} from '../../types/tokens';
-import MoreInfo from '../../assets/moreinfo-icon.svg';
 import CopyIcon from '../../assets/copy-icon.svg';
+import MoreInfo from '../../assets/moreinfo-icon.svg';
+import useIntentSdk from '../../hooks/useIntentSdk';
+import {
+  PayingToken as PayingTokenType,
+  SelectedToken,
+} from '../../types/tokens';
+import Esc from '../Misc/Esc';
+import Refresh from '../Misc/Refresh';
+import IntentTracker from '../Status/IntentTracker';
+import PayingToken from './PayingToken';
 
 interface PreviewBuyProps {
   closePreview: () => void;
@@ -98,7 +98,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             <div className="flex">
               <div
                 style={{
-                  backgroundColor: 'black',
+                  backgroundColor: '#121116',
                   borderRadius: 10,
                   width: 40,
                   height: 40,
@@ -107,7 +107,17 @@ export default function PreviewBuy(props: PreviewBuyProps) {
               >
                 <Refresh />
               </div>
-              <div style={{ marginLeft: 10 }}>
+
+              <div
+                style={{
+                  backgroundColor: '#121116',
+                  borderRadius: 10,
+                  width: 40,
+                  height: 40,
+                  padding: '2px 2px 4px 2px',
+                  marginLeft: 10,
+                }}
+              >
                 <Esc closePreview={closePreview} />
               </div>
             </div>

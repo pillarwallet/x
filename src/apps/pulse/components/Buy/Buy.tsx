@@ -190,7 +190,7 @@ export default function Buy(props: BuyProps) {
           borderRadius: 10,
         }}
       >
-        <div className="flex">
+        <div className="flex p-3">
           <button
             onClick={() => {
               setSearching(true);
@@ -205,8 +205,6 @@ export default function Buy(props: BuyProps) {
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
-                  marginLeft: 10,
-                  marginTop: 15,
                 }}
               >
                 <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -296,8 +294,6 @@ export default function Buy(props: BuyProps) {
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
-                  marginLeft: 10,
-                  marginTop: 15,
                 }}
               >
                 <div
@@ -312,7 +308,7 @@ export default function Buy(props: BuyProps) {
               </div>
             )}
           </button>
-          <div className="flex-1" style={{ marginTop: 15, marginRight: 10 }}>
+          <div className="flex-1">
             <div
               className="flex"
               style={{ height: 36, fontSize: 36, width: 189 }}

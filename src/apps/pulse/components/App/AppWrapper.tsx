@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isAddress } from 'viem';
-import Search from '../Search/Search';
-import HomeScreen from './HomeScreen';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
+import { LoadingProvider } from '../../contexts/LoadingContext';
+import { RefreshProvider } from '../../contexts/RefreshContext';
 import { SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
+import Search from '../Search/Search';
+import HomeScreen from './HomeScreen';
 
 export default function AppWrapper() {
   const [searching, setSearching] = useState(false);
@@ -13,6 +17,21 @@ export default function AppWrapper() {
   const [buyToken, setBuyToken] = useState<SelectedToken | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sellToken, setSellToken] = useState<SelectedToken | null>(null);
+
+  const { walletAddress: accountAddress } = useTransactionKit();
+
+  const {
+    data: walletPortfolioData,
+    isLoading: walletPortfolioLoading,
+    error: walletPortfolioError,
+    refetch: refetchWalletPortfolio,
+  } = useGetWalletPortfolioQuery(
+    { wallet: accountAddress || '', isPnl: false },
+    {
+      skip: !accountAddress,
+      refetchOnFocus: false,
+    }
+  );
 
   const useQuery = () => {
     const { search } = useLocation();
@@ -29,21 +48,32 @@ export default function AppWrapper() {
     }
   }, [setSearching, query]);
 
-  return searching ? (
-    <Search
-      setSearching={setSearching}
-      isBuy={isBuy}
-      setBuyToken={setBuyToken}
-      setSellToken={setSellToken}
-      chains={chains}
-      setChains={setChains}
-    />
-  ) : (
-    <HomeScreen
-      setSearching={setSearching}
-      buyToken={buyToken}
-      isBuy={isBuy}
-      setIsBuy={setIsBuy}
-    />
+  return (
+    <LoadingProvider>
+      <RefreshProvider>
+        {searching ? (
+          <Search
+            setSearching={setSearching}
+            isBuy={isBuy}
+            setBuyToken={setBuyToken}
+            setSellToken={setSellToken}
+            chains={chains}
+            setChains={setChains}
+            walletPortfolioData={walletPortfolioData?.result?.data}
+            walletPortfolioLoading={walletPortfolioLoading}
+            walletPortfolioError={!!walletPortfolioError}
+          />
+        ) : (
+          <HomeScreen
+            setSearching={setSearching}
+            buyToken={buyToken}
+            sellToken={sellToken}
+            isBuy={isBuy}
+            setIsBuy={setIsBuy}
+            refetchWalletPortfolio={refetchWalletPortfolio}
+          />
+        )}
+      </RefreshProvider>
+    </LoadingProvider>
   );
 }
