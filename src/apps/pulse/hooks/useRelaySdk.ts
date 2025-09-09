@@ -46,6 +46,7 @@ export default function useRelaySdk() {
         setIsInitialized(true);
       } catch (error) {
         console.error('Failed to initialize Relay SDK:', error);
+        setRelayClient(undefined);
         setIsInitialized(false);
       }
     } else {

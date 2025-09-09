@@ -30,7 +30,7 @@ export function useTokenSearch(props: {
       filterBlockchains: getChainId(props.chains),
     },
     {
-      skip: !debouncedSearchText,
+      skip: !debouncedSearchText || !isBuy,
       refetchOnFocus: false,
     }
   );

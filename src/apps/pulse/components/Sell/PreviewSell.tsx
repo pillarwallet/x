@@ -173,8 +173,8 @@ const PreviewSell = (props: PreviewSellProps) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black">
         <div className="text-white text-lg">
-          No offer was found. Please check the token and the inpu amount and try
-          again.
+          No offer was found. Please check the token and the input amount and
+          try again.
         </div>
         <button
           type="button"

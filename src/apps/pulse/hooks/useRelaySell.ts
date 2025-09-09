@@ -300,11 +300,13 @@ export default function useRelaySell() {
 
       // Calculate fee distribution: 99% to user, 1% to fee receiver
       // We swap 100% of the token, then take 1% of the received USDC as fee
-      // Use the actual USDC received from the swap (before 99% display calculation)
+      // Use the guaranteed minimum USDC received from the swap (slippage-protected)
       // The amount is already in wei format (6 decimals for USDC)
-      // Note: We use the quote amount as an estimate, but the actual amount may vary due to slippage
+      // Note: We prefer minimumAmount to avoid overdrawing when slippage occurs, fallback to amount
       const actualUsdcReceived = BigInt(
-        sellOffer.offer.details?.currencyOut?.amount || '0'
+        sellOffer.offer.details?.currencyOut?.minimumAmount ||
+          sellOffer.offer.details?.currencyOut?.amount ||
+          '0'
       );
       const usdcFeeAmount = (actualUsdcReceived * BigInt(1)) / BigInt(100); // 1% to fee receiver
       const usdcUserAmount = actualUsdcReceived - usdcFeeAmount; // 99% to user
