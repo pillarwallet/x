@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
 import { toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
+import { keccak256 } from 'viem';
 
 
 // components
@@ -14,7 +15,7 @@ import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySup
 
 // images
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
-import { createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, toBytes, toHex } from 'viem';
+import { concat, createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, stringToBytes, stringToHex, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
@@ -35,7 +36,7 @@ const Passkeys = () => {
 
   const publicClient = createPublicClient({ 
     chain: mainnet,
-    transport: http()
+    transport: http('https://node1.web3api.com')
   })
 
   // Generate random alphanumeric username
@@ -113,7 +114,7 @@ const Passkeys = () => {
     }
   };
 
-  const handlePasskeyAuthentication = async () => {
+  const handleLoginWithPasskey = async () => {
     if (!username) {
       alert('Please connect your wallet first');
       return;
@@ -123,8 +124,6 @@ const Passkeys = () => {
     try {
       const success = await authenticateWithPasskey(username);
       if (success) {
-        alert('Passkey authentication successful!');
-
         getSenderAddress();
       } else {
         alert('Passkey authentication failed');
@@ -151,30 +150,54 @@ const Passkeys = () => {
     console.log('y', y);
     console.log('username', username);
 
+    const owner = toWebAuthnAccount({
+      credential: {
+        id: credentialId,
+        publicKey: publicKey as `0x${string}`,
+      },
+    });
+    
+    console.log(keccak256(toHex(`${x}${y}${username}`)))
+
     // Use viem to call a simulation on the getSenderAddress function
     // of the entry point 0.7 contract on ethereum mainnet
-    const senderAddress = await publicClient.simulateContract({
-      account: null,
-      address: "0x0000000071727De22E5E9d8BAf0edAc6f37da032",
+    const senderAddress = await publicClient.readContract({
+      account: '0x0000000000000000000000000000000000000000',
+      address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a",
       abi: [
         {
-          inputs: [
-            { internalType: "bytes", name: "passkeyId", type: "bytes" },
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "salt",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "initcode",
+              "type": "bytes"
+            }
           ],
-          name: "getSenderAddress",
-          outputs: [],
-          stateMutability: "vinonpayableew",
-          type: "function",
-        },
+          "name": "getAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
       ],
-      functionName: "getSenderAddress",
-      args: [`${Buffer.from(x).toString('hex')}${Buffer.from(y).toString('hex')}${Buffer.from(username).toString('hex')}`],
+      functionName: "getAddress",
+      args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
     }).catch((error) => {
-      console.error('Error simulating contract:', error);
+      console.error('Error calling contract:', error);
       return null;
     });
 
-    console.log('senderAddress', senderAddress);
+    console.log('senderAddress calculated!', senderAddress);
   }
 
   const handlePasskeySigning = async () => {
@@ -357,7 +380,7 @@ const Passkeys = () => {
                   {isLoading ? 'Registering Passkey...' : 'Register Passkey'}
                 </Button>
                 <Button 
-                  onClick={handlePasskeyAuthentication} 
+                  onClick={handleLoginWithPasskey} 
                   $fullWidth 
                   disabled={isLoading}
                 >
