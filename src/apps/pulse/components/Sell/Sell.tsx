@@ -172,7 +172,7 @@ const Sell = (props: SellProps) => {
   }, [setRefreshSellCallback, refreshSellData]);
 
   return (
-    <>
+    <div className="flex flex-col" data-testid="pulse-sell-component">
       <div className="m-2.5 bg-black w-[422px] h-[100px] rounded-[10px]">
         <div className="flex items-center gap-3 p-3">
           <button
@@ -181,6 +181,7 @@ const Sell = (props: SellProps) => {
             }}
             type="button"
             className="flex-shrink-0"
+            data-testid="pulse-sell-token-selector"
           >
             {token ? (
               <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
@@ -251,11 +252,13 @@ const Sell = (props: SellProps) => {
                   value={tokenAmount}
                   type="text"
                   onFocus={() => setInputPlaceholder('')}
+                  data-testid="pulse-sell-amount-input"
                 />
               </div>
               <p
                 className="text-grey ml-0 flex-shrink-0 opacity-50"
                 style={{ fontSize: '36px', fontWeight: '500' }}
+                data-testid="pulse-sell-token-symbol"
               >
                 {token ? token.symbol : 'TOKEN'}
               </p>
@@ -283,7 +286,10 @@ const Sell = (props: SellProps) => {
                 className="w-3.5 h-3.5 rounded-full"
               />
             )}
-            <div className="text-[#8A77FF] ml-1.5 text-xs">
+            <div
+              className="text-[#8A77FF] ml-1.5 text-xs"
+              data-testid="pulse-sell-token-balance"
+            >
               {token ? (
                 <>
                   {limitDigitsNumber(tokenBalance)} {token.symbol} ($
@@ -334,6 +340,7 @@ const Sell = (props: SellProps) => {
                 }}
                 type="button"
                 disabled={isDisabled}
+                data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
                 {item}
               </button>
@@ -343,7 +350,10 @@ const Sell = (props: SellProps) => {
       </div>
 
       {/* sell button */}
-      <div className="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5">
+      <div
+        className="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5"
+        data-testid="pulse-sell-button-container"
+      >
         <SellButton
           token={token}
           tokenAmount={tokenAmount}
@@ -355,7 +365,7 @@ const Sell = (props: SellProps) => {
           isInitialized={isInitialized}
         />
       </div>
-    </>
+    </div>
   );
 };
 

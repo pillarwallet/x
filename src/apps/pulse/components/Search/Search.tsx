@@ -225,8 +225,14 @@ export default function Search({
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]">
+    <div
+      className="flex items-center justify-center min-h-screen bg-black"
+      data-testid="pulse-search-view"
+    >
+      <div
+        className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
+        data-testid="pulse-search-modal"
+      >
         <div className="flex w-full">
           <div className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]">
             <span className="ml-2.5">
@@ -237,6 +243,7 @@ export default function Search({
               type="text"
               className="flex-1 w-fit ml-4 font-normal text-xs text-gray-500"
               value={searchText}
+              data-testid="pulse-search-input"
               onChange={(e) => {
                 setSearchText(e.target.value);
                 // Only clear search type if on buy screen AND not on My Holdings
@@ -276,7 +283,7 @@ export default function Search({
         </div>
 
         {/* Trending, Fresh, TopGainers, MyHoldings */}
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5" data-testid="pulse-search-filter-buttons">
           {(isBuy
             ? ['🔥 Trending', '🌱 Fresh', '🚀 Top Gainers', '💰My Holdings']
             : ['My Holdings']

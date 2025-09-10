@@ -149,6 +149,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             >
               <button
                 className="flex-1"
+                data-testid="pulse-buy-toggle-button"
                 style={
                   isBuy
                     ? {
@@ -170,6 +171,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               </button>
               <button
                 className="flex-1 items-center justify-center"
+                data-testid="pulse-sell-toggle-button"
                 style={
                   !isBuy
                     ? {
@@ -256,6 +258,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     <div
       className="flex flex-col items-center justify-center min-h-screen"
       style={{ backgroundColor: 'black' }}
+      data-testid="pulse-home-view"
     >
       {renderPreview()}
     </div>

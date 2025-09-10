@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
+<button
+  className="flex-1 items-center justify-center"
+  disabled={false}
+  onClick={[Function]}
+  style={
+    {
+      "backgroundColor": "#8A77FF",
+      "borderRadius": 8,
+      "color": "#FFFFFF",
+    }
+  }
+  type="button"
+>
+  Sell 10.0000 TEST for 50.0000 USDC
+</button>
+`;

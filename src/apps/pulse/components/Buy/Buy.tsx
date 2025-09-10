@@ -180,7 +180,7 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <>
+    <div className="flex flex-col" data-testid="pulse-buy-component">
       <div
         style={{
           margin: 10,
@@ -437,6 +437,6 @@ export default function Buy(props: BuyProps) {
           usdAmount={usdAmount}
         />
       </div>
-    </>
+    </div>
   );
 }
