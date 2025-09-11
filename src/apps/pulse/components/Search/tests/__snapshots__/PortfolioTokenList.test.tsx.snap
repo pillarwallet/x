@@ -1,0 +1,230 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
+[
+  <div
+    className="flex w-full pt-3 pr-3 pb-0 pl-3"
+  >
+    <div
+      className="flex items-center w-[250px]"
+    >
+      <p
+        className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]"
+      >
+        Token/Price
+      </p>
+    </div>
+    <div
+      className="flex items-center ml-auto mr-2.5"
+    >
+      <p
+        className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]"
+      >
+        Balance
+      </p>
+    </div>
+  </div>,
+  <button
+    className="flex w-full hover:bg-[#25232D] rounded-[10px] transition-colors h-[60px] p-3"
+    onClick={[Function]}
+    type="button"
+  >
+    <div
+      className="flex items-center w-[250px]"
+    >
+      <div
+        className="relative inline-block"
+      >
+        <div
+          className="w-8 h-8 rounded-full overflow-hidden"
+        >
+          <svg
+            className="rounded-md"
+            data-testid="random-avatar"
+            fill="none"
+            role="img"
+            viewBox="0 0 80 80"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <mask
+              height={80}
+              id=":r0:"
+              maskUnits="userSpaceOnUse"
+              width={80}
+              x={0}
+              y={0}
+            >
+              <rect
+                fill="#FFFFFF"
+                height={80}
+                width={80}
+              />
+            </mask>
+            <g
+              mask="url(#:r0:)"
+            >
+              <rect
+                fill="#92A1C6"
+                height={80}
+                width={80}
+              />
+              <path
+                d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                fill="#146A7C"
+                filter="url(#filter_:r0:)"
+                transform="translate(0 0) rotate(0 40 40) scale(1.2)"
+              />
+              <path
+                d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                fill="#F0AB3D"
+                filter="url(#filter_:r0:)"
+                style={
+                  {
+                    "mixBlendMode": "overlay",
+                  }
+                }
+                transform="translate(-4 4) rotate(-180 40 40) scale(1.2)"
+              />
+            </g>
+            <defs>
+              <filter
+                colorInterpolationFilters="sRGB"
+                filterUnits="userSpaceOnUse"
+                id="filter_:r0:"
+              >
+                <feFlood
+                  floodOpacity={0}
+                  result="BackgroundImageFix"
+                />
+                <feBlend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feGaussianBlur
+                  result="effect1_foregroundBlur"
+                  stdDeviation={7}
+                />
+              </filter>
+            </defs>
+          </svg>
+          <span
+            className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold"
+          >
+            An
+          </span>
+        </div>
+        <img
+          alt="chain logo"
+          className="absolute -bottom-px -right-px w-3.5 h-3.5 rounded-full border-[0.88px] border-[#25232D]"
+          src="/src/assets/images/logo-ethereum.png"
+        />
+      </div>
+      <div
+        className="flex flex-col ml-3 min-w-0"
+      >
+        <div
+          className="flex items-center min-w-0"
+        >
+          <p
+            className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap"
+          >
+            ANOTHER
+          </p>
+          <p
+            className="text-[13px] font-normal tracking-[-0.26px] ml-2 text-white opacity-50 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]"
+            title="Another Token"
+          >
+            Another Token
+          </p>
+        </div>
+        <p
+          className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left"
+        >
+          $
+          2
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col ml-auto mr-2.5 items-end"
+    >
+      <p
+        className="text-[13px] font-normal tracking-[-0.26px] text-white text-right"
+      >
+        $
+        4
+      </p>
+      <p
+        className="text-xs font-normal tracking-[-0.24px] text-white text-right"
+      >
+        2
+      </p>
+    </div>
+  </button>,
+  <button
+    className="flex w-full hover:bg-[#25232D] rounded-[10px] transition-colors h-[60px] p-3"
+    onClick={[Function]}
+    type="button"
+  >
+    <div
+      className="flex items-center w-[250px]"
+    >
+      <div
+        className="relative inline-block"
+      >
+        <img
+          alt="token logo"
+          className="w-8 h-8 rounded-full"
+          src="https://example.com/logo.png"
+        />
+        <img
+          alt="chain logo"
+          className="absolute -bottom-px -right-px w-3.5 h-3.5 rounded-full border-[0.88px] border-[#25232D]"
+          src="/src/assets/images/logo-ethereum.png"
+        />
+      </div>
+      <div
+        className="flex flex-col ml-3 min-w-0"
+      >
+        <div
+          className="flex items-center min-w-0"
+        >
+          <p
+            className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap"
+          >
+            TEST
+          </p>
+          <p
+            className="text-[13px] font-normal tracking-[-0.26px] ml-2 text-white opacity-50 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]"
+            title="Test Token"
+          >
+            Test Token
+          </p>
+        </div>
+        <p
+          className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left"
+        >
+          $
+          1.5
+        </p>
+      </div>
+    </div>
+    <div
+      className="flex flex-col ml-auto mr-2.5 items-end"
+    >
+      <p
+        className="text-[13px] font-normal tracking-[-0.26px] text-white text-right"
+      >
+        $
+        1.5
+      </p>
+      <p
+        className="text-xs font-normal tracking-[-0.24px] text-white text-right"
+      >
+        1
+      </p>
+    </div>
+  </button>,
+]
+`;

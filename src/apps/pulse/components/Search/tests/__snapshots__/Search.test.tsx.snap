@@ -1,0 +1,158 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<Search /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex items-center justify-center min-h-screen bg-black"
+  data-testid="pulse-search-view"
+>
+  <div
+    className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
+    data-testid="pulse-search-modal"
+  >
+    <div
+      className="flex w-full"
+    >
+      <div
+        className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]"
+      >
+        <span
+          className="ml-2.5"
+        >
+          <img
+            alt="search-icon"
+            src="data:image/svg+xml,%3csvg%20class='feather%20feather-search'%20fill='none'%20height='24'%20stroke='white'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='2'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='11'%20cy='11'%20r='8'/%3e%3cline%20x1='21'%20x2='16.65'%20y1='21'%20y2='16.65'/%3e%3c/svg%3e"
+          />
+        </span>
+        <input
+          className="flex-1 w-fit ml-4 font-normal text-xs text-gray-500"
+          data-testid="pulse-search-input"
+          onChange={[Function]}
+          type="text"
+          value=""
+        />
+        <button
+          aria-label="Close"
+          onClick={[Function]}
+          style={
+            {
+              "height": 20,
+              "marginRight": 10,
+              "width": 20,
+            }
+          }
+          type="button"
+        >
+          <img
+            alt="close-icon"
+            src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20view-box='0%200%2016%2016'%20fill='white'%20class-name='w-5%20h-5'%20%3e%3cpath%20fill-rule='evenodd'%20d='M10%2018a8%208%200%201%200%200-16%208%208%200%200%200%200%2016ZM8.28%207.22a.75.75%200%200%200-1.06%201.06L8.94%2010l-1.72%201.72a.75.75%200%201%200%201.06%201.06L10%2011.06l1.72%201.72a.75.75%200%201%200%201.06-1.06L11.06%2010l1.72-1.72a.75.75%200%200%200-1.06-1.06L10%208.94%208.28%207.22Z'%20clip-rule='evenodd'%20/%3e%3c/svg%3e"
+          />
+        </button>
+      </div>
+      <div
+        className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
+      >
+        <button
+          aria-label="Refresh"
+          className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-pointer"
+          disabled={false}
+          type="button"
+        >
+          <img
+            alt="refresh-icon"
+            src="data:image/svg+xml,%3csvg%20width='20'%20height='18'%20viewBox='0%200%2020%2018'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M1.93781%209.03579C1.94148%207.2726%202.52824%205.55746%203.6071%204.1564C4.68595%202.75533%206.19659%201.74663%207.90475%201.28674C9.6129%200.826854%2011.4231%200.941474%2013.0546%201.61283C14.6861%202.28419%2016.0477%203.47475%2016.9282%204.99989M16.9282%204.99989L13.7631%204.51784M16.9282%204.99989L16.7272%201.65181'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M18.0619%208.96372C18.0583%2010.7269%2017.4715%2012.442%2016.3927%2013.8431C15.3138%2015.2442%2013.8032%2016.2529%2012.095%2016.7128C10.3869%2017.1727%208.57666%2017.058%206.94518%2016.3867C5.31369%2015.7153%203.9521%2014.5248%203.07156%2012.9996M3.07156%2012.9996L6.23662%2013.4817M3.07156%2012.9996L3.27252%2016.3477'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
+          />
+        </button>
+      </div>
+      <div
+        className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+        onClick={[Function]}
+      >
+        <button
+          aria-label="Save"
+          className="flex items-center justify-center w-full h-full bg-[#121116] rounded-[10px]"
+          type="button"
+        >
+          <img
+            alt="globe-icon"
+            src="data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3ccircle%20opacity='0.3'%20cx='9.99976'%20cy='10'%20r='9'%20fill='white'/%3e%3cpath%20d='M9.99992%2019.0002C14.9706%2019.0002%2019.0001%2014.9706%2019.0001%2010C19.0001%205.02934%2014.9706%200.999832%209.99992%200.999832C5.02927%200.999832%200.999756%205.02934%200.999756%2010C0.999756%2014.9706%205.02927%2019.0002%209.99992%2019.0002Z'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M6.3999%201.89984H7.29992C5.54488%207.15594%205.54488%2012.844%207.29992%2018.1001H6.3999'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M12.7%201.89984C14.455%207.15594%2014.455%2012.844%2012.7%2018.1001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%2013.6001V12.7C7.15624%2014.4551%2012.8443%2014.4551%2018.1004%2012.7V13.6001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%207.29995C7.15624%205.54492%2012.8443%205.54492%2018.1004%207.29995'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="flex gap-1.5"
+      data-testid="pulse-search-filter-buttons"
+    >
+      <div
+        className="flex bg-black w-[100px] h-10 rounded-[10px]"
+      >
+        <button
+          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          onClick={[Function]}
+          type="button"
+        >
+          <p
+            className="text-xs font-normal text-center text-white opacity-50"
+          >
+            🔥 Trending
+          </p>
+        </button>
+      </div>
+      <div
+        className="flex bg-black w-[100px] h-10 rounded-[10px]"
+      >
+        <button
+          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          onClick={[Function]}
+          type="button"
+        >
+          <p
+            className="text-xs font-normal text-center text-white opacity-50"
+          >
+            🌱 Fresh
+          </p>
+        </button>
+      </div>
+      <div
+        className="flex bg-black w-[100px] h-10 rounded-[10px]"
+      >
+        <button
+          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          onClick={[Function]}
+          type="button"
+        >
+          <p
+            className="text-xs font-normal text-center text-white opacity-50"
+          >
+            🚀 Top Gainers
+          </p>
+        </button>
+      </div>
+      <div
+        className="flex bg-black w-[100px] h-10 rounded-[10px]"
+      >
+        <button
+          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          onClick={[Function]}
+          type="button"
+        >
+          <p
+            className="text-xs font-normal text-center text-white opacity-50"
+          >
+            💰My Holdings
+          </p>
+        </button>
+      </div>
+    </div>
+    <div
+      className="flex items-center justify-center m-[50px]"
+    >
+      <p
+        className="text-gray-500"
+      >
+        Search by token or paste address...
+      </p>
+    </div>
+  </div>
+</div>
+`;

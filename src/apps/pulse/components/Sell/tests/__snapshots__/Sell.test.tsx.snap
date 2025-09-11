@@ -1,0 +1,202 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col"
+    data-testid="pulse-sell-component"
+  >
+    <div
+      class="m-2.5 bg-black w-[422px] h-[100px] rounded-[10px]"
+    >
+      <div
+        class="flex items-center gap-3 p-3"
+      >
+        <button
+          class="flex-shrink-0"
+          data-testid="pulse-sell-token-selector"
+          type="button"
+        >
+          <div
+            class="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]"
+          >
+            <div
+              class="relative inline-block"
+            >
+              <img
+                alt="Main"
+                class="w-6 h-6 rounded-full ml-1.5 mr-1.5"
+                src="test-logo.png"
+              />
+              <img
+                alt="Chain Logo"
+                class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
+                src="/src/assets/images/logo-ethereum.png"
+              />
+            </div>
+            <div
+              class="flex flex-col ml-1.5 mt-1.5 h-9"
+            >
+              <div
+                class="flex"
+              >
+                <p
+                  class="text-xs font-normal"
+                >
+                  TEST
+                </p>
+                <p
+                  class="text-xs font-normal ml-0.5 text-grey"
+                >
+                  Test T...
+                </p>
+              </div>
+              <div
+                class="flex"
+              >
+                <p
+                  class="text-[10px] font-normal text-grey h-2.5"
+                >
+                  $
+                  100.00
+                </p>
+              </div>
+            </div>
+            <img
+              alt="arrow-down"
+              src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+            />
+          </div>
+        </button>
+        <div
+          class="flex-1 min-w-0"
+        >
+          <div
+            class="flex items-center justify-between"
+            style="height: 36px;"
+          >
+            <div
+              class="flex-1 min-w-0 overflow-hidden"
+            >
+              <input
+                class="w-full no-spinner text-right bg-transparent outline-none pr-0"
+                data-testid="pulse-sell-amount-input"
+                placeholder="0.00"
+                style="font-size: 36px; line-height: 1.2; font-weight: 500;"
+                type="text"
+                value=""
+              />
+            </div>
+            <p
+              class="text-grey ml-0 flex-shrink-0 opacity-50"
+              data-testid="pulse-sell-token-symbol"
+              style="font-size: 36px; font-weight: 500;"
+            >
+              TEST
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex justify-between m-2.5"
+      >
+        <div
+          class="flex"
+        />
+        <div
+          class="flex float-right"
+        >
+          <img
+            alt="TEST"
+            class="w-3.5 h-3.5 rounded-full"
+            src="test-logo.png"
+          />
+          <div
+            class="text-[#8A77FF] ml-1.5 text-xs"
+            data-testid="pulse-sell-token-balance"
+          >
+            100.5
+             
+            TEST
+             ($
+            10050
+            )
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div
+        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+      >
+        <button
+          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+          data-testid="pulse-sell-percentage-button-10%"
+          type="button"
+        >
+          10%
+        </button>
+      </div>
+      <div
+        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+      >
+        <button
+          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+          data-testid="pulse-sell-percentage-button-25%"
+          type="button"
+        >
+          25%
+        </button>
+      </div>
+      <div
+        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+      >
+        <button
+          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+          data-testid="pulse-sell-percentage-button-50%"
+          type="button"
+        >
+          50%
+        </button>
+      </div>
+      <div
+        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+      >
+        <button
+          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+          data-testid="pulse-sell-percentage-button-75%"
+          type="button"
+        >
+          75%
+        </button>
+      </div>
+      <div
+        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+      >
+        <button
+          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+          data-testid="pulse-sell-percentage-button-max"
+          type="button"
+        >
+          MAX
+        </button>
+      </div>
+    </div>
+    <div
+      class="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5"
+      data-testid="pulse-sell-button-container"
+    >
+      <button
+        class="flex-1 items-center justify-center"
+        disabled=""
+        style="background-color: rgb(41, 41, 47); color: grey; border-radius: 8px;"
+        type="button"
+      >
+        Sell TEST
+      </button>
+    </div>
+  </div>
+</div>
+`;
