@@ -30,10 +30,6 @@ vi.mock('../../../../hooks/useTransactionDebugLogger', () => ({
   useTransactionDebugLogger: vi.fn(),
 }));
 
-vi.mock('../../contexts/LoadingContext', () => ({
-  useLoading: vi.fn(),
-}));
-
 vi.mock('@relayprotocol/relay-sdk', () => ({
   getClient: vi.fn(),
 }));
@@ -157,7 +153,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: false,
@@ -180,10 +175,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());
@@ -212,7 +203,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     const mockUseRelaySdk = vi.fn();
     (useRelaySdk.default as any).mockImplementation(mockUseRelaySdk);
@@ -233,10 +223,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     // Initial state - not initialized
@@ -277,7 +263,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: true,
@@ -300,10 +285,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());
@@ -326,7 +307,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: true,
@@ -351,10 +331,6 @@ describe('useRelaySell', () => {
       transactionDebugLog: vi.fn(),
     });
 
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
-    });
-
     const { result } = renderHook(() => useRelaySell());
 
     const usdcAddress = result.current.getUSDCAddress(999);
@@ -375,7 +351,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: false,
@@ -398,10 +373,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());
@@ -436,7 +407,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: true,
@@ -459,10 +429,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());
@@ -497,7 +463,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
     const { getClient } = await import('@relayprotocol/relay-sdk');
     const { parseUnits } = await import('viem');
     const { getWrappedTokenAddressIfNative } = await import(
@@ -525,10 +490,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     (getClient as any).mockReturnValue(mockRelayClient);
@@ -569,7 +530,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
     const { getClient } = await import('@relayprotocol/relay-sdk');
     const { parseUnits } = await import('viem');
     const { getWrappedTokenAddressIfNative } = await import(
@@ -597,10 +557,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     (getClient as any).mockReturnValue(mockRelayClient);
@@ -644,7 +600,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: false,
@@ -667,10 +622,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());
@@ -700,7 +651,6 @@ describe('useRelaySell', () => {
     const { useTransactionDebugLogger } = await import(
       '../../../../hooks/useTransactionDebugLogger'
     );
-    const { useLoading } = await import('../../contexts/LoadingContext');
 
     (useRelaySdk.default as any).mockReturnValue({
       isInitialized: true,
@@ -723,10 +673,6 @@ describe('useRelaySell', () => {
 
     (useTransactionDebugLogger as any).mockReturnValue({
       transactionDebugLog: vi.fn(),
-    });
-
-    (useLoading as any).mockReturnValue({
-      setQuoteLoading: vi.fn(),
     });
 
     const { result } = renderHook(() => useRelaySell());

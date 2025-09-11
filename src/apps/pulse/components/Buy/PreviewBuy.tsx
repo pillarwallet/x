@@ -118,7 +118,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
                   marginLeft: 10,
                 }}
               >
-                <Esc closePreview={closePreview} />
+                <Esc onClose={closePreview} />
               </div>
             </div>
           </div>

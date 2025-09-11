@@ -76,9 +76,12 @@ describe('<SellButton />', () => {
         />
       );
 
-      expect(
-        screen.getByText('Sell 10.0000 TEST for 50.0000 USDC')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Sell')).toBeInTheDocument();
+      expect(screen.getByText('10')).toBeInTheDocument();
+      expect(screen.getByText('TEST')).toBeInTheDocument();
+      expect(screen.getByText('for')).toBeInTheDocument();
+      expect(screen.getByText('50')).toBeInTheDocument();
+      expect(screen.getByText('USDC')).toBeInTheDocument();
     });
 
     it('with token only when no offer', () => {

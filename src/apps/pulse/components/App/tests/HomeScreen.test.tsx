@@ -14,10 +14,6 @@ import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTran
 // servuces
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
 
-// contexts
-import { LoadingProvider } from '../../../contexts/LoadingContext';
-import { RefreshProvider } from '../../../contexts/RefreshContext';
-
 // components
 import HomeScreen from '../HomeScreen';
 
@@ -41,15 +37,11 @@ const mockProps = {
 
 const renderWithProviders = (props = {}) => {
   return render(
-    <RefreshProvider>
-      <LoadingProvider>
-        <GlobalTransactionsBatchProvider>
-          <BottomMenuModalProvider>
-            <HomeScreen {...mockProps} {...props} />
-          </BottomMenuModalProvider>
-        </GlobalTransactionsBatchProvider>
-      </LoadingProvider>
-    </RefreshProvider>
+    <GlobalTransactionsBatchProvider>
+      <BottomMenuModalProvider>
+        <HomeScreen {...mockProps} {...props} />
+      </BottomMenuModalProvider>
+    </GlobalTransactionsBatchProvider>
   );
 };
 
@@ -79,15 +71,11 @@ describe('<HomeScreen />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <RefreshProvider>
-          <LoadingProvider>
-            <GlobalTransactionsBatchProvider>
-              <BottomMenuModalProvider>
-                <HomeScreen {...mockProps} />
-              </BottomMenuModalProvider>
-            </GlobalTransactionsBatchProvider>
-          </LoadingProvider>
-        </RefreshProvider>
+        <GlobalTransactionsBatchProvider>
+          <BottomMenuModalProvider>
+            <HomeScreen {...mockProps} />
+          </BottomMenuModalProvider>
+        </GlobalTransactionsBatchProvider>
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
@@ -129,15 +117,11 @@ describe('<HomeScreen />', () => {
 
     // Switch to Sell state
     rerender(
-      <RefreshProvider>
-        <LoadingProvider>
-          <GlobalTransactionsBatchProvider>
-            <BottomMenuModalProvider>
-              <HomeScreen {...mockProps} isBuy={false} />
-            </BottomMenuModalProvider>
-          </GlobalTransactionsBatchProvider>
-        </LoadingProvider>
-      </RefreshProvider>
+      <GlobalTransactionsBatchProvider>
+        <BottomMenuModalProvider>
+          <HomeScreen {...mockProps} isBuy={false} />
+        </BottomMenuModalProvider>
+      </GlobalTransactionsBatchProvider>
     );
 
     // Sell state - should show Sell component, hide Buy
@@ -249,15 +233,11 @@ describe('<HomeScreen />', () => {
 
     // Test Sell mode
     rerender(
-      <RefreshProvider>
-        <LoadingProvider>
-          <GlobalTransactionsBatchProvider>
-            <BottomMenuModalProvider>
-              <HomeScreen {...mockProps} isBuy={false} />
-            </BottomMenuModalProvider>
-          </GlobalTransactionsBatchProvider>
-        </LoadingProvider>
-      </RefreshProvider>
+      <GlobalTransactionsBatchProvider>
+        <BottomMenuModalProvider>
+          <HomeScreen {...mockProps} isBuy={false} />
+        </BottomMenuModalProvider>
+      </GlobalTransactionsBatchProvider>
     );
 
     expect(screen.getByTestId('pulse-sell-component')).toBeInTheDocument();

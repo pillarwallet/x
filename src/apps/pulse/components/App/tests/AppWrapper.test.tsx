@@ -13,6 +13,10 @@ import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import * as searchService from '../../../../../services/pillarXApiSearchTokens';
 import * as portfolioService from '../../../../../services/pillarXApiWalletPortfolio';
 
+// providers
+import BottomMenuModalProvider from '../../../../../providers/BottomMenuModalProvider';
+import GlobalTransactionsBatchProvider from '../../../../../providers/GlobalTransactionsBatchProvider';
+
 // components
 import AppWrapper from '../AppWrapper';
 
@@ -32,6 +36,16 @@ vi.mock('../../../../../services/pillarXApiSearchTokens', () => ({
 const mockStore = configureStore({
   reducer: {},
 });
+
+const renderWithProviders = (component: React.ReactElement) => {
+  return render(
+    <Provider store={mockStore}>
+      <GlobalTransactionsBatchProvider>
+        <BottomMenuModalProvider>{component}</BottomMenuModalProvider>
+      </GlobalTransactionsBatchProvider>
+    </Provider>
+  );
+};
 
 const defaultMocks = () => {
   (useTransactionKit as any).mockReturnValue({
@@ -73,9 +87,15 @@ describe('<AppWrapper />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <MemoryRouter initialEntries={['/']}>
-          <AppWrapper />
-        </MemoryRouter>
+        <Provider store={mockStore}>
+          <GlobalTransactionsBatchProvider>
+            <BottomMenuModalProvider>
+              <MemoryRouter initialEntries={['/']}>
+                <AppWrapper />
+              </MemoryRouter>
+            </BottomMenuModalProvider>
+          </GlobalTransactionsBatchProvider>
+        </Provider>
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
@@ -83,7 +103,7 @@ describe('<AppWrapper />', () => {
 
   describe('renders HomeScreen by default', () => {
     it('when no asset parameter', () => {
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/']}>
           <AppWrapper />
         </MemoryRouter>
@@ -102,7 +122,7 @@ describe('<AppWrapper />', () => {
     });
 
     it('when asset parameter is invalid', () => {
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/?asset=invalid-address']}>
           <AppWrapper />
         </MemoryRouter>
@@ -117,7 +137,7 @@ describe('<AppWrapper />', () => {
     });
 
     it('when asset parameter is empty', () => {
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/?asset=']}>
           <AppWrapper />
         </MemoryRouter>
@@ -130,7 +150,7 @@ describe('<AppWrapper />', () => {
     });
 
     it('when asset parameter is malformed', () => {
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/?asset=%20invalid%20address%20']}>
           <AppWrapper />
         </MemoryRouter>
@@ -146,16 +166,14 @@ describe('<AppWrapper />', () => {
 
   describe('renders Search component', () => {
     it('when valid asset parameter is present', () => {
-      render(
-        <Provider store={mockStore}>
-          <MemoryRouter
-            initialEntries={[
-              '/?asset=0x1234567890123456789012345678901234567890',
-            ]}
-          >
-            <AppWrapper />
-          </MemoryRouter>
-        </Provider>
+      renderWithProviders(
+        <MemoryRouter
+          initialEntries={[
+            '/?asset=0x1234567890123456789012345678901234567890',
+          ]}
+        >
+          <AppWrapper />
+        </MemoryRouter>
       );
 
       expect(screen.getByTestId('pulse-search-view')).toBeInTheDocument();
@@ -176,16 +194,14 @@ describe('<AppWrapper />', () => {
     });
 
     it('with multiple query parameters', () => {
-      render(
-        <Provider store={mockStore}>
-          <MemoryRouter
-            initialEntries={[
-              '/?asset=0x1234567890123456789012345678901234567890&chain=ethereum&amount=100',
-            ]}
-          >
-            <AppWrapper />
-          </MemoryRouter>
-        </Provider>
+      renderWithProviders(
+        <MemoryRouter
+          initialEntries={[
+            '/?asset=0x1234567890123456789012345678901234567890&chain=ethereum&amount=100',
+          ]}
+        >
+          <AppWrapper />
+        </MemoryRouter>
       );
 
       expect(screen.getByTestId('pulse-search-view')).toBeInTheDocument();
@@ -205,7 +221,7 @@ describe('<AppWrapper />', () => {
         refetch: vi.fn(),
       });
 
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/']}>
           <AppWrapper />
         </MemoryRouter>
@@ -224,7 +240,7 @@ describe('<AppWrapper />', () => {
         refetch: vi.fn(),
       });
 
-      render(
+      renderWithProviders(
         <MemoryRouter initialEntries={['/']}>
           <AppWrapper />
         </MemoryRouter>
@@ -239,7 +255,7 @@ describe('<AppWrapper />', () => {
   });
 
   it('handles wallet address changes', () => {
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       <MemoryRouter initialEntries={['/']}>
         <AppWrapper />
       </MemoryRouter>
@@ -254,9 +270,15 @@ describe('<AppWrapper />', () => {
     });
 
     rerender(
-      <MemoryRouter initialEntries={['/']}>
-        <AppWrapper />
-      </MemoryRouter>
+      <Provider store={mockStore}>
+        <GlobalTransactionsBatchProvider>
+          <BottomMenuModalProvider>
+            <MemoryRouter initialEntries={['/']}>
+              <AppWrapper />
+            </MemoryRouter>
+          </BottomMenuModalProvider>
+        </GlobalTransactionsBatchProvider>
+      </Provider>
     );
 
     expect(screen.getByTestId('pulse-home-view')).toBeInTheDocument();

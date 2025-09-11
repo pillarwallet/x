@@ -11,6 +11,7 @@ import { limitDigitsNumber } from '../../../../utils/number';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import CopyIcon from '../../assets/copy-icon.svg';
 import MoreInfo from '../../assets/moreinfo-icon.svg';
+import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
 
 // hooks
 import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
@@ -24,17 +25,13 @@ import { SelectedToken } from '../../types/tokens';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 
-// context
-import { useLoading } from '../../contexts/LoadingContext';
-import { useRefresh } from '../../contexts/RefreshContext';
-
 interface PreviewSellProps {
   closePreview: () => void;
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
-  onRefresh?: () => void;
+  onSellOfferUpdate?: (offer: SellOffer | null) => void;
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -44,15 +41,21 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     walletPortfolioData,
-    onRefresh,
+    onSellOfferUpdate,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
-  const { getUSDCAddress, executeSell, error, clearError } = useRelaySell();
+  const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
+  const {
+    getUSDCAddress,
+    executeSell,
+    error,
+    clearError,
+    getBestSellOffer,
+    isInitialized,
+  } = useRelaySell();
   const { transactionDebugLog } = useTransactionDebugLogger();
-  const { setRefreshPreviewSellCallback, isRefreshing } = useRefresh();
-  const { isQuoteLoading } = useLoading();
 
   useEffect(() => {
     if (isCopied) {
@@ -102,17 +105,36 @@ const PreviewSell = (props: PreviewSellProps) => {
 
   const usdcAddress = getUSDCAddress(sellToken?.chainId || 0);
 
-  // Refresh function for PreviewSell component
+  // Refresh function for PreviewSell component - only refreshes sell offer
   const refreshPreviewSellData = useCallback(async () => {
-    if (onRefresh) {
-      await onRefresh();
-    }
-  }, [onRefresh]);
+    setIsRefreshingPreview(true);
 
-  // Register refresh callback
-  useEffect(() => {
-    setRefreshPreviewSellCallback(refreshPreviewSellData);
-  }, [setRefreshPreviewSellCallback, refreshPreviewSellData]);
+    try {
+      // Only fetch new sell offer - wallet portfolio is already fresh from HomeScreen
+      if (sellToken && tokenAmount && isInitialized && onSellOfferUpdate) {
+        const newOffer = await getBestSellOffer({
+          fromAmount: tokenAmount,
+          fromTokenAddress: sellToken.address,
+          fromChainId: sellToken.chainId,
+          fromTokenDecimals: sellToken.decimals,
+        });
+        onSellOfferUpdate(newOffer);
+      }
+    } catch (e) {
+      console.error('Failed to refresh sell offer:', e);
+      if (onSellOfferUpdate) {
+        onSellOfferUpdate(null);
+      }
+    } finally {
+      setIsRefreshingPreview(false);
+    }
+  }, [
+    sellToken,
+    tokenAmount,
+    isInitialized,
+    onSellOfferUpdate,
+    getBestSellOffer,
+  ]);
 
   const detailsEntry = (
     lhs: string,
@@ -207,10 +229,8 @@ const PreviewSell = (props: PreviewSellProps) => {
           >
             <Refresh
               onClick={refreshPreviewSellData}
-              isLoading={isQuoteLoading || isRefreshing}
-              disabled={
-                !sellToken || !tokenAmount || isQuoteLoading || isRefreshing
-              }
+              isLoading={isRefreshingPreview}
+              disabled={!sellToken || !tokenAmount || isRefreshingPreview}
             />
           </div>
 
@@ -224,7 +244,7 @@ const PreviewSell = (props: PreviewSellProps) => {
               marginLeft: 10,
             }}
           >
-            <Esc closePreview={closePreview} />
+            <Esc onClose={closePreview} />
           </div>
         </div>
       </div>
@@ -288,9 +308,7 @@ const PreviewSell = (props: PreviewSellProps) => {
       <div className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
         <div className="flex items-center">
           <div className="relative inline-block mr-2">
-            <div className="w-8 h-8 overflow-hidden rounded-full flex items-center justify-center bg-[#2775CA]">
-              <span className="text-white font-bold text-sm">USD</span>
-            </div>
+            <img src={UsdcLogo} alt="USDC" className="w-8 h-8 rounded-full" />
             <img
               src={getLogoForChainId(sellToken?.chainId)}
               className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"
@@ -330,7 +348,7 @@ const PreviewSell = (props: PreviewSellProps) => {
           </div>
         </div>
         <div className="flex flex-col justify-center text-right">
-          {isQuoteLoading ? (
+          {isRefreshingPreview ? (
             <div className="flex items-center justify-end">
               <TailSpin color="#FFFFFF" height={15} width={15} />
             </div>

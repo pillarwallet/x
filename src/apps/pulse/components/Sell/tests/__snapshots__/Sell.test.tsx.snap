@@ -87,13 +87,16 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
                 value=""
               />
             </div>
-            <p
-              class="text-grey ml-0 flex-shrink-0 opacity-50"
-              data-testid="pulse-sell-token-symbol"
-              style="font-size: 36px; font-weight: 500;"
+            <div
+              class="relative"
             >
-              TEST
-            </p>
+              <p
+                class="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help text-4xl font-medium"
+                data-testid="pulse-sell-token-symbol"
+              >
+                TEST
+              </p>
+            </div>
           </div>
         </div>
       </div>

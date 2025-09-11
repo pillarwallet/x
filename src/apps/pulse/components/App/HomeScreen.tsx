@@ -18,11 +18,7 @@ import Sell from '../Sell/Sell';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
-import { SellOffer } from '../../hooks/useRelaySell';
-
-// context
-import { useLoading } from '../../contexts/LoadingContext';
-import { useRefresh } from '../../contexts/RefreshContext';
+import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -43,8 +39,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     refetchWalletPortfolio,
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
-  const { refreshSell, isRefreshing } = useRefresh();
-  const { isQuoteLoading } = useLoading();
+  const { getBestSellOffer, isInitialized } = useRelaySell();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
@@ -52,10 +47,48 @@ export default function HomeScreen(props: HomeScreenProps) {
     useState<ExpressIntentResponse | null>(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
+  const [isRefreshingHome, setIsRefreshingHome] = useState(false);
 
   const handleRefresh = useCallback(async () => {
-    await Promise.all([refetchWalletPortfolio(), refreshSell()]);
-  }, [refetchWalletPortfolio, refreshSell]);
+    setIsRefreshingHome(true);
+
+    try {
+      const refreshPromises: Promise<void>[] = [
+        Promise.resolve(refetchWalletPortfolio()),
+      ];
+
+      // If we have the required data, refresh the sell offer (regardless of whether one exists)
+      if (sellToken && tokenAmount && isInitialized) {
+        const sellOfferPromise = (async () => {
+          try {
+            const newOffer = await getBestSellOffer({
+              fromAmount: tokenAmount,
+              fromTokenAddress: sellToken.address,
+              fromChainId: sellToken.chainId,
+              fromTokenDecimals: sellToken.decimals,
+            });
+            setSellOffer(newOffer);
+          } catch (error) {
+            console.error('Failed to refresh sell offer:', error);
+            setSellOffer(null);
+          }
+        })();
+        refreshPromises.push(sellOfferPromise);
+      }
+
+      await Promise.all(refreshPromises);
+    } catch (error) {
+      console.error('Refresh failed:', error);
+    } finally {
+      setIsRefreshingHome(false);
+    }
+  }, [
+    refetchWalletPortfolio,
+    sellToken,
+    tokenAmount,
+    isInitialized,
+    getBestSellOffer,
+  ]);
 
   const closePreviewBuy = () => {
     setPreviewBuy(false);
@@ -95,7 +128,7 @@ export default function HomeScreen(props: HomeScreenProps) {
           sellOffer={sellOffer}
           tokenAmount={tokenAmount}
           walletPortfolioData={walletPortfolioData}
-          onRefresh={handleRefresh}
+          onSellOfferUpdate={setSellOffer}
         />
       );
     }
@@ -205,12 +238,9 @@ export default function HomeScreen(props: HomeScreenProps) {
               >
                 <Refresh
                   onClick={isBuy ? undefined : handleRefresh}
-                  isLoading={isBuy ? false : isQuoteLoading || isRefreshing}
+                  isLoading={isBuy ? false : isRefreshingHome}
                   disabled={
-                    isBuy ||
-                    isQuoteLoading ||
-                    isRefreshing ||
-                    (!buyToken && !sellToken)
+                    isBuy || isRefreshingHome || (!buyToken && !sellToken)
                   }
                 />
               </div>
@@ -247,6 +277,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               setPreviewSell={setPreviewSell}
               setSellOffer={setSellOffer}
               setTokenAmount={setTokenAmount}
+              isRefreshing={isRefreshingHome}
             />
           )}
         </div>

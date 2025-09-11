@@ -14,6 +14,31 @@ exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
   }
   type="button"
 >
-  Sell 10.0000 TEST for 50.0000 USDC
+  <div
+    className="flex items-center justify-center gap-1"
+  >
+    <span>
+      Sell
+    </span>
+    <p
+      className="text-white"
+    >
+      10
+    </p>
+    <span>
+      TEST
+    </span>
+    <span>
+      for
+    </span>
+    <p
+      className="text-white"
+    >
+      50
+    </p>
+    <span>
+      USDC
+    </span>
+  </div>
 </button>
 `;

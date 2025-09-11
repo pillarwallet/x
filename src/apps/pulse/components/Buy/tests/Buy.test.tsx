@@ -13,10 +13,6 @@ import useModularSdk from '../../../hooks/useModularSdk';
 import { WalletPortfolioMobulaResponse } from '../../../../../types/api';
 import { PayingToken, SelectedToken } from '../../../types/tokens';
 
-// contexts
-import { LoadingProvider } from '../../../contexts/LoadingContext';
-import { RefreshProvider } from '../../../contexts/RefreshContext';
-
 // components
 import Buy from '../Buy';
 
@@ -135,13 +131,7 @@ const defaultMocks = () => {
 };
 
 const renderWithProviders = (props = {}) => {
-  return render(
-    <RefreshProvider>
-      <LoadingProvider>
-        <Buy {...mockProps} {...props} />
-      </LoadingProvider>
-    </RefreshProvider>
-  );
+  return render(<Buy {...mockProps} {...props} />);
 };
 
 describe('<Buy />', () => {
@@ -151,15 +141,7 @@ describe('<Buy />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer
-      .create(
-        <RefreshProvider>
-          <LoadingProvider>
-            <Buy {...mockProps} />
-          </LoadingProvider>
-        </RefreshProvider>
-      )
-      .toJSON();
+    const tree = renderer.create(<Buy {...mockProps} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
