@@ -20,6 +20,7 @@ export default function AppWrapper() {
   const {
     data: walletPortfolioData,
     isLoading: walletPortfolioLoading,
+    isFetching: walletPortfolioFetching,
     error: walletPortfolioError,
     refetch: refetchWalletPortfolio,
   } = useGetWalletPortfolioQuery(
@@ -55,7 +56,9 @@ export default function AppWrapper() {
       setChains={setChains}
       walletPortfolioData={walletPortfolioData?.result?.data}
       walletPortfolioLoading={walletPortfolioLoading}
+      walletPortfolioFetching={walletPortfolioFetching}
       walletPortfolioError={!!walletPortfolioError}
+      refetchWalletPortfolio={refetchWalletPortfolio}
     />
   ) : (
     <HomeScreen
