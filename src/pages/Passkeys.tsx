@@ -329,6 +329,11 @@ const Passkeys = () => {
               [pubKeyX, pubKeyY],
               credentialIdHash
             ]);
+
+       console.log('pubkeyX', pubKeyX);
+       console.log('pubkeyY', pubKeyY);
+       console.log('credentialIdHash', credentialIdHash);
+       console.log('initData', initData);
  
        console.log('installing validator for:', await modularSdk?.getCounterFactualAddress());
        const uoHash = await modularSdk?.installModule(MODULE_TYPE.VALIDATOR, moduleAddress, initData);
