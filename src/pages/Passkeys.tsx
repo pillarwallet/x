@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import { toSimpleSmartAccount } from 'permissionless/accounts'
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
-import { toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
-import { keccak256 } from 'viem';
+import { createBundlerClient, toSmartAccount, toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
+import { Hex, keccak256, parseEther } from 'viem';
 
 
 // components
@@ -19,6 +20,7 @@ import { concat, createPublicClient, createWalletClient, custom, encodeAbiParame
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
+import { privateKeyToAccount, toAccount } from 'viem/accounts';
 
 const Passkeys = () => {
   const { address } = useAccount();
@@ -32,7 +34,23 @@ const Passkeys = () => {
   const [publicKey, setPublicKey] = useState("");
   const [credentialId, setCredentialId] = useState("");
   const [username, setUsername] = useState("");
+  const [eoaAddress, setEoaAddress] = useState("");
   const [webAuthnAccount, setWebAuthnAccount] = useState<WebAuthnAccount | null>(null);
+
+  const derivePrivateKeyFromPasskey = async(credential: string) => {
+    // This is a simplified approach - in production, you'd want to:
+    // 1. Use proper HKDF or similar key derivation
+    // 2. Store the derived key securely
+    // 3. Use the passkey for signing operations
+    
+    const hash = crypto.subtle.digest('SHA-256', toBytes(credential))
+    return hash.then(hashBuffer => {
+      const hashArray = new Uint8Array(hashBuffer)
+      return `0x${Array.from(hashArray)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')}` as Hex
+    }) as any // Simplified for example - handle Promise properly in real implementation
+  }
 
   const publicClient = createPublicClient({ 
     chain: mainnet,
@@ -53,10 +71,12 @@ const Passkeys = () => {
   // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
   function getXYCoordinates(publicKeyBase64: string) {
     const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
-    let b = Array.from(publicKeyBuffer);
-    b = b.slice(-128)
-    const x = b.slice(0,32)
-    const y = b.slice(-32)
+    
+    // WebAuthn public keys are CBOR encoded
+    // X coordinate starts at byte 10 (after CBOR headers)
+    // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
+    const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
+    const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
 
     return { x, y };
   }
@@ -150,14 +170,6 @@ const Passkeys = () => {
     console.log('y', y);
     console.log('username', username);
 
-    const owner = toWebAuthnAccount({
-      credential: {
-        id: credentialId,
-        publicKey: publicKey as `0x${string}`,
-      },
-    });
-    
-    console.log(keccak256(toHex(`${x}${y}${username}`)))
 
     // Use viem to call a simulation on the getSenderAddress function
     // of the entry point 0.7 contract on ethereum mainnet
@@ -198,14 +210,43 @@ const Passkeys = () => {
     });
 
     console.log('senderAddress calculated!', senderAddress);
+
+    /**
+     * Next attempt to instantiate the Modular SDK
+     */
+    const privateKey = await derivePrivateKeyFromPasskey(`${x}${y}${username}`);
+    console.log('privateKey', privateKey);
+
+    const pkAccount = privateKeyToAccount(privateKey);
+    const client = createWalletClient({
+      account: pkAccount,
+      chain: mainnet,
+      transport: http('https://node1.web3api.com')
+    });
+
+    const bundlerClient = createBundlerClient({ 
+      client, 
+      transport: http('https://rpc.etherspot.io/v2/1') 
+    });
+
+    const addresses = bundlerClient.client.account.address;
+    setEoaAddress(addresses);
+    console.log('bundlerClient.client.account.address', addresses);
+
+    const modularSdk = new ModularSdk(client, {
+      chainId: mainnet.id,
+      bundlerProvider: new EtherspotBundler(mainnet.id, import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''),
+    });
+
+    const counterFactualAddress = await modularSdk.getCounterFactualAddress();
+    console.log('counterFactualAddress', counterFactualAddress);
+    setEAddress(counterFactualAddress);
+
+    setModularSdk(modularSdk);
+    console.log('finished');
   }
 
   const handlePasskeySigning = async () => {
-    if (!address) {
-      alert('Please connect your wallet first');
-      return;
-    }
-
     setIsLoading(true);
     try {
       // Create a custom challenge for testing (this would be your transaction data)
@@ -276,6 +317,9 @@ const Passkeys = () => {
           //   credentialId
           // ])
 
+          // Hash the credential ID to ensure it fits in bytes32
+          const credentialIdHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(credentialId));
+          
           const initData = ethers.utils.defaultAbiCoder.encode(
             [
               "tuple(uint256 pubKeyX, uint256 pubKeyY)",
@@ -283,13 +327,11 @@ const Passkeys = () => {
             ],
             [
               [pubKeyX, pubKeyY],
-              ethers.utils.formatBytes32String(credentialId)
+              credentialIdHash
             ]);
-
-      console.log('initData', initData);
  
+       console.log('installing validator for:', await modularSdk?.getCounterFactualAddress());
        const uoHash = await modularSdk?.installModule(MODULE_TYPE.VALIDATOR, moduleAddress, initData);
- 
        console.log(`UserOpHash: ${uoHash}`);
  
        // get transaction hash...
@@ -303,16 +345,10 @@ const Passkeys = () => {
        console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
      } catch (error) {
        console.error('Passkey validator installation error:', error);
-       alert('Passkey validator installation failed. Please try again.');
      } 
    };
 
    const handleGetPublicKey = async () => {
-     if (!username) {
-       alert('Please connect your wallet first');
-       return;
-     }
-
      setIsLoading(true);
      try {
        const passkeyDetails = await getPasskeyDetails(username);
@@ -357,6 +393,7 @@ const Passkeys = () => {
       <ContentWrapper>
         <Title>Passkey Management</Title>
         <p>Username: {username}</p>
+        <p>EOA address: {eoaAddress}</p>
         <p>Etherspot address: {eAddress}</p>
         {publicKey && <p>Public Key: {publicKey}</p>}
         {credentialId && <p>Credential ID: {credentialId}</p>}
