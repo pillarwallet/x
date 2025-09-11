@@ -15,6 +15,7 @@ import {
 } from '../../../../services/tokensData';
 import { PortfolioData } from '../../../../types/api';
 import { isTestnet } from '../../../../utils/blockchain';
+import { limitDigitsNumber } from '../../../../utils/number';
 import SearchIcon from '../../assets/seach-icon.svg';
 import { useTokenSearch } from '../../hooks/useTokenSearch';
 import { SearchType, SelectedToken } from '../../types/tokens';
@@ -25,6 +26,7 @@ import {
   parseSearchData,
 } from '../../utils/parseSearchData';
 import Close from '../Misc/Close';
+import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import ChainOverlay from './ChainOverlay';
 import ChainSelectButton from './ChainSelect';
@@ -82,6 +84,7 @@ export default function Search({
   const [showChainOverlay, setShowChainOverlay] = useState(false);
   const chainButtonRef = useRef<HTMLDivElement>(null);
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties>({});
+  const searchModalRef = useRef<HTMLDivElement>(null);
 
   const useQuery = () => {
     const { search } = useLocation();
@@ -121,6 +124,51 @@ export default function Search({
     }
   }, [query, setSearchText, isBuy]);
 
+  const handleClose = () => {
+    setSearchText('');
+    // It resets search type to MyHoldings if on sell screen
+    if (!isBuy) {
+      setSearchType(SearchType.MyHoldings);
+    } else {
+      setSearchType(undefined);
+    }
+    setSearching(false);
+    removeQueryParams();
+  };
+
+  // Click outside to close functionality
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchModalRef.current &&
+        !searchModalRef.current.contains(event.target as Node)
+      ) {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ESC key to close functionality
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (searchType) {
       setIsLoading(true);
@@ -139,18 +187,6 @@ export default function Search({
     }
   }, [searchType, chains]);
 
-  const handleClose = () => {
-    setSearchText('');
-    // It resets search type to MyHoldings if on sell screen
-    if (!isBuy) {
-      setSearchType(SearchType.MyHoldings);
-    } else {
-      setSearchType(undefined);
-    }
-    setSearching(false);
-    removeQueryParams();
-  };
-
   const handleSearchTypeChange = (index: number) => {
     if (index === 0) setSearchType(SearchType.Trending);
     else if (index === 1) setSearchType(SearchType.Fresh);
@@ -167,9 +203,7 @@ export default function Search({
           name: item.name,
           symbol: item.symbol,
           logo: item.logo ?? '',
-          usdValue: item.price
-            ? item.price.toFixed(6)
-            : Number.parseFloat('0').toFixed(6),
+          usdValue: limitDigitsNumber(item.price || 0).toString(),
           dailyPriceChange: -0.02,
           chainId: chainNameToChainIdTokensData(item.chain),
           decimals: item.decimals,
@@ -181,9 +215,7 @@ export default function Search({
           name: item.name,
           symbol: item.symbol,
           logo: item.logo ?? '',
-          usdValue: item.price
-            ? item.price.toFixed(6)
-            : Number.parseFloat('0').toFixed(6),
+          usdValue: limitDigitsNumber(item.price || 0).toString(),
           dailyPriceChange: -0.02,
           chainId: chainNameToChainIdTokensData(item.blockchain),
           decimals: item.decimals,
@@ -195,9 +227,7 @@ export default function Search({
         name: item.name,
         symbol: item.symbol,
         logo: item.logo ?? '',
-        usdValue: item.price
-          ? item.price.toFixed(6)
-          : Number.parseFloat('0').toFixed(6),
+        usdValue: limitDigitsNumber(item.price || 0).toString(),
         dailyPriceChange: -0.02,
         decimals: item.decimals,
         address: item.contract,
@@ -230,6 +260,7 @@ export default function Search({
       data-testid="pulse-search-view"
     >
       <div
+        ref={searchModalRef}
         className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
         data-testid="pulse-search-modal"
       >
@@ -264,22 +295,28 @@ export default function Search({
           <div className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5">
             <Refresh />
           </div>
-          <div
-            ref={chainButtonRef}
-            className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
-            onClick={() => {
-              const rect = chainButtonRef?.current?.getBoundingClientRect();
-              setShowChainOverlay(true);
-              setOverlayStyle({
-                ...overlayStyling,
-                position: 'absolute',
-                top: rect?.top ? rect.top + 44 : undefined,
-                left: rect?.left ? rect.left : undefined,
-              });
-            }}
-          >
-            <ChainSelectButton />
-          </div>
+          {isBuy ? (
+            <div
+              ref={chainButtonRef}
+              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+              onClick={() => {
+                const rect = chainButtonRef?.current?.getBoundingClientRect();
+                setShowChainOverlay(true);
+                setOverlayStyle({
+                  ...overlayStyling,
+                  position: 'absolute',
+                  top: rect?.top ? rect.top + 44 : undefined,
+                  left: rect?.left ? rect.left : undefined,
+                });
+              }}
+            >
+              <ChainSelectButton />
+            </div>
+          ) : (
+            <div className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer">
+              <Esc onClose={handleClose} />
+            </div>
+          )}
         </div>
 
         {/* Trending, Fresh, TopGainers, MyHoldings */}

@@ -1,16 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
 import { vi } from 'vitest';
 
 // types
 import { WalletPortfolioMobulaResponse } from '../../../../../types/api';
 import { SelectedToken } from '../../../types/tokens';
-
-// contexts
-import { LoadingProvider } from '../../../contexts/LoadingContext';
-import { RefreshProvider, useRefresh } from '../../../contexts/RefreshContext';
 
 // hooks
 import useRelaySell from '../../../hooks/useRelaySell';
@@ -21,11 +16,6 @@ import Sell from '../Sell';
 // Mock dependencies
 vi.mock('../../../hooks/useRelaySell', () => ({
   default: vi.fn(),
-}));
-
-vi.mock('../../../contexts/RefreshContext', () => ({
-  useRefresh: vi.fn(),
-  RefreshProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const mockToken: SelectedToken = {
@@ -94,24 +84,13 @@ const defaultMocks = () => {
     error: null,
   };
 
-  const mockUseRefresh = {
-    setRefreshSellCallback: vi.fn(),
-  };
-
   (useRelaySell as any).mockReturnValue(mockUseRelaySell);
-  (useRefresh as any).mockReturnValue(mockUseRefresh);
 
-  return { mockUseRelaySell, mockUseRefresh };
+  return { mockUseRelaySell };
 };
 
 const renderWithProviders = (props = {}) => {
-  return render(
-    <RefreshProvider>
-      <LoadingProvider>
-        <Sell {...mockProps} {...props} />
-      </LoadingProvider>
-    </RefreshProvider>
-  );
+  return render(<Sell {...mockProps} {...props} />);
 };
 
 describe('<Sell />', () => {
@@ -130,9 +109,9 @@ describe('<Sell />', () => {
       renderWithProviders({ token: null });
 
       expect(screen.getByText('Select token')).toBeInTheDocument();
-      expect(screen.getByTestId('pulse-sell-token-symbol')).toHaveTextContent(
-        'TOKEN'
-      );
+      expect(
+        screen.queryByTestId('pulse-sell-token-symbol')
+      ).not.toBeInTheDocument();
       expect(screen.getByTestId('pulse-sell-token-balance')).toHaveTextContent(
         '0.00($0.00)'
       );

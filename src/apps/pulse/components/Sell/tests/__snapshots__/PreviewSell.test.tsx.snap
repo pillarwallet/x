@@ -54,6 +54,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
         <button
           aria-label="Close"
           className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px]"
+          data-testid="esc-button"
           onClick={[MockFunction spy]}
           type="button"
         >
@@ -148,15 +149,11 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       <div
         className="relative inline-block mr-2"
       >
-        <div
-          className="w-8 h-8 overflow-hidden rounded-full flex items-center justify-center bg-[#2775CA]"
-        >
-          <span
-            className="text-white font-bold text-sm"
-          >
-            USD
-          </span>
-        </div>
+        <img
+          alt="USDC"
+          className="w-8 h-8 rounded-full"
+          src="/src/apps/pulse/assets/usd-coin-usdc-logo.png"
+        />
         <img
           alt="Chain logo"
           className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"

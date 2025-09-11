@@ -8,10 +8,6 @@ import { vi } from 'vitest';
 import { useTransactionDebugLogger } from '../../../../../hooks/useTransactionDebugLogger';
 import useRelaySell from '../../../hooks/useRelaySell';
 
-// contexts
-import { LoadingProvider } from '../../../contexts/LoadingContext';
-import { RefreshProvider } from '../../../contexts/RefreshContext';
-
 // components
 import PreviewSell from '../PreviewSell';
 
@@ -94,13 +90,7 @@ const mockProps = {
 };
 
 const renderWithProviders = (props = {}) => {
-  return render(
-    <RefreshProvider>
-      <LoadingProvider>
-        <PreviewSell {...mockProps} {...props} />
-      </LoadingProvider>
-    </RefreshProvider>
-  );
+  return render(<PreviewSell {...mockProps} {...props} />);
 };
 
 describe('<PreviewSell />', () => {
@@ -120,15 +110,7 @@ describe('<PreviewSell />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer
-      .create(
-        <RefreshProvider>
-          <LoadingProvider>
-            <PreviewSell {...mockProps} />
-          </LoadingProvider>
-        </RefreshProvider>
-      )
-      .toJSON();
+    const tree = renderer.create(<PreviewSell {...mockProps} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 

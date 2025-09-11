@@ -24,9 +24,6 @@ import SellButton from './SellButton';
 // hooks
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
-// context
-import { useRefresh } from '../../contexts/RefreshContext';
-
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   token: SelectedToken | null;
@@ -34,6 +31,7 @@ interface SellProps {
   setPreviewSell: Dispatch<SetStateAction<boolean>>;
   setSellOffer: Dispatch<SetStateAction<SellOffer | null>>;
   setTokenAmount: Dispatch<SetStateAction<string>>;
+  isRefreshing?: boolean;
 }
 
 const Sell = (props: SellProps) => {
@@ -44,6 +42,7 @@ const Sell = (props: SellProps) => {
     setPreviewSell,
     setSellOffer,
     setTokenAmount: setParentTokenAmount,
+    isRefreshing = false,
   } = props;
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
@@ -51,9 +50,9 @@ const Sell = (props: SellProps) => {
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
   const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
-  const { setRefreshSellCallback } = useRefresh();
 
   const fetchSellOffer = useCallback(async () => {
     if (
@@ -158,19 +157,6 @@ const Sell = (props: SellProps) => {
     fetchSellOffer();
   }, [fetchSellOffer]);
 
-  // Refresh function for Sell component
-  const refreshSellData = useCallback(async () => {
-    if (debouncedTokenAmount && token && isInitialized) {
-      // Re-trigger the getBestSellOffer call by calling fetchSellOffer directly
-      await fetchSellOffer();
-    }
-  }, [debouncedTokenAmount, token, isInitialized, fetchSellOffer]);
-
-  // Register refresh callback
-  useEffect(() => {
-    setRefreshSellCallback(refreshSellData);
-  }, [setRefreshSellCallback, refreshSellData]);
-
   return (
     <div className="flex flex-col" data-testid="pulse-sell-component">
       <div className="m-2.5 bg-black w-[422px] h-[100px] rounded-[10px]">
@@ -255,13 +241,25 @@ const Sell = (props: SellProps) => {
                   data-testid="pulse-sell-amount-input"
                 />
               </div>
-              <p
-                className="text-grey ml-0 flex-shrink-0 opacity-50"
-                style={{ fontSize: '36px', fontWeight: '500' }}
-                data-testid="pulse-sell-token-symbol"
-              >
-                {token ? token.symbol : 'TOKEN'}
-              </p>
+              {token && (
+                <div className="relative">
+                  <p
+                    className="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help text-4xl font-medium"
+                    data-testid="pulse-sell-token-symbol"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                  >
+                    {token.symbol.length > 4
+                      ? `${token.symbol.slice(0, 3)}...`
+                      : token.symbol}
+                  </p>
+                  {showTooltip && token.symbol.length > 4 && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
+                      {token.symbol}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -361,7 +359,7 @@ const Sell = (props: SellProps) => {
           setPreviewSell={setPreviewSell}
           setSellOffer={setSellOffer}
           sellOffer={sellOffer}
-          isLoadingOffer={isLoadingOffer}
+          isLoadingOffer={isLoadingOffer || isRefreshing}
           isInitialized={isInitialized}
         />
       </div>

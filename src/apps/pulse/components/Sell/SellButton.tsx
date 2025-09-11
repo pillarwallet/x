@@ -7,12 +7,19 @@ import { SellOffer } from '../../hooks/useRelaySell';
 // types
 import { SelectedToken } from '../../types/tokens';
 
+// components
+import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
+
+// utils
+import { limitDigitsNumber } from '../../../../utils/number';
+
 function getButtonText(
   isLoading: boolean,
   isInitialized: boolean,
   selectedToken: SelectedToken | null,
   tokenAmount: string,
-  sellOffer?: SellOffer | null
+  sellOffer?: SellOffer | null,
+  isDisabled?: boolean
 ) {
   if (!isInitialized) {
     return 'Initializing...';
@@ -27,8 +34,34 @@ function getButtonText(
   }
 
   const amount = parseFloat(tokenAmount);
-  if (!Number.isNaN(amount) && amount > 0 && sellOffer?.tokenAmountToReceive) {
-    return `Sell ${amount.toFixed(4)} ${selectedToken?.symbol} for ${sellOffer.tokenAmountToReceive.toFixed(4)} USDC`;
+  if (
+    !isDisabled &&
+    !Number.isNaN(amount) &&
+    amount > 0 &&
+    sellOffer?.tokenAmountToReceive
+  ) {
+    const limitedAmount = limitDigitsNumber(amount);
+    const limitedUsdcAmount = limitDigitsNumber(sellOffer.tokenAmountToReceive);
+
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <span>Sell</span>
+        <HighDecimalsFormatted
+          value={limitedAmount}
+          styleNumber="text-white"
+          styleZeros="text-white/70 text-xs"
+        />
+        <span>{selectedToken?.symbol}</span>
+        <span>for</span>
+        <HighDecimalsFormatted
+          value={limitedUsdcAmount}
+          moneySymbol=""
+          styleNumber="text-white"
+          styleZeros="text-white/70 text-xs"
+        />
+        <span>USDC</span>
+      </div>
+    );
   }
 
   return selectedToken?.symbol ? `Sell ${selectedToken.symbol}` : 'Sell';
@@ -93,7 +126,8 @@ const SellButton = (props: SellButtonProps) => {
         isInitialized,
         token,
         tokenAmount,
-        sellOffer
+        sellOffer,
+        isDisabled()
       )}
     </button>
   );

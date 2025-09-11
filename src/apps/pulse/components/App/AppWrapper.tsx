@@ -3,8 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { isAddress } from 'viem';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
-import { LoadingProvider } from '../../contexts/LoadingContext';
-import { RefreshProvider } from '../../contexts/RefreshContext';
 import { SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
 import Search from '../Search/Search';
@@ -15,7 +13,6 @@ export default function AppWrapper() {
   const [isBuy, setIsBuy] = useState(true);
   const [chains, setChains] = useState<MobulaChainNames>(MobulaChainNames.All);
   const [buyToken, setBuyToken] = useState<SelectedToken | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sellToken, setSellToken] = useState<SelectedToken | null>(null);
 
   const { walletAddress: accountAddress } = useTransactionKit();
@@ -48,32 +45,26 @@ export default function AppWrapper() {
     }
   }, [setSearching, query]);
 
-  return (
-    <LoadingProvider>
-      <RefreshProvider>
-        {searching ? (
-          <Search
-            setSearching={setSearching}
-            isBuy={isBuy}
-            setBuyToken={setBuyToken}
-            setSellToken={setSellToken}
-            chains={chains}
-            setChains={setChains}
-            walletPortfolioData={walletPortfolioData?.result?.data}
-            walletPortfolioLoading={walletPortfolioLoading}
-            walletPortfolioError={!!walletPortfolioError}
-          />
-        ) : (
-          <HomeScreen
-            setSearching={setSearching}
-            buyToken={buyToken}
-            sellToken={sellToken}
-            isBuy={isBuy}
-            setIsBuy={setIsBuy}
-            refetchWalletPortfolio={refetchWalletPortfolio}
-          />
-        )}
-      </RefreshProvider>
-    </LoadingProvider>
+  return searching ? (
+    <Search
+      setSearching={setSearching}
+      isBuy={isBuy}
+      setBuyToken={setBuyToken}
+      setSellToken={setSellToken}
+      chains={chains}
+      setChains={setChains}
+      walletPortfolioData={walletPortfolioData?.result?.data}
+      walletPortfolioLoading={walletPortfolioLoading}
+      walletPortfolioError={!!walletPortfolioError}
+    />
+  ) : (
+    <HomeScreen
+      setSearching={setSearching}
+      buyToken={buyToken}
+      sellToken={sellToken}
+      isBuy={isBuy}
+      setIsBuy={setIsBuy}
+      refetchWalletPortfolio={refetchWalletPortfolio}
+    />
   );
 }
