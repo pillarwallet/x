@@ -3,7 +3,7 @@ import { toSimpleSmartAccount } from 'permissionless/accounts'
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
-import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep, WalletProviderLike } from "modularPasskeys";
+import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep } from "modularPasskeys";
 import { createBundlerClient, toSmartAccount, toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
 import { Hex, keccak256, parseEther } from 'viem';
 
@@ -19,7 +19,7 @@ import PillarXLogo from '../assets/images/pillarX_full_white.png';
 import { concat, createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, stringToBytes, stringToHex, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { ethers } from 'ethers';
-import { mainnet } from 'viem/chains';
+import { base, mainnet } from 'viem/chains';
 import { privateKeyToAccount, toAccount } from 'viem/accounts';
 
 const Passkeys = () => {
@@ -226,7 +226,7 @@ const Passkeys = () => {
 
     const bundlerClient = createBundlerClient({ 
       client, 
-      transport: http('https://rpc.etherspot.io/v2/1') 
+      transport: http('https://rpc.etherspot.io/v2/8453') 
     });
 
     const addresses = bundlerClient.client.account.address;
@@ -234,8 +234,8 @@ const Passkeys = () => {
     console.log('bundlerClient.client.account.address', addresses);
 
     const modularSdk = new ModularSdk(client, {
-      chainId: mainnet.id,
-      bundlerProvider: new EtherspotBundler(mainnet.id, import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''),
+      chainId: base.id,
+      bundlerProvider: new EtherspotBundler(base.id, import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''),
     });
 
     const counterFactualAddress = await modularSdk.getCounterFactualAddress();
@@ -386,6 +386,62 @@ const Passkeys = () => {
      }
    };
 
+  const handleSendNativeToken = async () => {
+    if (!modularSdk) {
+      alert('Please complete the setup first by clicking "Login with Passkey"');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const recipient = '0x11041744893Fa72629aB93ea8adaf35A1dc24AA5';
+      
+      
+      console.log('Sending native token...');
+      console.log('From:', await modularSdk.getCounterFactualAddress());
+      console.log('To:', recipient);
+
+      // add transactions to the batch
+      const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther("0") });
+      console.log('transactions: ', transactionBatch);
+
+      // get balance of the account address
+      const balance = await modularSdk.getNativeBalance();
+
+      console.log('balances: ', balance);
+
+      // estimate transactions added to the batch and get the fee data for the UserOp
+      const op = await modularSdk.estimate();
+      console.log(`Estimate UserOp: `, op);
+
+      // sign the UserOp and sending to the bundler...
+      const uoHash = await modularSdk.send(op);
+      console.log(`UserOpHash: ${uoHash}`);
+      console.log(`UserOpHash: ${uoHash}`);
+
+      // Wait for transaction confirmation
+      console.log('Waiting for transaction...');
+      let userOpsReceipt = null;
+      const timeout = Date.now() + 60000; // 60 seconds timeout
+      while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+        await sleep(2);
+        userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash || '');
+      }
+      
+      if (userOpsReceipt) {
+        console.log('Transaction successful:', userOpsReceipt);
+        alert(`Transaction successful!\nSent 0.001 ETH to ${recipient}\nTx Hash: ${userOpsReceipt}`);
+      } else {
+        alert('Transaction timeout - please check manually');
+      }
+    } catch (error) {
+      console.error('Send native token error:', error);
+      alert(`Transaction failed: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Wrapper>
       <LogoContainer>
@@ -443,11 +499,18 @@ const Passkeys = () => {
                 </Button>
                 <Button
                   onClick={handleGetPublicKey} 
-                  $last 
                   $fullWidth 
                   disabled={isLoading}
                 >
                   {isLoading ? 'Getting Public Key...' : 'Get Public Key'}
+                </Button>
+                <Button
+                  onClick={handleSendNativeToken}
+                  $last 
+                  $fullWidth 
+                  disabled={isLoading || !modularSdk}
+                >
+                  {isLoading ? 'Sending...' : 'Send 0.001 ETH'}
                 </Button>
               </ButtonContainer>
             ) : (
