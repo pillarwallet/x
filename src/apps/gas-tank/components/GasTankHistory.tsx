@@ -4,6 +4,17 @@ import styled from 'styled-components';
 import { useWalletAddress } from '@etherspot/transaction-kit';
 import { formatUnits } from 'viem';
 
+// Import chain logos
+import logoArbitrum from '../../../assets/images/logo-arbitrum.png';
+import logoAvalanche from '../../../assets/images/logo-avalanche.png';
+import logoBase from '../../../assets/images/logo-base.png';
+import logoBsc from '../../../assets/images/logo-bsc.png';
+import logoEthereum from '../../../assets/images/logo-ethereum.png';
+import logoGnosis from '../../../assets/images/logo-gnosis.png';
+import logoOptimism from '../../../assets/images/logo-optimism.png';
+import logoPolygon from '../../../assets/images/logo-polygon.png';
+import logoUnknown from '../../../assets/images/logo-unknown.png';
+
 /**
  * Represents a single entry in the gas tank history table.
  */
@@ -16,6 +27,7 @@ interface HistoryEntry {
     symbol: string;
     value: string;
     icon: string;
+    chainId: string;
   };
 }
 
@@ -28,6 +40,33 @@ type SortKey = 'id' | 'date' | 'type' | 'amount' | 'token';
  * REST API base URL, configurable via environment variable.
  */
 const API_URL = import.meta.env.VITE_PAYMASTER_URL || '';
+
+/**
+ * Maps chainId to the corresponding chain logo image
+ */
+const getChainLogo = (chainId: string): string => {
+  const chainIdNum = parseInt(chainId);
+  switch (chainIdNum) {
+    case 1: // Ethereum
+      return logoEthereum;
+    case 137: // Polygon
+      return logoPolygon;
+    case 42161: // Arbitrum
+      return logoArbitrum;
+    case 10: // Optimism
+      return logoOptimism;
+    case 8453: // Base
+      return logoBase;
+    case 56: // BSC
+      return logoBsc;
+    case 43114: // Avalanche
+      return logoAvalanche;
+    case 100: // Gnosis
+      return logoGnosis;
+    default:
+      return logoUnknown;
+  }
+};
 
 /**
  * GasTankHistory component
@@ -50,7 +89,7 @@ const GasTankHistory = () => {
     if (!walletAddress) return;
     setLoading(true);
     setError(false); // Reset error before fetching
-    fetch(`${API_URL}/getGasTankHistory?sender=${walletAddress}`, {
+    fetch(`${API_URL}/getGasTankHistory?sender=0x70e8741c1758Ba32176B188286B8086956627B1c`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -65,18 +104,24 @@ const GasTankHistory = () => {
             id: String(idx + 1), // Numeric id starting from 1
             date: formatTimestamp(item.timestamp),
             type: isDeposit ? 'Top-up' : 'Spend',
-            amount: formatAmount(item.amount, isDeposit),
+            amount: formatAmount(isDeposit ? item.amountUsd : item.amount, isDeposit),
             token: {
-              symbol: 'USDC',
-              value: formatTokenValue(item.amount),
-              icon: isDeposit ? '🔵' : '🔴', // Blue for deposit, red otherwise
+              symbol: isDeposit ? item.swap[0].asset.symbol : 'USDC',
+              value: isDeposit ? item.amount : formatTokenValue(item.amount),
+              icon: isDeposit 
+                ? (item.swap && item.swap.length > 0 
+                   ? item.swap[0].asset.logo 
+                   : 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694')
+                : 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',
+              chainId: item.chainId || '1',
             },
           };
         });
         setHistoryData(entries);
       })
-      .catch(() => {
+      .catch((err) => {
         setHistoryData([]);
+        console.error('Error fetching gas tank history:', err);
         setError(true); // Set error on failure
       })
       .finally(() => setLoading(false));
@@ -216,7 +261,10 @@ const GasTankHistory = () => {
                       {entry.amount}
                     </AmountCell>
                     <TokenCell>
-                      <TokenIcon>{entry.token.icon}</TokenIcon>
+                      <TokenIconContainer>
+                        <TokenIcon src={entry.token.icon} alt={entry.token.symbol} />
+                        <ChainOverlay src={getChainLogo(entry.token.chainId)} alt={`Chain ${entry.token.chainId}`} />
+                      </TokenIconContainer>
                       <TokenInfo>
                         <TokenValue>{entry.token.value}</TokenValue>
                         <TokenSymbol>{entry.token.symbol}</TokenSymbol>
@@ -250,7 +298,9 @@ function formatTimestamp(timestamp: string): string {
  * Formats the amount as a USD string, with + for deposit and - for spend.
  */
 function formatAmount(amount: string, isDeposit: boolean): string {
-  const value = Number(formatUnits(BigInt(amount), 6)).toFixed(2);
+  let value = amount;
+  if (!isDeposit) value = Number(formatUnits(BigInt(amount), 6)).toFixed(2);
+  if (Number(value) <= 0) value = '<0.01';
   return `${isDeposit ? '+' : '-'}$${value}`;
 }
 
@@ -275,7 +325,7 @@ export function useGasTankHistory(walletAddress: string | undefined) {
     if (!walletAddress) return;
     setLoading(true);
     setError(false);
-    fetch(`${API_URL}/getGasTankHistory?sender=${walletAddress}`, {
+    fetch(`${API_URL}/getGasTankHistory?sender=0x70e8741c1758Ba32176B188286B8086956627B1c`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -286,14 +336,19 @@ export function useGasTankHistory(walletAddress: string | undefined) {
         const entries: HistoryEntry[] = (data.history || []).map((item: any, idx: number) => {
           const isDeposit = item.transactionType === 'Deposit';
           return {
-            id: String(idx + 1),
+            id: String(idx + 1), // Numeric id starting from 1
             date: formatTimestamp(item.timestamp),
             type: isDeposit ? 'Top-up' : 'Spend',
-            amount: formatAmount(item.amount, isDeposit),
+            amount: formatAmount(isDeposit ? item.amountUsd : item.amount, isDeposit),
             token: {
-              symbol: 'USDC',
-              value: formatTokenValue(item.amount),
-              icon: isDeposit ? '🔵' : '🔴',
+              symbol: item.swap ? item.swap.asset.symbol : 'USDC',
+              value: item.swap ? item.amount : formatTokenValue(item.amount),
+              icon: isDeposit 
+                ? (item.swap && item.swap.length > 0 
+                   ? item.swap[0].asset.logo 
+                   : 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694')
+                : 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',
+              chainId: item.chainId || '1',
             },
           };
         });
@@ -475,14 +530,34 @@ const TokenCell = styled.div`
   gap: 8px;
 `;
 
-const TokenIcon = styled.span`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+const TokenIconContainer = styled.div`
+  position: relative;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+`;
+
+const TokenIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #2a2a2a;
+`;
+
+const ChainOverlay = styled.img`
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 `;
 
 const TokenInfo = styled.div`
