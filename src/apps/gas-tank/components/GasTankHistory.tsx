@@ -89,7 +89,7 @@ const GasTankHistory = () => {
     if (!walletAddress) return;
     setLoading(true);
     setError(false); // Reset error before fetching
-    fetch(`${API_URL}/getGasTankHistory?sender=0x70e8741c1758Ba32176B188286B8086956627B1c`, {
+    fetch(`${API_URL}/getGasTankHistory?sender=${walletAddress}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -325,7 +325,7 @@ export function useGasTankHistory(walletAddress: string | undefined) {
     if (!walletAddress) return;
     setLoading(true);
     setError(false);
-    fetch(`${API_URL}/getGasTankHistory?sender=0x70e8741c1758Ba32176B188286B8086956627B1c`, {
+    fetch(`${API_URL}/getGasTankHistory?sender=${walletAddress}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
