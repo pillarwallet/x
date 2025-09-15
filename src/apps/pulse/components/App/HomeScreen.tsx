@@ -1,5 +1,14 @@
-import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import {
+  DispensableAsset,
+  ExpressIntentResponse,
+} from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 // services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
@@ -48,35 +57,47 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [isRefreshingHome, setIsRefreshingHome] = useState(false);
+  const [usdAmount, setUsdAmount] = useState<string>('');
+  const [dispensableAssets, setDispensableAssets] = useState<
+    DispensableAsset[]
+  >([]);
+  const [buyRefreshCallback, setBuyRefreshCallback] = useState<
+    (() => Promise<void>) | null
+  >(null);
 
   const handleRefresh = useCallback(async () => {
+    // Prevent multiple simultaneous refresh calls
+    if (isRefreshingHome) {
+      return;
+    }
+
     setIsRefreshingHome(true);
 
     try {
-      const refreshPromises: Promise<void>[] = [
-        Promise.resolve(refetchWalletPortfolio()),
-      ];
+      // Always refresh wallet portfolio
+      await refetchWalletPortfolio();
 
-      // If we have the required data, refresh the sell offer (regardless of whether one exists)
-      if (sellToken && tokenAmount && isInitialized) {
-        const sellOfferPromise = (async () => {
-          try {
-            const newOffer = await getBestSellOffer({
-              fromAmount: tokenAmount,
-              fromTokenAddress: sellToken.address,
-              fromChainId: sellToken.chainId,
-              fromTokenDecimals: sellToken.decimals,
-            });
-            setSellOffer(newOffer);
-          } catch (error) {
-            console.error('Failed to refresh sell offer:', error);
-            setSellOffer(null);
-          }
-        })();
-        refreshPromises.push(sellOfferPromise);
+      // If we have the required data, refresh the sell offer
+      if (!isBuy && sellToken && tokenAmount && isInitialized) {
+        try {
+          const newOffer = await getBestSellOffer({
+            fromAmount: tokenAmount,
+            fromTokenAddress: sellToken.address,
+            fromChainId: sellToken.chainId,
+            fromTokenDecimals: sellToken.decimals,
+          });
+          setSellOffer(newOffer);
+        } catch (error) {
+          console.error('Failed to refresh sell offer:', error);
+          setSellOffer(null);
+        }
       }
 
-      await Promise.all(refreshPromises);
+      // If we have the required data, refresh the buy intent
+      // Only refresh if PreviewBuy is not open (to avoid duplicate calls)
+      if (isBuy && buyRefreshCallback && !previewBuy) {
+        await buyRefreshCallback();
+      }
     } catch (error) {
       console.error('Refresh failed:', error);
     } finally {
@@ -84,10 +105,14 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   }, [
     refetchWalletPortfolio,
+    isBuy,
     sellToken,
     tokenAmount,
     isInitialized,
     getBestSellOffer,
+    buyRefreshCallback,
+    previewBuy,
+    isRefreshingHome,
   ]);
 
   const closePreviewBuy = () => {
@@ -108,28 +133,59 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   );
 
+  // Auto-refresh when in sell mode every 15 seconds
+  useEffect(() => {
+    if (!isBuy && sellToken && tokenAmount && isInitialized) {
+      const interval = setInterval(() => {
+        handleRefresh();
+      }, 15000); // 15 seconds
+
+      return () => clearInterval(interval);
+    }
+    return undefined;
+  }, [isBuy, sellToken, tokenAmount, isInitialized, handleRefresh]);
+
+  // Auto-refresh when in buy mode every 15 seconds
+  useEffect(() => {
+    if (isBuy && buyRefreshCallback && !previewBuy) {
+      const interval = setInterval(() => {
+        handleRefresh();
+      }, 15000); // 15 seconds
+
+      return () => clearInterval(interval);
+    }
+    return undefined;
+  }, [isBuy, buyRefreshCallback, previewBuy, handleRefresh]);
+
   const renderPreview = () => {
     if (previewBuy) {
       return (
-        <PreviewBuy
-          closePreview={closePreviewBuy}
-          buyToken={buyToken}
-          payingTokens={payingTokens}
-          expressIntentResponse={expressIntentResponse}
-        />
+        <div className="w-full flex justify-center p-3 mb-[70px]">
+          <PreviewBuy
+            closePreview={closePreviewBuy}
+            buyToken={buyToken}
+            payingTokens={payingTokens}
+            expressIntentResponse={expressIntentResponse}
+            setExpressIntentResponse={setExpressIntentResponse}
+            usdAmount={usdAmount}
+            dispensableAssets={dispensableAssets}
+          />
+        </div>
       );
     }
 
     if (previewSell) {
       return (
-        <PreviewSell
-          closePreview={closePreviewSell}
-          sellToken={sellToken}
-          sellOffer={sellOffer}
-          tokenAmount={tokenAmount}
-          walletPortfolioData={walletPortfolioData}
-          onSellOfferUpdate={setSellOffer}
-        />
+        <div className="w-full flex justify-center p-3 mb-[70px]">
+          <PreviewSell
+            closePreview={closePreviewSell}
+            sellToken={sellToken}
+            sellOffer={sellOffer}
+            tokenAmount={tokenAmount}
+            walletPortfolioData={walletPortfolioData}
+            onSellOfferUpdate={setSellOffer}
+          />
+        </div>
       );
     }
 
@@ -237,11 +293,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                 }}
               >
                 <Refresh
-                  onClick={isBuy ? undefined : handleRefresh}
-                  isLoading={isBuy ? false : isRefreshingHome}
-                  disabled={
-                    isBuy || isRefreshingHome || (!buyToken && !sellToken)
-                  }
+                  onClick={handleRefresh}
+                  isLoading={isRefreshingHome}
+                  disabled={isRefreshingHome || (!buyToken && !sellToken)}
                 />
               </div>
 
@@ -268,6 +322,9 @@ export default function HomeScreen(props: HomeScreenProps) {
               setPreviewBuy={setPreviewBuy}
               setPayingTokens={setPayingTokens}
               setExpressIntentResponse={setExpressIntentResponse}
+              setUsdAmount={setUsdAmount}
+              setDispensableAssets={setDispensableAssets}
+              setBuyRefreshCallback={setBuyRefreshCallback}
             />
           ) : (
             <Sell

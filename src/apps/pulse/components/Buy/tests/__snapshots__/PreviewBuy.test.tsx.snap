@@ -2,51 +2,27 @@
 
 exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
 <div
-  className="flex flex-col"
-  style={
-    {
-      "backgroundColor": "#121116",
-      "border": "2px solid #1E1D24",
-      "borderRadius": 10,
-      "width": 446,
-    }
-  }
+  className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6"
 >
   <div
-    className="flex justify-between"
-    style={
-      {
-        "margin": 10,
-      }
-    }
+    className="flex justify-between mb-6"
   >
     <div
-      style={
-        {
-          "fontSize": 20,
-        }
-      }
+      className="text-xl font-normal"
     >
-      Preview
+      Confirm Transaction
     </div>
     <div
       className="flex"
     >
       <div
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "height": 40,
-            "padding": "2px 2px 4px 2px",
-            "width": 40,
-          }
-        }
+        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
       >
         <button
           aria-label="Refresh"
           className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-pointer"
           disabled={false}
+          onClick={[Function]}
           type="button"
         >
           <img
@@ -56,16 +32,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         </button>
       </div>
       <div
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "height": 40,
-            "marginLeft": 10,
-            "padding": "2px 2px 4px 2px",
-            "width": 40,
-          }
-        }
+        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
       >
         <button
           aria-label="Close"
@@ -84,18 +51,10 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex justify-between"
-    style={
-      {
-        "color": "grey",
-        "fontSize": 13,
-        "margin": 10,
-        "marginBottom": 0,
-      }
-    }
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
-      You’re paying
+      You're paying
     </div>
     <div
       className="flex"
@@ -105,87 +64,36 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="rounded-[10px]"
-    style={
-      {
-        "background": "black",
-        "margin": 10,
-        "minHeight": 50,
-        "width": 422,
-      }
-    }
+    className="flex flex-col w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
   >
     <div
       className="flex justify-between"
-      style={
-        {
-          "marginBottom": 10,
-          "marginTop": 10,
-        }
-      }
     >
       <div
         className="flex items-center"
       >
         <div
-          style={
-            {
-              "display": "inline-block",
-              "position": "relative",
-            }
-          }
+          className="relative inline-block mr-2"
         >
           <img
             alt="Main"
+            className="w-8 h-8 rounded-full"
             src="usdc-logo.png"
-            style={
-              {
-                "borderRadius": 50,
-                "height": 32,
-                "marginLeft": 5,
-                "marginRight": 5,
-                "width": 32,
-              }
-            }
           />
           <img
             alt="Chain logo"
+            className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"
             src="/src/assets/images/logo-ethereum.png"
-            style={
-              {
-                "borderRadius": "50%",
-                "bottom": "-1px",
-                "height": 12,
-                "position": "absolute",
-                "right": "2px",
-                "width": 12,
-              }
-            }
           />
         </div>
-        <div
-          style={
-            {
-              "marginLeft": 5,
-            }
-          }
-        >
+        <div>
           <div
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="text-[13px] font-normal text-white"
           >
             USD Coin
           </div>
           <div
-            style={
-              {
-                "color": "grey",
-                "fontSize": 13,
-              }
-            }
+            className="text-[13px] font-normal text-white/50"
           >
             100.00
              
@@ -194,33 +102,15 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="flex flex-col justify-center"
-        style={
-          {
-            "marginRight": 10,
-          }
-        }
+        className="flex flex-col justify-center text-right"
       >
         <div
-          className="flex"
-          style={
-            {
-              "fontSize": 13,
-              "textAlign": "right",
-            }
-          }
+          className="text-[13px] font-normal text-white"
         >
           100000000
         </div>
         <div
-          className="flex justify-end"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 12,
-              "textAlign": "right",
-            }
-          }
+          className="text-xs font-normal text-white/50"
         >
           $
           100.00
@@ -229,464 +119,311 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex justify-between"
-    style={
-      {
-        "color": "grey",
-        "fontSize": 13,
-        "margin": 10,
-        "marginBottom": 0,
-      }
-    }
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
-      You’re buying
+      You're buying
     </div>
   </div>
-  <div>
+  <div
+    className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
+  >
     <div
-      className="flex justify-between"
-      style={
-        {
-          "background": "black",
-          "borderRadius": 10,
-          "height": 50,
-          "margin": 10,
-          "width": 422,
-        }
-      }
+      className="flex items-center"
     >
       <div
-        className="flex items-center"
+        className="relative inline-block mr-2"
       >
+        <img
+          alt="Main"
+          className="w-8 h-8 rounded-full"
+          src="test-logo.png"
+        />
+        <img
+          alt="Chain logo"
+          className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"
+          src="/src/assets/images/logo-ethereum.png"
+        />
+      </div>
+      <div>
         <div
-          style={
-            {
-              "display": "inline-block",
-              "position": "relative",
-            }
-          }
+          className="text-[13px] font-normal text-white"
         >
-          <img
-            alt="Main"
-            src="test-logo.png"
-            style={
-              {
-                "borderRadius": 50,
-                "height": 32,
-                "marginLeft": 5,
-                "marginRight": 5,
-                "width": 32,
-              }
-            }
-          />
-          <img
-            alt="Chain logo"
-            src="/src/assets/images/logo-ethereum.png"
-            style={
-              {
-                "borderRadius": "50%",
-                "bottom": "-1px",
-                "height": 12,
-                "position": "absolute",
-                "right": "2px",
-                "width": 12,
-              }
-            }
-          />
+          Test Token
         </div>
         <div
-          style={
-            {
-              "marginLeft": 5,
-            }
-          }
+          className="flex items-center text-[13px] font-normal text-white/50"
         >
+          <span>
+            0x1234...7890
+          </span>
           <div
-            className="flex"
+            className="flex items-center ml-1 cursor-pointer"
+            onClick={[Function]}
           >
-            <div
-              style={
-                {
-                  "fontSize": 13,
-                }
-              }
-            >
-              Test Token
-            </div>
-            <div
-              style={
-                {
-                  "color": "grey",
-                  "fontSize": 13,
-                  "marginLeft": 5,
-                }
-              }
-            >
-              TEST
-            </div>
-          </div>
-          <div
-            className="flex"
-          >
-            <div
-              style={
-                {
-                  "color": "grey",
-                  "fontSize": 13,
-                }
-              }
-            >
-              0x1234
-              ...
-              7890
-            </div>
-            <button
-              aria-label="Copy address"
-              onClick={[Function]}
-              style={
-                {
-                  "marginLeft": 5,
-                }
-              }
-              type="button"
-            >
-              <img
-                alt="copy-icon"
-                src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
-              />
-            </button>
+            <img
+              alt="copy-address-icon"
+              className="w-[10px] h-3"
+              src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
+            />
           </div>
         </div>
       </div>
+    </div>
+    <div
+      className="flex flex-col justify-center text-right"
+    >
       <div
-        className="flex flex-col justify-center"
-        style={
-          {
-            "marginRight": 10,
-          }
-        }
+        className="text-[13px] font-normal text-white"
       >
-        <div
-          className="flex"
-          style={
-            {
-              "fontSize": 13,
-              "textAlign": "right",
-            }
-          }
-        >
-          1.000000
-        </div>
-        <div
-          className="flex justify-end"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 12,
-              "textAlign": "right",
-            }
-          }
-        >
-          $
-          100.00
-        </div>
+        1.000000
+      </div>
+      <div
+        className="text-xs font-normal text-white/50"
+      >
+        $
+        100.00
       </div>
     </div>
   </div>
   <div
-    className="flex justify-between"
-    style={
-      {
-        "color": "grey",
-        "fontSize": 13,
-        "margin": 10,
-        "marginBottom": 0,
-      }
-    }
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
       Details
     </div>
   </div>
-  <div>
+  <div
+    className="flex flex-col w-full border border-[#25232D] rounded-[10px] p-3 mb-3"
+  >
     <div
-      style={
-        {
-          "background": "black",
-          "borderRadius": 10,
-          "height": 137,
-          "margin": 10,
-          "width": 422,
-        }
-      }
+      className="flex justify-between mb-3"
     >
       <div
-        className="flex justify-between"
-        style={
-          {
-            "margin": 10,
-          }
-        }
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
-        <div
-          className="flex"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 13,
-            }
-          }
-        >
-          <div>
-            Rate
-          </div>
-        </div>
         <div>
+          Rate
+        </div>
+        <div
+          className="ml-1.5"
+        >
           <div
-            className="flex"
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="relative inline-block"
           >
-            <div>
-              1 USD ≈ 0.010
-            </div>
             <div
-              style={
-                {
-                  "color": "grey",
-                }
-              }
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
             >
-              TEST
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className="flex justify-between"
-        style={
-          {
-            "margin": 10,
-          }
-        }
-      >
+      <div>
         <div
-          className="flex"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 13,
-            }
-          }
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            Minimum Receive
+            1 USD ≈ 0.010
           </div>
           <div
-            style={
-              {
-                "marginLeft": 4,
-                "marginTop": 4,
-              }
-            }
+            className="ml-1 text-white/50"
           >
-            <img
-              alt="more-info-icon"
-              src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%206%208'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M5.08335%202.75002C5.08335%202.19749%204.86386%201.66758%204.47316%201.27688C4.08246%200.88618%203.55255%200.666687%203.00002%200.666687C2.44749%200.666687%201.91758%200.88618%201.52688%201.27688C1.13618%201.66758%200.916687%202.19749%200.916687%202.75002C0.916687%202.86053%200.960586%202.96651%201.03873%203.04465C1.11687%203.12279%201.22285%203.16669%201.33335%203.16669C1.44386%203.16669%201.54984%203.12279%201.62798%203.04465C1.70612%202.96651%201.75002%202.86053%201.75002%202.75002C1.75002%202.50279%201.82333%202.26112%201.96068%202.05556C2.09804%201.85%202.29326%201.68978%202.52167%201.59517C2.75007%201.50056%203.00141%201.47581%203.24388%201.52404C3.48636%201.57227%203.70909%201.69132%203.8839%201.86614C4.05872%202.04095%204.17777%202.26368%204.226%202.50616C4.27423%202.74863%204.24948%202.99997%204.15487%203.22837C4.06026%203.45678%203.90004%203.65201%203.69448%203.78936C3.48892%203.92671%203.24725%204.00002%203.00002%204.00002C2.88951%204.00002%202.78353%204.04392%202.70539%204.12206C2.62725%204.2002%202.58335%204.30618%202.58335%204.41669V5.25002C2.58335%205.36053%202.62725%205.46651%202.70539%205.54465C2.78353%205.62279%202.88951%205.66669%203.00002%205.66669C3.11053%205.66669%203.21651%205.62279%203.29465%205.54465C3.37279%205.46651%203.41669%205.36053%203.41669%205.25002V4.79169C3.88726%204.69563%204.31019%204.43994%204.6139%204.0679C4.91761%203.69585%205.08345%203.23029%205.08335%202.75002Z'%20fill='white'/%3e%3cpath%20d='M3.00016%207.33327C3.23028%207.33327%203.41683%207.14672%203.41683%206.91661C3.41683%206.68649%203.23028%206.49994%203.00016%206.49994C2.77004%206.49994%202.5835%206.68649%202.5835%206.91661C2.5835%207.14672%202.77004%207.33327%203.00016%207.33327Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
-            />
+            TEST
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      className="flex justify-between mb-3"
+    >
+      <div
+        className="flex items-center text-white/50 text-[13px] font-normal"
+      >
         <div>
+          Minimum receive
+        </div>
+        <div
+          className="ml-1.5"
+        >
           <div
-            className="flex"
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="relative inline-block"
           >
-            <div>
-              100.00
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className="flex justify-between"
-        style={
-          {
-            "margin": 10,
-          }
-        }
-      >
+      <div>
         <div
-          className="flex"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 13,
-            }
-          }
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            Price Impact
-          </div>
-          <div
-            style={
-              {
-                "marginLeft": 4,
-                "marginTop": 4,
-              }
-            }
-          >
-            <img
-              alt="more-info-icon"
-              src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%206%208'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M5.08335%202.75002C5.08335%202.19749%204.86386%201.66758%204.47316%201.27688C4.08246%200.88618%203.55255%200.666687%203.00002%200.666687C2.44749%200.666687%201.91758%200.88618%201.52688%201.27688C1.13618%201.66758%200.916687%202.19749%200.916687%202.75002C0.916687%202.86053%200.960586%202.96651%201.03873%203.04465C1.11687%203.12279%201.22285%203.16669%201.33335%203.16669C1.44386%203.16669%201.54984%203.12279%201.62798%203.04465C1.70612%202.96651%201.75002%202.86053%201.75002%202.75002C1.75002%202.50279%201.82333%202.26112%201.96068%202.05556C2.09804%201.85%202.29326%201.68978%202.52167%201.59517C2.75007%201.50056%203.00141%201.47581%203.24388%201.52404C3.48636%201.57227%203.70909%201.69132%203.8839%201.86614C4.05872%202.04095%204.17777%202.26368%204.226%202.50616C4.27423%202.74863%204.24948%202.99997%204.15487%203.22837C4.06026%203.45678%203.90004%203.65201%203.69448%203.78936C3.48892%203.92671%203.24725%204.00002%203.00002%204.00002C2.88951%204.00002%202.78353%204.04392%202.70539%204.12206C2.62725%204.2002%202.58335%204.30618%202.58335%204.41669V5.25002C2.58335%205.36053%202.62725%205.46651%202.70539%205.54465C2.78353%205.62279%202.88951%205.66669%203.00002%205.66669C3.11053%205.66669%203.21651%205.62279%203.29465%205.54465C3.37279%205.46651%203.41669%205.36053%203.41669%205.25002V4.79169C3.88726%204.69563%204.31019%204.43994%204.6139%204.0679C4.91761%203.69585%205.08345%203.23029%205.08335%202.75002Z'%20fill='white'/%3e%3cpath%20d='M3.00016%207.33327C3.23028%207.33327%203.41683%207.14672%203.41683%206.91661C3.41683%206.68649%203.23028%206.49994%203.00016%206.49994C2.77004%206.49994%202.5835%206.68649%202.5835%206.91661C2.5835%207.14672%202.77004%207.33327%203.00016%207.33327Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
-            />
+            0.970000 TEST
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      className="flex justify-between mb-3"
+    >
+      <div
+        className="flex items-center text-white/50 text-[13px] font-normal"
+      >
         <div>
+          Price impact
+        </div>
+        <div
+          className="ml-1.5"
+        >
           <div
-            className="flex"
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="relative inline-block"
           >
-            <div>
-              0.00%
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className="flex justify-between"
-        style={
-          {
-            "margin": 10,
-          }
-        }
-      >
+      <div>
         <div
-          className="flex"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 13,
-            }
-          }
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            Max Spillage
-          </div>
-          <div
-            style={
-              {
-                "marginLeft": 4,
-                "marginTop": 4,
-              }
-            }
-          >
-            <img
-              alt="more-info-icon"
-              src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%206%208'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M5.08335%202.75002C5.08335%202.19749%204.86386%201.66758%204.47316%201.27688C4.08246%200.88618%203.55255%200.666687%203.00002%200.666687C2.44749%200.666687%201.91758%200.88618%201.52688%201.27688C1.13618%201.66758%200.916687%202.19749%200.916687%202.75002C0.916687%202.86053%200.960586%202.96651%201.03873%203.04465C1.11687%203.12279%201.22285%203.16669%201.33335%203.16669C1.44386%203.16669%201.54984%203.12279%201.62798%203.04465C1.70612%202.96651%201.75002%202.86053%201.75002%202.75002C1.75002%202.50279%201.82333%202.26112%201.96068%202.05556C2.09804%201.85%202.29326%201.68978%202.52167%201.59517C2.75007%201.50056%203.00141%201.47581%203.24388%201.52404C3.48636%201.57227%203.70909%201.69132%203.8839%201.86614C4.05872%202.04095%204.17777%202.26368%204.226%202.50616C4.27423%202.74863%204.24948%202.99997%204.15487%203.22837C4.06026%203.45678%203.90004%203.65201%203.69448%203.78936C3.48892%203.92671%203.24725%204.00002%203.00002%204.00002C2.88951%204.00002%202.78353%204.04392%202.70539%204.12206C2.62725%204.2002%202.58335%204.30618%202.58335%204.41669V5.25002C2.58335%205.36053%202.62725%205.46651%202.70539%205.54465C2.78353%205.62279%202.88951%205.66669%203.00002%205.66669C3.11053%205.66669%203.21651%205.62279%203.29465%205.54465C3.37279%205.46651%203.41669%205.36053%203.41669%205.25002V4.79169C3.88726%204.69563%204.31019%204.43994%204.6139%204.0679C4.91761%203.69585%205.08345%203.23029%205.08335%202.75002Z'%20fill='white'/%3e%3cpath%20d='M3.00016%207.33327C3.23028%207.33327%203.41683%207.14672%203.41683%206.91661C3.41683%206.68649%203.23028%206.49994%203.00016%206.49994C2.77004%206.49994%202.5835%206.68649%202.5835%206.91661C2.5835%207.14672%202.77004%207.33327%203.00016%207.33327Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
-            />
+            0.00%
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      className="flex justify-between mb-3"
+    >
+      <div
+        className="flex items-center text-white/50 text-[13px] font-normal"
+      >
         <div>
+          Max slippage
+        </div>
+        <div
+          className="ml-1.5"
+        >
           <div
-            className="flex"
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="relative inline-block"
           >
-            <div>
-              0.0%
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className="flex justify-between"
-        style={
-          {
-            "margin": 10,
-          }
-        }
-      >
+      <div>
         <div
-          className="flex"
-          style={
-            {
-              "color": "grey",
-              "fontSize": 13,
-            }
-          }
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            Gas Fee
-          </div>
-          <div
-            style={
-              {
-                "marginLeft": 4,
-                "marginTop": 4,
-              }
-            }
-          >
-            <img
-              alt="more-info-icon"
-              src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%206%208'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M5.08335%202.75002C5.08335%202.19749%204.86386%201.66758%204.47316%201.27688C4.08246%200.88618%203.55255%200.666687%203.00002%200.666687C2.44749%200.666687%201.91758%200.88618%201.52688%201.27688C1.13618%201.66758%200.916687%202.19749%200.916687%202.75002C0.916687%202.86053%200.960586%202.96651%201.03873%203.04465C1.11687%203.12279%201.22285%203.16669%201.33335%203.16669C1.44386%203.16669%201.54984%203.12279%201.62798%203.04465C1.70612%202.96651%201.75002%202.86053%201.75002%202.75002C1.75002%202.50279%201.82333%202.26112%201.96068%202.05556C2.09804%201.85%202.29326%201.68978%202.52167%201.59517C2.75007%201.50056%203.00141%201.47581%203.24388%201.52404C3.48636%201.57227%203.70909%201.69132%203.8839%201.86614C4.05872%202.04095%204.17777%202.26368%204.226%202.50616C4.27423%202.74863%204.24948%202.99997%204.15487%203.22837C4.06026%203.45678%203.90004%203.65201%203.69448%203.78936C3.48892%203.92671%203.24725%204.00002%203.00002%204.00002C2.88951%204.00002%202.78353%204.04392%202.70539%204.12206C2.62725%204.2002%202.58335%204.30618%202.58335%204.41669V5.25002C2.58335%205.36053%202.62725%205.46651%202.70539%205.54465C2.78353%205.62279%202.88951%205.66669%203.00002%205.66669C3.11053%205.66669%203.21651%205.62279%203.29465%205.54465C3.37279%205.46651%203.41669%205.36053%203.41669%205.25002V4.79169C3.88726%204.69563%204.31019%204.43994%204.6139%204.0679C4.91761%203.69585%205.08345%203.23029%205.08335%202.75002Z'%20fill='white'/%3e%3cpath%20d='M3.00016%207.33327C3.23028%207.33327%203.41683%207.14672%203.41683%206.91661C3.41683%206.68649%203.23028%206.49994%203.00016%206.49994C2.77004%206.49994%202.5835%206.68649%202.5835%206.91661C2.5835%207.14672%202.77004%207.33327%203.00016%207.33327Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
-            />
+            3.0%
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      className="flex justify-between mb-3"
+    >
+      <div
+        className="flex items-center text-white/50 text-[13px] font-normal"
+      >
         <div>
+          Gas fee
+        </div>
+        <div
+          className="ml-1.5"
+        >
           <div
-            className="flex"
-            style={
-              {
-                "fontSize": 13,
-              }
-            }
+            className="relative inline-block"
           >
-            <div>
-              ≈ $0.00
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          className="flex items-center text-[13px] font-normal text-white"
+        >
+          <div>
+            ≈ $0.00
           </div>
         </div>
       </div>
     </div>
   </div>
   <div
-    className="flex"
-    style={
-      {
-        "backgroundColor": "black",
-        "borderRadius": 10,
-        "height": 50,
-        "margin": 10,
-        "width": 422,
-      }
-    }
+    className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
   >
     <button
-      className="flex-1 items-center justify-center"
+      className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
       disabled={false}
       onClick={[Function]}
-      style={
-        {
-          "backgroundColor": "#8A77FF",
-          "borderRadius": 10,
-          "margin": 2,
-        }
-      }
       type="submit"
     >
       Confirm

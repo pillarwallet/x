@@ -511,6 +511,9 @@ describe('useRelaySell', () => {
 
     expect(sellOffer).toEqual({
       tokenAmountToReceive: 99.0,
+      minimumReceive: 98.01, // 99.0 * 0.99 (platform fee applied to minimum amount)
+      slippageTolerance: 0.03,
+      priceImpact: undefined, // No price impact in mock data
       offer: mockSellOffer.offer,
     });
     expect(result.current.error).toBe(null);

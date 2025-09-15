@@ -49,6 +49,9 @@ const mockToken = {
 
 const mockSellOffer = {
   tokenAmountToReceive: 50.0,
+  minimumReceive: 49.5,
+  priceImpact: 0.0,
+  slippageTolerance: 3.0,
   offer: {
     steps: [],
     minimumReceived: 49.5,
@@ -118,14 +121,14 @@ describe('<PreviewSell />', () => {
     it('displays main elements correctly', () => {
       renderWithProviders();
 
-      expect(screen.getByText('Preview')).toBeInTheDocument();
+      expect(screen.getByText('Confirm Transaction')).toBeInTheDocument();
       expect(screen.getByText('Test Token')).toBeInTheDocument();
       expect(screen.getByText('USD Coin')).toBeInTheDocument();
       expect(screen.getByText('50.000000')).toBeInTheDocument();
       expect(screen.getByText('$50.00')).toBeInTheDocument();
       expect(screen.getByText('Details')).toBeInTheDocument();
       expect(screen.getByText('Rate')).toBeInTheDocument();
-      expect(screen.getByText('Minimum Receive')).toBeInTheDocument();
+      expect(screen.getByText('Minimum receive')).toBeInTheDocument();
       expect(screen.getByText('Confirm')).toBeInTheDocument();
     });
 
@@ -133,16 +136,17 @@ describe('<PreviewSell />', () => {
       renderWithProviders();
 
       expect(screen.getByText('1 TEST ≈ 100.000')).toBeInTheDocument();
-      expect(screen.getByText('50.000000 USDC')).toBeInTheDocument();
+      expect(screen.getByText('50.000000')).toBeInTheDocument();
+      expect(screen.getAllByText('USDC')).toHaveLength(2);
       expect(screen.getByText('Details')).toBeInTheDocument();
       expect(screen.getByText('Rate')).toBeInTheDocument();
-      expect(screen.getByText('Minimum Receive')).toBeInTheDocument();
+      expect(screen.getByText('Minimum receive')).toBeInTheDocument();
     });
 
     it('shows copy functionality when USDC address is available', () => {
       renderWithProviders();
 
-      expect(screen.getByTestId('copy-to-clipboard')).toBeInTheDocument();
+      expect(screen.getAllByTestId('copy-to-clipboard')).toHaveLength(2);
       expect(screen.getByText('0xUSDC...7890')).toBeInTheDocument();
     });
   });
@@ -151,11 +155,13 @@ describe('<PreviewSell />', () => {
     it('executes copy functionality', async () => {
       renderWithProviders();
 
-      const copyButton = screen.getByTestId('copy-to-clipboard');
+      const copyButtons = screen.getAllByTestId('copy-to-clipboard');
+      const copyButton = copyButtons[0];
       fireEvent.click(copyButton);
 
       await waitFor(() => {
-        const copyContainer = screen.getByTestId('copy-to-clipboard');
+        const copyContainers = screen.getAllByTestId('copy-to-clipboard');
+        const copyContainer = copyContainers[0];
         const checkmarkSvg = copyContainer.querySelector('svg');
         expect(checkmarkSvg).toBeInTheDocument();
       });
@@ -179,7 +185,9 @@ describe('<PreviewSell />', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText('Waiting for signature...')
+          screen.getByText(
+            'Please open your wallet and confirm the transaction.'
+          )
         ).toBeInTheDocument();
       });
 
@@ -242,7 +250,7 @@ describe('<PreviewSell />', () => {
 
       renderWithProviders();
 
-      expect(screen.queryByTestId('copy-to-clipboard')).not.toBeInTheDocument();
+      expect(screen.getAllByTestId('copy-to-clipboard')).toHaveLength(1);
     });
 
     it('handles token without logo', () => {
@@ -256,10 +264,13 @@ describe('<PreviewSell />', () => {
       renderWithProviders({ walletPortfolioData: undefined });
 
       expect(
-        screen.getByText((content, element) => {
-          return element?.textContent === '0 TEST';
+        screen.getAllByText((content, element) => {
+          return !!(
+            element?.textContent?.includes('10.500000') &&
+            element?.textContent?.includes('TEST')
+          );
         })
-      ).toBeInTheDocument();
+      ).toHaveLength(5);
     });
   });
 });

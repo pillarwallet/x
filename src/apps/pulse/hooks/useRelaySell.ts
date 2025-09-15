@@ -37,6 +37,9 @@ import {
 
 export interface SellOffer {
   tokenAmountToReceive: number;
+  minimumReceive: number;
+  slippageTolerance: number;
+  priceImpact?: number;
   offer: Execute;
 }
 
@@ -199,12 +202,24 @@ export default function useRelaySell() {
           // Extract USDC amount from the quote response
           const { currencyOut } = quote.details;
           let usdcAmount = 0;
+          let minimumAmount = 0;
 
+          // Get the estimated amount (prefer formatted, fallback to raw amount)
           if (currencyOut.amountFormatted) {
             usdcAmount = parseFloat(currencyOut.amountFormatted);
           } else if (currencyOut.amount) {
-            // Convert from wei to readable format if needed
+            // Convert from raw units to readable format
             usdcAmount = parseFloat(currencyOut.amount) / 10 ** 6; // USDC has 6 decimals
+          }
+
+          // Get the minimum amount (prefer formatted, fallback to raw amount)
+          if (currencyOut.minimumAmount) {
+            // minimumAmount is in raw units, convert to readable format
+            minimumAmount = parseFloat(currencyOut.minimumAmount) / 10 ** 6; // USDC has 6 decimals
+          } else {
+            // Fallback: calculate minimum receive using slippage tolerance
+            // Formula: Minimum to receive = Est. to amount × (1 - max.slippage)
+            minimumAmount = usdcAmount * (1 - slippage);
           }
 
           // Validate the quote
@@ -213,12 +228,43 @@ export default function useRelaySell() {
             return null;
           }
 
-          // Calculate what user will actually receive (99% of USDC received)
-          // This is just for display - the actual fee calculation happens later
+          // Apply platform fee (1%) to both estimated and minimum amounts
+          // The fee should be calculated on the actual amounts, not overridden
           const userReceivesAmount = usdcAmount * 0.99;
+          const userMinimumReceive = minimumAmount * 0.99;
+
+          // Calculate price impact on raw swap amounts (before platform fee)
+          // This shows the actual market impact, separate from our platform fee
+          let priceImpact: number | undefined;
+
+          // Try to get price impact from Relay API first
+          if (quote.details?.totalImpact?.percent) {
+            priceImpact = parseFloat(quote.details.totalImpact.percent);
+          } else if (quote.details?.swapImpact?.percent) {
+            priceImpact = parseFloat(quote.details.swapImpact.percent);
+          } else {
+            // Fallback: Calculate price impact manually using raw swap amounts
+            // Price Impact (%) = (Total Paid Value - Total Received Value) / Total Paid Value × 100
+            // For sell operations:
+            // Total Paid Value = Token amount in USD (estimated from input amount)
+            // Total Received Value = USDC amount received from swap (before platform fee)
+            const tokenAmountInUsd =
+              parseFloat(fromAmount) *
+              (quote.details?.currencyIn?.amountUsd
+                ? parseFloat(quote.details.currencyIn.amountUsd)
+                : 0);
+            if (tokenAmountInUsd > 0) {
+              // Use the raw USDC amount from the swap (before our 1% fee)
+              priceImpact =
+                ((tokenAmountInUsd - usdcAmount) / tokenAmountInUsd) * 100;
+            }
+          }
 
           const sellOffer: SellOffer = {
             tokenAmountToReceive: userReceivesAmount,
+            minimumReceive: userMinimumReceive,
+            slippageTolerance: slippage,
+            priceImpact,
             offer: quote,
           };
 
