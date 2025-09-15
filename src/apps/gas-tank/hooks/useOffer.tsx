@@ -141,19 +141,11 @@ const useOffer = () => {
         fromTokenAddress,
         fromChainId
       );
-
-      /**
-       * Step 2: Apply fee deduction using BigInt arithmetic
-       * Convert to wei first, then apply 1% fee deduction using integer math
-       * This prevents precision loss for large amounts or tokens with many decimals
-       */
-      const fromAmountInWei = parseUnits(String(fromAmount), fromTokenDecimals);
-      const feeDeduction = fromAmountInWei / BigInt(100); // 1% fee
-      const fromAmountFeeDeducted = fromAmountInWei - feeDeduction;
       const toTokenAddress = USDC_ADDRESSES[fromChainId];
       const toTokenDecimals = 6; // USDC has 6 decimals
+
       /**
-       * Step 3: Create route request for LiFi
+       * Step 2: Create route request for LiFi
        * This request includes all necessary parameters for finding swap routes
        */
       const routesRequest: RoutesRequest = {
@@ -161,7 +153,7 @@ const useOffer = () => {
         toChainId: fromChainId, // Swapping within the same chain
         fromTokenAddress: fromTokenAddressWithWrappedCheck,
         toTokenAddress,
-        fromAmount: fromAmountFeeDeducted.toString(),
+        fromAmount: parseUnits(String(fromAmount), fromTokenDecimals).toString(),
         options: {
           slippage,
           bridges: {
