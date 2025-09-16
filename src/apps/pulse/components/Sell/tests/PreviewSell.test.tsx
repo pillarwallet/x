@@ -36,6 +36,32 @@ vi.mock('../../../../utils/number', () => ({
   limitDigitsNumber: vi.fn((num: number) => num.toString()),
 }));
 
+vi.mock('../../../../../hooks/useTransactionKit', () => ({
+  default: vi.fn(() => ({
+    kit: {
+      estimateBatches: vi.fn().mockResolvedValue({
+        isEstimatedSuccessfully: true,
+        batches: {
+          'pulse-sell-batch-1': {
+            totalCost: '1000000000000000000', // 1 ETH in wei
+            errorMessage: null,
+          },
+        },
+      }),
+    },
+  })),
+}));
+
+vi.mock('../../../hooks/useGasEstimation', () => ({
+  default: vi.fn(() => ({
+    isEstimatingGas: false,
+    gasEstimationError: null,
+    gasCostNative: '1.000000',
+    nativeTokenSymbol: 'ETH',
+    estimateGasFees: vi.fn(),
+  })),
+}));
+
 const mockToken = {
   name: 'Test Token',
   symbol: 'TEST',
@@ -149,6 +175,15 @@ describe('<PreviewSell />', () => {
       expect(screen.getAllByTestId('copy-to-clipboard')).toHaveLength(2);
       expect(screen.getByText('0xUSDC...7890')).toBeInTheDocument();
     });
+
+    it('displays gas fee estimation', async () => {
+      renderWithProviders();
+
+      await waitFor(() => {
+        expect(screen.getByText('Gas fee')).toBeInTheDocument();
+        expect(screen.getByText('≈ 1.000000 ETH')).toBeInTheDocument();
+      });
+    });
   });
 
   describe('handles user interactions', () => {
@@ -191,7 +226,11 @@ describe('<PreviewSell />', () => {
         ).toBeInTheDocument();
       });
 
-      expect(mockExecuteSell).toHaveBeenCalledWith(mockToken, '10.5');
+      expect(mockExecuteSell).toHaveBeenCalledWith(
+        mockToken,
+        '10.5',
+        undefined
+      );
     });
 
     it('handles close functionality', () => {

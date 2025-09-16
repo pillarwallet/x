@@ -76,7 +76,11 @@ const GlobalTransactionsBatchProvider = ({
         );
       });
 
-      setBatchCount(Object.keys(batches).length);
+      // Filter out pulse-sell batches from the count - they are handled directly in the Pulse app
+      const filteredBatches = Object.keys(batches).filter(
+        (batchName) => !batchName.includes('pulse-sell')
+      );
+      setBatchCount(filteredBatches.length);
     }, 1000);
 
     return () => {

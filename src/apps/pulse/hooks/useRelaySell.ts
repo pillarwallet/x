@@ -10,7 +10,6 @@ import {
 } from 'viem';
 
 // hooks
-import useBottomMenuModal from '../../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../../hooks/useGlobalTransactionsBatch';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 import useTransactionKit from '../../../hooks/useTransactionKit';
@@ -55,7 +54,6 @@ export default function useRelaySell() {
   const { isInitialized, accountAddress } = useRelaySdk();
   const { kit, walletAddress } = useTransactionKit();
   const { setTransactionMetaForName } = useGlobalTransactionsBatch();
-  const { showSend, setShowBatchSendModal } = useBottomMenuModal();
   const { transactionDebugLog } = useTransactionDebugLogger();
   const { isZeroAddress } = EtherspotUtils;
   const [isLoading, setIsLoading] = useState(false);
@@ -914,10 +912,6 @@ export default function useRelaySell() {
         totalTransactions: transactions.length,
         batchName: `pulse-sell-batch-${token.chainId}`,
       });
-
-      // Open batch modal for user confirmation
-      setShowBatchSendModal(true);
-      showSend();
 
       return true;
     } catch (err) {

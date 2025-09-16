@@ -68,6 +68,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [isBuyTokenAddressCopied, setIsBuyTokenAddressCopied] = useState(false);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
+  const [isTransactionRejected, setIsTransactionRejected] = useState(false);
+  const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
 
   const { intentSdk, error, clearError } = useIntentSdk();
   const { walletAddress: accountAddress } = useTransactionKit();
@@ -96,11 +98,14 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     return undefined;
   }, [isBuyTokenAddressCopied]);
 
-  // Clear errors when amount, token, or quote props change
+  // Clear errors and reset transaction states when amount, token, or quote props change
   useEffect(() => {
     if (error) {
       clearError();
     }
+    // Reset transaction states when new data comes in
+    setIsTransactionRejected(false);
+    setIsWaitingForSignature(false);
     return undefined;
   }, [usdAmount, buyToken, expressIntentResponse, clearError, error]);
 
@@ -156,11 +161,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const shortlistBid = async () => {
     if (!buyToken || !expressIntentResponse) return;
 
-    // Clear any existing errors before attempting to execute
+    // Clear any existing errors and states before attempting to execute
     if (error) {
       clearError();
     }
-
+    setIsTransactionRejected(false);
+    setIsWaitingForSignature(true);
     setIsLoading(true);
 
     try {
@@ -171,7 +177,18 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       setShowTracker(true);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
-      // Error will be handled by the useIntentSdk hook
+
+      // Check if the error is a user rejection
+      if (
+        err instanceof Error &&
+        err.message.includes('User rejected the request')
+      ) {
+        setIsTransactionRejected(true);
+        setIsWaitingForSignature(false);
+      } else {
+        // Other errors will be handled by the useIntentSdk hook
+        setIsWaitingForSignature(false);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -197,6 +214,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
     setIsRefreshingPreview(true);
     clearError();
+    // Reset transaction states to allow retry
+    setIsTransactionRejected(false);
+    setIsWaitingForSignature(false);
 
     try {
       // Create a new intent with updated deadline - exactly matching original logic
@@ -242,7 +262,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     clearError,
   ]);
 
-  // Auto-refresh buy offer every 15 seconds
+  // Auto-refresh buy offer every 15 seconds (disabled when waiting for signature)
   useEffect(() => {
     if (
       !buyToken ||
@@ -251,6 +271,11 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       !accountAddress ||
       dispensableAssets.length === 0
     ) {
+      return undefined;
+    }
+
+    // Don't auto-refresh when waiting for signature
+    if (isWaitingForSignature) {
       return undefined;
     }
 
@@ -266,6 +291,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     accountAddress,
     dispensableAssets,
     refreshPreviewBuyData,
+    isWaitingForSignature,
   ]);
 
   if (!buyToken || !expressIntentResponse) {
@@ -316,6 +342,17 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
       : 0;
 
+  if (showTracker) {
+    return (
+      <IntentTracker
+        closePreview={closePreview}
+        bidHash={expressIntentResponse?.bids[0].bidHash!}
+        token={buyToken!}
+        isBuy
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">
       <div className="flex justify-between mb-6">
@@ -325,7 +362,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             <Refresh
               onClick={refreshPreviewBuyData}
               isLoading={isRefreshingPreview}
-              disabled={!buyToken || !totalPay || isRefreshingPreview}
+              disabled={
+                !buyToken ||
+                !totalPay ||
+                isRefreshingPreview ||
+                isWaitingForSignature
+              }
             />
           </div>
 
@@ -477,36 +519,36 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         </div>
       )}
 
-      <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
-        <button
-          className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
-          onClick={shortlistBid}
-          disabled={isLoading}
-          type="submit"
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center gap-2">
-              <TailSpin color="#FFFFFF" height={20} width={20} />
-              <span>Confirm</span>
-            </div>
-          ) : (
-            <>Confirm</>
-          )}
-        </button>
-      </div>
-      {isLoading && (
+      {!isTransactionRejected && (
+        <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
+          <button
+            className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+            onClick={shortlistBid}
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <TailSpin color="#FFFFFF" height={20} width={20} />
+                <span>Confirm</span>
+              </div>
+            ) : (
+              <>Confirm</>
+            )}
+          </button>
+        </div>
+      )}
+
+      {isWaitingForSignature && !isTransactionRejected && (
         <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
           Please open your wallet and confirm the transaction.
         </div>
       )}
 
-      {showTracker && (
-        <IntentTracker
-          closePreview={closePreview}
-          bidHash={expressIntentResponse?.bids[0].bidHash!}
-          token={buyToken!}
-          isBuy
-        />
+      {isTransactionRejected && (
+        <div className="text-[#FF366C] text-[13px] font-normal text-center mt-4">
+          Transaction was cancelled. No funds were moved
+        </div>
       )}
     </div>
   );

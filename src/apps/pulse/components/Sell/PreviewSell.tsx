@@ -13,11 +13,11 @@ import MoreInfo from '../../assets/moreinfo-icon.svg';
 import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
 
 // hooks
-import { useTransactionDebugLogger } from '../../../../hooks/useTransactionDebugLogger';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+import useGasEstimation from '../../hooks/useGasEstimation';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 // types
-import { WalletPortfolioMobulaResponse } from '../../../../types/api';
 import { SelectedToken } from '../../types/tokens';
 
 // components
@@ -30,8 +30,6 @@ interface PreviewSellProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
-  // eslint-disable-next-line react/no-unused-prop-types
-  walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
 }
 
@@ -44,6 +42,9 @@ const PreviewSell = (props: PreviewSellProps) => {
   const [isSellTokenAddressCopied, setIsSellTokenAddressCopied] =
     useState(false);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
+  const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
+  const [isTransactionRejected, setIsTransactionRejected] = useState(false);
+  const [isTransactionSuccess, setIsTransactionSuccess] = useState(false);
   const {
     getUSDCAddress,
     executeSell,
@@ -52,7 +53,18 @@ const PreviewSell = (props: PreviewSellProps) => {
     getBestSellOffer,
     isInitialized,
   } = useRelaySell();
-  const { transactionDebugLog } = useTransactionDebugLogger();
+  const { kit } = useTransactionKit();
+  const {
+    isEstimatingGas,
+    gasEstimationError,
+    gasCostNative,
+    nativeTokenSymbol,
+    estimateGasFees,
+  } = useGasEstimation({
+    sellToken,
+    sellOffer,
+    tokenAmount,
+  });
 
   useEffect(() => {
     if (isCopied) {
@@ -77,6 +89,60 @@ const PreviewSell = (props: PreviewSellProps) => {
 
     return undefined;
   }, [isSellTokenAddressCopied]);
+
+  // Auto-close preview when transaction is successful
+  useEffect(() => {
+    if (isTransactionSuccess && txHash) {
+      // Close the preview after a short delay to show success briefly
+      const timer = setTimeout(() => {
+        closePreview();
+      }, 2000); // 2 seconds delay
+
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [isTransactionSuccess, txHash, closePreview]);
+
+  // Reset transaction states when new data comes in
+  useEffect(() => {
+    if (!isExecuting && !isTransactionSuccess && !isTransactionRejected) {
+      setIsTransactionRejected(false);
+      setIsWaitingForSignature(false);
+      setIsTransactionSuccess(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sellToken, tokenAmount, sellOffer]);
+
+  // Utility function to clean up batch with consistent error handling
+  const cleanupBatch = useCallback(
+    (chainId: number, context: string) => {
+      if (!kit) return;
+
+      const batchName = `pulse-sell-batch-${chainId}`;
+      try {
+        kit.batch({ batchName }).remove();
+      } catch (cleanupErr) {
+        if (
+          !(
+            cleanupErr instanceof Error &&
+            cleanupErr.message.includes('does not exist')
+          )
+        ) {
+          console.error(`Failed to clean up batch (${context}):`, cleanupErr);
+        }
+      }
+    },
+    [kit]
+  );
+
+  // Clean up pulse-sell batch when component unmounts or preview closes
+  useEffect(() => {
+    return () => {
+      if (sellToken) {
+        cleanupBatch(sellToken.chainId, 'unmount');
+      }
+    };
+  }, [sellToken, cleanupBatch]);
 
   // Clear errors when amount, token, or quote props change
   useEffect(() => {
@@ -114,9 +180,27 @@ const PreviewSell = (props: PreviewSellProps) => {
 
   const usdcAddress = getUSDCAddress(sellToken?.chainId || 0);
 
+  // Clean up pulse-sell batch when component unmounts or preview closes
+  useEffect(() => {
+    return () => {
+      if (sellToken) {
+        cleanupBatch(sellToken.chainId, 'unmount');
+      }
+    };
+  }, [sellToken, cleanupBatch]);
+
   // Refresh function for PreviewSell component - only refreshes sell offer
   const refreshPreviewSellData = useCallback(async () => {
     setIsRefreshingPreview(true);
+    // Reset transaction states to allow retry
+    setIsTransactionRejected(false);
+    setIsWaitingForSignature(false);
+    setIsTransactionSuccess(false);
+
+    // Clean up any existing pulse-sell batch before refreshing
+    if (sellToken) {
+      cleanupBatch(sellToken.chainId, 'refresh');
+    }
 
     try {
       // Only fetch new sell offer - wallet portfolio is already fresh from HomeScreen
@@ -129,6 +213,9 @@ const PreviewSell = (props: PreviewSellProps) => {
         });
         onSellOfferUpdate(newOffer);
       }
+
+      // Also estimate gas fees after refreshing the offer
+      await estimateGasFees();
     } catch (e) {
       console.error('Failed to refresh sell offer:', e);
       if (onSellOfferUpdate) {
@@ -137,6 +224,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     } finally {
       setIsRefreshingPreview(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sellToken,
     tokenAmount,
@@ -145,9 +233,14 @@ const PreviewSell = (props: PreviewSellProps) => {
     getBestSellOffer,
   ]);
 
-  // Auto-refresh sell offer every 15 seconds
+  // Auto-refresh sell offer every 15 seconds (disabled when waiting for signature)
   useEffect(() => {
     if (!sellToken || !tokenAmount || !isInitialized || !onSellOfferUpdate) {
+      return undefined;
+    }
+
+    // Don't auto-refresh when waiting for signature or executing transaction
+    if (isWaitingForSignature || isExecuting) {
       return undefined;
     }
 
@@ -162,6 +255,8 @@ const PreviewSell = (props: PreviewSellProps) => {
     isInitialized,
     onSellOfferUpdate,
     refreshPreviewSellData,
+    isWaitingForSignature,
+    isExecuting,
   ]);
 
   const detailsEntry = (
@@ -213,33 +308,76 @@ const PreviewSell = (props: PreviewSellProps) => {
     );
   };
 
-  // TO DO - handle confirm sell differently once transaction status
-  // and execution fow is within the app rather than within the Action Bar
-  const handleConfirmSell = async () => {
-    if (!sellToken || !sellOffer) return;
+  // Execute sell transaction directly without opening batch modal
+  const executeSellDirectly = async () => {
+    if (!sellToken || !sellOffer || !kit) return;
 
-    // Clear any existing errors before attempting to execute
+    // Clear any existing errors and states
     if (error) {
       clearError();
     }
-
+    setIsTransactionRejected(false);
+    setIsTransactionSuccess(false);
+    setIsWaitingForSignature(true);
     setIsExecuting(true);
-    setTxHash(null); // Reset previous transaction hash
+    setTxHash(null);
 
     try {
-      const result = await executeSell(sellToken, tokenAmount);
-      if (result && typeof result === 'string') {
-        setTxHash(result);
-        transactionDebugLog('Sell transaction submitted successfully:', result);
-      } else if (result) {
-        transactionDebugLog('Sell transaction submitted successfully');
+      // First, prepare the batch using the existing executeSell logic (without showing batch modal)
+      const result = await executeSell(sellToken, tokenAmount, undefined);
+
+      if (result) {
+        // If executeSell succeeded, it means the batch was prepared
+        // Now execute the batch directly
+        const batchName = `pulse-sell-batch-${sellToken.chainId}`;
+
+        const batchSend = await kit.sendBatches({
+          onlyBatchNames: [batchName],
+        });
+        const sentBatch = batchSend.batches[batchName];
+
+        if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
+          const userOpHash = sentBatch?.userOpHash;
+          if (userOpHash) {
+            setTxHash(userOpHash);
+            setIsTransactionSuccess(true);
+
+            // Clean up the batch from kit after successful execution
+            cleanupBatch(sellToken.chainId, 'success');
+          } else {
+            throw new Error('No userOpHash returned after batch send');
+          }
+        } else {
+          throw new Error(sentBatch?.errorMessage || 'Batch send failed');
+        }
+      } else {
+        throw new Error('Failed to prepare sell transaction');
       }
     } catch (err) {
       console.error('Failed to execute sell:', err);
-      // The error will be handled by the useRelaySell hook's error state
+
+      // Clean up the batch from kit on any error
+      cleanupBatch(sellToken.chainId, 'error');
+
+      // Check if the error is a user rejection
+      if (
+        err instanceof Error &&
+        err.message.includes('User rejected the request')
+      ) {
+        setIsTransactionRejected(true);
+        setIsWaitingForSignature(false);
+      } else {
+        // Other errors will be handled by the useRelaySell hook's error state
+        setIsWaitingForSignature(false);
+      }
     } finally {
       setIsExecuting(false);
     }
+  };
+
+  const handleConfirmSell = async () => {
+    if (!sellToken || !sellOffer) return;
+    await executeSellDirectly();
   };
 
   if (!sellToken || !sellOffer) {
@@ -273,7 +411,13 @@ const PreviewSell = (props: PreviewSellProps) => {
             <Refresh
               onClick={refreshPreviewSellData}
               isLoading={isRefreshingPreview}
-              disabled={!sellToken || !tokenAmount || isRefreshingPreview}
+              disabled={
+                !sellToken ||
+                !tokenAmount ||
+                isRefreshingPreview ||
+                isWaitingForSignature ||
+                isExecuting
+              }
             />
           </div>
 
@@ -461,10 +605,12 @@ const PreviewSell = (props: PreviewSellProps) => {
         )}
         {detailsEntry(
           'Gas fee',
-          '≈ $0.00',
+          gasCostNative
+            ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
+            : '≈ 0.00',
           false,
           '',
-          false,
+          isEstimatingGas,
           'Fee that will be deducted from your universal gas tank.'
         )}
       </div>
@@ -476,35 +622,44 @@ const PreviewSell = (props: PreviewSellProps) => {
         </div>
       )}
 
-      {/* Transaction Hash Display */}
-      {txHash && (
-        <div className="m-2.5 p-2.5 bg-green-500/10 border border-green-500 rounded-[10px]">
-          <div className="text-green-300 text-xs">
-            Transaction submitted: {txHash.slice(0, 10)}...{txHash.slice(-8)}
-          </div>
+      {/* Gas Estimation Error Display */}
+      {gasEstimationError && (
+        <div className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500 rounded-[10px]">
+          <div className="text-yellow-300 text-xs">{gasEstimationError}</div>
         </div>
       )}
 
-      <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
-        <button
-          className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
-          onClick={handleConfirmSell}
-          disabled={isExecuting}
-          type="submit"
-        >
-          {isExecuting ? (
-            <div className="flex items-center justify-center gap-2">
-              <TailSpin color="#FFFFFF" height={20} width={20} />
-              <span>Confirm</span>
-            </div>
-          ) : (
-            <>Confirm</>
-          )}
-        </button>
-      </div>
-      {isExecuting && (
-        <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
-          Please open your wallet and confirm the transaction.
+      {!isTransactionRejected && !isTransactionSuccess && (
+        <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
+          <button
+            className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+            onClick={handleConfirmSell}
+            disabled={isExecuting}
+            type="submit"
+          >
+            {isExecuting ? (
+              <div className="flex items-center justify-center gap-2">
+                <TailSpin color="#FFFFFF" height={20} width={20} />
+                <span>Confirm</span>
+              </div>
+            ) : (
+              <>Confirm</>
+            )}
+          </button>
+        </div>
+      )}
+
+      {isWaitingForSignature &&
+        !isTransactionRejected &&
+        !isTransactionSuccess && (
+          <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
+            Please open your wallet and confirm the transaction.
+          </div>
+        )}
+
+      {isTransactionRejected && (
+        <div className="text-[#FF366C] text-[13px] font-normal text-center mt-4">
+          Transaction was cancelled. No funds were moved
         </div>
       )}
     </div>

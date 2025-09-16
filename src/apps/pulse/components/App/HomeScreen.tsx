@@ -182,7 +182,6 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellToken={sellToken}
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
-            walletPortfolioData={walletPortfolioData}
             onSellOfferUpdate={setSellOffer}
           />
         </div>

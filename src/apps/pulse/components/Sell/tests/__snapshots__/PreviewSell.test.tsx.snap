@@ -411,7 +411,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
           className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            ≈ $0.00
+            ≈ 1.000000 ETH
           </div>
         </div>
       </div>
