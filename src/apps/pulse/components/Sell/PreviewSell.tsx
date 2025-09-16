@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdCheck } from 'react-icons/md';
 import { TailSpin } from 'react-loader-spinner';
@@ -45,6 +45,7 @@ const PreviewSell = (props: PreviewSellProps) => {
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
   const [isTransactionRejected, setIsTransactionRejected] = useState(false);
   const [isTransactionSuccess, setIsTransactionSuccess] = useState(false);
+  const previewModalRef = useRef<HTMLDivElement>(null);
   const {
     getUSDCAddress,
     executeSell,
@@ -152,12 +153,28 @@ const PreviewSell = (props: PreviewSellProps) => {
     return undefined;
   }, [tokenAmount, sellToken, sellOffer, clearError, error]);
 
+  // Click outside to close functionality
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        previewModalRef.current &&
+        !previewModalRef.current.contains(event.target as Node)
+      ) {
+        closePreview();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [closePreview]);
+
   // TO DO - check if needed in the future
   // // Get the user's balance for the selected token
   // const getTokenBalance = () => {
   //   try {
   //     if (!sellToken || !walletPortfolioData?.result?.data?.assets) return 0;
-
   //     // Find the asset in the portfolio
   //     const assetData = walletPortfolioData.result.data.assets.find(
   //       (asset) => asset.asset.symbol === sellToken.symbol
@@ -403,7 +420,10 @@ const PreviewSell = (props: PreviewSellProps) => {
   const usdcAmountFormatted = usdcAmount.toFixed(6);
 
   return (
-    <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">
+    <div
+      ref={previewModalRef}
+      className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6"
+    >
       <div className="flex justify-between mb-6">
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">

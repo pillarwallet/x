@@ -42,7 +42,9 @@ interface SearchProps {
   setChains: Dispatch<SetStateAction<MobulaChainNames>>;
   walletPortfolioData?: PortfolioData;
   walletPortfolioLoading?: boolean;
+  walletPortfolioFetching?: boolean;
   walletPortfolioError?: boolean;
+  refetchWalletPortfolio?: () => void;
 }
 
 const overlayStyling = {
@@ -65,7 +67,9 @@ export default function Search({
   setChains,
   walletPortfolioData,
   walletPortfolioLoading,
+  walletPortfolioFetching,
   walletPortfolioError,
+  refetchWalletPortfolio,
 }: SearchProps) {
   const { searchText, setSearchText, searchData, isFetching } = useTokenSearch({
     isBuy,
@@ -293,7 +297,11 @@ export default function Search({
             )}
           </div>
           <div className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5">
-            <Refresh />
+            <Refresh
+              isLoading={walletPortfolioFetching}
+              onClick={refetchWalletPortfolio}
+              disabled={!refetchWalletPortfolio || walletPortfolioFetching}
+            />
           </div>
           {isBuy ? (
             <div
