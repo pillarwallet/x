@@ -6,6 +6,7 @@ import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep } from "modularPasskeys";
 import { createBundlerClient, toSmartAccount, toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
 import { Hex, keccak256, parseEther } from 'viem';
+import ModularEtherspotWalletFactory from '../assets/data/ModularEtherspotWalletFactory.json';
 
 
 // components
@@ -252,7 +253,7 @@ const Passkeys = () => {
       // Create a custom challenge for testing (this would be your transaction data)
       const customChallenge = `Sign this transaction: ${Date.now()}`;
       
-      const result = await signWithPasskey(address, customChallenge);
+      const result = await signWithPasskey(username, customChallenge);
       if (result.verified) {
         alert(`Passkey signing successful!\nSigned Challenge: ${result.signedChallenge}\nSignature: ${result.signature}`);
       } else {
@@ -264,6 +265,26 @@ const Passkeys = () => {
     } finally {
       setIsLoading(false);
     }
+
+    const typedData = {
+      domain: {
+        name: 'PillarX',
+        version: '1',
+        chainId: base.id,
+      },
+      types: {
+        Message: [
+          { name: 'content', type: 'string' }
+        ]
+      },
+      primaryType: 'Message',
+      message: {
+        content: 'hello'
+      }
+    };
+    
+    const signedMessage = await modularSdk?.signTypedData(typedData);
+    console.log('signed message', signedMessage);
   };
 
       const handleInstallPasskeyValidator = async () => {
@@ -442,6 +463,82 @@ const Passkeys = () => {
     }
   };
 
+  const handleGetSenderAddress = async () => {
+    /**
+     * First work out the wallet address
+     */
+    const { x, y } = getXYCoordinates(publicKey);
+    const salt = keccak256(toHex(`${x}${y}${username}`));
+    console.log('Salt:', salt);
+
+    /**
+     * Get address
+     */
+    const senderAddress = await publicClient.readContract({
+      address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a", // ModularEtherspotWalletFactory
+      abi: [
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "salt",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "initcode",
+              "type": "bytes"
+            }
+          ],
+          "name": "getAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ],
+      functionName: "getAddress",
+      args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
+    }).catch((error) => {
+      console.error('Error calling contract:', error);
+      return null;
+    });
+
+    console.log('senderAddress calculated!', senderAddress);
+
+    /**
+     * DONE
+     */
+
+    const owner = toWebAuthnAccount({
+      credential: {
+        id: credentialId,
+        publicKey: keccak256(toHex(publicKey)),
+      },
+    });
+
+    const bundlerClient = createBundlerClient({ 
+      transport: http('https://rpc.etherspot.io/v2/8453') 
+    });
+
+     const account = await toSimpleSmartAccount({
+       client: publicClient,
+       owner: privateKeyToAccount(await derivePrivateKeyFromPasskey(`${x}${y}${username}`)),
+       entryPoint: {
+         address: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+         version: '0.7',
+       }
+     });
+     
+     console.log('Smart account address:', account.address);
+
+  }
+
   return (
     <Wrapper>
       <LogoContainer>
@@ -506,11 +603,18 @@ const Passkeys = () => {
                 </Button>
                 <Button
                   onClick={handleSendNativeToken}
-                  $last 
                   $fullWidth 
                   disabled={isLoading || !modularSdk}
                 >
                   {isLoading ? 'Sending...' : 'Send 0.001 ETH'}
+                </Button>
+                <Button
+                  onClick={handleGetSenderAddress}
+                  $last 
+                  $fullWidth 
+                  disabled={isLoading || !modularSdk}
+                >
+                  Get Keccak Salt
                 </Button>
               </ButtonContainer>
             ) : (
