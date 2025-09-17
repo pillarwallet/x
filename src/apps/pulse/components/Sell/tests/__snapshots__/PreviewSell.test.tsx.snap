@@ -8,23 +8,15 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
     className="flex justify-between mb-6"
   >
     <div
-      className="text-xl font-medium"
+      className="text-xl font-normal"
     >
-      Preview
+      Confirm Transaction
     </div>
     <div
       className="flex"
     >
       <div
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "height": 40,
-            "padding": "2px 2px 4px 2px",
-            "width": 40,
-          }
-        }
+        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
       >
         <button
           aria-label="Refresh"
@@ -40,16 +32,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
         </button>
       </div>
       <div
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "height": 40,
-            "marginLeft": 10,
-            "padding": "2px 2px 4px 2px",
-            "width": 40,
-          }
-        }
+        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
       >
         <button
           aria-label="Close"
@@ -68,7 +51,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex justify-between mb-3 text-xs font-normal text-white/50"
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
       You're selling
@@ -104,16 +87,30 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div>
         <div
-          className="text-xs font-normal text-white"
+          className="text-[13px] font-normal text-white"
         >
           Test Token
         </div>
         <div
-          className="text-xs font-normal text-white/50"
+          className="flex items-center text-[13px] font-normal text-white/50"
         >
-          100.5
-           
-          TEST
+          <span>
+            0x1234...7890
+          </span>
+          <div
+            data-testid="copy-to-clipboard"
+            onClick={[Function]}
+          >
+            <div
+              className="flex items-center ml-1 cursor-pointer"
+            >
+              <img
+                alt="copy-address-icon"
+                className="w-[10px] h-3"
+                src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -121,7 +118,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex flex-col justify-center text-right"
     >
       <div
-        className="text-xs font-normal text-white"
+        className="text-[13px] font-normal text-white"
       >
         10.500000
       </div>
@@ -134,7 +131,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex justify-between mb-3 text-xs font-normal text-white/50"
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
       You're receiving
@@ -162,7 +159,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <span>
             USD Coin
@@ -174,7 +171,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
           </span>
         </div>
         <div
-          className="flex items-center text-xs font-normal text-white/50"
+          className="flex items-center text-[13px] font-normal text-white/50"
         >
           <span>
             0xUSDC...7890
@@ -200,7 +197,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex flex-col justify-center text-right"
     >
       <div
-        className="text-xs font-normal text-white"
+        className="text-[13px] font-normal text-white"
       >
         50.000000
       </div>
@@ -213,7 +210,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex justify-between mb-3 text-xs font-normal text-white/50"
+    className="flex justify-between mb-3 text-[13px] font-normal text-white/50"
   >
     <div>
       Details
@@ -226,7 +223,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex justify-between mb-3"
     >
       <div
-        className="flex items-center text-white/50 text-xs font-normal"
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
         <div>
           Rate
@@ -234,7 +231,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
             1 TEST ≈ 100.000
@@ -251,18 +248,41 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex justify-between mb-3"
     >
       <div
-        className="flex items-center text-white/50 text-xs font-normal"
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
         <div>
-          Minimum Receive
+          Minimum receive
+        </div>
+        <div
+          className="ml-1.5"
+        >
+          <div
+            className="relative inline-block"
+          >
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            50.000000 USDC
+            49.500000 USDC
           </div>
         </div>
       </div>
@@ -271,15 +291,38 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex justify-between mb-3"
     >
       <div
-        className="flex items-center text-white/50 text-xs font-normal"
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
         <div>
-          Price Impact
+          Price impact
+        </div>
+        <div
+          className="ml-1.5"
+        >
+          <div
+            className="relative inline-block"
+          >
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
             0.00%
@@ -291,18 +334,41 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex justify-between mb-3"
     >
       <div
-        className="flex items-center text-white/50 text-xs font-normal"
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
         <div>
-          Max Slippage
+          Max slippage
+        </div>
+        <div
+          className="ml-1.5"
+        >
+          <div
+            className="relative inline-block"
+          >
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            3.0%
+            300.0%
           </div>
         </div>
       </div>
@@ -311,28 +377,51 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
       className="flex justify-between mb-3"
     >
       <div
-        className="flex items-center text-white/50 text-xs font-normal"
+        className="flex items-center text-white/50 text-[13px] font-normal"
       >
         <div>
-          Gas Fee
+          Gas fee
+        </div>
+        <div
+          className="ml-1.5"
+        >
+          <div
+            className="relative inline-block"
+          >
+            <div
+              className="cursor-help"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+              >
+                <span
+                  className="text-white/50 text-[10px] font-normal"
+                >
+                  ?
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
         <div
-          className="flex items-center text-xs font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
           <div>
-            ≈ $0.00
+            ≈ 1.000000 ETH
           </div>
         </div>
       </div>
     </div>
   </div>
   <div
-    className="flex w-full h-[50px] rounded-[10px] bg-black"
+    className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
   >
     <button
-      className="flex items-center justify-center w-full rounded-[10px] m-0.5 bg-[#8A77FF]"
+      className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
       disabled={false}
       onClick={[Function]}
       type="submit"

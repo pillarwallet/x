@@ -78,6 +78,8 @@ const SendModalBatchesTabView = () => {
     > = {};
     Object.entries(batches).forEach(([batchName, transactions]) => {
       if (!transactions.length) return;
+      // Skip pulse-sell batches - they are handled directly in the Pulse app
+      if (batchName.includes('pulse-sell')) return;
       const { chainId } = transactions[0];
       if (typeof chainId !== 'number') return; // skip if chainId is undefined
       if (!grouped[chainId]) grouped[chainId] = [];
@@ -724,7 +726,10 @@ const SendModalBatchesTabView = () => {
           {/* Only map over valid batches */}
           {batchesArr
             .filter(
-              ({ batchName }) => batchName && batchName !== 'batch-undefined'
+              ({ batchName }) =>
+                batchName &&
+                batchName !== 'batch-undefined' &&
+                !batchName.includes('pulse-sell')
             )
             .map(({ batchName, transactions }) => (
               <div key={batchName} id={`batch-${batchName}`}>

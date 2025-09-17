@@ -140,6 +140,7 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
             aria-label="Refresh"
             className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-not-allowed opacity-50"
             disabled={true}
+            onClick={[Function]}
             type="button"
           >
             <img
@@ -311,28 +312,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
         className="flex"
       >
         <div
-          className="flex"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 30,
-              "marginLeft": 10,
-              "padding": "2px 2px 4px 2px",
-              "width": 75,
-            }
-          }
+          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
         >
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+            data-testid="pulse-buy-percentage-button-10"
+            disabled={true}
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#121116",
-                "borderRadius": 10,
-                "color": "grey",
-              }
-            }
             type="button"
           >
             $
@@ -340,28 +326,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           </button>
         </div>
         <div
-          className="flex"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 30,
-              "marginLeft": 10,
-              "padding": "2px 2px 4px 2px",
-              "width": 75,
-            }
-          }
+          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
         >
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+            data-testid="pulse-buy-percentage-button-20"
+            disabled={true}
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#121116",
-                "borderRadius": 10,
-                "color": "grey",
-              }
-            }
             type="button"
           >
             $
@@ -369,28 +340,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           </button>
         </div>
         <div
-          className="flex"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 30,
-              "marginLeft": 10,
-              "padding": "2px 2px 4px 2px",
-              "width": 75,
-            }
-          }
+          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
         >
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+            data-testid="pulse-buy-percentage-button-50"
+            disabled={true}
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#121116",
-                "borderRadius": 10,
-                "color": "grey",
-              }
-            }
             type="button"
           >
             $
@@ -398,28 +354,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           </button>
         </div>
         <div
-          className="flex"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 30,
-              "marginLeft": 10,
-              "padding": "2px 2px 4px 2px",
-              "width": 75,
-            }
-          }
+          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
         >
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+            data-testid="pulse-buy-percentage-button-100"
+            disabled={true}
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#121116",
-                "borderRadius": 10,
-                "color": "grey",
-              }
-            }
             type="button"
           >
             $
@@ -427,28 +368,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           </button>
         </div>
         <div
-          className="flex"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 30,
-              "marginLeft": 10,
-              "padding": "2px 2px 4px 2px",
-              "width": 75,
-            }
-          }
+          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
         >
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+            data-testid="pulse-buy-percentage-button-max"
+            disabled={true}
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#121116",
-                "borderRadius": 10,
-                "color": "grey",
-              }
-            }
             type="button"
           >
             $

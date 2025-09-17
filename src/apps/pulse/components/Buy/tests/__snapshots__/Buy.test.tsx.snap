@@ -213,28 +213,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
     className="flex"
   >
     <div
-      className="flex"
-      style={
-        {
-          "backgroundColor": "black",
-          "borderRadius": 10,
-          "height": 30,
-          "marginLeft": 10,
-          "padding": "2px 2px 4px 2px",
-          "width": 75,
-        }
-      }
+      className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
     >
       <button
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+        data-testid="pulse-buy-percentage-button-10"
+        disabled={false}
         onClick={[Function]}
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "color": "grey",
-          }
-        }
         type="button"
       >
         $
@@ -242,28 +227,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       </button>
     </div>
     <div
-      className="flex"
-      style={
-        {
-          "backgroundColor": "black",
-          "borderRadius": 10,
-          "height": 30,
-          "marginLeft": 10,
-          "padding": "2px 2px 4px 2px",
-          "width": 75,
-        }
-      }
+      className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
     >
       <button
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+        data-testid="pulse-buy-percentage-button-20"
+        disabled={false}
         onClick={[Function]}
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "color": "grey",
-          }
-        }
         type="button"
       >
         $
@@ -271,28 +241,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       </button>
     </div>
     <div
-      className="flex"
-      style={
-        {
-          "backgroundColor": "black",
-          "borderRadius": 10,
-          "height": 30,
-          "marginLeft": 10,
-          "padding": "2px 2px 4px 2px",
-          "width": 75,
-        }
-      }
+      className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
     >
       <button
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+        data-testid="pulse-buy-percentage-button-50"
+        disabled={false}
         onClick={[Function]}
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "color": "grey",
-          }
-        }
         type="button"
       >
         $
@@ -300,28 +255,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       </button>
     </div>
     <div
-      className="flex"
-      style={
-        {
-          "backgroundColor": "black",
-          "borderRadius": 10,
-          "height": 30,
-          "marginLeft": 10,
-          "padding": "2px 2px 4px 2px",
-          "width": 75,
-        }
-      }
+      className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
     >
       <button
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+        data-testid="pulse-buy-percentage-button-100"
+        disabled={false}
         onClick={[Function]}
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "color": "grey",
-          }
-        }
         type="button"
       >
         $
@@ -329,28 +269,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       </button>
     </div>
     <div
-      className="flex"
-      style={
-        {
-          "backgroundColor": "black",
-          "borderRadius": 10,
-          "height": 30,
-          "marginLeft": 10,
-          "padding": "2px 2px 4px 2px",
-          "width": 75,
-        }
-      }
+      className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
     >
       <button
-        className="flex-1 items-center justify-center"
+        className="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
+        data-testid="pulse-buy-percentage-button-max"
+        disabled={false}
         onClick={[Function]}
-        style={
-          {
-            "backgroundColor": "#121116",
-            "borderRadius": 10,
-            "color": "grey",
-          }
-        }
         type="button"
       >
         $

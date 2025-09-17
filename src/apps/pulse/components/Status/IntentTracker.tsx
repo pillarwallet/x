@@ -98,7 +98,7 @@ export default function IntentTracker(props: IntentTrackerProps) {
     };
   }, [bidHash, intentSdk]);
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex justify-between" style={{ margin: 10 }}>
         <div className="flex" style={{ fontSize: 20 }}>
           {`${isBuy ? 'Buy' : 'Sell'}`}
@@ -258,6 +258,6 @@ export default function IntentTracker(props: IntentTrackerProps) {
           Close
         </button>
       </div>
-    </>
+    </div>
   );
 }
