@@ -9,6 +9,8 @@ import {
   hashMessage,
   hashTypedData,
   keccak256,
+  parseAbi,
+  parseAbiParameters,
   PublicClient,
   stringToHex,
   toHex,
@@ -41,8 +43,90 @@ export type GetAccountNonceParams = {
   key?: bigint;
 };
 
+export interface BootstrapConfig {
+  module: string;
+  data: string;
+}
+
 const version = '1.0.0';
-const validatorAddress = '0xbA45a2BFb8De3D24cA9D7F1B551E14dFF5d690Fd';
+const validatorAddress = '0xbA45a2BFb8De3D24cA9D7F1B551E14dFF5d690Fd'; // ZeroDev
+const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000';
+const bootstrapAddress = '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7';
+let passkeyAddress: `0x${string}` | null = null;
+
+export const modulesAbi = [
+  'function onInstall(bytes data)'
+];
+
+export const factoryAbi = [
+  'function createAccount(bytes32 salt,bytes calldata initCode) returns (address)',
+  'function getAddress(bytes32 salt,bytes calldata initcode) view returns (address)'
+]
+
+export const bootstrapAbi = [
+  'function singleInitMSA(address validator, bytes calldata data)',
+  'function initMSA(BootstrapConfig[] calldata $valdiators,BootstrapConfig[] calldata $executors,BootstrapConfig calldata _hook,BootstrapConfig[] calldata _fallbacks)',
+  'struct BootstrapConfig {address module;bytes data;}',
+]
+
+function getInitCodeData({
+  keccakHash,
+}: {
+  keccakHash: `0x${string}`;
+}): string {
+  if (!validatorAddress) {
+    throw new Error('Validator address not found');
+  }
+  const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, '0x');
+  const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+
+  const initMSAData = encodeFunctionData({
+    functionName: 'initMSA',
+    abi: parseAbi(bootstrapAbi),
+    args: [validators, executors, hook, fallbacks],
+  });
+
+  const initCode = encodeAbiParameters(
+    parseAbiParameters('address, address, bytes'),
+    [keccakHash, bootstrapAddress as Hex, initMSAData]
+  )
+
+  return initCode;
+}
+
+function _makeBootstrapConfig(module: string, data: string): BootstrapConfig {
+  const config: BootstrapConfig = {
+      module: "",
+      data: ""
+  };
+  config.module = module;
+  const encodedFunctionData = encodeFunctionData({
+      functionName: 'onInstall',
+      abi: parseAbi(modulesAbi),
+      args: [data],
+    });
+
+  config.data = encodedFunctionData;
+
+  return config;
+}
+
+export function makeBootstrapConfig(module: string, data: string): BootstrapConfig[] {
+  const config: BootstrapConfig[] = [];
+  const encodedFunctionData = encodeFunctionData({
+      functionName: 'onInstall',
+      abi: parseAbi(modulesAbi),
+      args: [data],
+    });
+  const newConfig: BootstrapConfig = {
+      module: module,
+      data: encodedFunctionData
+  };
+  config.push(newConfig);
+  return config;
+}
 
 const wrapMessageHash = (
   messageHash: Hex,
@@ -105,6 +189,7 @@ export const getAccountNonce = async (
   client: Client,
   args: GetAccountNonceParams
 ): Promise<bigint> => {
+  console.log('getAccountNonce', args);
   const { address, entryPointAddress, key = BigInt(0) } = args;
 
   return getAction(
@@ -189,6 +274,13 @@ export const toEtherspotSmartAccount = async (props: {
    * @returns The arguments for the getAddress function
    */
   const getFactoryArgs = async () => {
+    console.log('getFactoryArgs', keccak256(toHex(`${x}${y}${passkeyCredentialId}`)));
+    const keccakHash = keccak256(toHex(`${x}${y}${passkeyCredentialId}`));
+
+    const initCodeData = getInitCodeData({
+      keccakHash,
+    });
+
     return {
       factory: FACTORY_ADDRESS,
       factoryData: encodeFunctionData({
@@ -219,12 +311,15 @@ export const toEtherspotSmartAccount = async (props: {
           },
         ],
         functionName: 'getAddress',
-        args: [keccak256(toHex(`${x}${y}${passkeyCredentialId}`)), '0x'],
+        args: [keccak256(toHex(`${x}${y}${passkeyCredentialId}`)), initCodeData as Hex],
       }),
     };
   };
 
   const getAddress = async () => {
+    console.log('getAddress', keccak256(toHex(`${x}${y}${passkeyCredentialId}`)));
+    const keccakHash = keccak256(toHex(`${x}${y}${passkeyCredentialId}`));
+
     /**
      * Get address
      */
@@ -265,10 +360,16 @@ export const toEtherspotSmartAccount = async (props: {
         return null;
       });
 
+    passkeyAddress = senderAddress as `0x${string}`;
+    const initcode = getInitCodeData({
+      keccakHash
+    });
+
     return senderAddress as `0x${string}`;
   };
 
   const getNonce = async (args?: { key?: bigint }) => {
+    console.log('getNonce', args);
     const TIMESTAMP_ADJUSTMENT = BigInt(16777215); // max value for size 3
     const defaultedKey = (args?.key ?? BigInt(0)) % TIMESTAMP_ADJUSTMENT;
     const defaultedValidationMode = '0x00';
@@ -287,10 +388,33 @@ export const toEtherspotSmartAccount = async (props: {
   };
 
   const getStubSignature = async (): Promise<`0x${string}`> => {
-    return '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c' as `0x${string}`;
+    console.log('getStubSignature');
+
+      return encodeAbiParameters(
+          [
+              { name: "authenticatorData", type: "bytes" },
+              { name: "clientDataJSON", type: "string" },
+              { name: "responseTypeLocation", type: "uint256" },
+              { name: "r", type: "uint256" },
+              { name: "s", type: "uint256" },
+              { name: "usePrecompiled", type: "bool" }
+          ],
+          [
+              "0x49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d97631d00000000",
+              '{"type":"webauthn.get","challenge":"tbxXNFS9X_4Byr1cMwqKrIGB-_30a0QhZ6y7ucM0BOE","origin":"http://localhost:3000","crossOrigin":false, "other_keys_can_be_added_here":"do not compare clientDataJSON against a template. See https://goo.gl/yabPex"}',
+              BigInt(1),
+              BigInt("44941127272049826721201904734628716258498742255959991581049806490182030242267"),
+              BigInt("9910254599581058084911561569808925251374718953855182016200087235935345969636"),
+              false
+          ]
+      )
+  
+
+    // return '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c' as `0x${string}`;
   };
 
   const decodeCalls = async (callData: `0x${string}`) => {
+    console.log('decodeCalls', callData);
     return decode7579Calls(callData).callData;
   };
 
@@ -301,6 +425,7 @@ export const toEtherspotSmartAccount = async (props: {
       data?: `0x${string}` | undefined;
     }[]
   ) => {
+    console.log('encodeCalls', calls);
     return encode7579Calls({
       mode: {
         type: calls.length > 1 ? 'batchcall' : 'call',
@@ -315,12 +440,14 @@ export const toEtherspotSmartAccount = async (props: {
   const sign = async (parameters: {
     hash: `0x${string}`;
   }): Promise<`0x${string}`> => {
+    console.log('sign', parameters);
     const result = await webAuthnAccount.sign(parameters);
     return result.signature;
   };
 
   let chainId: number;
   const getMemoizedChainId = async () => {
+    console.log('getMemoizedChainId');
     if (chainId) return chainId;
     chainId = client.chain
       ? client.chain.id
@@ -329,6 +456,7 @@ export const toEtherspotSmartAccount = async (props: {
   };
 
   const signMessage = async ({ message }: { message: SignableMessage }) => {
+    console.log('signMessage', message);
     let messageHash: Hex;
     if (typeof message === 'string') {
       messageHash = hashMessage(message);
@@ -361,6 +489,7 @@ export const toEtherspotSmartAccount = async (props: {
   >(
     parameters: TypedDataDefinition<TypedData, PrimaryType>
   ) => {
+    console.log('signTypedData', parameters);
     const { types: inputTypes, domain } = parameters;
 
     const types = {
@@ -400,6 +529,7 @@ export const toEtherspotSmartAccount = async (props: {
 
   // @ts-expect-error - TODO: fix this
   const signUserOperation = async (parameters) => {
+    console.log('signUserOperation', parameters);
     const { mChainId = await getMemoizedChainId(), ...userOperation } =
       parameters;
 

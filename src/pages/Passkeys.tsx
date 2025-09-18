@@ -22,6 +22,7 @@ import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { ethers } from 'ethers';
 import { base, mainnet } from 'viem/chains';
 import { privateKeyToAccount, toAccount } from 'viem/accounts';
+import { toEtherspotSmartAccount } from '../utils/viem';
 
 const Passkeys = () => {
   const { address } = useAccount();
@@ -467,49 +468,49 @@ const Passkeys = () => {
     /**
      * First work out the wallet address
      */
-    const { x, y } = getXYCoordinates(publicKey);
-    const salt = keccak256(toHex(`${x}${y}${username}`));
-    console.log('Salt:', salt);
+    // const { x, y } = getXYCoordinates(publicKey);
+    // const salt = keccak256(toHex(`${x}${y}${username}`));
+    // console.log('Salt:', salt);
 
-    /**
-     * Get address
-     */
-    const senderAddress = await publicClient.readContract({
-      address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a", // ModularEtherspotWalletFactory
-      abi: [
-        {
-          "inputs": [
-            {
-              "internalType": "bytes32",
-              "name": "salt",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initcode",
-              "type": "bytes"
-            }
-          ],
-          "name": "getAddress",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ],
-      functionName: "getAddress",
-      args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
-    }).catch((error) => {
-      console.error('Error calling contract:', error);
-      return null;
-    });
+    // /**
+    //  * Get address
+    //  */
+    // const senderAddress = await publicClient.readContract({
+    //   address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a", // ModularEtherspotWalletFactory
+    //   abi: [
+    //     {
+    //       "inputs": [
+    //         {
+    //           "internalType": "bytes32",
+    //           "name": "salt",
+    //           "type": "bytes32"
+    //         },
+    //         {
+    //           "internalType": "bytes",
+    //           "name": "initcode",
+    //           "type": "bytes"
+    //         }
+    //       ],
+    //       "name": "getAddress",
+    //       "outputs": [
+    //         {
+    //           "internalType": "address",
+    //           "name": "",
+    //           "type": "address"
+    //         }
+    //       ],
+    //       "stateMutability": "view",
+    //       "type": "function"
+    //     }
+    //   ],
+    //   functionName: "getAddress",
+    //   args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
+    // }).catch((error) => {
+    //   console.error('Error calling contract:', error);
+    //   return null;
+    // });
 
-    console.log('senderAddress calculated!', senderAddress);
+    // console.log('senderAddress calculated!', senderAddress);
 
     /**
      * DONE
@@ -521,22 +522,35 @@ const Passkeys = () => {
         publicKey: keccak256(toHex(publicKey)),
       },
     });
-    
-    const bundlerClient = createBundlerClient({ 
-      transport: http('https://rpc.etherspot.io/v2/8453') 
+  
+
+     const etherspotAccount = await toEtherspotSmartAccount({
+      client: publicClient,
+      webAuthnAccount: owner,
+      passkeyPublicKey: publicKey,
+      passkeyCredentialId: credentialId,
+      entryPoint: {
+        address: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+        version: '0.7',
+      }
+     });
+
+     const bundlerClient = createBundlerClient({ 
+      account: etherspotAccount,
+      transport: http('https://rpc.etherspot.io/v2/1?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6ImUwNDExNTU3MjM3NzQ3MzY5MTAyN2YwZjM0NzBmNDVhIiwiaCI6Im11cm11cjEyOCJ9') 
     });
 
-     const account = await toSimpleSmartAccount({
-       client: publicClient,
-       owner: privateKeyToAccount(await derivePrivateKeyFromPasskey(`${x}${y}${username}`)),
-       entryPoint: {
-         address: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-         version: '0.7',
-       }
-     });
-     
-     console.log('Smart account address:', account.address);
+    console.log('Smart account address:', await etherspotAccount.getAddress());
 
+    const userOperation = await bundlerClient.prepareUserOperation({ 
+      account: etherspotAccount,
+      calls: [{
+        to: '0x11041744893Fa72629aB93ea8adaf35A1dc24AA5',
+        value: parseEther('0.00001')
+      }]
+    })
+
+    console.log('User operation:', userOperation);
   }
 
   return (
@@ -614,7 +628,7 @@ const Passkeys = () => {
                   $fullWidth 
                   disabled={isLoading || !modularSdk}
                 >
-                  Get Keccak Salt
+                  Etherspot Smart Account actions
                 </Button>
               </ButtonContainer>
             ) : (
