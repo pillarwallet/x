@@ -57,6 +57,7 @@ const mockPayingToken: PayingToken = {
   totalUsd: 100.0,
   totalRaw: '100000000',
   chainId: 1,
+  address: '0xA0b86a33E6441b8C4C8C0C4C8C0C4C8C0C4C8C0C4',
 };
 
 const mockWalletPortfolioData: WalletPortfolioMobulaResponse = {
@@ -92,8 +93,35 @@ const mockWalletPortfolioData: WalletPortfolioMobulaResponse = {
           allocation: 1,
           wallets: ['0x1234567890123456789012345678901234567890'],
         },
+        {
+          asset: {
+            id: 2,
+            symbol: 'USDC',
+            name: 'USD Coin',
+            logo: 'usdc-logo.png',
+            decimals: ['6'],
+            contracts: [],
+            blockchains: [],
+          },
+          contracts_balances: [
+            {
+              address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC on Ethereum
+              chainId: 'evm:1',
+              balance: 10050,
+              balanceRaw: '10050000000',
+              decimals: 6,
+            },
+          ],
+          cross_chain_balances: {},
+          price_change_24h: 0,
+          estimated_balance: 10050,
+          price: 1,
+          token_balance: 10050,
+          allocation: 1,
+          wallets: ['0x1234567890123456789012345678901234567890'],
+        },
       ],
-      balances_length: 1,
+      balances_length: 2,
     },
   },
 };
@@ -106,6 +134,8 @@ const mockProps = {
   setPreviewBuy: vi.fn(),
   setPayingTokens: vi.fn(),
   setExpressIntentResponse: vi.fn(),
+  setUsdAmount: vi.fn(),
+  setDispensableAssets: vi.fn(),
 };
 
 const defaultMocks = () => {
@@ -212,7 +242,7 @@ describe('<Buy />', () => {
   });
 
   describe('handles different states', () => {
-    it('shows not enough liquidity warning', () => {
+    it('shows not enough liquidity warning', async () => {
       (useModularSdk as any).mockReturnValue({
         areModulesInstalled: true,
         isInstalling: false,
@@ -227,15 +257,46 @@ describe('<Buy />', () => {
       fireEvent.change(input, { target: { value: '999999.00' } });
 
       // Wait for debounced effect
-      setTimeout(() => {
-        expect(screen.getByText('Not Enough liquidity')).toBeInTheDocument();
-      }, 1100);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+      expect(
+        screen.getByText('Insufficient wallet balance')
+      ).toBeInTheDocument();
+    });
+
+    it('resets liquidity state when amount changes', async () => {
+      (useModularSdk as any).mockReturnValue({
+        areModulesInstalled: true,
+        isInstalling: false,
+        installModules: vi.fn(),
+        isFetching: false,
+      });
+
+      renderWithProviders();
+
+      // First, set a high amount that might trigger not enough liquidity
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '999999.00' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      // Then change to a valid amount
+      fireEvent.change(input, { target: { value: '100.00' } });
+
+      // The liquidity warning should be cleared immediately when user types
+      expect(
+        screen.queryByText('Not enough liquidity')
+      ).not.toBeInTheDocument();
     });
 
     it('handles missing wallet portfolio data', () => {
       renderWithProviders({ walletPortfolioData: undefined });
 
-      expect(screen.getByText('$0')).toBeInTheDocument();
+      expect(screen.getByText('$0.00')).toBeInTheDocument();
     });
 
     it('handles loading state', () => {

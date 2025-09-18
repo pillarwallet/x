@@ -80,6 +80,9 @@ const Sell = (props: SellProps) => {
     } else if (!debouncedTokenAmount || parseFloat(debouncedTokenAmount) <= 0) {
       setLocalSellOffer(null);
       setIsLoadingOffer(false);
+    } else if (notEnoughLiquidity) {
+      setLocalSellOffer(null);
+      setIsLoadingOffer(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedTokenAmount, token, isInitialized, notEnoughLiquidity]);
@@ -271,7 +274,8 @@ const Sell = (props: SellProps) => {
                   <img src={WarningIcon} alt="warning" />
                 </div>
                 <div className="underline text-[#FF366C] text-xs ml-1.5">
-                  {relayError || 'Not enough liquidity'}
+                  {relayError ||
+                    (notEnoughLiquidity ? 'Not enough liquidity' : '')}
                 </div>
               </>
             )}
@@ -323,9 +327,12 @@ const Sell = (props: SellProps) => {
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
-                      const amount = tokenBalance.toFixed(6);
-                      setTokenAmount(amount);
-                      setParentTokenAmount(amount);
+                      const decimals = token?.decimals || 18;
+                      const multiplier = 10 ** decimals;
+                      const amount =
+                        Math.floor(tokenBalance * multiplier) / multiplier;
+                      setTokenAmount(amount.toString());
+                      setParentTokenAmount(amount.toString());
                     } else {
                       const amount = (
                         (tokenBalance * percentage) /

@@ -88,16 +88,33 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         </div>
         <div>
           <div
-            className="text-[13px] font-normal text-white"
+            className="flex items-center text-[13px] font-normal text-white"
           >
-            USD Coin
+            <span>
+              USD Coin
+            </span>
+            <span
+              className="ml-1 text-white/50"
+            >
+              USDC
+            </span>
           </div>
           <div
-            className="text-[13px] font-normal text-white/50"
+            className="flex items-center text-[13px] font-normal text-white/50"
           >
-            100.00
-             
-            USDC
+            <span>
+              0xA0b8...C0C4
+            </span>
+            <div
+              className="flex items-center ml-1 cursor-pointer"
+              onClick={[Function]}
+            >
+              <img
+                alt="copy-address-icon"
+                className="w-[10px] h-3"
+                src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -147,9 +164,16 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div>
         <div
-          className="text-[13px] font-normal text-white"
+          className="flex items-center text-[13px] font-normal text-white"
         >
-          Test Token
+          <span>
+            USD Coin
+          </span>
+          <span
+            className="ml-1 text-white/50"
+          >
+            TEST
+          </span>
         </div>
         <div
           className="flex items-center text-[13px] font-normal text-white/50"

@@ -42,6 +42,7 @@ const mockPayingToken: PayingToken = {
   totalUsd: 100.0,
   totalRaw: '100000000',
   chainId: 1,
+  address: '0xA0b86a33E6441b8C4C8C0C4C8C0C4C8C0C4C8C0C4',
 };
 
 const mockExpressIntentResponse: ExpressIntentResponse = {
@@ -83,8 +84,8 @@ describe('<PreviewBuy />', () => {
       render(<PreviewBuy {...mockProps} />);
 
       expect(screen.getByText('Confirm Transaction')).toBeInTheDocument();
-      expect(screen.getByText('Test Token')).toBeInTheDocument();
-      expect(screen.getAllByText('TEST')).toHaveLength(1);
+      expect(screen.getAllByText('USD Coin')).toHaveLength(2);
+      expect(screen.getAllByText('TEST')).toHaveLength(2);
       // Check that the component renders the main interface elements
       expect(screen.getByText('Total: $100.00')).toBeInTheDocument();
       expect(screen.getByText('Details')).toBeInTheDocument();
@@ -105,7 +106,7 @@ describe('<PreviewBuy />', () => {
       render(<PreviewBuy {...mockProps} />);
 
       expect(screen.getByText('0x1234...7890')).toBeInTheDocument();
-      expect(screen.getByAltText('copy-address-icon')).toBeInTheDocument();
+      expect(screen.getAllByAltText('copy-address-icon')).toHaveLength(2);
     });
 
     it('calculates token amount correctly', () => {
@@ -120,12 +121,12 @@ describe('<PreviewBuy />', () => {
     it('executes copy functionality', async () => {
       render(<PreviewBuy {...mockProps} />);
 
-      // Check that the copy button exists
-      const copyButton = screen.getByAltText('copy-address-icon');
-      expect(copyButton).toBeInTheDocument();
+      // Check that the copy buttons exist
+      const copyButtons = screen.getAllByAltText('copy-address-icon');
+      expect(copyButtons).toHaveLength(2);
 
-      // Click the copy button - this should not throw an error
-      expect(() => fireEvent.click(copyButton)).not.toThrow();
+      // Click the first copy button - this should not throw an error
+      expect(() => fireEvent.click(copyButtons[0])).not.toThrow();
     });
 
     it('executes shortlist bid transaction', async () => {

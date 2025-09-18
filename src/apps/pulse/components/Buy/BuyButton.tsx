@@ -1,7 +1,13 @@
-import { TailSpin } from 'react-loader-spinner';
 import { ExpressIntentResponse } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
+import { TailSpin } from 'react-loader-spinner';
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { getChainName } from '../../utils/constants';
+
+// components
+import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
+
+// utils
+import { limitDigitsNumber } from '../../../../utils/number';
 
 function getButtonText(
   isLoading: boolean,
@@ -10,34 +16,59 @@ function getButtonText(
   areModulesInstalled: boolean | undefined,
   selectedToken: SelectedToken | null,
   debouncedUsdAmount: string,
-  payingToken?: PayingToken
+  payingToken?: PayingToken,
+  isDisabled?: boolean
 ) {
   if (areModulesInstalled === false && payingToken && !isInstalling) {
     return (
       <div className="flex items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
     );
   }
+
+  if (isLoading || isInstalling || isFetching) {
+    return (
+      <div className="flex items-center justify-center">
+        <TailSpin color="#FFFFFF" height={15} width={15} />
+      </div>
+    );
+  }
+
   const usdAmount = parseFloat(debouncedUsdAmount);
   const tokenUsdValue = selectedToken?.usdValue
     ? Number(selectedToken.usdValue)
     : 0;
 
-  let tokenAmount = '';
-  if (!Number.isNaN(usdAmount) && usdAmount > 0 && tokenUsdValue > 0) {
-    tokenAmount = (usdAmount / tokenUsdValue).toFixed(4);
+  if (
+    !isDisabled &&
+    !Number.isNaN(usdAmount) &&
+    usdAmount > 0 &&
+    tokenUsdValue > 0
+  ) {
+    const tokenAmount = usdAmount / tokenUsdValue;
+    const limitedUsdAmount = limitDigitsNumber(usdAmount);
+    const limitedTokenAmount = limitDigitsNumber(tokenAmount);
+
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <span>Buy</span>
+        <HighDecimalsFormatted
+          value={limitedTokenAmount}
+          styleNumber="text-white"
+          styleZeros="text-white/70 text-xs"
+        />
+        <span>{selectedToken?.symbol}</span>
+        <span>for</span>
+        <HighDecimalsFormatted
+          value={limitedUsdAmount}
+          moneySymbol="$"
+          styleNumber="text-white"
+          styleZeros="text-white/70 text-xs"
+        />
+      </div>
+    );
   }
 
-  return isLoading || isInstalling || isFetching ? (
-    <div className="flex items-center justify-center">
-      <TailSpin color="#FFFFFF" height={15} width={15} />
-    </div>
-  ) : (
-    <div>
-      {selectedToken?.symbol
-        ? `Buy ${tokenAmount} ${selectedToken.symbol}`
-        : 'Buy'}
-    </div>
-  );
+  return selectedToken?.symbol ? `Buy ${selectedToken.symbol}` : 'Buy';
 }
 
 export interface BuyButtonProps {
@@ -106,7 +137,8 @@ export default function BuyButton(props: BuyButtonProps) {
         areModulesInstalled,
         token,
         debouncedUsdAmount,
-        payingTokens.length > 0 ? payingTokens[0] : undefined
+        payingTokens.length > 0 ? payingTokens[0] : undefined,
+        isDisabled()
       )}
     </button>
   );

@@ -408,9 +408,7 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           }
           type="button"
         >
-          <div>
-            Buy
-          </div>
+          Buy
         </button>
       </div>
     </div>
