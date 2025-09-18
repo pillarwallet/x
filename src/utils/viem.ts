@@ -36,6 +36,7 @@ import type {
 import { getChainId, readContract } from 'viem/actions';
 import { getAction } from 'viem/utils';
 import { decode7579Calls, encode7579Calls } from 'permissionless/utils';
+import { ethers } from 'ethers';
 
 export type GetAccountNonceParams = {
   address: Address;
@@ -220,13 +221,21 @@ export const toEtherspotSmartAccount = async (props: {
 
   // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
   function getXYCoordinates(publicKeyBase64: string) {
+    console.log('Input publicKeyBase64:', publicKeyBase64);
     const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
+    console.log('Public key buffer length:', publicKeyBuffer.length);
+    console.log('Public key buffer:', publicKeyBuffer.toString('hex'));
 
     // WebAuthn public keys are CBOR encoded
     // X coordinate starts at byte 10 (after CBOR headers)
     // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
     const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
     const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
+
+    console.log('X slice (10-42):', publicKeyBuffer.slice(10, 42).toString('hex'));
+    console.log('Y slice (45-77):', publicKeyBuffer.slice(45, 77).toString('hex'));
+    console.log('X array:', x);
+    console.log('Y array:', y);
 
     return { x, y };
   }
@@ -261,7 +270,40 @@ export const toEtherspotSmartAccount = async (props: {
       throw new Error('Validator address not found');
     }
 
-    const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, '0x');
+    /**
+     * Prepare ZeroDev validator data
+     */
+
+    const { x, y } = getXYCoordinates(passkeyPublicKey);
+
+    // Debug: Log the coordinate arrays to understand their structure
+    console.log('X coordinates array:', x, 'length:', x?.length);
+    console.log('Y coordinates array:', y, 'length:', y?.length);
+
+    // Convert coordinate arrays to hex strings properly
+    const pubKeyXHex = Buffer.from(x).toString('hex')
+    const pubKeyYHex = Buffer.from(y).toString('hex')
+    
+    // Ensure we have valid hex values before converting to BigInt
+    if (!pubKeyXHex || !pubKeyYHex) {
+      throw new Error('Invalid public key coordinates: empty hex values')
+    }
+    
+    const pubKeyX = BigInt('0x' + pubKeyXHex)
+    const pubKeyY = BigInt('0x' + pubKeyYHex)
+    const credentialIdHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(passkeyCredentialId));
+
+    const initData = ethers.utils.defaultAbiCoder.encode(
+      [
+        "tuple(uint256 pubKeyX, uint256 pubKeyY)",
+        "bytes32"
+      ],
+      [
+        [pubKeyX, pubKeyY],
+        credentialIdHash
+      ]);
+
+    const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, initData);
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
     const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
@@ -283,6 +325,7 @@ export const toEtherspotSmartAccount = async (props: {
 const getAddress = async () => {
     // 1. Generate deterministic owner address from passkey data
     const passkeyOwnerAddress = getPasskeyOwnerAddress(passkeyPublicKey, passkeyCredentialId);
+    console.log('passkeyOwnerAddress', passkeyOwnerAddress);
 
     // 2. Create initCode using the deterministic owner
     const initCode = getInitCodeData({
@@ -352,31 +395,31 @@ const getAddress = async () => {
       factoryData: encodeFunctionData({
         abi: [
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'bytes32',
-                name: 'salt',
-                type: 'bytes32',
+                "internalType": "bytes32",
+                "name": "salt",
+                "type": "bytes32"
               },
               {
-                internalType: 'bytes',
-                name: 'initcode',
-                type: 'bytes',
-              },
+                "internalType": "bytes",
+                "name": "initCode",
+                "type": "bytes"
+              }
             ],
-            name: 'getAddress',
-            outputs: [
+            "name": "createAccount",
+            "outputs": [
               {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-              },
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
             ],
-            stateMutability: 'view',
-            type: 'function',
-          },
+            "stateMutability": "payable",
+            "type": "function"
+          }
         ],
-        functionName: 'getAddress',
+        functionName: 'createAccount',
         args: [keccak256(toHex(`${x}${y}${passkeyCredentialId}`)), initCodeData as Hex],
       }),
     };
