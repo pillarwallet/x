@@ -69,33 +69,6 @@ export const bootstrapAbi = [
   'struct BootstrapConfig {address module;bytes data;}',
 ]
 
-function getInitCodeData({
-  keccakHash,
-}: {
-  keccakHash: `0x${string}`;
-}): string {
-  if (!validatorAddress) {
-    throw new Error('Validator address not found');
-  }
-  const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, '0x');
-  const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-  const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
-  const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-
-  const initMSAData = encodeFunctionData({
-    functionName: 'initMSA',
-    abi: parseAbi(bootstrapAbi),
-    args: [validators, executors, hook, fallbacks],
-  });
-
-  const initCode = encodeAbiParameters(
-    parseAbiParameters('address, address, bytes'),
-    [keccakHash, bootstrapAddress as Hex, initMSAData]
-  )
-
-  return initCode;
-}
-
 function _makeBootstrapConfig(module: string, data: string): BootstrapConfig {
   const config: BootstrapConfig = {
       module: "",
@@ -266,6 +239,100 @@ export const toEtherspotSmartAccount = async (props: {
     version: entryPoint?.version ?? ('0.7' as EntryPointVersion),
   };
 
+  function getPasskeyOwnerAddress(publicKeyBase64: string, credentialId: string): `0x${string}` {
+    const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
+    
+    // WebAuthn public keys are CBOR encoded
+    // X coordinate starts at byte 10 (after CBOR headers)
+    // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
+    const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
+    const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
+
+    const hash = keccak256(toHex(`${x}${y}${credentialId}`));
+    return `0x${hash.slice(2, 42)}` as `0x${string}`;
+  }
+
+ function getInitCodeData({
+    ownerAddress,
+  }: {
+    ownerAddress: `0x${string}`;
+  }): string {
+    if (!validatorAddress) {
+      throw new Error('Validator address not found');
+    }
+
+    const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, '0x');
+    const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+
+    const initMSAData = encodeFunctionData({
+      functionName: 'initMSA',
+      abi: parseAbi(bootstrapAbi),
+      args: [validators, executors, hook, fallbacks],
+    });
+
+    const initCode = encodeAbiParameters(
+      parseAbiParameters('address, address, bytes'),
+      [ownerAddress, bootstrapAddress as Hex, initMSAData] // ← Use ownerAddress
+    )
+
+    return initCode;
+  }
+
+const getAddress = async () => {
+    // 1. Generate deterministic owner address from passkey data
+    const passkeyOwnerAddress = getPasskeyOwnerAddress(passkeyPublicKey, passkeyCredentialId);
+
+    // 2. Create initCode using the deterministic owner
+    const initCode = getInitCodeData({
+      ownerAddress: passkeyOwnerAddress
+    });
+
+    // 3. Generate salt (can be same as before)
+    const salt = keccak256(toHex(`${x}${y}${passkeyCredentialId}`));
+
+    // 4. Get wallet address using factory
+    const senderAddress = await client
+      .readContract({
+        address: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+        abi: [
+          {
+            inputs: [
+              {
+                internalType: 'bytes32',
+                name: 'salt',
+                type: 'bytes32',
+              },
+              {
+                internalType: 'bytes',
+                name: 'initcode',
+                type: 'bytes',
+              },
+            ],
+            name: 'getAddress',
+            outputs: [
+              {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        functionName: 'getAddress',
+        args: [salt, initCode as Hex],
+      })
+      .catch((error) => {
+        console.error('Error calling contract:', error);
+        return null;
+      });
+
+    return senderAddress as `0x${string}`;
+  };
+
   /**
    * @description This function returns the arguments
    * for the getAddress function of the
@@ -274,11 +341,10 @@ export const toEtherspotSmartAccount = async (props: {
    * @returns The arguments for the getAddress function
    */
   const getFactoryArgs = async () => {
-    console.log('getFactoryArgs', keccak256(toHex(`${x}${y}${passkeyCredentialId}`)));
-    const keccakHash = keccak256(toHex(`${x}${y}${passkeyCredentialId}`));
+    const passkeyOwnerAddress = getPasskeyOwnerAddress(passkeyPublicKey, passkeyCredentialId);
 
     const initCodeData = getInitCodeData({
-      keccakHash,
+      ownerAddress: passkeyOwnerAddress,
     });
 
     return {
@@ -314,58 +380,6 @@ export const toEtherspotSmartAccount = async (props: {
         args: [keccak256(toHex(`${x}${y}${passkeyCredentialId}`)), initCodeData as Hex],
       }),
     };
-  };
-
-  const getAddress = async () => {
-    console.log('getAddress', keccak256(toHex(`${x}${y}${passkeyCredentialId}`)));
-    const keccakHash = keccak256(toHex(`${x}${y}${passkeyCredentialId}`));
-
-    /**
-     * Get address
-     */
-    const senderAddress = await client
-      .readContract({
-        address: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a', // ModularEtherspotWalletFactory
-        abi: [
-          {
-            inputs: [
-              {
-                internalType: 'bytes32',
-                name: 'salt',
-                type: 'bytes32',
-              },
-              {
-                internalType: 'bytes',
-                name: 'initcode',
-                type: 'bytes',
-              },
-            ],
-            name: 'getAddress',
-            outputs: [
-              {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ],
-        functionName: 'getAddress',
-        args: [keccak256(toHex(`${x}${y}${passkeyCredentialId}`)), '0x'],
-      })
-      .catch((error) => {
-        console.error('Error calling contract:', error);
-        return null;
-      });
-
-    passkeyAddress = senderAddress as `0x${string}`;
-    const initcode = getInitCodeData({
-      keccakHash
-    });
-
-    return senderAddress as `0x${string}`;
   };
 
   const getNonce = async (args?: { key?: bigint }) => {
