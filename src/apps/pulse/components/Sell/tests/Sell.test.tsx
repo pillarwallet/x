@@ -168,7 +168,7 @@ describe('<Sell />', () => {
       const maxButton = screen.getByTestId('pulse-sell-percentage-button-max');
       fireEvent.click(maxButton);
 
-      expect(screen.getByDisplayValue('100.500000')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('100.5')).toBeInTheDocument();
     });
 
     it('token selector click', () => {

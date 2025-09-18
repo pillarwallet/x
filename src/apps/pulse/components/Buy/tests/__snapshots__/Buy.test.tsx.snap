@@ -309,9 +309,7 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       }
       type="button"
     >
-      <div>
-        Buy  TEST
-      </div>
+      Buy TEST
     </button>
   </div>
 </div>

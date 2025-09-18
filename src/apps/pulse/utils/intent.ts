@@ -2,8 +2,8 @@
 import { DispensableAsset } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
 import { getAddress, Hex } from 'viem';
 import { PortfolioData } from '../../../types/api';
-import { PayingToken } from '../types/tokens';
 import { STABLE_CURRENCIES } from '../constants/tokens';
+import { PayingToken } from '../types/tokens';
 import { bigIntPow } from './number';
 
 export function getDesiredAssetValue(
@@ -72,6 +72,7 @@ export function getDispensableAssets(
               actualBal: token.balance.toString(),
               totalUsd: Number(Number(input).toFixed(6)),
               totalRaw: (Number(Number(input).toFixed(6)) / price).toFixed(6),
+              address: tokenItem.address,
             },
           ],
         ];

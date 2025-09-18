@@ -30,6 +30,7 @@ const mockPayingToken: PayingToken = {
   totalUsd: 100.0,
   totalRaw: '100000000',
   chainId: 1,
+  address: '0xA0b86a33E6441b8C4C8C0C4C8C0C4C8C0C4C8C0C4',
 };
 
 const mockExpressIntentResponse: ExpressIntentResponse = {
@@ -65,7 +66,11 @@ describe('<BuyButton />', () => {
     it('with token and valid amount', () => {
       render(<BuyButton {...mockProps} />);
 
-      expect(screen.getByText('Buy 1.0000 TEST')).toBeInTheDocument();
+      expect(screen.getByText('Buy')).toBeInTheDocument();
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('TEST')).toBeInTheDocument();
+      expect(screen.getByText('for')).toBeInTheDocument();
+      expect(screen.getByText('$100')).toBeInTheDocument();
     });
 
     it('shows "Buy" when no token selected', () => {

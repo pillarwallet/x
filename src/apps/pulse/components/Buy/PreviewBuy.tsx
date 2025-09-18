@@ -416,8 +416,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             />
           </div>
           <div>
-            <div className="text-[13px] font-normal text-white">
-              {buyToken?.name}
+            <div className="flex items-center text-[13px] font-normal text-white">
+              <span>USD Coin</span>
+              <span className="ml-1 text-white/50">{buyToken?.symbol}</span>
             </div>
             <div className="flex items-center text-[13px] font-normal text-white/50">
               <span>
