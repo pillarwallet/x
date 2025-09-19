@@ -129,7 +129,6 @@ jobs:
             git clone -b pillarx-playwright --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
             cd x-e2e
             git pull 
-            cat cypress.config.js
             sed -i "s|base_url_value|$BASE_URL|g" .env
             sed -i "s|dry_run_value|$DRY_RUN|g" .env
             sed -i "s|master_email_value|$MASTER_EMAIL|g" .env
@@ -140,6 +139,13 @@ jobs:
             sed -i "s|minimum_amount_value|$MINIMUM_AMOUNT|g" .env
             sed -i "s|headless_value|$HEADLESS|g" .env
             sed -i "s|timeout_value|$TIMEOUT|g" .env
+            sed -i "s|debug_value|$DEBUG|g" .env
+            sed -i "s|ci_value|$CI|g" .env
+            sed -i "s|headed_value|$HEADED|g" .env
+            sed -i "s|sushi_url_value|$SUSHI_URL|g" .env
+            sed -i "s|staging_url_value|$STAGING_URL|g" .env
+            sed -i "s|testmail_username_value|$TESTMAIL_USERNAME|g" .env
+            sed -i "s|testmail_email_value|$TESTMAIL_EMAIL|g" .env
             npm install
             npx playwright install
             npm run test:all
