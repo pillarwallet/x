@@ -7,6 +7,7 @@ interface TooltipProps {
 
 const Tooltip = ({ children, content }: TooltipProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isPositioned, setIsPositioned] = useState(false);
   const [position, setPosition] = useState({
     top: 0,
     left: 0,
@@ -63,6 +64,7 @@ const Tooltip = ({ children, content }: TooltipProps) => {
       left: finalLeft,
       transform,
     });
+    setIsPositioned(true);
   };
 
   const handleMouseEnter = () => {
@@ -71,12 +73,13 @@ const Tooltip = ({ children, content }: TooltipProps) => {
 
   const handleMouseLeave = () => {
     setIsVisible(false);
+    setIsPositioned(false);
   };
 
   useEffect(() => {
-    if (isVisible) {
-      // Small delay to ensure tooltip is rendered before calculating position
-      setTimeout(calculatePosition, 0);
+    if (isVisible && tooltipRef.current) {
+      // Calculate position after tooltip is rendered
+      calculatePosition();
     }
   }, [isVisible]);
 
@@ -98,6 +101,8 @@ const Tooltip = ({ children, content }: TooltipProps) => {
             top: position.top,
             left: position.left,
             transform: position.transform,
+            opacity: isPositioned ? 1 : 0,
+            transition: 'opacity 0.1s ease-in-out',
           }}
         >
           <div className="text-white text-[10px] font-normal leading-tight break-words">

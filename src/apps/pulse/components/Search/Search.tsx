@@ -15,7 +15,10 @@ import {
 } from '../../../../services/tokensData';
 import { PortfolioData } from '../../../../types/api';
 import { isTestnet } from '../../../../utils/blockchain';
-import { limitDigitsNumber } from '../../../../utils/number';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 import SearchIcon from '../../assets/seach-icon.svg';
 import { useTokenSearch } from '../../hooks/useTokenSearch';
 import { SearchType, SelectedToken } from '../../types/tokens';
@@ -207,7 +210,9 @@ export default function Search({
           name: item.name,
           symbol: item.symbol,
           logo: item.logo ?? '',
-          usdValue: limitDigitsNumber(item.price || 0).toString(),
+          usdValue: formatExponentialSmallNumber(
+            limitDigitsNumber(item.price || 0)
+          ),
           dailyPriceChange: -0.02,
           chainId: chainNameToChainIdTokensData(item.chain),
           decimals: item.decimals,
@@ -219,7 +224,9 @@ export default function Search({
           name: item.name,
           symbol: item.symbol,
           logo: item.logo ?? '',
-          usdValue: limitDigitsNumber(item.price || 0).toString(),
+          usdValue: formatExponentialSmallNumber(
+            limitDigitsNumber(item.price || 0)
+          ),
           dailyPriceChange: -0.02,
           chainId: chainNameToChainIdTokensData(item.blockchain),
           decimals: item.decimals,
@@ -231,7 +238,9 @@ export default function Search({
         name: item.name,
         symbol: item.symbol,
         logo: item.logo ?? '',
-        usdValue: limitDigitsNumber(item.price || 0).toString(),
+        usdValue: formatExponentialSmallNumber(
+          limitDigitsNumber(item.price || 0)
+        ),
         dailyPriceChange: -0.02,
         decimals: item.decimals,
         address: item.contract,

@@ -5,6 +5,7 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { formatNativeTokenAddress } from '../../utils/blockchain';
 
 // icons
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -479,12 +480,13 @@ const PreviewSell = (props: PreviewSellProps) => {
           </div>
           <div>
             <div className="text-[13px] font-normal text-white">
-              {sellToken?.name}
+              {sellToken?.name}{' '}
+              <span className="text-white/[.5]">{sellToken?.symbol}</span>
             </div>
             <div className="flex items-center text-[13px] font-normal text-white/50">
               <span>
                 {sellToken?.address
-                  ? `${sellToken.address.slice(0, 6)}...${sellToken.address.slice(-4)}`
+                  ? `${formatNativeTokenAddress(sellToken.address).slice(0, 6)}...${formatNativeTokenAddress(sellToken.address).slice(-4)}`
                   : 'Address not available'}
               </span>
               {sellToken?.address && (

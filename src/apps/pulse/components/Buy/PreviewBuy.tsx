@@ -13,6 +13,7 @@ import {
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { formatNativeTokenAddress } from '../../utils/blockchain';
 
 // icons
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -417,13 +418,13 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           </div>
           <div>
             <div className="flex items-center text-[13px] font-normal text-white">
-              <span>USD Coin</span>
+              <span>{buyToken.name}</span>
               <span className="ml-1 text-white/50">{buyToken?.symbol}</span>
             </div>
             <div className="flex items-center text-[13px] font-normal text-white/50">
               <span>
                 {buyToken?.address
-                  ? `${buyToken.address.slice(0, 6)}...${buyToken.address.slice(-4)}`
+                  ? `${formatNativeTokenAddress(buyToken.address).slice(0, 6)}...${formatNativeTokenAddress(buyToken.address).slice(-4)}`
                   : 'Address not available'}
               </span>
               {buyToken?.address && (
