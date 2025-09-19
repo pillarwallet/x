@@ -124,7 +124,7 @@ describe('<Sell />', () => {
         'TEST'
       );
       expect(screen.getByText('Test T...')).toBeInTheDocument();
-      expect(screen.getByText('$100.00')).toBeInTheDocument();
+      expect(screen.getByText('$100')).toBeInTheDocument();
       expect(screen.getByTestId('pulse-sell-token-balance')).toHaveTextContent(
         '100.5 TEST ($10050)'
       );
@@ -159,7 +159,7 @@ describe('<Sell />', () => {
       );
       fireEvent.click(tenPercentButton);
 
-      expect(screen.getByDisplayValue('10.050000')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('10.05')).toBeInTheDocument();
     });
 
     it('MAX button', () => {

@@ -309,7 +309,7 @@ describe('<PreviewSell />', () => {
             element?.textContent?.includes('TEST')
           );
         })
-      ).toHaveLength(5);
+      ).toHaveLength(6);
     });
   });
 });
