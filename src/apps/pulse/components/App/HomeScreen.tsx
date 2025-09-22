@@ -24,6 +24,7 @@ import Refresh from '../Misc/Refresh';
 import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
+import TransactionStatus from '../Sell/TransactionStatus';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
@@ -51,6 +52,15 @@ export default function HomeScreen(props: HomeScreenProps) {
   const { getBestSellOffer, isInitialized } = useRelaySell();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState(false);
+  const [userOpHash, setUserOpHash] = useState<string>('');
+  const [transactionGasFee, setTransactionGasFee] = useState<string>('≈ $0.00');
+  const [transactionData, setTransactionData] = useState<{
+    sellToken: SelectedToken | null;
+    tokenAmount: string;
+    sellOffer: SellOffer | null;
+    isBuy: boolean;
+  } | null>(null);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
@@ -125,6 +135,30 @@ export default function HomeScreen(props: HomeScreenProps) {
     setTokenAmount('');
   };
 
+  const showTransactionStatus = useCallback(
+    (userOperationHash: string, gasFee?: string) => {
+      // Store transaction data before clearing preview
+      setTransactionData({
+        sellToken,
+        tokenAmount,
+        sellOffer,
+        isBuy,
+      });
+      setPreviewSell(false);
+      setTransactionStatus(true);
+      setUserOpHash(userOperationHash);
+      if (gasFee) {
+        setTransactionGasFee(gasFee);
+      }
+    },
+    [sellToken, tokenAmount, sellOffer, isBuy]
+  );
+
+  const closeTransactionStatus = () => {
+    setTransactionStatus(false);
+    setTransactionData(null);
+  };
+
   const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
     {
@@ -179,10 +213,28 @@ export default function HomeScreen(props: HomeScreenProps) {
         <div className="w-full flex justify-center p-3 mb-[70px]">
           <PreviewSell
             closePreview={closePreviewSell}
+            showTransactionStatus={showTransactionStatus}
             sellToken={sellToken}
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
             onSellOfferUpdate={setSellOffer}
+          />
+        </div>
+      );
+    }
+
+    if (transactionStatus) {
+      return (
+        <div className="w-full flex justify-center p-3 mb-[70px]">
+          <TransactionStatus
+            closeTransactionStatus={closeTransactionStatus}
+            userOpHash={userOpHash}
+            chainId={transactionData?.sellToken?.chainId || 1}
+            gasFee={transactionGasFee}
+            isBuy={transactionData?.isBuy || false}
+            sellToken={transactionData?.sellToken}
+            tokenAmount={transactionData?.tokenAmount}
+            sellOffer={transactionData?.sellOffer}
           />
         </div>
       );
