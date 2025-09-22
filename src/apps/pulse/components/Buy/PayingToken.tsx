@@ -48,7 +48,9 @@ export default function PayingToken(props: PayingTokenProps) {
         </div>
         <div>
           <div className="flex items-center text-[13px] font-normal text-white">
-            <span>{payingToken.name}</span>
+            <span>
+              {payingToken.name === 'USDC' ? 'USD Coin' : payingToken.name}
+            </span>
             <span className="ml-1 text-white/50">{payingToken.symbol}</span>
           </div>
           <div className="flex items-center text-[13px] font-normal text-white/50">
