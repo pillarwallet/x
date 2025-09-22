@@ -5,6 +5,7 @@ import {
   encodeAbiParameters,
   encodeFunctionData,
   encodePacked,
+  getContractAddress,
   getTypesForEIP712Domain,
   hashMessage,
   hashTypedData,
@@ -15,6 +16,7 @@ import {
   stringToHex,
   toHex,
   validateTypedData,
+  getAddress as getAddressViem,
 } from 'viem';
 import {
   entryPoint07Abi,
@@ -36,7 +38,8 @@ import type {
 import { getChainId, readContract } from 'viem/actions';
 import { getAction } from 'viem/utils';
 import { decode7579Calls, encode7579Calls } from 'permissionless/utils';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import EP7 from '../assets/data/EP7.json';
 
 export type GetAccountNonceParams = {
   address: Address;
@@ -69,6 +72,36 @@ export const bootstrapAbi = [
   'function initMSA(BootstrapConfig[] calldata $valdiators,BootstrapConfig[] calldata $executors,BootstrapConfig calldata _hook,BootstrapConfig[] calldata _fallbacks)',
   'struct BootstrapConfig {address module;bytes data;}',
 ]
+
+export function getPasskeyOwnerAddress(publicKeyBase64: string, credentialId: string): `0x${string}` {
+  const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
+  
+  // WebAuthn public keys are CBOR encoded
+  // X coordinate starts at byte 10 (after CBOR headers)
+  // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
+  const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
+  const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
+
+  const hash = keccak256(toHex(`${x}${y}${credentialId}`));
+  return `0x${hash.slice(2, 42)}` as `0x${string}`;
+}
+
+export function createAccount(
+  factoryAddress: string,
+  registry: string,
+  owner: string,
+  salt: number,
+): string {
+  const abi = ['function createAccount(address, _registry, address owner, uint256 salt) returns(address)'];
+  const encodedData = encodeFunctionData({
+    functionName: 'createAccount',
+    abi: parseAbi(abi),
+    args: [registry,
+      owner,
+      salt,],
+  });
+  return encodedData;
+}
 
 function _makeBootstrapConfig(module: string, data: string): BootstrapConfig {
   const config: BootstrapConfig = {
@@ -200,6 +233,92 @@ export const getAccountNonce = async (
   });
 };
 
+function getInitCodeData({
+  ownerAddress,
+  passkeyPublicKey,
+  passkeyCredentialId,
+}: {
+  ownerAddress: `0x${string}`;
+  passkeyPublicKey: string;
+  passkeyCredentialId: string;
+}): string {
+  if (!validatorAddress) {
+    throw new Error('Validator address not found');
+  }
+
+  /**
+   * Prepare ZeroDev validator data
+   */
+
+  const { x, y } = getXYCoordinates(passkeyPublicKey);
+
+  // Debug: Log the coordinate arrays to understand their structure
+  console.log('X coordinates array:', x, 'length:', x?.length);
+  console.log('Y coordinates array:', y, 'length:', y?.length);
+
+  // Convert coordinate arrays to hex strings properly
+  const pubKeyXHex = Buffer.from(x).toString('hex')
+  const pubKeyYHex = Buffer.from(y).toString('hex')
+  
+  // Ensure we have valid hex values before converting to BigInt
+  if (!pubKeyXHex || !pubKeyYHex) {
+    throw new Error('Invalid public key coordinates: empty hex values')
+  }
+  
+  const pubKeyX = BigInt('0x' + pubKeyXHex)
+  const pubKeyY = BigInt('0x' + pubKeyYHex)
+  const credentialIdHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(passkeyCredentialId));
+
+  const initData = ethers.utils.defaultAbiCoder.encode(
+    [
+      "tuple(uint256 pubKeyX, uint256 pubKeyY)",
+      "bytes32"
+    ],
+    [
+      [pubKeyX, pubKeyY],
+      credentialIdHash
+    ]);
+
+  const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, initData);
+  const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+
+  const initMSAData = encodeFunctionData({
+    functionName: 'initMSA',
+    abi: parseAbi(bootstrapAbi),
+    args: [validators, executors, hook, fallbacks],
+  });
+
+  const initCode = encodeAbiParameters(
+    parseAbiParameters('address, address, bytes'),
+    [ownerAddress, bootstrapAddress as Hex, initMSAData] // ← Use ownerAddress
+  )
+
+  return initCode;
+}
+
+  // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
+  function getXYCoordinates(publicKeyBase64: string) {
+    console.log('Input publicKeyBase64:', publicKeyBase64);
+    const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
+    console.log('Public key buffer length:', publicKeyBuffer.length);
+    console.log('Public key buffer:', publicKeyBuffer.toString('hex'));
+
+    // WebAuthn public keys are CBOR encoded
+    // X coordinate starts at byte 10 (after CBOR headers)
+    // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
+    const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
+    const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
+
+    // console.log('X slice (10-42):', publicKeyBuffer.slice(10, 42).toString('hex'));
+    // console.log('Y slice (45-77):', publicKeyBuffer.slice(45, 77).toString('hex'));
+    // console.log('X array:', x);
+    // console.log('Y array:', y);
+
+    return { x, y };
+  }
+
 export const toEtherspotSmartAccount = async (props: {
   client: PublicClient;
   webAuthnAccount: WebAuthnAccount;
@@ -219,27 +338,6 @@ export const toEtherspotSmartAccount = async (props: {
     entryPoint,
   } = props;
 
-  // https://stackoverflow.com/questions/75765351/how-can-the-public-key-created-by-webauthn-be-decoded
-  function getXYCoordinates(publicKeyBase64: string) {
-    console.log('Input publicKeyBase64:', publicKeyBase64);
-    const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
-    console.log('Public key buffer length:', publicKeyBuffer.length);
-    console.log('Public key buffer:', publicKeyBuffer.toString('hex'));
-
-    // WebAuthn public keys are CBOR encoded
-    // X coordinate starts at byte 10 (after CBOR headers)
-    // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
-    const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
-    const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
-
-    console.log('X slice (10-42):', publicKeyBuffer.slice(10, 42).toString('hex'));
-    console.log('Y slice (45-77):', publicKeyBuffer.slice(45, 77).toString('hex'));
-    console.log('X array:', x);
-    console.log('Y array:', y);
-
-    return { x, y };
-  }
-
   const { x, y } = getXYCoordinates(passkeyPublicKey);
 
   const entryPointObject = {
@@ -248,79 +346,9 @@ export const toEtherspotSmartAccount = async (props: {
     version: entryPoint?.version ?? ('0.7' as EntryPointVersion),
   };
 
-  function getPasskeyOwnerAddress(publicKeyBase64: string, credentialId: string): `0x${string}` {
-    const publicKeyBuffer = Buffer.from(publicKeyBase64, 'base64');
-    
-    // WebAuthn public keys are CBOR encoded
-    // X coordinate starts at byte 10 (after CBOR headers)
-    // Y coordinate starts at byte 45 (after X coordinate and CBOR headers)
-    const x = Array.from(publicKeyBuffer.slice(10, 42)); // 32 bytes for x
-    const y = Array.from(publicKeyBuffer.slice(45, 77)); // 32 bytes for y
 
-    const hash = keccak256(toHex(`${x}${y}${credentialId}`));
-    return `0x${hash.slice(2, 42)}` as `0x${string}`;
-  }
 
- function getInitCodeData({
-    ownerAddress,
-  }: {
-    ownerAddress: `0x${string}`;
-  }): string {
-    if (!validatorAddress) {
-      throw new Error('Validator address not found');
-    }
 
-    /**
-     * Prepare ZeroDev validator data
-     */
-
-    const { x, y } = getXYCoordinates(passkeyPublicKey);
-
-    // Debug: Log the coordinate arrays to understand their structure
-    console.log('X coordinates array:', x, 'length:', x?.length);
-    console.log('Y coordinates array:', y, 'length:', y?.length);
-
-    // Convert coordinate arrays to hex strings properly
-    const pubKeyXHex = Buffer.from(x).toString('hex')
-    const pubKeyYHex = Buffer.from(y).toString('hex')
-    
-    // Ensure we have valid hex values before converting to BigInt
-    if (!pubKeyXHex || !pubKeyYHex) {
-      throw new Error('Invalid public key coordinates: empty hex values')
-    }
-    
-    const pubKeyX = BigInt('0x' + pubKeyXHex)
-    const pubKeyY = BigInt('0x' + pubKeyYHex)
-    const credentialIdHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(passkeyCredentialId));
-
-    const initData = ethers.utils.defaultAbiCoder.encode(
-      [
-        "tuple(uint256 pubKeyX, uint256 pubKeyY)",
-        "bytes32"
-      ],
-      [
-        [pubKeyX, pubKeyY],
-        credentialIdHash
-      ]);
-
-    const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, initData);
-    const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-    const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
-    const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-
-    const initMSAData = encodeFunctionData({
-      functionName: 'initMSA',
-      abi: parseAbi(bootstrapAbi),
-      args: [validators, executors, hook, fallbacks],
-    });
-
-    const initCode = encodeAbiParameters(
-      parseAbiParameters('address, address, bytes'),
-      [ownerAddress, bootstrapAddress as Hex, initMSAData] // ← Use ownerAddress
-    )
-
-    return initCode;
-  }
 
 const getAddress = async () => {
     // 1. Generate deterministic owner address from passkey data
@@ -329,7 +357,9 @@ const getAddress = async () => {
 
     // 2. Create initCode using the deterministic owner
     const initCode = getInitCodeData({
-      ownerAddress: passkeyOwnerAddress
+      ownerAddress: passkeyOwnerAddress,
+      passkeyPublicKey,
+      passkeyCredentialId,
     });
 
     // 3. Generate salt (can be same as before)
@@ -373,6 +403,16 @@ const getAddress = async () => {
         return null;
       });
 
+    /**
+     * Find out if this account is already deployed
+     */
+    const isDeployed = await client.getCode({
+      address: senderAddress as `0x${string}`,
+    });
+
+    console.log('isDeployed?', isDeployed);
+    console.log('Smart Wallet senderAddress', senderAddress);
+
     return senderAddress as `0x${string}`;
   };
 
@@ -388,6 +428,8 @@ const getAddress = async () => {
 
     const initCodeData = getInitCodeData({
       ownerAddress: passkeyOwnerAddress,
+      passkeyPublicKey,
+      passkeyCredentialId,
     });
 
     return {
@@ -425,23 +467,20 @@ const getAddress = async () => {
     };
   };
 
-  const getNonce = async (args?: { key?: bigint }) => {
-    console.log('getNonce', args);
-    const TIMESTAMP_ADJUSTMENT = BigInt(16777215); // max value for size 3
-    const defaultedKey = (args?.key ?? BigInt(0)) % TIMESTAMP_ADJUSTMENT;
-    const defaultedValidationMode = '0x00';
-    const key = concat([
-      toHex(defaultedKey, { size: 3 }),
-      defaultedValidationMode,
-    ]);
+  const getNonce = async (args?: { key?: bigint }): Promise<bigint> => {
+      const nonceKey = "0xbA45a2BFb8De3D24cA9D7F1B551E14dFF5d690Fd"; // <- ZeroDev validator / WebAuthnValidator
+      const dummyKey = getAddressViem(nonceKey);
 
-    const address = await getAddress();
+      const address = getAddress();
+  
+      const nonceResponse = await client.readContract({
+        address: entryPoint07Address,
+        abi: EP7,
+        functionName: 'getNonce',
+        args: [address, BigInt(dummyKey)]
+      });
 
-    return getAccountNonce(client, {
-      address,
-      entryPointAddress: entryPoint.address,
-      key: BigInt(key),
-    });
+      return nonceResponse as bigint;
   };
 
   const getStubSignature = async (): Promise<`0x${string}`> => {
@@ -499,6 +538,7 @@ const getAddress = async () => {
   }): Promise<`0x${string}`> => {
     console.log('sign', parameters);
     const result = await webAuthnAccount.sign(parameters);
+    console.log('sign result', result);
     return result.signature;
   };
 

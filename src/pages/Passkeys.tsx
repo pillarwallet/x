@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAccount, useConnectors } from 'wagmi';
 import { EtherspotBundler, ModularSdk, MODULE_TYPE, sleep } from "modularPasskeys";
-import { createBundlerClient, toSmartAccount, toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
-import { Hex, keccak256, parseEther } from 'viem';
+import { BundlerClient, createBundlerClient, SmartAccountImplementation, toSmartAccount, toWebAuthnAccount, WebAuthnAccount } from 'viem/account-abstraction'
+import { encodeFunctionData, Hex, hexToBytes, keccak256, pad, parseAbi, parseEther } from 'viem';
 import ModularEtherspotWalletFactory from '../assets/data/ModularEtherspotWalletFactory.json';
 
 
@@ -19,10 +19,19 @@ import { registerPasskey, authenticateWithPasskey, signWithPasskey, isPasskeySup
 import PillarXLogo from '../assets/images/pillarX_full_white.png';
 import { concat, createPublicClient, createWalletClient, custom, encodeAbiParameters, http, parseAbiParameters, stringToBytes, stringToHex, toBytes, toHex } from 'viem';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { base, mainnet } from 'viem/chains';
 import { privateKeyToAccount, toAccount } from 'viem/accounts';
-import { toEtherspotSmartAccount } from '../utils/viem';
+import { bootstrapAbi, BootstrapConfig, getPasskeyOwnerAddress, makeBootstrapConfig, modulesAbi, toEtherspotSmartAccount } from '../utils/viem';
+
+export const factoryAbi = [
+  'function createAccount(bytes32 salt,bytes calldata initCode) returns (address)',
+  'function getAddress(bytes32 salt,bytes calldata initcode) view returns (address)'
+]
+
+const validatorAddress = '0xbA45a2BFb8De3D24cA9D7F1B551E14dFF5d690Fd'; // ZeroDev
+const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000';
+const bootstrapAddress = '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7';
 
 const Passkeys = () => {
   const { address } = useAccount();
@@ -38,21 +47,116 @@ const Passkeys = () => {
   const [username, setUsername] = useState("");
   const [eoaAddress, setEoaAddress] = useState("");
   const [webAuthnAccount, setWebAuthnAccount] = useState<WebAuthnAccount | null>(null);
+  const [bundlerClient, setBundlerClient] = useState<BundlerClient | null>(null);
+  const [etherspotSmartAccount, setEtherspotSmartAccount] = useState<Awaited<ReturnType<typeof toEtherspotSmartAccount>> | null>(null);
 
-  const derivePrivateKeyFromPasskey = async(credential: string) => {
-    // This is a simplified approach - in production, you'd want to:
-    // 1. Use proper HKDF or similar key derivation
-    // 2. Store the derived key securely
-    // 3. Use the passkey for signing operations
-    
-    const hash = crypto.subtle.digest('SHA-256', toBytes(credential))
-    return hash.then(hashBuffer => {
-      const hashArray = new Uint8Array(hashBuffer)
-      return `0x${Array.from(hashArray)
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('')}` as Hex
-    }) as any // Simplified for example - handle Promise properly in real implementation
+  function parseDERSignature(signature: Uint8Array): { r: bigint, s: bigint } {
+    // DER parsing logic to extract r and s from ECDSA signature
+    // This is complex - you might want to use a library like @noble/secp256k1
+
+    // Simplified version (you'll need proper DER parsing):
+    const r = BigInt('0x' + Buffer.from(signature.slice(6, 38)).toString('hex'));
+    const s = BigInt('0x' + Buffer.from(signature.slice(40, 72)).toString('hex'));
+
+    return { r, s };
   }
+
+  function base64UrlEncode(buffer: Uint8Array): Uint8Array {
+    const base64 = Buffer.from(buffer).toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+    return new TextEncoder().encode(base64);
+  }
+
+  function base64UrlDecode(str: string): Uint8Array {
+    const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+    const padding = base64.length % 4;
+    const padded = base64 + '='.repeat(padding ? 4 - padding : 0);
+    return new Uint8Array(Buffer.from(padded, 'base64'));
+  }
+
+  const signUserOpWithPasskey = async (userOpHash: string, credentialId: string) => {
+    // 1. Create challenge from UserOp hash
+    const challenge = base64UrlEncode(hexToBytes(userOpHash as `0x${string}`));
+
+    // 2. Get WebAuthn credential with challenge
+    const credential = await navigator.credentials.get({
+      publicKey: {
+        challenge: challenge as BufferSource,
+        allowCredentials: [{
+          type: "public-key",
+          id: base64UrlDecode(credentialId) as BufferSource, // Your stored credential ID
+        }],
+        userVerification: "required",
+        timeout: 60000,
+      }
+    }) as PublicKeyCredential;
+
+    // 3. Parse the WebAuthn response
+    const response = credential.response as AuthenticatorAssertionResponse;
+    const clientDataJSON = new TextDecoder().decode(response.clientDataJSON);
+    const authenticatorData = new Uint8Array(response.authenticatorData);
+
+    // 4. Extract r and s from the DER signature
+    const signature = new Uint8Array(response.signature);
+    const { r, s } = parseDERSignature(signature);
+
+    // 5. Find the challenge location in clientDataJSON
+    const responseTypeLocation = clientDataJSON.indexOf('"type":"webauthn.get"');
+
+    // 6. Encode the signature in the required format
+    return encodeAbiParameters(
+      [
+        { name: "authenticatorData", type: "bytes" },
+        { name: "clientDataJSON", type: "string" },
+        { name: "responseTypeLocation", type: "uint256" },
+        { name: "r", type: "uint256" },
+        { name: "s", type: "uint256" },
+        { name: "usePrecompiled", type: "bool" }
+      ],
+      [
+        `0x${Buffer.from(authenticatorData).toString('hex')}`, // ← Real authenticator data
+        clientDataJSON, // ← Real client data with your challenge
+        BigInt(responseTypeLocation), // ← Actual location in JSON
+        r, // ← Real r value from signature
+        s, // ← Real s value from signature
+        false // ← Usually false (can be true for gas optimization)
+      ]
+    );
+  };
+
+  function _makeBootstrapConfig(module: string, data: string): BootstrapConfig {
+    const config: BootstrapConfig = {
+        module: "",
+        data: ""
+    };
+    config.module = module;
+    const encodedFunctionData = encodeFunctionData({
+        functionName: 'onInstall',
+        abi: parseAbi(modulesAbi),
+        args: [data],
+      });
+  
+    config.data = encodedFunctionData;
+  
+    return config;
+  }
+
+  // const derivePrivateKeyFromPasskey = async(credential: string) => {
+  //   // This is a simplified approach - in production, you'd want to:
+  //   // 1. Use proper HKDF or similar key derivation
+  //   // 2. Store the derived key securely
+  //   // 3. Use the passkey for signing operations
+    
+  //   const hash = crypto.subtle.digest('SHA-256', toBytes(credential))
+  //   return hash.then(hashBuffer => {
+  //     const hashArray = new Uint8Array(hashBuffer)
+  //     return `0x${Array.from(hashArray)
+  //       .map(b => b.toString(16).padStart(2, '0'))
+  //       .join('')}` as Hex
+  //   }) as any // Simplified for example - handle Promise properly in real implementation
+  // }
 
   const publicClient = createPublicClient({ 
     chain: mainnet,
@@ -82,6 +186,12 @@ const Passkeys = () => {
 
     return { x, y };
   }
+
+  useEffect(() => {
+    if (publicKey && credentialId) {
+      initialiseBundlerClient();
+    }
+  }, [publicKey, credentialId]);
 
   // Generate and store random username if not exists
   useEffect(() => {
@@ -145,8 +255,10 @@ const Passkeys = () => {
     setIsLoading(true);
     try {
       const success = await authenticateWithPasskey(username);
+      console.log('Passkey login successful', success);
       if (success) {
-        getSenderAddress();
+        // await getSenderAddress();
+        await handleGetPublicKey();
       } else {
         alert('Passkey authentication failed');
       }
@@ -161,92 +273,92 @@ const Passkeys = () => {
   /**
    * Determine what the sender address will be
    */
-  const getSenderAddress = async () => {
-    if (!username) {
-      alert('Please set a username first');
-      return;
-    }
+  // const getSenderAddress = async () => {
+  //   if (!username) {
+  //     alert('Please set a username first');
+  //     return;
+  //   }
     
-    const { x, y } = getXYCoordinates(publicKey);
-    console.log('x', x);
-    console.log('y', y);
-    console.log('username', username);
+  //   const { x, y } = getXYCoordinates(publicKey);
+  //   console.log('x', x);
+  //   console.log('y', y);
+  //   console.log('username', username);
 
 
-    // Use viem to call a simulation on the getSenderAddress function
-    // of the entry point 0.7 contract on ethereum mainnet
-    const senderAddress = await publicClient.readContract({
-      account: '0x0000000000000000000000000000000000000000',
-      address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a",
-      abi: [
-        {
-          "inputs": [
-            {
-              "internalType": "bytes32",
-              "name": "salt",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initcode",
-              "type": "bytes"
-            }
-          ],
-          "name": "getAddress",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ],
-      functionName: "getAddress",
-      args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
-    }).catch((error) => {
-      console.error('Error calling contract:', error);
-      return null;
-    });
+  //   // Use viem to call a simulation on the getSenderAddress function
+  //   // of the entry point 0.7 contract on ethereum mainnet
+  //   const senderAddress = await publicClient.readContract({
+  //     account: '0x0000000000000000000000000000000000000000',
+  //     address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a",
+  //     abi: [
+  //       {
+  //         "inputs": [
+  //           {
+  //             "internalType": "bytes32",
+  //             "name": "salt",
+  //             "type": "bytes32"
+  //           },
+  //           {
+  //             "internalType": "bytes",
+  //             "name": "initcode",
+  //             "type": "bytes"
+  //           }
+  //         ],
+  //         "name": "getAddress",
+  //         "outputs": [
+  //           {
+  //             "internalType": "address",
+  //             "name": "",
+  //             "type": "address"
+  //           }
+  //         ],
+  //         "stateMutability": "view",
+  //         "type": "function"
+  //       }
+  //     ],
+  //     functionName: "getAddress",
+  //     args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
+  //   }).catch((error) => {
+  //     console.error('Error calling contract:', error);
+  //     return null;
+  //   });
 
-    console.log('senderAddress calculated!', senderAddress);
+  //   console.log('senderAddress calculated!', senderAddress);
 
-    /**
-     * Next attempt to instantiate the Modular SDK
-     */
-    const privateKey = await derivePrivateKeyFromPasskey(`${x}${y}${username}`);
-    console.log('privateKey', privateKey);
+  //   /**
+  //    * Next attempt to instantiate the Modular SDK
+  //    */
+  //   const privateKey = await derivePrivateKeyFromPasskey(`${x}${y}${username}`);
+  //   console.log('privateKey', privateKey);
 
-    const pkAccount = privateKeyToAccount(privateKey);
-    const client = createWalletClient({
-      account: pkAccount,
-      chain: mainnet,
-      transport: http('https://node1.web3api.com')
-    });
+  //   const pkAccount = privateKeyToAccount(privateKey);
+  //   const client = createWalletClient({
+  //     account: pkAccount,
+  //     chain: mainnet,
+  //     transport: http('https://node1.web3api.com')
+  //   });
 
-    const bundlerClient = createBundlerClient({ 
-      client, 
-      transport: http('https://rpc.etherspot.io/v2/8453') 
-    });
+  //   const bundlerClient = createBundlerClient({ 
+  //     client, 
+  //     transport: http('https://rpc.etherspot.io/v2/8453') 
+  //   });
 
-    const addresses = bundlerClient.client.account.address;
-    setEoaAddress(addresses);
-    console.log('bundlerClient.client.account.address', addresses);
+  //   const addresses = bundlerClient.client.account.address;
+  //   setEoaAddress(addresses);
+  //   console.log('bundlerClient.client.account.address', addresses);
 
-    const modularSdk = new ModularSdk(client, {
-      chainId: base.id,
-      bundlerProvider: new EtherspotBundler(base.id, import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''),
-    });
+  //   const modularSdk = new ModularSdk(client, {
+  //     chainId: base.id,
+  //     bundlerProvider: new EtherspotBundler(base.id, import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || ''),
+  //   });
 
-    const counterFactualAddress = await modularSdk.getCounterFactualAddress();
-    console.log('counterFactualAddress', counterFactualAddress);
-    setEAddress(counterFactualAddress);
+  //   const counterFactualAddress = await modularSdk.getCounterFactualAddress();
+  //   console.log('counterFactualAddress', counterFactualAddress);
+  //   setEAddress(counterFactualAddress);
 
-    setModularSdk(modularSdk);
-    console.log('finished');
-  }
+  //   setModularSdk(modularSdk);
+  //   console.log('finished');
+  // }
 
   const handlePasskeySigning = async () => {
     setIsLoading(true);
@@ -396,7 +508,7 @@ const Passkeys = () => {
          console.log('passkeyDetails publicKey', publicKeyAsHex);
          console.log('webAuthnAccount', webAuthnAccount);
 
-         alert(`Passkey details retrieved successfully!\nPublic Key: ${passkeyDetails.publicKey}\nCredential ID: ${passkeyDetails.credentialId}`);
+         return passkeyDetails?.publicKey || null;
        } else {
          alert('No passkey found for this address');
        }
@@ -464,67 +576,15 @@ const Passkeys = () => {
     }
   };
 
-  const handleGetSenderAddress = async () => {
-    /**
-     * First work out the wallet address
-     */
-    // const { x, y } = getXYCoordinates(publicKey);
-    // const salt = keccak256(toHex(`${x}${y}${username}`));
-    // console.log('Salt:', salt);
-
-    // /**
-    //  * Get address
-    //  */
-    // const senderAddress = await publicClient.readContract({
-    //   address: "0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a", // ModularEtherspotWalletFactory
-    //   abi: [
-    //     {
-    //       "inputs": [
-    //         {
-    //           "internalType": "bytes32",
-    //           "name": "salt",
-    //           "type": "bytes32"
-    //         },
-    //         {
-    //           "internalType": "bytes",
-    //           "name": "initcode",
-    //           "type": "bytes"
-    //         }
-    //       ],
-    //       "name": "getAddress",
-    //       "outputs": [
-    //         {
-    //           "internalType": "address",
-    //           "name": "",
-    //           "type": "address"
-    //         }
-    //       ],
-    //       "stateMutability": "view",
-    //       "type": "function"
-    //     }
-    //   ],
-    //   functionName: "getAddress",
-    //   args: [keccak256(toHex(`${x}${y}${username}`)), '0x'],
-    // }).catch((error) => {
-    //   console.error('Error calling contract:', error);
-    //   return null;
-    // });
-
-    // console.log('senderAddress calculated!', senderAddress);
-
-    /**
-     * DONE
-     */
-
+  const initialiseBundlerClient = async () => {
     const owner = toWebAuthnAccount({
       credential: {
         id: credentialId,
         publicKey: keccak256(toHex(publicKey)),
       },
     });
-  
 
-     const etherspotAccount = await toEtherspotSmartAccount({
+    const etherspotAccount = await toEtherspotSmartAccount({
       client: publicClient,
       webAuthnAccount: owner,
       passkeyPublicKey: publicKey,
@@ -535,22 +595,148 @@ const Passkeys = () => {
       }
      });
 
-     const bundlerClient = createBundlerClient({ 
+     setEtherspotSmartAccount(etherspotAccount);
+
+    const bundlerClient = createBundlerClient({ 
       account: etherspotAccount,
       transport: http('https://rpc.etherspot.io/v2/1?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6ImUwNDExNTU3MjM3NzQ3MzY5MTAyN2YwZjM0NzBmNDVhIiwiaCI6Im11cm11cjEyOCJ9') 
     });
 
-    console.log('Smart account address:', await etherspotAccount.getAddress());
+    setBundlerClient(bundlerClient);
+  }
 
+  const handleGetSenderAddress = async () => {
+    /**
+     * Prepare the user operation
+     */
+
+    if (!bundlerClient || !etherspotSmartAccount) {
+      alert('Please initialize the bundler client and smart account first');
+      return;
+    }
+    
     const userOperation = await bundlerClient.prepareUserOperation({ 
-      account: etherspotAccount,
+      account: etherspotSmartAccount,
       calls: [{
         to: '0x11041744893Fa72629aB93ea8adaf35A1dc24AA5',
         value: parseEther('0.00001')
       }]
-    })
+    });
 
-    console.log('User operation:', userOperation);
+    console.log('Estimated User operation:', userOperation);
+
+    /**
+     * Send the user operation to the bundler
+     */
+    const userOpHash = await bundlerClient.sendUserOperation({
+      account: etherspotSmartAccount,
+      calls: [{
+        to: '0x11041744893Fa72629aB93ea8adaf35A1dc24AA5',
+        value: parseEther('0.00001')
+      }]
+    });
+
+    console.log('User operation hash:', userOpHash);
+  }
+
+  const handleDeployAccount = async () => {
+    /**
+     * Prepare the user operation
+     */
+
+    if (!bundlerClient || !etherspotSmartAccount) {
+      alert('Please initialize the bundler client and smart account first');
+      return;
+    }
+
+    /**
+     * Start init code
+     */
+
+    const { x, y } = getXYCoordinates(publicKey);
+  
+    // Convert coordinate arrays to hex strings properly
+    const pubKeyXHex = Buffer.from(x).toString('hex')
+    const pubKeyYHex = Buffer.from(y).toString('hex')
+    
+    // Ensure we have valid hex values before converting to BigInt
+    if (!pubKeyXHex || !pubKeyYHex) {
+      throw new Error('Invalid public key coordinates: empty hex values')
+    }
+    
+    const pubKeyX = BigInt('0x' + pubKeyXHex)
+    const pubKeyY = BigInt('0x' + pubKeyYHex)
+    const credentialIdHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(credentialId));
+  
+    const initData = ethers.utils.defaultAbiCoder.encode(
+      [
+        "tuple(uint256 pubKeyX, uint256 pubKeyY)",
+        "bytes32"
+      ],
+      [
+        [pubKeyX, pubKeyY],
+        credentialIdHash
+      ]);
+  
+    const validators: BootstrapConfig[] = makeBootstrapConfig(validatorAddress, initData);
+    const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  
+    const initMSAData = encodeFunctionData({
+      functionName: 'initMSA',
+      abi: parseAbi(bootstrapAbi),
+      args: [validators, executors, hook, fallbacks],
+    });
+
+    const passkeyOwnerAddress = await getPasskeyOwnerAddress(publicKey, credentialId);
+  
+    const initCode = encodeAbiParameters(
+      parseAbiParameters('address, address, bytes'),
+      [passkeyOwnerAddress, bootstrapAddress as Hex, initMSAData] // ← Use ownerAddress
+    )
+
+    /**
+     * END init code data
+     */
+
+    const salt = pad(toHex(1), { size: 32 });
+    
+    const functionData = encodeFunctionData({
+      functionName: 'createAccount',
+      abi: parseAbi(factoryAbi),
+      args: [
+        salt,
+        initCode,
+      ],
+    });
+
+    console.log('functionData', functionData);
+
+    let estimatedUserOperation = await bundlerClient.prepareUserOperation({ 
+      account: etherspotSmartAccount,
+      nonce: BigNumber.from(validatorAddress).toBigInt(),
+      calls: [{
+        to: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+        value: parseEther('0'),
+        data: functionData
+      }]
+    });
+
+    console.log('estimated userOperation', estimatedUserOperation);
+
+    // console.log('sending userOperation...');
+
+    // const userOpHash = await bundlerClient.sendUserOperation({
+    //   account: etherspotSmartAccount,
+    //   calls: [{
+    //     to: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+    //     value: parseEther('0'),
+    //     data: functionData
+    //   }]
+    // });
+
+    console.log('userOpHash!!!', userOpHash);
   }
 
   return (
@@ -618,7 +804,7 @@ const Passkeys = () => {
                 <Button
                   onClick={handleSendNativeToken}
                   $fullWidth 
-                  disabled={isLoading || !modularSdk}
+                  disabled={isLoading || !bundlerClient}
                 >
                   {isLoading ? 'Sending...' : 'Send 0.001 ETH'}
                 </Button>
@@ -626,9 +812,17 @@ const Passkeys = () => {
                   onClick={handleGetSenderAddress}
                   $last 
                   $fullWidth 
-                  disabled={isLoading || !modularSdk}
+                  disabled={isLoading || !bundlerClient}
                 >
                   Etherspot Smart Account actions
+                </Button>
+                <Button
+                  onClick={handleDeployAccount}
+                  $last 
+                  $fullWidth 
+                  disabled={isLoading || !bundlerClient}
+                >
+                  Etherspot Deploy Account
                 </Button>
               </ButtonContainer>
             ) : (
