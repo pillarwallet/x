@@ -599,7 +599,7 @@ const Passkeys = () => {
 
     const bundlerClient = createBundlerClient({ 
       account: etherspotAccount,
-      transport: http('https://rpc.etherspot.io/v2/1?api-key=eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6ImUwNDExNTU3MjM3NzQ3MzY5MTAyN2YwZjM0NzBmNDVhIiwiaCI6Im11cm11cjEyOCJ9') 
+      transport: http(`https://rpc.etherspot.io/v2/1?api-key=${import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY}`) 
     });
 
     setBundlerClient(bundlerClient);
