@@ -81,7 +81,8 @@ jobs:
           name: Parse Playwright results and send Slack notification
           when: always
           command: |
-            RESULTS_FILE="/tmp/test-results/results.json"
+            RESULTS_FILE="/tmp/test-results/.last-run.json"
+
       
             if [ ! -f "$RESULTS_FILE" ]; then
               echo "Playwright results JSON not found at $RESULTS_FILE"
