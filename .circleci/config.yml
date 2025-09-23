@@ -77,7 +77,6 @@ jobs:
           path: /tmp/playwright-report
           when: always
 
-
       - run:
           name: Parse Playwright results and send Slack notification
           when: always
@@ -89,13 +88,11 @@ jobs:
               exit 0
             fi
       
-            # Extract totals from JSON
             TOTAL_TESTS=$(jq '.stats.total' $RESULTS_FILE)
             TOTAL_PASSES=$(jq '.stats.expected' $RESULTS_FILE)
             TOTAL_FAILURES=$(jq '.stats.unexpected' $RESULTS_FILE)
             TOTAL_SKIPPED=$(jq '.stats.skipped' $RESULTS_FILE)
       
-            # Collect failed tests with suite + title
             FAILED_TESTS_FILE=failed-tests.txt
             jq -r '
               .suites[].specs[]?
@@ -106,48 +103,47 @@ jobs:
             if [ -s $FAILED_TESTS_FILE ]; then
               MESSAGE=$(cat $FAILED_TESTS_FILE)
               SLACK_MESSAGE=$(cat <<EOF
-      :x: *Playwright UI Tests Failed :x:*
-      *Project:* ${CIRCLE_PROJECT_REPONAME}
-      *Triggered by:* ${CIRCLE_USERNAME}
-      *Branch:* ${CIRCLE_BRANCH}
-      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-      
-      *Test Summary:*
-      *Total Tests:* ${TOTAL_TESTS}
-      *Passes:* ${TOTAL_PASSES}
-      *Failures:* ${TOTAL_FAILURES}
-      *Skipped:* ${TOTAL_SKIPPED}
-      
-      *Failed Tests:*
-      ${MESSAGE}
-      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
-      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
-      cc: ${TAG_RESPONSIBLE_PEOPLE}
-      EOF
-      )
+:x: *Playwright UI Tests Failed :x:*
+*Project:* ${CIRCLE_PROJECT_REPONAME}
+*Triggered by:* ${CIRCLE_USERNAME}
+*Branch:* ${CIRCLE_BRANCH}
+*Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+
+*Test Summary:*
+*Total Tests:* ${TOTAL_TESTS}
+*Passes:* ${TOTAL_PASSES}
+*Failures:* ${TOTAL_FAILURES}
+*Skipped:* ${TOTAL_SKIPPED}
+
+*Failed Tests:*
+${MESSAGE}
+*Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
+*Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
+cc: ${TAG_RESPONSIBLE_PEOPLE}
+EOF
+)
             else
               SLACK_MESSAGE=$(cat <<EOF
-      :white_check_mark: All Playwright UI tests passed
-      *Project:* ${CIRCLE_PROJECT_REPONAME}
-      *Triggered by:* ${CIRCLE_USERNAME}
-      *Branch:* ${CIRCLE_BRANCH}
-      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
-      
-      *Test Summary:*
-      *Total Tests:* ${TOTAL_TESTS}
-      *Passes:* ${TOTAL_PASSES}
-      *Failures:* ${TOTAL_FAILURES}
-      *Skipped:* ${TOTAL_SKIPPED}
-      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
-      EOF
-      )
+:white_check_mark: All Playwright UI tests passed
+*Project:* ${CIRCLE_PROJECT_REPONAME}
+*Triggered by:* ${CIRCLE_USERNAME}
+*Branch:* ${CIRCLE_BRANCH}
+*Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+*Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
+
+*Test Summary:*
+*Total Tests:* ${TOTAL_TESTS}
+*Passes:* ${TOTAL_PASSES}
+*Failures:* ${TOTAL_FAILURES}
+*Skipped:* ${TOTAL_SKIPPED}
+*Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
+EOF
+)
             fi
       
             curl -X POST -H 'Content-type: application/json' \
               --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
 
-      
 workflows:
   version: 2
   pr_triggered_e2e_tests:
