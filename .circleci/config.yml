@@ -102,47 +102,37 @@ jobs:
       
             if [ -s $FAILED_TESTS_FILE ]; then
               MESSAGE=$(cat $FAILED_TESTS_FILE)
-              SLACK_MESSAGE=$(cat <<'EOF'
-      :x: *Playwright UI Tests Failed :x:*
-      *Project:* ${CIRCLE_PROJECT_REPONAME}
-      *Triggered by:* ${CIRCLE_USERNAME}
-      *Branch:* ${CIRCLE_BRANCH}
-      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-      
-      *Test Summary:*
-      *Total Tests:* ${TOTAL_TESTS}
-      *Passes:* ${TOTAL_PASSES}
-      *Failures:* ${TOTAL_FAILURES}
-      *Skipped:* ${TOTAL_SKIPPED}
-      
-      *Failed Tests:*
-      ${MESSAGE}
-      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
-      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
-      cc: ${TAG_RESPONSIBLE_PEOPLE}
-      EOF
-      )
+              SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*\n\
+            *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+            *Triggered by:* ${CIRCLE_USERNAME}\n\
+            *Branch:* ${CIRCLE_BRANCH}\n\
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
+            *Test Summary:*\n\
+            *Total Tests:* ${TOTAL_TESTS}\n\
+            *Passes:* ${TOTAL_PASSES}\n\
+            *Failures:* ${TOTAL_FAILURES}\n\
+            *Skipped:* ${TOTAL_SKIPPED}\n\n\
+            *Failed Tests:*\n${MESSAGE}\n\
+            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>\n\
+            *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+            cc: ${TAG_RESPONSIBLE_PEOPLE}"
             else
-              SLACK_MESSAGE=$(cat <<'EOF'
-      :white_check_mark: All Playwright UI tests passed
-      *Project:* ${CIRCLE_PROJECT_REPONAME}
-      *Triggered by:* ${CIRCLE_USERNAME}
-      *Branch:* ${CIRCLE_BRANCH}
-      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
-      
-      *Test Summary:*
-      *Total Tests:* ${TOTAL_TESTS}
-      *Passes:* ${TOTAL_PASSES}
-      *Failures:* ${TOTAL_FAILURES}
-      *Skipped:* ${TOTAL_SKIPPED}
-      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
-      EOF
-      )
+              SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed\n\
+            *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+            *Triggered by:* ${CIRCLE_USERNAME}\n\
+            *Branch:* ${CIRCLE_BRANCH}\n\
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+            *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+            \n*Test Summary:*\n\
+            *Total Tests:* ${TOTAL_TESTS}\n\
+            *Passes:* ${TOTAL_PASSES}\n\
+            *Failures:* ${TOTAL_FAILURES}\n\
+            *Skipped:* ${TOTAL_SKIPPED}\n\
+            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
             fi
-      
-            curl -X POST -H 'Content-type: application/json' \
-              --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
+            
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+
 
 
 workflows:
