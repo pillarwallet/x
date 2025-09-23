@@ -49,35 +49,21 @@ jobs:
             npm run test:metamask -- --reporter=list,html,json
 
       - run:
-          name: Move Playwright test reports
+          name: Move test report
           when: always
           command: |
-            # Move HTML report
-            if [ -d playwright-report ]; then
-              mv playwright-report /tmp/
-              chmod 777 -R /tmp/playwright-report
-            fi
-            # Move raw results (screenshots, traces, videos)
-            if [ -d test-results ]; then
-              mv test-results /tmp/
-              chmod 777 -R /tmp/test-results
-            fi
-
-      - store_artifacts:
-          path: /tmp/playwright-report
-          destination: playwright-report
-          when: always
+            mv /root/x-e2e/test-results/ /tmp/test-results/
+            chmod 777 -R /tmp/test-results
 
       - store_artifacts:
           path: /tmp/test-results
-          destination: test-results
           when: always
 
       - run:
           name: Parse Playwright results and send Slack notification
           when: always
           command: |
-            RESULTS_FILE=$(find /tmp/playwright-report -name "*.json" | head -n 1)
+            RESULTS_FILE=$(find /tmp/test-results -name "*.json" | head -n 1)
 
             if [ ! -f "$RESULTS_FILE" ]; then
               echo "Playwright results JSON not found."
