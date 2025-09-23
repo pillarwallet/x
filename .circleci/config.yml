@@ -52,6 +52,8 @@ jobs:
           name: Move test report
           when: always
           command: |
+            ls -lah /root/x-e2e/test-results/
+            ls -lah /root/x-e2e/
             mv /root/x-e2e/test-results/ /tmp/test-results/
             chmod 777 -R /tmp/test-results
 
