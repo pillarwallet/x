@@ -105,7 +105,7 @@ jobs:
       
             if [ -s $FAILED_TESTS_FILE ]; then
               MESSAGE=$(cat $FAILED_TESTS_FILE)
-              read -r -d '' SLACK_MESSAGE <<'EOF'
+              SLACK_MESSAGE=$(cat <<EOF
       :x: *Playwright UI Tests Failed :x:*
       *Project:* ${CIRCLE_PROJECT_REPONAME}
       *Triggered by:* ${CIRCLE_USERNAME}
@@ -124,8 +124,9 @@ jobs:
       *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>
       cc: ${TAG_RESPONSIBLE_PEOPLE}
       EOF
+      )
             else
-              read -r -d '' SLACK_MESSAGE <<'EOF'
+              SLACK_MESSAGE=$(cat <<EOF
       :white_check_mark: All Playwright UI tests passed
       *Project:* ${CIRCLE_PROJECT_REPONAME}
       *Triggered by:* ${CIRCLE_USERNAME}
@@ -140,10 +141,12 @@ jobs:
       *Skipped:* ${TOTAL_SKIPPED}
       *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>
       EOF
+      )
             fi
       
             curl -X POST -H 'Content-type: application/json' \
-              --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+              --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
+
       
 workflows:
   version: 2
