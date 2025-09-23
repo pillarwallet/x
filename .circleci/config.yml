@@ -103,7 +103,7 @@ jobs:
             if [ -s $FAILED_TESTS_FILE ]; then
               MESSAGE=$(cat $FAILED_TESTS_FILE)
               SLACK_MESSAGE=$(cat <<EOF
-:x: *Playwright UI Tests Failed :x:*
+":x: *Playwright UI Tests Failed :x:*"
 *Project:* ${CIRCLE_PROJECT_REPONAME}
 *Triggered by:* ${CIRCLE_USERNAME}
 *Branch:* ${CIRCLE_BRANCH}
