@@ -82,58 +82,28 @@ jobs:
           when: always
           command: |
             RESULTS_FILE="/tmp/test-results/.last-run.json"
-
-      
-            if [ ! -f "$RESULTS_FILE" ]; then
-              echo "Playwright results JSON not found at $RESULTS_FILE"
-              exit 0
-            fi
-      
-            TOTAL_TESTS=$(jq '.stats.total' $RESULTS_FILE)
-            TOTAL_PASSES=$(jq '.stats.expected' $RESULTS_FILE)
-            TOTAL_FAILURES=$(jq '.stats.unexpected' $RESULTS_FILE)
-            TOTAL_SKIPPED=$(jq '.stats.skipped' $RESULTS_FILE)
-      
-            FAILED_TESTS_FILE=failed-tests.txt
-            jq -r '
-              .suites[].specs[]?
-              | select(.tests[]?.outcome=="unexpected")
-              | "*Suite:* \(.title)\n*Failing Tests:* \(.tests[]? | select(.outcome=="unexpected") | .title)"
-            ' $RESULTS_FILE > $FAILED_TESTS_FILE
-      
-            if [ -s $FAILED_TESTS_FILE ]; then
-              MESSAGE=$(cat $FAILED_TESTS_FILE)
-              SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*\n\
-            *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
-            *Triggered by:* ${CIRCLE_USERNAME}\n\
-            *Branch:* ${CIRCLE_BRANCH}\n\
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
-            *Test Summary:*\n\
-            *Total Tests:* ${TOTAL_TESTS}\n\
-            *Passes:* ${TOTAL_PASSES}\n\
-            *Failures:* ${TOTAL_FAILURES}\n\
-            *Skipped:* ${TOTAL_SKIPPED}\n\n\
-            *Failed Tests:*\n${MESSAGE}\n\
-            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>\n\
-            *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-            cc: ${TAG_RESPONSIBLE_PEOPLE}"
+            STATUS=$(jq -r '.status' $RESULTS_FILE)
+            FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
+            
+            if [ "$STATUS" == "passed" ]; then
+              SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
+            *Project:* ${CIRCLE_PROJECT_REPONAME}
+            *Triggered by:* ${CIRCLE_USERNAME}
+            *Branch:* ${CIRCLE_BRANCH}
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
             else
-              SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed\n\
-            *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
-            *Triggered by:* ${CIRCLE_USERNAME}\n\
-            *Branch:* ${CIRCLE_BRANCH}\n\
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
-            *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-            \n*Test Summary:*\n\
-            *Total Tests:* ${TOTAL_TESTS}\n\
-            *Passes:* ${TOTAL_PASSES}\n\
-            *Failures:* ${TOTAL_FAILURES}\n\
-            *Skipped:* ${TOTAL_SKIPPED}\n\
+              SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*
+            *Project:* ${CIRCLE_PROJECT_REPONAME}
+            *Triggered by:* ${CIRCLE_USERNAME}
+            *Branch:* ${CIRCLE_BRANCH}
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Failed Tests:* ${FAILED_TESTS}
             *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
             fi
             
-            curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
-
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
 
 
 workflows:
