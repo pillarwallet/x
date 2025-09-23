@@ -49,70 +49,90 @@ jobs:
             npm run test:metamask -- --reporter=list,html,json
 
       - run:
-          name: Move test report
+          name: Move Playwright reports
           when: always
           command: |
-            ls -lah /root/x-e2e/test-results/
-            ls -lah /root/x-e2e/
-            mv /root/x-e2e/test-results/ /tmp/test-results/
-            chmod 777 -R /tmp/test-results
+            echo "Contents of test-results before move:"
+            ls -lah /root/x-e2e/test-results/ || true
+            echo "Contents of project root before move:"
+            ls -lah /root/x-e2e/ || true
+      
+            # Move test results (JSON, traces, screenshots)
+            if [ -d "/root/x-e2e/test-results" ]; then
+              mv /root/x-e2e/test-results /tmp/test-results
+              chmod 777 -R /tmp/test-results
+            fi
+      
+            # Move HTML report
+            if [ -d "/root/x-e2e/playwright-report" ]; then
+              mv /root/x-e2e/playwright-report /tmp/playwright-report
+              chmod 777 -R /tmp/playwright-report
+            fi
 
       - store_artifacts:
           path: /tmp/test-results
+          when: always
+      
+      - store_artifacts:
+          path: /tmp/playwright-report
           when: always
 
       - run:
           name: Parse Playwright results and send Slack notification
           when: always
           command: |
-            RESULTS_FILE=$(find /tmp/test-results -name "*.json" | head -n 1)
-
+            RESULTS_FILE="/tmp/test-results/results.json"
+      
             if [ ! -f "$RESULTS_FILE" ]; then
-              echo "Playwright results JSON not found."
+              echo "Playwright results JSON not found at $RESULTS_FILE"
               exit 0
             fi
-
+      
+            # Extract totals from JSON
             TOTAL_TESTS=$(jq '.stats.total' $RESULTS_FILE)
             TOTAL_PASSES=$(jq '.stats.expected' $RESULTS_FILE)
             TOTAL_FAILURES=$(jq '.stats.unexpected' $RESULTS_FILE)
             TOTAL_SKIPPED=$(jq '.stats.skipped' $RESULTS_FILE)
-
+      
+            # Collect failed tests with suite + title
             FAILED_TESTS_FILE=failed-tests.txt
-            jq -r '.suites[].specs[] | select(.tests[].outcome=="failed") |
-              "*Suite:* \(.title)\n*Failing Tests:* \(.tests[] | select(.outcome=="failed") | .title)"' \
-              $RESULTS_FILE > $FAILED_TESTS_FILE
-
+            jq -r '
+              .suites[].specs[]?
+              | select(.tests[]?.outcome=="unexpected")
+              | "*Suite:* \(.title)\n*Failing Tests:* \(.tests[]? | select(.outcome=="unexpected") | .title)"
+            ' $RESULTS_FILE > $FAILED_TESTS_FILE
+      
             if [ -s $FAILED_TESTS_FILE ]; then
               MESSAGE=$(cat $FAILED_TESTS_FILE)
               SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*\n\
-              *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
-              *Triggered by:* ${CIRCLE_USERNAME}\n\
-              *Branch:* ${CIRCLE_BRANCH}\n\
-              *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
-              *Test Summary:*\n\
-              *Total Tests:* ${TOTAL_TESTS}\n\
-              *Passes:* ${TOTAL_PASSES}\n\
-              *Failures:* ${TOTAL_FAILURES}\n\
-              *Skipped:* ${TOTAL_SKIPPED}\n\n\
-              *Failed Tests:*\n${MESSAGE}\n\
-              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>\n\
-              *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-              cc: ${TAG_RESPONSIBLE_PEOPLE}"
+      *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+      *Triggered by:* ${CIRCLE_USERNAME}\n\
+      *Branch:* ${CIRCLE_BRANCH}\n\
+      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
+      *Test Summary:*\n\
+      *Total Tests:* ${TOTAL_TESTS}\n\
+      *Passes:* ${TOTAL_PASSES}\n\
+      *Failures:* ${TOTAL_FAILURES}\n\
+      *Skipped:* ${TOTAL_SKIPPED}\n\n\
+      *Failed Tests:*\n${MESSAGE}\n\
+      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>\n\
+      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+      cc: ${TAG_RESPONSIBLE_PEOPLE}"
             else
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed\n\
-              *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
-              *Triggered by:* ${CIRCLE_USERNAME}\n\
-              *Branch:* ${CIRCLE_BRANCH}\n\
-              *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
-              *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-              \n*Test Summary:*\n\
-              *Total Tests:* ${TOTAL_TESTS}\n\
-              *Passes:* ${TOTAL_PASSES}\n\
-              *Failures:* ${TOTAL_FAILURES}\n\
-              *Skipped:* ${TOTAL_SKIPPED}\n\
-              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
+      *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+      *Triggered by:* ${CIRCLE_USERNAME}\n\
+      *Branch:* ${CIRCLE_BRANCH}\n\
+      *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+      *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+      \n*Test Summary:*\n\
+      *Total Tests:* ${TOTAL_TESTS}\n\
+      *Passes:* ${TOTAL_PASSES}\n\
+      *Failures:* ${TOTAL_FAILURES}\n\
+      *Skipped:* ${TOTAL_SKIPPED}\n\
+      *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
             fi
-
+      
             curl -X POST -H 'Content-type: application/json' \
               --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
 
