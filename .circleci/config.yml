@@ -46,7 +46,7 @@ jobs:
             npm install
             npx playwright install
             # Run tests with html + json reporters
-            npx playwright test --reporter=list,html,json
+            npm run test:metamask -- --reporter=list,html,json
 
       - run:
           name: Move Playwright test reports
