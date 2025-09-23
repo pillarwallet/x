@@ -28,6 +28,7 @@ import Tooltip from '../Misc/Tooltip';
 
 interface PreviewSellProps {
   closePreview: () => void;
+  showTransactionStatus: (txHash: string, gasFee?: string) => void;
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
@@ -35,10 +36,15 @@ interface PreviewSellProps {
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
-  const { closePreview, sellToken, sellOffer, tokenAmount, onSellOfferUpdate } =
-    props;
+  const {
+    closePreview,
+    showTransactionStatus,
+    sellToken,
+    sellOffer,
+    tokenAmount,
+    onSellOfferUpdate,
+  } = props;
   const [isExecuting, setIsExecuting] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [isSellTokenAddressCopied, setIsSellTokenAddressCopied] =
     useState(false);
@@ -91,19 +97,6 @@ const PreviewSell = (props: PreviewSellProps) => {
 
     return undefined;
   }, [isSellTokenAddressCopied]);
-
-  // Auto-close preview when transaction is successful
-  useEffect(() => {
-    if (isTransactionSuccess && txHash) {
-      // Close the preview after a short delay to show success briefly
-      const timer = setTimeout(() => {
-        closePreview();
-      }, 2000); // 2 seconds delay
-
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [isTransactionSuccess, txHash, closePreview]);
 
   // Reset transaction states when new data comes in
   useEffect(() => {
@@ -338,7 +331,6 @@ const PreviewSell = (props: PreviewSellProps) => {
     setIsTransactionSuccess(false);
     setIsWaitingForSignature(true);
     setIsExecuting(true);
-    setTxHash(null);
 
     try {
       // First, prepare the batch using the existing executeSell logic (without showing batch modal)
@@ -357,20 +349,27 @@ const PreviewSell = (props: PreviewSellProps) => {
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
           const userOpHash = sentBatch?.userOpHash;
           if (userOpHash) {
-            setTxHash(userOpHash);
             setIsTransactionSuccess(true);
+            setIsWaitingForSignature(false);
+            setIsExecuting(false);
 
             // Clean up the batch from kit after successful execution
             cleanupBatch(sellToken.chainId, 'success');
-          } else {
-            throw new Error('No userOpHash returned after batch send');
+
+            const gasFeeString = gasCostNative
+              ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
+              : '≈ 0.00';
+            showTransactionStatus(userOpHash, gasFeeString);
+            return;
           }
-        } else {
-          throw new Error(sentBatch?.errorMessage || 'Batch send failed');
+
+          throw new Error('No userOpHash returned after batch send');
         }
-      } else {
-        throw new Error('Failed to prepare sell transaction');
+
+        throw new Error(sentBatch?.errorMessage || 'Batch send failed');
       }
+
+      throw new Error('Failed to prepare sell transaction');
     } catch (err) {
       console.error('Failed to execute sell:', err);
 
@@ -388,7 +387,6 @@ const PreviewSell = (props: PreviewSellProps) => {
         // Other errors will be handled by the useRelaySell hook's error state
         setIsWaitingForSignature(false);
       }
-    } finally {
       setIsExecuting(false);
     }
   };
