@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { Hex } from 'viem';
-import Esc from '../Misc/Esc';
-import useIntentSdk from '../../hooks/useIntentSdk';
-import TransactionStatus from './TxStatus';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import useIntentSdk from '../../hooks/useIntentSdk';
 import { SelectedToken } from '../../types/tokens';
+import Esc from '../Misc/Esc';
+import TransactionStatus from './TxStatus';
 
 interface IntentTrackerProps {
   closePreview: () => void;
@@ -98,7 +98,7 @@ export default function IntentTracker(props: IntentTrackerProps) {
     };
   }, [bidHash, intentSdk]);
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex justify-between" style={{ margin: 10 }}>
         <div className="flex" style={{ fontSize: 20 }}>
           {`${isBuy ? 'Buy' : 'Sell'}`}
@@ -135,7 +135,7 @@ export default function IntentTracker(props: IntentTrackerProps) {
         </div>
         <div className="flex">
           <div style={{ marginLeft: 10 }}>
-            <Esc closePreview={closePreview} />
+            <Esc onClose={closePreview} />
           </div>
         </div>
       </div>
@@ -258,6 +258,6 @@ export default function IntentTracker(props: IntentTrackerProps) {
           Close
         </button>
       </div>
-    </>
+    </div>
   );
 }

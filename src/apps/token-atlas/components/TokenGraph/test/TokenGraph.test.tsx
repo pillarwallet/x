@@ -1,125 +1,83 @@
+import { configureStore } from '@reduxjs/toolkit';
 import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 
-// redux store
-import { Provider } from 'react-redux';
-import { store } from '../../../../../store';
-
-// reducer
-import {
-  setIsGraphLoading,
-  setPeriodFilter,
-  setTokenDataGraph,
-  setTokenDataInfo,
-} from '../../../reducer/tokenAtlasSlice';
+// test utils
+import { TestWrapper } from '../../../../../test-utils/testUtils';
 
 // types
-import {
-  MarketHistoryPairData,
-  TokenAtlasInfoData,
-} from '../../../../../types/api';
-import { PeriodFilter } from '../../../types/types';
 
 // components
 import TokenGraph from '../TokenGraph';
 
-const mockTokenDataGraph: MarketHistoryPairData = {
-  result: {
-    data: [
-      {
-        volume: 1050.25,
-        open: 45000.5,
-        high: 45500.0,
-        low: 44800.25,
-        close: 45250.75,
-        time: 1712457600, // Unix timestamp
-      },
-      {
-        volume: 980.1,
-        open: 45250.75,
-        high: 46000.0,
-        low: 45000.0,
-        close: 45900.0,
-        time: 1712544000,
-      },
-      {
-        volume: 1125.8,
-        open: 45900.0,
-        high: 46250.5,
-        low: 45700.0,
-        close: 46050.5,
-        time: 1712630400,
-      },
-    ],
-  },
-};
-
-const mockTokenDataInfo: TokenAtlasInfoData = {
-  id: 1,
-  market_cap: 100,
-  market_cap_diluted: 100,
-  liquidity: 150,
-  price: 105,
-  off_chain_volume: 150,
-  volume: 150,
-  volume_change_24h: 1.54,
-  volume_7d: 2.3,
-  is_listed: true,
-  price_change_24h: 0.44,
-  price_change_1h: 0.1,
-  price_change_7d: 1.8,
-  price_change_1m: 3.4,
-  price_change_1y: 6.7,
-  ath: 146,
-  atl: 96,
-  name: 'TOKEN',
-  symbol: 'TKN',
-  logo: 'tokenLogo.png',
-  rank: 1047,
-  contracts: [],
-  total_supply: '300',
-  circulating_supply: '170',
-};
+// reducer
+import tokenAtlasSlice from '../../../reducer/tokenAtlasSlice';
 
 describe('<TokenGraph />', () => {
-  beforeEach(() => {
-    store.dispatch(setIsGraphLoading(false));
-    store.dispatch(setTokenDataGraph(mockTokenDataGraph));
-    store.dispatch(setTokenDataInfo(mockTokenDataInfo));
-    store.dispatch(setPeriodFilter(PeriodFilter.DAY));
-  });
-
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <Provider store={store}>
+        <TestWrapper>
           <TokenGraph />
-        </Provider>
+        </TestWrapper>
       )
       .toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
+  it('renders the graph with data when available', () => {
+    render(
+      <TestWrapper>
+        <TokenGraph />
+      </TestWrapper>
+    );
+
+    expect(screen.getByTestId('price-graph')).toBeInTheDocument();
+  });
+
+  it('renders the graph container with correct styling', () => {
+    render(
+      <TestWrapper>
+        <TokenGraph />
+      </TestWrapper>
+    );
+
+    const container = screen.getByTestId('price-graph').parentElement;
+    expect(container).toHaveAttribute('id', 'token-atlas-token-graph');
+    expect(container).toHaveClass(
+      'flex',
+      'w-[99%]',
+      'mb-20',
+      'h-full',
+      'max-h-[400px]',
+      'mobile:mb-0'
+    );
+  });
+
   it('displays a message when no price history is available', () => {
-    store.dispatch(setTokenDataGraph({ result: { data: [] } }));
+    // Create a custom test store with empty data
+    const testStore = configureStore({
+      reducer: {
+        tokenAtlas: tokenAtlasSlice.reducer,
+      },
+      preloadedState: {
+        tokenAtlas: {
+          ...tokenAtlasSlice.getInitialState(),
+          tokenDataGraph: { result: { data: [] } },
+          isGraphLoading: false,
+          isGraphErroring: false,
+        },
+      },
+    });
 
     render(
-      <Provider store={store}>
+      <Provider store={testStore}>
         <TokenGraph />
       </Provider>
     );
 
     expect(screen.getByText('Price history not found.')).toBeInTheDocument();
-  });
-
-  it('renders the graph with data when available', () => {
-    render(
-      <Provider store={store}>
-        <TokenGraph />
-      </Provider>
-    );
-
-    expect(screen.getByTestId('price-graph')).toBeInTheDocument();
   });
 });

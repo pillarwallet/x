@@ -34,7 +34,9 @@ import ERC1155_ABI from './abis/ERC1155.json';
 import ERC20_ABI from './abis/ERC20Token.json';
 import ERC721_ABI from './abis/ERC721.json';
 
-const chainMapping = {
+const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
+
+const allChainMapping = {
   polygon: 'https://polygon-rpc.com',
   ethereum: 'https://ethereum-rpc.publicnode.com',
   gnosis: 'https://rpc.gnosischain.com',
@@ -44,10 +46,13 @@ const chainMapping = {
   arbitrum: 'https://arbitrum.drpc.org',
 };
 
-export const allNativeTokens: Record<
-  Network,
-  { name: string; symbol: string }
-> = {
+const chainMapping = Object.fromEntries(
+  Object.entries(allChainMapping).filter(
+    ([chain]) => isGnosisEnabled || chain !== 'gnosis'
+  )
+);
+
+const allNativeTokensData: Record<Network, { name: string; symbol: string }> = {
   ethereum: { name: 'Ether', symbol: 'ETH' },
   polygon: { name: 'MATIC', symbol: 'MATIC' },
   gnosis: { name: 'xDai', symbol: 'XDAI' },
@@ -57,7 +62,17 @@ export const allNativeTokens: Record<
   arbitrum: { name: 'Ether', symbol: 'ETH' },
 };
 
+export const allNativeTokens = Object.fromEntries(
+  Object.entries(allNativeTokensData).filter(
+    ([network]) => isGnosisEnabled || network !== 'gnosis'
+  )
+) as Record<Network, { name: string; symbol: string }>;
+
 export const getNetworkViem = (chainId: number): Chain => {
+  if (!isGnosisEnabled && chainId === 100) {
+    return mainnet;
+  }
+
   switch (chainId) {
     case 1:
       return mainnet;

@@ -128,17 +128,6 @@ vi.mock('../../../../../hooks/useBottomMenuModal', () => {
   };
 });
 
-vi.mock('@etherspot/transaction-kit', () => ({
-  useEtherspotSwaps: () => ({
-    prepareCrossChainOfferTransactions: vi.fn().mockResolvedValue([]),
-  }),
-  useEtherspotUtils: vi.fn().mockReturnValue({
-    isZeroAddress: vi.fn(),
-  }),
-  useWalletAddress: vi.fn().mockReturnValue({
-    walletAddress: vi.fn(),
-  }),
-}));
 vi.mock('../../../utils/converters', () => ({
   hasThreeZerosAfterDecimal: vi.fn((num) => num % 1 === 0),
   formatTokenAmount: vi.fn((amount) => {

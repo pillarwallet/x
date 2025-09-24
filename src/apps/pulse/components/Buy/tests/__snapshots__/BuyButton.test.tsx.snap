@@ -1,0 +1,42 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
+<button
+  className="flex-1 items-center justify-center"
+  disabled={false}
+  onClick={[MockFunction spy]}
+  style={
+    {
+      "backgroundColor": "#8A77FF",
+      "borderRadius": 8,
+      "color": "#FFFFFF",
+    }
+  }
+  type="button"
+>
+  <div
+    className="flex items-center justify-center gap-1"
+  >
+    <span>
+      Buy
+    </span>
+    <p
+      className="text-white"
+    >
+      1
+    </p>
+    <span>
+      TEST
+    </span>
+    <span>
+      for
+    </span>
+    <p
+      className="text-white"
+    >
+      $
+      100
+    </p>
+  </div>
+</button>
+`;

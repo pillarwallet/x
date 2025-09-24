@@ -1,5 +1,5 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useEffect } from 'react';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // hooks
 import { useAppSelector } from '../../hooks/useReducerHooks';
@@ -10,7 +10,7 @@ import { SwapOffer } from '../../utils/types';
 
 // utils
 import { hasThreeZerosAfterDecimal } from '../../utils/converters';
-import { logSwapOperation, addExchangeBreadcrumb } from '../../utils/sentry';
+import { addExchangeBreadcrumb, logSwapOperation } from '../../utils/sentry';
 
 // components
 import BodySmall from '../Typography/BodySmall';
@@ -19,7 +19,7 @@ import BodySmall from '../Typography/BodySmall';
 import ArrowRightLight from '../../images/arrow-right-light.png';
 
 const SwapSummary = () => {
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   const swapToken = useAppSelector((state) => state.swap.swapToken as Token);
   const receiveToken = useAppSelector(
     (state) => state.swap.receiveToken as Token

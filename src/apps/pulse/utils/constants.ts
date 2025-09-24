@@ -1,6 +1,6 @@
-import { CompatibleChains } from '../../../utils/blockchain';
+import { CompatibleChains, isGnosisEnabled } from '../../../utils/blockchain';
 
-export const MOBULA_CHAIN_NAMES = [
+const allMobulaChainNames = [
   'Ethereum',
   'Polygon',
   'Base',
@@ -9,6 +9,10 @@ export const MOBULA_CHAIN_NAMES = [
   'Arbitrum',
   'Optimistic',
 ];
+
+export const MOBULA_CHAIN_NAMES = allMobulaChainNames.filter(
+  (name) => isGnosisEnabled || name !== 'XDAI'
+);
 
 export enum MobulaChainNames {
   Ethereum = 'Ethereum',

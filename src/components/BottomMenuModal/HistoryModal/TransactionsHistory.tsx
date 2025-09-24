@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { ExportSquare as IconExportSquare } from 'iconsax-react';
 import moment from 'moment';
 import { useEffect } from 'react';
@@ -21,6 +20,7 @@ import {
 } from '../../../types/api';
 
 // components
+import useTransactionKit from '../../../hooks/useTransactionKit';
 import ChainAssetIcon from '../../ChainAssetIcon';
 import HistoryChainDropdown from '../../Form/HistoryChainDropdown/HistoryChainDropdown';
 import SkeletonLoader from '../../SkeletonLoader';
@@ -31,7 +31,7 @@ interface HistoryModalProps {
 }
 
 const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const [t] = useTranslation();
   const {
     data: history,

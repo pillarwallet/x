@@ -3,18 +3,10 @@ import React from 'react';
 import { vi } from 'vitest';
 
 // providers
-import GlobalTransactionsBatchProvider, {
-  IGlobalBatchTransaction,
-} from '../GlobalTransactionsBatchProvider';
+import GlobalTransactionsBatchProvider from '../GlobalTransactionsBatchProvider';
 
 // hooks
 import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
-
-const mockBlockTransaction: IGlobalBatchTransaction = {
-  to: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
-  title: 'test',
-  chainId: 137,
-};
 
 describe('GlobalTransactionsBatchProvider', () => {
   let wrapper: React.FC;
@@ -27,60 +19,73 @@ describe('GlobalTransactionsBatchProvider', () => {
     );
   });
 
-  it('initializes with empty batches', () => {
+  it('initializes with empty transaction metadata', () => {
     const { result } = renderHook(() => useGlobalTransactionsBatch(), {
       wrapper,
     });
-    expect(result.current.transactions).toEqual([]);
+    expect(result.current.transactionMeta).toEqual({});
   });
 
-  it('adds transactions to batches correctly', async () => {
+  it('initializes with undefined wallet connect transaction hash', () => {
     const { result } = renderHook(() => useGlobalTransactionsBatch(), {
       wrapper,
     });
-
-    act(() => {
-      result.current.addToBatch({ id: '1', ...mockBlockTransaction });
-      result.current.addToBatch({
-        id: '3',
-        ...mockBlockTransaction,
-        chainId: 137,
-      });
-      result.current.addToBatch({ id: '2', ...mockBlockTransaction });
-      result.current.addToBatch(mockBlockTransaction);
-    });
-
-    expect(Object.keys(result.current.transactions).length).toEqual(4);
-    expect(result.current.transactions[0].id).toEqual('1');
-    expect(result.current.transactions[1].id).toEqual('3');
-    expect(result.current.transactions[2].id).toEqual('2');
-    expect(result.current.transactions[3].id?.startsWith('0x')).toBeTruthy(); // assigns id automatically
+    expect(result.current.walletConnectTxHash).toBeUndefined();
   });
 
-  it('removes transactions from batches correctly', async () => {
+  it('sets wallet connect transaction hash correctly', () => {
     const { result } = renderHook(() => useGlobalTransactionsBatch(), {
       wrapper,
     });
 
     act(() => {
-      result.current.addToBatch({ id: '1', ...mockBlockTransaction });
-      result.current.addToBatch({
-        id: '3',
-        ...mockBlockTransaction,
-        chainId: 137,
-      });
-      result.current.addToBatch({ id: '2', ...mockBlockTransaction });
+      result.current.setWalletConnectTxHash('0x1234567890abcdef');
     });
 
-    expect(result.current.transactions.length).toEqual(3);
+    expect(result.current.walletConnectTxHash).toBe('0x1234567890abcdef');
+  });
+
+  it('sets transaction metadata for name correctly', () => {
+    const { result } = renderHook(() => useGlobalTransactionsBatch(), {
+      wrapper,
+    });
 
     act(() => {
-      result.current.removeFromBatch('2');
-      result.current.removeFromBatch('3');
+      result.current.setTransactionMetaForName('test-transaction', {
+        title: 'Test Transaction',
+        description: 'This is a test transaction',
+      });
     });
 
-    expect(result.current.transactions.length).toEqual(1);
-    expect(result.current.transactions[0].id).toEqual('1');
+    expect(result.current.transactionMeta['test-transaction']).toEqual({
+      title: 'Test Transaction',
+      description: 'This is a test transaction',
+    });
+  });
+
+  it('updates existing transaction metadata', () => {
+    const { result } = renderHook(() => useGlobalTransactionsBatch(), {
+      wrapper,
+    });
+
+    act(() => {
+      result.current.setTransactionMetaForName('test-transaction', {
+        title: 'Test Transaction',
+        description: 'This is a test transaction',
+      });
+    });
+
+    act(() => {
+      result.current.setTransactionMetaForName('test-transaction', {
+        title: 'Updated Test Transaction',
+        description: 'This is an updated test transaction',
+      });
+    });
+
+    expect(result.current.transactionMeta['test-transaction']).toEqual({
+      title: 'Updated Test Transaction',
+      description: 'This is an updated test transaction',
+    });
   });
 
   afterEach(() => {

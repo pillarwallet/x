@@ -1,24 +1,36 @@
-import EscIcon from '../../assets/esc-icon.svg';
+import { useEffect } from 'react';
 
-interface CloseProps {
-  closePreview: () => void;
+interface EscProps {
+  onClose: () => void;
 }
 
-export default function Esc(props: CloseProps) {
-  const { closePreview } = props;
+export default function Esc(props: EscProps) {
+  const { onClose } = props;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <button
-      style={{
-        backgroundColor: 'black',
-        borderRadius: 10,
-        width: 40,
-        height: 40,
-      }}
-      onClick={closePreview}
+      className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px]"
+      onClick={onClose}
       type="button"
       aria-label="Close"
+      data-testid="esc-button"
     >
-      <img src={EscIcon} alt="" aria-hidden="true" />
+      <p className="text-white/50 font-medium text-[13px] leading-[100%] tracking-[-0.02em] text-center">
+        ESC
+      </p>
     </button>
   );
 }

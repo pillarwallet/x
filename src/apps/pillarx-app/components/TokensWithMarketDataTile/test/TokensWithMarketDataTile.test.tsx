@@ -11,6 +11,9 @@ import {
   TokensMarketData,
 } from '../../../../../types/api';
 
+// Mock the environment variable
+const originalEnv = import.meta.env;
+
 const mockTokensMarketData: Projection = {
   id: 'tokens-with-market-data',
   layout: ApiLayout.TOKENS_WITH_MARKET_DATA,
@@ -86,6 +89,22 @@ const mockTokensMarketData: Projection = {
 };
 
 describe('<TokensWithMarketDataTile />', () => {
+  beforeEach(() => {
+    // Reset environment
+    Object.defineProperty(import.meta, 'env', {
+      value: { ...originalEnv, VITE_FEATURE_FLAG_GNOSIS: 'true' },
+      writable: true,
+    });
+  });
+
+  afterEach(() => {
+    // Reset environment
+    Object.defineProperty(import.meta, 'env', {
+      value: originalEnv,
+      writable: true,
+    });
+  });
+
   it('renders and matches snapshot', () => {
     const tree = render(
       <MemoryRouter>
@@ -139,12 +158,15 @@ describe('<TokensWithMarketDataTile />', () => {
     expect(mobileScreen.getByText('20.1%')).toBeInTheDocument();
     expect(mobileScreen.getByText('1823')).toBeInTheDocument();
 
-    expect(mobileScreen.getAllByText('XDAI')).toHaveLength(2);
-    expect(mobileScreen.getByText('$1.4m')).toBeInTheDocument();
-    expect(mobileScreen.getByText('$3,123')).toBeInTheDocument();
-    expect(mobileScreen.getByText('$1.0622')).toBeInTheDocument(); // rounded up with limitDigitsNumber helper function
-    expect(mobileScreen.getByText('3.1%')).toBeInTheDocument();
-    expect(mobileScreen.getByText('1423')).toBeInTheDocument();
+    // XDAI should only be present when Gnosis feature flag is enabled
+    if (import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true') {
+      expect(mobileScreen.getAllByText('XDAI')).toHaveLength(2);
+      expect(mobileScreen.getByText('$1.4m')).toBeInTheDocument();
+      expect(mobileScreen.getByText('$3,123')).toBeInTheDocument();
+      expect(mobileScreen.getByText('$1.0622')).toBeInTheDocument(); // rounded up with limitDigitsNumber helper function
+      expect(mobileScreen.getByText('3.1%')).toBeInTheDocument();
+      expect(mobileScreen.getByText('1423')).toBeInTheDocument();
+    }
   });
 
   it('does not render anything while loading', () => {

@@ -1,22 +1,31 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   DispensableAsset,
   ExpressIntentResponse,
   UserIntent,
 } from '@etherspot/intent-sdk/dist/cjs/sdk/types/user-intent-types';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Hex, getAddress } from 'viem';
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { WalletPortfolioMobulaResponse } from '../../../../types/api';
-import useIntentSdk from '../../hooks/useIntentSdk';
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import { PayingToken, SelectedToken } from '../../types/tokens';
-import useModularSdk from '../../hooks/useModularSdk';
-import BuyButton from './BuyButton';
-import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
+import { STABLE_CURRENCIES } from '../../constants/tokens';
+import useIntentSdk from '../../hooks/useIntentSdk';
+import useModularSdk from '../../hooks/useModularSdk';
+import { PayingToken, SelectedToken } from '../../types/tokens';
+import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
+import BuyButton from './BuyButton';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -28,6 +37,11 @@ interface BuyProps {
   setExpressIntentResponse: Dispatch<
     SetStateAction<ExpressIntentResponse | null>
   >;
+  setUsdAmount: Dispatch<SetStateAction<string>>;
+  setDispensableAssets: Dispatch<SetStateAction<DispensableAsset[]>>;
+  setBuyRefreshCallback?: Dispatch<
+    SetStateAction<(() => Promise<void>) | null>
+  >;
 }
 
 export default function Buy(props: BuyProps) {
@@ -36,6 +50,9 @@ export default function Buy(props: BuyProps) {
     setPayingTokens,
     setPreviewBuy,
     setSearching,
+    setUsdAmount: setParentUsdAmount,
+    setDispensableAssets: setParentDispensableAssets,
+    setBuyRefreshCallback,
     token,
     walletPortfolioData,
     payingTokens,
@@ -51,18 +68,56 @@ export default function Buy(props: BuyProps) {
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
-  const accountAddress = useWalletAddress();
+  const [insufficientWalletBalance, setInsufficientWalletBalance] =
+    useState(false);
+  const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [dispensableAssets, setDispensableAssets] = useState<
     DispensableAsset[]
   >([]);
   const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
 
+  // Helper function to calculate stable currency balance
+  const getStableCurrencyBalance = () => {
+    return (
+      walletPortfolioData?.result.data.assets
+        ?.filter((asset) =>
+          asset.contracts_balances.some((contract) =>
+            STABLE_CURRENCIES.some(
+              (stable) =>
+                stable.address.toLowerCase() ===
+                  contract.address.toLowerCase() &&
+                stable.chainId === Number(contract.chainId.split(':').at(-1))
+            )
+          )
+        )
+        .reduce((total, asset) => {
+          const stableContracts = asset.contracts_balances.filter((contract) =>
+            STABLE_CURRENCIES.some(
+              (stable) =>
+                stable.address.toLowerCase() ===
+                  contract.address.toLowerCase() &&
+                stable.chainId === Number(contract.chainId.split(':').at(-1))
+            )
+          );
+          return (
+            total +
+            stableContracts.reduce(
+              (sum, contract) => sum + asset.price * contract.balance,
+              0
+            )
+          );
+        }, 0) || 0
+    );
+  };
+
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setUsdAmount(input);
+      setNoEnoughLiquidity(false);
+      setInsufficientWalletBalance(false);
     }
   };
 
@@ -79,6 +134,7 @@ export default function Buy(props: BuyProps) {
     const timer = setTimeout(() => {
       if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
         setNoEnoughLiquidity(false);
+        setInsufficientWalletBalance(false);
         setDebouncedUsdAmount(usdAmount);
         const [dAssets, pChains, pTokens] = getDispensableAssets(
           usdAmount,
@@ -100,15 +156,20 @@ export default function Buy(props: BuyProps) {
         ) {
           setDispensableAssets(dAssets);
           setPermittedChains(pChains);
+          setParentDispensableAssets(dAssets);
+          setParentUsdAmount(usdAmount);
         } else {
           setDispensableAssets(dAssets);
           setPermittedChains(pChains);
           setPayingTokens(pTokens);
+          setParentDispensableAssets(dAssets);
+          setParentUsdAmount(usdAmount);
         }
       }
     }, 1000);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     usdAmount,
     setPayingTokens,
@@ -117,68 +178,125 @@ export default function Buy(props: BuyProps) {
     payingTokens,
   ]);
 
-  useEffect(() => {
-    const manageIntent = async (input: string) => {
-      setNoEnoughLiquidity(false);
-      if (
-        Number(parseFloat(input) > 0) &&
-        token &&
-        accountAddress &&
-        intentSdk
-      ) {
-        if (dispensableAssets.length === 0 && permittedChains.length === 0) {
-          setNoEnoughLiquidity(true);
-          return;
-        }
-        const intent: UserIntent = {
-          constraints: {
-            deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
-            desiredAssets: [
-              {
-                asset: getAddress(token.address) as Hex,
-                chainId: BigInt(token.chainId),
-                value: getDesiredAssetValue(
-                  input,
-                  token.decimals,
-                  token.usdValue
-                ),
-              },
-            ],
-            dispensableAssets,
-            slippagePercentage: 5,
-          },
-          intentHash:
-            '0x000000000000000000000000000000000000000000000000000000000000000',
-          account: accountAddress as Hex,
-        };
-        setIsLoading(true);
-        try {
-          const response = await intentSdk.expressIntent(intent);
-          setExpressIntentResponse(response);
-        } catch (error) {
-          console.error('express intent failed:: ', error);
-        }
-        setIsLoading(false);
-      }
-    };
-    if (debouncedUsdAmount && areModulesInstalled) {
-      manageIntent(debouncedUsdAmount);
+  const refreshBuyIntent = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isLoading) {
+      return;
     }
+
+    if (
+      !debouncedUsdAmount ||
+      !token ||
+      !accountAddress ||
+      !intentSdk ||
+      !areModulesInstalled ||
+      parseFloat(debouncedUsdAmount) <= 0
+    ) {
+      return;
+    }
+
+    const inputAmount = parseFloat(debouncedUsdAmount);
+    const stableCurrencyBalance = getStableCurrencyBalance();
+
+    // Check if input amount higher than stable currency balance
+    if (inputAmount > stableCurrencyBalance) {
+      setInsufficientWalletBalance(true);
+      setNoEnoughLiquidity(false);
+      return;
+    }
+
+    // Reset stable currency balance error if first check passes
+    setInsufficientWalletBalance(false);
+
+    // Check if enough dispensable assets liquidity
+    if (dispensableAssets.length === 0 && permittedChains.length === 0) {
+      setNoEnoughLiquidity(true);
+      return;
+    }
+
+    if (notEnoughLiquidity) {
+      return;
+    }
+
+    setNoEnoughLiquidity(false);
+    setInsufficientWalletBalance(false);
+    setIsLoading(true);
+
+    try {
+      const intent: UserIntent = {
+        constraints: {
+          deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
+          desiredAssets: [
+            {
+              asset: getAddress(token.address) as Hex,
+              chainId: BigInt(token.chainId),
+              value: getDesiredAssetValue(
+                debouncedUsdAmount,
+                token.decimals,
+                token.usdValue
+              ),
+            },
+          ],
+          dispensableAssets,
+          slippagePercentage: 3,
+        },
+        intentHash:
+          '0x000000000000000000000000000000000000000000000000000000000000000',
+        account: accountAddress as Hex,
+      };
+      const response = await intentSdk.expressIntent(intent);
+      setExpressIntentResponse(response);
+    } catch (error) {
+      console.error('express intent failed:: ', error);
+      setExpressIntentResponse(null);
+    } finally {
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    accountAddress,
     debouncedUsdAmount,
-    intentSdk,
-    setPayingTokens,
     token,
-    walletPortfolioData?.result.data,
-    payingTokens,
+    accountAddress,
+    intentSdk,
+    areModulesInstalled,
+    dispensableAssets,
+    permittedChains,
+    isLoading,
+    notEnoughLiquidity,
+    walletPortfolioData?.result.data.total_wallet_balance,
+  ]);
+
+  // Call refreshBuyIntent when input changes
+  useEffect(() => {
+    // Only call refreshBuyIntent if we have a token selected
+    if (token) {
+      refreshBuyIntent();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    debouncedUsdAmount,
+    token,
+    accountAddress,
+    intentSdk,
     areModulesInstalled,
     dispensableAssets,
     permittedChains,
   ]);
 
+  // Register refresh callback with HomeScreen
+  useEffect(() => {
+    if (setBuyRefreshCallback) {
+      setBuyRefreshCallback(() => refreshBuyIntent);
+    }
+    return () => {
+      if (setBuyRefreshCallback) {
+        setBuyRefreshCallback(null);
+      }
+    };
+  }, [setBuyRefreshCallback, refreshBuyIntent]);
+
   return (
-    <>
+    <div className="flex flex-col" data-testid="pulse-buy-component">
       <div
         style={{
           margin: 10,
@@ -188,7 +306,7 @@ export default function Buy(props: BuyProps) {
           borderRadius: 10,
         }}
       >
-        <div className="flex">
+        <div className="flex p-3">
           <button
             onClick={() => {
               setSearching(true);
@@ -203,8 +321,6 @@ export default function Buy(props: BuyProps) {
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
-                  marginLeft: 10,
-                  marginTop: 15,
                 }}
               >
                 <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -294,8 +410,6 @@ export default function Buy(props: BuyProps) {
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
-                  marginLeft: 10,
-                  marginTop: 15,
                 }}
               >
                 <div
@@ -310,7 +424,7 @@ export default function Buy(props: BuyProps) {
               </div>
             )}
           </button>
-          <div className="flex-1" style={{ marginTop: 15, marginRight: 10 }}>
+          <div className="flex-1">
             <div
               className="flex"
               style={{ height: 36, fontSize: 36, width: 189 }}
@@ -331,27 +445,44 @@ export default function Buy(props: BuyProps) {
         </div>
         <div className="flex justify-between" style={{ margin: 10 }}>
           <div className="flex">
-            {(notEnoughLiquidity ||
-              (!isLoading &&
-                expressIntentResponse &&
-                expressIntentResponse.bids?.length === 0)) && (
-              <>
-                <div className="flex items-center justify-center">
-                  <img src={WarningIcon} alt="warning" />
-                </div>
+            {(() => {
+              const showError =
+                insufficientWalletBalance ||
+                (notEnoughLiquidity && token) ||
+                (!isLoading &&
+                  expressIntentResponse &&
+                  expressIntentResponse.bids?.length === 0);
 
-                <div
-                  style={{
-                    textDecoration: 'underline',
-                    color: '#FF366C',
-                    fontSize: 12,
-                    marginLeft: 5,
-                  }}
-                >
-                  Not Enough liquidity
-                </div>
-              </>
-            )}
+              if (!showError) return null;
+
+              let message = '';
+              if (insufficientWalletBalance) {
+                message = 'Insufficient wallet balance';
+              } else if (notEnoughLiquidity && token) {
+                message = 'Not enough liquidity';
+              } else {
+                message = 'No available routes for this amount';
+              }
+
+              return (
+                <>
+                  <div className="flex items-center justify-center">
+                    <img src={WarningIcon} alt="warning" />
+                  </div>
+
+                  <div
+                    style={{
+                      textDecoration: 'underline',
+                      color: '#FF366C',
+                      fontSize: 12,
+                      marginLeft: 5,
+                    }}
+                  >
+                    {message}
+                  </div>
+                </>
+              );
+            })()}
           </div>
           <div className="flex" style={{ float: 'right' }}>
             <img src={WalletIcon} alt="wallet-icon" />
@@ -362,10 +493,7 @@ export default function Buy(props: BuyProps) {
                 fontSize: 12,
               }}
             >
-              $
-              {walletPortfolioData?.result.data.total_wallet_balance.toFixed(
-                2
-              ) || 0.0}
+              ${getStableCurrencyBalance().toFixed(2)}
             </div>
           </div>
         </div>
@@ -373,38 +501,32 @@ export default function Buy(props: BuyProps) {
       {/* amounts */}
       <div className="flex">
         {['10', '20', '50', '100', 'MAX'].map((item) => {
+          const isMax = item === 'MAX';
+          const isDisabled = !token;
+
           return (
             <div
               key={item}
-              className="flex"
-              style={{
-                backgroundColor: 'black',
-                marginLeft: 10,
-                width: 75,
-                height: 30,
-                borderRadius: 10,
-                padding: '2px 2px 4px 2px',
-              }}
+              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className="flex-1 items-center justify-center"
-                style={{
-                  backgroundColor: '#121116',
-                  borderRadius: 10,
-                  color: 'grey',
-                }}
+                className={`flex-1 items-center justify-center rounded-[10px] ${
+                  isDisabled
+                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                    : 'bg-[#121116] text-white cursor-pointer'
+                }`}
                 onClick={() => {
-                  if (item === 'MAX') {
-                    setUsdAmount(
-                      walletPortfolioData?.result.data.total_wallet_balance.toFixed(
-                        2
-                      ) ?? '0.00'
-                    );
-                  } else {
-                    setUsdAmount(parseFloat(item).toFixed(2));
+                  if (!isDisabled) {
+                    if (isMax) {
+                      setUsdAmount(getStableCurrencyBalance().toFixed(2));
+                    } else {
+                      setUsdAmount(parseFloat(item).toFixed(2));
+                    }
                   }
                 }}
                 type="button"
+                disabled={isDisabled}
+                data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
                 ${item}
               </button>
@@ -433,12 +555,12 @@ export default function Buy(props: BuyProps) {
           isFetching={isFetching}
           isInstalling={isInstalling}
           isLoading={isLoading}
-          notEnoughLiquidity={notEnoughLiquidity}
+          notEnoughLiquidity={notEnoughLiquidity || insufficientWalletBalance}
           payingTokens={payingTokens}
           token={token}
           usdAmount={usdAmount}
         />
       </div>
-    </>
+    </div>
   );
 }

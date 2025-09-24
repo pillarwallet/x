@@ -12,7 +12,7 @@ exports[`<SelectToken /> > renders correctly and matches snapshot 1`] = `
     <p
       className="text-base font-medium text-black_grey capitalize line-clamp-2 text-ellipsis break-all"
     >
-      Token Example
+      Ether
     </p>
     <p
       className="text-base font-medium text-black_grey font-normal capitalize"
@@ -30,7 +30,7 @@ exports[`<SelectToken /> > renders correctly and matches snapshot 1`] = `
         alt="token-logo"
         className="w-full h-full object-fill rounded-full"
         onError={[Function]}
-        src="https://example.com/token-logo.png"
+        src="iconEth.png"
       />
     </div>
     <div

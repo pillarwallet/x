@@ -1,4 +1,3 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
@@ -10,11 +9,8 @@ import {
 } from '../../../../../types/api';
 
 // components
+import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import PxPointsSummary from '../PxPointsSummary';
-
-vi.mock('@etherspot/transaction-kit', () => ({
-  useWalletAddress: vi.fn(),
-}));
 
 // mock subcomponents
 vi.mock('../../PointsCards/GasNewDropCard', () => ({
@@ -45,8 +41,11 @@ vi.mock('../../Typography/BodySmall', () => ({
   },
 }));
 
+vi.mock('../../../../../hooks/useTransactionKit');
+
 describe('<PxPointsSummary />', () => {
   const mockWallet = '0x1234';
+  const useTransactionKitMock = useTransactionKit as unknown as Mock;
 
   const allTimeTradingDataMock: LeaderboardTableData[] = [
     {
@@ -113,7 +112,10 @@ describe('<PxPointsSummary />', () => {
   ];
 
   beforeEach(() => {
-    (useWalletAddress as Mock).mockReturnValue(mockWallet);
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: mockWallet,
+      kit: {},
+    });
   });
 
   it('renders correctly and matches snapshot', () => {
@@ -189,7 +191,10 @@ describe('<PxPointsSummary />', () => {
   });
 
   it('handles no wallet address gracefully', () => {
-    (useWalletAddress as Mock).mockReturnValue(undefined);
+    useTransactionKitMock.mockReturnValue({
+      walletAddress: undefined,
+      kit: {},
+    });
 
     render(
       <PxPointsSummary

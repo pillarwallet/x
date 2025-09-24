@@ -1,11 +1,13 @@
 import { IntentSdk, Options } from '@etherspot/intent-sdk';
-import { useWalletAddress } from '@etherspot/transaction-kit';
-import { useEffect, useState } from 'react';
-import { createWalletClient, custom, Hex } from 'viem';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useCallback, useEffect, useState } from 'react';
+import { Hex, createWalletClient, custom } from 'viem';
+
+// hooks
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 export default function useIntentSdk() {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
 
@@ -15,6 +17,7 @@ export default function useIntentSdk() {
     (wallet) => wallet.address === privyWalletAddress
   );
   const [intentSdk, setIntentSdk] = useState<IntentSdk | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (accountAddress && ready && authenticated && walletProvider) {
@@ -23,17 +26,28 @@ export default function useIntentSdk() {
         modularAccount: accountAddress as Hex,
       };
 
-      walletProvider.getEthereumProvider().then((provider) => {
-        const walletClient = createWalletClient({
-          account: walletProvider.address as Hex,
-          transport: custom(provider),
+      walletProvider
+        .getEthereumProvider()
+        .then((provider) => {
+          const walletClient = createWalletClient({
+            account: walletProvider.address as Hex,
+            transport: custom(provider),
+          });
+          /* eslint-disable @typescript-eslint/no-explicit-any */
+          const sdk = new IntentSdk(walletClient as any, options);
+          setIntentSdk(sdk);
+          setError(null); // Clear any previous errors when SDK initializes
+        })
+        .catch((err) => {
+          console.error('Failed to initialize Intent SDK:', err);
+          setError('Failed to initialize Intent SDK. Please try again.');
         });
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        const sdk = new IntentSdk(walletClient as any, options);
-        setIntentSdk(sdk);
-      });
     }
   }, [accountAddress, ready, authenticated, walletProvider]);
 
-  return { intentSdk };
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  return { intentSdk, error, clearError };
 }

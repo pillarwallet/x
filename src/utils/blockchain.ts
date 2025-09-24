@@ -1,8 +1,6 @@
 /* eslint-disable no-restricted-syntax */
-import { Nft } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft';
-import { NftCollection } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/nft-collection';
-import { TokenListToken } from '@etherspot/data-utils/dist/cjs/sdk/data/classes/token-list-token';
 import { ethers } from 'ethers';
+import { encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import {
   arbitrum,
   avalanche,
@@ -14,6 +12,12 @@ import {
   polygon,
   sepolia,
 } from 'viem/chains';
+
+// utils
+import { isNativeToken } from '../apps/the-exchange/utils/wrappedTokens';
+
+// types
+import { TokenListToken } from '../types/blockchain';
 
 // images
 import logoArbitrum from '../assets/images/logo-arbitrum.png';
@@ -33,6 +37,9 @@ export const isTestnet = (() => {
   }
   return storedIsTestnet === 'true';
 })();
+
+export const isGnosisEnabled =
+  import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
 
 export const isValidEthereumAddress = (
   address: string | undefined
@@ -84,7 +91,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
       'https://public.etherspot.io/buidler/chain_logos/ethereum.png';
   }
 
-  if (chainId === gnosis.id) {
+  if (isGnosisEnabled && chainId === gnosis.id) {
     nativeAsset.name = 'XDAI';
     nativeAsset.symbol = 'XDAI';
     nativeAsset.logoURI =
@@ -136,7 +143,7 @@ export const getNativeAssetForChainId = (chainId: number): TokenListToken => {
   return nativeAsset;
 };
 
-export const supportedChains = [
+const allSupportedChains = [
   mainnet,
   polygon,
   gnosis,
@@ -147,13 +154,13 @@ export const supportedChains = [
   sepolia,
 ];
 
+export const supportedChains = allSupportedChains.filter(
+  (chain) => isGnosisEnabled || chain.id !== 100
+);
+
 export const visibleChains = supportedChains.filter((chain) =>
   isTestnet ? chain.testnet : !chain.testnet
 );
-
-export const parseNftTitle = (collection: NftCollection, nft: Nft): string => {
-  return nft.name ? nft.name : `${collection.contractName} #${nft.tokenId}`;
-};
 
 export const getLogoForChainId = (chainId: number): string => {
   if (chainId === mainnet.id) {
@@ -164,7 +171,7 @@ export const getLogoForChainId = (chainId: number): string => {
     return logoPolygon;
   }
 
-  if (chainId === gnosis.id) {
+  if (isGnosisEnabled && chainId === gnosis.id) {
     return logoGnosis;
   }
 
@@ -224,7 +231,9 @@ export const getBlockScan = (chain: number, isAddress: boolean = false) => {
     case 8453:
       return `https://basescan.org/${isAddress ? 'address' : 'tx'}/`;
     case 100:
-      return `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`;
+      return isGnosisEnabled
+        ? `https://gnosisscan.io/${isAddress ? 'address' : 'tx'}/`
+        : '';
     case 56:
       return `https://bscscan.com/${isAddress ? 'address' : 'tx'}/`;
     case 10:
@@ -245,7 +254,7 @@ export const getBlockScanName = (chain: number) => {
     case 8453:
       return 'Basescan';
     case 100:
-      return 'Gnosisscan';
+      return isGnosisEnabled ? 'Gnosisscan' : '';
     case 56:
       return 'Bscscan';
     case 10:
@@ -266,7 +275,7 @@ export const getChainName = (chain: number) => {
     case 8453:
       return 'Base';
     case 100:
-      return 'Gnosis';
+      return isGnosisEnabled ? 'Gnosis' : `${chain}`;
     case 56:
       return 'BNB Smart Chain';
     case 10:
@@ -278,7 +287,7 @@ export const getChainName = (chain: number) => {
   }
 };
 
-export const CompatibleChains = [
+const allCompatibleChains = [
   {
     chainId: 1,
     chainName: 'Ethereum',
@@ -309,7 +318,11 @@ export const CompatibleChains = [
   },
 ];
 
-const STABLECOIN_ADDRESSES: Record<number, Set<string>> = {
+export const CompatibleChains = allCompatibleChains.filter(
+  (chain) => isGnosisEnabled || chain.chainId !== 100
+);
+
+const allStablecoinAddresses: Record<number, Set<string>> = {
   1: new Set([
     // Ethereum mainnet
     '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
@@ -347,9 +360,134 @@ const STABLECOIN_ADDRESSES: Record<number, Set<string>> = {
   ]),
 };
 
+const STABLECOIN_ADDRESSES = Object.fromEntries(
+  Object.entries(allStablecoinAddresses).filter(
+    ([chainId]) => isGnosisEnabled || chainId !== '100'
+  )
+) as Record<number, Set<string>>;
+
 export function isStableCoin(address: string, chainId: number): boolean {
   if (!address || !chainId) return false;
   const set = STABLECOIN_ADDRESSES[chainId];
   if (!set) return false;
   return set.has(address.toLowerCase());
 }
+
+// Simple utility to safely convert values to BigInt
+export const safeBigIntConversion = (value: unknown): bigint => {
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'string' && value.includes('.')) return BigInt(0); // Skip decimal strings
+  try {
+    return BigInt(String(value || 0));
+  } catch {
+    return BigInt(0);
+  }
+};
+
+export const buildTransactionData = ({
+  tokenAddress,
+  recipient,
+  amount,
+  decimals,
+}: {
+  tokenAddress: string;
+  recipient: string;
+  amount: string | bigint;
+  decimals: number;
+}) => {
+  // Validate recipient address
+  if (!recipient || !isValidEthereumAddress(recipient)) {
+    throw new Error('Invalid recipient address');
+  }
+
+  // Validate amount
+  if (typeof amount === 'string') {
+    if (!amount || amount === '0' || amount === '0.0' || amount === '0.00') {
+      throw new Error('Invalid amount: must be a positive value');
+    }
+    if (Number.isNaN(Number(amount)) || Number(amount) <= 0) {
+      throw new Error('Invalid amount: must be a positive valid number');
+    }
+  } else if (typeof amount === 'bigint') {
+    if (amount <= BigInt(0)) {
+      throw new Error('Invalid amount: must be a positive value');
+    }
+  }
+
+  // Validate decimals
+  if (decimals < 0 || decimals > 18 || !Number.isInteger(decimals)) {
+    throw new Error('Invalid decimals: must be an integer between 0 and 18');
+  }
+
+  // Validate token address (for ERC20 tokens)
+  if (!isNativeToken(tokenAddress) && !isValidEthereumAddress(tokenAddress)) {
+    throw new Error('Invalid token address');
+  }
+
+  try {
+    // Ensure amount is properly formatted as a string with appropriate precision
+    const amountString =
+      typeof amount === 'string' ? amount : amount.toString();
+
+    if (isNativeToken(tokenAddress)) {
+      // Native token transfer
+      try {
+        const parsedValue = parseUnits(amountString, decimals);
+        // Ensure the parsed value is a valid bigint
+        if (typeof parsedValue !== 'bigint') {
+          throw new Error(`parseUnits returned invalid value: ${parsedValue}`);
+        }
+        return {
+          to: recipient,
+          value: parsedValue,
+          data: '0x',
+        };
+      } catch (parseError) {
+        console.error(
+          'parseUnits error:',
+          parseError,
+          'amountString:',
+          amountString,
+          'decimals:',
+          decimals
+        );
+        throw new Error(
+          `Failed to parse units: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+        );
+      }
+    }
+    // ERC20 transfer
+    try {
+      const parsedAmount = parseUnits(amountString, decimals);
+      // Ensure the parsed amount is a valid bigint
+      if (typeof parsedAmount !== 'bigint') {
+        throw new Error(`parseUnits returned invalid value: ${parsedAmount}`);
+      }
+      return {
+        to: tokenAddress,
+        value: '0',
+        data: encodeFunctionData({
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [recipient as `0x${string}`, parsedAmount],
+        }),
+      };
+    } catch (parseError) {
+      console.error(
+        'parseUnits error:',
+        parseError,
+        'amountString:',
+        amountString,
+        'decimals:',
+        decimals
+      );
+      throw new Error(
+        `Failed to parse units: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`
+      );
+    }
+  } catch (error) {
+    throw new Error(
+      `Failed to build transaction data: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+};

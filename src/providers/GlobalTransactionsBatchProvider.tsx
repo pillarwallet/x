@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { createContext, useMemo } from 'react';
 
-// utils
-import { getObjectHash } from '../utils/common';
+// hooks
+import useTransactionKit from '../hooks/useTransactionKit';
 
 // types
 import { ITransaction } from '../types/blockchain';
@@ -15,13 +15,17 @@ export type IGlobalBatchTransaction = {
 
 export interface IGlobalTransactionsBatchContext {
   data: {
-    transactions: IGlobalBatchTransaction[];
-    addToBatch: (transaction: IGlobalBatchTransaction) => void;
-    removeFromBatch: (transactionId: string) => void;
     walletConnectTxHash: string | undefined;
     setWalletConnectTxHash: React.Dispatch<
       React.SetStateAction<string | undefined>
     >;
+    transactionMeta: Record<string, { title: string; description?: string }>;
+    setTransactionMetaForName: (
+      transactionName: string,
+      meta: { title: string; description?: string }
+    ) => void;
+    batchCount: number;
+    setBatchCount: React.Dispatch<React.SetStateAction<number>>;
   };
 }
 
@@ -33,37 +37,68 @@ const GlobalTransactionsBatchProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [transactions, setBatches] = React.useState<IGlobalBatchTransaction[]>(
-    []
-  );
   const [walletConnectTxHash, setWalletConnectTxHash] = React.useState<
     string | undefined
   >(undefined);
-
-  const addToBatch = (transaction: IGlobalBatchTransaction) => {
-    setBatches((prev) =>
-      prev.concat({
-        ...transaction,
-        id:
-          transaction.id ||
-          getObjectHash(transaction, +new Date() + Math.random()),
-      })
-    );
+  const [transactionMeta, setTransactionMeta] = React.useState<
+    Record<string, { title: string; description?: string }>
+  >({});
+  const [batchCount, setBatchCount] = React.useState<number>(0);
+  const setTransactionMetaForName = (
+    transactionName: string,
+    meta: { title: string; description?: string }
+  ) => {
+    if (!transactionName || !meta.title) {
+      console.warn('Invalid transaction metadata: name and title are required');
+      return;
+    }
+    setTransactionMeta((prev) => ({ ...prev, [transactionName]: meta }));
   };
 
-  const removeFromBatch = (transactionId: string) => {
-    setBatches((prev) => prev.filter((tx) => tx.id !== transactionId));
-  };
+  const { kit } = useTransactionKit();
+  React.useEffect(() => {
+    let mounted = true;
+    const interval = setInterval(() => {
+      if (!mounted) return;
+
+      const { namedTransactions, batches } = kit.getState();
+
+      setTransactionMeta((prev) => {
+        // Skip if no changes needed
+        const prevKeys = Object.keys(prev);
+        const validNames = new Set(Object.keys(namedTransactions));
+        const hasChanges = prevKeys.some((key) => !validNames.has(key));
+
+        if (!hasChanges) return prev;
+
+        return Object.fromEntries(
+          Object.entries(prev).filter(([name]) => validNames.has(name))
+        );
+      });
+
+      // Filter out pulse-sell batches from the count - they are handled directly in the Pulse app
+      const filteredBatches = Object.keys(batches).filter(
+        (batchName) => !batchName.includes('pulse-sell')
+      );
+      setBatchCount(filteredBatches.length);
+    }, 1000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [kit]);
 
   const contextData = useMemo(
     () => ({
-      transactions,
       walletConnectTxHash,
       setWalletConnectTxHash,
-      addToBatch,
-      removeFromBatch,
+      transactionMeta,
+      setTransactionMetaForName,
+      batchCount,
+      setBatchCount,
     }),
-    [transactions, walletConnectTxHash]
+    [walletConnectTxHash, transactionMeta, batchCount]
   );
 
   return (

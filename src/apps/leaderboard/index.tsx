@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import { useCallback, useEffect, useMemo } from 'react';
 
 // styles
@@ -22,6 +21,7 @@ import PxPointsSummary from './components/PxPointsSummary/PxPointsSummary';
 import H1 from './components/Typography/H1';
 
 // hooks
+import useTransactionKit from '../../hooks/useTransactionKit';
 import { useLeaderboardData } from './hooks/useLeaderboardData';
 import { useAppDispatch, useAppSelector } from './hooks/useReducerHooks';
 
@@ -38,7 +38,7 @@ import {
 
 const App = () => {
   const dispatch = useAppDispatch();
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
 
   const activeTab = useAppSelector(
     (state) => state.leaderboard.activeTab as LeaderboardTabsType

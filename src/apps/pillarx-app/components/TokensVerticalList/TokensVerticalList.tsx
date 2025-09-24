@@ -1,4 +1,4 @@
-import { useEtherspotUtils } from '@etherspot/transaction-kit';
+import { EtherspotUtils } from '@etherspot/transaction-kit';
 import { useNavigate } from 'react-router-dom';
 
 // types
@@ -18,7 +18,7 @@ type TokensVerticalListProps = {
 
 const TokensVerticalList = ({ position, data }: TokensVerticalListProps) => {
   const navigate = useNavigate();
-  const { isZeroAddress } = useEtherspotUtils();
+  const { isZeroAddress } = EtherspotUtils;
   const listStartIndex = position === 'left' ? 1 : 4;
 
   return (

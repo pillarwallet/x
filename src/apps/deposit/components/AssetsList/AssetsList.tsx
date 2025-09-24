@@ -38,7 +38,9 @@ import PolygonList from '../../utils/tokens/polygon-tokens.json';
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 import Asset from '../Asset/Asset';
 
-const tokenLists = {
+const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
+
+const allTokenLists = {
   1: EthereumList,
   137: PolygonList,
   100: GnosisList,
@@ -47,6 +49,12 @@ const tokenLists = {
   10: OptimismList,
   42161: ArbitrumList,
 };
+
+const tokenLists = Object.fromEntries(
+  Object.entries(allTokenLists).filter(
+    ([chainId]) => isGnosisEnabled || chainId !== '100'
+  )
+);
 
 type AssetsListProps = {
   accountAddress: string;

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useEtherspot, useWalletAddress } from '@etherspot/transaction-kit';
 import { EVM, createConfig } from '@lifi/sdk';
 import { useEffect, useRef } from 'react';
 
@@ -8,14 +7,15 @@ import styled from 'styled-components';
 import './styles/tailwindTheExchange.css';
 
 // hooks
+import useTransactionKit from '../../hooks/useTransactionKit';
 import { useAppSelector } from './hooks/useReducerHooks';
 
 // utils
 import { supportedChains } from '../../utils/blockchain';
 import {
+  addExchangeBreadcrumb,
   initSentryForExchange,
   logExchangeEvent,
-  addExchangeBreadcrumb,
 } from './utils/sentry';
 
 // components
@@ -28,8 +28,8 @@ import SwapSummary from './components/SwapSummary/SwapSummary';
 import XBackground from './images/x-background.svg';
 
 export const App = () => {
-  const { provider } = useEtherspot();
-  const walletAddress = useWalletAddress();
+  const { kit, walletAddress } = useTransactionKit();
+  const provider = kit.getProvider();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );

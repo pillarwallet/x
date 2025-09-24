@@ -17,6 +17,7 @@ export type PayingToken = {
   totalUsd: number;
   totalRaw: string;
   chainId: number;
+  address: string;
 };
 
 export enum SearchType {

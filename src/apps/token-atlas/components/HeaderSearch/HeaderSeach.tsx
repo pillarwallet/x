@@ -1,9 +1,8 @@
-import { useWalletAddress } from '@etherspot/transaction-kit';
-
 // api
 import { useRecordPresenceMutation } from '../../../../services/pillarXApiPresence';
 
 // hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 
 // reducer
@@ -24,17 +23,19 @@ const HeaderSearch = () => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   const dispatch = useAppDispatch();
 
   const handleSearchOpen = async () => {
     dispatch(setIsSearchTokenModalOpen(true));
-    recordPresence({
-      address: accountAddress,
-      action: 'app:tokenAtlas:searchOpen',
-      value: 'SEARCH_OPEN',
-    });
+    if (accountAddress) {
+      recordPresence({
+        address: accountAddress,
+        action: 'app:tokenAtlas:searchOpen',
+        value: 'SEARCH_OPEN',
+      });
+    }
   };
 
   return (

@@ -1,4 +1,6 @@
-export const STABLE_CURRENCIES = [
+import { isGnosisEnabled } from '../../../utils/blockchain';
+
+const allStableCurrencies = [
   { chainId: 1, address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' },
   { chainId: 10, address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85' }, // USDC on Optimism
   { chainId: 137, address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359' }, // USDC on Polygon
@@ -7,3 +9,7 @@ export const STABLE_CURRENCIES = [
   { chainId: 56, address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d' }, // USDC on BNB Smart Chain
   { chainId: 100, address: '0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0' }, // USDC on Gnosis
 ];
+
+export const STABLE_CURRENCIES = allStableCurrencies.filter(
+  (currency) => isGnosisEnabled || currency.chainId !== 100
+);

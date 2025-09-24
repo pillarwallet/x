@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useWalletAddress } from '@etherspot/transaction-kit';
 import styled from 'styled-components';
+
+// hooks
+import useTransactionKit from '../../../hooks/useTransactionKit';
 
 // components
 import SkeletonLoader from '../../SkeletonLoader';
@@ -11,7 +13,7 @@ interface HistoryModalProps {
 }
 
 const HistoryModal = ({ isContentVisible }: HistoryModalProps) => {
-  const accountAddress = useWalletAddress();
+  const { walletAddress: accountAddress } = useTransactionKit();
 
   if (!isContentVisible) {
     return <Wrapper />;

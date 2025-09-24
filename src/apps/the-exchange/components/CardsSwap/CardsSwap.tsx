@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 import { useState } from 'react';
-import { useWalletAddress } from '@etherspot/transaction-kit';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // reducer
 import {
@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
 import { CardPosition } from '../../utils/types';
 
 // utils
-import { logUserInteraction, addExchangeBreadcrumb } from '../../utils/sentry';
+import { addExchangeBreadcrumb, logUserInteraction } from '../../utils/sentry';
 
 // components
 import DropdownTokenList from '../DropdownTokensList/DropdownTokenList';
@@ -34,7 +34,7 @@ type CardPositionType = {
 
 const CardsSwap = () => {
   const dispatch = useAppDispatch();
-  const walletAddress = useWalletAddress();
+  const { walletAddress } = useTransactionKit();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );

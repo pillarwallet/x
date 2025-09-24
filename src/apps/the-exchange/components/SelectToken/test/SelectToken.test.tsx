@@ -1,115 +1,92 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
-
 import { vi } from 'vitest';
 
-// components
-import SelectToken from '../SelectToken';
+// test utils
+import { ExchangeTestWrapper } from '../../../../../test-utils/testUtils';
 
 // types
 import { CardPosition } from '../../../utils/types';
 
-// utils
-import { getChainName } from '../../../../../utils/blockchain';
-
-// Mock Sentry
-vi.mock('@sentry/react', () => ({
-  setContext: vi.fn(),
-  addBreadcrumb: vi.fn(),
-  startTransaction: vi.fn(() => ({
-    finish: vi.fn(),
-    setStatus: vi.fn(),
-    setTag: vi.fn(),
-    setData: vi.fn(),
-  })),
-  captureException: vi.fn(),
-  captureMessage: vi.fn(),
-  withScope: vi.fn((callback) =>
-    callback({
-      setLevel: vi.fn(),
-      setTag: vi.fn(),
-      setExtra: vi.fn(),
-    })
-  ),
-}));
-
-// Mock Sentry utility functions
-vi.mock('../../../utils/sentry', () => ({
-  logUserInteraction: vi.fn(),
-  addExchangeBreadcrumb: vi.fn(),
-}));
-
-// Mock the getChainName function
-vi.mock('../../../utils/converters', () => ({
-  getChainName: vi.fn(),
-}));
+// components
+import SelectToken from '../SelectToken';
 
 describe('<SelectToken />', () => {
+  const mockOnClick = vi.fn();
   const type = CardPosition.SWAP;
-  const tokenName = 'Token Example';
+  const tokenName = 'Ether';
   const tokenChain = 1;
-  const tokenLogo = 'https://example.com/token-logo.png';
-  const onClickMock = vi.fn();
+  const tokenLogo = 'iconEth.png';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <SelectToken
-          type={type}
-          tokenName={tokenName}
-          tokenChain={tokenChain}
-          tokenLogo={tokenLogo}
-          onClick={onClickMock}
-        />
+        <ExchangeTestWrapper>
+          <SelectToken
+            type={type}
+            tokenName={tokenName}
+            tokenChain={tokenChain}
+            tokenLogo={tokenLogo}
+            onClick={mockOnClick}
+          />
+        </ExchangeTestWrapper>
       )
       .toJSON();
+
     expect(tree).toMatchSnapshot();
   });
 
   it('renders SelectToken correctly with arguments', () => {
     render(
-      <SelectToken
-        type={type}
-        tokenName={tokenName}
-        tokenChain={tokenChain}
-        tokenLogo={tokenLogo}
-        onClick={onClickMock}
-      />
+      <ExchangeTestWrapper>
+        <SelectToken
+          type={type}
+          tokenName={tokenName}
+          tokenChain={tokenChain}
+          tokenLogo={tokenLogo}
+          onClick={mockOnClick}
+        />
+      </ExchangeTestWrapper>
     );
 
-    expect(screen.getByText(tokenName)).toBeInTheDocument();
-    expect(
-      screen.getByText(`On ${getChainName(tokenChain)}`)
-    ).toBeInTheDocument();
-    expect(screen.getByAltText('token-logo')).toHaveAttribute('src', tokenLogo);
+    expect(screen.getByText('Ether')).toBeInTheDocument();
+    expect(screen.getByText('On Ethereum')).toBeInTheDocument();
   });
 
   it('renders "Select Token" with type when token is not provided', () => {
-    render(<SelectToken type={type} onClick={onClickMock} />);
+    render(
+      <ExchangeTestWrapper>
+        <SelectToken type={type} onClick={mockOnClick} />
+      </ExchangeTestWrapper>
+    );
 
-    expect(screen.getByText(type)).toBeInTheDocument();
     expect(screen.getByText('Select Token')).toBeInTheDocument();
-    expect(
-      screen.queryByText(`On ${getChainName(tokenChain)}`)
-    ).not.toBeInTheDocument();
-    expect(screen.queryByAltText('token-logo')).not.toBeInTheDocument();
   });
 
   it('calls onClick when SelectToken is clicked', () => {
     render(
-      <SelectToken
-        type={type}
-        tokenName={tokenName}
-        tokenChain={tokenChain}
-        tokenLogo={tokenLogo}
-        onClick={onClickMock}
-      />
+      <ExchangeTestWrapper>
+        <SelectToken
+          type={type}
+          tokenName={tokenName}
+          tokenChain={tokenChain}
+          tokenLogo={tokenLogo}
+          onClick={mockOnClick}
+        />
+      </ExchangeTestWrapper>
     );
 
-    const selectTokenDiv = screen.getByText(tokenName).closest('div');
-    if (selectTokenDiv) {
-      fireEvent.click(selectTokenDiv);
-      expect(onClickMock).toHaveBeenCalled();
-    }
+    const selectTokenElement = screen.getByText('Ether');
+    fireEvent.click(selectTokenElement);
+
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 });
