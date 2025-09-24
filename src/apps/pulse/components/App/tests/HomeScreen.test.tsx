@@ -17,6 +17,9 @@ import * as portfolioService from '../../../../../services/pillarXApiWalletPortf
 // components
 import HomeScreen from '../HomeScreen';
 
+// test utils
+import { TestWrapper } from '../../../../../test-utils/testUtils';
+
 // Mock dependencies
 vi.mock('../../../../../hooks/useTransactionKit', () => ({
   default: vi.fn(),
@@ -33,15 +36,20 @@ const mockProps = {
   buyToken: null,
   sellToken: null,
   refetchWalletPortfolio: vi.fn(),
+  setBuyToken: vi.fn(),
+  chains: 'Ethereum',
+  setChains: vi.fn(),
 };
 
 const renderWithProviders = (props = {}) => {
   return render(
-    <GlobalTransactionsBatchProvider>
-      <BottomMenuModalProvider>
-        <HomeScreen {...mockProps} {...props} />
-      </BottomMenuModalProvider>
-    </GlobalTransactionsBatchProvider>
+    <TestWrapper>
+      <GlobalTransactionsBatchProvider>
+        <BottomMenuModalProvider>
+          <HomeScreen {...mockProps} {...props} />
+        </BottomMenuModalProvider>
+      </GlobalTransactionsBatchProvider>
+    </TestWrapper>
   );
 };
 
@@ -71,11 +79,13 @@ describe('<HomeScreen />', () => {
   it('renders correctly and matches snapshot', () => {
     const tree = renderer
       .create(
-        <GlobalTransactionsBatchProvider>
-          <BottomMenuModalProvider>
-            <HomeScreen {...mockProps} />
-          </BottomMenuModalProvider>
-        </GlobalTransactionsBatchProvider>
+        <TestWrapper>
+          <GlobalTransactionsBatchProvider>
+            <BottomMenuModalProvider>
+              <HomeScreen {...mockProps} />
+            </BottomMenuModalProvider>
+          </GlobalTransactionsBatchProvider>
+        </TestWrapper>
       )
       .toJSON();
     expect(tree).toMatchSnapshot();
@@ -117,11 +127,13 @@ describe('<HomeScreen />', () => {
 
     // Switch to Sell state
     rerender(
-      <GlobalTransactionsBatchProvider>
-        <BottomMenuModalProvider>
-          <HomeScreen {...mockProps} isBuy={false} />
-        </BottomMenuModalProvider>
-      </GlobalTransactionsBatchProvider>
+      <TestWrapper>
+        <GlobalTransactionsBatchProvider>
+          <BottomMenuModalProvider>
+            <HomeScreen {...mockProps} isBuy={false} />
+          </BottomMenuModalProvider>
+        </GlobalTransactionsBatchProvider>
+      </TestWrapper>
     );
 
     // Sell state - should show Sell component, hide Buy
@@ -233,11 +245,13 @@ describe('<HomeScreen />', () => {
 
     // Test Sell mode
     rerender(
-      <GlobalTransactionsBatchProvider>
-        <BottomMenuModalProvider>
-          <HomeScreen {...mockProps} isBuy={false} />
-        </BottomMenuModalProvider>
-      </GlobalTransactionsBatchProvider>
+      <TestWrapper>
+        <GlobalTransactionsBatchProvider>
+          <BottomMenuModalProvider>
+            <HomeScreen {...mockProps} isBuy={false} />
+          </BottomMenuModalProvider>
+        </GlobalTransactionsBatchProvider>
+      </TestWrapper>
     );
 
     expect(screen.getByTestId('pulse-sell-component')).toBeInTheDocument();

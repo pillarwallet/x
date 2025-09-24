@@ -10,8 +10,17 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Hex, getAddress } from 'viem';
-import { WalletPortfolioMobulaResponse } from '../../../../types/api';
+import { TailSpin } from 'react-loader-spinner';
+import { useLocation } from 'react-router-dom';
+import { Hex, getAddress, isAddress } from 'viem';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
+import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
+import {
+  PairResponse,
+  TokenAssetResponse,
+  WalletPortfolioMobulaResponse,
+} from '../../../../types/api';
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import ArrowDown from '../../assets/arrow-down.svg';
@@ -21,11 +30,9 @@ import { STABLE_CURRENCIES } from '../../constants/tokens';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useModularSdk from '../../hooks/useModularSdk';
 import { PayingToken, SelectedToken } from '../../types/tokens';
+import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import BuyButton from './BuyButton';
-
-// hooks
-import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -42,6 +49,8 @@ interface BuyProps {
   setBuyRefreshCallback?: Dispatch<
     SetStateAction<(() => Promise<void>) | null>
   >;
+  setBuyToken?: Dispatch<SetStateAction<SelectedToken | null>>;
+  setChains: Dispatch<SetStateAction<MobulaChainNames>>;
 }
 
 export default function Buy(props: BuyProps) {
@@ -56,10 +65,34 @@ export default function Buy(props: BuyProps) {
     token,
     walletPortfolioData,
     payingTokens,
+    setBuyToken,
+    setChains,
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
   const { intentSdk } = useIntentSdk();
+
+  // Simple background search for token-atlas
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const tokenToSearch = query.get('asset');
+  const blockchain = query.get('blockchain');
+  const fromTokenAtlas = query.get('from') === 'token-atlas';
+  const [isSearchingToken, setIsSearchingToken] = useState(false);
+
+  const { data: searchData, isLoading: isSearchLoading } =
+    useGetSearchTokensQuery(
+      {
+        searchInput: tokenToSearch || '',
+        filterBlockchains: getChainId(
+          (blockchain as MobulaChainNames) || 'Ethereum'
+        ),
+      },
+      {
+        skip: !fromTokenAtlas || !tokenToSearch || !!token,
+      }
+    );
+
   const { areModulesInstalled, isInstalling, installModules, isFetching } =
     useModularSdk({
       payingTokens,
@@ -295,6 +328,77 @@ export default function Buy(props: BuyProps) {
     };
   }, [setBuyRefreshCallback, refreshBuyIntent]);
 
+  // Start searching when coming from token-atlas
+  useEffect(() => {
+    if (fromTokenAtlas && tokenToSearch && !token) {
+      setIsSearchingToken(true);
+    }
+  }, [fromTokenAtlas, tokenToSearch, token]);
+
+  // Auto-select token when search results are ready
+  useEffect(() => {
+    if (
+      fromTokenAtlas &&
+      tokenToSearch &&
+      !token &&
+      searchData?.result?.data &&
+      !isSearchLoading
+    ) {
+      const foundToken = searchData.result.data.find(
+        (searchToken: TokenAssetResponse | PairResponse | undefined) => {
+          if (isAddress(tokenToSearch)) {
+            return (
+              (
+                searchToken as TokenAssetResponse
+              )?.contracts?.[0]?.toLowerCase() === tokenToSearch.toLowerCase()
+            );
+          }
+          return (
+            (searchToken as TokenAssetResponse)?.symbol?.toLowerCase() ===
+            tokenToSearch.toLowerCase()
+          );
+        }
+      );
+
+      if (foundToken && 'name' in foundToken && setBuyToken) {
+        const chainIdFromUrl = blockchain
+          ? chainNameToChainIdTokensData(blockchain)
+          : 1;
+
+        const tokenToSelect = {
+          name: foundToken.name,
+          symbol: foundToken.symbol,
+          logo: foundToken.logo ?? '',
+          address: foundToken.contracts?.[0] || '',
+          chainId: chainIdFromUrl,
+          decimals: Array.isArray(foundToken.decimals)
+            ? foundToken.decimals[0] || 18
+            : foundToken.decimals || 18,
+          usdValue: foundToken.price?.toString() || '0',
+          dailyPriceChange: 0,
+        };
+
+        setBuyToken(tokenToSelect as SelectedToken);
+
+        // Set the correct chain based on the blockchain parameter
+        if (blockchain) {
+          setChains(blockchain as MobulaChainNames);
+        }
+
+        setIsSearchingToken(false);
+      }
+    }
+  }, [
+    fromTokenAtlas,
+    tokenToSearch,
+    token,
+    searchData,
+    isSearchLoading,
+    setBuyToken,
+    blockchain,
+    setChains,
+  ]);
+
   return (
     <div className="flex flex-col" data-testid="pulse-buy-component">
       <div
@@ -412,15 +516,24 @@ export default function Buy(props: BuyProps) {
                   borderRadius: 10,
                 }}
               >
-                <div
-                  className="flex"
-                  style={{ fontWeight: 400, fontSize: 12, marginLeft: 5 }}
-                >
-                  Select token
-                </div>
-                <div className="flex ml-2">
-                  <img src={ArrowDown} alt="arrow-down" />
-                </div>
+                {isSearchingToken ? (
+                  <div className="flex items-center">
+                    <TailSpin width={16} height={16} />
+                    <div className="flex font-normal text-xs">Searching...</div>
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="flex"
+                      style={{ fontWeight: 400, fontSize: 12, marginLeft: 5 }}
+                    >
+                      Select token
+                    </div>
+                    <div className="flex ml-2">
+                      <img src={ArrowDown} alt="arrow-down" />
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </button>
