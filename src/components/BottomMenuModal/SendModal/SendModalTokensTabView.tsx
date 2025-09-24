@@ -1513,6 +1513,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       if (isPaymaster && selectedPaymasterAddress && selectedFeeAsset) {
         const batchName = 'paymaster-batch';
 
+        // Clear any existing paymaster batch before creating a new one
+        const existingBatches = kit.getState().batches;
+        if (existingBatches[batchName]) {
+          kit.batch({ batchName }).remove();
+        }
+
         // 1. Approval transaction
         kit
           .transaction({
@@ -1560,6 +1566,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             'Batch estimation error:',
             batchEstimate.batches[batchName]?.errorMessage
           );
+          // Clear the failed paymaster batch
+          kit.batch({ batchName }).remove();
+
           Sentry.captureMessage('Estimation error during send', {
             level: 'error',
             tags: {
@@ -1644,6 +1653,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             'Batch send error:',
             batchSend.batches[batchName]?.errorMessage
           );
+
+          // Clear the failed paymaster batch
+          kit.batch({ batchName }).remove();
+
           Sentry.captureMessage('Sending error during send', {
             level: 'error',
             tags: {
@@ -1687,6 +1700,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         const chainIdForTxHash = selectedAsset.chainId;
         if (!userOpHash) {
           transactionDebugLog('No userOpHash returned after batch send');
+
+          // Clear the failed paymaster batch
+          kit.batch({ batchName }).remove();
+
           Sentry.captureMessage('Failed to get UserOp hash', {
             level: 'error',
             tags: {

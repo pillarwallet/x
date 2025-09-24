@@ -80,6 +80,8 @@ const SendModalBatchesTabView = () => {
       if (!transactions.length) return;
       // Skip pulse-sell batches - they are handled directly in the Pulse app
       if (batchName.includes('pulse-sell')) return;
+      // Skip paymaster-batch - these are internal and should not be displayed in batches view
+      if (batchName === 'paymaster-batch') return;
       const { chainId } = transactions[0];
       if (typeof chainId !== 'number') return; // skip if chainId is undefined
       if (!grouped[chainId]) grouped[chainId] = [];
