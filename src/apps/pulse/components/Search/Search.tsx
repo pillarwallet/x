@@ -121,7 +121,9 @@ export default function Search({
     inputRef.current?.focus();
     const tokenAddress = query.get('asset');
 
-    if (isAddress(tokenAddress || '')) {
+    // Only read asset parameter when in buy mode to prevent token address
+    // from token-atlas showing in sell search
+    if (isBuy && isAddress(tokenAddress || '')) {
       setSearchText(tokenAddress!);
     }
 

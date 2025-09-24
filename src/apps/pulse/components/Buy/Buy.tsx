@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { TailSpin } from 'react-loader-spinner';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Hex, getAddress, isAddress } from 'viem';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
@@ -74,11 +74,16 @@ export default function Buy(props: BuyProps) {
 
   // Simple background search for token-atlas
   const location = useLocation();
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
   const tokenToSearch = query.get('asset');
   const blockchain = query.get('blockchain');
   const fromTokenAtlas = query.get('from') === 'token-atlas';
   const [isSearchingToken, setIsSearchingToken] = useState(false);
+
+  const removeQueryParams = () => {
+    navigate(location.pathname, { replace: true });
+  };
 
   const { data: searchData, isLoading: isSearchLoading } =
     useGetSearchTokensQuery(
@@ -386,8 +391,12 @@ export default function Buy(props: BuyProps) {
         }
 
         setIsSearchingToken(false);
+
+        // Clean up URL parameters after successfully selecting token from token-atlas
+        removeQueryParams();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fromTokenAtlas,
     tokenToSearch,
