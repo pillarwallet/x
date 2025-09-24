@@ -153,6 +153,27 @@ const mockProps = {
 const defaultMocks = () => {
   (useTransactionKit as any).mockReturnValue({
     walletAddress: '0x1234567890123456789012345678901234567890',
+    kit: {
+      getState: vi.fn(() => ({
+        namedTransactions: {},
+        batches: {},
+        isEstimating: false,
+        isSending: false,
+        containsSendingError: false,
+        containsEstimatingError: false,
+      })),
+      getEtherspotProvider: vi.fn(() => ({
+        getChainId: vi.fn(() => 1),
+      })),
+      transaction: vi.fn(() => ({
+        name: vi.fn(() => ({
+          estimate: vi.fn(() => Promise.resolve({})),
+          send: vi.fn(() => Promise.resolve({})),
+        })),
+      })),
+      estimateBatches: vi.fn(() => Promise.resolve({})),
+      sendBatches: vi.fn(() => Promise.resolve({})),
+    },
   });
 
   (useIntentSdk as any).mockReturnValue({
@@ -378,7 +399,30 @@ describe('<Buy />', () => {
     });
 
     it('handles missing wallet address', () => {
-      (useTransactionKit as any).mockReturnValue({ walletAddress: null });
+      (useTransactionKit as any).mockReturnValue({
+        walletAddress: null,
+        kit: {
+          getState: vi.fn(() => ({
+            namedTransactions: {},
+            batches: {},
+            isEstimating: false,
+            isSending: false,
+            containsSendingError: false,
+            containsEstimatingError: false,
+          })),
+          getEtherspotProvider: vi.fn(() => ({
+            getChainId: vi.fn(() => 1),
+          })),
+          transaction: vi.fn(() => ({
+            name: vi.fn(() => ({
+              estimate: vi.fn(() => Promise.resolve({})),
+              send: vi.fn(() => Promise.resolve({})),
+            })),
+          })),
+          estimateBatches: vi.fn(() => Promise.resolve({})),
+          sendBatches: vi.fn(() => Promise.resolve({})),
+        },
+      });
       renderWithProviders();
 
       expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
