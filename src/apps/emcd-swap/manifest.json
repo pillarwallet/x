@@ -1,0 +1,14 @@
+{
+  "id": "emcd-swap",
+  "title": "EMCD Swap",
+  "version": "1.0.0",
+  "description": "Cryptocurrency swap application allowing users to exchange digital assets.",
+  "icons": {},
+  "category": "Finance",
+  "translations": {
+    "ru": {
+      "title": "EMCD Обмен",
+      "description": "Приложение для обмена криптовалюты, позволяющее пользователям обменивать цифровые активы."
+    }
+  }
+}
