@@ -40,11 +40,17 @@ import Body from '../Typography/Body';
 type TokenGraphColumnProps = {
   className?: string;
   isLoadingTokenDataInfo: boolean;
+  selectedToken: SelectedTokenType;
+  isWrappedOrNativeToken: boolean;
+  getSymbol: (symbol: string) => string;
 };
 
 const TokenGraphColumn = ({
   className,
   isLoadingTokenDataInfo,
+  selectedToken,
+  isWrappedOrNativeToken,
+  getSymbol,
 }: TokenGraphColumnProps) => {
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
@@ -59,9 +65,6 @@ const TokenGraphColumn = ({
   );
   const periodFilter = useAppSelector(
     (state) => state.tokenAtlas.periodFilter as PeriodFilter
-  );
-  const selectedToken = useAppSelector(
-    (state) => state.tokenAtlas.selectedToken as SelectedTokenType | undefined
   );
   const isTokenDataErroring = useAppSelector(
     (state) => state.tokenAtlas.isTokenDataErroring as boolean
@@ -209,9 +212,22 @@ const TokenGraphColumn = ({
                   className="flex w-fit ml-2 py-3 px-6 text-sm font-semibold uppercase truncate rounded bg-green hover:bg-[#5DE000] text-dark_grey"
                   onClick={() => {
                     setIsAnimated(false);
-                    navigate(
-                      `/the-exchange?${!isZeroAddress(selectedToken?.address || '') ? `&asset=${selectedToken?.address}` : `&asset=${selectedToken?.symbol}`}&blockchain=${chainIdToChainNameTokensData(selectedToken?.chainId)}`
+
+                    let assetParam: string;
+                    if (isWrappedOrNativeToken) {
+                      assetParam = getSymbol(selectedToken.symbol);
+                    } else if (!isZeroAddress(selectedToken.address || '')) {
+                      assetParam = selectedToken.address;
+                    } else {
+                      assetParam = selectedToken.symbol;
+                    }
+
+                    const blockchainParam = chainIdToChainNameTokensData(
+                      selectedToken.chainId
                     );
+                    const finalUrl = `/pulse?asset=${assetParam}&blockchain=${blockchainParam}&from=token-atlas`;
+
+                    navigate(finalUrl);
                   }}
                 >
                   Buy {tokenDataInfo?.symbol}

@@ -89,14 +89,21 @@ const mockChains = {
   arbitrum: { chainId: 42161, chainName: 'Arbitrum' },
 };
 
-vi.mock('../../../../../services/pillarXApiSearchTokens', () => ({
-  __esModule: true,
-  useGetSearchTokensQuery: vi.fn().mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isFetching: false,
-  }),
-}));
+vi.mock(
+  '../../../../../services/pillarXApiSearchTokens',
+  async (importOriginal) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const actual = (await importOriginal()) as any;
+    return {
+      ...actual,
+      useGetSearchTokensQuery: vi.fn().mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isFetching: false,
+      }),
+    };
+  }
+);
 
 vi.mock('../../../../../services/tokensData', () => ({
   __esModule: true,

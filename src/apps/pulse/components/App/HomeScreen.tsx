@@ -15,6 +15,7 @@ import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalle
 
 // types
 import { PayingToken, SelectedToken } from '../../types/tokens';
+import { MobulaChainNames } from '../../utils/constants';
 
 // components
 import SearchIcon from '../../assets/seach-icon.svg';
@@ -37,6 +38,8 @@ interface HomeScreenProps {
   isBuy: boolean;
   setIsBuy: Dispatch<SetStateAction<boolean>>;
   refetchWalletPortfolio: () => void;
+  setBuyToken: Dispatch<SetStateAction<SelectedToken | null>>;
+  setChains: Dispatch<SetStateAction<MobulaChainNames>>;
 }
 
 export default function HomeScreen(props: HomeScreenProps) {
@@ -47,6 +50,8 @@ export default function HomeScreen(props: HomeScreenProps) {
     setIsBuy,
     setSearching,
     refetchWalletPortfolio,
+    setBuyToken,
+    setChains,
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
@@ -376,6 +381,8 @@ export default function HomeScreen(props: HomeScreenProps) {
               setUsdAmount={setUsdAmount}
               setDispensableAssets={setDispensableAssets}
               setBuyRefreshCallback={setBuyRefreshCallback}
+              setBuyToken={setBuyToken}
+              setChains={setChains}
             />
           ) : (
             <Sell

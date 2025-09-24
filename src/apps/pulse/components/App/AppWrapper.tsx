@@ -40,9 +40,22 @@ export default function AppWrapper() {
 
   useEffect(() => {
     const tokenAddress = query.get('asset');
+    const from = query.get('from');
 
-    if (isAddress(tokenAddress || '')) {
-      setSearching(true);
+    // If coming from token-atlas, don't show search modal - let Buy component handle everything
+    if (from === 'token-atlas' && tokenAddress) {
+      // Do nothing - Buy component will handle the search and chain filter
+    } else if (tokenAddress) {
+      // Only show search for valid addresses or symbols (not empty/invalid)
+      const isValidAddress = isAddress(tokenAddress);
+      const isValidSymbol =
+        /^[A-Za-z0-9]+$/.test(tokenAddress) &&
+        tokenAddress.length > 0 &&
+        tokenAddress.length <= 10;
+
+      if (isValidAddress || isValidSymbol) {
+        setSearching(true);
+      }
     }
   }, [setSearching, query]);
 
@@ -68,6 +81,8 @@ export default function AppWrapper() {
       isBuy={isBuy}
       setIsBuy={setIsBuy}
       refetchWalletPortfolio={refetchWalletPortfolio}
+      setBuyToken={setBuyToken}
+      setChains={setChains}
     />
   );
 }
