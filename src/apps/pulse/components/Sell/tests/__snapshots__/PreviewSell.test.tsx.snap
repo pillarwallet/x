@@ -90,6 +90,12 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
           className="text-[13px] font-normal text-white"
         >
           Test Token
+           
+          <span
+            className="text-white/[.5]"
+          >
+            TEST
+          </span>
         </div>
         <div
           className="flex items-center text-[13px] font-normal text-white/50"

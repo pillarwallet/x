@@ -13,7 +13,10 @@ import { SelectedToken } from '../../types/tokens';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
-import { limitDigitsNumber } from '../../../../utils/number';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -206,7 +209,7 @@ const Sell = (props: SellProps) => {
                   </div>
                   <div className="flex">
                     <p className="text-[10px] font-normal text-grey h-2.5">
-                      ${token.usdValue}
+                      ${formatExponentialSmallNumber(token.usdValue)}
                     </p>
                   </div>
                 </div>
@@ -294,8 +297,13 @@ const Sell = (props: SellProps) => {
             >
               {token ? (
                 <>
-                  {limitDigitsNumber(tokenBalance)} {token.symbol} ($
-                  {limitDigitsNumber(tokenBalance * parseFloat(token.usdValue))}
+                  {formatExponentialSmallNumber(
+                    limitDigitsNumber(tokenBalance)
+                  )}{' '}
+                  {token.symbol} ($
+                  {formatExponentialSmallNumber(
+                    limitDigitsNumber(tokenBalance * parseFloat(token.usdValue))
+                  )}
                   )
                 </>
               ) : (
@@ -331,15 +339,19 @@ const Sell = (props: SellProps) => {
                       const multiplier = 10 ** decimals;
                       const amount =
                         Math.floor(tokenBalance * multiplier) / multiplier;
-                      setTokenAmount(amount.toString());
-                      setParentTokenAmount(amount.toString());
+                      const formattedAmount =
+                        formatExponentialSmallNumber(amount);
+                      setTokenAmount(formattedAmount);
+                      setParentTokenAmount(formattedAmount);
                     } else {
                       const amount = (
                         (tokenBalance * percentage) /
                         100
                       ).toFixed(6);
-                      setTokenAmount(amount);
-                      setParentTokenAmount(amount);
+                      const formattedAmount =
+                        formatExponentialSmallNumber(amount);
+                      setTokenAmount(formattedAmount);
+                      setParentTokenAmount(formattedAmount);
                     }
                   }
                 }}

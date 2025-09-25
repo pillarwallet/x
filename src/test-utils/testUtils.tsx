@@ -17,6 +17,9 @@ import walletPortfolioSlice from '../apps/pillarx-app/reducer/WalletPortfolioSli
 import swapSlice from '../apps/the-exchange/reducer/theExchangeSlice';
 import tokenAtlasSlice from '../apps/token-atlas/reducer/tokenAtlasSlice';
 
+// APIs
+import { pillarXApiSearchTokens } from '../services/pillarXApiSearchTokens';
+
 // types
 import { PeriodFilter } from '../apps/token-atlas/types/types';
 
@@ -36,7 +39,10 @@ const testStore = configureStore({
     walletPortfolio: walletPortfolioSlice.reducer,
     swap: swapSlice.reducer,
     tokenAtlas: tokenAtlasSlice.reducer,
+    [pillarXApiSearchTokens.reducerPath]: pillarXApiSearchTokens.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(pillarXApiSearchTokens.middleware),
   preloadedState: {
     deposit: depositSlice.getInitialState(),
     leaderboard: leaderboardSlice.getInitialState(),

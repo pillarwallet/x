@@ -296,6 +296,9 @@ export const App = () => {
           isLoadingTokenDataInfo={
             isLoadingTokenDataInfo || isFetchingTokenDataInfo
           }
+          selectedToken={selectedToken}
+          isWrappedOrNativeToken={isWrappedOrNativeToken}
+          getSymbol={getSymbol}
         />
         <TokenInfoColumn
           className="basis-2/5"

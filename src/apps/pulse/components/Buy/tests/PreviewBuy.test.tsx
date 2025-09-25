@@ -84,7 +84,7 @@ describe('<PreviewBuy />', () => {
       render(<PreviewBuy {...mockProps} />);
 
       expect(screen.getByText('Confirm Transaction')).toBeInTheDocument();
-      expect(screen.getAllByText('USD Coin')).toHaveLength(2);
+      expect(screen.getAllByText('USD Coin')).toHaveLength(1);
       expect(screen.getAllByText('TEST')).toHaveLength(2);
       // Check that the component renders the main interface elements
       expect(screen.getByText('Total: $100.00')).toBeInTheDocument();

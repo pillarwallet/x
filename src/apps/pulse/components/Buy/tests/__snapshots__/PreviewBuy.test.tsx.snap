@@ -167,7 +167,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
           className="flex items-center text-[13px] font-normal text-white"
         >
           <span>
-            USD Coin
+            Test Token
           </span>
           <span
             className="ml-1 text-white/50"

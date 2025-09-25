@@ -48,6 +48,16 @@ export default function Authorized({
   );
 
   useEffect(() => {
+    // Check if we're coming from token-atlas
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromTokenAtlas = urlParams.get('from') === 'token-atlas';
+
+    if (fromTokenAtlas) {
+      // Skip animation when coming from token-atlas
+      setShowAnimation(false);
+      return undefined;
+    }
+
     const timer = setTimeout(() => {
       setShowAnimation(false);
     }, 3000);

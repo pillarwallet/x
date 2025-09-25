@@ -12,9 +12,13 @@ import useModularSdk from '../../../hooks/useModularSdk';
 // types
 import { WalletPortfolioMobulaResponse } from '../../../../../types/api';
 import { PayingToken, SelectedToken } from '../../../types/tokens';
+import { MobulaChainNames } from '../../../utils/constants';
 
 // components
 import Buy from '../Buy';
+
+// test utils
+import { TestWrapper } from '../../../../../test-utils/testUtils';
 
 // Mock dependencies
 vi.mock('../../../hooks/useIntentSdk', () => ({
@@ -25,8 +29,13 @@ vi.mock('../../../hooks/useModularSdk', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('../../../../../hooks/useTransactionKit', () => ({
-  default: vi.fn(),
+// useTransactionKit is mocked globally in setupTests.ts
+
+vi.mock('../../../../services/pillarXApiSearchTokens', () => ({
+  useGetSearchTokensQuery: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+  })),
 }));
 
 vi.mock('../../../../utils/blockchain', () => ({
@@ -136,11 +145,35 @@ const mockProps = {
   setExpressIntentResponse: vi.fn(),
   setUsdAmount: vi.fn(),
   setDispensableAssets: vi.fn(),
+  setBuyToken: vi.fn(),
+  chains: MobulaChainNames.All,
+  setChains: vi.fn(),
 };
 
 const defaultMocks = () => {
   (useTransactionKit as any).mockReturnValue({
     walletAddress: '0x1234567890123456789012345678901234567890',
+    kit: {
+      getState: vi.fn(() => ({
+        namedTransactions: {},
+        batches: {},
+        isEstimating: false,
+        isSending: false,
+        containsSendingError: false,
+        containsEstimatingError: false,
+      })),
+      getEtherspotProvider: vi.fn(() => ({
+        getChainId: vi.fn(() => 1),
+      })),
+      transaction: vi.fn(() => ({
+        name: vi.fn(() => ({
+          estimate: vi.fn(() => Promise.resolve({})),
+          send: vi.fn(() => Promise.resolve({})),
+        })),
+      })),
+      estimateBatches: vi.fn(() => Promise.resolve({})),
+      sendBatches: vi.fn(() => Promise.resolve({})),
+    },
   });
 
   (useIntentSdk as any).mockReturnValue({
@@ -161,7 +194,11 @@ const defaultMocks = () => {
 };
 
 const renderWithProviders = (props = {}) => {
-  return render(<Buy {...mockProps} {...props} />);
+  return render(
+    <TestWrapper>
+      <Buy {...mockProps} {...props} />
+    </TestWrapper>
+  );
 };
 
 describe('<Buy />', () => {
@@ -171,7 +208,13 @@ describe('<Buy />', () => {
   });
 
   it('renders correctly and matches snapshot', () => {
-    const tree = renderer.create(<Buy {...mockProps} />).toJSON();
+    const tree = renderer
+      .create(
+        <TestWrapper>
+          <Buy {...mockProps} />
+        </TestWrapper>
+      )
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
@@ -356,7 +399,30 @@ describe('<Buy />', () => {
     });
 
     it('handles missing wallet address', () => {
-      (useTransactionKit as any).mockReturnValue({ walletAddress: null });
+      (useTransactionKit as any).mockReturnValue({
+        walletAddress: null,
+        kit: {
+          getState: vi.fn(() => ({
+            namedTransactions: {},
+            batches: {},
+            isEstimating: false,
+            isSending: false,
+            containsSendingError: false,
+            containsEstimatingError: false,
+          })),
+          getEtherspotProvider: vi.fn(() => ({
+            getChainId: vi.fn(() => 1),
+          })),
+          transaction: vi.fn(() => ({
+            name: vi.fn(() => ({
+              estimate: vi.fn(() => Promise.resolve({})),
+              send: vi.fn(() => Promise.resolve({})),
+            })),
+          })),
+          estimateBatches: vi.fn(() => Promise.resolve({})),
+          sendBatches: vi.fn(() => Promise.resolve({})),
+        },
+      });
       renderWithProviders();
 
       expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();

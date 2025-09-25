@@ -58,7 +58,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
                   class="text-[10px] font-normal text-grey h-2.5"
                 >
                   $
-                  100.00
+                  100
                 </p>
               </div>
             </div>

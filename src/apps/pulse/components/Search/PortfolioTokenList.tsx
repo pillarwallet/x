@@ -10,7 +10,10 @@ import {
   Token,
 } from '../../../../services/tokensData';
 import { getLogoForChainId } from '../../../../utils/blockchain';
-import { limitDigitsNumber } from '../../../../utils/number';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 
 // constants
 import { STABLE_CURRENCIES } from '../../constants/tokens';
@@ -195,7 +198,12 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
                   </p>
                 </div>
                 <p className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left">
-                  ${token.price ? limitDigitsNumber(token.price) : '0.00'}
+                  $
+                  {token.price
+                    ? formatExponentialSmallNumber(
+                        limitDigitsNumber(token.price)
+                      )
+                    : '0.00'}
                 </p>
               </div>
             </div>
@@ -203,10 +211,12 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
             {/* Balance Column */}
             <div className="flex flex-col ml-auto mr-2.5 items-end">
               <p className="text-[13px] font-normal tracking-[-0.26px] text-white text-right">
-                ${limitDigitsNumber(balanceUSD)}
+                ${formatExponentialSmallNumber(limitDigitsNumber(balanceUSD))}
               </p>
               <p className="text-xs font-normal tracking-[-0.24px] text-white text-right">
-                {limitDigitsNumber(token.balance || 0)}
+                {formatExponentialSmallNumber(
+                  limitDigitsNumber(token.balance || 0)
+                )}
               </p>
             </div>
           </button>
