@@ -36,7 +36,7 @@ import { getDesiredAssetValue } from '../../utils/intent';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import Tooltip from '../Misc/Tooltip';
-import IntentTracker from '../Status/IntentTracker';
+import TransactionStatus from '../Sell/TransactionStatus';
 import PayingToken from './PayingToken';
 
 interface PreviewBuyProps {
@@ -64,12 +64,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     .toFixed(2);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showTracker, setShowTracker] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isBuyTokenAddressCopied, setIsBuyTokenAddressCopied] = useState(false);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
   const [isTransactionRejected, setIsTransactionRejected] = useState(false);
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
+  const [showTxStatus, setShowTxStatus] = useState(false);
 
   const { intentSdk, error, clearError } = useIntentSdk();
   const { walletAddress: accountAddress } = useTransactionKit();
@@ -174,7 +174,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         expressIntentResponse?.intentHash!,
         expressIntentResponse?.bids[0].bidHash!
       );
-      setShowTracker(true);
+      setShowTxStatus(true);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
 
@@ -342,13 +342,14 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
       : 0;
 
-  if (showTracker) {
+  if (showTxStatus && expressIntentResponse?.bids?.[0]?.bidHash) {
     return (
-      <IntentTracker
-        closePreview={closePreview}
-        bidHash={expressIntentResponse?.bids[0].bidHash!}
-        token={buyToken!}
+      <TransactionStatus
+        closeTransactionStatus={() => setShowTxStatus(false)}
+        userOpHash={expressIntentResponse?.bids[0].bidHash}
+        chainId={buyToken!.chainId}
         isBuy
+        tokenAmount={usdAmount}
       />
     );
   }

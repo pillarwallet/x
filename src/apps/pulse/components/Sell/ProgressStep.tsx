@@ -1,12 +1,12 @@
 import { TailSpin } from 'react-loader-spinner';
 
 interface ProgressStepProps {
-  step: 'Submitted' | 'Pending' | 'Completed';
-  status: 'completed' | 'pending' | 'failed';
+  step: 'Submitted' | 'Pending' | 'ResourceLock' | 'Completed';
+  status: 'completed' | 'pending' | 'failed' | 'inactive';
   label: string;
   isLast?: boolean;
   showLine?: boolean;
-  lineStatus?: 'completed' | 'pending' | 'failed';
+  lineStatus?: 'completed' | 'pending' | 'failed' | 'inactive';
   timestamp?: string;
 }
 
@@ -29,20 +29,32 @@ const ProgressStep = ({
     if (status === 'failed') {
       return `${baseClasses} bg-[#8A77FF]`;
     }
-    if (status === 'pending' && step === 'Pending') {
+    if (
+      status === 'pending' &&
+      (step === 'Pending' || step === 'ResourceLock')
+    ) {
       return `${baseClasses} bg-[#8A77FF]`;
+    }
+    if (status === 'pending' && step === 'Completed') {
+      return `${baseClasses} bg-[#8A77FF]`;
+    }
+    if (status === 'inactive') {
+      return `${baseClasses} bg-[#121116]`;
     }
     return `${baseClasses} bg-[#121116]`;
   };
 
   const getLineClasses = () => {
-    return `w-0.5 h-4 ml-2 ${lineStatus === 'completed' ? 'bg-[#8A77FF]' : 'bg-[#121116]'}`;
+    return `w-0.5 h-4 ml-2 ${lineStatus === 'completed' || lineStatus === 'pending' || lineStatus === 'failed' ? 'bg-[#8A77FF]' : 'bg-[#121116]'}`;
   };
 
   const getTextClasses = () => {
     const baseClasses = 'font-normal text-[13px]';
     if (status === 'failed' || status === 'completed') {
       return `${baseClasses} text-white`;
+    }
+    if (status === 'inactive') {
+      return `${baseClasses} text-white/30`;
     }
     return `${baseClasses} text-white/50`;
   };
@@ -80,10 +92,21 @@ const ProgressStep = ({
       );
     }
 
-    if (status === 'pending' && step === 'Pending') {
+    if (
+      status === 'pending' &&
+      (step === 'Pending' || step === 'ResourceLock')
+    ) {
       return (
         <TailSpin color="#FFFFFF" height={10} width={10} strokeWidth={8} />
       );
+    }
+    if (status === 'pending' && step === 'Completed') {
+      return (
+        <TailSpin color="#FFFFFF" height={10} width={10} strokeWidth={8} />
+      );
+    }
+    if (status === 'inactive') {
+      return null;
     }
 
     return null;

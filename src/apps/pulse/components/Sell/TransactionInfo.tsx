@@ -24,6 +24,12 @@ interface TransactionInfoProps {
   chainId: number;
   gasFee?: string;
   completedAt?: Date;
+  // Buy-specific fields
+  isBuy?: boolean;
+  resourceLockTxHash?: string;
+  resourceLockChainId?: number;
+  completedTxHash?: string;
+  completedChainId?: number;
 }
 
 const TransactionInfo = ({
@@ -34,10 +40,15 @@ const TransactionInfo = ({
   chainId,
   gasFee,
   completedAt,
+  isBuy = false,
+  resourceLockTxHash,
+  resourceLockChainId,
+  completedTxHash,
+  completedChainId,
 }: TransactionInfoProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
-  const displayTxHash = txHash;
+  const displayTxHash = isBuy ? completedTxHash || '-' : txHash;
   const hasValidTxHash = displayTxHash && displayTxHash !== '-';
 
   useEffect(() => {
@@ -48,12 +59,8 @@ const TransactionInfo = ({
     return undefined;
   }, [isCopied]);
 
-  const handleExternalLink = () => {
-    window.open(
-      `${getBlockScan(chainId)}${displayTxHash}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
+  const handleExternalLink = (hash: string, cId: number) => {
+    window.open(`${getBlockScan(cId)}${hash}`, '_blank', 'noopener,noreferrer');
   };
 
   const getStatusInfo = () => {
@@ -76,70 +83,81 @@ const TransactionInfo = ({
     rhs: string,
     showExternalLink = false,
     showCopy = false,
-    tooltipContent = ''
-  ) => (
-    <div className="flex justify-between">
-      <div className="flex items-center text-white/50 text-[13px] font-normal">
-        {lhs}
-        {tooltipContent && (
-          <div className="ml-1.5">
-            <Tooltip content={tooltipContent}>
-              <div className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center">
-                <span className="text-white/50 text-[10px] font-normal">?</span>
-              </div>
-            </Tooltip>
-          </div>
-        )}
-        {showExternalLink && hasValidTxHash && (
-          <button
-            type="button"
-            onClick={handleExternalLink}
-            className="w-3 h-3 ml-1"
-          >
-            <img
-              src={ExternalLinkLogo}
-              alt="external-link"
-              className="w-3 h-3"
-            />
-          </button>
-        )}
-      </div>
-      <div className="flex items-center text-[13px] font-normal text-white">
-        <div className="flex w-full items-center gap-1">
-          <div
-            className={`${lhs !== 'Status' || statusInfo.text !== 'Success' ? 'hidden' : ''} w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0`}
-          >
-            <img
-              src="/src/apps/pulse/assets/confirmed-icon.svg"
-              alt="confirmed"
-              className="w-[8px] h-[5px]"
-            />
-          </div>
-          <span className={`${lhs === 'Status' && statusInfo.color}`}>
-            {rhs}
-          </span>
-        </div>
-        {showCopy && hasValidTxHash && (
-          <CopyToClipboard
-            text={displayTxHash}
-            onCopy={() => setIsCopied(true)}
-          >
-            <div className="flex items-center ml-1 cursor-pointer">
-              {isCopied ? (
-                <MdCheck className="w-[10px] h-3 text-white" />
-              ) : (
-                <img
-                  src={CopyIcon}
-                  alt="copy-address-icon"
-                  className="w-[10px] h-3"
-                />
-              )}
+    tooltipContent = '',
+    transactionHash?: string,
+    txChainId?: number
+  ) => {
+    const isValidHash = transactionHash && transactionHash !== '-';
+    const effectiveChainId = txChainId || chainId;
+
+    return (
+      <div className="flex justify-between">
+        <div className="flex items-center text-white/50 text-[13px] font-normal">
+          {lhs}
+          {tooltipContent && (
+            <div className="ml-1.5">
+              <Tooltip content={tooltipContent}>
+                <div className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center">
+                  <span className="text-white/50 text-[10px] font-normal">
+                    ?
+                  </span>
+                </div>
+              </Tooltip>
             </div>
-          </CopyToClipboard>
-        )}
+          )}
+          {showExternalLink && isValidHash && (
+            <button
+              type="button"
+              onClick={() =>
+                handleExternalLink(transactionHash, effectiveChainId)
+              }
+              className="w-3 h-3 ml-1"
+            >
+              <img
+                src={ExternalLinkLogo}
+                alt="external-link"
+                className="w-3 h-3"
+              />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center text-[13px] font-normal text-white">
+          <div className="flex w-full items-center gap-1">
+            <div
+              className={`${lhs !== 'Status' || statusInfo.text !== 'Success' ? 'hidden' : ''} w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0`}
+            >
+              <img
+                src="/src/apps/pulse/assets/confirmed-icon.svg"
+                alt="confirmed"
+                className="w-[8px] h-[5px]"
+              />
+            </div>
+            <span className={`${lhs === 'Status' && statusInfo.color}`}>
+              {rhs}
+            </span>
+          </div>
+          {showCopy && isValidHash && (
+            <CopyToClipboard
+              text={transactionHash}
+              onCopy={() => setIsCopied(true)}
+            >
+              <div className="flex items-center ml-1 cursor-pointer">
+                {isCopied ? (
+                  <MdCheck className="w-[10px] h-3 text-white" />
+                ) : (
+                  <img
+                    src={CopyIcon}
+                    alt="copy-address-icon"
+                    className="w-[10px] h-3"
+                  />
+                )}
+              </div>
+            </CopyToClipboard>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex flex-col w-full gap-3">
@@ -147,13 +165,43 @@ const TransactionInfo = ({
       {status === 'Transaction Complete' &&
         completedAt &&
         detailsEntry('Time', format(completedAt, 'MMM d, yyyy HH:mm'))}
-      {detailsEntry(
-        'Tx Hash',
-        hasValidTxHash
-          ? `${displayTxHash.slice(0, 6)}...${displayTxHash.slice(-4)}`
-          : '-',
-        true,
-        true
+      {isBuy ? (
+        <>
+          {detailsEntry(
+            'Resource Lock',
+            resourceLockTxHash
+              ? `${resourceLockTxHash.slice(0, 6)}...${resourceLockTxHash.slice(-4)}`
+              : '-',
+            !!resourceLockTxHash,
+            !!resourceLockTxHash,
+            '',
+            resourceLockTxHash,
+            resourceLockChainId
+          )}
+          {detailsEntry(
+            'Completed',
+            completedTxHash
+              ? `${completedTxHash.slice(0, 6)}...${completedTxHash.slice(-4)}`
+              : '-',
+            !!completedTxHash,
+            !!completedTxHash,
+            '',
+            completedTxHash,
+            completedChainId
+          )}
+        </>
+      ) : (
+        detailsEntry(
+          'Tx Hash',
+          hasValidTxHash
+            ? `${displayTxHash.slice(0, 6)}...${(displayTxHash as string).slice(-4)}`
+            : '-',
+          true,
+          true,
+          '',
+          displayTxHash,
+          chainId
+        )
       )}
       {detailsEntry(
         'Gas Fee',

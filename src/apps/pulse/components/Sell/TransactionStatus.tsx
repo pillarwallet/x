@@ -4,12 +4,15 @@ import { TailSpin } from 'react-loader-spinner';
 // services
 import { getUserOperationStatus } from '../../../../services/userOpStatus';
 
+// hooks
+import useIntentSdk from '../../hooks/useIntentSdk';
+
 // components
 import TransactionDetails from './TransactionDetails';
 
 interface TransactionStatusProps {
   closeTransactionStatus: () => void;
-  userOpHash: string; // UserOperation hash (submitted to bundler)
+  userOpHash: string; // UserOperation hash (submitted to bundler) OR bidHash for Buy
   chainId: number;
   gasFee?: string;
   // Transaction data from PreviewSell/PreviewBuy
@@ -41,10 +44,26 @@ type UserOpStatus =
   | 'Cancelled'
   | 'Reverted';
 
+type BidStatus =
+  | 'PENDING'
+  | 'SHORTLISTING_INITIATED'
+  | 'SHORTLISTED'
+  | 'EXECUTED'
+  | 'CLAIMED'
+  | 'RESOURCE_LOCK_RELEASED'
+  | 'FAILED_EXECUTION'
+  | 'SHORTLISTING_FAILED';
+
+type ResourceLockStatus =
+  | 'PENDING_USER_OPS_CREATION'
+  | 'USER_OPS_CREATION_INITIATED'
+  | 'USER_OPS_EXECUTION_SUCCESSFUL'
+  | 'USER_OPS_EXECUTION_FAILED';
+
 const TransactionStatus = (props: TransactionStatusProps) => {
   const {
     closeTransactionStatus,
-    userOpHash, // UserOperation hash (submitted to bundler)
+    userOpHash, // UserOperation hash (submitted to bundler) OR bidHash for Buy
     chainId,
     gasFee,
     isBuy,
@@ -52,6 +71,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     tokenAmount,
     sellOffer,
   } = props;
+  const { intentSdk } = useIntentSdk();
   const [currentStatus, setCurrentStatus] = useState<TransactionStatusState>(
     'Starting Transaction'
   );
@@ -65,15 +85,32 @@ const TransactionStatus = (props: TransactionStatusProps) => {
   const transactionStatusRef = useRef<HTMLDivElement>(null);
 
   // Track real timestamps when each step completes
-  const [submittedAt, setSubmittedAt] = useState<Date | undefined>();
+  const [submittedAt, setSubmittedAt] = useState<Date | undefined>(undefined);
   const [pendingCompletedAt, setPendingCompletedAt] = useState<
     Date | undefined
-  >();
+  >(undefined);
 
   // Track transaction details from getUserOperationStatus
-  const [blockchainTxHash, setBlockchainTxHash] = useState<
+  const [blockchainTxHash, setBlockchainTxHash] = useState<string | undefined>(
+    undefined
+  );
+  const [resourceLockTxHash, setResourceLockTxHash] = useState<
     string | undefined
-  >();
+  >(undefined);
+  const [completedTxHash, setCompletedTxHash] = useState<string | undefined>(
+    undefined
+  );
+  const [completedChainId, setCompletedChainId] = useState<number | undefined>(
+    undefined
+  );
+  const [resourceLockChainId, setResourceLockChainId] = useState<
+    number | undefined
+  >(undefined);
+  const [resourceLockCompletedAt, setResourceLockCompletedAt] = useState<
+    Date | undefined
+  >(undefined);
+  const [isResourceLockFailed, setIsResourceLockFailed] =
+    useState<boolean>(false);
 
   // Track when each step actually completes
   useEffect(() => {
@@ -88,6 +125,11 @@ const TransactionStatus = (props: TransactionStatusProps) => {
       setSubmittedAt((prev) => prev || now);
     }
 
+    // For Buy: Resource lock step completes when we get resource lock hash
+    if (isBuy && resourceLockTxHash && !resourceLockCompletedAt) {
+      setResourceLockCompletedAt(now);
+    }
+
     // Pending step completes when status moves to Transaction Complete or Failed
     if (
       currentStatus === 'Transaction Complete' ||
@@ -95,7 +137,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     ) {
       setPendingCompletedAt((prev) => prev || now);
     }
-  }, [currentStatus]);
+  }, [currentStatus, isBuy, resourceLockTxHash, resourceLockCompletedAt]);
 
   // Function to map UserOp status to TransactionStatus state
   const mapUserOpStatusToTransactionStatus = (
@@ -114,6 +156,30 @@ const TransactionStatus = (props: TransactionStatusProps) => {
       return 'Transaction Failed';
     }
     return 'Starting Transaction'; // fallback
+  };
+
+  // Function to map BidStatus to TransactionStatus state (for Buy flow)
+  const mapBidStatusToTransactionStatus = (
+    status: BidStatus
+  ): TransactionStatusState => {
+    if (status === 'FAILED_EXECUTION' || status === 'SHORTLISTING_FAILED') {
+      return 'Transaction Failed';
+    }
+    if (
+      status === 'EXECUTED' ||
+      status === 'CLAIMED' ||
+      status === 'RESOURCE_LOCK_RELEASED'
+    ) {
+      return 'Transaction Complete';
+    }
+    if (
+      status === 'SHORTLISTING_INITIATED' ||
+      status === 'SHORTLISTED' ||
+      status === 'PENDING'
+    ) {
+      return 'Transaction Pending';
+    }
+    return 'Starting Transaction';
   };
 
   // Function to update status with minimum display duration
@@ -208,7 +274,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     }
   };
 
-  // Polling effect for getUserOperationStatus
+  // Polling effect for both Sell (UserOp) and Buy (Bid) flows
   useEffect(() => {
     if (!userOpHash || !chainId || !isPollingActive) {
       return undefined;
@@ -221,41 +287,120 @@ const TransactionStatus = (props: TransactionStatusProps) => {
       }
 
       try {
-        const response = await getUserOperationStatus(chainId, userOpHash);
-        if (response?.status) {
-          const newUserOpStatus = response.status as UserOpStatus;
-          const newTransactionStatus =
-            mapUserOpStatusToTransactionStatus(newUserOpStatus);
+        if (isBuy) {
+          if (!intentSdk) return;
 
-          // Track if we've seen success - once we have, ignore any failure statuses
-          if (newTransactionStatus === 'Transaction Complete') {
-            setHasSeenSuccess(true);
+          // Get bid status
+          const bids = await intentSdk.searchBidByBidHash(
+            userOpHash as `0x${string}`
+          );
+          const bid = bids?.[0];
+          const bidStatus: BidStatus | undefined = bid?.bidStatus;
+          const execTxHash: string | undefined =
+            bid?.executionResult?.executedTransactions?.[0]?.transactionHash;
+
+          if (execTxHash) {
+            setCompletedTxHash(execTxHash);
+            setCompletedChainId(chainId);
           }
 
-          // If we've already seen success, ignore any failure statuses
-          if (hasSeenSuccess && newTransactionStatus === 'Transaction Failed') {
+          // Get resource lock info
+          const resourceLock = await intentSdk.getResourceLockInfoByBidHash(
+            userOpHash as `0x${string}`
+          );
+          const lock = resourceLock?.resourceLockInfo?.resourceLocks?.[0];
+          const lockHash: string | undefined = lock?.transactionHash;
+          const lockChainId: number | undefined = lock?.chainId
+            ? Number(lock.chainId)
+            : undefined;
+          const resourceLockStatus: ResourceLockStatus | undefined =
+            resourceLock?.resourceLockInfo?.status as ResourceLockStatus;
+
+          if (lockHash) {
+            setResourceLockTxHash(lockHash);
+            if (lockChainId) setResourceLockChainId(lockChainId);
+          }
+
+          // Check for Resource Lock failure first
+          if (resourceLockStatus === 'USER_OPS_EXECUTION_FAILED') {
+            setIsResourceLockFailed(true);
+            updateStatusWithDelay('Transaction Failed');
+            setErrorDetails('Resource lock failed');
             return;
           }
 
-          // Always use delayed update to ensure all states are shown
-          updateStatusWithDelay(newTransactionStatus);
-
-          // Extract actual transaction hash if available
-          if (response.transaction) {
-            setBlockchainTxHash(response.transaction);
+          // Check if Resource Lock is completed
+          if (
+            resourceLockStatus === 'USER_OPS_EXECUTION_SUCCESSFUL' &&
+            lockHash
+          ) {
+            setResourceLockTxHash(lockHash);
+            if (lockChainId) setResourceLockChainId(lockChainId);
+            setResourceLockCompletedAt(new Date());
           }
 
-          // Capture error details if transaction failed
-          if (newTransactionStatus === 'Transaction Failed') {
-            const errorMessage =
-              response.reason ||
-              response.error ||
-              'Transaction failed. Please try again.';
-            setErrorDetails(errorMessage);
+          if (bidStatus) {
+            const newTransactionStatus =
+              mapBidStatusToTransactionStatus(bidStatus);
+
+            if (newTransactionStatus === 'Transaction Complete') {
+              setHasSeenSuccess(true);
+            }
+
+            // If we've already seen success, ignore any failure statuses
+            if (
+              hasSeenSuccess &&
+              newTransactionStatus === 'Transaction Failed'
+            ) {
+              return;
+            }
+
+            updateStatusWithDelay(newTransactionStatus);
+
+            if (newTransactionStatus === 'Transaction Failed') {
+              setErrorDetails('Transaction failed');
+            }
+          }
+        } else {
+          const response = await getUserOperationStatus(chainId, userOpHash);
+          if (response?.status) {
+            const newUserOpStatus = response.status as UserOpStatus;
+            const newTransactionStatus =
+              mapUserOpStatusToTransactionStatus(newUserOpStatus);
+
+            // Track if we've seen success - once we have, ignore any failure statuses
+            if (newTransactionStatus === 'Transaction Complete') {
+              setHasSeenSuccess(true);
+            }
+
+            // If we've already seen success, ignore any failure statuses
+            if (
+              hasSeenSuccess &&
+              newTransactionStatus === 'Transaction Failed'
+            ) {
+              return;
+            }
+
+            // Always use delayed update to ensure all states are shown
+            updateStatusWithDelay(newTransactionStatus);
+
+            // Extract actual transaction hash if available
+            if (response.transaction) {
+              setBlockchainTxHash(response.transaction);
+            }
+
+            // Capture error details if transaction failed
+            if (newTransactionStatus === 'Transaction Failed') {
+              const errorMessage =
+                response.reason ||
+                response.error ||
+                'Transaction failed. Please try again.';
+              setErrorDetails(errorMessage);
+            }
           }
         }
       } catch (error) {
-        console.error('Failed to get user operation status:', error);
+        console.error('Failed to get transaction status:', error);
         setCurrentStatus('Transaction Failed');
         setErrorDetails(
           error instanceof Error
@@ -275,7 +420,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
       clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userOpHash, chainId, isPollingActive, hasSeenSuccess]);
+  }, [userOpHash, chainId, isPollingActive, hasSeenSuccess, isBuy, intentSdk]);
 
   // Click outside to close functionality
   useEffect(() => {
@@ -429,9 +574,15 @@ const TransactionStatus = (props: TransactionStatusProps) => {
           sellOffer={sellOffer}
           submittedAt={submittedAt}
           pendingCompletedAt={pendingCompletedAt}
-          txHash={blockchainTxHash}
+          txHash={isBuy ? undefined : blockchainTxHash}
           gasFee={gasFee}
           errorDetails={errorDetails}
+          resourceLockTxHash={resourceLockTxHash}
+          completedTxHash={isBuy ? completedTxHash : undefined}
+          resourceLockChainId={resourceLockChainId}
+          completedChainId={completedChainId}
+          resourceLockCompletedAt={resourceLockCompletedAt}
+          isResourceLockFailed={isResourceLockFailed}
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full">

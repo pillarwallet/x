@@ -28,10 +28,19 @@ interface TransactionDetailsProps {
   // Timestamps for when each step completed
   submittedAt?: Date;
   pendingCompletedAt?: Date;
+  // Buy-specific timestamps
+  resourceLockCompletedAt?: Date;
   // Transaction details from getUserOperationStatus
   txHash?: string;
   gasFee?: string;
   errorDetails?: string;
+  // Buy-specific hashes
+  resourceLockTxHash?: string;
+  completedTxHash?: string;
+  resourceLockChainId?: number;
+  completedChainId?: number;
+  // Failure indicators
+  isResourceLockFailed?: boolean;
 }
 
 const TransactionDetails = ({
@@ -45,42 +54,82 @@ const TransactionDetails = ({
   sellOffer,
   submittedAt,
   pendingCompletedAt,
+  resourceLockCompletedAt,
   txHash,
   gasFee,
   errorDetails,
+  resourceLockTxHash,
+  completedTxHash,
+  resourceLockChainId,
+  completedChainId,
+  isResourceLockFailed = false,
 }: TransactionDetailsProps) => {
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
   // Function to determine step status based on current transaction status
-  const getStepStatus = (step: 'Submitted' | 'Pending' | 'Completed') => {
+  const getStepStatus = (
+    step: 'Submitted' | 'Pending' | 'ResourceLock' | 'Completed'
+  ) => {
     if (status === 'Starting Transaction') {
       // All steps pending
       return 'pending';
     }
 
     if (status === 'Transaction Pending') {
-      if (step === 'Submitted') return 'completed'; // Submitted is done
-      if (step === 'Pending') return 'pending'; // Currently in this step
-      if (step === 'Completed') return 'pending'; // Not yet reached
+      if (step === 'Submitted') return 'completed';
+      if (step === 'Pending') {
+        return 'pending';
+      }
+      if (step === 'ResourceLock') {
+        // For Buy, resource lock step shows pending until we have the hash
+        if (isBuy) {
+          return resourceLockTxHash ? 'completed' : 'pending';
+        }
+        return 'pending';
+      }
+      if (step === 'Completed') {
+        // For Buy, completed step shows pending only if resource lock is done
+        if (isBuy) {
+          if (!resourceLockTxHash) {
+            // If resource lock is not done yet, completed step should be inactive
+            return 'inactive';
+          }
+          return completedTxHash ? 'completed' : 'pending';
+        }
+        // For Sell, completed step should be inactive when pending is active
+        return 'inactive';
+      }
     }
 
     if (status === 'Transaction Complete') {
-      if (step === 'Submitted') return 'completed'; // Submitted is done
-      if (step === 'Pending') return 'completed'; // Pending is done
-      if (step === 'Completed') return 'completed'; // Completed is done
+      if (step === 'Submitted') return 'completed';
+      if (step === 'Pending') return 'completed';
+      if (step === 'ResourceLock') return 'completed';
+      if (step === 'Completed') return 'completed';
     }
 
     if (status === 'Transaction Failed') {
-      if (step === 'Submitted') return 'completed'; // Submitted is done
-      if (step === 'Pending') return 'completed'; // Pending is done
-      if (step === 'Completed') return 'failed'; // Failed
+      if (step === 'Submitted') return 'completed';
+      if (step === 'Pending') {
+        return 'completed';
+      }
+      if (step === 'ResourceLock') {
+        if (isBuy && isResourceLockFailed) return 'failed';
+        return 'completed';
+      }
+      if (step === 'Completed') {
+        if (isBuy && isResourceLockFailed) return 'inactive';
+        return 'failed'; // For Sell, Completed should be failed when transaction fails
+      }
     }
 
     return 'pending';
   };
 
   // Function to format timestamps for completed steps
-  const getStepTimestamp = (step: 'Submitted' | 'Pending' | 'Completed') => {
+  const getStepTimestamp = (
+    step: 'Submitted' | 'Pending' | 'ResourceLock' | 'Completed'
+  ) => {
     const stepStatus = getStepStatus(step);
 
     // Only show timestamps for completed steps, not the last step
@@ -95,8 +144,16 @@ const TransactionDetails = ({
     }
 
     if (step === 'Pending' && pendingCompletedAt) {
-      // For pending step, show only time
+      // For Sell pending step, show pendingCompletedAt timestamp
       return format(pendingCompletedAt, 'HH:mm');
+    }
+
+    if (step === 'ResourceLock') {
+      // For Buy show resource lock timestamp if present, else pendingCompletedAt fallback
+      const ts = isBuy
+        ? resourceLockCompletedAt || pendingCompletedAt
+        : pendingCompletedAt;
+      if (ts) return format(ts, 'HH:mm');
     }
 
     return undefined;
@@ -156,29 +213,59 @@ const TransactionDetails = ({
                 step="Submitted"
                 status={getStepStatus('Submitted')}
                 label="Submitted"
-                lineStatus={getStepStatus('Submitted')}
+                lineStatus={
+                  isBuy
+                    ? getStepStatus('ResourceLock')
+                    : getStepStatus('Pending')
+                }
                 timestamp={getStepTimestamp('Submitted')}
               />
 
-              <ProgressStep
-                step="Pending"
-                status={getStepStatus('Pending')}
-                label="Pending"
-                lineStatus={getStepStatus('Pending')}
-                timestamp={getStepTimestamp('Pending')}
-              />
+              {isBuy ? (
+                <>
+                  <ProgressStep
+                    step="ResourceLock"
+                    status={getStepStatus('ResourceLock')}
+                    label="Resource Lock"
+                    lineStatus={getStepStatus('Completed')}
+                    timestamp={getStepTimestamp('ResourceLock')}
+                  />
 
-              <ProgressStep
-                step="Completed"
-                status={getStepStatus('Completed')}
-                label={
-                  getStepStatus('Completed') === 'failed'
-                    ? 'Transaction Failed'
-                    : 'Completed'
-                }
-                isLast
-                timestamp={getStepTimestamp('Completed')}
-              />
+                  <ProgressStep
+                    step="Completed"
+                    status={getStepStatus('Completed')}
+                    label={
+                      getStepStatus('Completed') === 'failed'
+                        ? 'Transaction Failed'
+                        : 'Completed'
+                    }
+                    isLast
+                    timestamp={getStepTimestamp('Completed')}
+                  />
+                </>
+              ) : (
+                <>
+                  <ProgressStep
+                    step="Pending"
+                    status={getStepStatus('Pending')}
+                    label="Pending"
+                    lineStatus={getStepStatus('Completed')}
+                    timestamp={getStepTimestamp('Pending')}
+                  />
+
+                  <ProgressStep
+                    step="Completed"
+                    status={getStepStatus('Completed')}
+                    label={
+                      getStepStatus('Completed') === 'failed'
+                        ? 'Transaction Failed'
+                        : 'Completed'
+                    }
+                    isLast
+                    timestamp={getStepTimestamp('Completed')}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -192,6 +279,11 @@ const TransactionDetails = ({
           chainId={chainId}
           gasFee={gasFee}
           completedAt={pendingCompletedAt}
+          isBuy={isBuy}
+          resourceLockTxHash={resourceLockTxHash}
+          completedTxHash={completedTxHash}
+          resourceLockChainId={resourceLockChainId}
+          completedChainId={completedChainId}
         />
       </div>
 
