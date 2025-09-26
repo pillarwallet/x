@@ -28,8 +28,7 @@ export default function LandingPage() {
             </div>
             <div className="home_hero__signup">
               <p>
-                Trade, manage crypto assets seamlessly across EVM chains, &
-                access secure DeFi — all in one app
+                PillarX
               </p>
               <a
                 href="/login"
