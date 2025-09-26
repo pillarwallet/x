@@ -37,7 +37,6 @@ import { getDesiredAssetValue } from '../../utils/intent';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import Tooltip from '../Misc/Tooltip';
-import IntentTracker from '../Status/IntentTracker';
 import PayingToken from './PayingToken';
 
 interface PreviewBuyProps {
@@ -48,6 +47,7 @@ interface PreviewBuyProps {
   setExpressIntentResponse: (response: ExpressIntentResponse | null) => void;
   usdAmount: string;
   dispensableAssets: DispensableAsset[];
+  showTransactionStatus: (userOperationHash: string, gasFee?: string) => void;
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -59,13 +59,13 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     setExpressIntentResponse,
     usdAmount,
     dispensableAssets,
+    showTransactionStatus,
   } = props;
   const totalPay = payingTokens
     .reduce((acc, curr) => acc + curr.totalUsd, 0)
     .toFixed(2);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showTracker, setShowTracker] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isBuyTokenAddressCopied, setIsBuyTokenAddressCopied] = useState(false);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
@@ -175,7 +175,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         expressIntentResponse?.intentHash!,
         expressIntentResponse?.bids[0].bidHash!
       );
-      setShowTracker(true);
+      showTransactionStatus(expressIntentResponse?.bids[0].bidHash!);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
 
@@ -342,17 +342,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     totalPaidValue > 0
       ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
       : 0;
-
-  if (showTracker) {
-    return (
-      <IntentTracker
-        closePreview={closePreview}
-        bidHash={expressIntentResponse?.bids[0].bidHash!}
-        token={buyToken!}
-        isBuy
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">
