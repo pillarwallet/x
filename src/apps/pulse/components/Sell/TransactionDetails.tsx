@@ -1,8 +1,15 @@
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProgressStep from './ProgressStep';
 import TransactionErrorBox from './TransactionErrorBox';
 import TransactionInfo from './TransactionInfo';
+
+// assets
+import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
+
+// components
+import CloseButton from '../Misc/CloseButton';
+import Esc from '../Misc/Esc';
 
 interface TransactionDetailsProps {
   onDone: () => void;
@@ -65,6 +72,38 @@ const TransactionDetails = ({
   isResourceLockFailed = false,
 }: TransactionDetailsProps) => {
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const detailsRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close functionality
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        detailsRef.current &&
+        !detailsRef.current.contains(event.target as Node)
+      ) {
+        onDone();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onDone]);
+
+  // ESC key to close functionality
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onDone();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onDone]);
 
   // Function to determine step status based on current transaction status
   const getStepStatus = (
@@ -136,16 +175,25 @@ const TransactionDetails = ({
     if (stepStatus !== 'completed' || step === 'Completed') return undefined;
 
     if (step === 'Submitted' && submittedAt) {
-      // For submitted step, show full date and time
-      return `${format(submittedAt, 'MMM d, yyyy')} • ${format(
-        submittedAt,
-        'HH:mm'
-      )}`;
+      // For submitted step, show full date and time with different colors
+      return (
+        <>
+          <span className="text-white">
+            {format(submittedAt, 'MMM d, yyyy')}
+          </span>
+          <span className="text-white"> • </span>
+          <span className="text-white/50">{format(submittedAt, 'HH:mm')}</span>
+        </>
+      );
     }
 
     if (step === 'Pending' && pendingCompletedAt) {
       // For Sell pending step, show pendingCompletedAt timestamp
-      return format(pendingCompletedAt, 'HH:mm');
+      return (
+        <span className="text-white/50">
+          {format(pendingCompletedAt, 'HH:mm')}
+        </span>
+      );
     }
 
     if (step === 'ResourceLock') {
@@ -153,17 +201,27 @@ const TransactionDetails = ({
       const ts = isBuy
         ? resourceLockCompletedAt || pendingCompletedAt
         : pendingCompletedAt;
-      if (ts) return format(ts, 'HH:mm');
+      if (ts)
+        return <span className="text-white/50">{format(ts, 'HH:mm')}</span>;
     }
 
     return undefined;
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full w-full">
-      <p className="text-xl text-white font-normal">Transaction Details</p>
-      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] border-[4px_4px] p-6 items-center justify-center">
-        <p className="text-5xl text-white font-medium">
+    <div ref={detailsRef} className="flex flex-col gap-4 h-full w-full">
+      <div className="flex justify-between items-center">
+        <p className="text-xl text-white font-normal">Transaction Details</p>
+        <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]">
+          {status === 'Transaction Pending' ? (
+            <Esc onClose={onDone} />
+          ) : (
+            <CloseButton onClose={onDone} />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center">
+        <div className="text-5xl text-white font-medium">
           {isBuy ? (
             <span className="text-white/30">$</span>
           ) : (
@@ -190,13 +248,9 @@ const TransactionDetails = ({
             </div>
           )}{' '}
           {tokenAmount || '0'}
-        </p>
+        </div>
         <div className="flex gap-1.5">
-          <img
-            className="w-4 h-4 rounded"
-            src="/src/apps/pulse/assets/usd-coin-usdc-logo.png"
-            alt="USDC"
-          />
+          <img className="w-4 h-4 rounded" src={UsdcLogo} alt="USDC" />
           <p className="text-white font-normal text-[13px]">
             {sellOffer?.tokenAmountToReceive?.toFixed(6) || '0'}{' '}
             <span className="text-white/30">USDC</span>
@@ -205,7 +259,7 @@ const TransactionDetails = ({
       </div>
 
       {status !== 'Transaction Complete' && (
-        <div className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] border-[4px_4px] p-3">
+        <div className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3">
           <div className="flex flex-col items-center justify-center w-full">
             {/* Progress Bar */}
             <div className="flex flex-col w-full">
@@ -271,7 +325,7 @@ const TransactionDetails = ({
         </div>
       )}
 
-      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] border-[4px_4px] p-3">
+      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3">
         <TransactionInfo
           status={status}
           userOpHash={userOpHash}
@@ -291,13 +345,15 @@ const TransactionDetails = ({
         <TransactionErrorBox technicalDetails={errorDetails} />
       )}
 
-      <button
-        className="px-6 py-2 bg-[#8A77FF] text-white rounded-lg font-normal text-[14px]"
-        type="button"
-        onClick={onDone}
-      >
-        Done
-      </button>
+      <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
+        <button
+          className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF] text-white font-normal text-[14px]"
+          type="button"
+          onClick={onDone}
+        >
+          Done
+        </button>
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { MdCheck } from 'react-icons/md';
 
 // icons
 import ExternalLinkLogo from '../../../token-atlas/images/external-link-audit.svg';
+import ConfirmedIcon from '../../assets/confirmed-icon.svg';
 import CopyIcon from '../../assets/copy-icon.svg';
 
 // components
@@ -127,7 +128,7 @@ const TransactionInfo = ({
               className={`${lhs !== 'Status' || statusInfo.text !== 'Success' ? 'hidden' : ''} w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0`}
             >
               <img
-                src="/src/apps/pulse/assets/confirmed-icon.svg"
+                src={ConfirmedIcon}
                 alt="confirmed"
                 className="w-[8px] h-[5px]"
               />

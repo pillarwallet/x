@@ -37,7 +37,6 @@ import { getDesiredAssetValue } from '../../utils/intent';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import Tooltip from '../Misc/Tooltip';
-import TransactionStatus from '../Sell/TransactionStatus';
 import PayingToken from './PayingToken';
 
 interface PreviewBuyProps {
@@ -48,6 +47,7 @@ interface PreviewBuyProps {
   setExpressIntentResponse: (response: ExpressIntentResponse | null) => void;
   usdAmount: string;
   dispensableAssets: DispensableAsset[];
+  showTransactionStatus: (userOperationHash: string, gasFee?: string) => void;
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -59,6 +59,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     setExpressIntentResponse,
     usdAmount,
     dispensableAssets,
+    showTransactionStatus,
   } = props;
   const totalPay = payingTokens
     .reduce((acc, curr) => acc + curr.totalUsd, 0)
@@ -70,7 +71,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
   const [isTransactionRejected, setIsTransactionRejected] = useState(false);
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
-  const [showTxStatus, setShowTxStatus] = useState(false);
 
   const { intentSdk, error, clearError } = useIntentSdk();
   const { walletAddress: accountAddress } = useTransactionKit();
@@ -175,7 +175,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         expressIntentResponse?.intentHash!,
         expressIntentResponse?.bids[0].bidHash!
       );
-      setShowTxStatus(true);
+      showTransactionStatus(expressIntentResponse?.bids[0].bidHash!);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
 
@@ -342,18 +342,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     totalPaidValue > 0
       ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
       : 0;
-
-  if (showTxStatus && expressIntentResponse?.bids?.[0]?.bidHash) {
-    return (
-      <TransactionStatus
-        closeTransactionStatus={() => setShowTxStatus(false)}
-        userOpHash={expressIntentResponse?.bids[0].bidHash}
-        chainId={buyToken!.chainId}
-        isBuy
-        tokenAmount={usdAmount}
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">

@@ -1,3 +1,4 @@
+import React from 'react';
 import { TailSpin } from 'react-loader-spinner';
 
 interface ProgressStepProps {
@@ -7,7 +8,7 @@ interface ProgressStepProps {
   isLast?: boolean;
   showLine?: boolean;
   lineStatus?: 'completed' | 'pending' | 'failed' | 'inactive';
-  timestamp?: string;
+  timestamp?: string | React.ReactNode;
 }
 
 const ProgressStep = ({
@@ -53,19 +54,30 @@ const ProgressStep = ({
     if (status === 'failed' || status === 'completed') {
       return `${baseClasses} text-white`;
     }
-    if (status === 'inactive') {
-      return `${baseClasses} text-white/30`;
+    if (status === 'inactive' || status === 'pending') {
+      return `${baseClasses} text-white/50`;
     }
     return `${baseClasses} text-white/50`;
+  };
+
+  const getTimestampDisplay = () => {
+    if (typeof timestamp === 'string' && timestamp.includes('•')) {
+      return timestamp.split('•')[1].trim();
+    }
+    if (typeof timestamp === 'string') {
+      return timestamp;
+    }
+    return timestamp;
   };
 
   const renderIcon = () => {
     if (status === 'completed') {
       return (
         <svg
-          className="w-2 h-2 text-white"
+          className="w-3 h-3 text-white"
           fill="currentColor"
           viewBox="0 0 20 20"
+          strokeWidth="2"
         >
           <path
             fillRule="evenodd"
@@ -79,9 +91,10 @@ const ProgressStep = ({
     if (status === 'failed') {
       return (
         <svg
-          className="w-2 h-2 text-white"
+          className="w-3 h-3 text-white"
           fill="currentColor"
           viewBox="0 0 20 20"
+          strokeWidth="2"
         >
           <path
             fillRule="evenodd"
@@ -121,15 +134,11 @@ const ProgressStep = ({
           <span className={getTextClasses()}>{label}</span>
         </div>
         {status === 'completed' && timestamp && (
-          <div className="text-white/50 text-[13px] font-normal text-right">
+          <div className="text-[13px] font-normal text-right">
             {/* Full timestamp - hidden on small screens */}
             <span className="xs:hidden">{timestamp}</span>
             {/* Time only - shown on small screens */}
-            <span className="hidden xs:inline">
-              {timestamp.includes('•')
-                ? timestamp.split('•')[1].trim()
-                : timestamp}
-            </span>
+            <span className="hidden xs:inline">{getTimestampDisplay()}</span>
           </div>
         )}
       </div>
