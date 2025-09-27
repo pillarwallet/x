@@ -55,14 +55,41 @@ const Header = () => {
             <ul id="menu" onClick={() => setShowMobileMenu(!showMobileMenu)}>
               <li>
                 <NavLink
-                  to="/developers"
-                  className={({ isActive }) => (isActive ? 'active' : '')}
+                  to="/#superpowers"
+          
                 >
-                  For dApps
+                  Superpowers
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/#about"
+                  className="active--no-style"
+                >
+                  About
                 </NavLink>
               </li>
               <li>
                 <a href="https://blog.pillarx.app/">Blog</a>
+              </li>
+              <li>
+                <a>Cooperation</a>
+                <ul>
+                  <li>
+                    <NavLink
+                      to="/developers"
+                    >
+                      For dApp
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/advertising"
+                    >
+                      Advertising
+                    </NavLink>
+                  </li>
+                </ul>
               </li>
             </ul>
 
