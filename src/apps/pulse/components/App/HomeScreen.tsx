@@ -148,6 +148,9 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [hasSeenSuccess, setHasSeenSuccess] = useState<boolean>(false);
   const [failureTimeoutId, setFailureTimeoutId] =
     useState<NodeJS.Timeout | null>(null);
+  const [isBackgroundPolling, setIsBackgroundPolling] =
+    useState<boolean>(false);
+  const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
@@ -199,23 +202,30 @@ export default function HomeScreen(props: HomeScreenProps) {
     isRefreshingHome,
   ]);
 
+  // Stop transaction status polling
+  const stopTransactionPolling = useCallback(() => {
+    setIsPollingActive(false);
+    setIsBackgroundPolling(false);
+    setShouldAutoReopen(false);
+    setTransactionData(null);
+  }, []);
+
   const closePreviewBuy = () => {
     setPreviewBuy(false);
+    stopTransactionPolling();
   };
 
   const closePreviewSell = () => {
     setPreviewSell(false);
     setSellOffer(null);
     setTokenAmount('');
+    stopTransactionPolling();
   };
-
-  // Stop transaction status polling
-  const stopTransactionPolling = useCallback(() => {
-    setIsPollingActive(false);
-  }, []);
 
   const showTransactionStatus = useCallback(
     (userOperationHash: string, gasFee?: string) => {
+      stopTransactionPolling();
+
       // Store transaction data before clearing preview
       setTransactionData({
         sellToken,
@@ -246,14 +256,26 @@ export default function HomeScreen(props: HomeScreenProps) {
       setHasSeenSuccess(false);
       setFailureTimeoutId(null);
       setIsPollingActive(true);
+      setIsBackgroundPolling(false);
+      setShouldAutoReopen(false);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sellToken, tokenAmount, sellOffer, isBuy]
   );
 
   const closeTransactionStatus = () => {
     setTransactionStatus(false);
-    setTransactionData(null);
-    stopTransactionPolling();
+
+    const isFinalStatus =
+      currentTransactionStatus === 'Transaction Complete' ||
+      currentTransactionStatus === 'Transaction Failed';
+
+    if (isFinalStatus) {
+      stopTransactionPolling();
+    } else {
+      setIsBackgroundPolling(true);
+      setShouldAutoReopen(true);
+    }
   };
 
   // Helper function to map BidStatus to TransactionStatusState
@@ -266,12 +288,15 @@ export default function HomeScreen(props: HomeScreenProps) {
     if (
       status === 'EXECUTED' ||
       status === 'CLAIMED' ||
-      status === 'RESOURCE_LOCK_RELEASED' ||
-      status === 'SHORTLISTED' // Resource lock UserOp succeeded
+      status === 'RESOURCE_LOCK_RELEASED'
     ) {
       return 'Transaction Complete';
     }
-    if (status === 'SHORTLISTING_INITIATED' || status === 'PENDING') {
+    if (
+      status === 'SHORTLISTED' ||
+      status === 'SHORTLISTING_INITIATED' ||
+      status === 'PENDING'
+    ) {
       return 'Transaction Pending';
     }
     return 'Starting Transaction';
@@ -309,6 +334,12 @@ export default function HomeScreen(props: HomeScreenProps) {
       currentTransactionStatus === 'Transaction Failed';
     if (isFinalStatus) {
       setIsPollingActive(false);
+      // If we're in background polling and should auto-reopen, reopen the modal
+      if (isBackgroundPolling && shouldAutoReopen) {
+        setTransactionStatus(true);
+        setIsBackgroundPolling(false);
+        setShouldAutoReopen(false);
+      }
       return;
     }
 
@@ -338,6 +369,12 @@ export default function HomeScreen(props: HomeScreenProps) {
         setStatusStartTime(Date.now());
         setIsPollingActive(false); // Stop polling after confirming failure
         setFailureTimeoutId(null);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
       }, failureConfirmationTime);
       setFailureTimeoutId(timeoutId);
       return;
@@ -361,6 +398,12 @@ export default function HomeScreen(props: HomeScreenProps) {
           setCurrentTransactionStatus(newStatus);
           setStatusStartTime(Date.now());
           setIsPollingActive(false); // Stop polling after showing final status
+          // If we're in background polling and should auto-reopen, reopen the modal
+          if (isBackgroundPolling && shouldAutoReopen) {
+            setTransactionStatus(true);
+            setIsBackgroundPolling(false);
+            setShouldAutoReopen(false);
+          }
         }, minDisplayTime);
         return;
       }
@@ -384,6 +427,12 @@ export default function HomeScreen(props: HomeScreenProps) {
         newStatus === ('Transaction Failed' as TransactionStatusState)
       ) {
         setIsPollingActive(false);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
       }
     }
   };
@@ -428,13 +477,13 @@ export default function HomeScreen(props: HomeScreenProps) {
   useEffect(() => {
     const chainId = transactionData?.sellToken?.chainId || 1;
     const isBuyTransaction = transactionData?.isBuy || false;
-    if (!userOpHash || !chainId || !isPollingActive) {
+    if (!userOpHash || !chainId || (!isPollingActive && !isBackgroundPolling)) {
       return undefined;
     }
 
     const pollStatus = async () => {
       // Check if polling is still active before making the API call
-      if (!isPollingActive) {
+      if (!isPollingActive && !isBackgroundPolling) {
         return;
       }
 
@@ -450,13 +499,6 @@ export default function HomeScreen(props: HomeScreenProps) {
           );
           const bid = bids?.[0];
           const bidStatus: BidStatus | undefined = bid?.bidStatus;
-          const execTxHash: string | undefined =
-            bid?.executionResult?.executedTransactions?.[0]?.transactionHash;
-
-          if (execTxHash) {
-            setCompletedTxHash(execTxHash);
-            setCompletedChainId(chainId);
-          }
 
           // Get resource lock info
           const resourceLock = await intentSdk.getResourceLockInfoByBidHash(
@@ -492,10 +534,6 @@ export default function HomeScreen(props: HomeScreenProps) {
                 if (lockChainId) setResourceLockChainId(lockChainId);
                 setResourceLockCompletedAt(new Date());
               }
-              // Resource lock success means bid is SHORTLISTED → Transaction Complete
-              updateStatusWithDelay('Transaction Complete');
-              setHasSeenSuccess(true);
-              return;
             }
           }
 
@@ -504,7 +542,15 @@ export default function HomeScreen(props: HomeScreenProps) {
             const newTransactionStatus =
               mapBidStatusToTransactionStatus(bidStatus);
 
+            // For Buy transactions, set completed transaction hash from execution result
             if (newTransactionStatus === 'Transaction Complete') {
+              const execTxHash: string | undefined =
+                bid?.executionResult?.executedTransactions?.[0]
+                  ?.transactionHash;
+              if (execTxHash) {
+                setCompletedTxHash(execTxHash);
+                setCompletedChainId(chainId);
+              }
               setHasSeenSuccess(true);
             }
 
@@ -585,6 +631,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     userOpHash,
     transactionData?.sellToken?.chainId,
     isPollingActive,
+    isBackgroundPolling,
     hasSeenSuccess,
     transactionData?.isBuy,
     intentSdk,
