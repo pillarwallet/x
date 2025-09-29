@@ -47,7 +47,20 @@ export default function LandingPage() {
             {/* Feature Detail */}
             <div className="home_feature__detail home_feature__detail--reverse">
               <div className="home_feature__detail__image home_feature__detail__image--large gradient_border">
-                <img src="/landing-images/home-superpowers-1.webp" />
+                <video
+                  width="100%"
+                  preload="none"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="/landing-images/home-superpowers-1.webp"
+                >
+                  <source
+                    src="/landing-images/home-superpowers-1.mp4"
+                    type="video/mp4"
+                  />
+                </video>
               </div>
               <div className="home_feature__detail__content gradient_border">
                 <h4>Superpowers</h4>
@@ -67,7 +80,20 @@ export default function LandingPage() {
             {/* Feature Detail */}
             <div className="home_feature__detail">
               <div className="home_feature__detail__image gradient_border">
-                <img src="/landing-images/home-superpowers-2.webp" />
+                <video
+                  width="100%"
+                  preload="none"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="/landing-images/home-superpowers-2.webp"
+                >
+                  <source
+                    src="/landing-images/home-superpowers-2.mp4"
+                    type="video/mp4"
+                  />
+                </video>
               </div>
               <div className="home_feature__detail__content gradient_border">
                 <h2>
@@ -89,7 +115,20 @@ export default function LandingPage() {
             {/* Feature Detail */}
             <div className="home_feature__detail home_feature__detail--reverse">
               <div className="home_feature__detail__image gradient_border">
-                <img src="/landing-images/home-superpowers-3.webp" />
+                <video
+                  width="100%"
+                  preload="none"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="/landing-images/home-superpowers-3.webp"
+                >
+                  <source
+                    src="/landing-images/home-superpowers-3.mp4"
+                    type="video/mp4"
+                  />
+                </video>
               </div>
               <div className="home_feature__detail__content gradient_border">
                 <h2>

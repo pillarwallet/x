@@ -882,14 +882,18 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
-  .home_feature__detail__image img {
+  .home_feature__detail__image video {
     width: 100%;
     max-width: 17.5rem;
+    border-radius: 1.6rem;
+    overflow: hidden;
   }
 
-  .home_feature__detail__image--large img {
+  .home_feature__detail__image--large video {
     width: 100%;
     max-width: 23.5rem;
+    border-radius: 1.6rem;
+    overflow: hidden;
   }
 
   .home_feature__detail__content {
