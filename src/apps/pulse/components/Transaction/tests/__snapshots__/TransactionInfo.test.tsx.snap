@@ -1,0 +1,150 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TransactionInfo /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col w-full gap-3"
+>
+  <div
+    className="flex justify-between"
+  >
+    <div
+      className="flex items-center text-white/50 text-[13px] font-normal"
+    >
+      Status
+    </div>
+    <div
+      className="flex items-center text-[13px] font-normal text-white"
+    >
+      <div
+        className="flex w-full items-center gap-1"
+      >
+        <div
+          className="hidden w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0"
+        >
+          <img
+            alt="confirmed"
+            className="w-[8px] h-[5px]"
+            src="data:image/svg+xml,%3csvg%20width='40'%20height='27'%20viewBox='0%200%2040%2027'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M3.49854%2012.5L14.4379%2023.4393C15.0237%2024.0251%2015.9734%2024.0251%2016.5592%2023.4393L36.4985%203.5'%20stroke='%235CFF93'%20stroke-width='6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+          />
+        </div>
+        <span
+          className="text-white/50"
+        >
+          Starting...
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex justify-between"
+  >
+    <div
+      className="flex items-center text-white/50 text-[13px] font-normal"
+    >
+      Tx Hash
+      <button
+        className="w-3 h-3 ml-1"
+        onClick={[Function]}
+        type="button"
+      >
+        <img
+          alt="external-link"
+          className="w-3 h-3"
+          src="data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4.125%201H3C1.89543%201%201%201.89543%201%203V9C1%2010.1046%201.89543%2011%203%2011H9C10.1046%2011%2011%2010.1046%2011%209V7.875'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'/%3e%3cpath%20d='M6%206L11%201M11%201V4.75M11%201H7.25'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
+        />
+      </button>
+    </div>
+    <div
+      className="flex items-center text-[13px] font-normal text-white"
+    >
+      <div
+        className="flex w-full items-center gap-1"
+      >
+        <div
+          className="hidden w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0"
+        >
+          <img
+            alt="confirmed"
+            className="w-[8px] h-[5px]"
+            src="data:image/svg+xml,%3csvg%20width='40'%20height='27'%20viewBox='0%200%2040%2027'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M3.49854%2012.5L14.4379%2023.4393C15.0237%2024.0251%2015.9734%2024.0251%2016.5592%2023.4393L36.4985%203.5'%20stroke='%235CFF93'%20stroke-width='6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+          />
+        </div>
+        <span
+          className="false"
+        >
+          0xabcd...7890
+        </span>
+      </div>
+      <button
+        data-testid="copy-button"
+        onClick={[Function]}
+        type="button"
+      >
+        <div
+          className="flex items-center ml-1 cursor-pointer"
+        >
+          <img
+            alt="copy-address-icon"
+            className="w-[10px] h-3"
+            src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
+          />
+        </div>
+      </button>
+    </div>
+  </div>
+  <div
+    className="flex justify-between"
+  >
+    <div
+      className="flex items-center text-white/50 text-[13px] font-normal"
+    >
+      Gas Fee
+      <div
+        className="ml-1.5"
+      >
+        <div
+          className="relative inline-block"
+        >
+          <div
+            className="cursor-help"
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="w-3 h-3 rounded-full bg-white/10 flex items-center justify-center"
+            >
+              <span
+                className="text-white/50 text-[10px] font-normal"
+              >
+                ?
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="flex items-center text-[13px] font-normal text-white"
+    >
+      <div
+        className="flex w-full items-center gap-1"
+      >
+        <div
+          className="hidden w-[14px] h-[14px] rounded-full border border-[#5CFF93] bg-[#5CFF93]/30 flex items-center justify-center flex-shrink-0"
+        >
+          <img
+            alt="confirmed"
+            className="w-[8px] h-[5px]"
+            src="data:image/svg+xml,%3csvg%20width='40'%20height='27'%20viewBox='0%200%2040%2027'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M3.49854%2012.5L14.4379%2023.4393C15.0237%2024.0251%2015.9734%2024.0251%2016.5592%2023.4393L36.4985%203.5'%20stroke='%235CFF93'%20stroke-width='6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+          />
+        </div>
+        <span
+          className="false"
+        >
+          0.001
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

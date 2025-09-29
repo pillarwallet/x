@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TransactionStatus /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col w-full max-w-[446px] h-[calc(100vh-94px)] max-h-[600px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6"
+>
+  <div
+    className="flex flex-col items-center justify-center h-full"
+  >
+    <div
+      className="w-[90px] h-[90px] rounded-full border-[3px] border-white/10 bg-[#8A77FF] flex items-center justify-center flex-shrink-0"
+    >
+      <img
+        alt="Starting Transaction"
+        className="w-[60px] h-[60px]"
+        src="data:image/svg+xml,%3csvg%20width='61'%20height='60'%20viewBox='0%200%2061%2060'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.4'%20d='M34.81%2048.0128C33.0167%2050.3805%2031.5555%2052.31%2030.3127%2053.5723C29.1497%2054.7538%2027.5325%2056.0378%2025.5377%2055.506C23.421%2054.942%2022.8381%2052.8993%2022.6112%2051.322C22.3699%2049.6455%2022.37%2047.312%2022.3701%2044.485V39.7178L37.0522%2044.7963L34.81%2048.0128Z'%20fill='white'/%3e%3cpath%20d='M47.1273%204.9353C49.4888%204.21403%2051.8128%204.00053%2053.7673%205.45345C55.7313%206.91348%2056.1723%209.19933%2056.1255%2011.6528C56.0798%2014.0723%2055.5413%2017.2649%2054.872%2021.2329L52.433%2035.6953C52.0003%2038.261%2051.642%2040.386%2051.124%2042.0043C50.5795%2043.705%2049.7615%2045.1735%2048.193%2046.0908C46.6293%2047.0058%2044.9438%2047.0073%2043.1833%2046.6628C41.523%2046.338%2039.4983%2045.6405%2037.0515%2044.7943L37.0345%2044.819L22.3694%2039.7158L42.9945%2017.5L16.7445%2037.7585C13.8688%2036.737%2011.5008%2035.8285%209.70523%2034.9115C7.17873%2033.621%205.02968%2031.9408%204.87748%2029.1948C4.72521%2026.4468%206.67801%2024.5426%209.04748%2022.9867C11.4594%2021.403%2015.0409%2019.7103%2019.5622%2017.5734L38.1643%208.78113C41.8403%207.04365%2044.7918%205.64855%2047.1273%204.9353Z'%20fill='white'/%3e%3c/svg%3e"
+      />
+    </div>
+    <div
+      className="text-white font-normal text-[20px] mt-3"
+    >
+      Starting Transaction
+    </div>
+    <div
+      className="text-white/50 font-normal text-[16px] mt-[10px]"
+    >
+      Just a moment...
+    </div>
+  </div>
+</div>
+`;

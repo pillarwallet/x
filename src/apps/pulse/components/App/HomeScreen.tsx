@@ -7,6 +7,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -26,7 +27,7 @@ import Refresh from '../Misc/Refresh';
 import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
-import TransactionStatus from '../Sell/TransactionStatus';
+import TransactionStatus from '../Transaction/TransactionStatus';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
@@ -154,6 +155,25 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [isBackgroundPolling, setIsBackgroundPolling] =
     useState<boolean>(false);
   const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
+  const hasSeenSuccessRef = useRef<boolean>(false);
+
+  // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
+  // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
+  useEffect(() => {
+    if (isBuy && buyToken && payingTokens.length > 0) {
+      const tokenUsdValue = parseFloat(buyToken.usdValue || '0');
+      if (tokenUsdValue > 0) {
+        const totalPay = payingTokens.reduce(
+          (acc, curr) => acc + curr.totalUsd,
+          0
+        );
+        const calculatedAmount = totalPay / tokenUsdValue;
+        setTokenAmount(calculatedAmount.toFixed(6));
+      }
+    } else if (isBuy) {
+      setTokenAmount('');
+    }
+  }, [isBuy, buyToken, payingTokens]);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
@@ -260,6 +280,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       setIsResourceLockFailed(false);
       setStatusStartTime(Date.now());
       setHasSeenSuccess(false);
+      hasSeenSuccessRef.current = false;
       setFailureTimeoutId(null);
       setIsPollingActive(true);
       setIsBackgroundPolling(false);
@@ -356,12 +377,27 @@ export default function HomeScreen(props: HomeScreenProps) {
         setFailureTimeoutId(null);
       }
       setHasSeenSuccess(true);
+      hasSeenSuccessRef.current = true;
+      // If we're currently showing pending due to a failure confirmation,
+      // immediately show the success status
+      if (currentTransactionStatus === 'Transaction Pending') {
+        setCurrentTransactionStatus('Transaction Complete');
+        setStatusStartTime(now);
+        setIsPollingActive(false);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
+        return;
+      }
     }
 
     // Special handling for failed status - wait 10 seconds before confirming
     if (newStatus === ('Transaction Failed' as TransactionStatusState)) {
       // If we've already seen success, ignore failure statuses
-      if (hasSeenSuccess) {
+      if (hasSeenSuccess || hasSeenSuccessRef.current) {
         return;
       }
 
@@ -371,6 +407,11 @@ export default function HomeScreen(props: HomeScreenProps) {
 
       // After 10 seconds, confirm the failure
       const timeoutId = setTimeout(() => {
+        // Double-check that we haven't seen success in the meantime
+        if (hasSeenSuccessRef.current) {
+          setFailureTimeoutId(null);
+          return;
+        }
         setCurrentTransactionStatus('Transaction Failed');
         setStatusStartTime(Date.now());
         setIsPollingActive(false); // Stop polling after confirming failure
