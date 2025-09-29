@@ -1,15 +1,19 @@
 import { format } from 'date-fns';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import ProgressStep from './ProgressStep';
 import TransactionErrorBox from './TransactionErrorBox';
 import TransactionInfo from './TransactionInfo';
 
-// assets
-import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
-
 // components
 import CloseButton from '../Misc/CloseButton';
 import Esc from '../Misc/Esc';
+
+// hooks
+import useTransactionKit from '../../../../hooks/useTransactionKit';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 
 interface TransactionDetailsProps {
   onDone: () => void;
@@ -26,12 +30,30 @@ interface TransactionDetailsProps {
     symbol: string;
     name: string;
     logo: string;
+    address?: string;
+  } | null;
+  buyToken?: {
+    symbol: string;
+    name: string;
+    logo: string;
+    address?: string;
   } | null;
   tokenAmount?: string;
   sellOffer?: {
     tokenAmountToReceive: number;
     minimumReceive: number;
   } | null;
+  payingTokens?: Array<{
+    totalUsd: number;
+    name: string;
+    symbol: string;
+    logo: string;
+    actualBal: string;
+    totalRaw: string;
+    chainId: number;
+    address: string;
+  }>;
+  usdAmount?: string;
   // Timestamps for when each step completed
   submittedAt?: Date;
   pendingCompletedAt?: Date;
@@ -57,8 +79,11 @@ const TransactionDetails = ({
   status,
   isBuy = false,
   sellToken,
+  buyToken,
   tokenAmount,
   sellOffer,
+  payingTokens,
+  usdAmount,
   submittedAt,
   pendingCompletedAt,
   resourceLockCompletedAt,
@@ -71,7 +96,7 @@ const TransactionDetails = ({
   completedChainId,
   isResourceLockFailed = false,
 }: TransactionDetailsProps) => {
-  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const { walletAddress: accountAddress } = useTransactionKit();
   const detailsRef = useRef<HTMLDivElement>(null);
 
   // Click outside to close functionality
@@ -208,6 +233,152 @@ const TransactionDetails = ({
     return undefined;
   };
 
+  // Function to determine at which step the transaction failed
+  const determineFailureStep = () => {
+    if (isResourceLockFailed) {
+      return 'Resource Lock Creation';
+    }
+
+    const submittedStatus = getStepStatus('Submitted');
+    const pendingStatus = getStepStatus('Pending');
+    const resourceLockStatus = getStepStatus('ResourceLock');
+    const completedStatus = getStepStatus('Completed');
+
+    if (submittedStatus === 'failed') {
+      return 'Transaction Submission';
+    }
+    if (pendingStatus === 'failed') {
+      return 'Transaction Pending';
+    }
+    if (resourceLockStatus === 'failed') {
+      return 'Resource Lock Creation';
+    }
+    if (completedStatus === 'failed') {
+      return 'Transaction Completion';
+    }
+
+    return 'Unknown Step';
+  };
+
+  // Function to sanitize API key from error details
+  const sanitizeErrorDetails = (errorThrown: string) => {
+    if (!errorThrown) return errorThrown;
+
+    return errorThrown.replace(
+      /api-key=[A-Za-z0-9+/=]+/g,
+      'api-key=***REDACTED***'
+    );
+  };
+
+  // Function to generate comprehensive technical details for debugging
+  const generateTechnicalDetails = () => {
+    const details = {
+      // Basic transaction info
+      transactionType: isBuy ? 'BUY' : 'SELL',
+      transactionHash: isBuy ? userOpHash : userOpHash, // For Buy: bidHash, For Sell: userOpHash
+      hashType: isBuy ? 'bidHash' : 'userOpHash',
+      chainId,
+      status,
+      timestamp: new Date().toISOString(),
+
+      // User account info
+      accountAddress: accountAddress || 'N/A',
+
+      // Token information
+      // eslint-disable-next-line no-nested-ternary
+      token: isBuy
+        ? buyToken
+          ? {
+              symbol: buyToken.symbol,
+              name: buyToken.name,
+              address: buyToken.address || 'N/A',
+              chainId,
+              amount: tokenAmount || 'N/A',
+              logo: buyToken.logo || 'N/A',
+              type: 'BUY_TOKEN',
+            }
+          : null
+        : sellToken
+          ? {
+              symbol: sellToken.symbol,
+              name: sellToken.name,
+              address: sellToken.address || 'N/A',
+              chainId,
+              amount: tokenAmount || 'N/A',
+              logo: sellToken.logo || 'N/A',
+              type: 'SELL_TOKEN',
+            }
+          : null,
+
+      // Sell offer details
+      sellOffer: sellOffer
+        ? {
+            tokenAmountToReceive: sellOffer.tokenAmountToReceive,
+            minimumReceive: sellOffer.minimumReceive,
+          }
+        : null,
+
+      // Buy mode specific data
+      buyMode: isBuy
+        ? {
+            usdAmount: usdAmount || 'N/A',
+            payingTokens: payingTokens || [],
+            totalPayingUsd:
+              payingTokens?.reduce((sum, token) => sum + token.totalUsd, 0) ||
+              0,
+          }
+        : null,
+
+      // Transaction hashes and status
+      transactionHashes: {
+        [isBuy ? 'bidHash' : 'userOpHash']: userOpHash,
+        blockchainTxHash: txHash || 'N/A',
+        resourceLockTxHash: resourceLockTxHash || 'N/A',
+        completedTxHash: completedTxHash || 'N/A',
+      },
+
+      // Chain information
+      chains: {
+        mainChainId: chainId,
+        resourceLockChainId: resourceLockChainId || 'N/A',
+        completedChainId: completedChainId || 'N/A',
+      },
+
+      // Timestamps
+      timestamps: {
+        submittedAt: submittedAt?.toISOString() || 'N/A',
+        pendingCompletedAt: pendingCompletedAt?.toISOString() || 'N/A',
+        resourceLockCompletedAt:
+          resourceLockCompletedAt?.toISOString() || 'N/A',
+        currentTime: new Date().toISOString(),
+      },
+
+      // Error information
+      error: {
+        details: sanitizeErrorDetails(
+          errorDetails || 'No specific error details available'
+        ),
+        isResourceLockFailed: isResourceLockFailed || false,
+        failureStep: determineFailureStep(),
+      },
+
+      // Gas information
+      gas: {
+        fee: gasFee || 'N/A',
+      },
+
+      // Step status information
+      stepStatus: {
+        submitted: getStepStatus('Submitted'),
+        pending: getStepStatus('Pending'),
+        resourceLock: getStepStatus('ResourceLock'),
+        completed: getStepStatus('Completed'),
+      },
+    };
+
+    return JSON.stringify(details, null, 2);
+  };
+
   return (
     <div ref={detailsRef} className="flex flex-col gap-4 h-full w-full">
       <div className="flex justify-between items-center">
@@ -222,38 +393,30 @@ const TransactionDetails = ({
       </div>
       <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center">
         <div className="text-5xl text-white font-medium">
-          {isBuy ? (
-            <span className="text-white/30">$</span>
-          ) : (
-            <div className="relative inline-block">
-              <span
-                className="text-white/30 cursor-help"
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-              >
-                {(() => {
-                  const symbol = sellToken?.symbol || 'Token';
-                  return symbol.length > 3
-                    ? `${symbol.slice(0, 3)}...`
-                    : symbol;
-                })()}
-              </span>
-              {showTooltip &&
-                sellToken?.symbol &&
-                sellToken.symbol.length > 3 && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
-                    {sellToken.symbol}
-                  </div>
-                )}
-            </div>
-          )}{' '}
-          {tokenAmount || '0'}
+          <span className="text-white/30">$</span>{' '}
+          {isBuy
+            ? formatExponentialSmallNumber(
+                limitDigitsNumber(Number(usdAmount) || 0)
+              )
+            : formatExponentialSmallNumber(
+                limitDigitsNumber(sellOffer?.tokenAmountToReceive || 0)
+              )}
         </div>
         <div className="flex gap-1.5">
-          <img className="w-4 h-4 rounded" src={UsdcLogo} alt="USDC" />
+          <img
+            className="w-4 h-4 rounded"
+            src={isBuy ? buyToken?.logo || '' : sellToken?.logo || ''}
+            alt={
+              isBuy ? buyToken?.symbol || 'Token' : sellToken?.symbol || 'Token'
+            }
+          />
           <p className="text-white font-normal text-[13px]">
-            {sellOffer?.tokenAmountToReceive?.toFixed(6) || '0'}{' '}
-            <span className="text-white/30">USDC</span>
+            {tokenAmount || '0'}{' '}
+            <span className="text-white/30">
+              {isBuy
+                ? buyToken?.symbol || 'Token'
+                : sellToken?.symbol || 'Token'}
+            </span>
           </p>
         </div>
       </div>
@@ -342,7 +505,7 @@ const TransactionDetails = ({
       </div>
 
       {status === 'Transaction Failed' && (
-        <TransactionErrorBox technicalDetails={errorDetails} />
+        <TransactionErrorBox technicalDetails={generateTechnicalDetails()} />
       )}
 
       <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">

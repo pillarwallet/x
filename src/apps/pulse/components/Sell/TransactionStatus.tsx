@@ -20,12 +20,30 @@ interface TransactionStatusProps {
     symbol: string;
     name: string;
     logo: string;
+    address?: string;
+  } | null;
+  buyToken?: {
+    symbol: string;
+    name: string;
+    logo: string;
+    address?: string;
   } | null;
   tokenAmount?: string;
   sellOffer?: {
     tokenAmountToReceive: number;
     minimumReceive: number;
   } | null;
+  payingTokens?: Array<{
+    totalUsd: number;
+    name: string;
+    symbol: string;
+    logo: string;
+    actualBal: string;
+    totalRaw: string;
+    chainId: number;
+    address: string;
+  }>;
+  usdAmount?: string;
   // Externalized polling state
   currentStatus: TransactionStatusState;
   errorDetails: string;
@@ -54,8 +72,11 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     gasFee,
     isBuy,
     sellToken,
+    buyToken,
     tokenAmount,
     sellOffer,
+    payingTokens,
+    usdAmount,
     // Externalized polling state
     currentStatus,
     errorDetails,
@@ -230,8 +251,11 @@ const TransactionStatus = (props: TransactionStatusProps) => {
           status={currentStatus}
           isBuy={isBuy}
           sellToken={sellToken}
+          buyToken={buyToken}
           tokenAmount={tokenAmount}
           sellOffer={sellOffer}
+          payingTokens={payingTokens}
+          usdAmount={usdAmount}
           submittedAt={submittedAt}
           pendingCompletedAt={pendingCompletedAt}
           txHash={isBuy ? undefined : blockchainTxHash}

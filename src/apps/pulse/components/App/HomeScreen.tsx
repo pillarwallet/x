@@ -97,8 +97,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [transactionGasFee, setTransactionGasFee] = useState<string>('≈ $0.00');
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
+    buyToken: SelectedToken | null;
     tokenAmount: string;
     sellOffer: SellOffer | null;
+    payingTokens: PayingToken[];
+    usdAmount: string;
     isBuy: boolean;
   } | null>(null);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
@@ -229,8 +232,11 @@ export default function HomeScreen(props: HomeScreenProps) {
       // Store transaction data before clearing preview
       setTransactionData({
         sellToken,
+        buyToken,
         tokenAmount,
         sellOffer,
+        payingTokens,
+        usdAmount,
         isBuy,
       });
       setPreviewSell(false);
@@ -708,12 +714,19 @@ export default function HomeScreen(props: HomeScreenProps) {
           <TransactionStatus
             closeTransactionStatus={closeTransactionStatus}
             userOpHash={userOpHash}
-            chainId={transactionData?.sellToken?.chainId || 1}
+            chainId={
+              transactionData?.isBuy
+                ? transactionData?.buyToken?.chainId || 1
+                : transactionData?.sellToken?.chainId || 1
+            }
             gasFee={transactionGasFee}
             isBuy={transactionData?.isBuy || false}
             sellToken={transactionData?.sellToken}
+            buyToken={transactionData?.buyToken}
             tokenAmount={transactionData?.tokenAmount}
             sellOffer={transactionData?.sellOffer}
+            payingTokens={transactionData?.payingTokens}
+            usdAmount={transactionData?.usdAmount}
             // Externalized polling state
             currentStatus={currentTransactionStatus}
             errorDetails={errorDetails}
