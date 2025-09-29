@@ -169,6 +169,43 @@ export default function LandingPage() {
               {/* Form */}
               <MailChimp />
             </div>
+            <div className="home_app__download gradient_border">
+              <div className="home_app__download__copy">
+                <h3>Get started with</h3>
+                <img
+                  src="/landing-images/pillarXLogo.png"
+                  alt="pillar-x-logo"
+                />
+                <h3>on any device</h3>
+              </div>
+              <div className="home_app__download__cta">
+                <a
+                  href="https://www.apple.com/app-store/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="plausible-event-name=Download+App+Store"
+                >
+                  <img
+                    src="/landing-images/app-store.svg"
+                    alt="app-store-logo"
+                  />
+                </a>
+                <a
+                  href="https://play.google.com/store/apps/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="plausible-event-name=Download+Google+Play"
+                >
+                  <img
+                    src="/landing-images/google-play.svg"
+                    alt="google-play-logo"
+                  />
+                </a>
+                <Link to="/login" className="plausible-event-name=Download+Web">
+                  <img src="/landing-images/web.svg" alt="web-icon" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -1089,6 +1089,7 @@ const GlobalStyles = createGlobalStyle`
   @media only screen and (max-width: 767px) {
     .home_app__subscribe p {
       margin-bottom: 3.2rem;
+      font-size: 1.6rem;
     }
   }
 
@@ -1118,7 +1119,7 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
     background: #2A244D;
     border-radius: 1.2rem;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     border: 0;
     padding: 1.8rem 13.5rem 1.8rem 1.8rem;
   }
@@ -1156,6 +1157,105 @@ const GlobalStyles = createGlobalStyle`
       height: 2rem;
     }
   }
+
+  .home_app__download {
+    padding: 20rem 4rem 4.5rem 4rem;
+    border-radius: 2.4rem;
+    width: 100%;
+    max-width: 91.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5rem;
+    filter: drop-shadow(0px 20px 4px rgba(0, 0, 0, 0.1));
+    margin-top: -14rem;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .home_app__download::before {
+    opacity: 0.1;
+    border-radius: 2.4rem;
+    background: linear-gradient(to bottom,rgba(255, 255, 255, 1)0%, rgba(255, 255, 255, 0.8)100%);
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_app__download {
+      padding: 16rem 1.5rem 2rem 1.5rem;
+      margin-top: -13rem;
+      border-radius: 1.2rem;
+      flex-direction: column;
+      gap: 2rem
+    }
+
+    .home_app__download::before {
+      border-radius: 1.2rem;
+    }
+
+  }
+
+  .home_app__download__copy {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_app__download__copy {
+      width: 100%;
+    }
+  }
+
+  .home_app__download__copy h3 {
+    font-size: 3.2rem;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 0;
+    text-align: left;
+    opacity: 0.5;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_app__download__copy h3 {
+      font-size: 2rem;
+    }
+  }
+
+  .home_app__download__copy img {
+    max-width: 28rem;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_app__download__copy img {
+      max-width: 18rem;
+    }
+  }
+
+  .home_app__download__cta {
+    width: 50%;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    pointer-events: all;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .home_app__download__cta {
+      width: 100%;
+    }
+  }
+
+  .home_app__download__cta a {
+    filter: drop-shadow(0px 4px 20px rgba(255, 255, 255, 0.1));
+    transition: all ease 0.3s;
+  }
+
+  .home_app__download__cta a:hover {
+    transform: translateY(-0.2rem);
+  }
+
+
 
 
 
