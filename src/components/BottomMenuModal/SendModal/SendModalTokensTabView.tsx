@@ -202,7 +202,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       wallet: accountAddress || '',
       isPnl: false,
     },
-    { skip: !accountAddress }
+    { skip: !accountAddress, refetchOnFocus: false }
   );
 
   /**
