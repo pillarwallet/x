@@ -2736,7 +2736,7 @@ ul li:last-child {
 
 @media only screen and (max-width: 767px) {
   .advertising_hero__inapp__content {
-    padding-bottom: 55rem;
+    padding-bottom: 51rem;
   }
 }
 
@@ -2797,7 +2797,7 @@ ul li:last-child {
   .advertising_hero__inapp__images {
     flex-direction: column;
     gap: 1rem;
-    margin-top: -52rem;
+    margin-top: -50rem;
   }
 }
 
