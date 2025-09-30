@@ -11,15 +11,10 @@ describe('useKeyboardNavigation', () => {
   beforeEach(() => {
     mockOnEscape = vi.fn();
     mockOnEnter = vi.fn();
-
-    // Clear any existing event listeners
-    document.removeEventListener('keydown', vi.fn());
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    // Clean up event listeners
-    document.removeEventListener('keydown', vi.fn());
   });
 
   it('should call onEscape when Escape key is pressed', () => {
@@ -101,7 +96,7 @@ describe('useKeyboardNavigation', () => {
     expect(mockOnEscape).not.toHaveBeenCalled();
   });
 
-  it('should not handle keys when enabled is not provided (defaults to true)', () => {
+  it('should handle keys when enabled is not provided (defaults to true)', () => {
     renderHook(() =>
       useKeyboardNavigation({
         onEscape: mockOnEscape,

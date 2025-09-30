@@ -362,7 +362,7 @@ describe('<TransactionDetails />', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('does not show progress steps for failed transaction', () => {
+    it('shows progress steps for failed transaction', () => {
       vi.mocked(useTransactionStatus).mockReturnValue({
         getStepStatusForStep: vi.fn((step: string) => {
           if (step === 'Submitted') return 'completed' as const;

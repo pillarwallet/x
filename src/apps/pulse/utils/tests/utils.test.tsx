@@ -157,7 +157,7 @@ describe('Transaction Utils', () => {
       ).toBe(true);
     });
 
-    it('should return false for invalid hash', () => {
+    it('should return true for any non-empty, non-"-" string', () => {
       expect(isValidHash('invalid-hash')).toBe(true); // Any non-empty string is valid
       expect(isValidHash('0x')).toBe(true);
       expect(isValidHash('')).toBe(false);
