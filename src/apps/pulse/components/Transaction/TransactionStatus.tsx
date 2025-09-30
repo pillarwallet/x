@@ -93,12 +93,29 @@ const TransactionStatus = (props: TransactionStatusProps) => {
   const [showDetails, setShowDetails] = useState(false);
   const transactionStatusRef = useRef<HTMLDivElement>(null);
 
-  // Click outside to close functionality
+  // Auto-show details when transaction completes or fails (with 1 second delay)
+  useEffect(() => {
+    if (
+      (currentStatus === 'Transaction Complete' ||
+        currentStatus === 'Transaction Failed') &&
+      !showDetails
+    ) {
+      const timer = setTimeout(() => {
+        setShowDetails(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentStatus, showDetails]);
+
+  // Click outside to close functionality - only allow when Completed or Failed
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         transactionStatusRef.current &&
-        !transactionStatusRef.current.contains(event.target as Node)
+        !transactionStatusRef.current.contains(event.target as Node) &&
+        (currentStatus === 'Transaction Complete' ||
+          currentStatus === 'Transaction Failed')
       ) {
         closeTransactionStatus();
       }
@@ -108,13 +125,20 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [closeTransactionStatus]);
+  }, [closeTransactionStatus, currentStatus]);
 
-  // ESC key to close functionality
+  // ESC key functionality - close when Completed/Failed, return to main view when Pending
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        closeTransactionStatus();
+        if (
+          currentStatus === 'Transaction Complete' ||
+          currentStatus === 'Transaction Failed'
+        ) {
+          closeTransactionStatus();
+        } else if (currentStatus === 'Transaction Pending' && showDetails) {
+          setShowDetails(false);
+        }
       }
     };
 
@@ -122,7 +146,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [closeTransactionStatus]);
+  }, [closeTransactionStatus, currentStatus, showDetails]);
 
   // Function to get icon and styling based on status
   const getStatusIcon = () => {
@@ -245,7 +269,11 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     >
       {showDetails ? (
         <TransactionDetails
-          onDone={closeTransactionStatus}
+          onDone={
+            currentStatus === 'Transaction Pending'
+              ? () => setShowDetails(false)
+              : closeTransactionStatus
+          }
           userOpHash={userOpHash}
           chainId={chainId}
           status={currentStatus}

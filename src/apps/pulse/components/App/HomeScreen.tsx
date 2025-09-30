@@ -150,8 +150,9 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [isPollingActive, setIsPollingActive] = useState<boolean>(false);
   const [statusStartTime, setStatusStartTime] = useState<number>(Date.now());
   const [hasSeenSuccess, setHasSeenSuccess] = useState<boolean>(false);
-  const [failureTimeoutId, setFailureTimeoutId] =
-    useState<NodeJS.Timeout | null>(null);
+  const [failureTimeoutId, setFailureTimeoutId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [isBackgroundPolling, setIsBackgroundPolling] =
     useState<boolean>(false);
   const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
@@ -522,7 +523,9 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   // Polling effect for both Sell (UserOp) and Buy (Bid) flows (EXACT COPY FROM ORIGINAL)
   useEffect(() => {
-    const chainId = transactionData?.sellToken?.chainId || 1;
+    const chainId = transactionData?.isBuy
+      ? transactionData?.buyToken?.chainId || 1
+      : transactionData?.sellToken?.chainId || 1;
     const isBuyTransaction = transactionData?.isBuy || false;
     if (!userOpHash || !chainId || (!isPollingActive && !isBackgroundPolling)) {
       return undefined;
@@ -677,6 +680,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   }, [
     userOpHash,
     transactionData?.sellToken?.chainId,
+    transactionData?.buyToken?.chainId,
     isPollingActive,
     isBackgroundPolling,
     hasSeenSuccess,

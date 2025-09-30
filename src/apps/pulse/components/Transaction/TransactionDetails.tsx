@@ -99,12 +99,13 @@ const TransactionDetails = ({
   const { walletAddress: accountAddress } = useTransactionKit();
   const detailsRef = useRef<HTMLDivElement>(null);
 
-  // Click outside to close functionality
+  // Click outside to close functionality - only allow when Completed or Failed
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         detailsRef.current &&
-        !detailsRef.current.contains(event.target as Node)
+        !detailsRef.current.contains(event.target as Node) &&
+        (status === 'Transaction Complete' || status === 'Transaction Failed')
       ) {
         onDone();
       }
@@ -114,13 +115,20 @@ const TransactionDetails = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onDone]);
+  }, [onDone, status]);
 
-  // ESC key to close functionality
+  // ESC key functionality - close when Completed/Failed, call onDone for Pending (which will return to main view)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onDone();
+        if (
+          status === 'Transaction Complete' ||
+          status === 'Transaction Failed'
+        ) {
+          onDone();
+        } else if (status === 'Transaction Pending') {
+          onDone(); // This will return to main view for Pending status
+        }
       }
     };
 
@@ -128,7 +136,7 @@ const TransactionDetails = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onDone]);
+  }, [onDone, status]);
 
   // Function to determine step status based on current transaction status
   const getStepStatus = (

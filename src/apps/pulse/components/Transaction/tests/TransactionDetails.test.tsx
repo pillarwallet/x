@@ -224,13 +224,26 @@ describe('<TransactionDetails />', () => {
       expect(baseProps.onDone).toHaveBeenCalled();
     });
 
-    it('calls onDone when clicking outside the modal', () => {
-      render(<TransactionDetails {...baseProps} />);
+    it('calls onDone when clicking outside the modal for completed status', () => {
+      render(
+        <TransactionDetails {...baseProps} status="Transaction Complete" />
+      );
 
       // Click outside the modal
       fireEvent.mouseDown(document.body);
 
       expect(baseProps.onDone).toHaveBeenCalled();
+    });
+
+    it('does not call onDone when clicking outside the modal for pending status', () => {
+      render(
+        <TransactionDetails {...baseProps} status="Transaction Pending" />
+      );
+
+      // Click outside the modal
+      fireEvent.mouseDown(document.body);
+
+      expect(baseProps.onDone).not.toHaveBeenCalled();
     });
   });
 

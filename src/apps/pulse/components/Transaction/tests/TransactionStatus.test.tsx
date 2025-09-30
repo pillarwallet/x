@@ -195,7 +195,7 @@ describe('<TransactionStatus />', () => {
       expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
     });
 
-    it('closes transaction status when done button is clicked in details', () => {
+    it('returns to main view when done button is clicked in details for pending status', () => {
       render(
         <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
       );
@@ -204,28 +204,103 @@ describe('<TransactionStatus />', () => {
       const viewStatusButton = screen.getByText('View Status');
       fireEvent.click(viewStatusButton);
 
-      // Click done button
+      // Click done button - should return to main view, not close
+      const doneButton = screen.getByTestId('done-button');
+      fireEvent.click(doneButton);
+
+      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
+      // Should be back to main view (no details shown)
+      expect(screen.getByText('Transaction Pending')).toBeInTheDocument();
+    });
+
+    it('closes transaction status when done button is clicked in details for completed status', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      // Open details first
+      const successButton = screen.getByText('Success');
+      fireEvent.click(successButton);
+
+      // Click done button - should close for completed status
       const doneButton = screen.getByTestId('done-button');
       fireEvent.click(doneButton);
 
       expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
     });
 
-    it('closes transaction status when ESC key is pressed', () => {
-      render(<TransactionStatus {...baseProps} />);
+    it('closes transaction status when ESC key is pressed for completed status', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
 
       fireEvent.keyDown(document, { key: 'Escape' });
 
       expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
     });
 
-    it('closes transaction status when clicking outside the modal', () => {
-      render(<TransactionStatus {...baseProps} />);
+    it('does not close transaction status when ESC key is pressed for starting status', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Starting Transaction"
+        />
+      );
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
+    });
+
+    it('returns to main view when ESC key is pressed in details for pending status', () => {
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
+      );
+
+      // Open details first
+      const viewStatusButton = screen.getByText('View Status');
+      fireEvent.click(viewStatusButton);
+
+      // Press ESC - should return to main view
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
+      // Should be back to main view
+      expect(screen.getByText('Transaction Pending')).toBeInTheDocument();
+    });
+
+    it('closes transaction status when clicking outside the modal for completed status', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
 
       // Click outside the modal
       fireEvent.mouseDown(document.body);
 
       expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
+    });
+
+    it('does not close transaction status when clicking outside the modal for starting status', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Starting Transaction"
+        />
+      );
+
+      // Click outside the modal
+      fireEvent.mouseDown(document.body);
+
+      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
     });
   });
 
