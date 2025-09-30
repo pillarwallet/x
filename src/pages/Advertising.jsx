@@ -47,11 +47,11 @@ const Advertising = () => {
               </div>
               <div className="advertising_hero__inapp__images">
                 <div className="advertising_hero__inapp__images__wrapper">
-                  <img src="/public/landing-images/advertising-pillarx.webp" />
+                  <img src="/landing-images/advertising-pillarx.webp" />
                   <p>PillarX in-app banner</p>
                 </div>
                 <div className="advertising_hero__inapp__images__wrapper">
-                  <img src="/public/landing-images/advertising-pillar.webp" />
+                  <img src="/landing-images/advertising-pillar.webp" />
                   <p>
                     <a
                       href="https://pillar.fi"
