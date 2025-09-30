@@ -26,6 +26,7 @@ import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
 import TransactionStatus from '../Sell/TransactionStatus';
+import PulseToast from '../Toast/PulseToast';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
@@ -55,6 +56,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
+  const [showBetaToast, setShowBetaToast] = useState(false);
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -79,6 +81,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [buyRefreshCallback, setBuyRefreshCallback] = useState<
     (() => Promise<void>) | null
   >(null);
+
+  // Show beta toast on every entry to Pulse
+  useEffect(() => {
+    setShowBetaToast(true);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
@@ -406,6 +413,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       style={{ backgroundColor: 'black' }}
       data-testid="pulse-home-view"
     >
+      {showBetaToast && <PulseToast onClose={() => setShowBetaToast(false)} />}
       {renderPreview()}
     </div>
   );
