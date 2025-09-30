@@ -1,117 +1,126 @@
-/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fireEvent, render, screen } from '@testing-library/react';
+/* eslint-disable react/jsx-props-no-spreading */
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import { vi } from 'vitest';
 
+// hooks
+import { useClickOutside } from '../../../hooks/useClickOutside';
+import { useKeyboardNavigation } from '../../../hooks/useKeyboardNavigation';
+
 // types
-import { SelectedToken } from '../../../types/tokens';
+import { TransactionStatusState } from '../../../types/types';
 
 // components
 import TransactionStatus from '../TransactionStatus';
 
-// Mock dependencies
-vi.mock('../../assets/confirmed-icon.svg', () => ({
-  default: 'confirmed-icon.svg',
+// Mock all dependencies
+vi.mock('../../../../hooks/useTransactionKit', () => ({
+  default: () => ({
+    walletAddress: '0x1234567890123456789012345678901234567890',
+  }),
 }));
 
-vi.mock('../../assets/failed-icon.svg', () => ({
-  default: 'failed-icon.svg',
-}));
-
-vi.mock('../../assets/pending.svg', () => ({
-  default: 'pending.svg',
-}));
-
+// Mock the TransactionDetails component
 vi.mock('../TransactionDetails', () => ({
-  default: ({ onDone }: { onDone: () => void }) => (
+  default: ({ status, onDone }: { status: string; onDone: () => void }) => (
     <div data-testid="transaction-details">
-      <button type="button" onClick={onDone} data-testid="done-button">
+      <div data-testid="details-status">{status}</div>
+      <button type="button" onClick={onDone} data-testid="details-done-button">
         Done
       </button>
     </div>
   ),
 }));
 
-const mockSellToken: SelectedToken = {
-  name: 'Test Token',
-  symbol: 'TEST',
-  logo: 'test-logo.png',
-  usdValue: '100.00',
-  dailyPriceChange: 0.05,
-  chainId: 1,
-  decimals: 18,
-  address: '0x1234567890123456789012345678901234567890',
-};
+// Mock the TransactionStatusContainer component
+vi.mock('../TransactionStatusContainer', () => ({
+  default: ({
+    status,
+    onViewDetails,
+  }: {
+    status: string;
+    onViewDetails: () => void;
+  }) => (
+    <div data-testid="transaction-status-container">
+      <div data-testid="container-status">{status}</div>
+      <button
+        type="button"
+        onClick={onViewDetails}
+        data-testid="view-details-button"
+      >
+        View Details
+      </button>
+    </div>
+  ),
+}));
 
-const mockBuyToken: SelectedToken = {
-  name: 'Buy Token',
-  symbol: 'BUY',
-  logo: 'buy-logo.png',
-  usdValue: '50.00',
-  dailyPriceChange: 0.02,
-  chainId: 1,
-  decimals: 18,
-  address: '0x9876543210987654321098765432109876543210',
-};
+// Mock the custom hooks
+vi.mock('../../../hooks/useClickOutside', () => ({
+  useClickOutside: vi.fn(),
+}));
 
-const mockPayingTokens = [
-  {
-    totalUsd: 100.0,
-    name: 'USD Coin',
-    symbol: 'USDC',
-    logo: 'usdc-logo.png',
-    actualBal: '100.00',
-    totalRaw: '100000000',
-    chainId: 1,
-    address: '0xA0b86a33E6441b8C4C8C0C4C8C0C4C8C0C4C8C0C4',
-  },
-];
-
-const mockSellOffer = {
-  tokenAmountToReceive: 50.0,
-  minimumReceive: 45.0,
-};
+vi.mock('../../../hooks/useKeyboardNavigation', () => ({
+  useKeyboardNavigation: vi.fn(),
+}));
 
 const baseProps = {
+  currentStatus: 'Starting Transaction' as TransactionStatusState,
   closeTransactionStatus: vi.fn(),
   userOpHash:
     '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
   chainId: 1,
-  gasFee: '0.001',
   isBuy: false,
-  sellToken: mockSellToken,
+  sellToken: {
+    name: 'Test Token',
+    symbol: 'TEST',
+    logo: 'test-logo.png',
+    usdValue: '100.00',
+    dailyPriceChange: 0.05,
+    chainId: 1,
+    decimals: 18,
+    address: '0x1234567890123456789012345678901234567890',
+  },
   buyToken: null,
   tokenAmount: '100',
-  sellOffer: mockSellOffer,
+  sellOffer: {
+    tokenAmountToReceive: 50.0,
+    minimumReceive: 45.0,
+    slippageTolerance: 0.01,
+    offer: {} as any,
+  },
   payingTokens: undefined,
   usdAmount: undefined,
-  currentStatus: 'Starting Transaction' as const,
-  errorDetails: '',
   submittedAt: new Date('2023-01-01T00:00:00Z'),
   pendingCompletedAt: undefined,
-  blockchainTxHash:
-    '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+  resourceLockCompletedAt: undefined,
+  txHash: undefined,
+  gasFee: '0.001',
+  errorDetails: '',
   resourceLockTxHash: undefined,
   completedTxHash: undefined,
-  completedChainId: undefined,
   resourceLockChainId: undefined,
-  resourceLockCompletedAt: undefined,
+  completedChainId: undefined,
   isResourceLockFailed: false,
 };
 
 describe('<TransactionStatus />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock implementations
+    vi.mocked(useClickOutside).mockImplementation(() => {});
+    vi.mocked(useKeyboardNavigation).mockImplementation(() => {});
   });
 
-  it('renders correctly and matches snapshot', () => {
-    const tree = renderer.create(<TransactionStatus {...baseProps} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
+  describe('Rendering', () => {
+    it('renders correctly and matches snapshot', () => {
+      const tree = renderer
+        .create(<TransactionStatus {...baseProps} />)
+        .toJSON();
+      expect(tree).toMatchSnapshot();
+    });
 
-  describe('renders different transaction statuses', () => {
-    it('displays starting transaction status correctly', () => {
+    it('renders with starting transaction status', () => {
       render(
         <TransactionStatus
           {...baseProps}
@@ -119,299 +128,28 @@ describe('<TransactionStatus />', () => {
         />
       );
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
-      expect(screen.getByText('Just a moment...')).toBeInTheDocument();
-      expect(screen.getByAltText('Starting Transaction')).toBeInTheDocument();
-    });
-
-    it('displays transaction pending status correctly', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
-      );
-
-      expect(screen.getByText('Transaction Pending')).toBeInTheDocument();
-      expect(screen.getByText('View Status')).toBeInTheDocument();
-      expect(screen.getByAltText('Transaction Pending')).toBeInTheDocument();
-    });
-
-    it('displays transaction complete status correctly', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Transaction Complete"
-        />
-      );
-
-      expect(screen.getByText('Transaction Complete')).toBeInTheDocument();
-      expect(screen.getByText('Success')).toBeInTheDocument();
-      expect(screen.getByAltText('Transaction Complete')).toBeInTheDocument();
-    });
-
-    it('displays transaction failed status correctly', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
-      );
-
-      expect(screen.getByText('Transaction Failed')).toBeInTheDocument();
-      expect(screen.getByText('View Status')).toBeInTheDocument();
-      expect(screen.getByAltText('Transaction Failed')).toBeInTheDocument();
-    });
-  });
-
-  describe('handles user interactions', () => {
-    it('opens details when view status button is clicked', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
-      );
-
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
-    });
-
-    it('opens details when success button is clicked', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Transaction Complete"
-        />
-      );
-
-      const successButton = screen.getByText('Success');
-      fireEvent.click(successButton);
-
-      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
-    });
-
-    it('opens details when failed view status button is clicked', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
-      );
-
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
-    });
-
-    it('returns to main view when done button is clicked in details for pending status', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
-      );
-
-      // Open details first
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      // Click done button - should return to main view, not close
-      const doneButton = screen.getByTestId('done-button');
-      fireEvent.click(doneButton);
-
-      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
-      // Should be back to main view (no details shown)
-      expect(screen.getByText('Transaction Pending')).toBeInTheDocument();
-    });
-
-    it('closes transaction status when done button is clicked in details for completed status', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Transaction Complete"
-        />
-      );
-
-      // Open details first
-      const successButton = screen.getByText('Success');
-      fireEvent.click(successButton);
-
-      // Click done button - should close for completed status
-      const doneButton = screen.getByTestId('done-button');
-      fireEvent.click(doneButton);
-
-      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
-    });
-
-    it('closes transaction status when ESC key is pressed for completed status', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Transaction Complete"
-        />
-      );
-
-      fireEvent.keyDown(document, { key: 'Escape' });
-
-      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
-    });
-
-    it('does not close transaction status when ESC key is pressed for starting status', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Starting Transaction"
-        />
-      );
-
-      fireEvent.keyDown(document, { key: 'Escape' });
-
-      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
-    });
-
-    it('returns to main view when ESC key is pressed in details for pending status', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
-      );
-
-      // Open details first
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      // Press ESC - should return to main view
-      fireEvent.keyDown(document, { key: 'Escape' });
-
-      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
-      // Should be back to main view
-      expect(screen.getByText('Transaction Pending')).toBeInTheDocument();
-    });
-
-    it('closes transaction status when clicking outside the modal for completed status', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Transaction Complete"
-        />
-      );
-
-      // Click outside the modal
-      fireEvent.mouseDown(document.body);
-
-      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
-    });
-
-    it('does not close transaction status when clicking outside the modal for starting status', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Starting Transaction"
-        />
-      );
-
-      // Click outside the modal
-      fireEvent.mouseDown(document.body);
-
-      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('handles buy mode', () => {
-    it('renders buy mode correctly', () => {
-      const buyProps = {
-        ...baseProps,
-        isBuy: true,
-        buyToken: mockBuyToken,
-        sellToken: null,
-        usdAmount: '50.00',
-        payingTokens: mockPayingTokens,
-      };
-
-      render(
-        <TransactionStatus {...buyProps} currentStatus="Starting Transaction" />
-      );
-
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
-    });
-
-    it('passes correct props to TransactionDetails for buy mode', () => {
-      const buyProps = {
-        ...baseProps,
-        isBuy: true,
-        buyToken: mockBuyToken,
-        sellToken: null,
-        usdAmount: '50.00',
-        payingTokens: mockPayingTokens,
-        completedTxHash: '0xcompleted123',
-        completedChainId: 1,
-      };
-
-      render(
-        <TransactionStatus {...buyProps} currentStatus="Transaction Pending" />
-      );
-
-      // Open details
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
-    });
-  });
-
-  describe('handles sell mode', () => {
-    it('renders sell mode correctly', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Starting Transaction"
-        />
-      );
-
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
-    });
-
-    it('passes correct props to TransactionDetails for sell mode', () => {
-      render(
-        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
-      );
-
-      // Open details
-      const viewStatusButton = screen.getByText('View Status');
-      fireEvent.click(viewStatusButton);
-
-      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
-    });
-  });
-
-  describe('handles different status icons and styling', () => {
-    it('applies correct styling for starting transaction', () => {
-      render(
-        <TransactionStatus
-          {...baseProps}
-          currentStatus="Starting Transaction"
-        />
-      );
-
-      const iconContainer = screen.getByAltText(
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('container-status')).toHaveTextContent(
         'Starting Transaction'
-      ).parentElement;
-      expect(iconContainer).toHaveClass(
-        'w-[90px]',
-        'h-[90px]',
-        'rounded-full',
-        'border-[3px]',
-        'border-white/10',
-        'bg-[#8A77FF]'
       );
     });
 
-    it('applies correct styling for transaction pending', () => {
+    it('renders with pending transaction status', () => {
       render(
         <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
       );
 
-      const iconContainer = screen.getByAltText(
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('container-status')).toHaveTextContent(
         'Transaction Pending'
-      ).parentElement;
-      expect(iconContainer).toHaveClass(
-        'w-[90px]',
-        'h-[90px]',
-        'rounded-full',
-        'border-[3px]',
-        'border-white/10',
-        'bg-[#8A77FF]'
       );
     });
 
-    it('applies correct styling for transaction complete', () => {
+    it('renders with completed transaction status', () => {
       render(
         <TransactionStatus
           {...baseProps}
@@ -419,111 +157,346 @@ describe('<TransactionStatus />', () => {
         />
       );
 
-      const iconContainer = screen.getByAltText(
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('container-status')).toHaveTextContent(
         'Transaction Complete'
-      ).parentElement;
-      expect(iconContainer).toHaveClass(
-        'w-[90px]',
-        'h-[90px]',
-        'rounded-full',
-        'border-[4.5px]',
-        'border-[#5CFF93]',
-        'bg-[#5CFF93]/30'
       );
     });
 
-    it('applies correct styling for transaction failed', () => {
+    it('renders with failed transaction status', () => {
       render(
         <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
       );
 
-      const iconContainer =
-        screen.getByAltText('Transaction Failed').parentElement;
-      expect(iconContainer).toHaveClass(
-        'w-[90px]',
-        'h-[90px]',
-        'rounded-full',
-        'border-[4.5px]',
-        'border-[#FF366C]',
-        'bg-[#FF366C]/30'
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('container-status')).toHaveTextContent(
+        'Transaction Failed'
       );
     });
   });
 
-  describe('handles edge cases', () => {
-    it('handles missing optional props gracefully', () => {
-      const minimalProps = {
-        closeTransactionStatus: vi.fn(),
-        userOpHash: '0x1234567890abcdef',
-        chainId: 1,
-        currentStatus: 'Starting Transaction' as const,
-        errorDetails: '',
-      };
+  describe('Auto-show details behavior', () => {
+    it('automatically shows details for completed transactions after 1 second', async () => {
+      vi.useFakeTimers();
 
-      render(<TransactionStatus {...minimalProps} />);
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
+      // Initially should show container
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-details')
+      ).not.toBeInTheDocument();
+
+      // Fast-forward time by 1 second
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Should now show details
+      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-status-container')
+      ).not.toBeInTheDocument();
+
+      vi.useRealTimers();
     });
 
-    it('handles null token values', () => {
-      const propsWithNullTokens = {
-        ...baseProps,
-        sellToken: null,
-        buyToken: null,
-      };
+    it('automatically shows details for failed transactions after 1 second', async () => {
+      vi.useFakeTimers();
 
-      render(<TransactionStatus {...propsWithNullTokens} />);
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
+      );
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
+      // Initially should show container
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-details')
+      ).not.toBeInTheDocument();
+
+      // Fast-forward time by 1 second
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Should now show details
+      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-status-container')
+      ).not.toBeInTheDocument();
+
+      vi.useRealTimers();
     });
 
-    it('handles missing sell offer', () => {
-      const propsWithoutSellOffer = {
-        ...baseProps,
-        sellOffer: null,
-      };
+    it('does not auto-show details for pending transactions', () => {
+      vi.useFakeTimers();
 
-      render(<TransactionStatus {...propsWithoutSellOffer} />);
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
+      );
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
+      // Fast-forward time by 1 second
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      // Should still show container, not details
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-details')
+      ).not.toBeInTheDocument();
+
+      vi.useRealTimers();
     });
   });
 
-  describe('handles different chain IDs', () => {
-    it('renders with different chain ID', () => {
-      const propsWithDifferentChain = {
-        ...baseProps,
-        chainId: 137, // Polygon
-      };
+  describe('User interactions', () => {
+    it('shows details when view details button is clicked', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Starting Transaction"
+        />
+      );
 
-      render(<TransactionStatus {...propsWithDifferentChain} />);
+      // Initially showing container
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
+      // Click view details
+      fireEvent.click(screen.getByTestId('view-details-button'));
+
+      // Should now show details
+      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-status-container')
+      ).not.toBeInTheDocument();
+    });
+
+    it('closes transaction when done button is clicked in details', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      // Click view details first
+      fireEvent.click(screen.getByTestId('view-details-button'));
+
+      // Click done button
+      fireEvent.click(screen.getByTestId('details-done-button'));
+
+      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
+    });
+
+    it('handles ESC key press for completed transactions', () => {
+      let onEscapeCallback: (() => void) | undefined;
+
+      vi.mocked(useKeyboardNavigation).mockImplementation(
+        ({ onEscape }: { onEscape: () => void }) => {
+          onEscapeCallback = onEscape;
+        }
+      );
+
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      // Simulate ESC key press
+      if (onEscapeCallback) {
+        act(() => {
+          onEscapeCallback!();
+        });
+      }
+
+      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
+    });
+
+    it('handles ESC key press for failed transactions', () => {
+      let onEscapeCallback: (() => void) | undefined;
+
+      vi.mocked(useKeyboardNavigation).mockImplementation(
+        ({ onEscape }: { onEscape: () => void }) => {
+          onEscapeCallback = onEscape;
+        }
+      );
+
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
+      );
+
+      // Simulate ESC key press
+      if (onEscapeCallback) {
+        act(() => {
+          onEscapeCallback!();
+        });
+      }
+
+      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
+    });
+
+    it('handles ESC key press for pending transactions (returns to main view)', () => {
+      let onEscapeCallback: (() => void) | undefined;
+
+      vi.mocked(useKeyboardNavigation).mockImplementation(
+        ({ onEscape }: { onEscape: () => void }) => {
+          onEscapeCallback = onEscape;
+        }
+      );
+
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Pending" />
+      );
+
+      // First show details
+      fireEvent.click(screen.getByTestId('view-details-button'));
+      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
+
+      // Simulate ESC key press
+      if (onEscapeCallback) {
+        act(() => {
+          onEscapeCallback!();
+        });
+      }
+
+      // Should return to main view, not close entirely
+      expect(
+        screen.getByTestId('transaction-status-container')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('transaction-details')
+      ).not.toBeInTheDocument();
+      expect(baseProps.closeTransactionStatus).not.toHaveBeenCalled();
+    });
+
+    it('handles click outside for completed transactions', () => {
+      let callback: (() => void) | undefined;
+
+      vi.mocked(useClickOutside).mockImplementation(
+        ({ callback: cb }: { callback: () => void }) => {
+          callback = cb;
+        }
+      );
+
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      // Simulate click outside
+      if (callback) {
+        act(() => {
+          callback!();
+        });
+      }
+
+      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
+    });
+
+    it('handles click outside for failed transactions', () => {
+      let callback: (() => void) | undefined;
+
+      vi.mocked(useClickOutside).mockImplementation(
+        ({ callback: cb }: { callback: () => void }) => {
+          callback = cb;
+        }
+      );
+
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
+      );
+
+      // Simulate click outside
+      if (callback) {
+        act(() => {
+          callback!();
+        });
+      }
+
+      expect(baseProps.closeTransactionStatus).toHaveBeenCalled();
     });
   });
 
-  describe('handles error states', () => {
-    it('displays error details when provided', () => {
-      const propsWithError = {
-        ...baseProps,
-        currentStatus: 'Transaction Failed' as const,
-        errorDetails: 'Transaction failed due to insufficient gas',
-      };
+  describe('Hook integration', () => {
+    it('calls useClickOutside with correct parameters for completed transactions', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
 
-      render(<TransactionStatus {...propsWithError} />);
-
-      expect(screen.getByText('Transaction Failed')).toBeInTheDocument();
+      expect(useClickOutside).toHaveBeenCalledWith({
+        ref: expect.any(Object),
+        callback: expect.any(Function),
+        condition: true,
+      });
     });
 
-    it('handles resource lock failure', () => {
-      const propsWithResourceLockFailure = {
-        ...baseProps,
-        isResourceLockFailed: true,
-      };
+    it('calls useClickOutside with correct parameters for failed transactions', () => {
+      render(
+        <TransactionStatus {...baseProps} currentStatus="Transaction Failed" />
+      );
 
-      render(<TransactionStatus {...propsWithResourceLockFailure} />);
+      expect(useClickOutside).toHaveBeenCalledWith({
+        ref: expect.any(Object),
+        callback: expect.any(Function),
+        condition: true,
+      });
+    });
 
-      expect(screen.getByText('Starting Transaction')).toBeInTheDocument();
+    it('calls useKeyboardNavigation with correct parameters', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      expect(useKeyboardNavigation).toHaveBeenCalledWith({
+        onEscape: expect.any(Function),
+      });
+    });
+  });
+
+  describe('Props passing', () => {
+    it('passes correct props to TransactionDetails', () => {
+      render(
+        <TransactionStatus
+          {...baseProps}
+          currentStatus="Transaction Complete"
+        />
+      );
+
+      // Click view details to show TransactionDetails
+      fireEvent.click(screen.getByTestId('view-details-button'));
+
+      expect(screen.getByTestId('transaction-details')).toBeInTheDocument();
+      expect(screen.getByTestId('details-status')).toHaveTextContent(
+        'Transaction Complete'
+      );
     });
   });
 });

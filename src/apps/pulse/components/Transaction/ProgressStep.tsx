@@ -1,15 +1,5 @@
-import React from 'react';
 import { TailSpin } from 'react-loader-spinner';
-
-interface ProgressStepProps {
-  step: 'Submitted' | 'Pending' | 'ResourceLock' | 'Completed';
-  status: 'completed' | 'pending' | 'failed' | 'inactive';
-  label: string;
-  isLast?: boolean;
-  showLine?: boolean;
-  lineStatus?: 'completed' | 'pending' | 'failed' | 'inactive';
-  timestamp?: string | React.ReactNode;
-}
+import { ProgressStepProps } from '../../types/types';
 
 const ProgressStep = ({
   step,

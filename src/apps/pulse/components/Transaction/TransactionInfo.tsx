@@ -13,25 +13,10 @@ import Tooltip from '../Misc/Tooltip';
 
 // utils
 import { getBlockScan } from '../../../../utils/blockchain';
+import { getStatusInfo, isValidHash, truncateHash } from '../../utils/utils';
 
-interface TransactionInfoProps {
-  status:
-    | 'Starting Transaction'
-    | 'Transaction Pending'
-    | 'Transaction Complete'
-    | 'Transaction Failed';
-  userOpHash: string;
-  txHash?: string;
-  chainId: number;
-  gasFee?: string;
-  completedAt?: Date;
-  // Buy-specific fields
-  isBuy?: boolean;
-  resourceLockTxHash?: string;
-  resourceLockChainId?: number;
-  completedTxHash?: string;
-  completedChainId?: number;
-}
+// types
+import { TransactionInfoProps } from '../../types/types';
 
 const TransactionInfo = ({
   status,
@@ -50,7 +35,6 @@ const TransactionInfo = ({
   const [isCopied, setIsCopied] = useState(false);
 
   const displayTxHash = isBuy ? completedTxHash || '-' : txHash;
-  const hasValidTxHash = displayTxHash && displayTxHash !== '-';
 
   useEffect(() => {
     if (isCopied) {
@@ -64,20 +48,7 @@ const TransactionInfo = ({
     window.open(`${getBlockScan(cId)}${hash}`, '_blank', 'noopener,noreferrer');
   };
 
-  const getStatusInfo = () => {
-    switch (status) {
-      case 'Transaction Pending':
-        return { text: 'Pending', color: 'text-[#FFAB36]' };
-      case 'Transaction Failed':
-        return { text: 'Failed', color: 'text-[#FF366C]' };
-      case 'Transaction Complete':
-        return { text: 'Success', color: 'text-[#5CFF93]' };
-      default:
-        return { text: 'Starting...', color: 'text-white/50' };
-    }
-  };
-
-  const statusInfo = getStatusInfo();
+  const statusInfo = getStatusInfo(status);
 
   const detailsEntry = (
     lhs: string,
@@ -88,7 +59,7 @@ const TransactionInfo = ({
     transactionHash?: string,
     txChainId?: number
   ) => {
-    const isValidHash = transactionHash && transactionHash !== '-';
+    const isHashValid = isValidHash(transactionHash);
     const effectiveChainId = txChainId || chainId;
 
     return (
@@ -106,7 +77,7 @@ const TransactionInfo = ({
               </Tooltip>
             </div>
           )}
-          {showExternalLink && isValidHash && (
+          {showExternalLink && isHashValid && transactionHash && (
             <button
               type="button"
               onClick={() =>
@@ -137,7 +108,7 @@ const TransactionInfo = ({
               {rhs}
             </span>
           </div>
-          {showCopy && isValidHash && (
+          {showCopy && isHashValid && transactionHash && (
             <CopyToClipboard
               text={transactionHash}
               onCopy={() => setIsCopied(true)}
@@ -170,9 +141,7 @@ const TransactionInfo = ({
         <>
           {detailsEntry(
             'Resource Lock',
-            resourceLockTxHash
-              ? `${resourceLockTxHash.slice(0, 6)}...${resourceLockTxHash.slice(-4)}`
-              : '-',
+            truncateHash(resourceLockTxHash || '-'),
             !!resourceLockTxHash,
             !!resourceLockTxHash,
             '',
@@ -181,9 +150,7 @@ const TransactionInfo = ({
           )}
           {detailsEntry(
             'Completed',
-            completedTxHash
-              ? `${completedTxHash.slice(0, 6)}...${completedTxHash.slice(-4)}`
-              : '-',
+            truncateHash(completedTxHash || '-'),
             !!completedTxHash,
             !!completedTxHash,
             '',
@@ -194,9 +161,7 @@ const TransactionInfo = ({
       ) : (
         detailsEntry(
           'Tx Hash',
-          hasValidTxHash
-            ? `${displayTxHash.slice(0, 6)}...${(displayTxHash as string).slice(-4)}`
-            : '-',
+          truncateHash(displayTxHash || '-'),
           true,
           true,
           '',
