@@ -106,6 +106,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [currentStatus, showDetails]);
 
   // Click outside to close functionality - only allow when Completed or Failed
