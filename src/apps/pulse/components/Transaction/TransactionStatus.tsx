@@ -1,3 +1,4 @@
+import { animated, useSpring } from '@react-spring/web';
 import { useEffect, useRef, useState } from 'react';
 
 // components
@@ -41,6 +42,52 @@ const TransactionStatus = (props: TransactionStatusProps) => {
   const [showDetails, setShowDetails] = useState(false);
   const transactionStatusRef = useRef<HTMLDivElement>(null);
 
+  // Bouncing animation spring
+  const [springs, api] = useSpring(() => ({
+    from: {
+      scale: 1,
+      opacity: 1,
+      transformOrigin: 'center center',
+    },
+    to: {
+      scale: 1,
+      opacity: 1,
+      transformOrigin: 'center center',
+    },
+  }));
+
+  // Trigger bouncing animation when showDetails changes
+  useEffect(() => {
+    // Quick bounce effect when size changes
+    api.start({
+      to: {
+        scale: 1.04,
+        opacity: 1,
+        transformOrigin: 'center center',
+      },
+      config: {
+        duration: 100,
+        tension: 400,
+        friction: 10,
+      },
+      onRest: () => {
+        // Bounce back to normal size
+        api.start({
+          to: {
+            scale: 1,
+            opacity: 1,
+            transformOrigin: 'center center',
+          },
+          config: {
+            duration: 120,
+            tension: 300,
+            friction: 25,
+          },
+        });
+      },
+    });
+  }, [showDetails, api]);
+
   // Auto-show details when transaction completes or fails (with 1 second delay)
   useEffect(() => {
     if (
@@ -79,9 +126,10 @@ const TransactionStatus = (props: TransactionStatusProps) => {
   });
 
   return (
-    <div
+    <animated.div
       ref={transactionStatusRef}
       className={`flex flex-col w-full max-w-[446px] ${!showDetails ? 'h-[calc(100vh-94px)] max-h-[600px]' : 'h-min'} bg-[#1E1D24] border border-white/5 rounded-[10px] p-6`}
+      style={springs}
     >
       {showDetails ? (
         <TransactionDetails
@@ -118,7 +166,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
           onViewDetails={() => setShowDetails(true)}
         />
       )}
-    </div>
+    </animated.div>
   );
 };
 

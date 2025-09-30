@@ -1,4 +1,5 @@
-import React from 'react';
+import { animated, useSpring } from '@react-spring/web';
+import React, { useEffect, useRef } from 'react';
 import { TailSpin } from 'react-loader-spinner';
 
 // assets
@@ -18,6 +19,45 @@ const TransactionStatusButton: React.FC<TransactionStatusButtonProps> = ({
   onClick,
 }) => {
   const config = getButtonConfig(status);
+  const prevStatusRef = useRef<TransactionStatusState>(status);
+
+  // Zoom animation spring
+  const [springs, api] = useSpring(() => ({
+    from: { scale: 1 },
+    to: { scale: 1 },
+  }));
+
+  useEffect(() => {
+    const prevStatus = prevStatusRef.current;
+
+    // Only animate if there was a previous status (not initial mount)
+    if (prevStatus) {
+      // Check for status changes that should trigger zoom animation
+      if (
+        (prevStatus === 'Starting Transaction' &&
+          status === 'Transaction Pending') ||
+        (prevStatus === 'Transaction Pending' &&
+          (status === 'Transaction Complete' ||
+            status === 'Transaction Failed'))
+      ) {
+        // Start slightly smaller, grow, then settle to normal
+        api.set({ scale: 0.7 });
+        api.start({
+          to: { scale: 1.15 },
+          config: { duration: 150 },
+          onRest: () => {
+            api.start({
+              to: { scale: 1 },
+              config: { duration: 150 },
+            });
+          },
+        });
+      }
+    }
+
+    // Update the previous status
+    prevStatusRef.current = status;
+  }, [status, api]);
 
   const renderIcon = () => {
     if (status === 'Transaction Pending') {
@@ -60,8 +100,9 @@ const TransactionStatusButton: React.FC<TransactionStatusButtonProps> = ({
   }
 
   return (
-    <button
+    <animated.button
       className={`flex items-center justify-between rounded-[30px] px-2 py-2 ${config.bgColor} mt-[10px] w-[154px]`}
+      style={springs}
       type="button"
       onClick={onClick}
     >
@@ -74,7 +115,7 @@ const TransactionStatusButton: React.FC<TransactionStatusButtonProps> = ({
       >
         <span className={`${config.textColor} text-[10px] font-bold`}>i</span>
       </div>
-    </button>
+    </animated.button>
   );
 };
 

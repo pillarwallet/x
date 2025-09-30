@@ -3,6 +3,13 @@
 exports[`<TransactionStatus /> > Rendering > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col w-full max-w-[446px] h-[calc(100vh-94px)] max-h-[600px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6"
+  style={
+    {
+      "opacity": 1,
+      "transform": "none",
+      "transformOrigin": "center center",
+    }
+  }
 >
   <div
     data-testid="transaction-status-container"
