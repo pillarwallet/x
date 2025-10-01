@@ -300,10 +300,7 @@ const TransactionDetails = ({
       </div>
 
       {status === 'Transaction Failed' && (
-        <TransactionErrorBox
-          technicalDetails={technicalDetails}
-          data-testid="pulse-transaction-details-error-box"
-        />
+        <TransactionErrorBox technicalDetails={technicalDetails} />
       )}
 
       <div
