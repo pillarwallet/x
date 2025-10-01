@@ -348,7 +348,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       <div className="flex justify-between mb-6">
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]">
+          <div
+            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+            data-testid="pulse-preview-buy-refresh-button"
+          >
             <Refresh
               onClick={refreshPreviewBuyData}
               isLoading={isRefreshingPreview}
@@ -361,7 +364,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             />
           </div>
 
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]">
+          <div
+            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+            data-testid="pulse-preview-buy-esc-button"
+          >
             <Esc onClose={closePreview} />
           </div>
         </div>
@@ -384,7 +390,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
       <div className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
         <div className="flex items-center">
-          <div className="relative inline-block mr-2">
+          <div
+            className="relative inline-block mr-2"
+            data-testid={`pulse-preview-buy-buying-token-${buyToken.chainId}-${buyToken.name}`}
+          >
             {buyToken?.logo ? (
               <img
                 src={buyToken?.logo}
@@ -517,6 +526,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             onClick={shortlistBid}
             disabled={isLoading}
             type="submit"
+            data-testid="pulse-preview-buy-confirm-button"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">

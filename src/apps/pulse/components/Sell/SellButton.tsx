@@ -120,6 +120,7 @@ const SellButton = (props: SellButtonProps) => {
         borderRadius: 8,
       }}
       type="button"
+      data-testid="pulse-sell-button"
     >
       {getButtonText(
         isLoadingOffer,

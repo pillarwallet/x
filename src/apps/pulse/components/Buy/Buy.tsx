@@ -425,6 +425,7 @@ export default function Buy(props: BuyProps) {
               setSearching(true);
             }}
             type="button"
+            data-testid="pulse-buy-token-selector"
           >
             {token ? (
               <div
@@ -435,6 +436,7 @@ export default function Buy(props: BuyProps) {
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
                 }}
+                data-testid={`pulse-buy-token-selected-${token.chainId}-${token.name}`}
               >
                 <div style={{ position: 'relative', display: 'inline-block' }}>
                   {token.logo ? (
@@ -560,6 +562,7 @@ export default function Buy(props: BuyProps) {
                 type="text"
                 disabled={isLoading}
                 onFocus={() => setInputPlaceholder('')}
+                data-testid="pulse-buy-amount-input"
               />
               <p style={{ lineHeight: 1, color: 'grey' }}>USD</p>
             </div>
@@ -589,7 +592,11 @@ export default function Buy(props: BuyProps) {
               return (
                 <>
                   <div className="flex items-center justify-center">
-                    <img src={WarningIcon} alt="warning" />
+                    <img
+                      src={WarningIcon}
+                      alt="warning"
+                      data-testid="pulse-buy-warning-icon"
+                    />
                   </div>
 
                   <div
@@ -599,6 +606,7 @@ export default function Buy(props: BuyProps) {
                       fontSize: 12,
                       marginLeft: 5,
                     }}
+                    data-testid="pulse-buy-error-message"
                   >
                     {message}
                   </div>
@@ -607,13 +615,18 @@ export default function Buy(props: BuyProps) {
             })()}
           </div>
           <div className="flex" style={{ float: 'right' }}>
-            <img src={WalletIcon} alt="wallet-icon" />
+            <img
+              src={WalletIcon}
+              alt="wallet-icon"
+              data-testid="pulse-buy-wallet-icon"
+            />
             <div
               style={{
                 color: '#8A77FF',
                 marginLeft: 5,
                 fontSize: 12,
               }}
+              data-testid="pulse-buy-wallet-balance"
             >
               ${getStableCurrencyBalance().toFixed(2)}
             </div>

@@ -39,6 +39,7 @@ const PulseToast = ({ onClose }: PulseToastProps) => {
     <animated.div
       style={toastAnimation}
       className="flex fixed bottom-4 right-4 max-w-80 bg-[#8A77FF] text-medium_grey p-4 rounded-lg shadow-lg z-[500] border border-white/[.5]"
+      data-testid="pulse-toast"
     >
       <div className="flex flex-col">
         <div className="flex justify-between">
@@ -50,6 +51,7 @@ const PulseToast = ({ onClose }: PulseToastProps) => {
             className="absolute top-2 right-2"
             onClick={handleClose}
             aria-label="Close"
+            data-testid="pulse-toast-close"
           >
             <MdClose color="white" />
           </button>

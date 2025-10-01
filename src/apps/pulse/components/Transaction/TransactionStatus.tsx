@@ -130,6 +130,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
       ref={transactionStatusRef}
       className={`flex flex-col w-full max-w-[446px] ${!showDetails ? 'h-[calc(100vh-94px)] max-h-[600px]' : 'h-min'} bg-[#1E1D24] border border-white/5 rounded-[10px] p-6`}
       style={springs}
+      data-testid="pulse-transaction-status"
     >
       {showDetails ? (
         <TransactionDetails

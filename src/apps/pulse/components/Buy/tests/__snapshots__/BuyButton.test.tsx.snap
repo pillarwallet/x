@@ -3,6 +3,7 @@
 exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
 <button
   className="flex-1 items-center justify-center"
+  data-testid="pulse-buy-button"
   disabled={false}
   onClick={[MockFunction spy]}
   style={

@@ -47,6 +47,7 @@ export default function TokenPriceChange(
           fontWeight: 400,
           color: value > 0 ? '#5CFF93' : '#FF366C',
         }}
+        data-testid="pulse-token-price-change"
       >
         {value > 0 ? green : red}
         <p>{value < 0 ? (value * -1).toFixed(2) : value.toFixed(2)}%</p>

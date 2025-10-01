@@ -422,11 +422,15 @@ const PreviewSell = (props: PreviewSellProps) => {
     <div
       ref={previewModalRef}
       className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6"
+      data-testid="pulse-preview-sell-container"
     >
       <div className="flex justify-between mb-6">
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]">
+          <div
+            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+            data-testid="pulse-preview-sell-refresh-button"
+          >
             <Refresh
               onClick={refreshPreviewSellData}
               isLoading={isRefreshingPreview}
@@ -440,7 +444,10 @@ const PreviewSell = (props: PreviewSellProps) => {
             />
           </div>
 
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]">
+          <div
+            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+            data-testid="pulse-preview-sell-esc-button"
+          >
             <Esc onClose={closePreview} />
           </div>
         </div>
@@ -453,9 +460,15 @@ const PreviewSell = (props: PreviewSellProps) => {
         </div>
       </div>
 
-      <div className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
+      <div
+        className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
+        data-testid="pulse-preview-sell-selling-token"
+      >
         <div className="flex items-center">
-          <div className="relative inline-block mr-2">
+          <div
+            className="relative inline-block mr-2"
+            data-testid={`pulse-preview-sell-selling-token-${sellToken.chainId}-${sellToken.name}`}
+          >
             {sellToken?.logo ? (
               <img
                 src={sellToken?.logo}
@@ -509,10 +522,16 @@ const PreviewSell = (props: PreviewSellProps) => {
           </div>
         </div>
         <div className="flex flex-col justify-center text-right">
-          <div className="text-[13px] font-normal text-white">
+          <div
+            className="text-[13px] font-normal text-white"
+            data-testid="pulse-preview-sell-token-amount-value"
+          >
             {tokenAmountFormatted}
           </div>
-          <div className="text-xs font-normal text-white/50">
+          <div
+            className="text-xs font-normal text-white/50"
+            data-testid="pulse-preview-sell-token-amount-usd"
+          >
             $
             {(parseFloat(tokenAmount) * parseFloat(sellToken.usdValue)).toFixed(
               2
@@ -525,9 +544,15 @@ const PreviewSell = (props: PreviewSellProps) => {
         <div>You&apos;re receiving</div>
       </div>
 
-      <div className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
+      <div
+        className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
+        data-testid={`pulse-preview-sell-receiving-token-${sellToken?.chainId}-usdc`}
+      >
         <div className="flex items-center">
-          <div className="relative inline-block mr-2">
+          <div
+            className="relative inline-block mr-2"
+            data-testid="pulse-preview-sell-usdc-token"
+          >
             <img src={UsdcLogo} alt="USDC" className="w-8 h-8 rounded-full" />
             <img
               src={getLogoForChainId(sellToken?.chainId)}
@@ -567,17 +592,26 @@ const PreviewSell = (props: PreviewSellProps) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-center text-right">
+        <div
+          className="flex flex-col justify-center text-right"
+          data-testid="pulse-preview-sell-usdc-amount"
+        >
           {isRefreshingPreview ? (
             <div className="flex items-center justify-end">
               <TailSpin color="#FFFFFF" height={15} width={15} />
             </div>
           ) : (
             <>
-              <div className="text-[13px] font-normal text-white">
+              <div
+                className="text-[13px] font-normal text-white"
+                data-testid="pulse-preview-sell-usdc-amount-value"
+              >
                 {usdcAmountFormatted}
               </div>
-              <div className="text-xs font-normal text-white/50">
+              <div
+                className="text-xs font-normal text-white/50"
+                data-testid="pulse-preview-sell-usdc-amount-usd"
+              >
                 ${usdcAmount.toFixed(2)}
               </div>
             </>
@@ -637,14 +671,20 @@ const PreviewSell = (props: PreviewSellProps) => {
 
       {/* Error Display */}
       {error && (
-        <div className="m-2.5 p-2.5 bg-red-500/10 border border-red-500 rounded-[10px]">
+        <div
+          className="m-2.5 p-2.5 bg-red-500/10 border border-red-500 rounded-[10px]"
+          data-testid="pulse-preview-sell-error"
+        >
           <div className="text-red-300 text-xs">{error}</div>
         </div>
       )}
 
       {/* Gas Estimation Error Display */}
       {gasEstimationError && (
-        <div className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500 rounded-[10px]">
+        <div
+          className="m-2.5 p-2.5 bg-yellow-500/10 border border-yellow-500 rounded-[10px]"
+          data-testid="pulse-preview-sell-gas-error"
+        >
           <div className="text-yellow-300 text-xs">{gasEstimationError}</div>
         </div>
       )}
@@ -656,6 +696,7 @@ const PreviewSell = (props: PreviewSellProps) => {
             onClick={handleConfirmSell}
             disabled={isExecuting}
             type="submit"
+            data-testid="pulse-preview-sell-confirm-button"
           >
             {isExecuting ? (
               <div className="flex items-center justify-center gap-2">
@@ -672,13 +713,19 @@ const PreviewSell = (props: PreviewSellProps) => {
       {isWaitingForSignature &&
         !isTransactionRejected &&
         !isTransactionSuccess && (
-          <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
+          <div
+            className="text-[#FFAB36] text-[13px] font-normal text-left mt-4"
+            data-testid="pulse-preview-sell-waiting-signature"
+          >
             Please open your wallet and confirm the transaction.
           </div>
         )}
 
       {isTransactionRejected && (
-        <div className="text-[#FF366C] text-[13px] font-normal text-center mt-4">
+        <div
+          className="text-[#FF366C] text-[13px] font-normal text-center mt-4"
+          data-testid="pulse-preview-sell-transaction-rejected"
+        >
           Transaction was cancelled. No funds were moved
         </div>
       )}

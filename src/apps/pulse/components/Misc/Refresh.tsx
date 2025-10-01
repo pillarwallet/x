@@ -23,6 +23,7 @@ export default function Refresh({
       aria-label="Refresh"
       onClick={onClick}
       disabled={disabled || isLoading}
+      data-testid="pulse-refresh-button"
     >
       {isLoading ? (
         <TailSpin color="#FFFFFF" height={20} width={20} />

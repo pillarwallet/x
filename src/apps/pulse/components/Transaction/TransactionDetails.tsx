@@ -133,10 +133,22 @@ const TransactionDetails = ({
   };
 
   return (
-    <div ref={detailsRef} className="flex flex-col gap-4 h-full w-full">
+    <div
+      ref={detailsRef}
+      className="flex flex-col gap-4 h-full w-full"
+      data-testid="pulse-transaction-details-container"
+    >
       <div className="flex justify-between items-center">
-        <p className="text-xl text-white font-normal">Transaction Details</p>
-        <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]">
+        <p
+          className="text-xl text-white font-normal"
+          data-testid="pulse-transaction-details-title"
+        >
+          Transaction Details
+        </p>
+        <div
+          className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+          data-testid="pulse-transaction-details-close-button"
+        >
           {status === 'Transaction Pending' ? (
             <Esc onClose={onDone} />
           ) : (
@@ -144,8 +156,14 @@ const TransactionDetails = ({
           )}
         </div>
       </div>
-      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center">
-        <div className="text-5xl text-white font-medium">
+      <div
+        className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center"
+        data-testid={`pulse-transaction-details-summary-${isBuy ? 'buy' : 'sell'}-${isBuy ? buyToken?.name : sellToken?.name}`}
+      >
+        <div
+          className="text-5xl text-white font-medium"
+          data-testid="pulse-transaction-details-amount-usd"
+        >
           <span className="text-white/30">$</span>{' '}
           {isBuy
             ? formatExponentialSmallNumber(
@@ -155,17 +173,27 @@ const TransactionDetails = ({
                 limitDigitsNumber(sellOffer?.tokenAmountToReceive || 0)
               )}
         </div>
-        <div className="flex gap-1.5">
+        <div
+          className="flex gap-1.5"
+          data-testid="pulse-transaction-details-token-info"
+        >
           <img
             className="w-4 h-4 rounded"
             src={isBuy ? buyToken?.logo || '' : sellToken?.logo || ''}
             alt={
               isBuy ? buyToken?.symbol || 'Token' : sellToken?.symbol || 'Token'
             }
+            data-testid={`pulse-transaction-details-token-logo-${isBuy ? buyToken?.name : sellToken?.name}`}
           />
-          <p className="text-white font-normal text-[13px]">
+          <p
+            className="text-white font-normal text-[13px]"
+            data-testid="pulse-transaction-details-token-amount"
+          >
             {tokenAmount || '0'}{' '}
-            <span className="text-white/30">
+            <span
+              className="text-white/30"
+              data-testid="pulse-transaction-details-token-symbol"
+            >
               {isBuy
                 ? buyToken?.symbol || 'Token'
                 : sellToken?.symbol || 'Token'}
@@ -175,10 +203,16 @@ const TransactionDetails = ({
       </div>
 
       {status !== 'Transaction Complete' && (
-        <div className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3">
+        <div
+          className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+          data-testid="pulse-transaction-details-progress-container"
+        >
           <div className="flex flex-col items-center justify-center w-full">
             {/* Progress Bar */}
-            <div className="flex flex-col w-full">
+            <div
+              className="flex flex-col w-full"
+              data-testid="pulse-transaction-details-progress-steps"
+            >
               <ProgressStep
                 step="Submitted"
                 status={getStepStatusForStep('Submitted')}
@@ -189,6 +223,7 @@ const TransactionDetails = ({
                     : getStepStatusForStep('Pending')
                 }
                 timestamp={getStepTimestamp('Submitted')}
+                data-testid="pulse-transaction-details-step-submitted"
               />
 
               {isBuy ? (
@@ -199,6 +234,7 @@ const TransactionDetails = ({
                     label="Resource Lock"
                     lineStatus={getStepStatusForStep('Completed')}
                     timestamp={getStepTimestamp('ResourceLock')}
+                    data-testid="pulse-transaction-details-step-resource-lock"
                   />
 
                   <ProgressStep
@@ -211,6 +247,7 @@ const TransactionDetails = ({
                     }
                     isLast
                     timestamp={getStepTimestamp('Completed')}
+                    data-testid="pulse-transaction-details-step-completed-buy"
                   />
                 </>
               ) : (
@@ -221,6 +258,7 @@ const TransactionDetails = ({
                     label="Pending"
                     lineStatus={getStepStatusForStep('Completed')}
                     timestamp={getStepTimestamp('Pending')}
+                    data-testid="pulse-transaction-details-step-pending"
                   />
 
                   <ProgressStep
@@ -233,6 +271,7 @@ const TransactionDetails = ({
                     }
                     isLast
                     timestamp={getStepTimestamp('Completed')}
+                    data-testid="pulse-transaction-details-step-completed-sell"
                   />
                 </>
               )}
@@ -241,7 +280,10 @@ const TransactionDetails = ({
         </div>
       )}
 
-      <div className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3">
+      <div
+        className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+        data-testid="pulse-transaction-details-info-container"
+      >
         <TransactionInfo
           status={status}
           userOpHash={userOpHash}
@@ -258,14 +300,21 @@ const TransactionDetails = ({
       </div>
 
       {status === 'Transaction Failed' && (
-        <TransactionErrorBox technicalDetails={technicalDetails} />
+        <TransactionErrorBox
+          technicalDetails={technicalDetails}
+          data-testid="pulse-transaction-details-error-box"
+        />
       )}
 
-      <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
+      <div
+        className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
+        data-testid="pulse-transaction-details-done-button-container"
+      >
         <button
           className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF] text-white font-normal text-[14px]"
           type="button"
           onClick={onDone}
+          data-testid="pulse-transaction-details-done-button"
         >
           Done
         </button>

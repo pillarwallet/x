@@ -3,6 +3,7 @@
 exports[`<TransactionStatusContainer /> > Rendering > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col items-center justify-center h-full"
+  data-testid="pulse-transaction-status-container"
 >
   <div
     data-testid="transaction-status-icon"
@@ -15,6 +16,7 @@ exports[`<TransactionStatusContainer /> > Rendering > renders correctly and matc
   </div>
   <div
     className="text-white font-normal text-[20px] mt-3"
+    data-testid="pulse-transaction-status-text"
   >
     Starting Transaction
   </div>

@@ -811,6 +811,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             setSearching(true);
           }}
           type="button"
+          data-testid="pulse-search-button-homescreen"
         >
           <span style={{ marginLeft: 10 }}>
             <img src={SearchIcon} alt="search-icon" />
@@ -898,6 +899,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                   height: 40,
                   padding: '2px 2px 4px 2px',
                 }}
+                data-testid="pulse-refresh-button-homescreen"
               >
                 <Refresh
                   onClick={handleRefresh}
