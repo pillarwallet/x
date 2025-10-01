@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TransactionStatusContainer /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col items-center justify-center h-full"
+>
+  <div
+    data-testid="transaction-status-icon"
+  >
+    <span
+      data-testid="icon-status"
+    >
+      Starting Transaction
+    </span>
+  </div>
+  <div
+    className="text-white font-normal text-[20px] mt-3"
+  >
+    Starting Transaction
+  </div>
+  <button
+    data-testid="transaction-status-button"
+    onClick={[MockFunction spy]}
+    type="button"
+  >
+    <span
+      data-testid="button-status"
+    >
+      Starting Transaction
+    </span>
+    <span
+      data-testid="button-label"
+    >
+      View Details
+    </span>
+  </button>
+</div>
+`;

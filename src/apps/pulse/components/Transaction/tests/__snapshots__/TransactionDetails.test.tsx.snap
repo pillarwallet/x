@@ -1,0 +1,178 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TransactionDetails /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col gap-4 h-full w-full"
+>
+  <div
+    className="flex justify-between items-center"
+  >
+    <p
+      className="text-xl text-white font-normal"
+    >
+      Transaction Details
+    </p>
+    <div
+      className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+    >
+      <button
+        aria-label="Close"
+        className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px]"
+        data-testid="close-button"
+        onClick={[MockFunction spy]}
+        type="button"
+      >
+        <svg
+          className="w-5 h-5 text-white/50"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M6 18L18 6M6 6l12 12"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div
+    className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center"
+  >
+    <div
+      className="text-5xl text-white font-medium"
+    >
+      <span
+        className="text-white/30"
+      >
+        $
+      </span>
+       
+      50
+    </div>
+    <div
+      className="flex gap-1.5"
+    >
+      <img
+        alt="TEST"
+        className="w-4 h-4 rounded"
+        src="test-logo.png"
+      />
+      <p
+        className="text-white font-normal text-[13px]"
+      >
+        100
+         
+        <span
+          className="text-white/30"
+        >
+          TEST
+        </span>
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+  >
+    <div
+      className="flex flex-col items-center justify-center w-full"
+    >
+      <div
+        className="flex flex-col w-full"
+      >
+        <div
+          data-testid="progress-step-Submitted"
+        >
+          <span
+            data-testid="step-Submitted-status"
+          >
+            completed
+          </span>
+          <span
+            data-testid="step-Submitted-label"
+          >
+            Submitted
+          </span>
+          <div
+            data-testid="step-Submitted-timestamp"
+          >
+            Formatted Submitted timestamp: 2023-01-01T00:00:00.000Z
+          </div>
+        </div>
+        <div
+          data-testid="progress-step-Pending"
+        >
+          <span
+            data-testid="step-Pending-status"
+          >
+            pending
+          </span>
+          <span
+            data-testid="step-Pending-label"
+          >
+            Pending
+          </span>
+        </div>
+        <div
+          data-testid="progress-step-Completed"
+        >
+          <span
+            data-testid="step-Completed-status"
+          >
+            pending
+          </span>
+          <span
+            data-testid="step-Completed-label"
+          >
+            Completed
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+  >
+    <div
+      data-testid="transaction-info"
+    >
+      <span
+        data-testid="info-status"
+      >
+        Starting Transaction
+      </span>
+      <span
+        data-testid="info-userOpHash"
+      >
+        0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+      </span>
+      <span
+        data-testid="info-txHash"
+      />
+      <span
+        data-testid="info-chainId"
+      >
+        1
+      </span>
+      <span
+        data-testid="info-gasFee"
+      >
+        0.001
+      </span>
+    </div>
+  </div>
+  <div
+    className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
+  >
+    <button
+      className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF] text-white font-normal text-[14px]"
+      onClick={[MockFunction spy]}
+      type="button"
+    >
+      Done
+    </button>
+  </div>
+</div>
+`;

@@ -69,7 +69,7 @@ const TransactionErrorBox = ({
       </div>
 
       {isExpanded && (
-        <div className="mt-2 p-3 bg-black/20 rounded-[6px] border border-[#FF366C]/30">
+        <div className="mt-2">
           <p className="text-white/70 text-[12px] font-mono whitespace-pre-wrap break-all">
             {technicalDetails}
           </p>

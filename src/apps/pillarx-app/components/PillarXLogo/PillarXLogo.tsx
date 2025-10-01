@@ -17,7 +17,9 @@ type PillarXLogoProps = {
 export const PillarXLogo = ({ src, className }: PillarXLogoProps) => {
   const [clickCount, setClickCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const [isTestnetSwitch, setIsTestnetSwitch] = useState<string>(
     String(isTestnet)
   );

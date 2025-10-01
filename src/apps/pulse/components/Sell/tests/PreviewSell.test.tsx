@@ -116,6 +116,7 @@ const mockProps = {
   tokenAmount: '10.5',
   walletPortfolioData: mockWalletPortfolioData,
   onRefresh: vi.fn(),
+  showTransactionStatus: vi.fn(),
 };
 
 const renderWithProviders = (props = {}) => {
