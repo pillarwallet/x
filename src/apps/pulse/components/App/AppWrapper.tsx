@@ -6,6 +6,7 @@ import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalle
 import { SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
 import Search from '../Search/Search';
+import PulseToast from '../Toast/PulseToast';
 import HomeScreen from './HomeScreen';
 
 export default function AppWrapper() {
@@ -14,6 +15,7 @@ export default function AppWrapper() {
   const [chains, setChains] = useState<MobulaChainNames>(MobulaChainNames.All);
   const [buyToken, setBuyToken] = useState<SelectedToken | null>(null);
   const [sellToken, setSellToken] = useState<SelectedToken | null>(null);
+  const [showBetaToast, setShowBetaToast] = useState(false);
 
   const { walletAddress: accountAddress } = useTransactionKit();
 
@@ -38,6 +40,11 @@ export default function AppWrapper() {
 
   const query = useQuery();
 
+  // Show beta toast every time Pulse app opens
+  useEffect(() => {
+    setShowBetaToast(true);
+  }, []);
+
   useEffect(() => {
     const tokenAddress = query.get('asset');
     const from = query.get('from');
@@ -59,30 +66,35 @@ export default function AppWrapper() {
     }
   }, [setSearching, query]);
 
-  return searching ? (
-    <Search
-      setSearching={setSearching}
-      isBuy={isBuy}
-      setBuyToken={setBuyToken}
-      setSellToken={setSellToken}
-      chains={chains}
-      setChains={setChains}
-      walletPortfolioData={walletPortfolioData?.result?.data}
-      walletPortfolioLoading={walletPortfolioLoading}
-      walletPortfolioFetching={walletPortfolioFetching}
-      walletPortfolioError={!!walletPortfolioError}
-      refetchWalletPortfolio={refetchWalletPortfolio}
-    />
-  ) : (
-    <HomeScreen
-      setSearching={setSearching}
-      buyToken={buyToken}
-      sellToken={sellToken}
-      isBuy={isBuy}
-      setIsBuy={setIsBuy}
-      refetchWalletPortfolio={refetchWalletPortfolio}
-      setBuyToken={setBuyToken}
-      setChains={setChains}
-    />
+  return (
+    <>
+      {showBetaToast && <PulseToast onClose={() => setShowBetaToast(false)} />}
+      {searching ? (
+        <Search
+          setSearching={setSearching}
+          isBuy={isBuy}
+          setBuyToken={setBuyToken}
+          setSellToken={setSellToken}
+          chains={chains}
+          setChains={setChains}
+          walletPortfolioData={walletPortfolioData?.result?.data}
+          walletPortfolioLoading={walletPortfolioLoading}
+          walletPortfolioFetching={walletPortfolioFetching}
+          walletPortfolioError={!!walletPortfolioError}
+          refetchWalletPortfolio={refetchWalletPortfolio}
+        />
+      ) : (
+        <HomeScreen
+          setSearching={setSearching}
+          buyToken={buyToken}
+          sellToken={sellToken}
+          isBuy={isBuy}
+          setIsBuy={setIsBuy}
+          refetchWalletPortfolio={refetchWalletPortfolio}
+          setBuyToken={setBuyToken}
+          setChains={setChains}
+        />
+      )}
+    </>
   );
 }
