@@ -2203,6 +2203,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       });
       const paymasterAddress = value.id.split('-')[2];
       setSelectedPaymasterAddress(paymasterAddress);
+      setPaymasterContext({
+        mode: 'commonerc20',
+        token: tokenAddress,
+      });
     },
     [feeAssetOptions]
   );
