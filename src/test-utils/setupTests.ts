@@ -192,6 +192,12 @@ vi.mock('wagmi', () => ({
   useDisconnect: vi.fn().mockReturnValue({
     disconnect: vi.fn(),
   }),
+  useConnect: vi.fn().mockReturnValue({
+    connectors: [],
+    connect: vi.fn(),
+    isPending: false,
+    error: null,
+  }),
 }));
 
 vi.mock('wagmi/connectors', () => ({
