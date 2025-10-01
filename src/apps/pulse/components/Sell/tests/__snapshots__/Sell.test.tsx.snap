@@ -19,6 +19,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             class="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]"
+            data-testid="pulse-sell-token-selected-1-Test Token"
           >
             <div
               class="relative inline-block"
@@ -26,11 +27,13 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
               <img
                 alt="Main"
                 class="w-6 h-6 rounded-full ml-1.5 mr-1.5"
+                data-testid="pulse-sell-token-selector-logo"
                 src="test-logo.png"
               />
               <img
                 alt="Chain Logo"
                 class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
+                data-testid="pulse-sell-token-selector-chain-logo"
                 src="/src/assets/images/logo-ethereum.png"
               />
             </div>
@@ -42,11 +45,13 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
               >
                 <p
                   class="text-xs font-normal"
+                  data-testid="pulse-sell-token-selector-symbol"
                 >
                   TEST
                 </p>
                 <p
                   class="text-xs font-normal ml-0.5 text-grey"
+                  data-testid="pulse-sell-token-selector-name"
                 >
                   Test T...
                 </p>
@@ -56,6 +61,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
               >
                 <p
                   class="text-[10px] font-normal text-grey h-2.5"
+                  data-testid="pulse-sell-token-selector-price"
                 >
                   $
                   100
@@ -64,6 +70,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
             </div>
             <img
               alt="arrow-down"
+              data-testid="pulse-sell-token-selector-arrow"
               src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
             />
           </div>
@@ -112,6 +119,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           <img
             alt="TEST"
             class="w-3.5 h-3.5 rounded-full"
+            data-testid="pulse-sell-token-logo"
             src="test-logo.png"
           />
           <div
@@ -130,6 +138,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
     </div>
     <div
       class="flex"
+      data-testid="pulse-sell-percentage-buttons"
     >
       <div
         class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
@@ -193,6 +202,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
     >
       <button
         class="flex-1 items-center justify-center"
+        data-testid="pulse-sell-button"
         disabled=""
         style="background-color: rgb(41, 41, 47); color: grey; border-radius: 8px;"
         type="button"

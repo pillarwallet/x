@@ -3,6 +3,7 @@
 exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
 <button
   className="flex-1 items-center justify-center"
+  data-testid="pulse-sell-button"
   disabled={false}
   onClick={[Function]}
   style={

@@ -104,6 +104,7 @@ exports[`<TransactionInfo /> > renders correctly and matches snapshot 1`] = `
       >
         <div
           className="relative inline-block"
+          data-testid="pulse-tooltip"
         >
           <div
             className="cursor-help"

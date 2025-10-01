@@ -17,10 +17,12 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
     >
       <div
         className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+        data-testid="pulse-preview-buy-refresh-button"
       >
         <button
           aria-label="Refresh"
           className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-pointer"
+          data-testid="pulse-refresh-button"
           disabled={false}
           onClick={[Function]}
           type="button"
@@ -33,6 +35,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+        data-testid="pulse-preview-buy-esc-button"
       >
         <button
           aria-label="Close"
@@ -68,6 +71,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
   >
     <div
       className="flex justify-between"
+      data-testid="pulse-buy-paying-token-1-USD Coin"
     >
       <div
         className="flex items-center"
@@ -150,6 +154,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
     >
       <div
         className="relative inline-block mr-2"
+        data-testid="pulse-preview-buy-buying-token-1-Test Token"
       >
         <img
           alt="Main"
@@ -234,6 +239,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             className="relative inline-block"
+            data-testid="pulse-tooltip"
           >
             <div
               className="cursor-help"
@@ -282,6 +288,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             className="relative inline-block"
+            data-testid="pulse-tooltip"
           >
             <div
               className="cursor-help"
@@ -325,6 +332,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             className="relative inline-block"
+            data-testid="pulse-tooltip"
           >
             <div
               className="cursor-help"
@@ -368,6 +376,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             className="relative inline-block"
+            data-testid="pulse-tooltip"
           >
             <div
               className="cursor-help"
@@ -411,6 +420,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <div
             className="relative inline-block"
+            data-testid="pulse-tooltip"
           >
             <div
               className="cursor-help"
@@ -446,6 +456,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
   >
     <button
       className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+      data-testid="pulse-preview-buy-confirm-button"
       disabled={false}
       onClick={[Function]}
       type="submit"

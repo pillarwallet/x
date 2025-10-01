@@ -3,17 +3,20 @@
 exports[`<TransactionDetails /> > Rendering > renders correctly and matches snapshot 1`] = `
 <div
   className="flex flex-col gap-4 h-full w-full"
+  data-testid="pulse-transaction-details-container"
 >
   <div
     className="flex justify-between items-center"
   >
     <p
       className="text-xl text-white font-normal"
+      data-testid="pulse-transaction-details-title"
     >
       Transaction Details
     </p>
     <div
       className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+      data-testid="pulse-transaction-details-close-button"
     >
       <button
         aria-label="Close"
@@ -40,9 +43,11 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
   </div>
   <div
     className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-6 items-center justify-center"
+    data-testid="pulse-transaction-details-summary-sell-Test Token"
   >
     <div
       className="text-5xl text-white font-medium"
+      data-testid="pulse-transaction-details-amount-usd"
     >
       <span
         className="text-white/30"
@@ -54,19 +59,23 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
     </div>
     <div
       className="flex gap-1.5"
+      data-testid="pulse-transaction-details-token-info"
     >
       <img
         alt="TEST"
         className="w-4 h-4 rounded"
+        data-testid="pulse-transaction-details-token-logo-Test Token"
         src="test-logo.png"
       />
       <p
         className="text-white font-normal text-[13px]"
+        data-testid="pulse-transaction-details-token-amount"
       >
         100
          
         <span
           className="text-white/30"
+          data-testid="pulse-transaction-details-token-symbol"
         >
           TEST
         </span>
@@ -75,12 +84,14 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
   </div>
   <div
     className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+    data-testid="pulse-transaction-details-progress-container"
   >
     <div
       className="flex flex-col items-center justify-center w-full"
     >
       <div
         className="flex flex-col w-full"
+        data-testid="pulse-transaction-details-progress-steps"
       >
         <div
           data-testid="progress-step-Submitted"
@@ -134,6 +145,7 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
   </div>
   <div
     className="flex flex-col h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+    data-testid="pulse-transaction-details-info-container"
   >
     <div
       data-testid="transaction-info"
@@ -165,9 +177,11 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
   </div>
   <div
     className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
+    data-testid="pulse-transaction-details-done-button-container"
   >
     <button
       className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF] text-white font-normal text-[14px]"
+      data-testid="pulse-transaction-details-done-button"
       onClick={[MockFunction spy]}
       type="button"
     >

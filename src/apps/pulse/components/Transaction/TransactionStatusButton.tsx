@@ -93,7 +93,10 @@ const TransactionStatusButton: React.FC<TransactionStatusButtonProps> = ({
 
   if (status === 'Starting Transaction') {
     return (
-      <div className="text-white/50 font-normal text-[16px] mt-[10px]">
+      <div
+        className="text-white/50 font-normal text-[16px] mt-[10px]"
+        data-testid="pulse-transaction-starting-message"
+      >
         Just a moment...
       </div>
     );
@@ -105,6 +108,7 @@ const TransactionStatusButton: React.FC<TransactionStatusButtonProps> = ({
       style={springs}
       type="button"
       onClick={onClick}
+      data-testid="pulse-transaction-status-button"
     >
       {renderIcon()}
       <span className={`${config.textColor} font-normal text-[13px]`}>

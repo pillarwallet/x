@@ -1,8 +1,8 @@
 import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
 import { getLogoForChainId } from '../../../../utils/blockchain';
-import { MobulaChainNames } from '../../utils/constants';
 import GlobeIcon from '../../assets/globe-icon.svg';
 import SelectedIcon from '../../assets/selected-icon.svg';
+import { MobulaChainNames } from '../../utils/constants';
 
 export interface ChainOverlayProps {
   setShowChainOverlay: React.Dispatch<React.SetStateAction<boolean>>;

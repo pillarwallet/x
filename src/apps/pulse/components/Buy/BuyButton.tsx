@@ -129,6 +129,7 @@ export default function BuyButton(props: BuyButtonProps) {
         borderRadius: 8,
       }}
       type="button"
+      data-testid="pulse-buy-button"
     >
       {getButtonText(
         isLoading,

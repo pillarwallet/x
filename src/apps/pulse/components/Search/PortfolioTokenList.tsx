@@ -78,9 +78,22 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center m-[50px]">
-        <TailSpin color="#FFFFFF" height={40} width={40} />
-        <p className="text-gray-500 mt-2.5">Loading your portfolio...</p>
+      <div
+        className="flex flex-col items-center justify-center m-[50px]"
+        data-testid="pulse-portfolio-loading"
+      >
+        <TailSpin
+          color="#FFFFFF"
+          height={40}
+          width={40}
+          data-testid="pulse-portfolio-loading-spinner"
+        />
+        <p
+          className="text-gray-500 mt-2.5"
+          data-testid="pulse-portfolio-loading-text"
+        >
+          Loading your portfolio...
+        </p>
       </div>
     );
   }
@@ -88,9 +101,20 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
   // Error state
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center m-[50px]">
-        <p className="text-red-500 mb-2.5">⚠️ Failed to load portfolio</p>
-        <p className="text-gray-500 text-xs text-center">
+      <div
+        className="flex flex-col items-center justify-center m-[50px]"
+        data-testid="pulse-portfolio-error"
+      >
+        <p
+          className="text-red-500 mb-2.5"
+          data-testid="pulse-portfolio-error-title"
+        >
+          ⚠️ Failed to load portfolio
+        </p>
+        <p
+          className="text-gray-500 text-xs text-center"
+          data-testid="pulse-portfolio-error-message"
+        >
           Unable to fetch your wallet data. Please try again later.
         </p>
       </div>
@@ -100,9 +124,20 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
   // No data state
   if (!walletPortfolioData) {
     return (
-      <div className="flex flex-col items-center justify-center m-[50px]">
-        <p className="text-gray-500 mb-2.5">🔍 No portfolio data</p>
-        <p className="text-gray-500 text-xs text-center">
+      <div
+        className="flex flex-col items-center justify-center m-[50px]"
+        data-testid="pulse-portfolio-no-data"
+      >
+        <p
+          className="text-gray-500 mb-2.5"
+          data-testid="pulse-portfolio-no-data-title"
+        >
+          🔍 No portfolio data
+        </p>
+        <p
+          className="text-gray-500 text-xs text-center"
+          data-testid="pulse-portfolio-no-data-message"
+        >
           Connect your wallet to see your holdings
         </p>
       </div>
@@ -112,13 +147,22 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
   // Empty portfolio state (either no tokens or no search results)
   if (portfolioTokens.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center m-[50px]">
-        <p className="text-gray-500 mb-2.5">
+      <div
+        className="flex flex-col items-center justify-center m-[50px]"
+        data-testid="pulse-portfolio-empty"
+      >
+        <p
+          className="text-gray-500 mb-2.5"
+          data-testid="pulse-portfolio-empty-title"
+        >
           {searchText && searchText.trim()
             ? '🔍 No matching tokens found'
             : '💰 Portfolio is empty'}
         </p>
-        <p className="text-gray-500 text-xs text-center">
+        <p
+          className="text-gray-500 text-xs text-center"
+          data-testid="pulse-portfolio-empty-message"
+        >
           {searchText && searchText.trim()
             ? `No tokens match '${searchText}' in your portfolio`
             : // eslint-disable-next-line quotes
@@ -129,18 +173,27 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
   }
 
   return (
-    <>
+    <div data-testid="pulse-portfolio-token-list">
       {/* Column Headers */}
-      <div className="flex w-full pt-3 pr-3 pb-0 pl-3">
+      <div
+        className="flex w-full pt-3 pr-3 pb-0 pl-3"
+        data-testid="pulse-portfolio-headers"
+      >
         {/* Token/Price Column Header */}
-        <div className="flex items-center w-[250px]">
+        <div
+          className="flex items-center w-[250px]"
+          data-testid="pulse-portfolio-header-token-price"
+        >
           <p className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]">
             Token/Price
           </p>
         </div>
 
         {/* Balance Column Header */}
-        <div className="flex items-center ml-auto mr-2.5">
+        <div
+          className="flex items-center ml-auto mr-2.5"
+          data-testid="pulse-portfolio-header-balance"
+        >
           <p className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]">
             Balance
           </p>
@@ -159,15 +212,20 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
               handleTokenSelect(token);
             }}
             type="button"
+            data-testid={`pulse-portfolio-token-item-${token.blockchain.toLowerCase()}-${token.name.toLowerCase()}`}
           >
             {/* Token/Price Column */}
-            <div className="flex items-center w-[250px]">
+            <div
+              className="flex items-center w-[250px]"
+              data-testid="pulse-portfolio-token-info"
+            >
               <div className="relative inline-block">
                 {token.logo ? (
                   <img
                     src={token.logo}
                     className="w-8 h-8 rounded-full"
                     alt="token logo"
+                    data-testid="pulse-portfolio-token-logo"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full overflow-hidden">
@@ -183,21 +241,29 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
                   )}
                   className="absolute -bottom-px -right-px w-3.5 h-3.5 rounded-full border-[0.88px] border-[#25232D]"
                   alt="chain logo"
+                  data-testid="pulse-portfolio-chain-logo"
                 />
               </div>
               <div className="flex flex-col ml-3 min-w-0">
                 <div className="flex items-center min-w-0">
-                  <p className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap">
+                  <p
+                    className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap"
+                    data-testid="pulse-portfolio-token-symbol"
+                  >
                     {token.symbol}
                   </p>
                   <p
                     className="text-[13px] font-normal tracking-[-0.26px] ml-2 text-white opacity-50 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]"
                     title={token.name}
+                    data-testid="pulse-portfolio-token-name"
                   >
                     {token.name}
                   </p>
                 </div>
-                <p className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left">
+                <p
+                  className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left"
+                  data-testid="pulse-portfolio-token-price"
+                >
                   $
                   {token.price
                     ? formatExponentialSmallNumber(
@@ -209,11 +275,20 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
             </div>
 
             {/* Balance Column */}
-            <div className="flex flex-col ml-auto mr-2.5 items-end">
-              <p className="text-[13px] font-normal tracking-[-0.26px] text-white text-right">
+            <div
+              className="flex flex-col ml-auto mr-2.5 items-end"
+              data-testid="pulse-portfolio-token-balance"
+            >
+              <p
+                className="text-[13px] font-normal tracking-[-0.26px] text-white text-right"
+                data-testid="pulse-portfolio-balance-usd"
+              >
                 ${formatExponentialSmallNumber(limitDigitsNumber(balanceUSD))}
               </p>
-              <p className="text-xs font-normal tracking-[-0.24px] text-white text-right">
+              <p
+                className="text-xs font-normal tracking-[-0.24px] text-white text-right"
+                data-testid="pulse-portfolio-balance-token"
+              >
                 {formatExponentialSmallNumber(
                   limitDigitsNumber(token.balance || 0)
                 )}
@@ -222,7 +297,7 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
           </button>
         );
       })}
-    </>
+    </div>
   );
 };
 
