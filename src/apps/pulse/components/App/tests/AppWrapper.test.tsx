@@ -285,4 +285,37 @@ describe('<AppWrapper />', () => {
     expect(screen.queryByTestId('pulse-search-view')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pulse-search-modal')).not.toBeInTheDocument();
   });
+
+  it('shows beta toast when Pulse app opens', () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/']}>
+        <AppWrapper />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Welcome to Pulse (beta)')).toBeInTheDocument();
+  });
+
+  it('allows closing the beta toast', async () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/']}>
+        <AppWrapper />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Welcome to Pulse (beta)')).toBeInTheDocument();
+
+    // Close the toast
+    const closeButton = screen.getByLabelText('Close');
+    closeButton.click();
+
+    // Wait for the animation to complete (300ms delay + some buffer)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 400);
+    });
+
+    expect(
+      screen.queryByText('Welcome to Pulse (beta)')
+    ).not.toBeInTheDocument();
+  });
 });
