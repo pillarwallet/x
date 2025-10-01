@@ -48,7 +48,7 @@ const AssetSelect = ({
     isSuccess: isWalletPortfolioDataSuccess,
   } = useGetWalletPortfolioQuery(
     { wallet: walletAddress || '', isPnl: false },
-    { skip: !walletAddress, refetchOnFocus: true, pollingInterval: 120000 }
+    { skip: !walletAddress, refetchOnFocus: false }
   );
 
   const assets = useMemo(() => {
