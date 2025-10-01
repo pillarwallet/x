@@ -329,7 +329,11 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
               const firstOption = feeOptions[0];
               if (selectedFeeAsset?.token) {
                 // Fee asset already selected by user, try to keep it if available
-                const userSelectedOption = feeOptions.find(value => value.asset.contract.toLowerCase() === selectedFeeAsset.token.toLowerCase());
+                const userSelectedOption = feeOptions.find(
+                  (value) =>
+                    value.asset.contract.toLowerCase() ===
+                    selectedFeeAsset.token.toLowerCase()
+                );
                 if (userSelectedOption) {
                   // Keep user's selected fee asset
                   setSelectedFeeAsset({
@@ -339,7 +343,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                     balance: userSelectedOption.value?.toString(),
                     id: userSelectedOption.id,
                   });
-                  setSelectedPaymasterAddress(userSelectedOption.id.split('-')[2]);
+                  setSelectedPaymasterAddress(
+                    userSelectedOption.id.split('-')[2]
+                  );
                   setPaymasterContext({
                     mode: 'commonerc20',
                     token: userSelectedOption.asset.contract,
@@ -2310,7 +2316,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                       onChange={handleOnChange}
                       options={feeAssetOptions}
                       isLoadingOptions={isLoadingFeeOptions}
-                      defaultSelectedId={selectedFeeAsset?.id ?? feeAssetOptions[0]?.id}
+                      defaultSelectedId={
+                        selectedFeeAsset?.id ?? feeAssetOptions[0]?.id
+                      }
                     />
                   </>
                 )}
