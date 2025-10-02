@@ -1165,7 +1165,7 @@ ul li:last-child {
   max-width: 34rem;
 }
 
-.home_app__subscribe .mailchimp_form form label {
+.home_app__subscribe .mailchimp_form form label span {
   display: none;
 }
 

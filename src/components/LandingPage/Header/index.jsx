@@ -1,6 +1,7 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from 'react';
 import { Link, NavLink, ScrollRestoration } from 'react-router-dom';
 
@@ -54,18 +55,10 @@ const Header = () => {
           >
             <ul id="menu" onClick={() => setShowMobileMenu(!showMobileMenu)}>
               <li>
-                <NavLink
-                  to="/#superpowers"
-          
-                >
-                  Superpowers
-                </NavLink>
+                <NavLink to="/#superpowers">Superpowers</NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/#about"
-                  className="active--no-style"
-                >
+                <NavLink to="/#about" className="active--no-style">
                   About
                 </NavLink>
               </li>
@@ -76,18 +69,10 @@ const Header = () => {
                 <a>Cooperation</a>
                 <ul>
                   <li>
-                    <NavLink
-                      to="/developers"
-                    >
-                      For dApp
-                    </NavLink>
+                    <NavLink to="/developers">For dApp</NavLink>
                   </li>
                   <li>
-                    <NavLink
-                      to="/advertising"
-                    >
-                      Advertising
-                    </NavLink>
+                    <NavLink to="/advertising">Advertising</NavLink>
                   </li>
                 </ul>
               </li>

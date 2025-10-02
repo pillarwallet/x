@@ -33,15 +33,17 @@ const MailChimp = () => {
           trackEvent('Email Signup');
         }}
       >
-        <label htmlFor="EMAIL">Email address</label>
-        <input
-          id="EMAIL"
-          type="email"
-          placeholder="Enter your email"
-          value={fields.EMAIL}
-          onChange={handleFieldChange}
-          required
-        />
+        <label>
+          <span>Email address</span>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={fields.email}
+            onChange={handleFieldChange}
+            required
+          />
+        </label>
+
         <button type="submit" className="cta mailchimp_form__cta">
           <span>Subscribe</span>
         </button>

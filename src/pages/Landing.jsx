@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 import '../styles/landing/tailwind.css';
-import { Link } from 'react-router-dom';
 
 // components
 import { Header } from '../components/LandingPage/Header';
@@ -34,7 +34,7 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="home_hero__image">
-              <img src="https://cdn.pillarx.app/home-hero.webp" />
+              <img src="https://cdn.pillarx.app/home-hero.webp" alt="" />
             </div>
           </div>
         </div>
@@ -163,7 +163,10 @@ export default function LandingPage() {
                 </p>
                 <div className="home_feature__detail__content__icon">
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img src="https://cdn.pillarx.app/home-superpowers-icon-1.svg" />
+                    <img
+                      src="https://cdn.pillarx.app/home-superpowers-icon-1.svg"
+                      alt=""
+                    />
                   </div>
                 </div>
               </div>
@@ -184,7 +187,10 @@ export default function LandingPage() {
                 <div className="home_feature__detail__content__icon">
                   <h4>Coming Soon</h4>
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img src="https://cdn.pillarx.app/home-superpowers-icon-2.svg" />
+                    <img
+                      src="https://cdn.pillarx.app/home-superpowers-icon-2.svg"
+                      alt=""
+                    />
                   </div>
                 </div>
               </div>
