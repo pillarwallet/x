@@ -6,13 +6,13 @@ import { I18nextProvider, useTranslation } from 'react-i18next';
 
 // hooks
 import useAllowedApps from '../../hooks/useAllowedApps';
+import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 
 // components
 import Alert from '../../components/Text/Alert';
 
 // apps
 import { loadApp } from '../../apps';
-import { AppManifest } from '../../types';
 import { ApiAllowedApp } from '../../providers/AllowedAppsProvider';
 
 type AnimatedAppTitleProps = {
@@ -63,6 +63,7 @@ const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
   const { isAnimated, allowed } = useAllowedApps();
   const [app, setApp] = useState<ApiAllowedApp | null>();
+  const { setShowBatchSendModal, showAccount, showHistory, showApps, showSend } = useBottomMenuModal();
 
   const [springs, api] = useSpring(() => ({
     from: { opacity: 0 },
@@ -100,25 +101,47 @@ const App = ({ id }: { id: string }) => {
     // If it's an external app, return an iframe component
     if (app?.type === 'app-external' && app.launchUrl) {
       return { 
-        default: () => (
-          <iframe
-            src={app.launchUrl}
-            style={{
-              all: 'unset',
-              width: '100vw',
-              height: '100vh',
-              border: 'none',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              zIndex: 1,
-              background: 'white',
-              display: 'block'
-            }}
-            title={app.title || app.name}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-          />
-        )
+        default: () => {
+          const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+          React.useEffect(() => {
+            const iframe = iframeRef.current;
+            if (!iframe) return;
+
+            const handleMessage = (event: MessageEvent) => {
+              // Verify origin for security
+              if (!app.launchUrl || event.origin !== new URL(app.launchUrl).origin) return;
+
+              if (event.data?.type === 'showAccount') {
+                showAccount();
+              }
+            };
+
+            window.addEventListener('message', handleMessage);
+            return () => window.removeEventListener('message', handleMessage);
+          }, []);
+
+          return (
+            <iframe
+              ref={iframeRef}
+              src={app.launchUrl}
+              style={{
+                all: 'unset',
+                width: '100vw',
+                height: '100vh',
+                border: 'none',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 1,
+                background: 'white',
+                display: 'block'
+              }}
+              title={app.title || app.name}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+            />
+          );
+        }
       };
     }
 
