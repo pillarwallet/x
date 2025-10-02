@@ -73,7 +73,7 @@ const AuthLayout = () => {
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const previouslyAuthenticated =
     !!localStorage.getItem('privy:token') ||
     localStorage.getItem('ACCOUNT_VIA_PK');
@@ -699,6 +699,19 @@ const AuthLayout = () => {
         element: <App id={appId} />,
       });
     });
+
+    /**
+     * Add the external apps to the route definition.
+     * We need to load the allowed apps 
+     */
+    const externalApps = allowed.filter((app) => app.type === 'app-external');
+    externalApps.forEach((app) => {
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${app.appId}`,
+        element: <App id={app.appId} />,
+      });
+    });
+     
 
     // ...and add the 404 route to the route definition
     // for good measure

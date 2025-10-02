@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 
 // types
+import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
 import { AppManifest } from '../types';
 
 /**
@@ -13,23 +14,28 @@ import { AppManifest } from '../types';
  * @param appId - the app identifier to load
  * @returns AppManifest | null
  */
-export const loadApp = async (appId: string) => {
+export const loadApp = async (app: ApiAllowedApp) => {
+  console.log('ateempting to load app', app);
   let appManifest: AppManifest | null = null;
 
   try {
-    appManifest = (await import(`./${appId}/manifest.json`)) as AppManifest;
+    if (app.type === 'app-external') {
+      return app;
+    }
+
+    appManifest = (await import(`./${app.appId}/manifest.json`)) as AppManifest;
 
     if (appManifest.translations) {
       Object.keys(appManifest.translations).forEach((languageKey) => {
         const translation = appManifest?.translations[languageKey];
-        i18next.addResourceBundle(languageKey, `app:${appId}`, translation);
+        i18next.addResourceBundle(languageKey, `app:${app.appId}`, translation);
       });
     }
 
     return appManifest;
   } catch (e) {
     console.error(
-      `Failed to load app ${appId} - does the ${appId} directory exist in the src/apps directory?`,
+      `Failed to load app ${app.appId} - does the ${app.appId} directory exist in the src/apps directory?`,
       e
     );
   }
@@ -49,8 +55,9 @@ export const loadApp = async (appId: string) => {
  * @returns Promise<Record<string, AppManifest>>
  * @throws Will log an error if an app fails to load.
  */
-export const loadApps = async (allowedApps: string[]) => {
-  const loadedApps: Record<string, AppManifest> = {};
+export const loadApps = async (allowedApps: ApiAllowedApp[]) => {
+  const loadedApps: Record<string, AppManifest | ApiAllowedApp> = {};
+  console.log('allowedApps', allowedApps);
 
   /**
    * Cycle through the allowedApps array and load the app manifest for each app
@@ -63,7 +70,7 @@ export const loadApps = async (allowedApps: string[]) => {
     if (appIdentifier) {
       const loadedApp = await loadApp(appIdentifier);
       if (loadedApp) {
-        loadedApps[appIdentifier] = loadedApp;
+        loadedApps[appIdentifier.appId] = loadedApp;
       }
     } else {
       continue;

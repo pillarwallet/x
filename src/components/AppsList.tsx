@@ -21,13 +21,15 @@ import { useWallets } from '@privy-io/react-auth';
 
 // services
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
+import { useGetAllDeveloperAppsQuery } from '../apps/developer-apps/api/developerAppsApi';
 
 // utils
 import { loadApps } from '../apps';
 import { isTestnet } from '../utils/blockchain';
+import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
-  const [apps, setApps] = React.useState<Record<string, AppManifest>>({});
+  const [apps, setApps] = React.useState<Record<string, AppManifest | ApiAllowedApp>>({});
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
   const { hide } = useBottomMenuModal();
@@ -37,25 +39,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const { wallets } = useWallets();
   const ownerEoaAddress = wallets?.[0]?.address;
 
-  const [developerApps, setDeveloperApps] = React.useState<
-    Array<{
-      appId: string;
-      ownerEoaAddress: string;
-      name: string;
-      shortDescription: string;
-      logo?: string;
-      launchUrl: string;
-      tags?: string;
-      createdAt?: number;
-      updatedAt?: number;
-      banner?: string;
-      socialTelegram?: string;
-      socialX?: string;
-      socialFacebook?: string;
-      socialTiktok?: string;
-    }>
-  >([]);
-  const [isLoadingDeveloperApps, setIsLoadingDeveloperApps] = React.useState(false);
+  // Use RTK Query for developer apps
+  const { 
+    data: developerAppsData, 
+    isLoading: isLoadingDeveloperApps 
+  } = useGetAllDeveloperAppsQuery({ eoaAddress: ownerEoaAddress }, {
+    skip: !ownerEoaAddress
+  });
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -71,33 +61,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
     fetchApps();
   }, [allowed]);
 
-  React.useEffect(() => {
-    const fetchDeveloperApps = async () => {
-      if (!ownerEoaAddress) return;
-      setIsLoadingDeveloperApps(true);
-      try {
-        const baseUrl = isTestnet
-          ? 'http://localhost:5000/pillarx-staging/us-central1/developerApps'
-          : 'https://developersapps-7eu4izffpa-uc.a.run.app';
-        const res = await fetch(baseUrl, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const json = await res.json();
-        const allApps = (json?.data ?? json?.result ?? []) as Array<any>;
-        const mine = allApps.filter(
-          (a) => a?.ownerEoaAddress && a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
-        );
-        setDeveloperApps(mine);
-      } catch (e) {
-        // fail silently to avoid breaking the modal
-        setDeveloperApps([]);
-      } finally {
-        setIsLoadingDeveloperApps(false);
-      }
-    };
-    fetchDeveloperApps();
-  }, [ownerEoaAddress]);
+  // Get developer apps from RTK Query data
+  const developerApps = React.useMemo(() => {
+    if (!developerAppsData?.data || !ownerEoaAddress) return [];
+    return developerAppsData.data.filter(
+      (a) => a?.ownerEoaAddress && a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
+    );
+  }, [developerAppsData, ownerEoaAddress]);
 
   return (
     <Wrapper id="apps-modal">
@@ -170,7 +140,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
           </>
         )}
         {!isLoadingAllowedApps &&
-          Object.keys(apps).map((appId) => (
+          Object.keys(apps)
+            .filter((appId) => {
+              // Filter out developer apps that are already shown in the developer apps section
+              const app = apps[appId];
+              return !(app as ApiAllowedApp).type || (app as ApiAllowedApp).type !== 'app-external';
+            })
+            .map((appId) => (
             <AppListItem
               id="app-list-item"
               key={appId}
@@ -189,7 +165,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
                 navigate('/' + appId);
               }}
             >
-              <AppIcon appId={appId} />
+              <AppIcon app={apps[appId]} appId={appId} />
               <AppTitle>{apps[appId].title}</AppTitle>
             </AppListItem>
           ))}

@@ -81,8 +81,14 @@ export const developerAppsApi = createApi({
   tagTypes: ['DeveloperApp'],
   endpoints: (builder) => ({
     // Get all developer apps
-    getAllDeveloperApps: builder.query<ApiResponse<DeveloperApp[]>, void>({
-      query: () => '/',
+    getAllDeveloperApps: builder.query<ApiResponse<DeveloperApp[]>, { eoaAddress?: string } | void>({
+      query: (params = {}) => {
+        const searchParams = new URLSearchParams();
+        if (params?.eoaAddress) {
+          searchParams.append('eoaAddress', params.eoaAddress);
+        }
+        return `/?${searchParams.toString()}`;
+      },
       providesTags: ['DeveloperApp'],
     }),
 

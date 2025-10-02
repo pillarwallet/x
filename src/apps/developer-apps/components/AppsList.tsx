@@ -9,7 +9,7 @@ const AppsList: React.FC = () => {
   const { wallets } = useWallets();
   const eoaAddress = wallets[0]?.address;
 
-  const { data, isLoading, error } = useGetAllDeveloperAppsQuery();
+  const { data, isLoading, error } = useGetAllDeveloperAppsQuery({ eoaAddress });
   const [deleteApp, { isLoading: isDeleting }] = useDeleteDeveloperAppMutation();
 
   const myApps = React.useMemo(() => {

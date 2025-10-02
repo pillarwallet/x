@@ -13,6 +13,7 @@ import Alert from '../../components/Text/Alert';
 // apps
 import { loadApp } from '../../apps';
 import { AppManifest } from '../../types';
+import { ApiAllowedApp } from '../../providers/AllowedAppsProvider';
 
 type AnimatedAppTitleProps = {
   text: string;
@@ -60,8 +61,8 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
 
 const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
-  const { isAnimated } = useAllowedApps();
-  const [app, setApp] = useState<AppManifest | null>();
+  const { isAnimated, allowed } = useAllowedApps();
+  const [app, setApp] = useState<ApiAllowedApp | null>();
 
   const [springs, api] = useSpring(() => ({
     from: { opacity: 0 },
@@ -70,8 +71,11 @@ const App = ({ id }: { id: string }) => {
 
   useEffect(() => {
     const fetchApp = async () => {
-      const loadedApp = await loadApp(id);
-      setApp(loadedApp);
+      const foundApp = allowed.find((app) => app.appId === id);
+      if (!foundApp) return;
+      const loadedApp = await loadApp(foundApp);
+      console.log('loadedApp', loadedApp);
+      setApp(loadedApp as ApiAllowedApp);
 
       // Start the spring animation with reset, immediate, and configuration
       api.start({
@@ -92,6 +96,31 @@ const App = ({ id }: { id: string }) => {
     await new Promise((resolve) => {
       setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
+
+    // If it's an external app, return an iframe component
+    if (app?.type === 'app-external' && app.launchUrl) {
+      return { 
+        default: () => (
+          <iframe
+            src={app.launchUrl}
+            style={{
+              all: 'unset',
+              width: '100vw',
+              height: '100vh',
+              border: 'none',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              zIndex: 1,
+              background: 'white',
+              display: 'block'
+            }}
+            title={app.title || app.name}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+          />
+        )
+      };
+    }
 
     try {
       const appImport = await import(`../../apps/${id}`);
