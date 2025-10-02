@@ -13,7 +13,7 @@ const Footer = () => {
             </div>
             <div className="footer__socials">
               <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
-                <img src="/landing-images/social-x.svg" alt="x-image" />
+                <img src="https://cdn.pillarx.app/social-x.svg" alt="x-image" />
               </a>
               <a
                 href="https://t.me/+WmZpena91_dlNDhk"

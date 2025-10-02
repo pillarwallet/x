@@ -54,7 +54,7 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-superpowers-1.webp"
+                  poster="https://cdn.pillarx.app/home-superpowers-1.webp"
                 >
                   <source
                     src="https://cdn.pillarx.app/home-superpowers-1.mp4"
@@ -87,7 +87,7 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-superpowers-2.webp"
+                  poster="https://cdn.pillarx.app/home-superpowers-2.webp"
                 >
                   <source
                     src="https://cdn.pillarx.app/home-superpowers-2.mp4"
@@ -122,7 +122,7 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="/landing-images/home-superpowers-3.webp"
+                  poster="https://cdn.pillarx.app/home-superpowers-3.webp"
                 >
                   <source
                     src="https://cdn.pillarx.app/home-superpowers-3.mp4"

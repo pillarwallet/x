@@ -43,7 +43,7 @@ const Header = () => {
       >
         <div className="container">
           <Link to="/" className="header__logo">
-            <img src="/landing-images/pillarXLogo.png" alt="pillar-x-logo" />
+            <img src="https://cdn.pillarx.app/pillarXLogo.png" alt="pillar-x-logo" />
           </Link>
 
           <nav
