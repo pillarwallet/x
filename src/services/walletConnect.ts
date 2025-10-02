@@ -3,6 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 import { usePrivy } from '@privy-io/react-auth';
 import Client, { WalletKit, WalletKitTypes } from '@reown/walletkit';
+import * as Sentry from '@sentry/react';
 import { Core } from '@walletconnect/core';
 import {
   formatJsonRpcError,
@@ -19,7 +20,6 @@ import {
   isAddressEqual,
 } from 'viem';
 import { useAccount } from 'wagmi';
-import * as Sentry from '@sentry/react';
 
 // hooks
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
@@ -268,7 +268,7 @@ export const useWalletConnect = () => {
       });
 
       const walletKitInit = await WalletKit.init({
-        core,
+        core: core as any,
         metadata: {
           name: 'PillarX',
           description: 'PillarX',
