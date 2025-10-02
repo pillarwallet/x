@@ -34,7 +34,7 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="home_hero__image">
-              <img src="/landing-images/home-hero.webp" />
+              <img src="https://cdn.pillarx.app/home-hero.webp" />
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function LandingPage() {
                   poster="/landing-images/home-superpowers-1.webp"
                 >
                   <source
-                    src="/landing-images/home-superpowers-1.mp4"
+                    src="https://cdn.pillarx.app/home-superpowers-1.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -90,7 +90,7 @@ export default function LandingPage() {
                   poster="/landing-images/home-superpowers-2.webp"
                 >
                   <source
-                    src="/landing-images/home-superpowers-2.mp4"
+                    src="https://cdn.pillarx.app/home-superpowers-2.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -125,7 +125,7 @@ export default function LandingPage() {
                   poster="/landing-images/home-superpowers-3.webp"
                 >
                   <source
-                    src="/landing-images/home-superpowers-3.mp4"
+                    src="https://cdn.pillarx.app/home-superpowers-3.mp4"
                     type="video/mp4"
                   />
                 </video>
@@ -163,7 +163,7 @@ export default function LandingPage() {
                 </p>
                 <div className="home_feature__detail__content__icon">
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img src="/landing-images/home-superpowers-icon-1.svg" />
+                    <img src="https://cdn.pillarx.app/home-superpowers-icon-1.svg" />
                   </div>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function LandingPage() {
                 <div className="home_feature__detail__content__icon">
                   <h4>Coming Soon</h4>
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img src="/landing-images/home-superpowers-icon-2.svg" />
+                    <img src="https://cdn.pillarx.app/home-superpowers-icon-2.svg" />
                   </div>
                 </div>
               </div>
@@ -212,8 +212,8 @@ export default function LandingPage() {
               <div className="home_app__download__copy">
                 <h3>Get started with</h3>
                 <img
-                  src="/landing-images/pillarXLogo.png"
-                  alt="pillar-x-logo"
+                  src="https://cdn.pillarx.app/pillarXLogo.png"
+                  alt="PillarX logo"
                 />
                 <h3>on any device</h3>
               </div>
@@ -225,7 +225,7 @@ export default function LandingPage() {
                   className="plausible-event-name=Download+App+Store"
                 >
                   <img
-                    src="/landing-images/app-store.svg"
+                    src="https://cdn.pillarx.app/app-store.svg"
                     alt="app-store-logo"
                   />
                 </a>
@@ -236,12 +236,12 @@ export default function LandingPage() {
                   className="plausible-event-name=Download+Google+Play"
                 >
                   <img
-                    src="/landing-images/google-play.svg"
+                    src="https://cdn.pillarx.app/google-play.svg"
                     alt="google-play-logo"
                   />
                 </a>
                 <Link to="/login" className="plausible-event-name=Download+Web">
-                  <img src="/landing-images/web.svg" alt="web-icon" />
+                  <img src="https://cdn.pillarx.app/web.svg" alt="web-icon" />
                 </Link>
               </div>
             </div>

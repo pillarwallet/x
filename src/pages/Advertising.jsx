@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
 
 // components
@@ -47,11 +46,17 @@ const Advertising = () => {
               </div>
               <div className="advertising_hero__inapp__images">
                 <div className="advertising_hero__inapp__images__wrapper">
-                  <img src="/landing-images/advertising-pillarx.webp" />
+                  <img
+                    src="https://cdn.pillarx.app/advertising-pillarx.webp"
+                    alt="PillarX in-app banner"
+                  />
                   <p>PillarX in-app banner</p>
                 </div>
                 <div className="advertising_hero__inapp__images__wrapper">
-                  <img src="/landing-images/advertising-pillar.webp" />
+                  <img
+                    src="https://cdn.pillarx.app/advertising-pillar.webp"
+                    alt="Pillar Wallet in-app banner"
+                  />
                   <p>
                     <a
                       href="https://pillar.fi"
@@ -86,7 +91,10 @@ const Advertising = () => {
                   <br /> on X <span>(Twitter)</span>
                 </h2>
                 <div className="advertising_feature__detail__content__icon">
-                  <img src="/landing-images/advertising-icon-1.svg" />
+                  <img
+                    src="https://cdn.pillarx.app/advertising-icon-1.svg"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
@@ -97,7 +105,10 @@ const Advertising = () => {
                   Pillar & PillarX Newsletter
                 </h2>
                 <div className="advertising_feature__detail__content__icon">
-                  <img src="/landing-images/advertising-icon-2.svg" />
+                  <img
+                    src="https://cdn.pillarx.app/advertising-icon-2.svg"
+                    alt=""
+                  />
                 </div>
               </div>
               <div className="advertising_feature__detail__content gradient_border">
@@ -106,7 +117,10 @@ const Advertising = () => {
                   PillarX Web3 App Store
                 </h2>
                 <div className="advertising_feature__detail__content__icon">
-                  <img src="/landing-images/advertising-icon-3.svg" />
+                  <img
+                    src="https://cdn.pillarx.app/advertising-icon-3.svg"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>

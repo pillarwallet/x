@@ -31,7 +31,7 @@ const Footer = () => {
                 rel="noreferrer"
               >
                 <img
-                  src="/landing-images/social-discord.svg"
+                  src="https://cdn.pillarx.app/social-discord.svg"
                   alt="discord-image"
                 />
               </a>

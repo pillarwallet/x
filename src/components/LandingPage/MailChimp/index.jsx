@@ -22,21 +22,27 @@ const MailChimp = () => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          // Email validation
+          if (
+            !fields.EMAIL ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.EMAIL)
+          ) {
+            return;
+          }
           handleSubmit(fields);
           trackEvent('Email Signup');
         }}
       >
+        <label htmlFor="EMAIL">Email address</label>
         <input
           id="EMAIL"
           type="email"
           placeholder="Enter your email"
           value={fields.EMAIL}
           onChange={handleFieldChange}
+          required
         />
-        <button
-          type="submit"
-          className="cta mailchimp_form__cta plausible-event-name=Email+Signup"
-        >
+        <button type="submit" className="cta mailchimp_form__cta">
           <span>Subscribe</span>
         </button>
       </form>

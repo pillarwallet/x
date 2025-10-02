@@ -508,7 +508,7 @@ ul li:last-child {
   top: 30%;
   width: 10px;
   height: 10px;
-  background: url("/landing-images/arrow-down.png");
+  background: url("https://cdn.pillarx.app/arrow-down.png");
   background-size: contain;
   right: -2rem;
   transition: all 0.3s ease;
@@ -742,7 +742,7 @@ ul li:last-child {
 /* Home Page Styles */
 
 .home_hero {
-  background: url("/landing-images/home-hero-bg.svg");
+  background: url("https://cdn.pillarx.app/home-hero-bg.svg");
   background-position: center bottom;
   background-position: center calc(100% - 80px);
   background-repeat: no-repeat;
@@ -1165,6 +1165,10 @@ ul li:last-child {
   max-width: 34rem;
 }
 
+.home_app__subscribe .mailchimp_form form label {
+  display: none;
+}
+
 .home_app__subscribe .mailchimp_form form input {
   width: 100%;
   background: #2a244d;
@@ -1311,7 +1315,7 @@ ul li:last-child {
 
 .home_about {
   position: relative;
-  background: url("/landing-images/home-bg.svg");
+  background: url("https://cdn.pillarx.app/home-bg.svg");
   background-position: top center;
   background-repeat: no-repeat;
 }
@@ -2605,7 +2609,7 @@ ul li:last-child {
 /* Advertising Page Styles */
 
 .advertising_hero {
-  background: url("/landing-images/advertising-hero-bg.svg");
+  background: url("https://cdn.pillarx.app/advertising-hero-bg.svg");
   background-position: center top;
   background-position: center 160px;
   background-repeat: no-repeat;
@@ -2896,7 +2900,7 @@ ul li:last-child {
 .advertising_feature__detail:first-child
   .advertising_feature__detail__content:first-child {
   width: 60%;
-  background: url("/landing-images/advertising-feature.webp");
+  background: url("https://cdn.pillarx.app/advertising-feature.webp");
   background-size: 30rem;
   background-position: bottom right;
   background-repeat: no-repeat;
