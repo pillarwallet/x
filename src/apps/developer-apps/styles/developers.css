@@ -1,0 +1,134 @@
+/* Developers App Styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap');
+
+.developers-app {
+  font-family: 'Roboto Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+.developers-app ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.developers-app ::-webkit-scrollbar-track {
+  background: rgba(17, 24, 39, 0.5);
+  border-radius: 4px;
+}
+
+.developers-app ::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.5);
+  border-radius: 4px;
+}
+
+.developers-app ::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 51, 234, 0.7);
+}
+
+/* Form inputs focus ring */
+.developers-app input:focus,
+.developers-app textarea:focus {
+  ring-width: 2px;
+  ring-color: rgb(168, 85, 247);
+  ring-opacity: 0.5;
+}
+
+/* Animations */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.developers-app .animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Card hover effects */
+.developers-app [class*="bg-gradient-to-br"]:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+
+/* Button hover effects */
+.developers-app button:not(:disabled):hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.developers-app button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.developers-app .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Line clamp utility */
+.developers-app .line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Purple gradient backgrounds */
+.developers-app .bg-purple-gradient {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+}
+
+.developers-app .border-purple-gradient {
+  border-image: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.1)) 1;
+}
+
+/* Text gradients */
+.developers-app .text-gradient-purple {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Image upload placeholder */
+.developers-app .image-upload-placeholder {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(139, 92, 246, 0.1),
+    rgba(139, 92, 246, 0.1) 10px,
+    rgba(168, 85, 247, 0.05) 10px,
+    rgba(168, 85, 247, 0.05) 20px
+  );
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .developers-app {
+    padding: 1rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .developers-app {
+    background: white;
+    color: black;
+  }
+  
+  .developers-app button {
+    display: none;
+  }
+}
+

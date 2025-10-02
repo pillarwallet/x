@@ -17,12 +17,14 @@ import { AppManifest } from '../types';
 import useAllowedApps from '../hooks/useAllowedApps';
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useTransactionKit from '../hooks/useTransactionKit';
+import { useWallets } from '@privy-io/react-auth';
 
 // services
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
 
 // utils
 import { loadApps } from '../apps';
+import { isTestnet } from '../utils/blockchain';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const [apps, setApps] = React.useState<Record<string, AppManifest>>({});
@@ -32,6 +34,28 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [t] = useTranslation();
   const { walletAddress: accountAddress } = useTransactionKit();
+  const { wallets } = useWallets();
+  const ownerEoaAddress = wallets?.[0]?.address;
+
+  const [developerApps, setDeveloperApps] = React.useState<
+    Array<{
+      appId: string;
+      ownerEoaAddress: string;
+      name: string;
+      shortDescription: string;
+      logo?: string;
+      launchUrl: string;
+      tags?: string;
+      createdAt?: number;
+      updatedAt?: number;
+      banner?: string;
+      socialTelegram?: string;
+      socialX?: string;
+      socialFacebook?: string;
+      socialTiktok?: string;
+    }>
+  >([]);
+  const [isLoadingDeveloperApps, setIsLoadingDeveloperApps] = React.useState(false);
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -47,6 +71,34 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
     fetchApps();
   }, [allowed]);
 
+  React.useEffect(() => {
+    const fetchDeveloperApps = async () => {
+      if (!ownerEoaAddress) return;
+      setIsLoadingDeveloperApps(true);
+      try {
+        const baseUrl = isTestnet
+          ? 'http://localhost:5000/pillarx-staging/us-central1/developerApps'
+          : 'https://developersapps-7eu4izffpa-uc.a.run.app';
+        const res = await fetch(baseUrl, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const json = await res.json();
+        const allApps = (json?.data ?? json?.result ?? []) as Array<any>;
+        const mine = allApps.filter(
+          (a) => a?.ownerEoaAddress && a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
+        );
+        setDeveloperApps(mine);
+      } catch (e) {
+        // fail silently to avoid breaking the modal
+        setDeveloperApps([]);
+      } finally {
+        setIsLoadingDeveloperApps(false);
+      }
+    };
+    fetchDeveloperApps();
+  }, [ownerEoaAddress]);
+
   return (
     <Wrapper id="apps-modal">
       {!hideTitle && (
@@ -61,6 +113,51 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
           Discover new apps and services
         </ExploreAppsCardContent>
       </ExploreAppsCard>
+      {/* Developer apps (owned by user) */}
+      {ownerEoaAddress && (
+        <>
+          {isLoadingDeveloperApps && (
+            <AppsListWrapper>
+              <SkeletonLoader $height="94px" $width="94px" />
+              <SkeletonLoader $height="94px" $width="94px" />
+              <SkeletonLoader $height="94px" $width="94px" />
+            </AppsListWrapper>
+          )}
+          {!isLoadingDeveloperApps && developerApps.length > 0 && (
+            <>
+              <Label>My developer apps</Label>
+              <AppsListWrapper>
+                {developerApps.map((devApp) => (
+                  <AppListItem
+                    id="dev-app-list-item"
+                    key={devApp.appId}
+                    onClick={() => {
+                      hide();
+                      if (accountAddress) {
+                        recordPresence({
+                          address: accountAddress,
+                          action: 'developerAppOpened',
+                          value: devApp.appId,
+                        });
+                      }
+                      navigate('/' + devApp.appId);
+                      // window.open(devApp.launchUrl, '_blank', 'noopener,noreferrer');
+                    }}
+                  >
+                    {devApp.logo ? (
+                      <DevAppLogo src={devApp.logo} alt={devApp.name} />
+                    ) : (
+                      <PlaceholderLogo />
+                    )}
+                    <AppTitle>{devApp.name}</AppTitle>
+                  </AppListItem>
+                ))}
+              </AppsListWrapper>
+              <Separator />
+            </>
+          )}
+        </>
+      )}
       <Label>{t`label.latestApps`}</Label>
       <AppsListWrapper id="apps-list">
         {isLoadingAllowedApps && (
@@ -145,6 +242,28 @@ const AppTitle = styled.p`
   color: ${({ theme }) => theme.color.text.cardTitle};
   padding: 8px 6px 8px;
   word-break: break-word;
+`;
+
+const Separator = styled.div`
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 16px 0 10px;
+`;
+
+const DevAppLogo = styled.img`
+  width: 94px;
+  height: 94px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(147, 51, 234, 0.24);
+`;
+
+const PlaceholderLogo = styled.div`
+  width: 94px;
+  height: 94px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(109, 40, 217, 0.08));
+  border: 1px dashed rgba(147, 51, 234, 0.24);
 `;
 
 const ExploreAppsCard = styled.div`
