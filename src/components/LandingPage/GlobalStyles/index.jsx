@@ -1221,6 +1221,7 @@ ul li:last-child {
   margin-top: -14rem;
   position: relative;
   pointer-events: none;
+  display: none;
 }
 
 .home_app__download::before {
