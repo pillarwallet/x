@@ -1,14 +1,5 @@
 import { TailSpin } from 'react-loader-spinner';
-
-interface ProgressStepProps {
-  step: 'Submitted' | 'Pending' | 'Completed';
-  status: 'completed' | 'pending' | 'failed';
-  label: string;
-  isLast?: boolean;
-  showLine?: boolean;
-  lineStatus?: 'completed' | 'pending' | 'failed';
-  timestamp?: string;
-}
+import { ProgressStepProps } from '../../types/types';
 
 const ProgressStep = ({
   step,
@@ -29,14 +20,23 @@ const ProgressStep = ({
     if (status === 'failed') {
       return `${baseClasses} bg-[#8A77FF]`;
     }
-    if (status === 'pending' && step === 'Pending') {
+    if (
+      status === 'pending' &&
+      (step === 'Pending' || step === 'ResourceLock')
+    ) {
       return `${baseClasses} bg-[#8A77FF]`;
+    }
+    if (status === 'pending' && step === 'Completed') {
+      return `${baseClasses} bg-[#8A77FF]`;
+    }
+    if (status === 'inactive') {
+      return `${baseClasses} bg-[#121116]`;
     }
     return `${baseClasses} bg-[#121116]`;
   };
 
   const getLineClasses = () => {
-    return `w-0.5 h-4 ml-2 ${lineStatus === 'completed' ? 'bg-[#8A77FF]' : 'bg-[#121116]'}`;
+    return `w-0.5 h-4 ml-2 ${lineStatus === 'completed' || lineStatus === 'pending' || lineStatus === 'failed' ? 'bg-[#8A77FF]' : 'bg-[#121116]'}`;
   };
 
   const getTextClasses = () => {
@@ -44,16 +44,30 @@ const ProgressStep = ({
     if (status === 'failed' || status === 'completed') {
       return `${baseClasses} text-white`;
     }
+    if (status === 'inactive' || status === 'pending') {
+      return `${baseClasses} text-white/50`;
+    }
     return `${baseClasses} text-white/50`;
+  };
+
+  const getTimestampDisplay = () => {
+    if (typeof timestamp === 'string' && timestamp.includes('•')) {
+      return timestamp.split('•')[1].trim();
+    }
+    if (typeof timestamp === 'string') {
+      return timestamp;
+    }
+    return timestamp;
   };
 
   const renderIcon = () => {
     if (status === 'completed') {
       return (
         <svg
-          className="w-2 h-2 text-white"
+          className="w-3 h-3 text-white"
           fill="currentColor"
           viewBox="0 0 20 20"
+          strokeWidth="2"
         >
           <path
             fillRule="evenodd"
@@ -67,9 +81,10 @@ const ProgressStep = ({
     if (status === 'failed') {
       return (
         <svg
-          className="w-2 h-2 text-white"
+          className="w-3 h-3 text-white"
           fill="currentColor"
           viewBox="0 0 20 20"
+          strokeWidth="2"
         >
           <path
             fillRule="evenodd"
@@ -80,10 +95,21 @@ const ProgressStep = ({
       );
     }
 
-    if (status === 'pending' && step === 'Pending') {
+    if (
+      status === 'pending' &&
+      (step === 'Pending' || step === 'ResourceLock')
+    ) {
       return (
         <TailSpin color="#FFFFFF" height={10} width={10} strokeWidth={8} />
       );
+    }
+    if (status === 'pending' && step === 'Completed') {
+      return (
+        <TailSpin color="#FFFFFF" height={10} width={10} strokeWidth={8} />
+      );
+    }
+    if (status === 'inactive') {
+      return null;
     }
 
     return null;
@@ -98,15 +124,11 @@ const ProgressStep = ({
           <span className={getTextClasses()}>{label}</span>
         </div>
         {status === 'completed' && timestamp && (
-          <div className="text-white/50 text-[13px] font-normal text-right">
+          <div className="text-[13px] font-normal text-right">
             {/* Full timestamp - hidden on small screens */}
             <span className="xs:hidden">{timestamp}</span>
             {/* Time only - shown on small screens */}
-            <span className="hidden xs:inline">
-              {timestamp.includes('•')
-                ? timestamp.split('•')[1].trim()
-                : timestamp}
-            </span>
+            <span className="hidden xs:inline">{getTimestampDisplay()}</span>
           </div>
         )}
       </div>

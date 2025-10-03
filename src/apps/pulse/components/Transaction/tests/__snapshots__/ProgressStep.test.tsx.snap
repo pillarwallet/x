@@ -1,0 +1,59 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<ProgressStep /> > renders correctly and matches snapshot 1`] = `
+[
+  <div
+    className="flex items-center justify-between w-full"
+  >
+    <div
+      className="flex items-center gap-3"
+    >
+      <div
+        className="w-4 h-4 rounded-full flex items-center justify-center relative z-10 bg-[#8A77FF]"
+      >
+        <svg
+          className="w-3 h-3 text-white"
+          fill="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 20 20"
+        >
+          <path
+            clipRule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            fillRule="evenodd"
+          />
+        </svg>
+      </div>
+      <span
+        className="font-normal text-[13px] text-white"
+      >
+        Transaction Submitted
+      </span>
+    </div>
+    <div
+      className="text-[13px] font-normal text-right"
+    >
+      <span
+        className="xs:hidden"
+      >
+        2023-01-01 12:00:00
+      </span>
+      <span
+        className="hidden xs:inline"
+      >
+        2023-01-01 12:00:00
+      </span>
+    </div>
+  </div>,
+  <div
+    className="w-0.5 h-4 ml-2 bg-[#8A77FF]"
+    style={
+      {
+        "height": "24px",
+        "marginBottom": "-8px",
+        "marginTop": "-8px",
+      }
+    }
+  />,
+]
+`;

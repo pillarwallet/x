@@ -1,12 +1,13 @@
+import { Networks } from '@etherspot/intent-sdk';
 import {
   EtherspotBundler,
   ModularSdk,
   SdkOptions,
 } from '@etherspot/modular-sdk';
-import { useEffect, useState } from 'react';
-import { createWalletClient, custom, Hex } from 'viem';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { Networks } from '@etherspot/intent-sdk';
+import { useEffect, useState } from 'react';
+import { Hex, createWalletClient, custom } from 'viem';
+import { useAccount, useConnect } from 'wagmi';
 import { PayingToken } from '../types/tokens';
 import { sleep } from '../utils/sleep';
 
@@ -18,6 +19,8 @@ export default function useModularSdk(props: ModularSdkProps) {
   const { payingTokens } = props;
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
+  const { isConnected: isWagmiConnected } = useAccount();
+  const { connectors } = useConnect();
 
   const privyWalletAddress = user?.wallet?.address;
 
@@ -42,7 +45,9 @@ export default function useModularSdk(props: ModularSdkProps) {
   };
 
   useEffect(() => {
-    if (ready && authenticated && walletProvider && payingTokens.length > 0) {
+    const initializeSdk = async () => {
+      if (payingTokens.length === 0) return;
+
       const { chainId } = payingTokens[0];
       const options: SdkOptions = {
         chainId: payingTokens[0].chainId,
@@ -52,16 +57,69 @@ export default function useModularSdk(props: ModularSdkProps) {
         ),
       };
 
-      walletProvider.getEthereumProvider().then((provider) => {
-        const walletClient = createWalletClient({
-          account: walletProvider.address as Hex,
-          transport: custom(provider),
-        });
-        const sdk = new ModularSdk(walletClient, options);
-        setModularSdk(sdk);
-      });
-    }
-  }, [ready, authenticated, walletProvider, payingTokens]);
+      try {
+        // 1: Check if connected via Privy wallet
+        if (ready && authenticated && walletProvider) {
+          const provider = await walletProvider.getEthereumProvider();
+          const walletClient = createWalletClient({
+            account: walletProvider.address as Hex,
+            transport: custom(provider),
+          });
+          const sdk = new ModularSdk(walletClient, options);
+          setModularSdk(sdk);
+          return;
+        }
+
+        // 2: Check if connected via WalletConnect (only if no Privy wallet)
+        const hasWallets = walletProvider !== undefined;
+        if (isWagmiConnected && !hasWallets) {
+          const walletConnectConnector = connectors.find(
+            ({ id }) => id === 'walletConnect'
+          );
+
+          if (walletConnectConnector) {
+            /* eslint-disable @typescript-eslint/no-explicit-any */
+            const wcProvider: any = await walletConnectConnector.getProvider();
+
+            // Only proceed if the provider is actually connected
+            if (
+              wcProvider &&
+              wcProvider.connected &&
+              wcProvider.accounts &&
+              wcProvider.accounts.length > 0
+            ) {
+              // Get the connected account
+              const accounts = await wcProvider.request({
+                method: 'eth_accounts',
+              });
+              const wcAccount = accounts[0];
+
+              if (wcAccount) {
+                const walletClient = createWalletClient({
+                  account: wcAccount as Hex,
+                  transport: custom(wcProvider),
+                });
+                const sdk = new ModularSdk(walletClient, options);
+                setModularSdk(sdk);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to initialize Modular SDK:', err);
+        setModularSdk(null);
+      }
+    };
+
+    initializeSdk();
+  }, [
+    ready,
+    authenticated,
+    walletProvider,
+    payingTokens,
+    isWagmiConnected,
+    connectors,
+  ]);
 
   useEffect(() => {
     if (!areModulesInstalled && modularSdk && payingTokens.length > 0) {

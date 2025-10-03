@@ -1,4 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 // utils
 import { getAllUniqueBlockchains } from '../../utils/blockchain';
@@ -32,6 +34,21 @@ type PortfolioOverviewProps = {
 const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
   const [t] = useTranslation();
   const { walletAddress: accountAddress } = useTransactionKit();
+  const { user } = usePrivy();
+  const { isConnected } = useAccount();
+
+  // Check if Privy user is connected via WalletConnect using linkedAccounts
+  const isPrivyConnectedViaWalletConnect = user?.linkedAccounts?.some(
+    (account) =>
+      account.type === 'wallet' &&
+      (account.connectorType === 'wallet_connect' ||
+        account.connectorType === 'wallet_connect_v1' ||
+        account.connectorType === 'wallet_connect_v2')
+  );
+
+  // Don't show WalletConnectDropdown if user is connected via Wagmi or Privy with WalletConnect
+  const shouldShowWalletConnectDropdown =
+    !isConnected && !isPrivyConnectedViaWalletConnect;
   const { data: dataPortlioOverview } = data || {};
   const dataWallet = dataPortlioOverview as WalletPortfolioData | undefined;
   const { percentage_change: percentageChange = 0 } =
@@ -82,7 +99,7 @@ const PortfolioOverview = ({ data, isDataLoading }: PortfolioOverviewProps) => {
     >
       <div className="flex flex-col justify-between">
         <WalletAddressOverview address={accountAddress ?? ''} />
-        <WalletConnectDropdown />
+        {shouldShowWalletConnectDropdown && <WalletConnectDropdown />}
         <div className="mobile:border mobile:border-medium_grey mobile:rounded-[10px] mobile:p-4 mobile:w-full">
           <Body className="text-purple_light mb-2">{t`title.totalBalance`}</Body>
           <div className="flex gap-4 items-end" id="wallet-portfolio-balance">

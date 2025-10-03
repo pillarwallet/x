@@ -13,7 +13,7 @@ const Footer = () => {
             </div>
             <div className="footer__socials">
               <a href="https://x.com/PX_Web3" target="_blank" rel="noreferrer">
-                <img src="https://cdn.pillarx.app/home-x.svg" alt="x-image" />
+                <img src="https://cdn.pillarx.app/social-x.svg" alt="x-image" />
               </a>
               <a
                 href="https://t.me/+WmZpena91_dlNDhk"
@@ -23,6 +23,16 @@ const Footer = () => {
                 <img
                   src="https://cdn.pillarx.app/social-telegram.svg"
                   alt="home-image"
+                />
+              </a>
+              <a
+                href="https://chat.pillar.fi/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="https://cdn.pillarx.app/social-discord.svg"
+                  alt="discord-image"
                 />
               </a>
             </div>

@@ -8,6 +8,7 @@ export default function Close(props: { onClose: () => void }) {
       onClick={() => onClose()}
       type="button"
       aria-label="Close"
+      data-testid="pulse-close-button"
     >
       <img src={CloseIcon} alt="close-icon" />
     </button>

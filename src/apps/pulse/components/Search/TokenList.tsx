@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Asset } from '../../utils/parseSearchData';
-import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
-import { getLogoForChainId } from '../../../../utils/blockchain';
 import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
+import { getLogoForChainId } from '../../../../utils/blockchain';
+import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import { SearchType, SortType } from '../../types/tokens';
-import { formatElapsedTime } from '../../utils/time';
-import Sort from './Sort';
 import { formatBigNumber } from '../../utils/number';
+import { Asset } from '../../utils/parseSearchData';
+import { formatElapsedTime } from '../../utils/time';
 import TokenPrice from '../Price/TokenPrice';
 import TokenPriceChange from '../Price/TokenPriceChange';
+import Sort from './Sort';
 
 export interface TokenListProps {
   assets: Asset[];
@@ -72,6 +72,7 @@ export default function TokenList(props: TokenListProps) {
                   handleSortChange('mCap');
                 }}
                 type="button"
+                data-testid="pulse-search-sort-mcap"
               >
                 MCap
               </button>
@@ -84,6 +85,7 @@ export default function TokenList(props: TokenListProps) {
                   handleSortChange('volume');
                 }}
                 type="button"
+                data-testid="pulse-search-sort-volume"
               >
                 24h Vol
               </button>
@@ -97,6 +99,7 @@ export default function TokenList(props: TokenListProps) {
                   handleSortChange('price');
                 }}
                 type="button"
+                data-testid="pulse-search-sort-price"
               >
                 Price
               </button>
@@ -109,6 +112,7 @@ export default function TokenList(props: TokenListProps) {
                   handleSortChange('priceChange24h');
                 }}
                 type="button"
+                data-testid="pulse-search-sort-price-change"
               >
                 24h %
               </button>
@@ -132,6 +136,7 @@ export default function TokenList(props: TokenListProps) {
                 handleTokenSelect(item);
               }}
               type="button"
+              data-testid={`pulse-token-${item.chain.toLowerCase()}-${item.name.toLowerCase()}`}
             >
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 {item.logo ? (

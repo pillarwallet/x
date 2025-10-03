@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { TailSpin } from 'react-loader-spinner';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Hex, getAddress, isAddress } from 'viem';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
@@ -74,11 +74,16 @@ export default function Buy(props: BuyProps) {
 
   // Simple background search for token-atlas
   const location = useLocation();
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
   const tokenToSearch = query.get('asset');
   const blockchain = query.get('blockchain');
   const fromTokenAtlas = query.get('from') === 'token-atlas';
   const [isSearchingToken, setIsSearchingToken] = useState(false);
+
+  const removeQueryParams = () => {
+    navigate(location.pathname, { replace: true });
+  };
 
   const { data: searchData, isLoading: isSearchLoading } =
     useGetSearchTokensQuery(
@@ -103,6 +108,7 @@ export default function Buy(props: BuyProps) {
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
   const [insufficientWalletBalance, setInsufficientWalletBalance] =
     useState(false);
+  const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [dispensableAssets, setDispensableAssets] = useState<
@@ -149,6 +155,7 @@ export default function Buy(props: BuyProps) {
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setUsdAmount(input);
+      setBelowMinimumAmount(false);
       setNoEnoughLiquidity(false);
       setInsufficientWalletBalance(false);
     }
@@ -166,6 +173,16 @@ export default function Buy(props: BuyProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
+        const amount = parseFloat(usdAmount);
+
+        if (amount < 0.5) {
+          setBelowMinimumAmount(true);
+          setNoEnoughLiquidity(false);
+          setInsufficientWalletBalance(false);
+          return;
+        }
+
+        setBelowMinimumAmount(false);
         setNoEnoughLiquidity(false);
         setInsufficientWalletBalance(false);
         setDebouncedUsdAmount(usdAmount);
@@ -181,23 +198,12 @@ export default function Buy(props: BuyProps) {
           setNoEnoughLiquidity(true);
           return;
         }
-        if (
-          payingTokens.length > 0 &&
-          pTokens[0].chainId === payingTokens[0].chainId &&
-          pTokens[0].name === payingTokens[0].name &&
-          pTokens[0].symbol === payingTokens[0].symbol
-        ) {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        } else {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setPayingTokens(pTokens);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        }
+        // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
+        setDispensableAssets(dAssets);
+        setPermittedChains(pChains);
+        setPayingTokens(pTokens);
+        setParentDispensableAssets(dAssets);
+        setParentUsdAmount(usdAmount);
       }
     }, 1000);
 
@@ -208,7 +214,6 @@ export default function Buy(props: BuyProps) {
     setPayingTokens,
     walletPortfolioData?.result.data,
     dispensableAssets.length,
-    payingTokens,
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
@@ -386,8 +391,12 @@ export default function Buy(props: BuyProps) {
         }
 
         setIsSearchingToken(false);
+
+        // Clean up URL parameters after successfully selecting token from token-atlas
+        removeQueryParams();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fromTokenAtlas,
     tokenToSearch,
@@ -416,6 +425,7 @@ export default function Buy(props: BuyProps) {
               setSearching(true);
             }}
             type="button"
+            data-testid="pulse-buy-token-selector"
           >
             {token ? (
               <div
@@ -426,6 +436,7 @@ export default function Buy(props: BuyProps) {
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
                 }}
+                data-testid={`pulse-buy-token-selected-${token.chainId}-${token.name}`}
               >
                 <div style={{ position: 'relative', display: 'inline-block' }}>
                   {token.logo ? (
@@ -551,6 +562,7 @@ export default function Buy(props: BuyProps) {
                 type="text"
                 disabled={isLoading}
                 onFocus={() => setInputPlaceholder('')}
+                data-testid="pulse-buy-amount-input"
               />
               <p style={{ lineHeight: 1, color: 'grey' }}>USD</p>
             </div>
@@ -560,6 +572,7 @@ export default function Buy(props: BuyProps) {
           <div className="flex">
             {(() => {
               const showError =
+                belowMinimumAmount ||
                 insufficientWalletBalance ||
                 (notEnoughLiquidity && token) ||
                 (!isLoading &&
@@ -569,7 +582,9 @@ export default function Buy(props: BuyProps) {
               if (!showError) return null;
 
               let message = '';
-              if (insufficientWalletBalance) {
+              if (belowMinimumAmount) {
+                message = 'Min. amount 0.5 USD';
+              } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
                 message = 'Not enough liquidity';
@@ -580,7 +595,11 @@ export default function Buy(props: BuyProps) {
               return (
                 <>
                   <div className="flex items-center justify-center">
-                    <img src={WarningIcon} alt="warning" />
+                    <img
+                      src={WarningIcon}
+                      alt="warning"
+                      data-testid="pulse-buy-warning-icon"
+                    />
                   </div>
 
                   <div
@@ -590,6 +609,7 @@ export default function Buy(props: BuyProps) {
                       fontSize: 12,
                       marginLeft: 5,
                     }}
+                    data-testid="pulse-buy-error-message"
                   >
                     {message}
                   </div>
@@ -598,13 +618,18 @@ export default function Buy(props: BuyProps) {
             })()}
           </div>
           <div className="flex" style={{ float: 'right' }}>
-            <img src={WalletIcon} alt="wallet-icon" />
+            <img
+              src={WalletIcon}
+              alt="wallet-icon"
+              data-testid="pulse-buy-wallet-icon"
+            />
             <div
               style={{
                 color: '#8A77FF',
                 marginLeft: 5,
                 fontSize: 12,
               }}
+              data-testid="pulse-buy-wallet-balance"
             >
               ${getStableCurrencyBalance().toFixed(2)}
             </div>
@@ -668,7 +693,11 @@ export default function Buy(props: BuyProps) {
           isFetching={isFetching}
           isInstalling={isInstalling}
           isLoading={isLoading}
-          notEnoughLiquidity={notEnoughLiquidity || insufficientWalletBalance}
+          notEnoughLiquidity={
+            belowMinimumAmount ||
+            notEnoughLiquidity ||
+            insufficientWalletBalance
+          }
           payingTokens={payingTokens}
           token={token}
           usdAmount={usdAmount}

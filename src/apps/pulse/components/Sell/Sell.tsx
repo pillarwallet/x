@@ -176,13 +176,17 @@ const Sell = (props: SellProps) => {
             data-testid="pulse-sell-token-selector"
           >
             {token ? (
-              <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
+              <div
+                className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]"
+                data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
+              >
                 <div className="relative inline-block">
                   {token.logo ? (
                     <img
                       src={token.logo}
                       alt="Main"
                       className="w-6 h-6 rounded-full ml-1.5 mr-1.5"
+                      data-testid="pulse-sell-token-selector-logo"
                     />
                   ) : (
                     <div className="w-full h-full overflow-hidden rounded-full w-6 h-6 ml-1.5 mr-1.5">
@@ -196,32 +200,55 @@ const Sell = (props: SellProps) => {
                     src={getLogoForChainId(token.chainId)}
                     className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
                     alt="Chain Logo"
+                    data-testid="pulse-sell-token-selector-chain-logo"
                   />
                 </div>
                 <div className="flex flex-col ml-1.5 mt-1.5 h-9">
                   <div className="flex">
-                    <p className="text-xs font-normal">{token.symbol}</p>
-                    <p className="text-xs font-normal ml-0.5 text-grey">
+                    <p
+                      className="text-xs font-normal"
+                      data-testid="pulse-sell-token-selector-symbol"
+                    >
+                      {token.symbol}
+                    </p>
+                    <p
+                      className="text-xs font-normal ml-0.5 text-grey"
+                      data-testid="pulse-sell-token-selector-name"
+                    >
                       {token.name.length >= 10
                         ? `${token.name.slice(0, 6)}...`
                         : token.name}
                     </p>
                   </div>
                   <div className="flex">
-                    <p className="text-[10px] font-normal text-grey h-2.5">
+                    <p
+                      className="text-[10px] font-normal text-grey h-2.5"
+                      data-testid="pulse-sell-token-selector-price"
+                    >
                       ${formatExponentialSmallNumber(token.usdValue)}
                     </p>
                   </div>
                 </div>
-                <img src={ArrowDown} alt="arrow-down" />
+                <img
+                  src={ArrowDown}
+                  alt="arrow-down"
+                  data-testid="pulse-sell-token-selector-arrow"
+                />
               </div>
             ) : (
               <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
-                <div className="flex font-normal text-xs ml-1.5">
+                <div
+                  className="flex font-normal text-xs ml-1.5"
+                  data-testid="pulse-sell-token-selector-placeholder"
+                >
                   Select token
                 </div>
                 <div className="flex ml-2">
-                  <img src={ArrowDown} alt="arrow-down" />
+                  <img
+                    src={ArrowDown}
+                    alt="arrow-down"
+                    data-testid="pulse-sell-token-selector-arrow-placeholder"
+                  />
                 </div>
               </div>
             )}
@@ -274,9 +301,16 @@ const Sell = (props: SellProps) => {
             {(notEnoughLiquidity || relayError) && (
               <>
                 <div className="flex items-center justify-center">
-                  <img src={WarningIcon} alt="warning" />
+                  <img
+                    src={WarningIcon}
+                    alt="warning"
+                    data-testid="pulse-sell-warning-icon"
+                  />
                 </div>
-                <div className="underline text-[#FF366C] text-xs ml-1.5">
+                <div
+                  className="underline text-[#FF366C] text-xs ml-1.5"
+                  data-testid="pulse-sell-error-message"
+                >
                   {relayError ||
                     (notEnoughLiquidity ? 'Not enough liquidity' : '')}
                 </div>
@@ -289,6 +323,7 @@ const Sell = (props: SellProps) => {
                 src={token.logo}
                 alt={token.symbol}
                 className="w-3.5 h-3.5 rounded-full"
+                data-testid="pulse-sell-token-logo"
               />
             )}
             <div
@@ -315,7 +350,7 @@ const Sell = (props: SellProps) => {
       </div>
 
       {/* amounts */}
-      <div className="flex">
+      <div className="flex" data-testid="pulse-sell-percentage-buttons">
         {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const percentage = isMax ? 100 : parseInt(item);

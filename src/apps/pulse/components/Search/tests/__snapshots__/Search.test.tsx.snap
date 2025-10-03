@@ -32,6 +32,7 @@ exports[`<Search /> > renders correctly and matches snapshot 1`] = `
         />
         <button
           aria-label="Close"
+          data-testid="pulse-close-button"
           onClick={[Function]}
           style={
             {
@@ -50,10 +51,12 @@ exports[`<Search /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
+        data-testid="pulse-search-refresh-button"
       >
         <button
           aria-label="Refresh"
           className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-not-allowed opacity-50"
+          data-testid="pulse-refresh-button"
           disabled={true}
           type="button"
         >
@@ -65,6 +68,7 @@ exports[`<Search /> > renders correctly and matches snapshot 1`] = `
       </div>
       <div
         className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+        data-testid="pulse-search-chain-selector"
         onClick={[Function]}
       >
         <button

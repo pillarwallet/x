@@ -32,7 +32,10 @@ export default function PayingToken(props: PayingTokenProps) {
   }, [isAddressCopied]);
 
   return (
-    <div className="flex justify-between">
+    <div
+      className="flex justify-between"
+      data-testid={`pulse-buy-paying-token-${payingToken.chainId}-${payingToken.name}`}
+    >
       <div className="flex items-center">
         <div className="relative inline-block mr-2">
           <img

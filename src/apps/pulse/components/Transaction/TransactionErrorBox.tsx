@@ -26,7 +26,10 @@ const TransactionErrorBox = ({
   const handleCopy = () => setIsCopied(true);
 
   return (
-    <div className="w-full h-fit rounded-[10px] p-3 gap-4 border border-[#FF366C] bg-[#FF366C]/10 flex flex-col">
+    <div
+      className="w-full h-fit rounded-[10px] p-3 gap-4 border border-[#FF366C] bg-[#FF366C]/10 flex flex-col"
+      data-testid="pulse-transaction-details-error-box"
+    >
       <div className="flex gap-1.5 items-center pb-4 border-b border-[#FF366C]">
         <img className="w-8 h-8" src={TransactionFailedIcon} alt="Error" />
         <div className="flex flex-col">
@@ -69,7 +72,7 @@ const TransactionErrorBox = ({
       </div>
 
       {isExpanded && (
-        <div className="mt-2 p-3 bg-black/20 rounded-[6px] border border-[#FF366C]/30">
+        <div className="mt-2">
           <p className="text-white/70 text-[12px] font-mono whitespace-pre-wrap break-all">
             {technicalDetails}
           </p>

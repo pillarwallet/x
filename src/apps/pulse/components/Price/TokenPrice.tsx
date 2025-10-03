@@ -11,11 +11,25 @@ export default function TokenPrice(props: TokenPriceProps): JSX.Element {
   const firstNonZeroIndex = decimals.search(/[^0]/);
 
   if (firstNonZeroIndex < 0) {
-    return <p style={{ fontSize: 13, fontWeight: 400 }}>$0.00</p>;
+    return (
+      <p
+        style={{ fontSize: 13, fontWeight: 400 }}
+        data-testid="pulse-token-price"
+      >
+        $0.00
+      </p>
+    );
   }
 
   if (value >= 0.01 || firstNonZeroIndex < 2) {
-    return <p style={{ fontSize: 13, fontWeight: 400 }}>${value.toFixed(5)}</p>;
+    return (
+      <p
+        style={{ fontSize: 13, fontWeight: 400 }}
+        data-testid="pulse-token-price"
+      >
+        ${value.toFixed(5)}
+      </p>
+    );
   }
 
   const leadingZerosCount = firstNonZeroIndex;
@@ -25,7 +39,10 @@ export default function TokenPrice(props: TokenPriceProps): JSX.Element {
   );
 
   return (
-    <p style={{ fontSize: 13, fontWeight: 400 }}>
+    <p
+      style={{ fontSize: 13, fontWeight: 400 }}
+      data-testid="pulse-token-price"
+    >
       $0.0<sub>{leadingZerosCount}</sub>
       {significantDigits}
     </p>

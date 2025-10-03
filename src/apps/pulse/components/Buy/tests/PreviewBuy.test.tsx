@@ -58,6 +58,7 @@ const mockProps = {
   setExpressIntentResponse: vi.fn(),
   usdAmount: '100.00',
   dispensableAssets: [],
+  showTransactionStatus: vi.fn(),
 };
 
 const defaultMocks = () => {
@@ -165,7 +166,7 @@ describe('<PreviewBuy />', () => {
       expect(mockProps.closePreview).toHaveBeenCalled();
     });
 
-    it('shows intent tracker after successful shortlist', async () => {
+    it('shows transaction status after successful shortlist', async () => {
       render(<PreviewBuy {...mockProps} />);
 
       const confirmButton = screen.getByText('Confirm');
@@ -179,9 +180,11 @@ describe('<PreviewBuy />', () => {
         ).toBeInTheDocument();
       });
 
-      // After shortlist completes, should show tracker
+      // After shortlist completes, should call showTransactionStatus
       await waitFor(() => {
-        expect(screen.getByText('Resource Lock Creation')).toBeInTheDocument();
+        expect(mockProps.showTransactionStatus).toHaveBeenCalledWith(
+          mockExpressIntentResponse.bids[0].bidHash
+        );
       });
     });
   });

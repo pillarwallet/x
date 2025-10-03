@@ -121,7 +121,9 @@ export default function Search({
     inputRef.current?.focus();
     const tokenAddress = query.get('asset');
 
-    if (isAddress(tokenAddress || '')) {
+    // Only read asset parameter when in buy mode to prevent token address
+    // from token-atlas showing in sell search
+    if (isBuy && isAddress(tokenAddress || '')) {
       setSearchText(tokenAddress!);
     }
 
@@ -298,14 +300,17 @@ export default function Search({
               }}
             />
             {(searchText.length > 0 && isFetching) || isLoading ? (
-              <div className="mr-2.5">
+              <div className="mr-2.5" data-testid="pulse-search-loading">
                 <TailSpin color="#FFFFFF" height={20} width={20} />
               </div>
             ) : (
               <Close onClose={handleClose} />
             )}
           </div>
-          <div className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5">
+          <div
+            className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
+            data-testid="pulse-search-refresh-button"
+          >
             <Refresh
               isLoading={walletPortfolioFetching}
               onClick={refetchWalletPortfolio}
@@ -326,11 +331,15 @@ export default function Search({
                   left: rect?.left ? rect.left : undefined,
                 });
               }}
+              data-testid="pulse-search-chain-selector"
             >
               <ChainSelectButton />
             </div>
           ) : (
-            <div className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer">
+            <div
+              data-testid="pulse-esc-button-search-modal"
+              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+            >
               <Esc onClose={handleClose} />
             </div>
           )}

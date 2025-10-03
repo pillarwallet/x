@@ -84,7 +84,7 @@ const Tooltip = ({ children, content }: TooltipProps) => {
   }, [isVisible]);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" data-testid="pulse-tooltip">
       <div
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
