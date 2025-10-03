@@ -108,6 +108,7 @@ export default function Buy(props: BuyProps) {
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
   const [insufficientWalletBalance, setInsufficientWalletBalance] =
     useState(false);
+  const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [dispensableAssets, setDispensableAssets] = useState<
@@ -154,6 +155,7 @@ export default function Buy(props: BuyProps) {
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setUsdAmount(input);
+      setBelowMinimumAmount(false);
       setNoEnoughLiquidity(false);
       setInsufficientWalletBalance(false);
     }
@@ -171,6 +173,16 @@ export default function Buy(props: BuyProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
+        const amount = parseFloat(usdAmount);
+
+        if (amount < 0.5) {
+          setBelowMinimumAmount(true);
+          setNoEnoughLiquidity(false);
+          setInsufficientWalletBalance(false);
+          return;
+        }
+
+        setBelowMinimumAmount(false);
         setNoEnoughLiquidity(false);
         setInsufficientWalletBalance(false);
         setDebouncedUsdAmount(usdAmount);
@@ -186,23 +198,12 @@ export default function Buy(props: BuyProps) {
           setNoEnoughLiquidity(true);
           return;
         }
-        if (
-          payingTokens.length > 0 &&
-          pTokens[0].chainId === payingTokens[0].chainId &&
-          pTokens[0].name === payingTokens[0].name &&
-          pTokens[0].symbol === payingTokens[0].symbol
-        ) {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        } else {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setPayingTokens(pTokens);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        }
+        // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
+        setDispensableAssets(dAssets);
+        setPermittedChains(pChains);
+        setPayingTokens(pTokens);
+        setParentDispensableAssets(dAssets);
+        setParentUsdAmount(usdAmount);
       }
     }, 1000);
 
@@ -213,7 +214,6 @@ export default function Buy(props: BuyProps) {
     setPayingTokens,
     walletPortfolioData?.result.data,
     dispensableAssets.length,
-    payingTokens,
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
@@ -572,6 +572,7 @@ export default function Buy(props: BuyProps) {
           <div className="flex">
             {(() => {
               const showError =
+                belowMinimumAmount ||
                 insufficientWalletBalance ||
                 (notEnoughLiquidity && token) ||
                 (!isLoading &&
@@ -581,7 +582,9 @@ export default function Buy(props: BuyProps) {
               if (!showError) return null;
 
               let message = '';
-              if (insufficientWalletBalance) {
+              if (belowMinimumAmount) {
+                message = 'Min. amount 0.5 USD';
+              } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
                 message = 'Not enough liquidity';
@@ -690,7 +693,11 @@ export default function Buy(props: BuyProps) {
           isFetching={isFetching}
           isInstalling={isInstalling}
           isLoading={isLoading}
-          notEnoughLiquidity={notEnoughLiquidity || insufficientWalletBalance}
+          notEnoughLiquidity={
+            belowMinimumAmount ||
+            notEnoughLiquidity ||
+            insufficientWalletBalance
+          }
           payingTokens={payingTokens}
           token={token}
           usdAmount={usdAmount}
