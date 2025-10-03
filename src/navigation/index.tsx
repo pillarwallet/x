@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 
 // pages
+import Advertising from '../pages/Advertising';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Lobby from '../pages/Lobby';
@@ -23,6 +24,7 @@ export const navigationRoute = {
   landing: '/landing',
   waitlist: '/waitlist',
   developers: '/developers',
+  advertising: '/advertising',
   privacy: '/privacy-policy',
   login: '/login',
 };
@@ -48,6 +50,10 @@ export const AuthorizedNavigation = () => {
       element: <Developers />,
     },
     {
+      path: '/advertising',
+      element: <Advertising />,
+    },
+    {
       path: '/privacy-policy',
       element: <Privacy />,
     },
@@ -71,6 +77,7 @@ export const UnauthorizedNavigation = () => {
       <Route path={navigationRoute.home} element={<LandingPage />} />
       <Route path={navigationRoute.waitlist} element={<WaitList />} />
       <Route path={navigationRoute.developers} element={<Developers />} />
+      <Route path={navigationRoute.advertising} element={<Advertising />} />
       <Route path={navigationRoute.privacy} element={<Privacy />} />
       <Route path={navigationRoute.login} element={<Login />} />
       <Route path="*" element={<NotFound />} />

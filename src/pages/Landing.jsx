@@ -1,11 +1,11 @@
+import { Link } from 'react-router-dom';
 import { GlobalStyles } from '../components/LandingPage/GlobalStyles';
-
 import '../styles/landing/tailwind.css';
 
 // components
-import { Form } from '../components/LandingPage';
-import { Footer } from '../components/LandingPage/Footer';
 import { Header } from '../components/LandingPage/Header';
+import { Footer } from '../components/LandingPage/Footer';
+import { MailChimp } from '../components/LandingPage/MailChimp';
 
 export default function LandingPage() {
   return (
@@ -21,41 +21,32 @@ export default function LandingPage() {
         <div className="container">
           <div className="home_hero__wrapper">
             <div className="home_hero__content">
-              <img
-                src="https://cdn.pillarx.app/home-px.png"
-                alt="PillarX logo"
-              />
-            </div>
-            <div className="home_hero__signup">
+              <h1>PillarX: Smart Choice for Web3 Traders & Users</h1>
               <p>
-                Trade, manage crypto assets seamlessly across EVM chains, &
-                access secure DeFi — all in one app
+                Get token insights, manage crypto assets seamlessly across EVM
+                chains, and access secure DeFi — all in one app.
               </p>
-              <a
-                href="/login"
-                className="cta plausible-event-name=Login+Home+Hero"
+              <Link
+                to="/login"
+                className="cta home_hero__cta plausible-event-name=Home+Get+Started"
               >
                 <span>Get started</span>
-              </a>
+              </Link>
+            </div>
+            <div className="home_hero__image">
+              <img src="https://cdn.pillarx.app/home-hero.webp" alt="" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Feature Section */}
-      <section className="home_feature">
+      <section className="home_feature scroll_margin" id="superpowers">
         <div className="container">
           <div className="home_feature__wrapper">
             {/* Feature Detail */}
-            <div className="home_feature__detail home_feature__detail--one">
-              <div className="home_feature__detail__copy">
-                <h2>Stay ahead with&nbsp;the Infinite Information Loop</h2>
-                <p>
-                  Scroll seamlessly and receive the latest Web3 news as it
-                  happens
-                </p>
-              </div>
-              <div className="home_feature__detail__image">
+            <div className="home_feature__detail home_feature__detail--reverse">
+              <div className="home_feature__detail__image home_feature__detail__image--large gradient_border">
                 <video
                   width="100%"
                   preload="none"
@@ -63,53 +54,32 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="https://cdn.pillarx.app/home-feature-1.png"
+                  poster="https://cdn.pillarx.app/home-superpowers-1.webp"
                 >
                   <source
-                    src="https://cdn.pillarx.app/home-feature-1.mp4"
+                    src="https://cdn.pillarx.app/home-superpowers-1.mp4"
                     type="video/mp4"
                   />
                 </video>
               </div>
-            </div>
-            {/* Feature Detail */}
-            <div className="home_feature__detail home_feature__detail--two">
-              <div className="home_feature__detail__copy">
+              <div className="home_feature__detail__content gradient_border">
+                <h4>Superpowers</h4>
                 <h2>
-                  Everything at your fingertips with the PillarX Action Bar
+                  Token Tiles
+                  <br />
+                  <span>Stay Ahead of the Curve</span>
                 </h2>
                 <p>
-                  Seamlessly manage transactions, assets, and explore dapps —
-                  all in one place!
+                  See the hottest tokens from each chain at a glance. With Token
+                  Tiles, PillarX brings trending and newly created assets
+                  directly to your home screen. No need to dig through endless
+                  tabs — just pure alpha, instantly accessible.
                 </p>
-              </div>
-              <div className="home_feature__detail__image">
-                <video
-                  width="100%"
-                  preload="none"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  poster="https://cdn.pillarx.app/home-feature-2.png"
-                >
-                  <source
-                    src="https://cdn.pillarx.app/home-feature-2.mp4"
-                    type="video/mp4"
-                  />
-                </video>
               </div>
             </div>
             {/* Feature Detail */}
-            <div className="home_feature__detail home_feature__detail--flex home_feature__detail--three">
-              <div className="home_feature__detail__copy">
-                <h2>Simplify your transactions with Mix and Batch</h2>
-                <p>
-                  Combine multiple transactions into one efficient batch with
-                  PillarX 🚀&nbsp;Hassle-free and super efficient!
-                </p>
-              </div>
-              <div className="home_feature__detail__image">
+            <div className="home_feature__detail">
+              <div className="home_feature__detail__image gradient_border">
                 <video
                   width="100%"
                   preload="none"
@@ -117,106 +87,201 @@ export default function LandingPage() {
                   loop
                   muted
                   playsInline
-                  poster="https://cdn.pillarx.app/home-feature-3.png"
+                  poster="https://cdn.pillarx.app/home-superpowers-2.webp"
                 >
                   <source
-                    src="https://cdn.pillarx.app/home-feature-3.mp4"
+                    src="https://cdn.pillarx.app/home-superpowers-2.mp4"
                     type="video/mp4"
                   />
                 </video>
               </div>
+              <div className="home_feature__detail__content gradient_border">
+                <h2>
+                  Token Atlas
+                  <br />
+                  <span>
+                    Everything You <br />
+                    Need in One View
+                  </span>
+                </h2>
+                <p>
+                  Live prices, charts, stats, token audit links, and a one-tap
+                  buy&nbsp;button. Token Atlas delivers all the essential token
+                  information in one seamless experience. No more switching apps
+                  or dealing with friction.
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="home_intro">
-        <div className="container">
-          <div className="home_intro__wrapper">
-            <div className="home_intro__content">
-              <h2>What is PX?</h2>
-              <p>
-                PillarX is the next evolution in the Pillar Project story, built
-                on the pillars of controlling your assets and data, PillarX will
-                provide an unparalleled experience in interacting with the Web3
-                ecosystem.
-              </p>
-              <img
-                src="https://cdn.pillarx.app/home-hero.png"
-                alt="PillarX Dashboard"
-              />
+            {/* Feature Detail */}
+            <div className="home_feature__detail home_feature__detail--reverse">
+              <div className="home_feature__detail__image gradient_border">
+                <video
+                  width="100%"
+                  preload="none"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster="https://cdn.pillarx.app/home-superpowers-3.webp"
+                >
+                  <source
+                    src="https://cdn.pillarx.app/home-superpowers-3.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
+              <div className="home_feature__detail__content gradient_border">
+                <h2>
+                  Instant Swaps
+                  <br />
+                  <span>
+                    Trade Tokens in
+                    <br /> Seconds
+                  </span>
+                </h2>
+                <p>
+                  Swap tokens across chains with PillarX’s streamlined
+                  <br /> flow. Seamless, lightning-fast, and optimized to save
+                  you
+                  <br /> time and gas.
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Signup Section */}
-      <section className="home_signup">
-        <div className="container">
-          <div className="home_signup__wrapper">
-            <div className="home_signup__content">
-              <h2>Be One of the First to&nbsp;Experience PX</h2>
-              <p>
-                Secure your place as a pioneer – Sign up for early&nbsp;access!
-              </p>
-              <div className="home_signup__content__form">
-                <div className="home_signup__content__form__wrapper">
-                  <Form />
+            {/* Feature Detail */}
+            <div className="home_feature__detail">
+              <div className="home_feature__detail__content home_feature__detail__content--column gradient_border">
+                <h2>
+                  PX Universal Gas Tank
+                  <br />
+                  <span>Gas Payments Made Easy</span>
+                </h2>
+                <p>
+                  Top up your gas tank with a variety of tokens and pay gas fees
+                  across multiple blockchains effortlessly and securely. Always
+                  be prepared without worrying about which token to use for each
+                  transaction.
+                </p>
+                <div className="home_feature__detail__content__icon">
+                  <div className="home_feature__detail__content__icon__wrapper">
+                    <img
+                      src="https://cdn.pillarx.app/home-superpowers-icon-1.svg"
+                      alt=""
+                    />
+                  </div>
                 </div>
+              </div>
+              <div className="home_feature__detail__content home_feature__detail__content--column gradient_border">
+                <h2>
+                  Web3 App Store
+                  <br />
+                  <span>
+                    Access dApps Without
+                    <br /> Leaving PillarX
+                  </span>
+                </h2>
                 <p>
-                  Stay tuned! We&apos;ll be unveiling more details as we
-                  approach the official launch date. Follow us on{' '}
-                  <a
-                    href="https://twitter.com/PX_Web3"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    X
-                  </a>
-                  .
+                  All your favorite dApps are built directly into PillarX,
+                  meaning you don’t have to leave the platform to connect to any
+                  of them! Safe, secure, and under your control.
                 </p>
+                <div className="home_feature__detail__content__icon">
+                  <h4>Coming Soon</h4>
+                  <div className="home_feature__detail__content__icon__wrapper">
+                    <img
+                      src="https://cdn.pillarx.app/home-superpowers-icon-2.svg"
+                      alt=""
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Build Section */}
-      <section className="home_build">
+      <section className="home_app">
         <div className="container">
-          <div className="home_build__wrapper">
-            <div className="home_build__content">
-              <div className="home_build__content__left">
-                <h2>Build with PillarX</h2>
-                <p>
-                  This is your chance to spotlight your project, engage with
-                  100k+ Pillar community members, and be part of the journey
-                  towards a more trustless future leveraging Account
-                  Abstraction.
-                </p>
+          <div className="home_app__wrapper">
+            <div className="home_app__subscribe">
+              <h2>
+                More Exciting Features
+                <br /> Coming Soon!
+              </h2>
+              <p>
+                Be the first to know about new features, smart token insights,
+                and exclusive announcements!
+              </p>
+              {/* Form */}
+              <MailChimp />
+            </div>
+            <div className="home_app__download gradient_border">
+              <div className="home_app__download__copy">
+                <h3>Get started with</h3>
+                <img
+                  src="https://cdn.pillarx.app/pillarXLogo.png"
+                  alt="PillarX logo"
+                />
+                <h3>on any device</h3>
               </div>
-              <div className="home_build__content__right">
-                <h2>
-                  Fill out{' '}
-                  <a
-                    href="https://form.pillarx.app/dapp-application/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="plausible-event-name=Testing+Form"
-                  >
-                    the form
-                  </a>{' '}
-                  to join our groundbreaking testing campaign.
-                </h2>
+              <div className="home_app__download__cta">
+                <a
+                  href="https://www.apple.com/app-store/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="plausible-event-name=Download+App+Store"
+                >
+                  <img
+                    src="https://cdn.pillarx.app/app-store.svg"
+                    alt="app-store-logo"
+                  />
+                </a>
+                <a
+                  href="https://play.google.com/store/apps/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="plausible-event-name=Download+Google+Play"
+                >
+                  <img
+                    src="https://cdn.pillarx.app/google-play.svg"
+                    alt="google-play-logo"
+                  />
+                </a>
+                <Link to="/login" className="plausible-event-name=Download+Web">
+                  <img src="https://cdn.pillarx.app/web.svg" alt="web-icon" />
+                </Link>
               </div>
             </div>
-            <div className="home_build__logo">
-              <img
-                src="https://cdn.pillarx.app/home-logo-px.svg"
-                alt="home-logo"
-              />
-            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="home_about scroll_margin" id="about">
+        <div className="container">
+          <div className="home_about__wrapper">
+            <h2>The Story Behind PillarX</h2>
+            <p>
+              PillarX began with{' '}
+              <a
+                href="https://pillar.fi/?utm_source=pillarx.app&utm_medium=website&utm_campaign=home_page"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Pillar Wallet
+              </a>{' '}
+              in 2017, one of the first EVM-compatible wallets. The team quickly
+              identified the usability challenges faced by EOAs, leading to the
+              introduction of Smart Accounts. This evolved into a smart contract
+              wallet, unlocking advanced features and setting the stage for
+              innovative use cases that would define the future of Web3, even
+              before Layer 1s and Layer 2s became mainstream. <br />
+              <br />
+              But the team didn’t stop there. The goal was to make the Web3
+              experience even better and more accessible. Enter PillarX, a
+              complete upgrade to the Pillar Wallet, designed to empower users
+              with a seamless, intuitive, and cutting-edge platform for all
+              things Web3.
+            </p>
           </div>
         </div>
       </section>

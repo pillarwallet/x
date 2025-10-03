@@ -34,6 +34,7 @@ import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
 
 // pages
+import Advertising from '../pages/Advertising';
 import Developers from '../pages/Developers';
 import LandingPage from '../pages/Landing';
 import Loading from '../pages/Loading';
@@ -668,6 +669,10 @@ const AuthLayout = () => {
             element: <Developers />,
           },
           {
+            path: '/advertising',
+            element: <Advertising />,
+          },
+          {
             path: '/privacy-policy',
             element: <Privacy />,
           },
@@ -737,6 +742,7 @@ const AuthLayout = () => {
     window.location.pathname === '/' ||
     window.location.pathname === '/waitlist' ||
     window.location.pathname === '/developers' ||
+    window.location.pathname === '/advertising' ||
     window.location.pathname === '/privacy-policy';
 
   /**
@@ -779,6 +785,10 @@ const AuthLayout = () => {
       {
         path: '/developers',
         element: <Developers />,
+      },
+      {
+        path: '/advertising',
+        element: <Advertising />,
       },
       {
         path: '/privacy-policy',
