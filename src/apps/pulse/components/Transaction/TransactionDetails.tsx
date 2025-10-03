@@ -164,7 +164,7 @@ const TransactionDetails = ({
           className="text-5xl text-white font-medium"
           data-testid="pulse-transaction-details-amount-usd"
         >
-          <span className="text-white/30">$</span>{' '}
+          <span className="text-white/30">$</span>
           {isBuy
             ? formatExponentialSmallNumber(
                 limitDigitsNumber(Number(usdAmount) || 0)
@@ -174,7 +174,7 @@ const TransactionDetails = ({
               )}
         </div>
         <div
-          className="flex gap-1.5"
+          className="flex gap-1.5 items-center"
           data-testid="pulse-transaction-details-token-info"
         >
           <img

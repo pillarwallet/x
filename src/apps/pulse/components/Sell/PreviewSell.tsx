@@ -5,6 +5,10 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 import { formatNativeTokenAddress } from '../../utils/blockchain';
 
 // icons
@@ -356,9 +360,12 @@ const PreviewSell = (props: PreviewSellProps) => {
             // Clean up the batch from kit after successful execution
             cleanupBatch(sellToken.chainId, 'success');
 
-            const gasFeeString = gasCostNative
-              ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
-              : '≈ 0.00';
+            // Ensure we have a valid gas fee string for the transaction status
+            const gasFeeString =
+              gasCostNative && nativeTokenSymbol
+                ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+                : '≈ 0.00';
+
             showTransactionStatus(userOpHash, gasFeeString);
             return;
           }
@@ -659,9 +666,12 @@ const PreviewSell = (props: PreviewSellProps) => {
         )}
         {detailsEntry(
           'Gas fee',
-          gasCostNative
-            ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
-            : '≈ 0.00',
+          (() => {
+            const gasFeeDisplay = gasCostNative
+              ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+              : '≈ 0.00';
+            return gasFeeDisplay;
+          })(),
           false,
           '',
           isEstimatingGas,
@@ -692,16 +702,16 @@ const PreviewSell = (props: PreviewSellProps) => {
       {!isTransactionRejected && !isTransactionSuccess && (
         <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
           <button
-            className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+            className={`flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] ${isEstimatingGas ? 'bg-[##29292F]' : 'bg-[#8A77FF]'}`}
             onClick={handleConfirmSell}
-            disabled={isExecuting}
+            disabled={isExecuting || isEstimatingGas}
             type="submit"
             data-testid="pulse-preview-sell-confirm-button"
           >
-            {isExecuting ? (
+            {isExecuting || isEstimatingGas ? (
               <div className="flex items-center justify-center gap-2">
                 <TailSpin color="#FFFFFF" height={20} width={20} />
-                <span>Confirm</span>
+                <span>{isEstimatingGas ? 'Estimating Gas...' : 'Confirm'}</span>
               </div>
             ) : (
               <>Confirm</>

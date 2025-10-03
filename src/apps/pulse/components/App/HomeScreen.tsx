@@ -628,13 +628,27 @@ export default function HomeScreen(props: HomeScreenProps) {
             // Track if we've seen success - once we have, ignore any failure statuses
             if (newTransactionStatus === 'Transaction Complete') {
               setHasSeenSuccess(true);
+              hasSeenSuccessRef.current = true;
             }
 
             // If we've already seen success, ignore any failure statuses
+            // Both state and ref to ensure we catch the success
             if (
-              hasSeenSuccess &&
+              (hasSeenSuccess || hasSeenSuccessRef.current) &&
               newTransactionStatus === 'Transaction Failed'
             ) {
+              return;
+            }
+
+            // Additional protection: If we have a blockchain transaction hash,
+            // it means the transaction was actually submitted and might be successful
+            // even if the status shows as 'Reverted' temporarily
+            if (
+              newTransactionStatus === 'Transaction Failed' &&
+              response.transaction &&
+              blockchainTxHash
+            ) {
+              // Don't immediately fail - wait for next poll to see if status changes
               return;
             }
 

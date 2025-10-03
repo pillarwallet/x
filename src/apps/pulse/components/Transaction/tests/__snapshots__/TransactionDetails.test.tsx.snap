@@ -54,11 +54,10 @@ exports[`<TransactionDetails /> > Rendering > renders correctly and matches snap
       >
         $
       </span>
-       
       50
     </div>
     <div
-      className="flex gap-1.5"
+      className="flex gap-1.5 items-center"
       data-testid="pulse-transaction-details-token-info"
     >
       <img
