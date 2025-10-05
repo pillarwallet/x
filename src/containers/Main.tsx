@@ -16,7 +16,7 @@ import {
   WalletClient,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mainnet, sepolia } from 'viem/chains';
+import { mainnet, sepolia, polygon } from 'viem/chains';
 import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 import * as Sentry from '@sentry/react';
@@ -861,7 +861,7 @@ const AuthLayout = () => {
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 export const config = createConfig({
-  chains: [mainnet],
+  chains: [mainnet, polygon],
   connectors: [
     walletConnect({
       projectId: import.meta.env.VITE_REOWN_PROJECT_ID ?? '',
@@ -877,6 +877,7 @@ export const config = createConfig({
   ],
   transports: {
     [mainnet.id]: http(),
+    [polygon.id]: http(),
   },
 });
 

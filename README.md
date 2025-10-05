@@ -21,3 +21,5 @@ file within the `src/apps` directory to learn how to get started.
 ⚠️ **Encountering 429 errors?** You may have hit a rate limit for the Etherspot service. PillarX will keep trying but it might be easier for you to register your own API keys for the Etherspot Bundler API and Etherspot Data Service API via the [Portal](https://portal.etherspot.io).
 
 ⚠️ **Privy encountering login limits?** You may have hit the maximum user limit for free accounts on Privy. Feel free to [register for Privy](https://dashboard.privy.io) and create an app. This will give you your own App ID which you can use in the `.env` file.
+
+⚠️ **ReOwn Account Needed For WalletConnect features** Sign up for a [ReOwn account](https://reown.com/), then copy your Project ID into the `.env` file.

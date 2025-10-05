@@ -1,0 +1,23 @@
+{
+  "title": "Pillar DAO",
+  "description": "Get your DAO membership NFT, join DAO socials, and vote on Snapshot.",
+  "links": {
+    "NFTsignup": "https://pillardao.org/#governor",
+    "community": "https://pillardao.org/",
+    "voting": "https://pillardao.org/voting",
+    "chat": "https://pillardao.org/chat",
+    "votingFallback": "https://snapshot.box/#/s:plrdao.eth/",
+    "chatFallback": "https://discord.com/invite/t39xKhzSPb"
+  },
+  "contracts": {
+    "dao": "0xc380f15Db7be87441d0723F19fBb440AEaa734aB",
+    "nft": "0xfa2d028ba398c20ee0a7483c00218f91ffee47c6",
+    "chainId": 137
+  },
+  "translations": {
+    "en": {
+      "title": "Pillar DAO",
+      "description": "Get your membership NFT, join our socials, and vote on DAO proposals."
+    }
+  }
+}

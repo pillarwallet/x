@@ -1,0 +1,34 @@
+providers = ["node"]
+
+# Global environment variables for low-memory builds/runtime
+[variables]
+NODE_ENV = "production"
+NODE_OPTIONS = "--max-old-space-size=2048"
+# Keep npm lean and quiet
+NPM_CONFIG_FUND = "false"
+NPM_CONFIG_AUDIT = "false"
+CI = "true"
+
+# Tools available in the image
+[phases.setup]
+nixPkgs = [
+  "nodejs_20",  # Correct Nix package name (underscore, not dash)
+  "caddy"       # Lightweight static file server for runtime
+]
+
+# Deterministic, memory-friendly install
+[phases.install]
+cmds = [
+  # Use npm ci (respects package-lock), avoid extra network/audit noise
+  "npm ci --prefer-offline --no-audit --no-fund"
+]
+
+# Build the static site (outputs to ./build via vite.config.mjs)
+[phases.build]
+cmds = [
+  "npm run build"
+]
+
+# Serve the built assets with Caddy (very low memory footprint)
+[start]
+cmd = "sh -c 'caddy file-server --root build --listen :${PORT:-3000}'"

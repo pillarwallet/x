@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // components
 import LeftColumnTokenMarketDataRow from '../LeftColumnTokenMarketDataRow';
@@ -33,6 +34,16 @@ const ethTokenRow = {
 };
 
 describe('<LeftColumnTokenMarketDataRow /> - ETH token row', () => {
+  beforeEach(() => {
+    // Mock the current date to December 22, 2025 for consistent relative time calculations
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-12-22T00:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('renders and matches snapshot', () => {
     const tree = render(<LeftColumnTokenMarketDataRow data={ethTokenRow} />);
     expect(tree).toMatchSnapshot();
