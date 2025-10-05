@@ -2,7 +2,7 @@
   "name": "pillarx",
   "compatibility_date": "2025-09-30",
   "assets": {
-    "directory": "./build",
-    "pages_build_output_dir": "./build"
-  }
+    "directory": "./build"
+  },
+  "pages_build_output_dir": "./build"
 }

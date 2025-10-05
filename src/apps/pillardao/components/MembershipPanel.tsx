@@ -79,11 +79,13 @@ const MembershipPanel: React.FC<MembershipPanelProps> = ({ resolvedAddress, nftC
   });
 
   const effectiveMembershipId = useMemo(() => {
+    const balance = nftBalanceRead?.data as bigint | undefined;
+    if (!balance || balance === BigInt(0)) return BigInt(0);
     const id = nftFirstTokenRead?.data as bigint | undefined;
     if (id && id > BigInt(0)) return id;
     const cachedId = cached?.tokenId ? BigInt(cached.tokenId) : BigInt(0);
     return cachedId > BigInt(0) ? cachedId : BigInt(0);
-  }, [nftFirstTokenRead?.data, cached?.tokenId]);
+  }, [nftBalanceRead?.data, nftFirstTokenRead?.data, cached?.tokenId]);
 
   const depositTsRead = useReadContract({
     abi: membershipTimestampAbi,

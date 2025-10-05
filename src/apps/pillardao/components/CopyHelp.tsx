@@ -18,7 +18,12 @@ const CopyHelp: React.FC<CopyHelpProps> = ({
 
   return (
     <Container>
-      <Figure $expanded={expanded} onClick={() => setExpanded((v) => !v)}>
+      <Figure
+        type="button"
+        $expanded={expanded}
+        onClick={() => setExpanded((v) => !v)}
+        aria-pressed={expanded}
+      >
         <Img src={imageSrc} alt="WalletConnect screenshot" $expanded={expanded} />
 
         {/* In-overlay toggle helper */}
@@ -34,7 +39,7 @@ const Container = styled.div`
   gap: 8px;
 `;
 
-const Figure = styled.div<{ $expanded: boolean }>`
+const Figure = styled.button<{ $expanded: boolean }>`
   position: relative;
   display: inline-block;
   width: auto;
@@ -47,6 +52,7 @@ const Figure = styled.div<{ $expanded: boolean }>`
   transition: max-width 0.2s ease-in-out, height 0.2s ease-in-out, transform 0.1s ease-in-out;
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   overflow: hidden; /* keep overlays clipped to the figure */
+  padding: 0;
 
   &:active {
     transform: scale(0.995);

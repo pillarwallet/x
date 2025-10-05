@@ -95,6 +95,10 @@ describe('<TokensWithMarketDataTile />', () => {
       value: { ...originalEnv, VITE_FEATURE_FLAG_GNOSIS: 'true' },
       writable: true,
     });
+
+    // Mock the current date to December 22, 2025 for consistent relative time calculations
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-12-22T00:00:00Z'));
   });
 
   afterEach(() => {
@@ -103,6 +107,8 @@ describe('<TokensWithMarketDataTile />', () => {
       value: originalEnv,
       writable: true,
     });
+
+    vi.useRealTimers();
   });
 
   it('renders and matches snapshot', () => {
