@@ -176,8 +176,7 @@ const MembershipPanel: React.FC<MembershipPanelProps> = ({ resolvedAddress, nftC
           <div className="right">
             <NftBox>
               {effectiveMembershipId > BigInt(0) ? (
-                // eslint-disable-next-line jsx-a11y/alt-text
-                <img src={placeholderNftImage} />
+                <img src={placeholderNftImage} alt="PillarDAO Member NFT" />
               ) : (
                 <p>No Member NFT in this Pillar X wallet.</p>
               )}
@@ -192,7 +191,7 @@ const MembershipPanel: React.FC<MembershipPanelProps> = ({ resolvedAddress, nftC
                       const tokenId = String(effectiveMembershipId);
                       const base = 'https://polygonscan.com/token';
                       const url = `${base}/${nftContract}?a=${tokenId}`;
-                      window.open(url, '_blank', 'noreferrer');
+                      window.open(url, '_blank', 'noopener,noreferrer');
                     }}
                   >
                     View on Polygonscan
@@ -206,7 +205,7 @@ const MembershipPanel: React.FC<MembershipPanelProps> = ({ resolvedAddress, nftC
                       const tokenId = String(effectiveMembershipId);
                       const base = 'https://polygon.blockscout.com/token';
                       const url = `${base}/${nftContract}/instance/${tokenId}`;
-                      window.open(url, '_blank', 'noreferrer');
+                      window.open(url, '_blank', 'noopener,noreferrer');
                     }}
                   >
                     View on Blockscout
