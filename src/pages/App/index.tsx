@@ -7,6 +7,7 @@ import { I18nextProvider, useTranslation } from 'react-i18next';
 // hooks
 import useAllowedApps from '../../hooks/useAllowedApps';
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
+import useTransactionKit from '../../hooks/useTransactionKit';
 
 // components
 import Alert from '../../components/Text/Alert';
@@ -63,7 +64,8 @@ const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
   const { isAnimated, allowed } = useAllowedApps();
   const [app, setApp] = useState<ApiAllowedApp | null>();
-  const { setShowBatchSendModal, showAccount, showHistory, showApps, showSend } = useBottomMenuModal();
+  const { setShowBatchSendModal, showAccount, showHistory, showApps, showSend, showTransactionConfirmation } = useBottomMenuModal();
+  const { walletAddress } = useTransactionKit();
 
   const [springs, api] = useSpring(() => ({
     from: { opacity: 0 },
@@ -102,11 +104,45 @@ const App = ({ id }: { id: string }) => {
 
       React.useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
+          console.log('incoming event', event.data);
           // Verify origin for security
           if (!app.launchUrl || event.origin !== new URL(app.launchUrl).origin) return;
 
           if (event.data?.type === 'showAccount') {
             showAccount();
+          }
+
+          if (event.data?.type === 'showHistory') {
+            showHistory();
+          }
+
+          if (event.data?.type === 'showApps') {
+            showApps();
+          }
+
+          if (event.data?.type === 'showSend') {
+            showSend();
+          }
+
+          if (event.data?.type === 'showTransactionConfirmation') {
+            showTransactionConfirmation(event.data.payload);
+          }
+
+          if (event.data?.type === 'showBatchSendModal') {
+            setShowBatchSendModal(true);
+          }
+
+          /**
+           * If the app asks for the account data, return the account data
+           */
+          if (event.data?.type === 'getWalletAddresses') {
+            iframeRef.current?.contentWindow?.postMessage({
+              type: 'walletAddresses',
+              payload: [{
+                address: walletAddress,
+                type: 'smart'
+              }],
+            }, '*');
           }
         };
 
