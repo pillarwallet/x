@@ -93,67 +93,68 @@ const App = ({ id }: { id: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // External App Iframe Component
+  const ExternalAppIframe = React.useMemo(() => {
+    if (app?.type !== 'app-external' || !app.launchUrl) return null;
+
+    return () => {
+      const iframeRef = React.useRef<HTMLIFrameElement>(null);
+
+      React.useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+          // Verify origin for security
+          if (!app.launchUrl || event.origin !== new URL(app.launchUrl).origin) return;
+
+          if (event.data?.type === 'showAccount') {
+            showAccount();
+          }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+      }, [app.launchUrl]);
+
+      return (
+        <iframe
+          ref={iframeRef}
+          src={app.launchUrl}
+          style={{
+            all: 'unset',
+            width: '100vw',
+            height: '100vh',
+            border: 'none',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: 1,
+            background: 'white',
+            display: 'block'
+          }}
+          title={app.title || app.name}
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+        />
+      );
+    };
+  }, [app?.type, app?.launchUrl, app?.title, app?.name]);
+
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => {
       setTimeout(resolve, isAnimated ? 1500 : 0); // 1500 delay to wait for animated text to fade in and out and overflow with app fade in animation
     }); // artificial 1s delay
 
-    // If it's an external app, return an iframe component
-    if (app?.type === 'app-external' && app.launchUrl) {
-      return { 
-        default: () => {
-          const iframeRef = React.useRef<HTMLIFrameElement>(null);
-
-          React.useEffect(() => {
-            const iframe = iframeRef.current;
-            if (!iframe) return;
-
-            const handleMessage = (event: MessageEvent) => {
-              // Verify origin for security
-              if (!app.launchUrl || event.origin !== new URL(app.launchUrl).origin) return;
-
-              if (event.data?.type === 'showAccount') {
-                showAccount();
-              }
-            };
-
-            window.addEventListener('message', handleMessage);
-            return () => window.removeEventListener('message', handleMessage);
-          }, []);
-
-          return (
-            <iframe
-              ref={iframeRef}
-              src={app.launchUrl}
-              style={{
-                all: 'unset',
-                width: '100vw',
-                height: '100vh',
-                border: 'none',
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                zIndex: 1,
-                background: 'white',
-                display: 'block'
-              }}
-              title={app.title || app.name}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-            />
-          );
-        }
-      };
-    }
-
     try {
       const appImport = await import(`../../apps/${id}`);
-
       return appImport;
     } catch (e) {
       console.error(`Failed to load app component for ${id}`, e);
       return { default: () => <Alert>{t`error.appNotFound`}</Alert> };
     }
   });
+
+  // If it's an external app, render the iframe directly
+  if (app?.type === 'app-external' && ExternalAppIframe) {
+    return <ExternalAppIframe />;
+  }
 
   return (
     <Suspense
