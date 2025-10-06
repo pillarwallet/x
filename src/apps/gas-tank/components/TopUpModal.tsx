@@ -34,7 +34,7 @@ import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLog
 // Search component
 import Search from './Search/Search';
 import { SelectedToken } from '../types/tokens';
-import { getChainName, MobulaChainNames } from '../utils/constants';
+import { getChainId, getChainName, MobulaChainNames } from '../utils/constants';
 
 interface TopUpModalProps {
   isOpen: boolean;
@@ -70,7 +70,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     bestOffer: any;
     swapTransactions: any[];
   } | null>(null);
-  const [swapAmountUsdPrice, setSwapAmountUsdPrice] = useState(0);
+  const [swapAmount, setSwapAmount] = useState(0);
   const [showTokenSelection, setShowTokenSelection] = useState(false);
   const { transactionDebugLog } = useTransactionDebugLogger();
 
@@ -96,8 +96,8 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       const tokens = convertPortfolioAPIResponseToToken(
         walletPortfolioData.result.data
       );
-      console.log(tokens);
       setPortfolioTokens(tokens);
+
     }
     if (!isWalletPortfolioDataSuccess || walletPortfolioDataError) {
       if (walletPortfolioDataError) {
@@ -118,7 +118,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
   }, [selectedToken]);
 
   const handleTopUp = async () => {
-    if (!selectedToken || !amount || !walletAddress) return;
+    if (!selectedToken || !amount || !swapAmount || !walletAddress) return;
 
     if (USDC_ADDRESSES[selectedToken.chainId] === undefined) {
       setErrorMsg('Gas Tank is not supported on the selected token\'s chain.');
@@ -136,6 +136,16 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       setErrorMsg('Enter a valid amount.');
       return;
     }
+    // Validate sufficient balance for the selected token
+    const portfolioToken = portfolioTokens.find(
+      (t) =>
+        t.contract.toLowerCase() === selectedToken.address.toLowerCase() &&
+        Number(getChainId(t.blockchain as MobulaChainNames)) === selectedToken.chainId
+    );
+    if (!portfolioToken || Number(portfolioToken.balance) < swapAmount) {
+      setErrorMsg(`Insufficient ${selectedToken.symbol} balance.`);
+      return;
+    }
     // Reset error if valid
     setErrorMsg(null);
 
@@ -145,14 +155,14 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
       // Check if token is USDC
       const isUSDC = selectedToken.address.toLowerCase() === USDC_ADDRESSES[selectedToken.chainId].toLowerCase();
 
-      let receiveSwapAmount = amount;
+      let receiveSwapAmount = swapAmount.toString(); // Default to input amount
 
       if (!isUSDC) {
         // Need to swap to USDC first
         try {
           const bestOffer = await getBestOffer({
             fromTokenAddress: selectedToken.address,
-            fromAmount: Number(amount),
+            fromAmount: Number(swapAmount),
             fromChainId: selectedToken.chainId,
             fromTokenDecimals: selectedToken.decimals,
             slippage: 0.03,
@@ -291,11 +301,11 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
-    let tokenUsdPrice = 0;
+    let tokenAmount = 0;
     if (selectedToken) {
-      tokenUsdPrice = Number(value) * (parseFloat(selectedToken.usdValue) ?? 0);
+      tokenAmount = Number(value) / (parseFloat(selectedToken.usdValue) || 1);
     }
-    setSwapAmountUsdPrice(tokenUsdPrice);
+    setSwapAmount(tokenAmount);
   };
 
   const handleMaxClick = () => {
