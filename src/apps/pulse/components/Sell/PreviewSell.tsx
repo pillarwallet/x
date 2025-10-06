@@ -37,6 +37,7 @@ interface PreviewSellProps {
   sellOffer: SellOffer | null;
   tokenAmount: string;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
+  setSellFlowPaused?: (paused: boolean) => void;
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -47,6 +48,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     onSellOfferUpdate,
+    setSellFlowPaused,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -76,6 +78,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellToken,
     sellOffer,
     tokenAmount,
+    isPaused: isWaitingForSignature || isExecuting,
   });
 
   useEffect(() => {
@@ -111,6 +114,20 @@ const PreviewSell = (props: PreviewSellProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sellToken, tokenAmount, sellOffer]);
+
+  // Bridge pause state to HomeScreen to stop its quote refresh while confirming
+  useEffect(() => {
+    if (setSellFlowPaused) {
+      setSellFlowPaused(isWaitingForSignature || isExecuting);
+    }
+  }, [isWaitingForSignature, isExecuting, setSellFlowPaused]);
+
+  // Ensure pause resets on unmount
+  useEffect(() => {
+    return () => {
+      if (setSellFlowPaused) setSellFlowPaused(false);
+    };
+  }, [setSellFlowPaused]);
 
   // Utility function to clean up batch with consistent error handling
   const cleanupBatch = useCallback(
@@ -206,6 +223,10 @@ const PreviewSell = (props: PreviewSellProps) => {
 
   // Refresh function for PreviewSell component - only refreshes sell offer
   const refreshPreviewSellData = useCallback(async () => {
+    // Pause both quote refresh and gas estimation while awaiting signature or executing
+    if (isWaitingForSignature || isExecuting) {
+      return;
+    }
     setIsRefreshingPreview(true);
     // Reset transaction states to allow retry
     setIsTransactionRejected(false);
@@ -246,6 +267,8 @@ const PreviewSell = (props: PreviewSellProps) => {
     isInitialized,
     onSellOfferUpdate,
     getBestSellOffer,
+    isWaitingForSignature,
+    isExecuting,
   ]);
 
   // Auto-refresh sell offer every 15 seconds (disabled when waiting for signature)
@@ -335,6 +358,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     setIsTransactionSuccess(false);
     setIsWaitingForSignature(true);
     setIsExecuting(true);
+    if (setSellFlowPaused) setSellFlowPaused(true);
 
     try {
       // First, prepare the batch using the existing executeSell logic (without showing batch modal)
@@ -356,6 +380,7 @@ const PreviewSell = (props: PreviewSellProps) => {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);
             setIsExecuting(false);
+            if (setSellFlowPaused) setSellFlowPaused(false);
 
             // Clean up the batch from kit after successful execution
             cleanupBatch(sellToken.chainId, 'success');
@@ -395,6 +420,7 @@ const PreviewSell = (props: PreviewSellProps) => {
         setIsWaitingForSignature(false);
       }
       setIsExecuting(false);
+      if (setSellFlowPaused) setSellFlowPaused(false);
     }
   };
 

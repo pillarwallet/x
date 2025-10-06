@@ -118,6 +118,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [buyRefreshCallback, setBuyRefreshCallback] = useState<
     (() => Promise<void>) | null
   >(null);
+  const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
 
   // Transaction status polling state
   const [currentTransactionStatus, setCurrentTransactionStatus] =
@@ -180,7 +181,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
-    if (isRefreshingHome) {
+    if (isRefreshingHome || isSellFlowPaused) {
       return;
     }
 
@@ -191,7 +192,13 @@ export default function HomeScreen(props: HomeScreenProps) {
       await refetchWalletPortfolio();
 
       // If we have the required data, refresh the sell offer
-      if (!isBuy && sellToken && tokenAmount && isInitialized) {
+      if (
+        !isBuy &&
+        sellToken &&
+        tokenAmount &&
+        isInitialized &&
+        !isSellFlowPaused
+      ) {
         try {
           const newOffer = await getBestSellOffer({
             fromAmount: tokenAmount,
@@ -226,6 +233,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     buyRefreshCallback,
     previewBuy,
     isRefreshingHome,
+    isSellFlowPaused,
   ]);
 
   // Stop transaction status polling
@@ -727,7 +735,13 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   // Auto-refresh when in sell mode every 15 seconds
   useEffect(() => {
-    if (!isBuy && sellToken && tokenAmount && isInitialized) {
+    if (
+      !isBuy &&
+      sellToken &&
+      tokenAmount &&
+      isInitialized &&
+      !isSellFlowPaused
+    ) {
       const interval = setInterval(() => {
         handleRefresh();
       }, 15000); // 15 seconds
@@ -735,7 +749,14 @@ export default function HomeScreen(props: HomeScreenProps) {
       return () => clearInterval(interval);
     }
     return undefined;
-  }, [isBuy, sellToken, tokenAmount, isInitialized, handleRefresh]);
+  }, [
+    isBuy,
+    sellToken,
+    tokenAmount,
+    isInitialized,
+    handleRefresh,
+    isSellFlowPaused,
+  ]);
 
   // Auto-refresh when in buy mode every 15 seconds
   useEffect(() => {
@@ -777,6 +798,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
             onSellOfferUpdate={setSellOffer}
+            setSellFlowPaused={setIsSellFlowPaused}
           />
         </div>
       );
