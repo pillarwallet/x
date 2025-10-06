@@ -820,6 +820,10 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     return (
       <>
+        <p className="flex text-base font-normal text-white/[.5] max-w-[442px] text-center mb-6">
+          You&apos;re trying out the beta version of Pulse: expect improvements
+          ahead. Thank you.
+        </p>
         <button
           className="flex items-center justify-center"
           style={{
