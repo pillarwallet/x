@@ -150,7 +150,9 @@ export const getStepStatus = (
   if (status === 'Transaction Complete') {
     if (step === 'Submitted') return 'completed';
     if (step === 'Pending') return 'completed';
-    if (step === 'ResourceLock') return 'completed';
+    if (step === 'ResourceLock') {
+      return isBuy ? 'completed' : 'inactive';
+    }
     if (step === 'Completed') return 'completed';
   }
 
@@ -158,8 +160,11 @@ export const getStepStatus = (
     if (step === 'Submitted') return 'completed';
     if (step === 'Pending') return 'completed';
     if (step === 'ResourceLock') {
-      if (isBuy && isResourceLockFailed) return 'failed';
-      return 'completed';
+      if (isBuy) {
+        if (isResourceLockFailed) return 'failed';
+        return 'completed';
+      }
+      return 'inactive';
     }
     if (step === 'Completed') {
       if (isBuy && isResourceLockFailed) return 'inactive';

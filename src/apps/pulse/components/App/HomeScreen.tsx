@@ -157,6 +157,8 @@ export default function HomeScreen(props: HomeScreenProps) {
     useState<boolean>(false);
   const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
   const hasSeenSuccessRef = useRef<boolean>(false);
+  const blockchainTxHashRef = useRef<string | undefined>(undefined);
+  const failureGraceExpiryRef = useRef<number | null>(null);
 
   // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
   // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
@@ -286,6 +288,8 @@ export default function HomeScreen(props: HomeScreenProps) {
       setIsPollingActive(true);
       setIsBackgroundPolling(false);
       setShouldAutoReopen(false);
+      blockchainTxHashRef.current = undefined;
+      failureGraceExpiryRef.current = null;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [sellToken, tokenAmount, sellOffer, isBuy]
@@ -628,23 +632,48 @@ export default function HomeScreen(props: HomeScreenProps) {
             // Track if we've seen success - once we have, ignore any failure statuses
             if (newTransactionStatus === 'Transaction Complete') {
               setHasSeenSuccess(true);
+              hasSeenSuccessRef.current = true;
             }
 
             // If we've already seen success, ignore any failure statuses
+            // Both state and ref to ensure we catch the success
             if (
-              hasSeenSuccess &&
+              (hasSeenSuccess || hasSeenSuccessRef.current) &&
               newTransactionStatus === 'Transaction Failed'
             ) {
               return;
             }
 
+            // Extract actual transaction hash if available and mirror into ref (do this before failure guard)
+            if (response.transaction) {
+              const firstObservation = !blockchainTxHashRef.current;
+              setBlockchainTxHash(response.transaction);
+              blockchainTxHashRef.current = response.transaction;
+              if (firstObservation && failureGraceExpiryRef.current == null) {
+                failureGraceExpiryRef.current = Date.now() + 10000; // start grace on first hash
+              }
+            }
+
+            // Additional protection using refs and single-use grace window
+            // If we have a blockchain transaction hash, it means the transaction was actually
+            // submitted and might be successful even if the status shows as 'Reverted' temporarily
+            if (newTransactionStatus === 'Transaction Failed') {
+              const nowTs = Date.now();
+              const hasOnChainHash = Boolean(blockchainTxHashRef.current);
+              if (hasOnChainHash) {
+                // Initialize grace window if not set
+                if (failureGraceExpiryRef.current == null) {
+                  failureGraceExpiryRef.current = nowTs + 10000; // 10s grace
+                  return; // skip once immediately when hash first observed
+                }
+                if (nowTs < failureGraceExpiryRef.current) {
+                  return; // still within grace window
+                }
+              }
+            }
+
             // Always use delayed update to ensure all states are shown
             updateStatusWithDelay(newTransactionStatus);
-
-            // Extract actual transaction hash if available
-            if (response.transaction) {
-              setBlockchainTxHash(response.transaction);
-            }
 
             // Capture error details if transaction failed
             if (newTransactionStatus === 'Transaction Failed') {

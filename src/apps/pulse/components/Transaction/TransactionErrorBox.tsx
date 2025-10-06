@@ -27,7 +27,7 @@ const TransactionErrorBox = ({
 
   return (
     <div
-      className="w-full h-fit rounded-[10px] p-3 gap-4 border border-[#FF366C] bg-[#FF366C]/10 flex flex-col"
+      className="w-full h-fit rounded-[10px] p-3 gap-4 border border-[#FF366C] bg-[#FF366C]/5 flex flex-col"
       data-testid="pulse-transaction-details-error-box"
     >
       <div className="flex gap-1.5 items-center pb-4 border-b border-[#FF366C]">
@@ -73,7 +73,7 @@ const TransactionErrorBox = ({
 
       {isExpanded && (
         <div className="mt-2">
-          <p className="text-white/70 text-[12px] font-mono whitespace-pre-wrap break-all">
+          <p className="text-white text-[12px] font-mono whitespace-pre-wrap break-all">
             {technicalDetails}
           </p>
         </div>
