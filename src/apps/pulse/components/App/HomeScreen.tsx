@@ -644,6 +644,16 @@ export default function HomeScreen(props: HomeScreenProps) {
               return;
             }
 
+            // Extract actual transaction hash if available and mirror into ref (do this before failure guard)
+            if (response.transaction) {
+              const firstObservation = !blockchainTxHashRef.current;
+              setBlockchainTxHash(response.transaction);
+              blockchainTxHashRef.current = response.transaction;
+              if (firstObservation && failureGraceExpiryRef.current == null) {
+                failureGraceExpiryRef.current = Date.now() + 10000; // start grace on first hash
+              }
+            }
+
             // Additional protection using refs and single-use grace window
             // If we have a blockchain transaction hash, it means the transaction was actually
             // submitted and might be successful even if the status shows as 'Reverted' temporarily
@@ -664,16 +674,6 @@ export default function HomeScreen(props: HomeScreenProps) {
 
             // Always use delayed update to ensure all states are shown
             updateStatusWithDelay(newTransactionStatus);
-
-            // Extract actual transaction hash if available and mirror into ref
-            if (response.transaction) {
-              const firstObservation = !blockchainTxHashRef.current;
-              setBlockchainTxHash(response.transaction);
-              blockchainTxHashRef.current = response.transaction;
-              if (firstObservation && failureGraceExpiryRef.current == null) {
-                failureGraceExpiryRef.current = Date.now() + 10000; // start grace on first hash
-              }
-            }
 
             // Capture error details if transaction failed
             if (newTransactionStatus === 'Transaction Failed') {
