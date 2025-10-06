@@ -1,4 +1,4 @@
-import { parseInt, parseInt as parseIntLodash } from 'lodash';
+import { isNaN, parseInt, parseInt as parseIntLodash } from 'lodash';
 
 export const formatAmountDisplay = (
   amountRaw: string | number,
@@ -108,4 +108,42 @@ export const formatExponential = (num: number) => {
 
   const final = `0.${newIntPart}${fracPart}`;
   return final;
+};
+
+/**
+ * Converts scientific notation to a readable format with zeros
+ * @param value - The value to format (can be string or number)
+ * @param maxDecimals - Maximum number of decimal places to show (default: 18)
+ * @returns Formatted string with zeros instead of scientific notation
+ */
+export const formatExponentialSmallNumber = (
+  value: string | number,
+  maxDecimals: number = 18
+): string => {
+  if (!value || value === '0' || value === 0) return '0';
+
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(numValue)) return '0';
+
+  // If it's not very small, return as is
+  if (Math.abs(numValue) >= 0.0001) {
+    return numValue.toString();
+  }
+
+  // For very small numbers, use toFixed to avoid scientific notation
+  const fixed = numValue.toFixed(maxDecimals);
+
+  // Remove trailing zeros but keep at least one digit after decimal
+  const trimmed = parseFloat(fixed).toString();
+
+  // If it's still in scientific notation, handle it manually
+  if (trimmed.includes('e-')) {
+    const [mantissa, exponent] = trimmed.split('e-');
+    const exp = parseInt(exponent);
+    const digits = mantissa.replace('.', '');
+    const zeros = '0'.repeat(exp - 1);
+    return `0.${zeros}${digits}`;
+  }
+
+  return trimmed;
 };

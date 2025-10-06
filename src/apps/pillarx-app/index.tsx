@@ -19,6 +19,7 @@ import { componentMap } from './utils/configComponent';
 
 // components
 import AnimatedTile from './components/AnimatedTile/AnimatedTitle';
+import GasTankPaymasterTile from './components/GasTankPaymasterTile/GasTankPaymasterTile';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
 import WalletPortfolioTile from './components/WalletPortfolioTile/WalletPortfolioTile';
@@ -194,6 +195,7 @@ const App = () => {
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
       >
         <WalletPortfolioTile />
+        <GasTankPaymasterTile />
         {DisplayHomeFeedTiles}
         {(isHomeFeedFetching || isHomeFeedLoading) && page === 1 && (
           <>

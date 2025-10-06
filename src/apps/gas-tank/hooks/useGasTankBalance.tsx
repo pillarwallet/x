@@ -21,7 +21,12 @@ interface UseGasTankBalanceReturn {
   refetch: () => void;
 }
 
-const useGasTankBalance = (): UseGasTankBalanceReturn => {
+interface UseGasTankBalanceOptions {
+  pauseAutoRefresh?: boolean;
+}
+
+const useGasTankBalance = (options: UseGasTankBalanceOptions = {}): UseGasTankBalanceReturn => {
+  const { pauseAutoRefresh = false } = options;
   const walletAddress = useWalletAddress();
   const [totalBalance, setTotalBalance] = useState(0);
   const [chainBalances, setChainBalances] = useState<ChainBalance[]>([]);
@@ -94,17 +99,17 @@ const useGasTankBalance = (): UseGasTankBalanceReturn => {
     fetchGasTankBalance();
   }, [fetchGasTankBalance]);
 
-  // Auto-refresh every 30 seconds when component is active
-  useEffect(() => {
-    if (!walletAddress) return;
+  // Auto-refresh disabled
+  // useEffect(() => {
+  //   if (!walletAddress || pauseAutoRefresh) return;
 
-    const interval = setInterval(() => {
-      fetchGasTankBalance();
-    }, 30000); // 30 seconds
+  //   const interval = setInterval(() => {
+  //     fetchGasTankBalance();
+  //   }, 30000); // 30 seconds
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, [walletAddress, fetchGasTankBalance]);
+  //   // Cleanup interval on component unmount
+  //   return () => clearInterval(interval);
+  // }, [walletAddress, fetchGasTankBalance, pauseAutoRefresh]);
 
   return {
     totalBalance,
