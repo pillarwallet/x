@@ -702,7 +702,7 @@ const PreviewSell = (props: PreviewSellProps) => {
       {!isTransactionRejected && !isTransactionSuccess && (
         <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
           <button
-            className={`flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] ${isEstimatingGas ? 'bg-[##29292F]' : 'bg-[#8A77FF]'}`}
+            className={`flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] ${isEstimatingGas ? 'bg-[#29292F]' : 'bg-[#8A77FF]'}`}
             onClick={handleConfirmSell}
             disabled={isExecuting || isEstimatingGas}
             type="submit"
