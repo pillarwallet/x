@@ -24,7 +24,6 @@ export const NativeSymbols: Record<number, string> = {
   42161: 'ETH',
   10: 'ETH',
   56: 'BNB',
-  100: 'XDAI',
 };
 
 export const getNativeTokenSymbol = (chainId: number): string => {
