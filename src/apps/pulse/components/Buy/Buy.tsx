@@ -175,7 +175,7 @@ export default function Buy(props: BuyProps) {
       if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
         const amount = parseFloat(usdAmount);
 
-        if (amount < 0.5) {
+        if (amount < 2) {
           setBelowMinimumAmount(true);
           setNoEnoughLiquidity(false);
           setInsufficientWalletBalance(false);
@@ -583,7 +583,7 @@ export default function Buy(props: BuyProps) {
 
               let message = '';
               if (belowMinimumAmount) {
-                message = 'Min. amount 0.5 USD';
+                message = 'Min. amount 2 USD';
               } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
