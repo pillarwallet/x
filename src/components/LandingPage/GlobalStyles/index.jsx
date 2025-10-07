@@ -327,6 +327,7 @@ const GlobalStyles = createGlobalStyle`
   .header__logo img {
     height: auto;
     width: 18rem;
+    max-width: 200px;
     display: block;
   }
 
