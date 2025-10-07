@@ -62,7 +62,7 @@ const AnimatedAppTitle: React.FC<AnimatedAppTitleProps> = ({ text }) => {
 
 const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
-  const { isAnimated, allowed } = useAllowedApps();
+  const { isAnimated, allowed, setIsAnimated } = useAllowedApps();
   const [app, setApp] = useState<ApiAllowedApp | null>();
   const { setShowBatchSendModal, showAccount, showHistory, showApps, showSend, showTransactionConfirmation } = useBottomMenuModal();
   const { walletAddress } = useTransactionKit();
@@ -94,6 +94,13 @@ const App = ({ id }: { id: string }) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  // Reset the animated loading flag after the initial animation finishes
+  useEffect(() => {
+    if (!isAnimated) return;
+    const timeout = setTimeout(() => setIsAnimated(false), 1500);
+    return () => clearTimeout(timeout);
+  }, [isAnimated, setIsAnimated]);
 
   // External App Iframe Component
   const ExternalAppIframe = React.useMemo(() => {
