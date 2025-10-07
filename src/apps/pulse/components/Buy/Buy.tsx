@@ -15,7 +15,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Hex, getAddress, isAddress } from 'viem';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
-import { chainNameToChainIdTokensData, convertPortfolioAPIResponseToToken } from '../../../../services/tokensData';
+import {
+  chainNameToChainIdTokensData,
+  convertPortfolioAPIResponseToToken,
+} from '../../../../services/tokensData';
 import {
   PairResponse,
   TokenAssetResponse,
@@ -139,8 +142,7 @@ export default function Buy(props: BuyProps) {
         asset.contracts_balances.some((contract) =>
           STABLE_CURRENCIES.some(
             (stable) =>
-              stable.address.toLowerCase() ===
-              contract.address.toLowerCase() &&
+              stable.address.toLowerCase() === contract.address.toLowerCase() &&
               stable.chainId === Number(contract.chainId.split(':').at(-1))
           )
         )
@@ -149,8 +151,7 @@ export default function Buy(props: BuyProps) {
         const stableContracts = asset.contracts_balances.filter((contract) =>
           STABLE_CURRENCIES.some(
             (stable) =>
-              stable.address.toLowerCase() ===
-              contract.address.toLowerCase() &&
+              stable.address.toLowerCase() === contract.address.toLowerCase() &&
               stable.chainId === Number(contract.chainId.split(':').at(-1))
           )
         );
@@ -161,13 +162,14 @@ export default function Buy(props: BuyProps) {
       });
 
     return balanceMap;
-  }
+  };
 
   useEffect(() => {
     const stableBalance = getStableCurrencyBalanceOnEachChain();
     const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
     setSumOfStableBalance(sum);
-  },[walletPortfolioData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletPortfolioData]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -217,12 +219,7 @@ export default function Buy(props: BuyProps) {
           setNoEnoughLiquidity(true);
           return;
         }
-        const stableBalance = getStableCurrencyBalanceOnEachChain();
-        const sumOfStableBalance = Object.values(stableBalance).reduce(
-          (a, b) => a + b,
-          0
-        );
-        console.log(sumOfStableBalance);
+
         if (sumOfStableBalance < 2) {
           setMinimumStableBalance(true);
           return;
@@ -240,6 +237,7 @@ export default function Buy(props: BuyProps) {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    sumOfStableBalance,
     usdAmount,
     setPayingTokens,
     walletPortfolioData?.result.data,
@@ -257,13 +255,17 @@ export default function Buy(props: BuyProps) {
       ) || '1'
     );
     // Take the native token balance of that chain
-    const tokens = convertPortfolioAPIResponseToToken(walletPortfolioData.result.data);
-    const nativeToken =
-      tokens.find(
-        (t) => Number(getChainId(t.blockchain as MobulaChainNames)) === chainIdOfMaxStableBalance && isNativeToken(t.contract)
-      );
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+    const nativeToken = tokens.find(
+      (t) =>
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+    );
     if (!nativeToken) return;
-    const nativeTokenUSDBalance = (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
+    const nativeTokenUSDBalance =
+      (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
     if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
       setMinGasFee(true);
       setMinGasFeeChain(getNativeTokenSymbol(chainIdOfMaxStableBalance));
@@ -356,7 +358,7 @@ export default function Buy(props: BuyProps) {
     isLoading,
     notEnoughLiquidity,
     walletPortfolioData?.result.data.total_wallet_balance,
-    sumOfStableBalance,
+    getStableCurrencyBalanceOnEachChain,
   ]);
 
   // Call refreshBuyIntent when input changes
@@ -652,22 +654,24 @@ export default function Buy(props: BuyProps) {
               }
 
               return (
-                <>
-                  <div className="flex items-center justify-center">
-                    <img
-                      src={WarningIcon}
-                      alt="warning"
-                      data-testid="pulse-buy-warning-icon"
-                    />
-                    <span style={{
+                <div className="flex items-center justify-center">
+                  <img
+                    src={WarningIcon}
+                    alt="warning"
+                    data-testid="pulse-buy-warning-icon"
+                  />
+                  <span
+                    style={{
                       textDecoration: 'underline',
                       color: '#FF366C',
                       fontSize: 12,
                       marginLeft: 5,
                     }}
-                      data-testid="pulse-buy-error-message">{message}</span>
-                  </div>
-                </>
+                    data-testid="pulse-buy-error-message"
+                  >
+                    {message}
+                  </span>
+                </div>
               );
             })()}
           </div>
@@ -702,10 +706,11 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                className={`flex-1 items-center justify-center rounded-[10px] ${
+                  isDisabled
                     ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
                     : 'bg-[#121116] text-white cursor-pointer'
-                  }`}
+                }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
