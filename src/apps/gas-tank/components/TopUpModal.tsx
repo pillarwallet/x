@@ -312,7 +312,16 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
     setErrorMsg(null);
     // Since we don't have balance info in SelectedToken, we'll just clear the amount
     // In a real implementation, you'd need to fetch balance for the selected token
-    setAmount('');
+    if (!selectedToken) return;
+    const portfolioToken = portfolioTokens.find(
+      (t) =>
+        t.contract.toLowerCase() === selectedToken.address.toLowerCase() &&
+        Number(getChainId(t.blockchain as MobulaChainNames)) === selectedToken.chainId
+    );
+    if (portfolioToken && portfolioToken.balance) {
+      const maxUsdValue = (Number(portfolioToken.balance) * parseFloat(selectedToken.usdValue)).toString();
+      setAmount(maxUsdValue);
+    }
   };
 
   const handleConfirmSwap = async () => {
@@ -585,7 +594,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
 
             <TokenAmountRow>
               <TokenAmountDisplay>
-                {selectedToken && amount ? (Number(amount)/(parseFloat(selectedToken.usdValue) || 0)).toFixed(2) : '0.00' } {selectedToken?.symbol}
+                {selectedToken && amount ? (Number(amount)/(parseFloat(selectedToken.usdValue) || 1)).toFixed(2) : '0.00' } {selectedToken?.symbol}
               </TokenAmountDisplay>
             </TokenAmountRow>
           </TokenAmountContainer>
@@ -600,7 +609,7 @@ const TopUpModal = ({ isOpen, onClose, onSuccess }: TopUpModalProps) => {
           <DetailsSection>
             <DetailRow>
               <DetailLabel>Rate</DetailLabel>
-              <DetailValue>1 USD ≈ {selectedToken ? (1 / parseFloat(selectedToken.usdValue)).toFixed(4) : '1.08'} {selectedToken?.symbol || 'USDC'}</DetailValue>
+              <DetailValue>1 USD ≈ {selectedToken ? (1 / (parseFloat(selectedToken.usdValue)) || 1).toFixed(4) : '1.08'} {selectedToken?.symbol || 'USDC'}</DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>
