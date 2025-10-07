@@ -72,7 +72,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     isSuccess: isWalletPortfolioDataSuccess,
   } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
-    { skip: !accountAddress, refetchOnFocus: true, pollingInterval: 120000 }
+    { skip: !accountAddress, refetchOnFocus: false, pollingInterval: 120000 }
   );
 
   const groupedTokens = useMemo(() => {
