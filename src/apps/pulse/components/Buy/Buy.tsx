@@ -119,41 +119,9 @@ export default function Buy(props: BuyProps) {
     DispensableAsset[]
   >([]);
   const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
+  const [sumOfStableBalance, setSumOfStableBalance] = useState<number>(0);
 
   // Helper function to calculate stable currency balance
-  const getStableCurrencyBalance = () => {
-    return (
-      walletPortfolioData?.result.data.assets
-        ?.filter((asset) =>
-          asset.contracts_balances.some((contract) =>
-            STABLE_CURRENCIES.some(
-              (stable) =>
-                stable.address.toLowerCase() ===
-                  contract.address.toLowerCase() &&
-                stable.chainId === Number(contract.chainId.split(':').at(-1))
-            )
-          )
-        )
-        .reduce((total, asset) => {
-          const stableContracts = asset.contracts_balances.filter((contract) =>
-            STABLE_CURRENCIES.some(
-              (stable) =>
-                stable.address.toLowerCase() ===
-                  contract.address.toLowerCase() &&
-                stable.chainId === Number(contract.chainId.split(':').at(-1))
-            )
-          );
-          return (
-            total +
-            stableContracts.reduce(
-              (sum, contract) => sum + asset.price * contract.balance,
-              0
-            )
-          );
-        }, 0) || 0
-    );
-  };
-
   const getStableCurrencyBalanceOnEachChain = () => {
     // get the list of chainIds from STABLE_CURRENCIES
     const chainIds = Array.from(
@@ -172,7 +140,7 @@ export default function Buy(props: BuyProps) {
           STABLE_CURRENCIES.some(
             (stable) =>
               stable.address.toLowerCase() ===
-                contract.address.toLowerCase() && 
+              contract.address.toLowerCase() &&
               stable.chainId === Number(contract.chainId.split(':').at(-1))
           )
         )
@@ -182,7 +150,7 @@ export default function Buy(props: BuyProps) {
           STABLE_CURRENCIES.some(
             (stable) =>
               stable.address.toLowerCase() ===
-                contract.address.toLowerCase() &&
+              contract.address.toLowerCase() &&
               stable.chainId === Number(contract.chainId.split(':').at(-1))
           )
         );
@@ -191,9 +159,15 @@ export default function Buy(props: BuyProps) {
           balanceMap[chainId] += asset.price * contract.balance;
         });
       });
-    
+
     return balanceMap;
   }
+
+  useEffect(() => {
+    const stableBalance = getStableCurrencyBalanceOnEachChain();
+    const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
+    setSumOfStableBalance(sum);
+  },[walletPortfolioData]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -243,8 +217,13 @@ export default function Buy(props: BuyProps) {
           setNoEnoughLiquidity(true);
           return;
         }
-        const stableBalance = getStableCurrencyBalance();
-        if (stableBalance < 2) {
+        const stableBalance = getStableCurrencyBalanceOnEachChain();
+        const sumOfStableBalance = Object.values(stableBalance).reduce(
+          (a, b) => a + b,
+          0
+        );
+        console.log(sumOfStableBalance);
+        if (sumOfStableBalance < 2) {
           setMinimumStableBalance(true);
           return;
         }
@@ -268,15 +247,15 @@ export default function Buy(props: BuyProps) {
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
-    const stable_Balance = getStableCurrencyBalanceOnEachChain();
+    if (!walletPortfolioData) return;
+    const stableCurrencyBalance = getStableCurrencyBalanceOnEachChain();
     // Take the Max value of stable currency balance across chains and also take the chainId
-    const maxStableBalance = Math.max(...Object.values(stable_Balance));
+    const maxStableBalance = Math.max(...Object.values(stableCurrencyBalance));
     const chainIdOfMaxStableBalance = Number(
-      Object.keys(stable_Balance).find(
-        (key) => stable_Balance[Number(key)] === maxStableBalance
+      Object.keys(stableCurrencyBalance).find(
+        (key) => stableCurrencyBalance[Number(key)] === maxStableBalance
       ) || '1'
     );
-    if (!walletPortfolioData) return;
     // Take the native token balance of that chain
     const tokens = convertPortfolioAPIResponseToToken(walletPortfolioData.result.data);
     const nativeToken =
@@ -310,10 +289,9 @@ export default function Buy(props: BuyProps) {
     }
 
     const inputAmount = parseFloat(debouncedUsdAmount);
-    const stableCurrencyBalance = getStableCurrencyBalance();
 
     // Check if input amount higher than stable currency balance
-    if (inputAmount > stableCurrencyBalance) {
+    if (inputAmount > sumOfStableBalance) {
       setInsufficientWalletBalance(true);
       setNoEnoughLiquidity(false);
       return;
@@ -378,6 +356,7 @@ export default function Buy(props: BuyProps) {
     isLoading,
     notEnoughLiquidity,
     walletPortfolioData?.result.data.total_wallet_balance,
+    sumOfStableBalance,
   ]);
 
   // Call refreshBuyIntent when input changes
@@ -663,7 +642,7 @@ export default function Buy(props: BuyProps) {
               } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
-                message = 'Not enough liquidity';
+                message = 'Not enough USDC to buy';
               } else if (minimumStableBalance) {
                 message = 'You need $2 USDC to trade, deposit USDC';
               } else if (minGasFee) {
@@ -686,7 +665,7 @@ export default function Buy(props: BuyProps) {
                       fontSize: 12,
                       marginLeft: 5,
                     }}
-                    data-testid="pulse-buy-error-message">{message}</span>
+                      data-testid="pulse-buy-error-message">{message}</span>
                   </div>
                 </>
               );
@@ -706,7 +685,7 @@ export default function Buy(props: BuyProps) {
               }}
               data-testid="pulse-buy-wallet-balance"
             >
-              ${getStableCurrencyBalance().toFixed(2)}
+              ${sumOfStableBalance.toFixed(2)}
             </div>
           </div>
         </div>
@@ -723,15 +702,14 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
                     ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
                     : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
-                      setUsdAmount(getStableCurrencyBalance().toFixed(2));
+                      setUsdAmount(sumOfStableBalance.toFixed(2));
                     } else {
                       setUsdAmount(parseFloat(item).toFixed(2));
                     }
