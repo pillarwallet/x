@@ -248,6 +248,7 @@ export default function Buy(props: BuyProps) {
           setMinimumStableBalance(true);
           return;
         }
+        setMinimumStableBalance(false);
         // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
         setDispensableAssets(dAssets);
         setPermittedChains(pChains);
