@@ -209,7 +209,7 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
           }
         >
           $
-          10050.00
+          0.00
         </div>
       </div>
     </div>

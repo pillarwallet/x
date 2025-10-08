@@ -104,6 +104,9 @@ export default function BuyButton(props: BuyButtonProps) {
     if (isInstalling || isFetching) {
       return true;
     }
+    if (notEnoughLiquidity) {
+      return true;
+    }
     if (!areModulesInstalled && payingTokens.length > 0) {
       return false;
     }
@@ -113,8 +116,7 @@ export default function BuyButton(props: BuyButtonProps) {
       !(parseFloat(usdAmount) > 0) ||
       !expressIntentResponse ||
       !!(expressIntentResponse as { error: string }).error ||
-      (expressIntentResponse as ExpressIntentResponse)?.bids?.length === 0 ||
-      notEnoughLiquidity
+      (expressIntentResponse as ExpressIntentResponse)?.bids?.length === 0
     );
   };
 
