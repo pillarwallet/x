@@ -36,7 +36,11 @@ import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import BuyButton from './BuyButton';
-import { ChainNames, isNativeToken, NativeSymbols } from '../../utils/blockchain';
+import {
+  ChainNames,
+  isNativeToken,
+  NativeSymbols,
+} from '../../utils/blockchain';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -259,19 +263,21 @@ export default function Buy(props: BuyProps) {
       return;
     }
     setMinimumStableBalance(false);
-    
+
     // Take the native token balance of that chain
     const tokens = convertPortfolioAPIResponseToToken(
       walletPortfolioData.result.data
     );
     const nativeToken = tokens.find(
       (t) =>
-        (Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          maxStableCoinBalance.chainId) && 
-        isNativeToken(t.contract)
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          maxStableCoinBalance.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
-      console.warn('Native token not found for chainId:', maxStableCoinBalance.chainId);
+      console.warn(
+        'Native token not found for chainId:',
+        maxStableCoinBalance.chainId
+      );
       setMinGasFee(false);
       return;
     }
