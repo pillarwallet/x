@@ -663,7 +663,7 @@ export default function Buy(props: BuyProps) {
               } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
-                message = 'Not enough USDC to buy';
+                message = `Not enough USDC to buy, reduce to ${Math.floor(maxStableCoinBalance.balance * 100) / 100}`;
               } else if (minimumStableBalance) {
                 message = 'You need $2 USDC to trade, deposit USDC';
               } else if (minGasFee) {
