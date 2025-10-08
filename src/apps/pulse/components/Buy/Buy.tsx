@@ -277,11 +277,7 @@ export default function Buy(props: BuyProps) {
           maxStableCoinBalance.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
-      console.warn(
-        'Native token not found for chainId:',
-        maxStableCoinBalance.chainId
-      );
-      setMinGasFee(false);
+      setMinGasFee(true);
       return;
     }
     const nativeTokenUSDBalance =
@@ -662,12 +658,12 @@ export default function Buy(props: BuyProps) {
                 message = 'Min. amount 2 USD';
               } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
+              } else if (minGasFee) {
+                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else if (notEnoughLiquidity && token) {
                 message = `Not enough USDC to buy, reduce to ${Math.floor(maxStableCoinBalance.balance * 100) / 100}`;
               } else if (minimumStableBalance) {
                 message = 'You need $2 USDC to trade, deposit USDC';
-              } else if (minGasFee) {
-                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else {
                 message = 'No available routes for this amount';
               }
