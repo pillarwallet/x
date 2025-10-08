@@ -172,6 +172,10 @@ export default function Buy(props: BuyProps) {
   };
 
   useEffect(() => {
+    if (!walletPortfolioData) {
+      console.warn('No wallet portfolio data');
+      return;
+    }
     const stableBalance = getStableCurrencyBalanceOnEachChain();
     const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
     const maxStableBalance = Math.max(...Object.values(stableBalance));
@@ -185,6 +189,34 @@ export default function Buy(props: BuyProps) {
       balance: maxStableBalance,
     });
     setSumOfStableBalance(sum);
+    if (maxStableBalance < 2) {
+      setMinimumStableBalance(true);
+      return;
+    }
+    setMinimumStableBalance(false);
+    // Take the native token balance of that chain
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+
+    const nativeToken = tokens.find(
+      (t) =>
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+    );
+
+    if (!nativeToken) {
+      setMinGasFee(true);
+      return;
+    }
+    const nativeTokenUSDBalance =
+      (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
+
+    if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
+      setMinGasFee(true);
+      return;
+    }
+    setMinGasFee(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletPortfolioData]);
 
@@ -257,37 +289,6 @@ export default function Buy(props: BuyProps) {
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
-    if (!walletPortfolioData) {
-      console.warn('No wallet portfolio data');
-      return;
-    }
-    if (maxStableCoinBalance.balance < 2) {
-      setMinimumStableBalance(true);
-      return;
-    }
-    setMinimumStableBalance(false);
-
-    // Take the native token balance of that chain
-    const tokens = convertPortfolioAPIResponseToToken(
-      walletPortfolioData.result.data
-    );
-    const nativeToken = tokens.find(
-      (t) =>
-        Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          maxStableCoinBalance.chainId && isNativeToken(t.contract)
-    );
-    if (!nativeToken) {
-      setMinGasFee(true);
-      return;
-    }
-    const nativeTokenUSDBalance =
-      (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
-    if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
-      setMinGasFee(true);
-      return;
-    }
-    setMinGasFee(false);
-
     // Prevent multiple simultaneous calls
     if (isLoading) {
       return;
@@ -658,12 +659,12 @@ export default function Buy(props: BuyProps) {
                 message = 'Min. amount 2 USD';
               } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
-              } else if (minGasFee) {
-                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else if (notEnoughLiquidity && token) {
                 message = `Not enough USDC to buy, reduce to ${Math.floor(maxStableCoinBalance.balance * 100) / 100}`;
               } else if (minimumStableBalance) {
                 message = 'You need $2 USDC to trade, deposit USDC';
+              } else if (minGasFee) {
+                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else {
                 message = 'No available routes for this amount';
               }
