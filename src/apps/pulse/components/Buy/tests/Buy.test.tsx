@@ -600,7 +600,9 @@ describe('<Buy />', () => {
 
       // The warning should appear immediately when the component mounts with insufficient gas
       await waitFor(() => {
-        expect(screen.getByText(/Min\. \$1 .* required on/)).toBeInTheDocument();
+        expect(
+          screen.getByText(/Min\. \$1 .* required on/)
+        ).toBeInTheDocument();
       });
     });
   });
