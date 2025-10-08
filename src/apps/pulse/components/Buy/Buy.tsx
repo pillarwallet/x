@@ -270,7 +270,11 @@ export default function Buy(props: BuyProps) {
           maxStableCoinBalance.chainId) && 
         isNativeToken(t.contract)
     );
-    if (!nativeToken) return;
+    if (!nativeToken) {
+      console.warn('Native token not found for chainId:', maxStableCoinBalance.chainId);
+      setMinGasFee(false);
+      return;
+    }
     const nativeTokenUSDBalance =
       (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
     if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
