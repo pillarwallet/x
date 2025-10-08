@@ -65,8 +65,10 @@ describe('<HomeScreen />', () => {
       data: {
         result: {
           data: {
-            tokens: [],
+            assets: [],
             total_wallet_balance: 0,
+            wallets: [],
+            balances_length: 0,
           },
         },
       },
