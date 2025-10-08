@@ -157,7 +157,7 @@ const mockWalletPortfolioData: WalletPortfolioMobulaResponse = {
           token_balance: 0.5,
           allocation: 0.05,
           wallets: ['0x1234567890123456789012345678901234567890'],
-        }
+        },
       ],
       balances_length: 2,
     },
@@ -639,9 +639,7 @@ describe('<Buy />', () => {
         setTimeout(resolve, 1100);
       });
 
-      expect(
-        screen.getByText(/Min\. \$1 .* required on/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Min\. \$1 .* required on/)).toBeInTheDocument();
     });
   });
 
