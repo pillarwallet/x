@@ -447,20 +447,6 @@ describe('<Buy />', () => {
     });
 
     it('shows minimum stable balance warning', async () => {
-      (useModularSdk as any).mockReturnValue({
-        areModulesInstalled: true,
-        isInstalling: false,
-        installModules: vi.fn(),
-        isFetching: false,
-      });
-
-      // Mock getDispensableAssets to return valid data to avoid notEnoughLiquidity
-      mockGetDispensableAssets.mockReturnValue([
-        [{ asset: '0x123', chainId: BigInt(1), value: BigInt(1000) }],
-        [BigInt(1)],
-        [mockPayingToken],
-      ]);
-
       const lowBalanceWalletData = {
         ...mockWalletPortfolioData,
         result: {
@@ -532,34 +518,15 @@ describe('<Buy />', () => {
 
       renderWithProviders({ walletPortfolioData: lowBalanceWalletData });
 
-      const input = screen.getByPlaceholderText('0.00');
-      fireEvent.change(input, { target: { value: '5.00' } });
-
-      // Wait for debounced effect and refreshBuyIntent
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1100);
+      // The warning should appear immediately when the component mounts with low balance data
+      await waitFor(() => {
+        expect(
+          screen.getByText('You need $2 USDC to trade, deposit USDC')
+        ).toBeInTheDocument();
       });
-
-      expect(
-        screen.getByText('You need $2 USDC to trade, deposit USDC')
-      ).toBeInTheDocument();
     });
 
     it('shows minimum gas fee warning', async () => {
-      (useModularSdk as any).mockReturnValue({
-        areModulesInstalled: true,
-        isInstalling: false,
-        installModules: vi.fn(),
-        isFetching: false,
-      });
-
-      // Mock getDispensableAssets to return valid data to avoid notEnoughLiquidity
-      mockGetDispensableAssets.mockReturnValue([
-        [{ asset: '0x123', chainId: BigInt(1), value: BigInt(1000) }],
-        [BigInt(1)],
-        [mockPayingToken],
-      ]);
-
       const noGasWalletData = {
         ...mockWalletPortfolioData,
         result: {
@@ -631,15 +598,12 @@ describe('<Buy />', () => {
 
       renderWithProviders({ walletPortfolioData: noGasWalletData });
 
-      const input = screen.getByPlaceholderText('0.00');
-      fireEvent.change(input, { target: { value: '5.00' } });
-
-      // Wait for debounced effect and refreshBuyIntent
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1100);
+      // The warning should appear immediately when the component mounts with insufficient gas
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Min\. \$1 .* required on/)
+        ).toBeInTheDocument();
       });
-
-      expect(screen.getByText(/Min\. \$1 .* required on/)).toBeInTheDocument();
     });
   });
 
