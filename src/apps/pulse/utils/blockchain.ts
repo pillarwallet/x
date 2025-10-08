@@ -26,6 +26,15 @@ export const NativeSymbols: Record<number, string> = {
   56: 'BNB',
 };
 
+export const ChainNames: Record<number, string> = {
+  1: 'Ethereum',
+  137: 'Polygon',
+  8453: 'Base',
+  42161: 'Arbitrum',
+  10: 'Optimism',
+  56: 'BNB',
+};
+
 export const getNativeTokenSymbol = (chainId: number): string => {
   return NativeSymbols[chainId] || 'ETH';
 };

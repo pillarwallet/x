@@ -36,7 +36,7 @@ import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import BuyButton from './BuyButton';
-import { getNativeTokenSymbol, isNativeToken } from '../../utils/blockchain';
+import { ChainNames, isNativeToken, NativeSymbols } from '../../utils/blockchain';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -114,7 +114,10 @@ export default function Buy(props: BuyProps) {
     useState(false);
   const [minimumStableBalance, setMinimumStableBalance] = useState(false);
   const [minGasFee, setMinGasFee] = useState(false);
-  const [minGasFeeChain, setMinGasFeeChain] = useState<string>('');
+  const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
+    chainId: number;
+    balance: number;
+  }>({ chainId: 1, balance: 0 });
   const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
@@ -167,6 +170,16 @@ export default function Buy(props: BuyProps) {
   useEffect(() => {
     const stableBalance = getStableCurrencyBalanceOnEachChain();
     const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
+    const maxStableBalance = Math.max(...Object.values(stableBalance));
+    const chainIdOfMaxStableBalance = Number(
+      Object.keys(stableBalance).find(
+        (key) => stableBalance[Number(key)] === maxStableBalance
+      ) || '1'
+    );
+    setMaxStableCoinBalance({
+      chainId: chainIdOfMaxStableBalance,
+      balance: maxStableBalance,
+    });
     setSumOfStableBalance(sum);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletPortfolioData]);
@@ -220,11 +233,6 @@ export default function Buy(props: BuyProps) {
           return;
         }
 
-        if (sumOfStableBalance < 2) {
-          setMinimumStableBalance(true);
-          return;
-        }
-        setMinimumStableBalance(false);
         // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
         setDispensableAssets(dAssets);
         setPermittedChains(pChains);
@@ -246,33 +254,30 @@ export default function Buy(props: BuyProps) {
 
   const refreshBuyIntent = useCallback(async () => {
     if (!walletPortfolioData) return;
-    const stableCurrencyBalance = getStableCurrencyBalanceOnEachChain();
-    // Take the Max value of stable currency balance across chains and also take the chainId
-    const maxStableBalance = Math.max(...Object.values(stableCurrencyBalance));
-    const chainIdOfMaxStableBalance = Number(
-      Object.keys(stableCurrencyBalance).find(
-        (key) => stableCurrencyBalance[Number(key)] === maxStableBalance
-      ) || '1'
-    );
+    if (maxStableCoinBalance.balance < 2) {
+      setMinimumStableBalance(true);
+      return;
+    }
+    setMinimumStableBalance(false);
+    
     // Take the native token balance of that chain
     const tokens = convertPortfolioAPIResponseToToken(
       walletPortfolioData.result.data
     );
     const nativeToken = tokens.find(
       (t) =>
-        Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+        (Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          maxStableCoinBalance.chainId) && 
+        isNativeToken(t.contract)
     );
     if (!nativeToken) return;
     const nativeTokenUSDBalance =
       (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
     if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
       setMinGasFee(true);
-      setMinGasFeeChain(getNativeTokenSymbol(chainIdOfMaxStableBalance));
       return;
     }
     setMinGasFee(false);
-    setMinGasFeeChain('');
 
     // Prevent multiple simultaneous calls
     if (isLoading) {
@@ -293,7 +298,7 @@ export default function Buy(props: BuyProps) {
     const inputAmount = parseFloat(debouncedUsdAmount);
 
     // Check if input amount higher than stable currency balance
-    if (inputAmount > sumOfStableBalance) {
+    if (inputAmount > maxStableCoinBalance.balance) {
       setInsufficientWalletBalance(true);
       setNoEnoughLiquidity(false);
       return;
@@ -358,7 +363,6 @@ export default function Buy(props: BuyProps) {
     isLoading,
     notEnoughLiquidity,
     walletPortfolioData?.result.data.total_wallet_balance,
-    getStableCurrencyBalanceOnEachChain,
   ]);
 
   // Call refreshBuyIntent when input changes
@@ -648,7 +652,7 @@ export default function Buy(props: BuyProps) {
               } else if (minimumStableBalance) {
                 message = 'You need $2 USDC to trade, deposit USDC';
               } else if (minGasFee) {
-                message = `You need at least $1 of ${minGasFeeChain} to trade, deposit ${minGasFeeChain}`;
+                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else {
                 message = 'No available routes for this amount';
               }
