@@ -257,7 +257,10 @@ export default function Buy(props: BuyProps) {
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
-    if (!walletPortfolioData) return;
+    if (!walletPortfolioData) {
+      console.warn('No wallet portfolio data');
+      return;
+    }
     if (maxStableCoinBalance.balance < 2) {
       setMinimumStableBalance(true);
       return;
@@ -283,7 +286,7 @@ export default function Buy(props: BuyProps) {
     }
     const nativeTokenUSDBalance =
       (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
-    if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
+    if (!nativeTokenUSDBalance || (nativeTokenUSDBalance < 1)) {
       setMinGasFee(true);
       return;
     }
@@ -646,6 +649,8 @@ export default function Buy(props: BuyProps) {
                 belowMinimumAmount ||
                 insufficientWalletBalance ||
                 (notEnoughLiquidity && token) ||
+                minimumStableBalance ||
+                minGasFee ||
                 (!isLoading &&
                   expressIntentResponse &&
                   expressIntentResponse.bids?.length === 0);
