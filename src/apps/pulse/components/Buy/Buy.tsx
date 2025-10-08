@@ -286,7 +286,7 @@ export default function Buy(props: BuyProps) {
     }
     const nativeTokenUSDBalance =
       (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
-    if (!nativeTokenUSDBalance || (nativeTokenUSDBalance < 1)) {
+    if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
       setMinGasFee(true);
       return;
     }
