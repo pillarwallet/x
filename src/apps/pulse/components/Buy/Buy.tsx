@@ -121,7 +121,7 @@ export default function Buy(props: BuyProps) {
   const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
     chainId: number;
     balance: number;
-  }>({ chainId: 1, balance: 0 });
+  }>({ chainId: 1, balance: 2 }); // Default to 2 to allow trading initially
   const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
