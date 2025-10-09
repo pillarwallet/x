@@ -51,6 +51,7 @@ const Sell = (props: SellProps) => {
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
+  const [minAmount, setMinAmount] = useState<boolean>(false);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -126,8 +127,14 @@ const Sell = (props: SellProps) => {
 
       if (input && token) {
         const inputAmount = parseFloat(input);
+        if (!Number.isNaN(token?.usdValue)) {
+          setMinAmount(inputAmount * Number(token?.usdValue) < 1);
+        } else {
+          setMinAmount(false);
+        }
         setNotEnoughLiquidity(inputAmount > tokenBalance);
       } else {
+        setMinAmount(false);
         setNotEnoughLiquidity(false);
       }
     }
@@ -149,11 +156,18 @@ const Sell = (props: SellProps) => {
     if (tokenAmount && tokenAmount.trim() !== '') {
       const inputAmount = parseFloat(tokenAmount);
       if (!Number.isNaN(inputAmount)) {
+        if (!Number.isNaN(token?.usdValue)) {
+          setMinAmount(inputAmount * Number(token?.usdValue) < 1);
+        } else {
+          setMinAmount(false);
+        }
         setNotEnoughLiquidity(inputAmount > tokenBalance);
       } else {
         setNotEnoughLiquidity(false);
+        setMinAmount(false);
       }
     } else {
+      setMinAmount(false);
       setNotEnoughLiquidity(false);
     }
   }, [token, tokenBalance, tokenAmount]);
@@ -298,7 +312,7 @@ const Sell = (props: SellProps) => {
         </div>
         <div className="flex justify-between m-2.5">
           <div className="flex">
-            {(notEnoughLiquidity || relayError) && (
+            {(notEnoughLiquidity || relayError || minAmount) && (
               <>
                 <div className="flex items-center justify-center">
                   <img
@@ -312,7 +326,8 @@ const Sell = (props: SellProps) => {
                   data-testid="pulse-sell-error-message"
                 >
                   {relayError ||
-                    (notEnoughLiquidity ? 'Not enough liquidity' : '')}
+                    (notEnoughLiquidity ? 'Not enough balance' : '') ||
+                    (minAmount ? 'Min amount is $1 worth of tokens' : '')}
                 </div>
               </>
             )}
@@ -409,7 +424,7 @@ const Sell = (props: SellProps) => {
         <SellButton
           token={token}
           tokenAmount={tokenAmount}
-          notEnoughLiquidity={notEnoughLiquidity}
+          notEnoughLiquidity={notEnoughLiquidity || minAmount}
           setPreviewSell={setPreviewSell}
           setSellOffer={setSellOffer}
           sellOffer={sellOffer}
