@@ -14,6 +14,10 @@ import {
 // services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
 import { getUserOperationStatus } from '../../../../services/userOpStatus';
+import {
+  convertPortfolioAPIResponseToToken,
+  PortfolioToken,
+} from '../../../../services/tokensData';
 
 // types
 import { PayingToken, SelectedToken } from '../../types/tokens';
@@ -156,6 +160,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   > | null>(null);
   const [isBackgroundPolling, setIsBackgroundPolling] =
     useState<boolean>(false);
+  const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
   const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
   const hasSeenSuccessRef = useRef<boolean>(false);
   const blockchainTxHashRef = useRef<string | undefined>(undefined);
@@ -733,6 +738,16 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   );
 
+  useEffect(() => {
+    if (!walletPortfolioData) return;
+
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+
+    setPortfolioTokens(tokens);
+  }, [walletPortfolioData]);
+
   // Auto-refresh when in sell mode every 15 seconds
   useEffect(() => {
     if (
@@ -976,6 +991,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               token={buyToken}
               walletPortfolioData={walletPortfolioData}
               payingTokens={payingTokens}
+              portfolioTokens={portfolioTokens}
               setPreviewBuy={setPreviewBuy}
               setPayingTokens={setPayingTokens}
               setExpressIntentResponse={setExpressIntentResponse}
@@ -990,6 +1006,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               setSearching={setSearching}
               token={sellToken}
               walletPortfolioData={walletPortfolioData}
+              portfolioTokens={portfolioTokens}
               setPreviewSell={setPreviewSell}
               setSellOffer={setSellOffer}
               setTokenAmount={setTokenAmount}

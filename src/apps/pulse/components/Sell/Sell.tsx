@@ -18,7 +18,11 @@ import {
   limitDigitsNumber,
 } from '../../../../utils/number';
 import { getChainId, MobulaChainNames } from '../../utils/constants';
-import { ChainNames, isNativeToken, NativeSymbols } from '../../utils/blockchain';
+import {
+  ChainNames,
+  isNativeToken,
+  NativeSymbols,
+} from '../../utils/blockchain';
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -30,7 +34,7 @@ import SellButton from './SellButton';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 // services
-import { convertPortfolioAPIResponseToToken } from '../../../../services/tokensData';
+import { PortfolioToken } from '../../../../services/tokensData';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -40,6 +44,7 @@ interface SellProps {
   setSellOffer: Dispatch<SetStateAction<SellOffer | null>>;
   setTokenAmount: Dispatch<SetStateAction<string>>;
   isRefreshing?: boolean;
+  portfolioTokens: PortfolioToken[];
 }
 
 const Sell = (props: SellProps) => {
@@ -51,6 +56,7 @@ const Sell = (props: SellProps) => {
     setSellOffer,
     setTokenAmount: setParentTokenAmount,
     isRefreshing = false,
+    portfolioTokens = [],
   } = props;
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
@@ -122,17 +128,12 @@ const Sell = (props: SellProps) => {
   };
 
   useEffect(() => {
-    if (!token || !walletPortfolioData) {
+    if (!token || portfolioTokens.length === 0) {
       setMinGasAmount(false);
       return;
     }
 
-    // Take the native token balance of that chain
-    const tokens = convertPortfolioAPIResponseToToken(
-      walletPortfolioData.result.data
-    );
-
-    const nativeToken = tokens.find(
+    const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
           token.chainId && isNativeToken(t.contract)
@@ -146,7 +147,7 @@ const Sell = (props: SellProps) => {
     } else {
       setMinGasAmount(false);
     }
-  }, [walletPortfolioData, token]);
+  }, [portfolioTokens, token]);
 
   const tokenBalance = getTokenBalance();
 
@@ -346,7 +347,9 @@ const Sell = (props: SellProps) => {
                 >
                   {relayError ||
                     (notEnoughLiquidity ? 'Not enough balance' : '') ||
-                    (minGasAmount && token ? `Min. $1 ${NativeSymbols[token.chainId]} required on ${ChainNames[token.chainId]}` : '')}
+                    (minGasAmount && token
+                      ? `Min. $1 ${NativeSymbols[token.chainId]} required on ${ChainNames[token.chainId]}`
+                      : '')}
                 </div>
               </>
             )}
