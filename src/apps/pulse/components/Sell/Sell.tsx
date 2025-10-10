@@ -17,6 +17,8 @@ import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
 } from '../../../../utils/number';
+import { getChainId, MobulaChainNames } from '../../utils/constants';
+import { ChainNames, isNativeToken, NativeSymbols } from '../../utils/blockchain';
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -26,6 +28,9 @@ import SellButton from './SellButton';
 
 // hooks
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+
+// services
+import { convertPortfolioAPIResponseToToken } from '../../../../services/tokensData';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -51,7 +56,7 @@ const Sell = (props: SellProps) => {
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
-  const [minAmount, setMinAmount] = useState<boolean>(false);
+  const [minGasAmount, setMinGasAmount] = useState<boolean>(false);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -116,6 +121,33 @@ const Sell = (props: SellProps) => {
     }
   };
 
+  useEffect(() => {
+    if (!token || !walletPortfolioData) {
+      setMinGasAmount(false);
+      return;
+    }
+
+    // Take the native token balance of that chain
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+
+    const nativeToken = tokens.find(
+      (t) =>
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          token.chainId && isNativeToken(t.contract)
+    );
+    if (!nativeToken) {
+      setMinGasAmount(true);
+      return;
+    }
+    if ((nativeToken?.price || 0) * (nativeToken?.balance || 0) < 1) {
+      setMinGasAmount(true);
+    } else {
+      setMinGasAmount(false);
+    }
+  }, [walletPortfolioData, token]);
+
   const tokenBalance = getTokenBalance();
 
   const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,14 +159,8 @@ const Sell = (props: SellProps) => {
 
       if (input && token) {
         const inputAmount = parseFloat(input);
-        if (!Number.isNaN(token?.usdValue)) {
-          setMinAmount(inputAmount * Number(token?.usdValue) < 1);
-        } else {
-          setMinAmount(false);
-        }
         setNotEnoughLiquidity(inputAmount > tokenBalance);
       } else {
-        setMinAmount(false);
         setNotEnoughLiquidity(false);
       }
     }
@@ -156,18 +182,11 @@ const Sell = (props: SellProps) => {
     if (tokenAmount && tokenAmount.trim() !== '') {
       const inputAmount = parseFloat(tokenAmount);
       if (!Number.isNaN(inputAmount)) {
-        if (!Number.isNaN(token?.usdValue)) {
-          setMinAmount(inputAmount * Number(token?.usdValue) < 1);
-        } else {
-          setMinAmount(false);
-        }
         setNotEnoughLiquidity(inputAmount > tokenBalance);
       } else {
         setNotEnoughLiquidity(false);
-        setMinAmount(false);
       }
     } else {
-      setMinAmount(false);
       setNotEnoughLiquidity(false);
     }
   }, [token, tokenBalance, tokenAmount]);
@@ -312,7 +331,7 @@ const Sell = (props: SellProps) => {
         </div>
         <div className="flex justify-between m-2.5">
           <div className="flex">
-            {(notEnoughLiquidity || relayError || minAmount) && (
+            {(notEnoughLiquidity || relayError || minGasAmount) && (
               <>
                 <div className="flex items-center justify-center">
                   <img
@@ -327,7 +346,7 @@ const Sell = (props: SellProps) => {
                 >
                   {relayError ||
                     (notEnoughLiquidity ? 'Not enough balance' : '') ||
-                    (minAmount ? 'Min amount is $1 worth of tokens' : '')}
+                    (minGasAmount && token ? `Min. $1 ${NativeSymbols[token.chainId]} required on ${ChainNames[token.chainId]}` : '')}
                 </div>
               </>
             )}
@@ -424,7 +443,7 @@ const Sell = (props: SellProps) => {
         <SellButton
           token={token}
           tokenAmount={tokenAmount}
-          notEnoughLiquidity={notEnoughLiquidity || minAmount}
+          notEnoughLiquidity={notEnoughLiquidity || minGasAmount}
           setPreviewSell={setPreviewSell}
           setSellOffer={setSellOffer}
           sellOffer={sellOffer}
