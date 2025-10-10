@@ -42,6 +42,7 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Privacy from '../pages/Privacy';
+import ViaPillarWallet from '../pages/ViaPillarWallet';
 import Waitlist from '../pages/WaitList';
 import Authorized from './Authorized';
 
@@ -680,6 +681,10 @@ const AuthLayout = () => {
             path: '/login',
             element: <Navigate to="/" />,
           },
+          {
+            path: '/via-pillar-wallet',
+            element: <ViaPillarWallet />,
+          },
         ],
       },
     ];
@@ -743,7 +748,9 @@ const AuthLayout = () => {
     window.location.pathname === '/waitlist' ||
     window.location.pathname === '/developers' ||
     window.location.pathname === '/advertising' ||
-    window.location.pathname === '/privacy-policy';
+    window.location.pathname === '/privacy-policy' ||
+    window.location.pathname === '/login' ||
+    window.location.pathname === '/via-pillar-wallet';
 
   /**
    * The following if statement determines if the user is
@@ -797,6 +804,10 @@ const AuthLayout = () => {
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/via-pillar-wallet',
+        element: <ViaPillarWallet />,
       },
       {
         path: '*',
@@ -854,6 +865,8 @@ const AuthLayout = () => {
       wagmiIsConnected,
     },
   });
+
+  console.log('Main');
 
   return <Loading type="wait" />;
 };
