@@ -52,6 +52,9 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   
   // Check if user is logged in via private key
   const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
+  
+  // Check if running inside React Native app
+  const isReactNativeApp = !!localStorage.getItem('DEVICE_PLATFORM');
 
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -203,11 +206,13 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </TopBarIcon>
           </CopyToClipboard>
         </AccountSection>
-        <Tooltip content="Log Out">
-          <TopBarIcon id="account-logout" onClick={onLogoutClick}>
-            <LogoutIcon size={20} />
-          </TopBarIcon>
-        </Tooltip>
+        {!isReactNativeApp && (
+          <Tooltip content="Log Out">
+            <TopBarIcon id="account-logout" onClick={onLogoutClick}>
+              <LogoutIcon size={20} />
+            </TopBarIcon>
+          </Tooltip>
+        )}
       </TopBar>
       <FormTabSelect
         items={[{ icon: <IconBlend size={20} />, title: t`label.tokens` }]}
