@@ -14,11 +14,12 @@ export default function Refresh({
 }: RefreshProps) {
   return (
     <button
-      className={`flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] ${
+      className={`flex items-center justify-center bg-[#1E1D24] rounded-[8px] ${
         disabled || isLoading
           ? 'cursor-not-allowed opacity-50'
           : 'cursor-pointer'
       }`}
+      style={{ width: 18, height: 18 }}
       type="button"
       aria-label="Refresh"
       onClick={onClick}
@@ -26,9 +27,9 @@ export default function Refresh({
       data-testid="pulse-refresh-button"
     >
       {isLoading ? (
-        <TailSpin color="#FFFFFF" height={20} width={20} />
+        <TailSpin color="#FFFFFF" height={18} width={18} />
       ) : (
-        <img src={RefreshIcon} alt="refresh-icon" />
+        <img src={RefreshIcon} height={18} width={18} alt="refresh-icon" />
       )}
     </button>
   );

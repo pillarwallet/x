@@ -500,12 +500,12 @@ export default function Buy(props: BuyProps) {
           >
             {token ? (
               <div
-                className="flex items-center justify-center"
+                className="flex items-center"
                 style={{
                   width: 150,
                   height: 36,
                   backgroundColor: '#1E1D24',
-                  borderRadius: 10,
+                  borderRadius: 6,
                 }}
                 data-testid={`pulse-buy-token-selected-${token.chainId}-${token.name}`}
               >
@@ -534,7 +534,7 @@ export default function Buy(props: BuyProps) {
                       }}
                     >
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
@@ -553,40 +553,41 @@ export default function Buy(props: BuyProps) {
                   />
                 </div>
                 <div
-                  className="flex flex-col"
-                  style={{ marginLeft: 5, marginTop: 5, height: 36 }}
+                  className="flex flex-col ml-1.5 mt-1.5"
+                  style={{ height: 36, width: 91 }}
                 >
                   <div className="flex">
-                    <p style={{ fontSize: 12, fontWeight: 400 }}>
-                      {token.symbol}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 400,
-                        marginLeft: 3,
-                        color: 'grey',
-                      }}
-                    >
-                      {token.name.length >= 10
-                        ? `${token.name.slice(0, 6)}...`
-                        : token.name}
-                    </p>
+                    <p className="text-xs font-normal">{token.symbol}</p>
+                    {token.symbol.length + token.name.length <= 13 && (
+                      <p
+                        className="text-xs font-normal"
+                        style={{
+                          marginLeft: 3,
+                          color: '#FFFFFF',
+                          opacity: 0.3,
+                        }}
+                      >
+                        {token.name}
+                      </p>
+                    )}
                   </div>
                   <div className="flex">
                     <p
                       style={{
                         fontSize: 10,
                         fontWeight: 400,
-                        color: 'grey',
+                        color: '#FFFFFF',
                         height: 10,
+                        opacity: 0.5,
                       }}
                     >
                       ${token.usdValue}
                     </p>
                   </div>
                 </div>
-                <img src={ArrowDown} alt="arrow-down" />
+                <div className="flex ml-5px">
+                  <img src={ArrowDown} alt="arrow-down" />
+                </div>
               </div>
             ) : (
               <div
@@ -740,7 +741,21 @@ export default function Buy(props: BuyProps) {
                 disabled={isDisabled}
                 data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
-                ${item}
+                <span
+                  style={{
+                    opacity: 0.5,
+                    font: 'Poppins',
+                    fontWeight: 400,
+                    fontStyle: 'Regular',
+                    fontSize: '13px',
+                    'leading-trim': 'NONE',
+                    'line-height': '13px',
+                    'letter-spacing': '-2%',
+                    'text-align': 'center',
+                  }}
+                >
+                  {isMax ? 'MAX' : `$${item}`}
+                </span>
               </button>
             </div>
           );

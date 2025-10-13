@@ -191,7 +191,7 @@ const Sell = (props: SellProps) => {
           >
             {token ? (
               <div
-                className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]"
+                className="flex items-center w-[150px] h-9 bg-[#1E1D24] rounded-[6px]"
                 data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
               >
                 <div className="relative inline-block">
@@ -199,25 +199,35 @@ const Sell = (props: SellProps) => {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 rounded-full ml-1.5 mr-1.5"
+                      className="w-6 h-6 rounded-full"
                       data-testid="pulse-sell-token-selector-logo"
+                      style={{
+                        borderRadius: 50,
+                        marginLeft: 5,
+                        marginRight: 5,
+                      }}
                     />
                   ) : (
                     <div className="w-full h-full overflow-hidden rounded-full w-6 h-6 ml-1.5 mr-1.5">
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
+                    className="absolute w-2.5 h-2.5 rounded-full"
+                    style={{
+                      bottom: '-2px',
+                      right: '-2px',
+                      borderRadius: '50%',
+                    }}
                     alt="Chain Logo"
                     data-testid="pulse-sell-token-selector-chain-logo"
                   />
                 </div>
-                <div className="flex flex-col ml-1.5 mt-1.5 h-9">
+                <div className="flex flex-col ml-1.5 mt-1.5 w-[91px] h-9">
                   <div className="flex">
                     <p
                       className="text-xs font-normal"
@@ -225,29 +235,37 @@ const Sell = (props: SellProps) => {
                     >
                       {token.symbol}
                     </p>
-                    <p
-                      className="text-xs font-normal ml-0.5 text-grey"
-                      data-testid="pulse-sell-token-selector-name"
-                    >
-                      {token.name.length >= 10
-                        ? `${token.name.slice(0, 6)}...`
-                        : token.name}
-                    </p>
+                    {token.symbol.length + token.name.length <= 13 && (
+                      <p
+                        className="text-xs font-normal"
+                        style={{
+                          marginLeft: 3,
+                          color: '#FFFFFF',
+                          opacity: 0.3,
+                        }}
+                        data-testid="pulse-sell-token-selector-name"
+                      >
+                        {token.name}
+                      </p>
+                    )}
                   </div>
                   <div className="flex">
                     <p
-                      className="text-[10px] font-normal text-grey h-2.5"
-                      data-testid="pulse-sell-token-selector-price"
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 400,
+                        color: '#FFFFFF',
+                        height: 10,
+                        opacity: 0.5,
+                      }}
                     >
-                      ${formatExponentialSmallNumber(token.usdValue)}
+                      ${token.usdValue}
                     </p>
                   </div>
                 </div>
-                <img
-                  src={ArrowDown}
-                  alt="arrow-down"
-                  data-testid="pulse-sell-token-selector-arrow"
-                />
+                <div className="flex ml-5px">
+                  <img src={ArrowDown} alt="arrow-down" />
+                </div>
               </div>
             ) : (
               <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
@@ -296,9 +314,7 @@ const Sell = (props: SellProps) => {
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                   >
-                    {token.symbol.length > 4
-                      ? `${token.symbol.slice(0, 3)}...`
-                      : token.symbol}
+                    {token.symbol.slice(0, 3)}
                   </p>
                   {showTooltip && token.symbol.length > 4 && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
@@ -409,7 +425,21 @@ const Sell = (props: SellProps) => {
                 disabled={isDisabled}
                 data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
-                {item}
+                <span
+                  style={{
+                    opacity: 0.5,
+                    font: 'Poppins',
+                    fontWeight: 400,
+                    fontStyle: 'Regular',
+                    fontSize: '13px',
+                    'leading-trim': 'NONE',
+                    'line-height': '13px',
+                    'letter-spacing': '-2%',
+                    'text-align': 'center',
+                  }}
+                >
+                  {item}
+                </span>
               </button>
             </div>
           );

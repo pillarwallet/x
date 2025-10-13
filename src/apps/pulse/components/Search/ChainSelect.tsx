@@ -3,7 +3,7 @@ import GlobeIcon from '../../assets/globe-icon.svg';
 export default function ChainSelectButton() {
   return (
     <button
-      className="flex items-center justify-center w-full h-full bg-[#121116] rounded-[10px]"
+      className="flex items-center justify-center w-full h-full bg-[#1E1D24] rounded-[10px]"
       type="button"
       aria-label="Save"
     >

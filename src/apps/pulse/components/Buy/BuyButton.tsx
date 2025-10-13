@@ -50,7 +50,7 @@ function getButtonText(
 
     return (
       <div className="flex items-center justify-center gap-1">
-        <span>Buy</span>
+        <span>{selectedToken ? 'Buy' : 'Select token'}</span>
         <HighDecimalsFormatted
           value={limitedTokenAmount}
           styleNumber="text-white"
@@ -68,7 +68,12 @@ function getButtonText(
     );
   }
 
-  return selectedToken?.symbol ? `Buy ${selectedToken.symbol}` : 'Buy';
+  // eslint-disable-next-line no-nested-ternary
+  return selectedToken?.symbol
+    ? `Buy ${selectedToken.symbol}`
+    : selectedToken === null
+      ? 'Select token'
+      : 'Buy';
 }
 
 export interface BuyButtonProps {
@@ -133,16 +138,29 @@ export default function BuyButton(props: BuyButtonProps) {
       type="button"
       data-testid="pulse-buy-button"
     >
-      {getButtonText(
-        isLoading,
-        isInstalling,
-        isFetching,
-        areModulesInstalled,
-        token,
-        debouncedUsdAmount,
-        payingTokens.length > 0 ? payingTokens[0] : undefined,
-        isDisabled()
-      )}
+      <span
+        style={{
+          'font-family': 'Poppins',
+          'font-weight': 500,
+          'font-style': 'Medium',
+          'font-size': '13px',
+          'leading-trim': 'NONE',
+          'line-height': '100%',
+          'letter-spacing': '-2%',
+          'text-align': 'center',
+        }}
+      >
+        {getButtonText(
+          isLoading,
+          isInstalling,
+          isFetching,
+          areModulesInstalled,
+          token,
+          debouncedUsdAmount,
+          payingTokens.length > 0 ? payingTokens[0] : undefined,
+          isDisabled()
+        )}
+      </span>
     </button>
   );
 }

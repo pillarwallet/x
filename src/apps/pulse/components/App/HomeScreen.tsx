@@ -20,7 +20,7 @@ import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
 
 // components
-import SearchIcon from '../../assets/seach-icon.svg';
+import SearchIcon from '../../assets/search-icon.png';
 import Buy from '../Buy/Buy';
 import PreviewBuy from '../Buy/PreviewBuy';
 import Refresh from '../Misc/Refresh';
@@ -861,10 +861,34 @@ export default function HomeScreen(props: HomeScreenProps) {
           type="button"
           data-testid="pulse-search-button-homescreen"
         >
-          <span style={{ marginLeft: 10 }}>
-            <img src={SearchIcon} alt="search-icon" />
+          <span style={{ marginLeft: 14, marginRight: 10 }}>
+            <img
+              src={SearchIcon}
+              alt="search-icon"
+              width={12}
+              height={12}
+              style={{
+                fill: '#FFFFFF',
+                stroke: '#FFFFFF',
+                strokeWeight: 1.5,
+                strokePosition: 'outside',
+                strokeStatePoint: 'Round',
+                strokeEndPoint: 'Round',
+              }}
+            />
           </span>
-          <div className="flex-1 w-fit" style={{ color: 'grey' }}>
+          <div
+            className="flex-1 w-fit"
+            style={{
+              color: 'grey',
+              textAlign: 'left',
+              opacity: 0.5,
+              font: 'Poppins',
+              width: 211,
+              height: 20,
+              fontSize: 13,
+            }}
+          >
             Search by token or paste address
           </div>
         </button>
@@ -874,7 +898,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             border: '2px solid #1E1D24',
             width: 446,
             height: 264,
-            backgroundColor: '#121116',
+            backgroundColor: '#1E1D24',
             borderRadius: 10,
             marginTop: 40,
           }}
@@ -898,7 +922,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -912,7 +936,21 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(true)}
                 type="button"
               >
-                <p className="text-center">Buy</p>
+                <span
+                  className="text-center"
+                  style={{
+                    'font-family': 'Poppins',
+                    'font-weight': '500',
+                    'font-style': 'Medium',
+                    'font-size': '13px',
+                    'leading-trim': 'NONE',
+                    'line-height': '100%',
+                    'letter-spacing': '-2%',
+                    'text-align': 'center',
+                  }}
+                >
+                  Buy
+                </span>
               </button>
               <button
                 className="flex-1 items-center justify-center"
@@ -920,7 +958,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -934,10 +972,24 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(false)}
                 type="button"
               >
-                <p className="text-center">Sell</p>
+                <span
+                  className="text-center"
+                  style={{
+                    'font-family': 'Poppins',
+                    'font-weight': '500',
+                    'font-style': 'Medium',
+                    'font-size': '13px',
+                    'leading-trim': 'NONE',
+                    'line-height': '100%',
+                    'letter-spacing': '-2%',
+                    'text-align': 'center',
+                  }}
+                >
+                  Sell
+                </span>
               </button>
             </div>
-            <div className="flex" style={{ marginTop: 10 }}>
+            <div className="flex mt-2.5">
               <div
                 style={{
                   marginLeft: 12,
@@ -945,15 +997,29 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
-                data-testid="pulse-refresh-button-homescreen"
               >
-                <Refresh
-                  onClick={handleRefresh}
-                  isLoading={isRefreshingHome}
-                  disabled={isRefreshingHome || (!buyToken && !sellToken)}
-                />
+                <div
+                  style={{
+                    padding: '8px 1px',
+                    width: 36,
+                    height: 34,
+                    backgroundColor: '#1E1D24',
+                    borderRadius: 8,
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Refresh
+                    onClick={handleRefresh}
+                    isLoading={isRefreshingHome}
+                    disabled={isRefreshingHome || (!buyToken && !sellToken)}
+                  />
+                </div>
               </div>
 
               <div
@@ -963,6 +1029,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
               >

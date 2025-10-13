@@ -122,14 +122,27 @@ const SellButton = (props: SellButtonProps) => {
       type="button"
       data-testid="pulse-sell-button"
     >
-      {getButtonText(
-        isLoadingOffer,
-        isInitialized,
-        token,
-        tokenAmount,
-        sellOffer,
-        isDisabled()
-      )}
+      <span
+        style={{
+          'font-family': 'Poppins',
+          'font-weight': 500,
+          'font-style': 'Medium',
+          'font-size': '13px',
+          'leading-trim': 'NONE',
+          'line-height': '100%',
+          'letter-spacing': '-2%',
+          'text-align': 'center',
+        }}
+      >
+        {getButtonText(
+          isLoadingOffer,
+          isInitialized,
+          token,
+          tokenAmount,
+          sellOffer,
+          isDisabled()
+        )}
+      </span>
     </button>
   );
 };

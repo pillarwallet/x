@@ -279,7 +279,7 @@ export default function Search({
         className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
         data-testid="pulse-search-modal"
       >
-        <div className="flex w-full">
+        <div className="flex w-full items-center">
           <div className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]">
             <span className="ml-2.5">
               <img src={SearchIcon} alt="search-icon" />
@@ -307,20 +307,45 @@ export default function Search({
               <Close onClose={handleClose} />
             )}
           </div>
-          <div
+          {/* <div
             className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
             data-testid="pulse-search-refresh-button"
+          > */}
+          <div
+            style={{
+              marginLeft: 12,
+              backgroundColor: 'black',
+              borderRadius: 10,
+              width: 40,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+              display: 'flex',
+              padding: '2px 2px 4px 2px',
+            }}
           >
-            <Refresh
-              isLoading={walletPortfolioFetching}
-              onClick={refetchWalletPortfolio}
-              disabled={!refetchWalletPortfolio || walletPortfolioFetching}
-            />
+            <div
+              style={{
+                padding: '8px 1px',
+                width: 36,
+                height: 34,
+                backgroundColor: '#1E1D24',
+                borderRadius: 8,
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <Refresh
+                isLoading={walletPortfolioFetching}
+                onClick={refetchWalletPortfolio}
+                disabled={!refetchWalletPortfolio || walletPortfolioFetching}
+              />
+            </div>
           </div>
           {isBuy ? (
             <div
               ref={chainButtonRef}
-              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+              className="ml-1.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
               onClick={() => {
                 const rect = chainButtonRef?.current?.getBoundingClientRect();
                 setShowChainOverlay(true);
@@ -338,7 +363,7 @@ export default function Search({
           ) : (
             <div
               data-testid="pulse-esc-button-search-modal"
-              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+              className="ml-1.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
             >
               <Esc onClose={handleClose} />
             </div>
