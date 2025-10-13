@@ -17,7 +17,7 @@ import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
   chainNameToChainIdTokensData,
-  convertPortfolioAPIResponseToToken,
+  PortfolioToken,
 } from '../../../../services/tokensData';
 import {
   PairResponse,
@@ -47,6 +47,7 @@ interface BuyProps {
   token: SelectedToken | null;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
   payingTokens: PayingToken[];
+  portfolioTokens: PortfolioToken[];
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
   setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>;
   setExpressIntentResponse: Dispatch<
@@ -71,6 +72,7 @@ export default function Buy(props: BuyProps) {
     setDispensableAssets: setParentDispensableAssets,
     setBuyRefreshCallback,
     token,
+    portfolioTokens,
     walletPortfolioData,
     payingTokens,
     setBuyToken,
@@ -172,7 +174,7 @@ export default function Buy(props: BuyProps) {
   };
 
   useEffect(() => {
-    if (!walletPortfolioData) {
+    if (!portfolioTokens || portfolioTokens.length === 0) {
       console.warn('No wallet portfolio data');
       return;
     }
@@ -194,12 +196,8 @@ export default function Buy(props: BuyProps) {
       return;
     }
     setMinimumStableBalance(false);
-    // Take the native token balance of that chain
-    const tokens = convertPortfolioAPIResponseToToken(
-      walletPortfolioData.result.data
-    );
 
-    const nativeToken = tokens.find(
+    const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
           chainIdOfMaxStableBalance && isNativeToken(t.contract)
@@ -218,7 +216,7 @@ export default function Buy(props: BuyProps) {
     }
     setMinGasFee(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletPortfolioData]);
+  }, [portfolioTokens]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
