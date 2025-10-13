@@ -30,9 +30,11 @@ import { WalletConnectToastProvider } from '../providers/WalletConnectToastProvi
 export default function Authorized({
   provider,
   chainId,
+  privateKey,
 }: {
   provider: WalletClient;
   chainId: number;
+  privateKey: string | null;
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
@@ -114,9 +116,10 @@ export default function Authorized({
     () => ({
       provider,
       chainId,
+      privateKey,
       bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
     }),
-    [provider, chainId]
+    [provider, chainId, privateKey]
   );
 
   if (showAnimation) {

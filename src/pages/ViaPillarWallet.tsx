@@ -211,7 +211,7 @@ const ViaPillarWallet = () => {
       {status === 'received' && (
         <>
           <SuccessIcon>✓</SuccessIcon>
-          <StatusText>Authentication successful!</StatusText>
+          <StatusText>Logged in!</StatusText>
         </>
       )}
       {status === 'error' && (

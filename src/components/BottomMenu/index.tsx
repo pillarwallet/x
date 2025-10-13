@@ -20,7 +20,6 @@ import { navigationRoute } from '../../navigation';
 // hooks
 import useBottomMenuModal from '../../hooks/useBottomMenuModal';
 import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
-import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 
 // components
 import BottomMenuModal from '../BottomMenuModal';
@@ -31,7 +30,6 @@ import { animation } from '../../theme';
 const BottomMenu = () => {
   const { authenticated } = usePrivy();
   const { isConnected } = useAccount();
-  const { account } = usePrivateKeyLogin();
   const navLocation = useLocation();
   const navigate = useNavigate();
   const [t] = useTranslation();
@@ -80,7 +78,7 @@ const BottomMenu = () => {
     };
   }, []);
 
-  if (!authenticated && !account && !isConnected) return null;
+  if (!authenticated && !isConnected) return null;
 
   const isHomeActive =
     active === null && navLocation.pathname === navigationRoute.home;

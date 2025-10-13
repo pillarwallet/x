@@ -126,7 +126,6 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const onLogoutClick = useCallback(async () => {
     // Handle private key logout
     if (account) {
-      localStorage.removeItem('ACCOUNT_VIA_PK');
       setAccount(undefined);
     }
 

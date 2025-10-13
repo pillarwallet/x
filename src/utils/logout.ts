@@ -29,7 +29,6 @@ export const useComprehensiveLogout = () => {
 
     // Clear any stored data
     try {
-      localStorage.removeItem('ACCOUNT_VIA_PK');
       sessionStorage.clear();
     } catch (e) {
       console.error('Error clearing storage:', e);

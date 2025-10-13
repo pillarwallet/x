@@ -27,7 +27,6 @@ import { defaultTheme, GlobalStyle } from '../theme';
 // providers
 import AllowedAppsProvider from '../providers/AllowedAppsProvider';
 import LanguageProvider from '../providers/LanguageProvider';
-import { PrivateKeyLoginProvider } from '../providers/PrivateKeyLoginProvider';
 
 // utils
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
@@ -48,8 +47,8 @@ import Authorized from './Authorized';
 
 // hooks
 import useAllowedApps from '../hooks/useAllowedApps';
-import usePrivateKeyLogin from '../hooks/usePrivateKeyLogin';
 
+// UI
 import App from '../pages/App';
 
 /**
@@ -70,17 +69,16 @@ const AuthLayout = () => {
    */
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
-  const { account, setAccount } = usePrivateKeyLogin();
+
   const { connectors } = useConnect();
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated =
-    !!localStorage.getItem('privy:token') ||
-    localStorage.getItem('ACCOUNT_VIA_PK');
+    !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
-  const isAuthenticated = authenticated || Boolean(account) || wagmiIsConnected;
+  const isAuthenticated = authenticated || wagmiIsConnected;
 
   // Sentry context for authentication state
   useEffect(() => {
@@ -89,7 +87,6 @@ const AuthLayout = () => {
       authenticated,
       hasUser: !!user,
       hasWallets: wallets.length > 0,
-      hasAccount: !!account,
       wagmiIsConnected,
       isAppReady,
       isAuthenticated,
@@ -105,7 +102,6 @@ const AuthLayout = () => {
         level: 'info',
         data: {
           authenticated,
-          hasAccount: !!account,
           wagmiIsConnected,
           walletsCount: wallets.length,
         },
@@ -115,7 +111,6 @@ const AuthLayout = () => {
     ready,
     authenticated,
     user,
-    account,
     wagmiIsConnected,
     isAppReady,
     isAuthenticated,
@@ -158,116 +153,10 @@ const AuthLayout = () => {
       authenticated,
       hasUser: !!user,
       hasWallets: wallets.length > 0,
-      hasAccount: !!account,
       wagmiIsConnected,
       connectorsCount: connectors.length,
     });
 
-    const searchURL = new URLSearchParams(window.location.search);
-    const searchURLPK = searchURL.get('pk');
-
-    if ((searchURL && searchURLPK) || account) {
-      Sentry.addBreadcrumb({
-        category: 'authentication',
-        message: 'Private key authentication detected',
-        level: 'info',
-        data: {
-          providerSetupId,
-          hasSearchURLPK: !!searchURLPK,
-          hasAccount: !!account,
-        },
-      });
-
-      if (searchURL && searchURLPK) {
-        try {
-          const privateKeyToAccountAddress = privateKeyToAccount(
-            searchURLPK as `0x${string}`
-          );
-
-          if (isAddress(privateKeyToAccountAddress.address)) {
-            setAccount(privateKeyToAccountAddress.address);
-
-            localStorage.setItem(
-              'ACCOUNT_VIA_PK',
-              privateKeyToAccountAddress.address
-            );
-
-            const URLWithPK = new URL(window.location.href);
-
-            // Remove the 'pk' parameter
-            URLWithPK.searchParams.delete('pk');
-
-            // Replace the current history state with the updated URL
-            window.history.replaceState(null, '', URLWithPK.toString());
-
-            Sentry.addBreadcrumb({
-              category: 'authentication',
-              message: 'Private key account set successfully',
-              level: 'info',
-              data: {
-                providerSetupId,
-                accountAddress: privateKeyToAccountAddress.address,
-              },
-            });
-          }
-        } catch (e) {
-          console.error(e);
-          localStorage.removeItem('ACCOUNT_VIA_PK');
-
-          Sentry.captureException(e, {
-            tags: {
-              component: 'authentication',
-              action: 'private_key_setup_error',
-              providerSetupId,
-            },
-            contexts: {
-              private_key_error: {
-                providerSetupId,
-                error: e instanceof Error ? e.message : String(e),
-                searchURLPK: !!searchURLPK,
-              },
-            },
-          });
-        }
-      }
-
-      const updateProvider = async () => {
-        const walletChainId = 1; // default chain id is 1
-
-        const newProvider = createWalletClient({
-          account: account as `0x${string}`,
-          chain: getNetworkViem(walletChainId),
-          transport: http(),
-        });
-
-        setProvider(newProvider);
-
-        const isWithinVisibleChains = visibleChains.some(
-          (chain) => chain.id === walletChainId
-        );
-        /**
-         * Sets supported chain ID rather than throw unsupported bundler error.
-         * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
-         */
-        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-
-        Sentry.addBreadcrumb({
-          category: 'authentication',
-          message: 'Private key provider setup completed',
-          level: 'info',
-          data: {
-            providerSetupId,
-            walletChainId,
-            isWithinVisibleChains,
-            finalChainId: isWithinVisibleChains
-              ? walletChainId
-              : visibleChains[0].id,
-          },
-        });
-      };
-
-      updateProvider();
-    } else {
       // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
         // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
@@ -616,9 +505,9 @@ const AuthLayout = () => {
         }
       };
       updateProvider();
-    }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, account, wagmiIsConnected]);
+  }, [wallets, user, wagmiIsConnected]);
 
   /**
    * If all the following variables are truthy within the if
@@ -641,7 +530,6 @@ const AuthLayout = () => {
         hasProvider: !!provider,
         chainId,
         hasUser: !!user,
-        hasAccount: !!account,
         wagmiIsConnected,
       },
     });
@@ -861,12 +749,9 @@ const AuthLayout = () => {
       ready,
       authenticated,
       hasUser: !!user,
-      hasAccount: !!account,
       wagmiIsConnected,
     },
   });
-
-  console.log('Main');
 
   return <Loading type="wait" />;
 };
@@ -900,26 +785,24 @@ const Main = () => {
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
       <LanguageProvider>
-        <PrivateKeyLoginProvider>
-          <PrivyProvider
-            appId={import.meta.env.VITE_PRIVY_APP_ID as string}
-            config={{
-              appearance: { theme: 'dark' },
-              defaultChain: isTestnet ? sepolia : mainnet,
-              embeddedWallets: {
-                createOnLogin: 'users-without-wallets',
-              },
-            }}
-          >
-            <QueryClientProvider client={queryClient}>
-              <WagmiProvider config={config}>
-                <AllowedAppsProvider>
-                  <AuthLayout />
-                </AllowedAppsProvider>
-              </WagmiProvider>
-            </QueryClientProvider>
-          </PrivyProvider>
-        </PrivateKeyLoginProvider>
+        <PrivyProvider
+          appId={import.meta.env.VITE_PRIVY_APP_ID as string}
+          config={{
+            appearance: { theme: 'dark' },
+            defaultChain: isTestnet ? sepolia : mainnet,
+            embeddedWallets: {
+              createOnLogin: 'users-without-wallets',
+            },
+          }}
+        >
+          <QueryClientProvider client={queryClient}>
+            <WagmiProvider config={config}>
+              <AllowedAppsProvider>
+                <AuthLayout />
+              </AllowedAppsProvider>
+            </WagmiProvider>
+          </QueryClientProvider>
+        </PrivyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
