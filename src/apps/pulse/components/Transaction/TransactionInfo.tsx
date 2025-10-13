@@ -171,7 +171,10 @@ const TransactionInfo = ({
       )}
       {detailsEntry(
         'Gas Fee',
-        gasFee || '-',
+        (() => {
+          const gasFeeDisplay = gasFee || '-';
+          return gasFeeDisplay;
+        })(),
         false,
         false,
         'Fee that will be deducted from your universal gas tank.'

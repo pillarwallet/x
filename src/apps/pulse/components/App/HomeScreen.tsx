@@ -14,6 +14,10 @@ import {
 // services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
 import { getUserOperationStatus } from '../../../../services/userOpStatus';
+import {
+  convertPortfolioAPIResponseToToken,
+  PortfolioToken,
+} from '../../../../services/tokensData';
 
 // types
 import { PayingToken, SelectedToken } from '../../types/tokens';
@@ -118,6 +122,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [buyRefreshCallback, setBuyRefreshCallback] = useState<
     (() => Promise<void>) | null
   >(null);
+  const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
 
   // Transaction status polling state
   const [currentTransactionStatus, setCurrentTransactionStatus] =
@@ -155,8 +160,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   > | null>(null);
   const [isBackgroundPolling, setIsBackgroundPolling] =
     useState<boolean>(false);
+  const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
   const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
   const hasSeenSuccessRef = useRef<boolean>(false);
+  const blockchainTxHashRef = useRef<string | undefined>(undefined);
+  const failureGraceExpiryRef = useRef<number | null>(null);
 
   // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
   // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
@@ -178,7 +186,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
-    if (isRefreshingHome) {
+    if (isRefreshingHome || isSellFlowPaused) {
       return;
     }
 
@@ -189,7 +197,13 @@ export default function HomeScreen(props: HomeScreenProps) {
       await refetchWalletPortfolio();
 
       // If we have the required data, refresh the sell offer
-      if (!isBuy && sellToken && tokenAmount && isInitialized) {
+      if (
+        !isBuy &&
+        sellToken &&
+        tokenAmount &&
+        isInitialized &&
+        !isSellFlowPaused
+      ) {
         try {
           const newOffer = await getBestSellOffer({
             fromAmount: tokenAmount,
@@ -224,6 +238,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     buyRefreshCallback,
     previewBuy,
     isRefreshingHome,
+    isSellFlowPaused,
   ]);
 
   // Stop transaction status polling
@@ -286,6 +301,8 @@ export default function HomeScreen(props: HomeScreenProps) {
       setIsPollingActive(true);
       setIsBackgroundPolling(false);
       setShouldAutoReopen(false);
+      blockchainTxHashRef.current = undefined;
+      failureGraceExpiryRef.current = null;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [sellToken, tokenAmount, sellOffer, isBuy]
@@ -628,23 +645,48 @@ export default function HomeScreen(props: HomeScreenProps) {
             // Track if we've seen success - once we have, ignore any failure statuses
             if (newTransactionStatus === 'Transaction Complete') {
               setHasSeenSuccess(true);
+              hasSeenSuccessRef.current = true;
             }
 
             // If we've already seen success, ignore any failure statuses
+            // Both state and ref to ensure we catch the success
             if (
-              hasSeenSuccess &&
+              (hasSeenSuccess || hasSeenSuccessRef.current) &&
               newTransactionStatus === 'Transaction Failed'
             ) {
               return;
             }
 
+            // Extract actual transaction hash if available and mirror into ref (do this before failure guard)
+            if (response.transaction) {
+              const firstObservation = !blockchainTxHashRef.current;
+              setBlockchainTxHash(response.transaction);
+              blockchainTxHashRef.current = response.transaction;
+              if (firstObservation && failureGraceExpiryRef.current == null) {
+                failureGraceExpiryRef.current = Date.now() + 10000; // start grace on first hash
+              }
+            }
+
+            // Additional protection using refs and single-use grace window
+            // If we have a blockchain transaction hash, it means the transaction was actually
+            // submitted and might be successful even if the status shows as 'Reverted' temporarily
+            if (newTransactionStatus === 'Transaction Failed') {
+              const nowTs = Date.now();
+              const hasOnChainHash = Boolean(blockchainTxHashRef.current);
+              if (hasOnChainHash) {
+                // Initialize grace window if not set
+                if (failureGraceExpiryRef.current == null) {
+                  failureGraceExpiryRef.current = nowTs + 10000; // 10s grace
+                  return; // skip once immediately when hash first observed
+                }
+                if (nowTs < failureGraceExpiryRef.current) {
+                  return; // still within grace window
+                }
+              }
+            }
+
             // Always use delayed update to ensure all states are shown
             updateStatusWithDelay(newTransactionStatus);
-
-            // Extract actual transaction hash if available
-            if (response.transaction) {
-              setBlockchainTxHash(response.transaction);
-            }
 
             // Capture error details if transaction failed
             if (newTransactionStatus === 'Transaction Failed') {
@@ -696,9 +738,25 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   );
 
+  useEffect(() => {
+    if (!walletPortfolioData) return;
+
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+
+    setPortfolioTokens(tokens);
+  }, [walletPortfolioData]);
+
   // Auto-refresh when in sell mode every 15 seconds
   useEffect(() => {
-    if (!isBuy && sellToken && tokenAmount && isInitialized) {
+    if (
+      !isBuy &&
+      sellToken &&
+      tokenAmount &&
+      isInitialized &&
+      !isSellFlowPaused
+    ) {
       const interval = setInterval(() => {
         handleRefresh();
       }, 15000); // 15 seconds
@@ -706,7 +764,14 @@ export default function HomeScreen(props: HomeScreenProps) {
       return () => clearInterval(interval);
     }
     return undefined;
-  }, [isBuy, sellToken, tokenAmount, isInitialized, handleRefresh]);
+  }, [
+    isBuy,
+    sellToken,
+    tokenAmount,
+    isInitialized,
+    handleRefresh,
+    isSellFlowPaused,
+  ]);
 
   // Auto-refresh when in buy mode every 15 seconds
   useEffect(() => {
@@ -748,6 +813,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
             onSellOfferUpdate={setSellOffer}
+            setSellFlowPaused={setIsSellFlowPaused}
           />
         </div>
       );
@@ -791,6 +857,10 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     return (
       <>
+        <p className="flex text-base font-normal text-white/[.5] max-w-[442px] text-center mb-6">
+          You&apos;re trying out the beta version of Pulse: expect improvements
+          ahead. Thank you.
+        </p>
         <button
           className="flex items-center justify-center"
           style={{
@@ -921,6 +991,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               token={buyToken}
               walletPortfolioData={walletPortfolioData}
               payingTokens={payingTokens}
+              portfolioTokens={portfolioTokens}
               setPreviewBuy={setPreviewBuy}
               setPayingTokens={setPayingTokens}
               setExpressIntentResponse={setExpressIntentResponse}
@@ -935,6 +1006,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               setSearching={setSearching}
               token={sellToken}
               walletPortfolioData={walletPortfolioData}
+              portfolioTokens={portfolioTokens}
               setPreviewSell={setPreviewSell}
               setSellOffer={setSellOffer}
               setTokenAmount={setTokenAmount}

@@ -5,6 +5,10 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 import { formatNativeTokenAddress } from '../../utils/blockchain';
 
 // icons
@@ -33,6 +37,7 @@ interface PreviewSellProps {
   sellOffer: SellOffer | null;
   tokenAmount: string;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
+  setSellFlowPaused?: (paused: boolean) => void;
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -43,6 +48,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     onSellOfferUpdate,
+    setSellFlowPaused,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -72,6 +78,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellToken,
     sellOffer,
     tokenAmount,
+    isPaused: isWaitingForSignature || isExecuting,
   });
 
   useEffect(() => {
@@ -107,6 +114,20 @@ const PreviewSell = (props: PreviewSellProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sellToken, tokenAmount, sellOffer]);
+
+  // Bridge pause state to HomeScreen to stop its quote refresh while confirming
+  useEffect(() => {
+    if (setSellFlowPaused) {
+      setSellFlowPaused(isWaitingForSignature || isExecuting);
+    }
+  }, [isWaitingForSignature, isExecuting, setSellFlowPaused]);
+
+  // Ensure pause resets on unmount
+  useEffect(() => {
+    return () => {
+      if (setSellFlowPaused) setSellFlowPaused(false);
+    };
+  }, [setSellFlowPaused]);
 
   // Utility function to clean up batch with consistent error handling
   const cleanupBatch = useCallback(
@@ -202,6 +223,10 @@ const PreviewSell = (props: PreviewSellProps) => {
 
   // Refresh function for PreviewSell component - only refreshes sell offer
   const refreshPreviewSellData = useCallback(async () => {
+    // Pause both quote refresh and gas estimation while awaiting signature or executing
+    if (isWaitingForSignature || isExecuting) {
+      return;
+    }
     setIsRefreshingPreview(true);
     // Reset transaction states to allow retry
     setIsTransactionRejected(false);
@@ -242,6 +267,8 @@ const PreviewSell = (props: PreviewSellProps) => {
     isInitialized,
     onSellOfferUpdate,
     getBestSellOffer,
+    isWaitingForSignature,
+    isExecuting,
   ]);
 
   // Auto-refresh sell offer every 15 seconds (disabled when waiting for signature)
@@ -331,6 +358,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     setIsTransactionSuccess(false);
     setIsWaitingForSignature(true);
     setIsExecuting(true);
+    if (setSellFlowPaused) setSellFlowPaused(true);
 
     try {
       // First, prepare the batch using the existing executeSell logic (without showing batch modal)
@@ -352,13 +380,17 @@ const PreviewSell = (props: PreviewSellProps) => {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);
             setIsExecuting(false);
+            if (setSellFlowPaused) setSellFlowPaused(false);
 
             // Clean up the batch from kit after successful execution
             cleanupBatch(sellToken.chainId, 'success');
 
-            const gasFeeString = gasCostNative
-              ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
-              : '≈ 0.00';
+            // Ensure we have a valid gas fee string for the transaction status
+            const gasFeeString =
+              gasCostNative && nativeTokenSymbol
+                ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+                : '≈ 0.00';
+
             showTransactionStatus(userOpHash, gasFeeString);
             return;
           }
@@ -388,6 +420,7 @@ const PreviewSell = (props: PreviewSellProps) => {
         setIsWaitingForSignature(false);
       }
       setIsExecuting(false);
+      if (setSellFlowPaused) setSellFlowPaused(false);
     }
   };
 
@@ -659,9 +692,12 @@ const PreviewSell = (props: PreviewSellProps) => {
         )}
         {detailsEntry(
           'Gas fee',
-          gasCostNative
-            ? `≈ ${parseFloat(gasCostNative).toFixed(6)} ${nativeTokenSymbol}`
-            : '≈ 0.00',
+          (() => {
+            const gasFeeDisplay = gasCostNative
+              ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+              : '≈ 0.00';
+            return gasFeeDisplay;
+          })(),
           false,
           '',
           isEstimatingGas,
@@ -692,16 +728,16 @@ const PreviewSell = (props: PreviewSellProps) => {
       {!isTransactionRejected && !isTransactionSuccess && (
         <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
           <button
-            className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+            className={`flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] ${isEstimatingGas ? 'bg-[#29292F]' : 'bg-[#8A77FF]'}`}
             onClick={handleConfirmSell}
-            disabled={isExecuting}
+            disabled={isExecuting || isEstimatingGas}
             type="submit"
             data-testid="pulse-preview-sell-confirm-button"
           >
-            {isExecuting ? (
+            {isExecuting || isEstimatingGas ? (
               <div className="flex items-center justify-center gap-2">
                 <TailSpin color="#FFFFFF" height={20} width={20} />
-                <span>Confirm</span>
+                <span>{isEstimatingGas ? 'Estimating Gas...' : 'Confirm'}</span>
               </div>
             ) : (
               <>Confirm</>

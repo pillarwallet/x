@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import { vi } from 'vitest';
 
@@ -42,8 +42,10 @@ vi.mock('../../../../utils/blockchain', () => ({
   getLogoForChainId: vi.fn(() => '/src/assets/images/logo-ethereum.png'),
 }));
 
+const mockGetDispensableAssets = vi.fn();
+
 vi.mock('../../../utils/intent', () => ({
-  getDispensableAssets: vi.fn(() => [[], [], []]),
+  getDispensableAssets: (...args: any[]) => mockGetDispensableAssets(...args),
   getDesiredAssetValue: vi.fn(() => BigInt(1000000000000000000)),
 }));
 
@@ -129,17 +131,70 @@ const mockWalletPortfolioData: WalletPortfolioMobulaResponse = {
           allocation: 1,
           wallets: ['0x1234567890123456789012345678901234567890'],
         },
+        {
+          asset: {
+            id: 3,
+            symbol: 'ETH',
+            name: 'Ethereum',
+            logo: 'eth-logo.png',
+            decimals: ['18'],
+            contracts: [],
+            blockchains: [],
+          },
+          contracts_balances: [
+            {
+              address: '0x0000000000000000000000000000000000000000',
+              chainId: 'evm:1',
+              balance: 0.5,
+              balanceRaw: '500000000000000000',
+              decimals: 18,
+            },
+          ],
+          cross_chain_balances: {},
+          price_change_24h: 0,
+          estimated_balance: 1500,
+          price: 3000,
+          token_balance: 0.5,
+          allocation: 0.05,
+          wallets: ['0x1234567890123456789012345678901234567890'],
+        },
       ],
       balances_length: 2,
     },
   },
 };
 
+const mockPortfolioTokens = [
+  {
+    id: 2,
+    contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    blockchain: 'Ethereum',
+    balance: 10050,
+    price: 1,
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+    logo: 'usdc-logo.png',
+  },
+  {
+    id: 3,
+    contract: '0x0000000000000000000000000000000000000000',
+    blockchain: 'Ethereum',
+    balance: 0.5,
+    price: 3000,
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ethereum',
+    logo: 'eth-logo.png',
+  },
+];
+
 const mockProps = {
   setSearching: vi.fn(),
   token: mockToken,
   walletPortfolioData: mockWalletPortfolioData,
   payingTokens: [mockPayingToken],
+  portfolioTokens: mockPortfolioTokens,
   setPreviewBuy: vi.fn(),
   setPayingTokens: vi.fn(),
   setExpressIntentResponse: vi.fn(),
@@ -191,6 +246,8 @@ const defaultMocks = () => {
     installModules: vi.fn(),
     isFetching: false,
   });
+
+  mockGetDispensableAssets.mockReturnValue([[], [], []]);
 };
 
 const renderWithProviders = (props = {}) => {
@@ -332,7 +389,7 @@ describe('<Buy />', () => {
 
       // The liquidity warning should be cleared immediately when user types
       expect(
-        screen.queryByText('Not enough liquidity')
+        screen.queryByText('Not enough USDC to buy')
       ).not.toBeInTheDocument();
     });
 
@@ -356,9 +413,285 @@ describe('<Buy />', () => {
     });
   });
 
+  describe('warning messages', () => {
+    it('shows minimum amount warning when amount is below $2', async () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '1.50' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      expect(screen.getByText('Min. amount 2 USD')).toBeInTheDocument();
+    });
+
+    it('shows insufficient wallet balance warning', async () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '999999.00' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      expect(
+        screen.getByText('Insufficient wallet balance')
+      ).toBeInTheDocument();
+    });
+
+    it('shows not enough USDC warning with max amount suggestion', async () => {
+      (useModularSdk as any).mockReturnValue({
+        areModulesInstalled: true,
+        isInstalling: false,
+        installModules: vi.fn(),
+        isFetching: false,
+      });
+
+      // Mock getDispensableAssets to return empty arrays to trigger notEnoughLiquidity
+      mockGetDispensableAssets.mockReturnValue([[], [], []]);
+
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      // Use amount within wallet balance but triggers liquidity issue
+      fireEvent.change(input, { target: { value: '5000.00' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      // The warning should suggest reducing to max stable balance
+      expect(
+        screen.getByText(/Not enough USDC to buy, reduce to/)
+      ).toBeInTheDocument();
+    });
+
+    it('shows minimum stable balance warning', async () => {
+      const lowBalanceWalletData = {
+        ...mockWalletPortfolioData,
+        result: {
+          ...mockWalletPortfolioData.result,
+          data: {
+            ...mockWalletPortfolioData.result.data,
+            total_wallet_balance: 1501,
+            assets: [
+              // ETH with sufficient balance for gas (> $1)
+              {
+                asset: {
+                  id: 3,
+                  symbol: 'ETH',
+                  name: 'Ethereum',
+                  logo: 'eth-logo.png',
+                  decimals: ['18'],
+                  contracts: [],
+                  blockchains: [],
+                },
+                contracts_balances: [
+                  {
+                    address: '0x0000000000000000000000000000000000000000',
+                    chainId: 'evm:1',
+                    balance: 0.5,
+                    balanceRaw: '500000000000000000',
+                    decimals: 18,
+                  },
+                ],
+                cross_chain_balances: {},
+                price_change_24h: 0,
+                estimated_balance: 1500,
+                price: 3000,
+                token_balance: 0.5,
+                allocation: 0.95,
+                wallets: ['0x1234567890123456789012345678901234567890'],
+              },
+              // USDC with balance less than $2
+              {
+                asset: {
+                  id: 2,
+                  symbol: 'USDC',
+                  name: 'USD Coin',
+                  logo: 'usdc-logo.png',
+                  decimals: ['6'],
+                  contracts: [],
+                  blockchains: [],
+                },
+                contracts_balances: [
+                  {
+                    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                    chainId: 'evm:1',
+                    balance: 1, // Less than $2
+                    balanceRaw: '1000000',
+                    decimals: 6,
+                  },
+                ],
+                cross_chain_balances: {},
+                price_change_24h: 0,
+                estimated_balance: 1,
+                price: 1,
+                token_balance: 1,
+                allocation: 0.05,
+                wallets: ['0x1234567890123456789012345678901234567890'],
+              },
+            ],
+          },
+        },
+      };
+
+      const lowBalancePortfolioTokens = [
+        {
+          id: 2,
+          contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          blockchain: 'Ethereum',
+          balance: 1,
+          price: 1,
+          decimals: 6,
+          symbol: 'USDC',
+          name: 'USD Coin',
+          logo: 'usdc-logo.png',
+        },
+        {
+          id: 3,
+          contract: '0x0000000000000000000000000000000000000000',
+          blockchain: 'Ethereum',
+          balance: 0.5,
+          price: 3000,
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          logo: 'eth-logo.png',
+        },
+      ];
+
+      renderWithProviders({
+        walletPortfolioData: lowBalanceWalletData,
+        portfolioTokens: lowBalancePortfolioTokens,
+      });
+
+      // The warning should appear immediately when the component mounts with low balance data
+      await waitFor(() => {
+        expect(
+          screen.getByText('You need $2 USDC to trade, deposit USDC')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows minimum gas fee warning', async () => {
+      const noGasWalletData = {
+        ...mockWalletPortfolioData,
+        result: {
+          ...mockWalletPortfolioData.result,
+          data: {
+            ...mockWalletPortfolioData.result.data,
+            total_wallet_balance: 100.3,
+            assets: [
+              // USDC with sufficient balance (>= $2)
+              {
+                asset: {
+                  id: 2,
+                  symbol: 'USDC',
+                  name: 'USD Coin',
+                  logo: 'usdc-logo.png',
+                  decimals: ['6'],
+                  contracts: [],
+                  blockchains: [],
+                },
+                contracts_balances: [
+                  {
+                    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+                    chainId: 'evm:1',
+                    balance: 100,
+                    balanceRaw: '100000000',
+                    decimals: 6,
+                  },
+                ],
+                cross_chain_balances: {},
+                price_change_24h: 0,
+                estimated_balance: 100,
+                price: 1,
+                token_balance: 100,
+                allocation: 0.99,
+                wallets: ['0x1234567890123456789012345678901234567890'],
+              },
+              // ETH with insufficient balance for gas (< $1)
+              {
+                asset: {
+                  id: 3,
+                  symbol: 'ETH',
+                  name: 'Ethereum',
+                  logo: 'eth-logo.png',
+                  decimals: ['18'],
+                  contracts: [],
+                  blockchains: [],
+                },
+                contracts_balances: [
+                  {
+                    address: '0x0000000000000000000000000000000000000000',
+                    chainId: 'evm:1',
+                    balance: 0.0001, // Very low ETH balance
+                    balanceRaw: '100000000000000',
+                    decimals: 18,
+                  },
+                ],
+                cross_chain_balances: {},
+                price_change_24h: 0,
+                estimated_balance: 0.3, // Less than $1
+                price: 3000,
+                token_balance: 0.0001,
+                allocation: 0.01,
+                wallets: ['0x1234567890123456789012345678901234567890'],
+              },
+            ],
+          },
+        },
+      };
+
+      const noGasPortfolioTokens = [
+        {
+          id: 2,
+          contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          blockchain: 'Ethereum',
+          balance: 100,
+          price: 1,
+          decimals: 6,
+          symbol: 'USDC',
+          name: 'USD Coin',
+          logo: 'usdc-logo.png',
+        },
+        {
+          id: 3,
+          contract: '0x0000000000000000000000000000000000000000',
+          blockchain: 'Ethereum',
+          balance: 0.0001,
+          price: 3000,
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          logo: 'eth-logo.png',
+        },
+      ];
+
+      renderWithProviders({
+        walletPortfolioData: noGasWalletData,
+        portfolioTokens: noGasPortfolioTokens,
+      });
+
+      // The warning should appear immediately when the component mounts with insufficient gas
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Min\. \$1 .* required on/)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('handles buy submission', () => {
     it('installs modules when not installed', async () => {
-      const mockInstallModules = vi.fn();
+      const mockInstallModules = vi.fn().mockResolvedValue(undefined);
       (useModularSdk as any).mockReturnValue({
         areModulesInstalled: false,
         isInstalling: false,
@@ -366,12 +699,36 @@ describe('<Buy />', () => {
         isFetching: false,
       });
 
+      // Mock getDispensableAssets to return valid data so payingTokens gets populated
+      mockGetDispensableAssets.mockReturnValue([
+        [{ asset: '0x123', chainId: BigInt(1), value: BigInt(1000) }], // dAssets
+        [BigInt(1)], // pChains
+        [mockPayingToken], // pTokens
+      ]);
+
       renderWithProviders();
 
-      const buyButton = screen.getByText('Enable Trading on Ethereum');
+      // Enter an amount to trigger payingTokens population
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '10.00' } });
+
+      // Wait for the "Enable Trading" button to appear and not be disabled
+      await waitFor(
+        () => {
+          const buyButton = screen.getByTestId('pulse-buy-button');
+          expect(buyButton).toHaveTextContent('Enable Trading on Ethereum');
+          expect(buyButton).not.toBeDisabled();
+        },
+        { timeout: 2000 }
+      );
+
+      // Click the button
+      const buyButton = screen.getByTestId('pulse-buy-button');
       fireEvent.click(buyButton);
 
-      expect(mockInstallModules).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockInstallModules).toHaveBeenCalled();
+      });
     });
 
     it('opens preview when modules are installed', async () => {

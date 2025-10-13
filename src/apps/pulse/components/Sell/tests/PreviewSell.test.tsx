@@ -34,6 +34,7 @@ vi.mock('../../../../utils/blockchain', () => ({
 
 vi.mock('../../../../utils/number', () => ({
   limitDigitsNumber: vi.fn((num: number) => num.toString()),
+  formatExponentialSmallNumber: vi.fn((num: number) => num.toString()),
 }));
 
 vi.mock('../../../../../hooks/useTransactionKit', () => ({
@@ -44,6 +45,18 @@ vi.mock('../../../../../hooks/useTransactionKit', () => ({
         batches: {
           'pulse-sell-batch-1': {
             totalCost: '1000000000000000000', // 1 ETH in wei
+            errorMessage: null,
+          },
+        },
+      }),
+      batch: vi.fn(() => ({
+        remove: vi.fn(),
+      })),
+      sendBatches: vi.fn().mockResolvedValue({
+        isSentSuccessfully: true,
+        batches: {
+          'pulse-sell-batch-1': {
+            userOpHash: '0xTransactionHash123456789',
             errorMessage: null,
           },
         },
@@ -182,7 +195,7 @@ describe('<PreviewSell />', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Gas fee')).toBeInTheDocument();
-        expect(screen.getByText('≈ 1.000000 ETH')).toBeInTheDocument();
+        expect(screen.getByText('≈ 1 ETH')).toBeInTheDocument();
       });
     });
   });
