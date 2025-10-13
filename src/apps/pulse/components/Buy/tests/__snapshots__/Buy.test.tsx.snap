@@ -2,17 +2,17 @@
 
 exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
 <div
-  className="flex flex-col"
+  className="flex flex-col w-full"
   data-testid="pulse-buy-component"
 >
   <div
+    className="w-full max-w-[422px]"
     style={
       {
         "backgroundColor": "black",
         "borderRadius": 10,
-        "height": 100,
         "margin": 10,
-        "width": 422,
+        "minHeight": 100,
       }
     }
   >
@@ -25,14 +25,13 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         type="button"
       >
         <div
-          className="flex items-center justify-center"
+          className="flex items-center w-full max-w-[150px]"
           data-testid="pulse-buy-token-selected-1-Test Token"
           style={
             {
               "backgroundColor": "#1E1D24",
-              "borderRadius": 10,
+              "borderRadius": 6,
               "height": 36,
-              "width": 150,
             }
           }
         >
@@ -73,12 +72,11 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
             />
           </div>
           <div
-            className="flex flex-col"
+            className="flex flex-col ml-1.5 mt-1.5"
             style={
               {
                 "height": 36,
-                "marginLeft": 5,
-                "marginTop": 5,
+                "width": 91,
               }
             }
           >
@@ -86,26 +84,9 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
               className="flex"
             >
               <p
-                style={
-                  {
-                    "fontSize": 12,
-                    "fontWeight": 400,
-                  }
-                }
+                className="text-xs font-normal"
               >
                 TEST
-              </p>
-              <p
-                style={
-                  {
-                    "color": "grey",
-                    "fontSize": 12,
-                    "fontWeight": 400,
-                    "marginLeft": 3,
-                  }
-                }
-              >
-                Test T...
               </p>
             </div>
             <div
@@ -114,10 +95,11 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
               <p
                 style={
                   {
-                    "color": "grey",
+                    "color": "#FFFFFF",
                     "fontSize": 10,
                     "fontWeight": 400,
                     "height": 10,
+                    "opacity": 0.5,
                   }
                 }
               >
@@ -126,27 +108,30 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
               </p>
             </div>
           </div>
-          <img
-            alt="arrow-down"
-            src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
-          />
+          <div
+            className="flex ml-5px"
+          >
+            <img
+              alt="arrow-down"
+              src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+            />
+          </div>
         </div>
       </button>
       <div
         className="flex-1"
       >
         <div
-          className="flex"
+          className="flex w-full"
           style={
             {
               "fontSize": 36,
               "height": 36,
-              "width": 189,
             }
           }
         >
           <input
-            className="no-spinner"
+            className="no-spinner flex-1"
             data-testid="pulse-buy-amount-input"
             disabled={false}
             onChange={[Function]}
@@ -155,7 +140,6 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
             style={
               {
                 "textAlign": "right",
-                "width": 185,
               }
             }
             type="text"
@@ -215,7 +199,7 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="flex"
+    className="flex w-full max-w-[422px]"
   >
     <div
       className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
@@ -227,8 +211,23 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
         type="button"
       >
-        $
-        10
+        <span
+          style={
+            {
+              "font": "Poppins",
+              "fontSize": "13px",
+              "fontStyle": "Regular",
+              "fontWeight": 400,
+              "leading-trim": "NONE",
+              "letter-spacing": "-2%",
+              "line-height": "13px",
+              "opacity": 0.5,
+              "text-align": "center",
+            }
+          }
+        >
+          $10
+        </span>
       </button>
     </div>
     <div
@@ -241,8 +240,23 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
         type="button"
       >
-        $
-        20
+        <span
+          style={
+            {
+              "font": "Poppins",
+              "fontSize": "13px",
+              "fontStyle": "Regular",
+              "fontWeight": 400,
+              "leading-trim": "NONE",
+              "letter-spacing": "-2%",
+              "line-height": "13px",
+              "opacity": 0.5,
+              "text-align": "center",
+            }
+          }
+        >
+          $20
+        </span>
       </button>
     </div>
     <div
@@ -255,8 +269,23 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
         type="button"
       >
-        $
-        50
+        <span
+          style={
+            {
+              "font": "Poppins",
+              "fontSize": "13px",
+              "fontStyle": "Regular",
+              "fontWeight": 400,
+              "leading-trim": "NONE",
+              "letter-spacing": "-2%",
+              "line-height": "13px",
+              "opacity": 0.5,
+              "text-align": "center",
+            }
+          }
+        >
+          $50
+        </span>
       </button>
     </div>
     <div
@@ -269,8 +298,23 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
         type="button"
       >
-        $
-        100
+        <span
+          style={
+            {
+              "font": "Poppins",
+              "fontSize": "13px",
+              "fontStyle": "Regular",
+              "fontWeight": 400,
+              "leading-trim": "NONE",
+              "letter-spacing": "-2%",
+              "line-height": "13px",
+              "opacity": 0.5,
+              "text-align": "center",
+            }
+          }
+        >
+          $100
+        </span>
       </button>
     </div>
     <div
@@ -283,13 +327,28 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         onClick={[Function]}
         type="button"
       >
-        $
-        MAX
+        <span
+          style={
+            {
+              "font": "Poppins",
+              "fontSize": "13px",
+              "fontStyle": "Regular",
+              "fontWeight": 400,
+              "leading-trim": "NONE",
+              "letter-spacing": "-2%",
+              "line-height": "13px",
+              "opacity": 0.5,
+              "text-align": "center",
+            }
+          }
+        >
+          MAX
+        </span>
       </button>
     </div>
   </div>
   <div
-    className="flex"
+    className="flex w-full max-w-[422px]"
     style={
       {
         "backgroundColor": "black",
@@ -297,7 +356,6 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
         "height": 50,
         "margin": 10,
         "padding": "2px 2px 4px 2px",
-        "width": 422,
       }
     }
   >
@@ -315,7 +373,22 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       }
       type="button"
     >
-      Buy TEST
+      <span
+        style={
+          {
+            "font-family": "Poppins",
+            "font-size": "13px",
+            "font-style": "Medium",
+            "font-weight": 500,
+            "leading-trim": "NONE",
+            "letter-spacing": "-2%",
+            "line-height": "100%",
+            "text-align": "center",
+          }
+        }
+      >
+        Buy TEST
+      </span>
     </button>
   </div>
 </div>

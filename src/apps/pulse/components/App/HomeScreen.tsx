@@ -773,7 +773,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const renderPreview = () => {
     if (previewBuy) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewBuy
             closePreview={closePreviewBuy}
             buyToken={buyToken}
@@ -790,7 +790,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (previewSell) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewSell
             closePreview={closePreviewSell}
             showTransactionStatus={showTransactionStatus}
@@ -806,7 +806,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (transactionStatus) {
       return (
-        <div className="w-full h-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full h-full flex justify-center px-3 md:p-3 mb-[70px]">
           <TransactionStatus
             closeTransactionStatus={closeTransactionStatus}
             userOpHash={userOpHash}
@@ -841,16 +841,15 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <>
-        <p className="flex text-base font-normal text-white/[.5] max-w-[442px] text-center mb-6">
+      <div className="w-full max-w-[446px] px-4 md:px-0">
+        <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
           You&apos;re trying out the beta version of Pulse: expect improvements
           ahead. Thank you.
         </p>
         <button
-          className="flex items-center justify-center"
+          className="flex items-center justify-center w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
             height: 40,
             backgroundColor: '#121116',
             borderRadius: 10,
@@ -878,13 +877,12 @@ export default function HomeScreen(props: HomeScreenProps) {
             />
           </span>
           <div
-            className="flex-1 w-fit"
+            className="flex-1"
             style={{
               color: 'grey',
               textAlign: 'left',
               opacity: 0.5,
               font: 'Poppins',
-              width: 211,
               height: 20,
               fontSize: 13,
             }}
@@ -893,22 +891,20 @@ export default function HomeScreen(props: HomeScreenProps) {
           </div>
         </button>
         <div
-          className="flex flex-col"
+          className="flex flex-col w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
-            height: 264,
+            minHeight: 264,
             backgroundColor: '#1E1D24',
-            borderRadius: 10,
+            borderRadius: 16,
             marginTop: 40,
           }}
         >
           {/* buy/sell, refresh, settings */}
-          <div className="flex">
+          <div className="flex justify-between">
             <div
-              className="flex"
+              className="flex flex-1 max-w-[318px]"
               style={{
-                width: 318,
                 height: 40,
                 backgroundColor: 'black',
                 borderRadius: 10,
@@ -989,7 +985,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 </span>
               </button>
             </div>
-            <div className="flex mt-2.5">
+            <div className="flex mt-2.5 mr-2.5">
               <div
                 style={{
                   marginLeft: 12,
@@ -1066,7 +1062,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             />
           )}
         </div>
-      </>
+      </div>
     );
   };
 

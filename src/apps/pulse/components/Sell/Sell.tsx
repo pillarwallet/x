@@ -178,8 +178,8 @@ const Sell = (props: SellProps) => {
   }, [fetchSellOffer]);
 
   return (
-    <div className="flex flex-col" data-testid="pulse-sell-component">
-      <div className="m-2.5 bg-black w-[422px] h-[100px] rounded-[10px]">
+    <div className="flex flex-col w-full" data-testid="pulse-sell-component">
+      <div className="bg-[#121116] m-2.5 rounded-[10px]">
         <div className="flex items-center gap-3 p-3">
           <button
             onClick={() => {
@@ -191,7 +191,7 @@ const Sell = (props: SellProps) => {
           >
             {token ? (
               <div
-                className="flex items-center w-[150px] h-9 bg-[#1E1D24] rounded-[6px]"
+                className="flex items-center w-36 h-9 bg-[#1E1D24] rounded-md"
                 data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
               >
                 <div className="relative inline-block">
@@ -199,25 +199,23 @@ const Sell = (props: SellProps) => {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 rounded-full"
+                      className="w-6 h-6 ml-1.5 mr-1.5"
                       data-testid="pulse-sell-token-selector-logo"
                       style={{
                         borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
                       }}
                     />
                   ) : (
                     <div className="w-full h-full overflow-hidden rounded-full w-6 h-6 ml-1.5 mr-1.5">
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-xs">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    className="absolute w-2.5 h-2.5 rounded-full"
+                    className="absolute w-2.5 h-2.5"
                     style={{
                       bottom: '-2px',
                       right: '-2px',
@@ -227,21 +225,22 @@ const Sell = (props: SellProps) => {
                     data-testid="pulse-sell-token-selector-chain-logo"
                   />
                 </div>
-                <div className="flex flex-col ml-1.5 mt-1.5 w-[91px] h-9">
+                <div
+                  className="flex flex-col ml-1.5 mt-1.5"
+                  style={{ height: 36, width: 91 }}
+                >
                   <div className="flex">
                     <p
-                      className="text-xs font-normal"
+                      className="desktop:text-sm mobile:text-xs xs:text-xs font-normal"
                       data-testid="pulse-sell-token-selector-symbol"
                     >
                       {token.symbol}
                     </p>
                     {token.symbol.length + token.name.length <= 13 && (
                       <p
-                        className="text-xs font-normal"
+                        className="opacity-30 desktop:text-sm mobile:text-xs xs:text-xs font-normal ml-1"
                         style={{
-                          marginLeft: 3,
                           color: '#FFFFFF',
-                          opacity: 0.3,
                         }}
                         data-testid="pulse-sell-token-selector-name"
                       >
@@ -263,21 +262,22 @@ const Sell = (props: SellProps) => {
                     </p>
                   </div>
                 </div>
-                <div className="flex ml-5px">
-                  <img src={ArrowDown} alt="arrow-down" />
+                <div className="flex ml-1.5">
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
+              <div className="flex ml-1.5 h-9 bg-[#1E1D24] items-center max-w-[150px] h-9 w-32 rounded-md justify-center font-normal desktop:text-sm mobile:text-xs xs:text-xs justify-items-end">
                 <div
-                  className="flex font-normal text-xs ml-1.5"
+                  className="flex font-normal text-xs"
                   data-testid="pulse-sell-token-selector-placeholder"
                 >
                   Select token
                 </div>
-                <div className="flex ml-2">
+                <div className="flex ml-1.5">
                   <img
                     src={ArrowDown}
+                    className="w-2 h-1"
                     alt="arrow-down"
                     data-testid="pulse-sell-token-selector-arrow-placeholder"
                   />
@@ -285,38 +285,33 @@ const Sell = (props: SellProps) => {
               </div>
             )}
           </button>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 justify-items-end max-w-56 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24">
             <div
-              className="flex items-center justify-between"
+              className="flex items-center max-w-56 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 text-right bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
-              <div className="flex-1 min-w-0 overflow-hidden">
-                <input
-                  className="w-full no-spinner text-right bg-transparent outline-none pr-0"
-                  style={{
-                    fontSize: '36px',
-                    lineHeight: '1.2',
-                    fontWeight: '500',
-                  }}
-                  placeholder={inputPlaceholder}
-                  onChange={handleTokenAmountChange}
-                  value={tokenAmount}
-                  type="text"
-                  onFocus={() => setInputPlaceholder('')}
-                  data-testid="pulse-sell-amount-input"
-                />
-              </div>
+              {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
+              <input
+                className="w-full no-spinner text-right bg-transparent outline-none pr-0 mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl max-w-36 desktop:w-36 mobile:w-36 xs:w-12 tablet:w-36 font-medium"
+                placeholder={inputPlaceholder}
+                onChange={handleTokenAmountChange}
+                value={tokenAmount}
+                type="text"
+                onFocus={() => setInputPlaceholder('')}
+                data-testid="pulse-sell-amount-input"
+              />
+              {/* </div> */}
               {token && (
-                <div className="relative">
+                <div>
                   <p
-                    className="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help text-4xl font-medium"
+                    className="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl w-full max-w-20 tablet:w-20 desktop:w-20 mobile:w-12 xs:w-12 font-medium"
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                   >
                     {token.symbol.slice(0, 3)}
                   </p>
-                  {showTooltip && token.symbol.length > 4 && (
+                  {showTooltip && token.symbol.length > 3 && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
                       {token.symbol}
                     </div>
@@ -381,7 +376,10 @@ const Sell = (props: SellProps) => {
       </div>
 
       {/* amounts */}
-      <div className="flex" data-testid="pulse-sell-percentage-buttons">
+      <div
+        className="flex w-full max-w-[422px]"
+        data-testid="pulse-sell-percentage-buttons"
+      >
         {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const percentage = isMax ? 100 : parseInt(item);
@@ -390,7 +388,7 @@ const Sell = (props: SellProps) => {
           return (
             <div
               key={item}
-              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+              className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${
@@ -426,14 +424,9 @@ const Sell = (props: SellProps) => {
                 data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
                 <span
+                  className="font-normal text-sm"
                   style={{
                     opacity: 0.5,
-                    font: 'Poppins',
-                    fontWeight: 400,
-                    fontStyle: 'Regular',
-                    fontSize: '13px',
-                    'leading-trim': 'NONE',
-                    'line-height': '13px',
                     'letter-spacing': '-2%',
                     'text-align': 'center',
                   }}
@@ -448,7 +441,14 @@ const Sell = (props: SellProps) => {
 
       {/* sell button */}
       <div
-        className="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5"
+        className="flex w-full m-2.5"
+        style={{
+          width: 'auto',
+          height: 50,
+          borderRadius: 10,
+          backgroundColor: 'black',
+          padding: '2px 2px 6px 2px',
+        }}
         data-testid="pulse-sell-button-container"
       >
         <SellButton

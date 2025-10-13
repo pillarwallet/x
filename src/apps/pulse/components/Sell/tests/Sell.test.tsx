@@ -121,10 +121,12 @@ describe('<Sell />', () => {
       renderWithProviders();
 
       expect(screen.getByTestId('pulse-sell-token-symbol')).toHaveTextContent(
-        'TEST'
+        'TES'
       );
-      expect(screen.getByText('Test T...')).toBeInTheDocument();
-      expect(screen.getByText('$100')).toBeInTheDocument();
+      expect(
+        screen.getByTestId('pulse-sell-token-selector-symbol')
+      ).toHaveTextContent('TEST');
+      expect(screen.getByText('$100.00')).toBeInTheDocument();
       expect(screen.getByTestId('pulse-sell-token-balance')).toHaveTextContent(
         '100.5 TEST ($10050)'
       );

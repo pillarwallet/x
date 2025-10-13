@@ -21,7 +21,7 @@ function getButtonText(
 ) {
   if (areModulesInstalled === false && payingToken && !isInstalling) {
     return (
-      <div className="flex items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
+      <div className="flex text-sm items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
     );
   }
 
@@ -54,7 +54,7 @@ function getButtonText(
         <HighDecimalsFormatted
           value={limitedTokenAmount}
           styleNumber="text-white"
-          styleZeros="text-white/70 text-xs"
+          styleZeros="text-white/70 text-sm"
         />
         <span>{selectedToken?.symbol}</span>
         <span>for</span>
@@ -62,7 +62,7 @@ function getButtonText(
           value={limitedUsdAmount}
           moneySymbol="$"
           styleNumber="text-white"
-          styleZeros="text-white/70 text-xs"
+          styleZeros="text-white/70 text-sm"
         />
       </div>
     );
@@ -138,18 +138,7 @@ export default function BuyButton(props: BuyButtonProps) {
       type="button"
       data-testid="pulse-buy-button"
     >
-      <span
-        style={{
-          'font-family': 'Poppins',
-          'font-weight': 500,
-          'font-style': 'Medium',
-          'font-size': '13px',
-          'leading-trim': 'NONE',
-          'line-height': '100%',
-          'letter-spacing': '-2%',
-          'text-align': 'center',
-        }}
-      >
+      <span className="text-sm font-medium tracking-tight leading-none text-center">
         {getButtonText(
           isLoading,
           isInstalling,

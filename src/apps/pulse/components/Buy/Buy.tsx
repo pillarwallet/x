@@ -480,17 +480,16 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <div className="flex flex-col" data-testid="pulse-buy-component">
+    <div className="flex flex-col w-full" data-testid="pulse-buy-component">
       <div
         style={{
           margin: 10,
-          backgroundColor: 'black',
-          width: 422,
-          height: 100,
-          borderRadius: 10,
+          backgroundColor: '#121116',
+          minHeight: 100,
+          borderRadius: 8,
         }}
       >
-        <div className="flex p-3">
+        <div className="flex p-3 justify-between">
           <button
             onClick={() => {
               setSearching(true);
@@ -500,9 +499,8 @@ export default function Buy(props: BuyProps) {
           >
             {token ? (
               <div
-                className="flex items-center"
+                className="flex items-center w-36"
                 style={{
-                  width: 150,
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 6,
@@ -514,23 +512,16 @@ export default function Buy(props: BuyProps) {
                     <img
                       src={token.logo}
                       alt="Main"
+                      className="w-6 h-6 ml-1.5 mr-1.5"
                       style={{
-                        width: 24,
-                        height: 24,
                         borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
                       }}
                     />
                   ) : (
                     <div
-                      className="w-full h-full overflow-hidden rounded-full"
+                      className="w-6 h-6 ml-1.5 mr-1.5 overflow-hidden"
                       style={{
-                        width: 24,
-                        height: 24,
                         borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
                       }}
                     >
                       <RandomAvatar name={token.name || ''} />
@@ -541,12 +532,11 @@ export default function Buy(props: BuyProps) {
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
+                    className="w-2.5 h-2.5"
                     style={{
                       position: 'absolute',
                       bottom: '-2px',
                       right: '-2px',
-                      width: 10,
-                      height: 10,
                       borderRadius: '50%',
                     }}
                     alt="Chain Logo"
@@ -557,14 +547,14 @@ export default function Buy(props: BuyProps) {
                   style={{ height: 36, width: 91 }}
                 >
                   <div className="flex">
-                    <p className="text-xs font-normal">{token.symbol}</p>
+                    <p className="font-normal desktop:text-sm mobile:text-xs xs:text-xs">
+                      {token.symbol}
+                    </p>
                     {token.symbol.length + token.name.length <= 13 && (
                       <p
-                        className="text-xs font-normal"
+                        className="ml-1 opacity-30 font-normal desktop:text-sm mobile:text-xs xs:text-xs"
                         style={{
-                          marginLeft: 3,
                           color: '#FFFFFF',
-                          opacity: 0.3,
                         }}
                       >
                         {token.name}
@@ -573,27 +563,25 @@ export default function Buy(props: BuyProps) {
                   </div>
                   <div className="flex">
                     <p
+                      className="opacity-50 font-normal"
                       style={{
-                        fontSize: 10,
-                        fontWeight: 400,
                         color: '#FFFFFF',
                         height: 10,
-                        opacity: 0.5,
+                        fontSize: 10,
                       }}
                     >
                       ${token.usdValue}
                     </p>
                   </div>
                 </div>
-                <div className="flex ml-5px">
-                  <img src={ArrowDown} alt="arrow-down" />
+                <div className="flex m-1.5">
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
             ) : (
               <div
-                className="flex items-center justify-center"
+                className="flex items-center justify-center max-w-[150px] w-32"
                 style={{
-                  width: 150,
                   height: 36,
                   backgroundColor: '#1E1D24',
                   borderRadius: 10,
@@ -602,33 +590,36 @@ export default function Buy(props: BuyProps) {
                 {isSearchingToken ? (
                   <div className="flex items-center">
                     <TailSpin width={16} height={16} />
-                    <div className="flex font-normal text-xs">Searching...</div>
+                    <div className="flex font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs">
+                      Searching...
+                    </div>
                   </div>
                 ) : (
                   <>
-                    <div
-                      className="flex"
-                      style={{ fontWeight: 400, fontSize: 12, marginLeft: 5 }}
-                    >
+                    <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
                       Select token
                     </div>
-                    <div className="flex ml-2">
-                      <img src={ArrowDown} alt="arrow-down" />
+                    <div className="flex ml-1.5">
+                      <img
+                        src={ArrowDown}
+                        className="w-2 h-1"
+                        alt="arrow-down"
+                      />
                     </div>
                   </>
                 )}
               </div>
             )}
           </button>
-          <div className="flex-1">
+          <div className="flex max-w-60 gap-2 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 overflow-hidden">
             <div
-              className="flex"
-              style={{ height: 36, fontSize: 36, width: 189 }}
+              className="flex items-center max-w-60 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 text-right bg-transparent outline-none pr-0"
+              style={{ height: 36 }}
             >
               <input
-                className="no-spinner"
+                className="no-spinner flex mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl max-w-36 desktop:w-36 tablet:w-36 mobile:w-36 xs:w-12 font-medium"
                 placeholder={inputPlaceholder}
-                style={{ width: 185, textAlign: 'right' }}
+                style={{ textAlign: 'right' }}
                 onChange={handleUsdAmountChange}
                 value={usdAmount}
                 type="text"
@@ -636,7 +627,12 @@ export default function Buy(props: BuyProps) {
                 onFocus={() => setInputPlaceholder('')}
                 data-testid="pulse-buy-amount-input"
               />
-              <p style={{ lineHeight: 1, color: 'grey' }}>USD</p>
+              <p
+                className="mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl w-full desktop:w-20 tablet:w-20 mobile:w-12 xs:w-12 overflow-hidden font-medium"
+                style={{ color: 'grey' }}
+              >
+                USD
+              </p>
             </div>
           </div>
         </div>
@@ -692,9 +688,13 @@ export default function Buy(props: BuyProps) {
               );
             })()}
           </div>
-          <div className="flex" style={{ float: 'right' }}>
+          <div
+            className="flex items-center"
+            style={{ float: 'right', alignItem: 'center' }}
+          >
             <img
               src={WalletIcon}
+              className="w-4 h-3"
               alt="wallet-icon"
               data-testid="pulse-buy-wallet-icon"
             />
@@ -712,7 +712,7 @@ export default function Buy(props: BuyProps) {
         </div>
       </div>
       {/* amounts */}
-      <div className="flex">
+      <div className="flex w-full max-w-[400px]">
         {['10', '20', '50', '100', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const isDisabled = !token;
@@ -720,7 +720,7 @@ export default function Buy(props: BuyProps) {
           return (
             <div
               key={item}
-              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+              className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${
@@ -742,12 +742,8 @@ export default function Buy(props: BuyProps) {
                 data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
                 <span
+                  className="opacity-50 font-normal text-sm"
                   style={{
-                    opacity: 0.5,
-                    font: 'Poppins',
-                    fontWeight: 400,
-                    fontStyle: 'Regular',
-                    fontSize: '13px',
                     'leading-trim': 'NONE',
                     'line-height': '13px',
                     'letter-spacing': '-2%',
@@ -764,14 +760,13 @@ export default function Buy(props: BuyProps) {
 
       {/* buy/sell button */}
       <div
-        className="flex"
+        className="flex w-full m-2.5"
         style={{
-          margin: 10,
-          width: 422,
+          width: 'auto',
           height: 50,
           borderRadius: 10,
           backgroundColor: 'black',
-          padding: '2px 2px 4px 2px',
+          padding: '2px 2px 6px 2px',
         }}
       >
         <BuyButton
