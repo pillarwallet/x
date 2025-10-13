@@ -31,6 +31,7 @@ import LanguageProvider from '../providers/LanguageProvider';
 // utils
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
+import { setupPillarWalletMessaging } from '../utils/pillarWalletMessaging';
 
 // pages
 import Advertising from '../pages/Advertising';
@@ -41,7 +42,6 @@ import Lobby from '../pages/Lobby';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Privacy from '../pages/Privacy';
-import ViaPillarWallet from '../pages/ViaPillarWallet';
 import Waitlist from '../pages/WaitList';
 import Authorized from './Authorized';
 
@@ -74,11 +74,13 @@ const AuthLayout = () => {
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
+  const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
+  const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated =
     !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
-  const isAuthenticated = authenticated || wagmiIsConnected;
+  const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
 
   // Sentry context for authentication state
   useEffect(() => {
@@ -134,6 +136,98 @@ const AuthLayout = () => {
   }, [authenticated, user, wallets.length]);
 
   /**
+   * Set up Pillar Wallet webview messaging to receive private keys
+   * Only activate when coming from React Native app (iOS or Android)
+   */
+  useEffect(() => {
+    // Check if request is from React Native app
+    const searchParams = new URLSearchParams(window.location.search);
+    const devicePlatform = searchParams.get('devicePlatform');
+    const isReactNativeApp = devicePlatform === 'ios' || devicePlatform === 'android';
+
+    Sentry.addBreadcrumb({
+      category: 'authentication',
+      message: 'Checking if Pillar Wallet messaging should be enabled',
+      level: 'info',
+      data: {
+        devicePlatform,
+        isReactNativeApp,
+      },
+    });
+
+    // Only set up messaging if coming from React Native app
+    if (isReactNativeApp) {
+      // Store device platform in localStorage for persistence across navigation
+      localStorage.setItem('DEVICE_PLATFORM', devicePlatform);
+
+      Sentry.addBreadcrumb({
+        category: 'authentication',
+        message: 'Setting up Pillar Wallet webview messaging',
+        level: 'info',
+        data: {
+          devicePlatform,
+        },
+      });
+
+      const cleanup = setupPillarWalletMessaging(
+        (address: string, pk: string) => {
+          // Success callback - private key received
+          setPkAccount(address);
+          setPrivateKey(pk);
+          
+          // Store in localStorage for persistence
+          localStorage.setItem('ACCOUNT_VIA_PK', address);
+          localStorage.setItem('PK_VIA_PK', pk);
+
+          Sentry.addBreadcrumb({
+            category: 'authentication',
+            message: 'Private key stored in state',
+            level: 'info',
+            data: {
+              accountAddress: address,
+              devicePlatform,
+            },
+          });
+        },
+        (error: Error) => {
+          // Error callback
+          console.error('Pillar Wallet authentication error:', error);
+          
+          Sentry.captureException(error, {
+            tags: {
+              component: 'authentication',
+              action: 'pillar_wallet_setup_error',
+              devicePlatform: devicePlatform || 'unknown',
+            },
+          });
+        }
+      );
+
+      return cleanup;
+    }
+
+    // Check if there's a stored private key on mount (for session restoration)
+    const storedPk = localStorage.getItem('PK_VIA_PK');
+    const storedAccount = localStorage.getItem('ACCOUNT_VIA_PK');
+    if (storedPk && storedAccount) {
+      Sentry.addBreadcrumb({
+        category: 'authentication',
+        message: 'Restoring private key from localStorage',
+        level: 'info',
+        data: {
+          accountAddress: storedAccount,
+        },
+      });
+
+      setPrivateKey(storedPk);
+      setPkAccount(storedAccount);
+    }
+
+    // No cleanup needed if messaging wasn't set up
+    return undefined;
+  }, []);
+
+  /**
    * The following useEffect is to detemine if the
    * user is logging in (or has logged in)  with a
    * private key or if the wallet state of Privy changed,
@@ -159,6 +253,49 @@ const AuthLayout = () => {
 
       // Handle both Privy wallets and WalletConnect connections
       const updateProvider = async () => {
+        // PRIORITY 1: Private key authentication (takes precedence over all other methods)
+        if (privateKey && pkAccount) {
+          Sentry.addBreadcrumb({
+            category: 'authentication',
+            message: 'Setting up private key provider (priority authentication)',
+            level: 'info',
+            data: {
+              providerSetupId,
+              accountAddress: pkAccount,
+            },
+          });
+
+          const account = privateKeyToAccount(privateKey as `0x${string}`);
+          const walletChainId = 1; // default chain id is 1 (mainnet)
+
+          const newProvider = createWalletClient({
+            account,
+            chain: getNetworkViem(walletChainId),
+            transport: http(),
+          });
+
+          setProvider(newProvider);
+
+          const isWithinVisibleChains = visibleChains.some(
+            (chain) => chain.id === walletChainId
+          );
+          setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+
+          Sentry.addBreadcrumb({
+            category: 'authentication',
+            message: 'Private key provider setup completed',
+            level: 'info',
+            data: {
+              providerSetupId,
+              walletChainId,
+              isWithinVisibleChains,
+              finalChainId: isWithinVisibleChains ? walletChainId : visibleChains[0].id,
+            },
+          });
+
+          return;
+        } // END if (privateKey && pkAccount)
+
         // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
         if (!ready && !wagmiIsConnected) {
           Sentry.addBreadcrumb({
@@ -507,7 +644,7 @@ const AuthLayout = () => {
       updateProvider();
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, wagmiIsConnected]);
+  }, [wallets, user, wagmiIsConnected, privateKey, pkAccount]);
 
   /**
    * If all the following variables are truthy within the if
@@ -538,7 +675,7 @@ const AuthLayout = () => {
     const authorizedRoutesDefinition = [
       {
         path: '/',
-        element: <Authorized chainId={chainId} provider={provider} />,
+        element: <Authorized chainId={chainId} provider={provider} privateKey={privateKey} />,
         children: [
           {
             index: true,
@@ -568,10 +705,6 @@ const AuthLayout = () => {
           {
             path: '/login',
             element: <Navigate to="/" />,
-          },
-          {
-            path: '/via-pillar-wallet',
-            element: <ViaPillarWallet />,
           },
         ],
       },
@@ -637,8 +770,7 @@ const AuthLayout = () => {
     window.location.pathname === '/developers' ||
     window.location.pathname === '/advertising' ||
     window.location.pathname === '/privacy-policy' ||
-    window.location.pathname === '/login' ||
-    window.location.pathname === '/via-pillar-wallet';
+    window.location.pathname === '/login';
 
   /**
    * The following if statement determines if the user is
@@ -692,10 +824,6 @@ const AuthLayout = () => {
       {
         path: '/login',
         element: <Login />,
-      },
-      {
-        path: '/via-pillar-wallet',
-        element: <ViaPillarWallet />,
       },
       {
         path: '*',

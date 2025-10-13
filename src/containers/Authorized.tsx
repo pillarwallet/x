@@ -34,7 +34,7 @@ export default function Authorized({
 }: {
   provider: WalletClient;
   chainId: number;
-  privateKey: string | null;
+  privateKey?: string;
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});

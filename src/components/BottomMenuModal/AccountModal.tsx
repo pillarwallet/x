@@ -31,7 +31,6 @@ import { useComprehensiveLogout } from '../../utils/logout';
 import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
-import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 import useTransactionKit from '../../hooks/useTransactionKit';
 
 // services
@@ -47,10 +46,12 @@ interface AccountModalProps {
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const { walletAddress: accountAddress } = useTransactionKit();
-  const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
   const [t] = useTranslation();
   const { logout } = useComprehensiveLogout();
+  
+  // Check if user is logged in via private key
+  const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
 
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -124,9 +125,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
-    // Handle private key logout
-    if (account) {
-      setAccount(undefined);
+    // Handle private key logout - clear localStorage
+    if (isPkAccount) {
+      localStorage.removeItem('ACCOUNT_VIA_PK');
+      localStorage.removeItem('PK_VIA_PK');
     }
 
     // Use comprehensive logout for both Privy and WAGMI
@@ -151,7 +153,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate]);
+  }, [isPkAccount, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {
