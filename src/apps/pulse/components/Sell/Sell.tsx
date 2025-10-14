@@ -26,6 +26,7 @@ import {
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WarningIcon from '../../assets/warning.svg';
 import SellButton from './SellButton';
@@ -35,7 +36,6 @@ import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 // services
 import { PortfolioToken } from '../../../../services/tokensData';
-import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
