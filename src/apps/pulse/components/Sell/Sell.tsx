@@ -191,7 +191,7 @@ const Sell = (props: SellProps) => {
           >
             {token ? (
               <div
-                className="flex items-center w-36 h-9 bg-[#1E1D24] rounded-md"
+                className="flex items-center mobile:w-36 xs:w-36 desktop:w-full h-9 bg-[#1E1D24] rounded-md"
                 data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
               >
                 <div className="relative inline-block">
@@ -199,7 +199,7 @@ const Sell = (props: SellProps) => {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-[34px] h-6 ml-1 mr-1"
+                      className="w-6 h-6 ml-1 mr-1"
                       data-testid="pulse-sell-token-selector-logo"
                       style={{
                         borderRadius: 50,
