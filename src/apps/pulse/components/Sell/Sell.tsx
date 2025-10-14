@@ -138,7 +138,7 @@ const Sell = (props: SellProps) => {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          token.chainId && isNativeToken(t.contract)
+        token.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
       setMinGasAmount(true);
@@ -319,17 +319,16 @@ const Sell = (props: SellProps) => {
                 >
                   <HighDecimalsFormatted
                     value={limitDigitsNumber(Number(tokenAmount))}
-                    styleNumber="text-white text-4xl text-center mt-2"
+                    styleNumber="text-white text-4xl text-center"
                     styleZeros="text-white/70 text-sm"
                   />
                 </div>
               ) : (
                 <input
-                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${
-                    token
+                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
                       ? 'desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24'
                       : 'desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44'
-                  }`}
+                    }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
                   value={tokenAmount}
@@ -427,11 +426,10 @@ const Sell = (props: SellProps) => {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
                     ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
                     : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     setShowNumInP(true);
