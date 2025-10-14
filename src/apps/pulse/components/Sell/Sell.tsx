@@ -289,15 +289,15 @@ const Sell = (props: SellProps) => {
               </div>
             )}
           </button>
-          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 items-right">
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right">
             <div
-              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
+              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               <input
                 className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 mr-1" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
+                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24" : "desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44"}`}
                 placeholder={inputPlaceholder}
                 onChange={handleTokenAmountChange}
                 value={tokenAmount}
@@ -309,7 +309,7 @@ const Sell = (props: SellProps) => {
               {token && (
                 <div className="relative">
                   <p
-                    className={`text-grey opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
+                    className={`text-grey ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}

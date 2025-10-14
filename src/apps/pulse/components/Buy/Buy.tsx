@@ -611,13 +611,13 @@ export default function Buy(props: BuyProps) {
               </div>
             )}
           </button>
-          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 items-right">
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden">
             <div
-              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
+              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
               <input
-                className="no-spinner flex mobile:text-4xl mr-1.5 xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 font-medium"
+                className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium"
                 placeholder={inputPlaceholder}
                 style={{ textAlign: 'right' }}
                 onChange={handleUsdAmountChange}
@@ -628,7 +628,7 @@ export default function Buy(props: BuyProps) {
                 data-testid="pulse-buy-amount-input"
               />
               <span
-                className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium"
+                className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden"
                 style={{ color: 'grey' }}
               >
                 USD
