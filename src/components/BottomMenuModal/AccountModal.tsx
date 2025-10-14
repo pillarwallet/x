@@ -49,10 +49,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const navigate = useNavigate();
   const [t] = useTranslation();
   const { logout } = useComprehensiveLogout();
-  
+
   // Check if user is logged in via private key
   const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
-  
+
   // Check if running inside React Native app
   const isReactNativeApp = !!localStorage.getItem('DEVICE_PLATFORM');
 

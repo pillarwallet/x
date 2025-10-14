@@ -38,7 +38,7 @@ const BottomMenu = () => {
   const { batchCount } = useGlobalTransactionsBatch();
   const overlayRef = React.useRef<HTMLDivElement>(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
-  
+
   // Check if user is logged in via private key (React Native app)
   const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
 

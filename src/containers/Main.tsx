@@ -8,13 +8,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import {
-  createWalletClient,
-  custom,
-  http,
-  isAddress,
-  WalletClient,
-} from 'viem';
+import { createWalletClient, custom, http, WalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
@@ -77,8 +71,7 @@ const AuthLayout = () => {
   const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
   const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
-  const previouslyAuthenticated =
-    !!localStorage.getItem('privy:token');
+  const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
 
@@ -143,7 +136,8 @@ const AuthLayout = () => {
     // Check if request is from React Native app
     const searchParams = new URLSearchParams(window.location.search);
     const devicePlatform = searchParams.get('devicePlatform');
-    const isReactNativeApp = devicePlatform === 'ios' || devicePlatform === 'android';
+    const isReactNativeApp =
+      devicePlatform === 'ios' || devicePlatform === 'android';
 
     Sentry.addBreadcrumb({
       category: 'authentication',
@@ -174,7 +168,7 @@ const AuthLayout = () => {
           // Success callback - private key received
           setPkAccount(address);
           setPrivateKey(pk);
-          
+
           // Store in localStorage for persistence
           localStorage.setItem('ACCOUNT_VIA_PK', address);
           localStorage.setItem('PK_VIA_PK', pk);
@@ -192,7 +186,7 @@ const AuthLayout = () => {
         (error: Error) => {
           // Error callback
           console.error('Pillar Wallet authentication error:', error);
-          
+
           Sentry.captureException(error, {
             tags: {
               component: 'authentication',
@@ -251,284 +245,304 @@ const AuthLayout = () => {
       connectorsCount: connectors.length,
     });
 
-      // Handle both Privy wallets and WalletConnect connections
-      const updateProvider = async () => {
-        // PRIORITY 1: Private key authentication (takes precedence over all other methods)
-        if (privateKey && pkAccount) {
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Setting up private key provider (priority authentication)',
-            level: 'info',
-            data: {
-              providerSetupId,
-              accountAddress: pkAccount,
-            },
-          });
-
-          const account = privateKeyToAccount(privateKey as `0x${string}`);
-          const walletChainId = 1; // default chain id is 1 (mainnet)
-
-          const newProvider = createWalletClient({
-            account,
-            chain: getNetworkViem(walletChainId),
-            transport: http(),
-          });
-
-          setProvider(newProvider);
-
-          const isWithinVisibleChains = visibleChains.some(
-            (chain) => chain.id === walletChainId
-          );
-          setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Private key provider setup completed',
-            level: 'info',
-            data: {
-              providerSetupId,
-              walletChainId,
-              isWithinVisibleChains,
-              finalChainId: isWithinVisibleChains ? walletChainId : visibleChains[0].id,
-            },
-          });
-
-          return;
-        } // END if (privateKey && pkAccount)
-
-        // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
-        if (!ready && !wagmiIsConnected) {
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Provider setup skipped - not ready',
-            level: 'info',
-            data: {
-              providerSetupId,
-              ready,
-              wagmiIsConnected,
-            },
-          });
-
-          return;
-        }
-
-        // Check if we have any wallets (Privy or WalletConnect)
-        const hasWallets = wallets.length > 0;
-        const isWalletConnectConnected = wagmiIsConnected && !hasWallets;
-
+    // Handle both Privy wallets and WalletConnect connections
+    const updateProvider = async () => {
+      // PRIORITY 1: Private key authentication (takes precedence over all other methods)
+      if (privateKey && pkAccount) {
         Sentry.addBreadcrumb({
           category: 'authentication',
-          message: 'Provider setup debug info',
+          message: 'Setting up private key provider (priority authentication)',
           level: 'info',
           data: {
             providerSetupId,
-            isAuthenticated,
-            hasWallets,
-            isWalletConnectConnected,
-            wagmiIsConnected,
-            walletsCount: wallets.length,
-            connectorsCount: connectors.length,
+            accountAddress: pkAccount,
           },
         });
 
-        // If no wallets and not connected via WalletConnect, return early
-        if (!hasWallets && !isWalletConnectConnected) {
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'No wallets or WalletConnect connection detected',
-            level: 'info',
-            data: {
-              providerSetupId,
-              hasWallets,
-              isWalletConnectConnected,
-            },
-          });
+        const account = privateKeyToAccount(privateKey as `0x${string}`);
+        const walletChainId = 1; // default chain id is 1 (mainnet)
 
-          return;
-        }
+        const newProvider = createWalletClient({
+          account,
+          chain: getNetworkViem(walletChainId),
+          transport: http(),
+        });
 
-        // If we have Privy wallets, don't try to setup WalletConnect
-        if (hasWallets) {
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Privy wallets detected, skipping WalletConnect setup',
-            level: 'info',
-            data: {
-              providerSetupId,
-              walletsCount: wallets.length,
-            },
-          });
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let privyEthereumProvider: any;
+        setProvider(newProvider);
 
-        const privyWalletAddress = user?.wallet?.address;
-
-        const walletProvider = wallets.find(
-          (wallet) => wallet.address === privyWalletAddress
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
         );
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
 
-        if (walletProvider) {
-          // Handle Privy wallet
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Private key provider setup completed',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletChainId,
+            isWithinVisibleChains,
+            finalChainId: isWithinVisibleChains
+              ? walletChainId
+              : visibleChains[0].id,
+          },
+        });
+
+        return;
+      } // END if (privateKey && pkAccount)
+
+      // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
+      if (!ready && !wagmiIsConnected) {
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Provider setup skipped - not ready',
+          level: 'info',
+          data: {
+            providerSetupId,
+            ready,
+            wagmiIsConnected,
+          },
+        });
+
+        return;
+      }
+
+      // Check if we have any wallets (Privy or WalletConnect)
+      const hasWallets = wallets.length > 0;
+      const isWalletConnectConnected = wagmiIsConnected && !hasWallets;
+
+      Sentry.addBreadcrumb({
+        category: 'authentication',
+        message: 'Provider setup debug info',
+        level: 'info',
+        data: {
+          providerSetupId,
+          isAuthenticated,
+          hasWallets,
+          isWalletConnectConnected,
+          wagmiIsConnected,
+          walletsCount: wallets.length,
+          connectorsCount: connectors.length,
+        },
+      });
+
+      // If no wallets and not connected via WalletConnect, return early
+      if (!hasWallets && !isWalletConnectConnected) {
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'No wallets or WalletConnect connection detected',
+          level: 'info',
+          data: {
+            providerSetupId,
+            hasWallets,
+            isWalletConnectConnected,
+          },
+        });
+
+        return;
+      }
+
+      // If we have Privy wallets, don't try to setup WalletConnect
+      if (hasWallets) {
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Privy wallets detected, skipping WalletConnect setup',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletsCount: wallets.length,
+          },
+        });
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let privyEthereumProvider: any;
+
+      const privyWalletAddress = user?.wallet?.address;
+
+      const walletProvider = wallets.find(
+        (wallet) => wallet.address === privyWalletAddress
+      );
+
+      if (walletProvider) {
+        // Handle Privy wallet
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Setting up Privy wallet provider',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletAddress: walletProvider.address,
+            chainId: walletProvider.chainId,
+          },
+        });
+
+        privyEthereumProvider = await walletProvider.getEthereumProvider();
+
+        const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+
+        const newProvider = createWalletClient({
+          account: walletProvider.address as `0x${string}`,
+          chain: getNetworkViem(walletChainId),
+          transport: custom(privyEthereumProvider),
+        });
+
+        setProvider(newProvider);
+
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Privy wallet provider setup completed',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletAddress: walletProvider.address,
+            walletChainId,
+            hasProvider: !!newProvider,
+          },
+        });
+      } else if (isWalletConnectConnected && !hasWallets) {
+        // Handle WalletConnect connection - only if no Privy wallets are present
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Attempting to setup WalletConnect provider',
+          level: 'info',
+          data: {
+            providerSetupId,
+            hasWallets,
+            isWalletConnectConnected,
+          },
+        });
+
+        try {
+          // Find the WalletConnect connector
+          const walletConnectConnector = connectors.find(
+            ({ id }) => id === 'walletConnect'
+          );
+
           Sentry.addBreadcrumb({
             category: 'authentication',
-            message: 'Setting up Privy wallet provider',
+            message: 'WalletConnect connector search result',
             level: 'info',
             data: {
               providerSetupId,
-              walletAddress: walletProvider.address,
-              chainId: walletProvider.chainId,
+              connectorFound: !!walletConnectConnector,
+              connectorsCount: connectors.length,
+              connectorIds: connectors.map((c) => c.id),
             },
           });
 
-          privyEthereumProvider = await walletProvider.getEthereumProvider();
-
-          const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-
-          const newProvider = createWalletClient({
-            account: walletProvider.address as `0x${string}`,
-            chain: getNetworkViem(walletChainId),
-            transport: custom(privyEthereumProvider),
-          });
-
-          setProvider(newProvider);
-
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Privy wallet provider setup completed',
-            level: 'info',
-            data: {
-              providerSetupId,
-              walletAddress: walletProvider.address,
-              walletChainId,
-              hasProvider: !!newProvider,
-            },
-          });
-        } else if (isWalletConnectConnected && !hasWallets) {
-          // Handle WalletConnect connection - only if no Privy wallets are present
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Attempting to setup WalletConnect provider',
-            level: 'info',
-            data: {
-              providerSetupId,
-              hasWallets,
-              isWalletConnectConnected,
-            },
-          });
-
-          try {
-            // Find the WalletConnect connector
-            const walletConnectConnector = connectors.find(
-              ({ id }) => id === 'walletConnect'
-            );
+          if (walletConnectConnector) {
+            // Get the WalletConnect provider
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const wcProvider: any = await walletConnectConnector.getProvider();
 
             Sentry.addBreadcrumb({
               category: 'authentication',
-              message: 'WalletConnect connector search result',
+              message: 'WalletConnect provider obtained',
               level: 'info',
               data: {
                 providerSetupId,
-                connectorFound: !!walletConnectConnector,
-                connectorsCount: connectors.length,
-                connectorIds: connectors.map((c) => c.id),
+                hasProvider: !!wcProvider,
+                providerConnected: wcProvider?.connected,
+                hasAccounts: wcProvider?.accounts?.length > 0,
               },
             });
 
-            if (walletConnectConnector) {
-              // Get the WalletConnect provider
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const wcProvider: any =
-                await walletConnectConnector.getProvider();
+            // Only proceed if the provider is actually connected
+            if (
+              wcProvider &&
+              wcProvider.connected &&
+              wcProvider.accounts &&
+              wcProvider.accounts.length > 0
+            ) {
+              // Get the connected account
+              const accounts = await wcProvider.request({
+                method: 'eth_accounts',
+              });
+              const wcAccount = accounts[0];
 
               Sentry.addBreadcrumb({
                 category: 'authentication',
-                message: 'WalletConnect provider obtained',
+                message: 'WalletConnect account retrieved',
                 level: 'info',
                 data: {
                   providerSetupId,
-                  hasProvider: !!wcProvider,
-                  providerConnected: wcProvider?.connected,
-                  hasAccounts: wcProvider?.accounts?.length > 0,
+                  hasAccount: !!wcAccount,
+                  accountAddress: wcAccount,
+                  accountsCount: accounts.length,
                 },
               });
 
-              // Only proceed if the provider is actually connected
-              if (
-                wcProvider &&
-                wcProvider.connected &&
-                wcProvider.accounts &&
-                wcProvider.accounts.length > 0
-              ) {
-                // Get the connected account
-                const accounts = await wcProvider.request({
-                  method: 'eth_accounts',
+              if (wcAccount) {
+                // Create wallet client with WalletConnect provider
+                const newProvider = createWalletClient({
+                  account: wcAccount as `0x${string}`,
+                  chain: getNetworkViem(1), // Default to mainnet
+                  transport: custom(wcProvider),
                 });
-                const wcAccount = accounts[0];
+
+                setProvider(newProvider);
+                setChainId(1); // Default to mainnet
 
                 Sentry.addBreadcrumb({
                   category: 'authentication',
-                  message: 'WalletConnect account retrieved',
+                  message: 'WalletConnect provider setup successful',
                   level: 'info',
                   data: {
                     providerSetupId,
-                    hasAccount: !!wcAccount,
-                    accountAddress: wcAccount,
-                    accountsCount: accounts.length,
+                    account: newProvider.account,
+                    chainId: newProvider.chain?.id,
+                    transport: 'custom(wcProvider)',
                   },
                 });
 
-                if (wcAccount) {
-                  // Create wallet client with WalletConnect provider
-                  const newProvider = createWalletClient({
-                    account: wcAccount as `0x${string}`,
-                    chain: getNetworkViem(1), // Default to mainnet
-                    transport: custom(wcProvider),
-                  });
-
-                  setProvider(newProvider);
-                  setChainId(1); // Default to mainnet
-
-                  Sentry.addBreadcrumb({
-                    category: 'authentication',
-                    message: 'WalletConnect provider setup successful',
+                Sentry.captureMessage(
+                  'WalletConnect provider setup completed successfully',
+                  {
                     level: 'info',
-                    data: {
+                    tags: {
+                      component: 'authentication',
+                      action: 'walletconnect_setup_success',
                       providerSetupId,
-                      account: newProvider.account,
-                      chainId: newProvider.chain?.id,
-                      transport: 'custom(wcProvider)',
                     },
-                  });
-
-                  Sentry.captureMessage(
-                    'WalletConnect provider setup completed successfully',
-                    {
-                      level: 'info',
-                      tags: {
-                        component: 'authentication',
-                        action: 'walletconnect_setup_success',
+                    contexts: {
+                      walletconnect_success: {
                         providerSetupId,
+                        account: newProvider.account,
+                        chainId: newProvider.chain?.id,
+                        transport: 'custom(wcProvider)',
                       },
-                      contexts: {
-                        walletconnect_success: {
-                          providerSetupId,
-                          account: newProvider.account,
-                          chainId: newProvider.chain?.id,
-                          transport: 'custom(wcProvider)',
-                        },
-                      },
-                    }
-                  );
+                    },
+                  }
+                );
 
-                  return;
-                }
+                return;
+              }
 
-                Sentry.captureMessage('No WalletConnect account found', {
+              Sentry.captureMessage('No WalletConnect account found', {
+                level: 'warning',
+                tags: {
+                  component: 'authentication',
+                  action: 'walletconnect_no_account',
+                  providerSetupId,
+                },
+                contexts: {
+                  walletconnect_error: {
+                    providerSetupId,
+                    hasProvider: !!wcProvider,
+                    providerConnected: wcProvider?.connected,
+                    accountsCount: wcProvider?.accounts?.length || 0,
+                  },
+                },
+              });
+            } else {
+              Sentry.captureMessage(
+                'WalletConnect provider not connected or no accounts',
+                {
                   level: 'warning',
                   tags: {
                     component: 'authentication',
-                    action: 'walletconnect_no_account',
+                    action: 'walletconnect_not_connected',
                     providerSetupId,
                   },
                   contexts: {
@@ -536,113 +550,92 @@ const AuthLayout = () => {
                       providerSetupId,
                       hasProvider: !!wcProvider,
                       providerConnected: wcProvider?.connected,
-                      accountsCount: wcProvider?.accounts?.length || 0,
+                      hasAccounts: wcProvider?.accounts?.length > 0,
                     },
                   },
-                });
-              } else {
-                Sentry.captureMessage(
-                  'WalletConnect provider not connected or no accounts',
-                  {
-                    level: 'warning',
-                    tags: {
-                      component: 'authentication',
-                      action: 'walletconnect_not_connected',
-                      providerSetupId,
-                    },
-                    contexts: {
-                      walletconnect_error: {
-                        providerSetupId,
-                        hasProvider: !!wcProvider,
-                        providerConnected: wcProvider?.connected,
-                        hasAccounts: wcProvider?.accounts?.length > 0,
-                      },
-                    },
-                  }
-                );
-              }
-            } else {
-              Sentry.captureMessage('WalletConnect connector not found', {
-                level: 'error',
-                tags: {
-                  component: 'authentication',
-                  action: 'walletconnect_connector_missing',
-                  providerSetupId,
-                },
-                contexts: {
-                  walletconnect_error: {
-                    providerSetupId,
-                    connectorsCount: connectors.length,
-                    connectorIds: connectors.map((c) => c.id),
-                  },
-                },
-              });
+                }
+              );
             }
-          } catch (error) {
-            console.error('Error setting up WalletConnect provider:', error);
-
-            Sentry.captureException(error, {
+          } else {
+            Sentry.captureMessage('WalletConnect connector not found', {
+              level: 'error',
               tags: {
                 component: 'authentication',
-                action: 'walletconnect_setup_error',
+                action: 'walletconnect_connector_missing',
                 providerSetupId,
               },
               contexts: {
                 walletconnect_error: {
                   providerSetupId,
-                  error: error instanceof Error ? error.message : String(error),
-                  hasWallets,
-                  isWalletConnectConnected,
+                  connectorsCount: connectors.length,
+                  connectorIds: connectors.map((c) => c.id),
                 },
               },
             });
           }
-        }
+        } catch (error) {
+          console.error('Error setting up WalletConnect provider:', error);
 
-        // Set chain ID for Privy wallets or WalletConnect
-        if (wallets.length > 0) {
-          const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
-          const isWithinVisibleChains = visibleChains.some(
-            (chain) => chain.id === walletChainId
-          );
-          /**
-           * Sets supported chain ID rather than throw unsupported bundler error.
-           * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
-           */
-          setChainId(
-            isWithinVisibleChains ? walletChainId : visibleChains[0].id
-          );
-
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Chain ID set for Privy wallets',
-            level: 'info',
-            data: {
+          Sentry.captureException(error, {
+            tags: {
+              component: 'authentication',
+              action: 'walletconnect_setup_error',
               providerSetupId,
-              walletChainId,
-              isWithinVisibleChains,
-              finalChainId: isWithinVisibleChains
-                ? walletChainId
-                : visibleChains[0].id,
             },
-          });
-        } else if (isWalletConnectConnected && !chainId) {
-          // For WalletConnect, default to mainnet if no chain ID is set
-          setChainId(1);
-
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Chain ID set for WalletConnect',
-            level: 'info',
-            data: {
-              providerSetupId,
-              finalChainId: 1,
+            contexts: {
+              walletconnect_error: {
+                providerSetupId,
+                error: error instanceof Error ? error.message : String(error),
+                hasWallets,
+                isWalletConnectConnected,
+              },
             },
           });
         }
-      };
-      updateProvider();
-    
+      }
+
+      // Set chain ID for Privy wallets or WalletConnect
+      if (wallets.length > 0) {
+        const walletChainId = +wallets[0].chainId.split(':')[1]; // extract from CAIP-2
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
+        );
+        /**
+         * Sets supported chain ID rather than throw unsupported bundler error.
+         * This does not affect transaction send flow if chain ID remains provided to TransationKit Batches JSX.
+         */
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Chain ID set for Privy wallets',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletChainId,
+            isWithinVisibleChains,
+            finalChainId: isWithinVisibleChains
+              ? walletChainId
+              : visibleChains[0].id,
+          },
+        });
+      } else if (isWalletConnectConnected && !chainId) {
+        // For WalletConnect, default to mainnet if no chain ID is set
+        setChainId(1);
+
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'Chain ID set for WalletConnect',
+          level: 'info',
+          data: {
+            providerSetupId,
+            finalChainId: 1,
+          },
+        });
+      }
+    };
+    updateProvider();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets, user, wagmiIsConnected, privateKey, pkAccount]);
 
@@ -675,7 +668,13 @@ const AuthLayout = () => {
     const authorizedRoutesDefinition = [
       {
         path: '/',
-        element: <Authorized chainId={chainId} provider={provider} privateKey={privateKey} />,
+        element: (
+          <Authorized
+            chainId={chainId}
+            provider={provider}
+            privateKey={privateKey}
+          />
+        ),
         children: [
           {
             index: true,

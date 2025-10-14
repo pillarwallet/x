@@ -12,6 +12,42 @@ import { MailChimp } from '../components/LandingPage/MailChimp';
 // utils
 import { setupPillarWalletMessaging } from '../utils/pillarWalletMessaging';
 
+// Styled components for loading state
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0a0a0a;
+  gap: 24px;
+`;
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
+`;
+
+const LoadingText = styled.p`
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+`;
+
 export default function LandingPage() {
   const navigate = useNavigate();
   const [isLoadingAuth, setIsLoadingAuth] = useState(false);
@@ -20,10 +56,13 @@ export default function LandingPage() {
     // Check if we're in React Native webview
     const searchParams = new URLSearchParams(window.location.search);
     const devicePlatform = searchParams.get('devicePlatform');
-    const hasDevicePlatformInUrl = devicePlatform === 'ios' || devicePlatform === 'android';
-    const hasDevicePlatformInStorage = !!localStorage.getItem('DEVICE_PLATFORM');
-    
-    const isReactNativeApp = hasDevicePlatformInUrl || hasDevicePlatformInStorage;
+    const hasDevicePlatformInUrl =
+      devicePlatform === 'ios' || devicePlatform === 'android';
+    const hasDevicePlatformInStorage =
+      !!localStorage.getItem('DEVICE_PLATFORM');
+
+    const isReactNativeApp =
+      hasDevicePlatformInUrl || hasDevicePlatformInStorage;
 
     if (isReactNativeApp) {
       setIsLoadingAuth(true);
@@ -50,6 +89,7 @@ export default function LandingPage() {
 
       return cleanup;
     }
+    return undefined;
   }, [navigate]);
 
   // Show loading state if authenticating via React Native
@@ -348,39 +388,3 @@ export default function LandingPage() {
     </>
   );
 }
-
-// Styled components for loading state
-const LoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #0a0a0a;
-  gap: 24px;
-`;
-
-const spin = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
-
-const Spinner = styled.div`
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #ffffff;
-  border-radius: 50%;
-  animation: ${spin} 1s linear infinite;
-`;
-
-const LoadingText = styled.p`
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0;
-`;

@@ -209,7 +209,10 @@ const App = () => {
     <Wrapper>
       <HeaderContainer>
         {isReactNativeApp && (
-          <SettingsButton onClick={handleSettingsClick} aria-label="Open settings">
+          <SettingsButton
+            onClick={handleSettingsClick}
+            aria-label="Open settings"
+          >
             <Setting2 size={24} variant="Outline" />
           </SettingsButton>
         )}
@@ -267,7 +270,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 70px;
-  
+
   @media (max-width: 768px) {
     margin-bottom: 58px;
   }

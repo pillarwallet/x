@@ -23,7 +23,10 @@ export type PillarWalletAuthRequest = {
 /**
  * Callback function type for when a private key is successfully received
  */
-export type OnPrivateKeyReceivedCallback = (address: string, privateKey: string) => void;
+export type OnPrivateKeyReceivedCallback = (
+  address: string,
+  privateKey: string
+) => void;
 
 /**
  * Callback function type for when an error occurs
@@ -214,7 +217,11 @@ export const setupPillarWalletMessaging = (
   });
 
   // Create the message handler
-  const messageHandler = createWebViewMessageHandler(authRequestId, onSuccess, onError);
+  const messageHandler = createWebViewMessageHandler(
+    authRequestId,
+    onSuccess,
+    onError
+  );
 
   // Add event listener for webview messages
   window.addEventListener('message', messageHandler);
@@ -230,4 +237,3 @@ export const setupPillarWalletMessaging = (
     clearTimeout(requestTimer);
   };
 };
-
