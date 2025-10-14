@@ -841,7 +841,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <div className="w-full max-w-[446px] px-4 md:px-0">
+      <div className="w-full max-w-[446px] md:px-0">
         <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
           You&apos;re trying out the beta version of Pulse: expect improvements
           ahead. Thank you.
@@ -918,32 +918,22 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
+                      backgroundColor: '#1E1D24',
+                      borderRadius: 10,
+                      margin: 4,
+                    }
                     : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
+                      backgroundColor: 'black',
+                      borderRadius: 10,
+                      margin: 4,
+                      color: 'grey',
+                    }
                 }
                 onClick={() => setIsBuy(true)}
                 type="button"
               >
                 <span
-                  className="text-center"
-                  style={{
-                    'font-family': 'Poppins',
-                    'font-weight': '500',
-                    'font-style': 'Medium',
-                    'font-size': '13px',
-                    'leading-trim': 'NONE',
-                    'line-height': '100%',
-                    'letter-spacing': '-2%',
-                    'text-align': 'center',
-                  }}
+                  className="text-center font-medium text-sm"
                 >
                   Buy
                 </span>
@@ -954,32 +944,22 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
+                      backgroundColor: '#1E1D24',
+                      borderRadius: 10,
+                      margin: 4,
+                    }
                     : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
+                      backgroundColor: 'black',
+                      borderRadius: 10,
+                      margin: 4,
+                      color: 'grey',
+                    }
                 }
                 onClick={() => setIsBuy(false)}
                 type="button"
               >
                 <span
-                  className="text-center"
-                  style={{
-                    'font-family': 'Poppins',
-                    'font-weight': '500',
-                    'font-style': 'Medium',
-                    'font-size': '13px',
-                    'leading-trim': 'NONE',
-                    'line-height': '100%',
-                    'letter-spacing': '-2%',
-                    'text-align': 'center',
-                  }}
+                  className="text-center font-medium text-sm"
                 >
                   Sell
                 </span>

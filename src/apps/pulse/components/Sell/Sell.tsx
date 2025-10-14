@@ -180,7 +180,7 @@ const Sell = (props: SellProps) => {
   return (
     <div className="flex flex-col w-full" data-testid="pulse-sell-component">
       <div className="bg-[#121116] m-2.5 rounded-[10px]">
-        <div className="flex items-center gap-3 p-3">
+        <div className="flex items-center justify-between p-3">
           <button
             onClick={() => {
               setSearching(true);
@@ -199,14 +199,14 @@ const Sell = (props: SellProps) => {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 ml-1.5 mr-1.5"
+                      className="w-[34px] h-6 ml-1 mr-1"
                       data-testid="pulse-sell-token-selector-logo"
                       style={{
                         borderRadius: 50,
                       }}
                     />
                   ) : (
-                    <div className="w-full h-full overflow-hidden rounded-full w-6 h-6 ml-1.5 mr-1.5">
+                    <div className="w-full h-full overflow-hidden rounded-full w-[34px] h-6 ml-1 mr-1">
                       <RandomAvatar name={token.name || ''} />
                       <span className="absolute inset-0 flex items-center justify-center text-white text-xs">
                         {token.name?.slice(0, 2)}
@@ -218,7 +218,7 @@ const Sell = (props: SellProps) => {
                     className="absolute w-2.5 h-2.5"
                     style={{
                       bottom: '-2px',
-                      right: '-2px',
+                      right: '2px',
                       borderRadius: '50%',
                     }}
                     alt="Chain Logo"
@@ -226,8 +226,8 @@ const Sell = (props: SellProps) => {
                   />
                 </div>
                 <div
-                  className="flex flex-col ml-1.5 mt-1.5"
-                  style={{ height: 36, width: 91 }}
+                  className="flex flex-col mt-1"
+                  style={{ height: 40, width: 91 }}
                 >
                   <div className="flex">
                     <p
@@ -267,9 +267,9 @@ const Sell = (props: SellProps) => {
                 </div>
               </div>
             ) : (
-              <div className="flex ml-1.5 h-9 bg-[#1E1D24] items-center max-w-[150px] h-9 w-32 rounded-md justify-center font-normal desktop:text-sm mobile:text-xs xs:text-xs justify-items-end">
+              <div className="flex ml-1.5 h-9 bg-[#1E1D24] items-center max-w-[150px] w-32 rounded-md justify-center font-normal desktop:text-sm mobile:text-xs xs:text-xs justify-items-end">
                 <div
-                  className="flex font-normal text-xs"
+                  className="flex font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs"
                   data-testid="pulse-sell-token-selector-placeholder"
                 >
                   Select token
@@ -285,14 +285,15 @@ const Sell = (props: SellProps) => {
               </div>
             )}
           </button>
-          <div className="flex-1 min-w-0 justify-items-end max-w-56 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24">
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 items-right">
             <div
-              className="flex items-center max-w-56 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 text-right bg-transparent outline-none pr-0"
+              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               <input
-                className="w-full no-spinner text-right bg-transparent outline-none pr-0 mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl max-w-36 desktop:w-36 mobile:w-36 xs:w-12 tablet:w-36 font-medium"
+                className={`no-spinner flex mobile:text-4xl mr-1.5 xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
+                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
                 placeholder={inputPlaceholder}
                 onChange={handleTokenAmountChange}
                 value={tokenAmount}
@@ -304,7 +305,7 @@ const Sell = (props: SellProps) => {
               {token && (
                 <div>
                   <p
-                    className="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl w-full max-w-20 tablet:w-20 desktop:w-20 mobile:w-12 xs:w-12 font-medium"
+                    className="text-grey flex-shrink-0 opacity-50 cursor-help mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium"
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
@@ -321,7 +322,7 @@ const Sell = (props: SellProps) => {
             </div>
           </div>
         </div>
-        <div className="flex justify-between m-2.5">
+        <div className="flex justify-between p-3">
           <div className="flex">
             {(notEnoughLiquidity || relayError || minAmount) && (
               <>
@@ -343,7 +344,7 @@ const Sell = (props: SellProps) => {
               </>
             )}
           </div>
-          <div className="flex float-right">
+          <div className="flex">
             {token && (
               <img
                 src={token.logo}
@@ -361,7 +362,7 @@ const Sell = (props: SellProps) => {
                   {formatExponentialSmallNumber(
                     limitDigitsNumber(tokenBalance)
                   )}{' '}
-                  {token.symbol} ($
+                  {token.symbol}($
                   {formatExponentialSmallNumber(
                     limitDigitsNumber(tokenBalance * parseFloat(token.usdValue))
                   )}
@@ -391,11 +392,10 @@ const Sell = (props: SellProps) => {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
@@ -424,12 +424,7 @@ const Sell = (props: SellProps) => {
                 data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
                 <span
-                  className="font-normal text-sm"
-                  style={{
-                    opacity: 0.5,
-                    'letter-spacing': '-2%',
-                    'text-align': 'center',
-                  }}
+                  className="font-normal text-center opacity-50 text-sm"
                 >
                   {item}
                 </span>

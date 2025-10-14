@@ -202,7 +202,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = tokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+        chainIdOfMaxStableBalance && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -480,7 +480,7 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <div className="flex flex-col w-full" data-testid="pulse-buy-component">
+    <div className="flex flex-col w-full desktop:min-w-[442px]" data-testid="pulse-buy-component">
       <div
         style={{
           margin: 10,
@@ -499,7 +499,7 @@ export default function Buy(props: BuyProps) {
           >
             {token ? (
               <div
-                className="flex items-center w-36"
+                className="flex items-center mobile:w-36 xs:w-36 desktop:w-full"
                 style={{
                   height: 36,
                   backgroundColor: '#1E1D24',
@@ -519,7 +519,7 @@ export default function Buy(props: BuyProps) {
                     />
                   ) : (
                     <div
-                      className="w-6 h-6 ml-1.5 mr-1.5 overflow-hidden"
+                      className="w-[34px] h-6 ml-1 mr-1 overflow-hidden"
                       style={{
                         borderRadius: 50,
                       }}
@@ -536,15 +536,15 @@ export default function Buy(props: BuyProps) {
                     style={{
                       position: 'absolute',
                       bottom: '-2px',
-                      right: '-2px',
+                      right: '2px',
                       borderRadius: '50%',
                     }}
                     alt="Chain Logo"
                   />
                 </div>
                 <div
-                  className="flex flex-col ml-1.5 mt-1.5"
-                  style={{ height: 36, width: 91 }}
+                  className="flex flex-col mt-1"
+                  style={{ height: 40, width: 91 }}
                 >
                   <div className="flex">
                     <p className="font-normal desktop:text-sm mobile:text-xs xs:text-xs">
@@ -611,13 +611,13 @@ export default function Buy(props: BuyProps) {
               </div>
             )}
           </button>
-          <div className="flex max-w-60 gap-2 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 overflow-hidden">
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 items-right">
             <div
-              className="flex items-center max-w-60 desktop:w-56 tablet:w-56 mobile:w-48 xs:w-24 text-right bg-transparent outline-none pr-0"
+              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
               <input
-                className="no-spinner flex mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl max-w-36 desktop:w-36 tablet:w-36 mobile:w-36 xs:w-12 font-medium"
+                className="no-spinner flex mobile:text-4xl mr-1.5 xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 font-medium"
                 placeholder={inputPlaceholder}
                 style={{ textAlign: 'right' }}
                 onChange={handleUsdAmountChange}
@@ -627,16 +627,16 @@ export default function Buy(props: BuyProps) {
                 onFocus={() => setInputPlaceholder('')}
                 data-testid="pulse-buy-amount-input"
               />
-              <p
-                className="mobile:text-xl xs:text-xl desktop:text-4xl tablet:text-4xl w-full desktop:w-20 tablet:w-20 mobile:w-12 xs:w-12 overflow-hidden font-medium"
+              <span
+                className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium"
                 style={{ color: 'grey' }}
               >
                 USD
-              </p>
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex justify-between" style={{ margin: 10 }}>
+        <div className="flex justify-between p-3">
           <div className="flex">
             {(() => {
               const showError =
@@ -674,11 +674,10 @@ export default function Buy(props: BuyProps) {
                     data-testid="pulse-buy-warning-icon"
                   />
                   <span
+                    className='text-xs m-1'
                     style={{
                       textDecoration: 'underline',
                       color: '#FF366C',
-                      fontSize: 12,
-                      marginLeft: 5,
                     }}
                     data-testid="pulse-buy-error-message"
                   >
@@ -690,7 +689,7 @@ export default function Buy(props: BuyProps) {
           </div>
           <div
             className="flex items-center"
-            style={{ float: 'right', alignItem: 'center' }}
+            style={{ alignItem: 'center' }}
           >
             <img
               src={WalletIcon}
@@ -699,10 +698,9 @@ export default function Buy(props: BuyProps) {
               data-testid="pulse-buy-wallet-icon"
             />
             <div
+              className='ml-1 text-xs'
               style={{
                 color: '#8A77FF',
-                marginLeft: 5,
-                fontSize: 12,
               }}
               data-testid="pulse-buy-wallet-balance"
             >
@@ -712,7 +710,7 @@ export default function Buy(props: BuyProps) {
         </div>
       </div>
       {/* amounts */}
-      <div className="flex w-full max-w-[400px]">
+      <div className="flex w-full">
         {['10', '20', '50', '100', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const isDisabled = !token;
@@ -723,11 +721,10 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
