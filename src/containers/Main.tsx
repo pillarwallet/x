@@ -208,7 +208,8 @@ const AuthLayout = () => {
     if (storedAccount && !isReactNativeApp) {
       Sentry.addBreadcrumb({
         category: 'authentication',
-        message: 'Previous RN authentication detected, but private key not available',
+        message:
+          'Previous RN authentication detected, but private key not available',
         level: 'info',
         data: {
           accountAddress: storedAccount,

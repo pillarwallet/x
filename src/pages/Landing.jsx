@@ -74,7 +74,7 @@ export default function LandingPage() {
 
       // Set up messaging to request private key
       const cleanup = setupPillarWalletMessaging(
-        (address, pk) => {
+        (address) => {
           // Success - store account address only (NOT the private key for security)
           localStorage.setItem('ACCOUNT_VIA_PK', address);
           // Private key will be stored in Main.tsx state (in-memory only)
