@@ -293,7 +293,7 @@ const Sell = (props: SellProps) => {
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               <input
                 className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 mr-1.5" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
+                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 mr-1" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
                 placeholder={inputPlaceholder}
                 onChange={handleTokenAmountChange}
                 value={tokenAmount}
@@ -303,9 +303,9 @@ const Sell = (props: SellProps) => {
               />
               {/* </div> */}
               {token && (
-                <div>
+                <>
                   <p
-                    className="text-grey flex-shrink-0 opacity-50 cursor-help mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium"
+                    className={`text-grey opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
@@ -317,7 +317,7 @@ const Sell = (props: SellProps) => {
                       {token.symbol}
                     </div>
                   )}
-                </div>
+                </>
               )}
             </div>
           </div>
