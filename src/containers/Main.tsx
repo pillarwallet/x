@@ -166,20 +166,21 @@ const AuthLayout = () => {
       const cleanup = setupPillarWalletMessaging(
         (address: string, pk: string) => {
           // Success callback - private key received
+          // Store in memory only (state) - NEVER persist private keys to localStorage
           setPkAccount(address);
           setPrivateKey(pk);
 
-          // Store in localStorage for persistence
+          // Store only the account address for session detection (NOT the private key)
           localStorage.setItem('ACCOUNT_VIA_PK', address);
-          localStorage.setItem('PK_VIA_PK', pk);
 
           Sentry.addBreadcrumb({
             category: 'authentication',
-            message: 'Private key stored in state',
+            message: 'Private key received and stored in memory only',
             level: 'info',
             data: {
               accountAddress: address,
               devicePlatform,
+              securityNote: 'Private key kept in memory only, not persisted',
             },
           });
         },
@@ -200,21 +201,21 @@ const AuthLayout = () => {
       return cleanup;
     }
 
-    // Check if there's a stored private key on mount (for session restoration)
-    const storedPk = localStorage.getItem('PK_VIA_PK');
+    // If user was previously authenticated (ACCOUNT_VIA_PK exists) but we're not in RN context,
+    // the private key will need to be re-requested on next RN webview load.
+    // We never restore private keys from localStorage for security reasons.
     const storedAccount = localStorage.getItem('ACCOUNT_VIA_PK');
-    if (storedPk && storedAccount) {
+    if (storedAccount && !isReactNativeApp) {
       Sentry.addBreadcrumb({
         category: 'authentication',
-        message: 'Restoring private key from localStorage',
+        message: 'Previous RN authentication detected, but private key not available',
         level: 'info',
         data: {
           accountAddress: storedAccount,
+          securityNote: 'Private key must be re-requested from RN app',
         },
       });
-
-      setPrivateKey(storedPk);
-      setPkAccount(storedAccount);
+      // Private key will be re-requested when app opens in RN webview again
     }
 
     // No cleanup needed if messaging wasn't set up

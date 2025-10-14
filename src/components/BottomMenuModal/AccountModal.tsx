@@ -128,10 +128,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
-    // Handle private key logout - clear localStorage
+    // Handle private key logout - clear account address from localStorage
+    // (Private key is never stored in localStorage for security reasons)
     if (isPkAccount) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
-      localStorage.removeItem('PK_VIA_PK');
     }
 
     // Use comprehensive logout for both Privy and WAGMI
