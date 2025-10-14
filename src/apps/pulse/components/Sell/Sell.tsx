@@ -358,7 +358,7 @@ const Sell = (props: SellProps) => {
               />
             )}
             <div
-              className="text-[#8A77FF] ml-1.5 text-xs"
+              className="text-[#8A77FF] ml-1.5 text-xs items-center"
               data-testid="pulse-sell-token-balance"
             >
               {token ? (
@@ -368,7 +368,7 @@ const Sell = (props: SellProps) => {
                       <HighDecimalsFormatted
                         value={limitDigitsNumber(tokenBalance)}
                         styleNumber="text-white"
-                        styleZeros="text-white/30 text-xs"
+                        styleZeros="text-white/70 text-[8px]"
                       />
                     )
                   }
