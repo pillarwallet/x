@@ -26,6 +26,7 @@ import SellButton from './SellButton';
 
 // hooks
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -51,7 +52,7 @@ const Sell = (props: SellProps) => {
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
-  const [minAmount, setMinAmount] = useState<boolean>(false);
+  const [minAmount, setMinAmount] = useState<boolean>(true);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -226,7 +227,7 @@ const Sell = (props: SellProps) => {
                   />
                 </div>
                 <div
-                  className="flex flex-col mt-1"
+                  className="flex flex-col mt-1.5"
                   style={{ height: 40, width: 91 }}
                 >
                   <div className="flex">
@@ -267,11 +268,15 @@ const Sell = (props: SellProps) => {
                 </div>
               </div>
             ) : (
-              <div className="flex ml-1.5 h-9 bg-[#1E1D24] items-center max-w-[150px] w-32 rounded-md justify-center font-normal desktop:text-sm mobile:text-xs xs:text-xs justify-items-end">
-                <div
-                  className="flex font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs"
-                  data-testid="pulse-sell-token-selector-placeholder"
-                >
+              <div
+                className="flex items-center justify-center max-w-[150px] w-32"
+                style={{
+                  height: 36,
+                  backgroundColor: '#1E1D24',
+                  borderRadius: 10,
+                }}
+              >
+                <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
                   Select token
                 </div>
                 <div className="flex ml-1.5">
@@ -279,7 +284,6 @@ const Sell = (props: SellProps) => {
                     src={ArrowDown}
                     className="w-2 h-1"
                     alt="arrow-down"
-                    data-testid="pulse-sell-token-selector-arrow-placeholder"
                   />
                 </div>
               </div>
@@ -303,7 +307,7 @@ const Sell = (props: SellProps) => {
               />
               {/* </div> */}
               {token && (
-                <>
+                <div className="relative">
                   <p
                     className={`text-grey opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
                     data-testid="pulse-sell-token-symbol"
@@ -317,12 +321,12 @@ const Sell = (props: SellProps) => {
                       {token.symbol}
                     </div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>
         </div>
-        <div className="flex justify-between p-3">
+        <div className="flex justify-between items-center p-3">
           <div className="flex">
             {(notEnoughLiquidity || relayError || minAmount) && (
               <>
@@ -334,7 +338,7 @@ const Sell = (props: SellProps) => {
                   />
                 </div>
                 <div
-                  className="underline text-[#FF366C] text-xs ml-1.5"
+                  className="underline text-[#FF366C] text-xs ml-1"
                   data-testid="pulse-sell-error-message"
                 >
                   {relayError ||
@@ -344,12 +348,12 @@ const Sell = (props: SellProps) => {
               </>
             )}
           </div>
-          <div className="flex">
+          <div className="flex items-center">
             {token && (
               <img
                 src={token.logo}
                 alt={token.symbol}
-                className="w-3.5 h-3.5 rounded-full"
+                className="w-2.5 h-2.5 rounded-full"
                 data-testid="pulse-sell-token-logo"
               />
             )}
@@ -358,16 +362,19 @@ const Sell = (props: SellProps) => {
               data-testid="pulse-sell-token-balance"
             >
               {token ? (
-                <>
-                  {formatExponentialSmallNumber(
-                    limitDigitsNumber(tokenBalance)
-                  )}{' '}
-                  {token.symbol}($
-                  {formatExponentialSmallNumber(
-                    limitDigitsNumber(tokenBalance * parseFloat(token.usdValue))
-                  )}
+                <span className='flex items-center justify-end gap-1'>
+                  {
+                    (
+                      <HighDecimalsFormatted
+                        value={limitDigitsNumber(tokenBalance)}
+                        styleNumber="text-white"
+                        styleZeros="text-white/30 text-xs"
+                      />
+                    )
+                  }
+                  {' ' + token.symbol}(${(tokenBalance * parseFloat(token.usdValue)).toFixed(2)}
                   )
-                </>
+                </span>
               ) : (
                 '0.00($0.00)'
               )}

@@ -519,7 +519,7 @@ export default function Buy(props: BuyProps) {
                     />
                   ) : (
                     <div
-                      className="w-[34px] h-6 ml-1 mr-1 overflow-hidden"
+                      className="w-6 h-6 ml-1 mr-1 overflow-hidden"
                       style={{
                         borderRadius: 50,
                       }}
@@ -543,7 +543,7 @@ export default function Buy(props: BuyProps) {
                   />
                 </div>
                 <div
-                  className="flex flex-col mt-1"
+                  className="flex flex-col mt-1.5"
                   style={{ height: 40, width: 91 }}
                 >
                   <div className="flex">
