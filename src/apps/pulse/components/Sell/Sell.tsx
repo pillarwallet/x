@@ -68,6 +68,7 @@ const Sell = (props: SellProps) => {
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const [truncatedFlag, setTruncatedFlag] = useState<boolean>(false);
 
   const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
 
@@ -319,15 +320,16 @@ const Sell = (props: SellProps) => {
                 >
                   <HighDecimalsFormatted
                     value={limitDigitsNumber(Number(tokenAmount))}
-                    styleNumber="text-white text-4xl text-center"
-                    styleZeros="text-white/70 text-sm"
+                    styleNumber={`text-white text-4xl text-center ${truncatedFlag ? 'mt-1.5' : ''}`}
+                    styleZeros="text-white/70 text-xs"
+                    setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
                   />
                 </div>
               ) : (
                 <input
                   className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                      ? 'desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24'
-                      : 'desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44'
+                    ? 'desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24'
+                    : 'desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44'
                     }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
@@ -427,8 +429,8 @@ const Sell = (props: SellProps) => {
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
                   }`}
                 onClick={() => {
                   if (!isDisabled) {
