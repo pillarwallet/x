@@ -48,7 +48,7 @@ function getButtonText(
         <span>Sell</span>
         <HighDecimalsFormatted
           value={limitedAmount}
-          styleNumber="text-white"
+          styleNumber="text-white text-sm"
           styleZeros="text-white/70 text-xs"
         />
         <span>{selectedToken?.symbol}</span>
@@ -56,7 +56,7 @@ function getButtonText(
         <HighDecimalsFormatted
           value={limitedUsdcAmount}
           moneySymbol=""
-          styleNumber="text-white"
+          styleNumber="text-white text-sm"
           styleZeros="text-white/70 text-xs"
         />
         <span>USDC</span>
@@ -111,7 +111,7 @@ const SellButton = (props: SellButtonProps) => {
 
   return (
     <button
-      className="flex-1 items-center justify-center"
+      className="flex-1 items-center justify-center font-medium text-sm"
       onClick={handleSellClick}
       disabled={isDisabled()}
       style={{
@@ -122,18 +122,7 @@ const SellButton = (props: SellButtonProps) => {
       type="button"
       data-testid="pulse-sell-button"
     >
-      <span
-        style={{
-          'font-family': 'Poppins',
-          'font-weight': 500,
-          'font-style': 'Medium',
-          'font-size': '13px',
-          'leading-trim': 'NONE',
-          'line-height': '100%',
-          'letter-spacing': '-2%',
-          'text-align': 'center',
-        }}
-      >
+      <span>
         {getButtonText(
           isLoadingOffer,
           isInitialized,

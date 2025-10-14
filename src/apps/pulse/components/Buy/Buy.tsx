@@ -200,7 +200,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-        chainIdOfMaxStableBalance && isNativeToken(t.contract)
+          chainIdOfMaxStableBalance && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -478,7 +478,10 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <div className="flex flex-col w-full desktop:min-w-[442px]" data-testid="pulse-buy-component">
+    <div
+      className="flex flex-col w-full desktop:min-w-[442px]"
+      data-testid="pulse-buy-component"
+    >
       <div
         style={{
           margin: 10,
@@ -672,7 +675,7 @@ export default function Buy(props: BuyProps) {
                     data-testid="pulse-buy-warning-icon"
                   />
                   <span
-                    className='text-xs m-1'
+                    className="text-xs m-1"
                     style={{
                       textDecoration: 'underline',
                       color: '#FF366C',
@@ -685,10 +688,7 @@ export default function Buy(props: BuyProps) {
               );
             })()}
           </div>
-          <div
-            className="flex items-center"
-            style={{ alignItem: 'center' }}
-          >
+          <div className="flex items-center" style={{ alignItem: 'center' }}>
             <img
               src={WalletIcon}
               className="w-4 h-3"
@@ -696,7 +696,7 @@ export default function Buy(props: BuyProps) {
               data-testid="pulse-buy-wallet-icon"
             />
             <div
-              className='ml-1 text-xs'
+              className="ml-1 text-xs"
               style={{
                 color: '#8A77FF',
               }}
@@ -719,10 +719,11 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
-                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                  : 'bg-[#121116] text-white cursor-pointer'
-                  }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${
+                  isDisabled
+                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                    : 'bg-[#121116] text-white cursor-pointer'
+                }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {

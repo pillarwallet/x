@@ -64,6 +64,7 @@ const Sell = (props: SellProps) => {
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
   const [minGasAmount, setMinGasAmount] = useState<boolean>(false);
+  const [showNumInP, setShowNumInP] = useState(false);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -137,7 +138,7 @@ const Sell = (props: SellProps) => {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-        token.chainId && isNativeToken(t.contract)
+          token.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
       setMinGasAmount(true);
@@ -300,11 +301,7 @@ const Sell = (props: SellProps) => {
                   Select token
                 </div>
                 <div className="flex ml-1.5">
-                  <img
-                    src={ArrowDown}
-                    className="w-2 h-1"
-                    alt="arrow-down"
-                  />
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
             )}
@@ -315,16 +312,32 @@ const Sell = (props: SellProps) => {
               style={{ height: 36 }}
             >
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
-              <input
-                className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24" : "desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44"}`}
-                placeholder={inputPlaceholder}
-                onChange={handleTokenAmountChange}
-                value={tokenAmount}
-                type="text"
-                onFocus={() => setInputPlaceholder('')}
-                data-testid="pulse-sell-amount-input"
-              />
+              {showNumInP ? (
+                <div
+                  className="text-center"
+                  onClick={() => setShowNumInP(false)}
+                >
+                  <HighDecimalsFormatted
+                    value={limitDigitsNumber(Number(tokenAmount))}
+                    styleNumber="text-white text-4xl text-center mt-2"
+                    styleZeros="text-white/70 text-sm"
+                  />
+                </div>
+              ) : (
+                <input
+                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${
+                    token
+                      ? 'desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24'
+                      : 'desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44'
+                  }`}
+                  placeholder={inputPlaceholder}
+                  onChange={handleTokenAmountChange}
+                  value={tokenAmount}
+                  type="text"
+                  onFocus={() => setInputPlaceholder('')}
+                  data-testid="pulse-sell-amount-input"
+                />
+              )}
               {/* </div> */}
               {token && (
                 <div className="relative">
@@ -384,18 +397,14 @@ const Sell = (props: SellProps) => {
               data-testid="pulse-sell-token-balance"
             >
               {token ? (
-                <span className='flex items-center justify-end gap-1'>
-                  {
-                    (
-                      <HighDecimalsFormatted
-                        value={limitDigitsNumber(tokenBalance)}
-                        styleNumber="text-white"
-                        styleZeros="text-white/70 text-[8px]"
-                      />
-                    )
-                  }
-                  {' ' + token.symbol}(${(tokenBalance * parseFloat(token.usdValue)).toFixed(2)}
-                  )
+                <span className="flex items-center justify-end gap-1">
+                  <HighDecimalsFormatted
+                    value={limitDigitsNumber(tokenBalance)}
+                    styleNumber="text-white"
+                    styleZeros="text-white/70 text-[8px]"
+                  />
+                  {` ${token.symbol}`}($
+                  {(tokenBalance * parseFloat(token.usdValue)).toFixed(2)})
                 </span>
               ) : (
                 '0.00($0.00)'
@@ -406,10 +415,7 @@ const Sell = (props: SellProps) => {
       </div>
 
       {/* amounts */}
-      <div
-        className="flex w-full"
-        data-testid="pulse-sell-percentage-buttons"
-      >
+      <div className="flex w-full" data-testid="pulse-sell-percentage-buttons">
         {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const percentage = isMax ? 100 : parseInt(item);
@@ -421,12 +427,14 @@ const Sell = (props: SellProps) => {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
-                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                  : 'bg-[#121116] text-white cursor-pointer'
-                  }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${
+                  isDisabled
+                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                    : 'bg-[#121116] text-white cursor-pointer'
+                }`}
                 onClick={() => {
                   if (!isDisabled) {
+                    setShowNumInP(true);
                     if (isMax) {
                       const decimals = token?.decimals || 18;
                       const multiplier = 10 ** decimals;
@@ -452,9 +460,7 @@ const Sell = (props: SellProps) => {
                 disabled={isDisabled}
                 data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
-                <span
-                  className="font-normal text-center opacity-50 text-sm"
-                >
+                <span className="font-normal text-center opacity-50 text-sm">
                   {item}
                 </span>
               </button>

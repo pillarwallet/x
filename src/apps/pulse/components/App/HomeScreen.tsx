@@ -933,25 +933,21 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(true)}
                 type="button"
               >
-                <span
-                  className="text-center font-medium text-sm"
-                >
-                  Buy
-                </span>
+                <span className="text-center font-medium text-sm">Buy</span>
               </button>
               <button
                 className="flex-1 items-center justify-center"
@@ -959,25 +955,21 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(false)}
                 type="button"
               >
-                <span
-                  className="text-center font-medium text-sm"
-                >
-                  Sell
-                </span>
+                <span className="text-center font-medium text-sm">Sell</span>
               </button>
             </div>
             <div className="flex mt-2.5 mr-2.5">
