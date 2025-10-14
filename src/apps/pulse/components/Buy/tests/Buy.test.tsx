@@ -164,11 +164,37 @@ const mockWalletPortfolioData: WalletPortfolioMobulaResponse = {
   },
 };
 
+const mockPortfolioTokens = [
+  {
+    id: 2,
+    contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    blockchain: 'Ethereum',
+    balance: 10050,
+    price: 1,
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin',
+    logo: 'usdc-logo.png',
+  },
+  {
+    id: 3,
+    contract: '0x0000000000000000000000000000000000000000',
+    blockchain: 'Ethereum',
+    balance: 0.5,
+    price: 3000,
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ethereum',
+    logo: 'eth-logo.png',
+  },
+];
+
 const mockProps = {
   setSearching: vi.fn(),
   token: mockToken,
   walletPortfolioData: mockWalletPortfolioData,
   payingTokens: [mockPayingToken],
+  portfolioTokens: mockPortfolioTokens,
   setPreviewBuy: vi.fn(),
   setPayingTokens: vi.fn(),
   setExpressIntentResponse: vi.fn(),
@@ -516,7 +542,35 @@ describe('<Buy />', () => {
         },
       };
 
-      renderWithProviders({ walletPortfolioData: lowBalanceWalletData });
+      const lowBalancePortfolioTokens = [
+        {
+          id: 2,
+          contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          blockchain: 'Ethereum',
+          balance: 1,
+          price: 1,
+          decimals: 6,
+          symbol: 'USDC',
+          name: 'USD Coin',
+          logo: 'usdc-logo.png',
+        },
+        {
+          id: 3,
+          contract: '0x0000000000000000000000000000000000000000',
+          blockchain: 'Ethereum',
+          balance: 0.5,
+          price: 3000,
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          logo: 'eth-logo.png',
+        },
+      ];
+
+      renderWithProviders({
+        walletPortfolioData: lowBalanceWalletData,
+        portfolioTokens: lowBalancePortfolioTokens,
+      });
 
       // The warning should appear immediately when the component mounts with low balance data
       await waitFor(() => {
@@ -596,7 +650,35 @@ describe('<Buy />', () => {
         },
       };
 
-      renderWithProviders({ walletPortfolioData: noGasWalletData });
+      const noGasPortfolioTokens = [
+        {
+          id: 2,
+          contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          blockchain: 'Ethereum',
+          balance: 100,
+          price: 1,
+          decimals: 6,
+          symbol: 'USDC',
+          name: 'USD Coin',
+          logo: 'usdc-logo.png',
+        },
+        {
+          id: 3,
+          contract: '0x0000000000000000000000000000000000000000',
+          blockchain: 'Ethereum',
+          balance: 0.0001,
+          price: 3000,
+          decimals: 18,
+          symbol: 'ETH',
+          name: 'Ethereum',
+          logo: 'eth-logo.png',
+        },
+      ];
+
+      renderWithProviders({
+        walletPortfolioData: noGasWalletData,
+        portfolioTokens: noGasPortfolioTokens,
+      });
 
       // The warning should appear immediately when the component mounts with insufficient gas
       await waitFor(() => {

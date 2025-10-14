@@ -56,8 +56,10 @@ const defaultMocks = () => {
     data: {
       result: {
         data: {
-          tokens: [],
+          assets: [],
           total_wallet_balance: 0,
+          wallets: ['0x1234567890123456789012345678901234567890'],
+          balances_length: 0,
         },
       },
     },
