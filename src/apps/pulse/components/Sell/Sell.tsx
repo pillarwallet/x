@@ -358,7 +358,7 @@ const Sell = (props: SellProps) => {
               />
             )}
             <div
-              className="text-[#8A77FF] ml-1.5 text-xs items-center"
+              className="text-[#8A77FF] ml-1 text-xs items-center"
               data-testid="pulse-sell-token-balance"
             >
               {token ? (
