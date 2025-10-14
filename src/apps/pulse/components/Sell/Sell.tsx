@@ -292,8 +292,8 @@ const Sell = (props: SellProps) => {
             >
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               <input
-                className={`no-spinner flex mobile:text-4xl mr-1.5 xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
+                className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
+                  ? "desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24 mr-1.5" : "desktop:w-60 tablet:w-60 mobile:w-52 xs:w-44"}`}
                 placeholder={inputPlaceholder}
                 onChange={handleTokenAmountChange}
                 value={tokenAmount}
@@ -378,7 +378,7 @@ const Sell = (props: SellProps) => {
 
       {/* amounts */}
       <div
-        className="flex w-full max-w-[422px]"
+        className="flex w-full"
         data-testid="pulse-sell-percentage-buttons"
       >
         {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
