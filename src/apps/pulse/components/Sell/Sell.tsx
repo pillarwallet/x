@@ -227,7 +227,7 @@ const Sell = (props: SellProps) => {
                   />
                 </div>
                 <div
-                  className="flex flex-col mt-1.5"
+                  className="flex flex-col mt-2.5"
                   style={{ height: 40, width: 91 }}
                 >
                   <div className="flex">
