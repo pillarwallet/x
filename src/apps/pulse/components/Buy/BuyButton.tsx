@@ -49,11 +49,11 @@ function getButtonText(
     const limitedTokenAmount = limitDigitsNumber(tokenAmount);
 
     return (
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex items-center justify-center gap-1 text-base">
         <span>{selectedToken ? 'Buy' : 'Select token'}</span>
         <HighDecimalsFormatted
           value={limitedTokenAmount}
-          styleNumber="text-white"
+          styleNumber="text-white text-base"
           styleZeros="text-white/70 text-sm"
         />
         <span>{selectedToken?.symbol}</span>
@@ -61,7 +61,7 @@ function getButtonText(
         <HighDecimalsFormatted
           value={limitedUsdAmount}
           moneySymbol="$"
-          styleNumber="text-white"
+          styleNumber="text-white text-base"
           styleZeros="text-white/70 text-sm"
         />
       </div>
@@ -138,7 +138,7 @@ export default function BuyButton(props: BuyButtonProps) {
       type="button"
       data-testid="pulse-buy-button"
     >
-      <span className="text-sm font-medium tracking-tight leading-none text-center">
+      <span className="text-base font-medium tracking-tight leading-none text-center">
         {getButtonText(
           isLoading,
           isInstalling,

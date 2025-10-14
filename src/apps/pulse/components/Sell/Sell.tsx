@@ -214,7 +214,7 @@ const Sell = (props: SellProps) => {
           >
             {token ? (
               <div
-                className="flex items-center mobile:w-36 xs:w-36 desktop:w-full h-9 bg-[#1E1D24] rounded-md"
+                className="flex items-center mobile:w-32 xs:w-32 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
                 data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
               >
                 <div className="relative inline-block">
@@ -315,7 +315,7 @@ const Sell = (props: SellProps) => {
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               {showNumInP ? (
                 <div
-                  className="text-center"
+                  className="text-center overflow-hidden"
                   onClick={() => setShowNumInP(false)}
                 >
                   <HighDecimalsFormatted
@@ -343,7 +343,7 @@ const Sell = (props: SellProps) => {
               {token && (
                 <div className="relative">
                   <p
-                    className={`text-grey ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
+                    className={`text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}

@@ -200,7 +200,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+        chainIdOfMaxStableBalance && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -500,7 +500,7 @@ export default function Buy(props: BuyProps) {
           >
             {token ? (
               <div
-                className="flex items-center mobile:w-36 xs:w-36 desktop:w-full"
+                className="flex items-center mobile:w-32 xs:w-32 desktop:w-36"
                 style={{
                   height: 36,
                   backgroundColor: '#1E1D24',
@@ -513,7 +513,7 @@ export default function Buy(props: BuyProps) {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 ml-1.5 mr-1.5"
+                      className="w-6 h-6 ml-1 mr-1"
                       style={{
                         borderRadius: 50,
                       }}
@@ -688,7 +688,7 @@ export default function Buy(props: BuyProps) {
               );
             })()}
           </div>
-          <div className="flex items-center" style={{ alignItem: 'center' }}>
+          <div className="flex items-center">
             <img
               src={WalletIcon}
               className="w-4 h-3"
@@ -719,17 +719,16 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
                       setUsdAmount(sumOfStableBalance.toFixed(2));
                     } else {
-                      setUsdAmount(parseFloat(item).toFixed(2));
+                      setUsdAmount(item);
                     }
                   }
                 }}
@@ -737,15 +736,7 @@ export default function Buy(props: BuyProps) {
                 disabled={isDisabled}
                 data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
-                <span
-                  className="opacity-50 font-normal text-sm"
-                  style={{
-                    'leading-trim': 'NONE',
-                    'line-height': '13px',
-                    'letter-spacing': '-2%',
-                    'text-align': 'center',
-                  }}
-                >
+                <span className="opacity-50 font-normal text-sm">
                   {isMax ? 'MAX' : `$${item}`}
                 </span>
               </button>
