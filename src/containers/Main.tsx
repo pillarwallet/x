@@ -216,7 +216,6 @@ const AuthLayout = () => {
           securityNote: 'Private key must be re-requested from RN app',
         },
       });
-      // Private key will be re-requested when app opens in RN webview again
     }
 
     // No cleanup needed if messaging wasn't set up
