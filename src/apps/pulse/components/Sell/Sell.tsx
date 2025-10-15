@@ -139,7 +139,7 @@ const Sell = (props: SellProps) => {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-        token.chainId && isNativeToken(t.contract)
+          token.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
       setMinGasAmount(true);
@@ -324,7 +324,9 @@ const Sell = (props: SellProps) => {
                         value={limitDigitsNumber(Number(tokenAmount))}
                         styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
                         styleZeros="text-white/70 text-xs"
-                        setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
+                        setTruncatedFlag={(flag: boolean) =>
+                          setTruncatedFlag(flag)
+                        }
                       />
                     </div>
                   </div>
@@ -336,35 +338,45 @@ const Sell = (props: SellProps) => {
                       {(() => {
                         const roundOffFn = () => {
                           const roundedTokenAmount = tokenAmount;
-                          const [integer, decimals] = tokenAmount.toString().split('.');
+                          const [, decimals] = tokenAmount
+                            .toString()
+                            .split('.');
                           if (!decimals) {
                             return roundedTokenAmount;
                           }
                           const match = decimals.match(/^(0+)/);
                           const zeroCount = match ? match[0].length : 0;
                           if (zeroCount < 2) {
-                            return Number(roundedTokenAmount).toFixed(decimals.length > 3 ? 3 : decimals.length);
+                            return Number(roundedTokenAmount).toFixed(
+                              decimals.length > 3 ? 3 : decimals.length
+                            );
                           }
-                          return Number(roundedTokenAmount).toFixed(zeroCount + 2);
-                        }
+                          return Number(roundedTokenAmount).toFixed(
+                            zeroCount + 2
+                          );
+                        };
                         const amount = roundOffFn();
                         return (
                           <HighDecimalsFormatted
                             value={limitDigitsNumber(Number(amount))}
                             styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
                             styleZeros="text-white/70 text-xs"
-                            setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
-                          />)
+                            setTruncatedFlag={(flag: boolean) =>
+                              setTruncatedFlag(flag)
+                            }
+                          />
+                        );
                       })()}
                     </div>
                   </div>
                 </>
               ) : (
                 <input
-                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                    ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
-                    : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
-                    }`}
+                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${
+                    token
+                      ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
+                      : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
+                  }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
                   value={tokenAmount}
@@ -377,7 +389,7 @@ const Sell = (props: SellProps) => {
               {token && (
                 <div className="relative flex-shrink-0 max-w-[80px]">
                   <p
-                    className={`text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help`}
+                    className="text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help"
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
@@ -466,10 +478,11 @@ const Sell = (props: SellProps) => {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
-                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                  : 'bg-[#121116] text-white cursor-pointer'
-                  }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${
+                  isDisabled
+                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                    : 'bg-[#121116] text-white cursor-pointer'
+                }`}
                 onClick={() => {
                   if (!isDisabled) {
                     setShowNumInP(true);

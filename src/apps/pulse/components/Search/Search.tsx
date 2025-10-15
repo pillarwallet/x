@@ -362,12 +362,10 @@ export default function Search({
             </div>
           ) : (
             <div
-              className='justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3'
+              className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
               data-testid="pulse-esc-button-search-modal"
             >
-              <div
-                className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
-              >
+              <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
                 <Esc onClose={handleClose} />
               </div>
             </div>
@@ -399,20 +397,22 @@ export default function Search({
                 className="flex bg-black w-[100px] h-10 rounded-[10px]"
               >
                 <button
-                  className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${searchType && item.includes(searchType)
-                    ? 'bg-[#2E2A4A]'
-                    : 'bg-[#1E1D24]'
-                    }`}
+                  className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${
+                    searchType && item.includes(searchType)
+                      ? 'bg-[#2E2A4A]'
+                      : 'bg-[#1E1D24]'
+                  }`}
                   type="button"
                   onClick={() => {
                     handleSearchTypeChange(actualIndex);
                   }}
                 >
                   <p
-                    className={`text-xs font-normal text-center ${searchType && item.includes(searchType)
-                      ? 'text-white'
-                      : 'text-white opacity-50'
-                      }`}
+                    className={`text-xs font-normal text-center ${
+                      searchType && item.includes(searchType)
+                        ? 'text-white'
+                        : 'text-white opacity-50'
+                    }`}
                   >
                     {item}
                   </p>
@@ -464,17 +464,15 @@ export default function Search({
           </div>
         )}
       </div>
-      {
-        showChainOverlay && (
-          <ChainOverlay
-            chains={chains}
-            overlayStyle={overlayStyle}
-            setChains={setChains}
-            setOverlayStyle={setOverlayStyle}
-            setShowChainOverlay={setShowChainOverlay}
-          />
-        )
-      }
-    </div >
+      {showChainOverlay && (
+        <ChainOverlay
+          chains={chains}
+          overlayStyle={overlayStyle}
+          setChains={setChains}
+          setOverlayStyle={setOverlayStyle}
+          setShowChainOverlay={setShowChainOverlay}
+        />
+      )}
+    </div>
   );
 }

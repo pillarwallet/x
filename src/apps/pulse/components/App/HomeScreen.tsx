@@ -929,16 +929,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(true)}
                 type="button"
@@ -951,16 +951,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(false)}
                 type="button"

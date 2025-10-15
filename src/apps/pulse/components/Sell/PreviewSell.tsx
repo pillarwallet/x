@@ -461,12 +461,10 @@ const PreviewSell = (props: PreviewSellProps) => {
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
           <div
-            className='justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3'
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
             data-testid="pulse-preview-sell-refresh-button"
           >
-            <div
-              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
-            >
+            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
               <Refresh
                 onClick={refreshPreviewSellData}
                 isLoading={isRefreshingPreview}
@@ -482,12 +480,10 @@ const PreviewSell = (props: PreviewSellProps) => {
           </div>
 
           <div
-            className='justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3'
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
             data-testid="pulse-preview-sell-esc-button"
           >
-            <div
-              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
-            >
+            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
               <Esc onClose={closePreview} />
             </div>
           </div>
