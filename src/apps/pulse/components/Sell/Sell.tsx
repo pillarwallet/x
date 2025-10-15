@@ -203,7 +203,7 @@ const Sell = (props: SellProps) => {
   return (
     <div className="flex flex-col w-full" data-testid="pulse-sell-component">
       <div className="bg-[#121116] m-2.5 rounded-[10px]">
-        <div className="flex items-center justify-between p-3">
+        <div className="flex items-center p-3">
           <button
             onClick={() => {
               setSearching(true);
@@ -214,7 +214,7 @@ const Sell = (props: SellProps) => {
           >
             {token ? (
               <div
-                className="flex items-center mobile:w-32 xs:w-32 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
+                className="flex items-center mobile:w-32 xs:w-28 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
                 data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
               >
                 <div className="relative inline-block">
@@ -307,29 +307,63 @@ const Sell = (props: SellProps) => {
               </div>
             )}
           </button>
-          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right">
+          <div className="flex flex-1 max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto items-right ml-auto">
             <div
-              className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
+              className="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
               {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               {showNumInP ? (
-                <div
-                  className="text-center overflow-hidden"
-                  onClick={() => setShowNumInP(false)}
-                >
-                  <HighDecimalsFormatted
-                    value={limitDigitsNumber(Number(tokenAmount))}
-                    styleNumber={`text-white text-4xl text-center ${truncatedFlag ? 'mt-1.5' : ''}`}
-                    styleZeros="text-white/70 text-xs"
-                    setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
-                  />
-                </div>
+                <>
+                  <div
+                    className="text-right mobile:hidden xs:hidden desktop:flex tablet:flex items-center justify-end flex-1 desktop:w-40 tablet:w-40 overflow-hidden whitespace-nowrap"
+                    onClick={() => setShowNumInP(false)}
+                  >
+                    <div className="inline-block whitespace-nowrap">
+                      <HighDecimalsFormatted
+                        value={limitDigitsNumber(Number(tokenAmount))}
+                        styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
+                        styleZeros="text-white/70 text-xs"
+                        setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="text-right desktop:hidden tablet:hidden mobile:flex xs:flex items-center justify-end flex-1 mobile:w-32 xs:w-auto overflow-hidden whitespace-nowrap"
+                    onClick={() => setShowNumInP(false)}
+                  >
+                    <div className="inline-block whitespace-nowrap">
+                      {(() => {
+                        const roundOffFn = () => {
+                          const roundedTokenAmount = tokenAmount;
+                          const [integer, decimals] = tokenAmount.toString().split('.');
+                          if (!decimals) {
+                            return roundedTokenAmount;
+                          }
+                          const match = decimals.match(/^(0+)/);
+                          const zeroCount = match ? match[0].length : 0;
+                          if (zeroCount < 2) {
+                            return Number(roundedTokenAmount).toFixed(decimals.length > 3 ? 3 : decimals.length);
+                          }
+                          return Number(roundedTokenAmount).toFixed(zeroCount + 2);
+                        }
+                        const amount = roundOffFn();
+                        return (
+                          <HighDecimalsFormatted
+                            value={limitDigitsNumber(Number(amount))}
+                            styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
+                            styleZeros="text-white/70 text-xs"
+                            setTruncatedFlag={(flag: boolean) => setTruncatedFlag(flag)}
+                          />)
+                      })()}
+                    </div>
+                  </div>
+                </>
               ) : (
                 <input
                   className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
-                    ? 'desktop:w-40 tablet:w-40 mobile:w-32 xs:w-24'
-                    : 'desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44'
+                    ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
+                    : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
                     }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
@@ -341,16 +375,20 @@ const Sell = (props: SellProps) => {
               )}
               {/* </div> */}
               {token && (
-                <div className="relative">
+                <div className="relative flex-shrink-0 max-w-[80px]">
                   <p
-                    className={`text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium ${token.symbol.length > 3 ? 'cursor-help' : ''}`}
+                    className={`text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help`}
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
+                    style={{
+                      maxWidth: '100%',
+                      textOverflow: 'clip',
+                    }}
                   >
                     {token.symbol.slice(0, 3)}
                   </p>
-                  {showTooltip && token.symbol.length > 3 && (
+                  {showTooltip && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
                       {token.symbol}
                     </div>

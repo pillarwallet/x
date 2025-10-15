@@ -349,26 +349,34 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
           <div
-            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+            className='justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3'
             data-testid="pulse-preview-buy-refresh-button"
           >
-            <Refresh
-              onClick={refreshPreviewBuyData}
-              isLoading={isRefreshingPreview}
-              disabled={
-                !buyToken ||
-                !totalPay ||
-                isRefreshingPreview ||
-                isWaitingForSignature
-              }
-            />
+            <div
+              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+            >
+              <Refresh
+                onClick={refreshPreviewBuyData}
+                isLoading={isRefreshingPreview}
+                disabled={
+                  !buyToken ||
+                  !totalPay ||
+                  isRefreshingPreview ||
+                  isWaitingForSignature
+                }
+              />
+            </div>
           </div>
 
           <div
-            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+            className='justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3'
             data-testid="pulse-preview-buy-esc-button"
           >
-            <Esc onClose={closePreview} />
+            <div
+              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+            >
+              <Esc onClose={closePreview} />
+            </div>
           </div>
         </div>
       </div>
@@ -513,44 +521,52 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       </div>
 
       {/* Error Display */}
-      {error && (
-        <div className="m-2.5 p-2.5 bg-red-500/10 border border-red-500 rounded-[10px]">
-          <div className="text-red-300 text-xs">{error}</div>
-        </div>
-      )}
+      {
+        error && (
+          <div className="m-2.5 p-2.5 bg-red-500/10 border border-red-500 rounded-[10px]">
+            <div className="text-red-300 text-xs">{error}</div>
+          </div>
+        )
+      }
 
-      {!isTransactionRejected && (
-        <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
-          <button
-            className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
-            onClick={shortlistBid}
-            disabled={isLoading}
-            type="submit"
-            data-testid="pulse-preview-buy-confirm-button"
-          >
-            {isLoading ? (
-              <div className="flex items-center justify-center gap-2">
-                <TailSpin color="#FFFFFF" height={20} width={20} />
-                <span>Confirm</span>
-              </div>
-            ) : (
-              <>Confirm</>
-            )}
-          </button>
-        </div>
-      )}
+      {
+        !isTransactionRejected && (
+          <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
+            <button
+              className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
+              onClick={shortlistBid}
+              disabled={isLoading}
+              type="submit"
+              data-testid="pulse-preview-buy-confirm-button"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <TailSpin color="#FFFFFF" height={20} width={20} />
+                  <span>Confirm</span>
+                </div>
+              ) : (
+                <>Confirm</>
+              )}
+            </button>
+          </div>
+        )
+      }
 
-      {isWaitingForSignature && !isTransactionRejected && (
-        <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
-          Please open your wallet and confirm the transaction.
-        </div>
-      )}
+      {
+        isWaitingForSignature && !isTransactionRejected && (
+          <div className="text-[#FFAB36] text-[13px] font-normal text-left mt-4">
+            Please open your wallet and confirm the transaction.
+          </div>
+        )
+      }
 
-      {isTransactionRejected && (
-        <div className="text-[#FF366C] text-[13px] font-normal text-center mt-4">
-          Transaction was cancelled. No funds were moved
-        </div>
-      )}
-    </div>
+      {
+        isTransactionRejected && (
+          <div className="text-[#FF366C] text-[13px] font-normal text-center mt-4">
+            Transaction was cancelled. No funds were moved
+          </div>
+        )
+      }
+    </div >
   );
 }
