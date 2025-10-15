@@ -7,10 +7,10 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
     data-testid="pulse-sell-component"
   >
     <div
-      class="m-2.5 bg-black w-full max-w-[422px] min-h-[100px] rounded-[10px]"
+      class="bg-[#121116] m-2.5 rounded-[10px]"
     >
       <div
-        class="flex items-center gap-3 p-3"
+        class="flex items-center p-3"
       >
         <button
           class="flex-shrink-0"
@@ -18,7 +18,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <div
-            class="flex items-center w-full max-w-[150px] h-9 bg-[#1E1D24] rounded-[6px]"
+            class="flex items-center mobile:w-32 xs:w-28 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
             data-testid="pulse-sell-token-selected-1-Test Token"
           >
             <div
@@ -26,27 +26,28 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
             >
               <img
                 alt="Main"
-                class="w-6 h-6 rounded-full"
+                class="w-6 h-6 ml-1 mr-1"
                 data-testid="pulse-sell-token-selector-logo"
                 src="test-logo.png"
-                style="border-radius: 50px; margin-left: 5px; margin-right: 5px;"
+                style="border-radius: 50%;"
               />
               <img
                 alt="Chain Logo"
-                class="absolute w-2.5 h-2.5 rounded-full"
+                class="absolute w-2.5 h-2.5"
                 data-testid="pulse-sell-token-selector-chain-logo"
                 src="/src/assets/images/logo-ethereum.png"
-                style="bottom: -2px; right: -2px; border-radius: 50%;"
+                style="bottom: -2px; right: 2px; border-radius: 50%;"
               />
             </div>
             <div
-              class="flex flex-col ml-1.5 mt-1.5 w-[91px] h-9"
+              class="flex flex-col mt-2.5"
+              style="height: 40px; width: 91px;"
             >
               <div
                 class="flex"
               >
                 <p
-                  class="text-xs font-normal"
+                  class="desktop:text-sm mobile:text-xs xs:text-xs font-normal"
                   data-testid="pulse-sell-token-selector-symbol"
                 >
                   TEST
@@ -64,40 +65,37 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
               </div>
             </div>
             <div
-              class="flex ml-5px"
+              class="flex ml-1.5"
             >
               <img
                 alt="arrow-down"
+                class="w-2 h-1"
                 src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
               />
             </div>
           </div>
         </button>
         <div
-          class="flex-1 min-w-0"
+          class="flex flex-1 max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto items-right ml-auto"
         >
           <div
-            class="flex items-center justify-between"
+            class="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0"
             style="height: 36px;"
           >
+            <input
+              class="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full"
+              data-testid="pulse-sell-amount-input"
+              placeholder="0.00"
+              type="text"
+              value=""
+            />
             <div
-              class="flex-1 min-w-0 overflow-hidden"
-            >
-              <input
-                class="w-full no-spinner text-right bg-transparent outline-none pr-0"
-                data-testid="pulse-sell-amount-input"
-                placeholder="0.00"
-                style="font-size: 36px; line-height: 1.2; font-weight: 500;"
-                type="text"
-                value=""
-              />
-            </div>
-            <div
-              class="relative"
+              class="relative flex-shrink-0 max-w-[80px]"
             >
               <p
-                class="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help text-4xl font-medium"
+                class="text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help"
                 data-testid="pulse-sell-token-symbol"
+                style="max-width: 100%; text-overflow: clip;"
               >
                 TES
               </p>
@@ -106,40 +104,47 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
         </div>
       </div>
       <div
-        class="flex justify-between m-2.5"
+        class="flex justify-between items-center p-3"
       >
         <div
           class="flex"
         />
         <div
-          class="flex float-right"
+          class="flex items-center"
         >
           <img
             alt="TEST"
-            class="w-3.5 h-3.5 rounded-full"
+            class="w-2.5 h-2.5 rounded-full"
             data-testid="pulse-sell-token-logo"
             src="test-logo.png"
           />
           <div
-            class="text-[#8A77FF] ml-1.5 text-xs"
+            class="text-[#8A77FF] ml-1 text-xs items-center"
             data-testid="pulse-sell-token-balance"
           >
-            100.5
-             
-            TEST
-             ($
-            10050
-            )
+            <span
+              class="flex items-center justify-end gap-1"
+            >
+              <p
+                class="text-white"
+              >
+                100.5
+              </p>
+               TEST
+              ($
+              10050.00
+              )
+            </span>
           </div>
         </div>
       </div>
     </div>
     <div
-      class="flex w-full max-w-[422px]"
+      class="flex w-full"
       data-testid="pulse-sell-percentage-buttons"
     >
       <div
-        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
       >
         <button
           class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
@@ -147,14 +152,14 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <span
-            style="opacity: 0.5; font: Poppins; font-weight: 400; font-style: Regular; font-size: 13px; line-height: 13px; letter-spacing: -2%; text-align: center;"
+            class="font-normal text-center opacity-50 text-sm"
           >
             10%
           </span>
         </button>
       </div>
       <div
-        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
       >
         <button
           class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
@@ -162,14 +167,14 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <span
-            style="opacity: 0.5; font: Poppins; font-weight: 400; font-style: Regular; font-size: 13px; line-height: 13px; letter-spacing: -2%; text-align: center;"
+            class="font-normal text-center opacity-50 text-sm"
           >
             25%
           </span>
         </button>
       </div>
       <div
-        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
       >
         <button
           class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
@@ -177,14 +182,14 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <span
-            style="opacity: 0.5; font: Poppins; font-weight: 400; font-style: Regular; font-size: 13px; line-height: 13px; letter-spacing: -2%; text-align: center;"
+            class="font-normal text-center opacity-50 text-sm"
           >
             50%
           </span>
         </button>
       </div>
       <div
-        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
       >
         <button
           class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
@@ -192,14 +197,14 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <span
-            style="opacity: 0.5; font: Poppins; font-weight: 400; font-style: Regular; font-size: 13px; line-height: 13px; letter-spacing: -2%; text-align: center;"
+            class="font-normal text-center opacity-50 text-sm"
           >
             75%
           </span>
         </button>
       </div>
       <div
-        class="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
       >
         <button
           class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
@@ -207,7 +212,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           type="button"
         >
           <span
-            style="opacity: 0.5; font: Poppins; font-weight: 400; font-style: Regular; font-size: 13px; line-height: 13px; letter-spacing: -2%; text-align: center;"
+            class="font-normal text-center opacity-50 text-sm"
           >
             MAX
           </span>
@@ -215,19 +220,18 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex m-2.5 w-full max-w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5"
+      class="flex w-full m-2.5"
       data-testid="pulse-sell-button-container"
+      style="width: auto; height: 50px; border-radius: 10px; background-color: black; padding: 2px 2px 6px 2px;"
     >
       <button
-        class="flex-1 items-center justify-center"
+        class="flex-1 items-center justify-center font-medium text-base"
         data-testid="pulse-sell-button"
         disabled=""
         style="background-color: rgb(41, 41, 47); color: grey; border-radius: 8px;"
         type="button"
       >
-        <span
-          style="font-family: Poppins; font-weight: 500px; font-style: Medium; font-size: 13px; line-height: 100%; letter-spacing: -2%; text-align: center;"
-        >
+        <span>
           Sell TEST
         </span>
       </button>

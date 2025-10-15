@@ -16,27 +16,16 @@ exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
   type="button"
 >
   <span
-    style={
-      {
-        "font-family": "Poppins",
-        "font-size": "13px",
-        "font-style": "Medium",
-        "font-weight": 500,
-        "leading-trim": "NONE",
-        "letter-spacing": "-2%",
-        "line-height": "100%",
-        "text-align": "center",
-      }
-    }
+    className="text-base font-medium tracking-tight leading-none text-center"
   >
     <div
-      className="flex items-center justify-center gap-1"
+      className="flex items-center justify-center gap-1 text-base"
     >
       <span>
         Buy
       </span>
       <p
-        className="text-white"
+        className="text-white text-base"
       >
         1
       </p>
@@ -47,7 +36,7 @@ exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
         for
       </span>
       <p
-        className="text-white"
+        className="text-white text-base"
       >
         $
         100

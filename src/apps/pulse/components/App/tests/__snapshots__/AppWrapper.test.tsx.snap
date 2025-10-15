@@ -11,7 +11,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
   }
 >
   <div
-    className="w-full max-w-[446px] px-4 md:px-0"
+    className="w-full max-w-[446px] md:px-0"
   >
     <p
       className="flex text-base font-normal text-white/[.5] w-full text-center mb-6"
@@ -44,16 +44,6 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
           alt="search-icon"
           height={12}
           src="/src/apps/pulse/assets/search-icon.png"
-          style={
-            {
-              "fill": "#FFFFFF",
-              "stroke": "#FFFFFF",
-              "strokeEndPoint": "Round",
-              "strokePosition": "outside",
-              "strokeStatePoint": "Round",
-              "strokeWeight": 1.5,
-            }
-          }
           width={12}
         />
       </span>
@@ -62,7 +52,6 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
         style={
           {
             "color": "grey",
-            "font": "Poppins",
             "fontSize": 13,
             "height": 20,
             "opacity": 0.5,
@@ -79,7 +68,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
         {
           "backgroundColor": "#1E1D24",
           "border": "2px solid #1E1D24",
-          "borderRadius": 10,
+          "borderRadius": 16,
           "marginTop": 40,
           "minHeight": 264,
         }
@@ -114,19 +103,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
             type="button"
           >
             <span
-              className="text-center"
-              style={
-                {
-                  "font-family": "Poppins",
-                  "font-size": "13px",
-                  "font-style": "Medium",
-                  "font-weight": "500",
-                  "leading-trim": "NONE",
-                  "letter-spacing": "-2%",
-                  "line-height": "100%",
-                  "text-align": "center",
-                }
-              }
+              className="text-center font-medium text-sm"
             >
               Buy
             </span>
@@ -146,19 +123,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
             type="button"
           >
             <span
-              className="text-center"
-              style={
-                {
-                  "font-family": "Poppins",
-                  "font-size": "13px",
-                  "font-style": "Medium",
-                  "font-weight": "500",
-                  "leading-trim": "NONE",
-                  "letter-spacing": "-2%",
-                  "line-height": "100%",
-                  "text-align": "center",
-                }
-              }
+              className="text-center font-medium text-sm"
             >
               Sell
             </span>
@@ -270,22 +235,21 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="flex flex-col w-full"
+        className="flex flex-col w-full desktop:min-w-[442px]"
         data-testid="pulse-buy-component"
       >
         <div
-          className="w-full max-w-[422px]"
           style={
             {
-              "backgroundColor": "black",
-              "borderRadius": 10,
+              "backgroundColor": "#121116",
+              "borderRadius": 8,
               "margin": 10,
               "minHeight": 100,
             }
           }
         >
           <div
-            className="flex p-3"
+            className="flex p-3 justify-between"
           >
             <button
               data-testid="pulse-buy-token-selector"
@@ -293,7 +257,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <div
-                className="flex items-center justify-center w-full max-w-[150px]"
+                className="flex items-center justify-center max-w-[150px] w-32"
                 style={
                   {
                     "backgroundColor": "#1E1D24",
@@ -303,41 +267,34 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
                 }
               >
                 <div
-                  className="flex"
-                  style={
-                    {
-                      "fontSize": 12,
-                      "fontWeight": 400,
-                      "marginLeft": 5,
-                    }
-                  }
+                  className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end"
                 >
                   Select token
                 </div>
                 <div
-                  className="flex ml-2"
+                  className="flex ml-1.5"
                 >
                   <img
                     alt="arrow-down"
+                    className="w-2 h-1"
                     src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
                   />
                 </div>
               </div>
             </button>
             <div
-              className="flex-1"
+              className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden"
             >
               <div
-                className="flex w-full"
+                className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0"
                 style={
                   {
-                    "fontSize": 36,
                     "height": 36,
                   }
                 }
               >
                 <input
-                  className="no-spinner flex-1"
+                  className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium"
                   data-testid="pulse-buy-amount-input"
                   disabled={false}
                   onChange={[Function]}
@@ -351,50 +308,40 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
                   type="text"
                   value=""
                 />
-                <p
+                <span
+                  className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden"
                   style={
                     {
                       "color": "grey",
-                      "lineHeight": 1,
                     }
                   }
                 >
                   USD
-                </p>
+                </span>
               </div>
             </div>
           </div>
           <div
-            className="flex justify-between"
-            style={
-              {
-                "margin": 10,
-              }
-            }
+            className="flex justify-between p-3"
           >
             <div
               className="flex"
             />
             <div
-              className="flex"
-              style={
-                {
-                  "float": "right",
-                }
-              }
+              className="flex items-center"
             >
               <img
                 alt="wallet-icon"
+                className="w-4 h-3"
                 data-testid="pulse-buy-wallet-icon"
                 src="data:image/svg+xml,%3csvg%20width='18'%20height='12'%20viewBox='0%200%2018%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M1%203.5C1%202.39543%201.89543%201.5%203%201.5H15C16.1046%201.5%2017%202.39543%2017%203.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V3.5Z'%20fill='%238A77FF'/%3e%3cpath%20d='M5%200.25C6.79493%200.25%208.25%201.70507%208.25%203.5C8.25%205.29493%206.79493%206.75%205%206.75C3.20507%206.75%201.75%205.29493%201.75%203.5C1.75%201.70507%203.20507%200.25%205%200.25Z'%20fill='%230052FF'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M4.99638%205.49985C6.10288%205.49985%206.99988%204.6044%206.99988%203.49985C6.99988%202.39528%206.10288%201.49985%204.99638%201.49985C3.94661%201.49985%203.08541%202.30583%202.99988%203.33172H5.64802V3.66795H2.99988C3.08541%204.69386%203.94661%205.49985%204.99638%205.49985Z'%20fill='%23E3E7E9'/%3e%3cpath%20d='M13%200.25C14.7949%200.25%2016.25%201.70507%2016.25%203.5C16.25%205.29491%2014.7949%206.75%2013%206.75C11.2051%206.75%209.75%205.29491%209.75%203.5C9.75%201.70507%2011.2051%200.25%2013%200.25Z'%20fill='white'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M13%200.5C11.3431%200.5%2010%201.84315%2010%203.5C10%205.15684%2011.3431%206.5%2013%206.5C14.6568%206.5%2016%205.15684%2016%203.5C16%201.84315%2014.6568%200.5%2013%200.5ZM13%205.02748V6.28022C11.8105%206.28022%2010.8462%205.3159%2010.8462%204.12637C10.8462%202.93684%2011.8105%201.97253%2013%201.97253V0.71978C14.1895%200.71978%2015.1538%201.68409%2015.1538%202.87363C15.1538%204.06316%2014.1895%205.02748%2013%205.02748ZM14.033%203.49039V3.5096C13.5777%203.73652%2013.2365%204.07765%2013.0096%204.53296H12.9904C12.7635%204.07765%2012.4223%203.73652%2011.967%203.5096V3.49039C12.4223%203.26347%2012.7635%202.92234%2012.9904%202.46703H13.0096C13.2365%202.92234%2013.5777%203.26347%2014.033%203.49039Z'%20fill='%23FF0420'/%3e%3cpath%20d='M9%200.25C10.7949%200.25%2012.25%201.70507%2012.25%203.5C12.25%205.29493%2010.7949%206.75%209%206.75C7.20507%206.75%205.75%205.29493%205.75%203.5C5.75%201.70507%207.20507%200.25%209%200.25Z'%20fill='%23627EEA'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M9.0929%201.25V2.91312L10.4986%203.54125L9.0929%201.25Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%201.25L7.6875%203.54125L9.09337%202.91312V1.25Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.61986V5.74993L10.4995%203.80386L9.0929%204.61986Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%205.74993V4.61968L7.6875%203.80386L9.09337%205.74993Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.35718L10.4986%203.54099L9.0929%202.91324V4.35718Z'%20fill='white'%20fill-opacity='0.2'/%3e%3cpath%20d='M7.6875%203.54099L9.09337%204.35718V2.91324L7.6875%203.54099Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M4.5%204.25C5.2082%204.25%205.87488%204.58383%206.2998%205.15039L6.90039%205.9502C7.04204%206.13886%207.26406%206.25%207.5%206.25H10.5C10.7359%206.25%2010.958%206.13886%2011.0996%205.9502L11.7002%205.15039C12.1251%204.58383%2012.7918%204.25%2013.5%204.25H16C16.6904%204.25%2017.25%204.80964%2017.25%205.5V9.5C17.25%2010.7426%2016.2426%2011.75%2015%2011.75H3C1.75736%2011.75%200.75%2010.7426%200.75%209.5V5.5C0.75%204.80964%201.30964%204.25%202%204.25H4.5Z'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M1%205.5C1%204.94772%201.44772%204.5%202%204.5H4.5C5.12951%204.5%205.72229%204.79639%206.1%205.3L6.7%206.1C6.88885%206.35181%207.18524%206.5%207.5%206.5H10.5C10.8148%206.5%2011.1111%206.35181%2011.3%206.1L11.9%205.3C12.2777%204.79639%2012.8705%204.5%2013.5%204.5H16C16.5523%204.5%2017%204.94772%2017%205.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V5.5Z'%20fill='%234E448A'/%3e%3c/svg%3e"
               />
               <div
+                className="ml-1 text-xs"
                 data-testid="pulse-buy-wallet-balance"
                 style={
                   {
                     "color": "#8A77FF",
-                    "fontSize": 12,
-                    "marginLeft": 5,
                   }
                 }
               >
@@ -405,10 +352,10 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          className="flex w-full max-w-[422px]"
+          className="flex w-full"
         >
           <div
-            className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
             <button
               className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
@@ -418,26 +365,14 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <span
-                style={
-                  {
-                    "font": "Poppins",
-                    "fontSize": "13px",
-                    "fontStyle": "Regular",
-                    "fontWeight": 400,
-                    "leading-trim": "NONE",
-                    "letter-spacing": "-2%",
-                    "line-height": "13px",
-                    "opacity": 0.5,
-                    "text-align": "center",
-                  }
-                }
+                className="opacity-50 font-normal text-sm"
               >
                 $10
               </span>
             </button>
           </div>
           <div
-            className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
             <button
               className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
@@ -447,26 +382,14 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <span
-                style={
-                  {
-                    "font": "Poppins",
-                    "fontSize": "13px",
-                    "fontStyle": "Regular",
-                    "fontWeight": 400,
-                    "leading-trim": "NONE",
-                    "letter-spacing": "-2%",
-                    "line-height": "13px",
-                    "opacity": 0.5,
-                    "text-align": "center",
-                  }
-                }
+                className="opacity-50 font-normal text-sm"
               >
                 $20
               </span>
             </button>
           </div>
           <div
-            className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
             <button
               className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
@@ -476,26 +399,14 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <span
-                style={
-                  {
-                    "font": "Poppins",
-                    "fontSize": "13px",
-                    "fontStyle": "Regular",
-                    "fontWeight": 400,
-                    "leading-trim": "NONE",
-                    "letter-spacing": "-2%",
-                    "line-height": "13px",
-                    "opacity": 0.5,
-                    "text-align": "center",
-                  }
-                }
+                className="opacity-50 font-normal text-sm"
               >
                 $50
               </span>
             </button>
           </div>
           <div
-            className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
             <button
               className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
@@ -505,26 +416,14 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <span
-                style={
-                  {
-                    "font": "Poppins",
-                    "fontSize": "13px",
-                    "fontStyle": "Regular",
-                    "fontWeight": 400,
-                    "leading-trim": "NONE",
-                    "letter-spacing": "-2%",
-                    "line-height": "13px",
-                    "opacity": 0.5,
-                    "text-align": "center",
-                  }
-                }
+                className="opacity-50 font-normal text-sm"
               >
                 $100
               </span>
             </button>
           </div>
           <div
-            className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
             <button
               className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
@@ -534,19 +433,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
               type="button"
             >
               <span
-                style={
-                  {
-                    "font": "Poppins",
-                    "fontSize": "13px",
-                    "fontStyle": "Regular",
-                    "fontWeight": 400,
-                    "leading-trim": "NONE",
-                    "letter-spacing": "-2%",
-                    "line-height": "13px",
-                    "opacity": 0.5,
-                    "text-align": "center",
-                  }
-                }
+                className="opacity-50 font-normal text-sm"
               >
                 MAX
               </span>
@@ -554,14 +441,14 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
           </div>
         </div>
         <div
-          className="flex w-full max-w-[422px]"
+          className="flex w-full m-2.5"
           style={
             {
               "backgroundColor": "black",
               "borderRadius": 10,
               "height": 50,
-              "margin": 10,
-              "padding": "2px 2px 4px 2px",
+              "padding": "2px 2px 6px 2px",
+              "width": "auto",
             }
           }
         >
@@ -580,18 +467,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
             type="button"
           >
             <span
-              style={
-                {
-                  "font-family": "Poppins",
-                  "font-size": "13px",
-                  "font-style": "Medium",
-                  "font-weight": 500,
-                  "leading-trim": "NONE",
-                  "letter-spacing": "-2%",
-                  "line-height": "100%",
-                  "text-align": "center",
-                }
-              }
+              className="text-base font-medium tracking-tight leading-none text-center"
             >
               Select token
             </span>

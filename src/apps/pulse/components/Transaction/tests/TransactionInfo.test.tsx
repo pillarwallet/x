@@ -300,7 +300,8 @@ describe('<TransactionInfo />', () => {
       render(<TransactionInfo {...baseProps} status="Transaction Complete" />);
 
       expect(screen.getByText('Time')).toBeInTheDocument();
-      expect(screen.getByText('Jan 1, 2023 12:00')).toBeInTheDocument();
+      // Time displayed is based on browser/test timezone
+      expect(screen.getByText(/Jan 1, 2023 \d{2}:\d{2}/)).toBeInTheDocument();
     });
 
     it('does not display completion time when transaction is not complete', () => {

@@ -16,48 +16,56 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
       className="flex"
     >
       <div
-        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+        className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
         data-testid="pulse-preview-buy-refresh-button"
       >
-        <button
-          aria-label="Refresh"
-          className="flex items-center justify-center bg-[#1E1D24] rounded-[8px] cursor-pointer"
-          data-testid="pulse-refresh-button"
-          disabled={false}
-          onClick={[Function]}
-          style={
-            {
-              "height": 18,
-              "width": 18,
-            }
-          }
-          type="button"
+        <div
+          className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
         >
-          <img
-            alt="refresh-icon"
-            height={18}
-            src="data:image/svg+xml,%3csvg%20width='22'%20height='24'%20viewBox='0%200%2022%2024'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.93785%2012.0354C2.94151%2010.2722%203.52828%208.55707%204.60713%207.156C5.68598%205.75494%207.19662%204.74624%208.90478%204.28635C10.6129%203.82646%2012.4231%203.94108%2014.0546%204.61243C15.6861%205.28379%2017.0477%206.47436%2017.9282%207.99949M17.9282%207.99949L14.7632%207.51744M17.9282%207.99949L17.7273%204.65142'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M19.0619%2011.9636C19.0582%2013.7268%2018.4714%2015.442%2017.3926%2016.843C16.3137%2018.2441%2014.8031%2019.2528%2013.0949%2019.7127C11.3868%2020.1726%209.5766%2020.0579%207.94512%2019.3866C6.31363%2018.7152%204.95204%2017.5247%204.0715%2015.9995M4.0715%2015.9995L7.23656%2016.4816M4.0715%2015.9995L4.27246%2019.3476'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
-            width={18}
-          />
-        </button>
+          <button
+            aria-label="Refresh"
+            className="flex items-center justify-center bg-[#1E1D24] rounded-[8px] cursor-pointer"
+            data-testid="pulse-refresh-button"
+            disabled={false}
+            onClick={[Function]}
+            style={
+              {
+                "height": 18,
+                "width": 18,
+              }
+            }
+            type="button"
+          >
+            <img
+              alt="refresh-icon"
+              height={18}
+              src="data:image/svg+xml,%3csvg%20width='22'%20height='24'%20viewBox='0%200%2022%2024'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.93785%2012.0354C2.94151%2010.2722%203.52828%208.55707%204.60713%207.156C5.68598%205.75494%207.19662%204.74624%208.90478%204.28635C10.6129%203.82646%2012.4231%203.94108%2014.0546%204.61243C15.6861%205.28379%2017.0477%206.47436%2017.9282%207.99949M17.9282%207.99949L14.7632%207.51744M17.9282%207.99949L17.7273%204.65142'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M19.0619%2011.9636C19.0582%2013.7268%2018.4714%2015.442%2017.3926%2016.843C16.3137%2018.2441%2014.8031%2019.2528%2013.0949%2019.7127C11.3868%2020.1726%209.5766%2020.0579%207.94512%2019.3866C6.31363%2018.7152%204.95204%2017.5247%204.0715%2015.9995M4.0715%2015.9995L7.23656%2016.4816M4.0715%2015.9995L4.27246%2019.3476'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+              width={18}
+            />
+          </button>
+        </div>
       </div>
       <div
-        className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+        className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
         data-testid="pulse-preview-buy-esc-button"
       >
-        <button
-          aria-label="Close"
-          className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px]"
-          data-testid="esc-button"
-          onClick={[MockFunction spy]}
-          type="button"
+        <div
+          className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
         >
-          <p
-            className="text-white/50 font-medium text-[13px] leading-[100%] tracking-[-0.02em] text-center"
+          <button
+            aria-label="Close"
+            className="flex items-center justify-center w-[18px] h-[18px] bg-[#1E1D24] rounded-[8px]"
+            data-testid="esc-button"
+            onClick={[MockFunction spy]}
+            type="button"
           >
-            ESC
-          </p>
-        </button>
+            <p
+              className="text-white/50 font-medium text-[13px] leading-[100%] tracking-[-0.02em] text-center"
+            >
+              ESC
+            </p>
+          </button>
+        </div>
       </div>
     </div>
   </div>

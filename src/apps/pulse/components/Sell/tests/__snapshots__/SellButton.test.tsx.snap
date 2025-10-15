@@ -2,7 +2,7 @@
 
 exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
 <button
-  className="flex-1 items-center justify-center"
+  className="flex-1 items-center justify-center font-medium text-base"
   data-testid="pulse-sell-button"
   disabled={false}
   onClick={[Function]}
@@ -15,28 +15,15 @@ exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
   }
   type="button"
 >
-  <span
-    style={
-      {
-        "font-family": "Poppins",
-        "font-size": "13px",
-        "font-style": "Medium",
-        "font-weight": 500,
-        "leading-trim": "NONE",
-        "letter-spacing": "-2%",
-        "line-height": "100%",
-        "text-align": "center",
-      }
-    }
-  >
+  <span>
     <div
-      className="flex items-center justify-center gap-1"
+      className="flex items-center justify-center gap-1 text-base"
     >
       <span>
         Sell
       </span>
       <p
-        className="text-white"
+        className="text-white text-base"
       >
         10
       </p>
@@ -47,7 +34,7 @@ exports[`<SellButton /> > renders correctly and matches snapshot 1`] = `
         for
       </span>
       <p
-        className="text-white"
+        className="text-white text-base"
       >
         50
       </p>

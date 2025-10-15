@@ -128,7 +128,7 @@ describe('<Sell />', () => {
       ).toHaveTextContent('TEST');
       expect(screen.getByText('$100.00')).toBeInTheDocument();
       expect(screen.getByTestId('pulse-sell-token-balance')).toHaveTextContent(
-        '100.5 TEST ($10050)'
+        '100.5 TEST($10050.00)'
       );
     });
   });
@@ -161,7 +161,8 @@ describe('<Sell />', () => {
       );
       fireEvent.click(tenPercentButton);
 
-      expect(screen.getByDisplayValue('10.05')).toBeInTheDocument();
+      // Multiple elements show the value (desktop and mobile versions)
+      expect(screen.getAllByText('10.05').length).toBeGreaterThan(0);
     });
 
     it('MAX button', () => {
@@ -170,7 +171,8 @@ describe('<Sell />', () => {
       const maxButton = screen.getByTestId('pulse-sell-percentage-button-max');
       fireEvent.click(maxButton);
 
-      expect(screen.getByDisplayValue('100.5')).toBeInTheDocument();
+      // Multiple elements show the value (desktop and mobile versions)
+      expect(screen.getAllByText('100.5').length).toBeGreaterThan(0);
     });
 
     it('token selector click', () => {
@@ -216,7 +218,7 @@ describe('<Sell />', () => {
       renderWithProviders({ walletPortfolioData: undefined });
 
       expect(screen.getByTestId('pulse-sell-token-balance')).toHaveTextContent(
-        '0 TEST ($0)'
+        '0 TEST($0.00)'
       );
     });
   });
