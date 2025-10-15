@@ -139,7 +139,7 @@ const Sell = (props: SellProps) => {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          token.chainId && isNativeToken(t.contract)
+        token.chainId && isNativeToken(t.contract)
     );
     if (!nativeToken) {
       setMinGasAmount(true);
@@ -225,7 +225,7 @@ const Sell = (props: SellProps) => {
                       className="w-6 h-6 ml-1 mr-1"
                       data-testid="pulse-sell-token-selector-logo"
                       style={{
-                        borderRadius: 50,
+                        borderRadius: '50%',
                       }}
                     />
                   ) : (
@@ -312,7 +312,6 @@ const Sell = (props: SellProps) => {
               className="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0"
               style={{ height: 36 }}
             >
-              {/* <div className="flex-1 min-w-0 overflow-hidden"> */}
               {showNumInP ? (
                 <>
                   <div
@@ -372,11 +371,10 @@ const Sell = (props: SellProps) => {
                 </>
               ) : (
                 <input
-                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${
-                    token
-                      ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
-                      : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
-                  }`}
+                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${token
+                    ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
+                    : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
+                    }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
                   value={tokenAmount}
@@ -385,7 +383,6 @@ const Sell = (props: SellProps) => {
                   data-testid="pulse-sell-amount-input"
                 />
               )}
-              {/* </div> */}
               {token && (
                 <div className="relative flex-shrink-0 max-w-[80px]">
                   <p
@@ -478,11 +475,10 @@ const Sell = (props: SellProps) => {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     setShowNumInP(true);
