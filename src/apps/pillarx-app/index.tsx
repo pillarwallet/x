@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { setWalletAddresses } from '@hypelab/sdk-react';
 import { useWallets } from '@privy-io/react-auth';
+import { Setting2 } from 'iconsax-react';
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import './styles/tailwindPillarX.css';
@@ -38,6 +39,9 @@ const App = () => {
   // Import wallets
   const { walletAddress } = useTransactionKit();
   const { wallets: privyWallets } = useWallets();
+
+  // Check if we're in React Native app (check localStorage which is set in Main.tsx)
+  const isReactNativeApp = !!localStorage.getItem('DEVICE_PLATFORM');
 
   const scrollPositionRef = useRef<number>(0);
   const divRef = createRef<HTMLDivElement>();
@@ -184,13 +188,39 @@ const App = () => {
     return allTileComponents;
   }, [pageData, isHomeFeedLoading, walletAddress]);
 
+  // Handler to open settings in React Native app
+  const handleSettingsClick = () => {
+    const message = JSON.stringify({
+      type: 'pillarXAuthRequest',
+      value: 'settings',
+    });
+
+    // Send message to React Native webview
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(message);
+    } else {
+      // Fallback for testing in browser
+      window.postMessage(message, '*');
+    }
+  };
+
   return (
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     <Wrapper>
-      <PillarXLogo
-        src={pillarLogoLight}
-        className="object-contain h-[20px] mb-[70px] mobile:h-[18px] mobile:mb-[58px] self-center"
-      />
+      <HeaderContainer>
+        {isReactNativeApp && (
+          <SettingsButton
+            onClick={handleSettingsClick}
+            aria-label="Open settings"
+          >
+            <Setting2 size={24} variant="Outline" />
+          </SettingsButton>
+        )}
+        <PillarXLogo
+          src={pillarLogoLight}
+          className="object-contain h-[20px] mobile:h-[18px]"
+        />
+      </HeaderContainer>
       <div
         ref={divRef}
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
@@ -231,6 +261,42 @@ const Wrapper = styled.div`
 
   @media (max-width: 768px) {
     padding: 32px 16px;
+  }
+`;
+
+const HeaderContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 70px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 58px;
+  }
+`;
+
+const SettingsButton = styled.button`
+  position: absolute;
+  left: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.color.text.body};
+  transition: opacity 0.2s;
+  border-radius: 8px;
+
+  &:hover {
+    opacity: 0.7;
+    background: ${({ theme }) => theme.color.background.card}20;
+  }
+
+  &:active {
+    opacity: 0.5;
   }
 `;
 

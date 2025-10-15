@@ -31,7 +31,6 @@ import { useComprehensiveLogout } from '../../utils/logout';
 import { formatAmountDisplay } from '../../utils/number';
 
 // hooks
-import usePrivateKeyLogin from '../../hooks/usePrivateKeyLogin';
 import useTransactionKit from '../../hooks/useTransactionKit';
 
 // services
@@ -47,10 +46,15 @@ interface AccountModalProps {
 
 const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const { walletAddress: accountAddress } = useTransactionKit();
-  const { account, setAccount } = usePrivateKeyLogin();
   const navigate = useNavigate();
   const [t] = useTranslation();
   const { logout } = useComprehensiveLogout();
+
+  // Check if user is logged in via private key
+  const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
+
+  // Check if running inside React Native app
+  const isReactNativeApp = !!localStorage.getItem('DEVICE_PLATFORM');
 
   const [expanded, setExpanded] = React.useState<Record<string, boolean>>({});
   const theme = useTheme();
@@ -124,10 +128,10 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   }, [accountAddress, copied]);
 
   const onLogoutClick = useCallback(async () => {
-    // Handle private key logout
-    if (account) {
+    // Handle private key logout - clear account address from localStorage
+    // (Private key is never stored in localStorage for security reasons)
+    if (isPkAccount) {
       localStorage.removeItem('ACCOUNT_VIA_PK');
-      setAccount(undefined);
     }
 
     // Use comprehensive logout for both Privy and WAGMI
@@ -152,7 +156,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, logout, navigate]);
+  }, [isPkAccount, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {
@@ -202,11 +206,13 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
             </TopBarIcon>
           </CopyToClipboard>
         </AccountSection>
-        <Tooltip content="Log Out">
-          <TopBarIcon id="account-logout" onClick={onLogoutClick}>
-            <LogoutIcon size={20} />
-          </TopBarIcon>
-        </Tooltip>
+        {!isReactNativeApp && (
+          <Tooltip content="Log Out">
+            <TopBarIcon id="account-logout" onClick={onLogoutClick}>
+              <LogoutIcon size={20} />
+            </TopBarIcon>
+          </Tooltip>
+        )}
       </TopBar>
       <FormTabSelect
         items={[{ icon: <IconBlend size={20} />, title: t`label.tokens` }]}
