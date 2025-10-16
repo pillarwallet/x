@@ -974,7 +974,6 @@ export default function HomeScreen(props: HomeScreenProps) {
               >
                 <div
                   style={{
-                    padding: '8px 1px',
                     width: 36,
                     height: 34,
                     backgroundColor: '#1E1D24',

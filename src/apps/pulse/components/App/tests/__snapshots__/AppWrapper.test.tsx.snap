@@ -156,7 +156,6 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
                   "display": "flex",
                   "height": 34,
                   "justifyContent": "center",
-                  "padding": "8px 1px",
                   "width": 36,
                 }
               }
