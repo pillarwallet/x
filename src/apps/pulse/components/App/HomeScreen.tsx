@@ -876,12 +876,7 @@ export default function HomeScreen(props: HomeScreenProps) {
           data-testid="pulse-search-button-homescreen"
         >
           <span style={{ marginLeft: 14, marginRight: 10 }}>
-            <img
-              src={SearchIcon}
-              alt="search-icon"
-              width={12}
-              height={12}
-            />
+            <img src={SearchIcon} alt="search-icon" width={12} height={12} />
           </span>
           <div
             className="flex-1"
@@ -924,16 +919,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(true)}
                 type="button"
@@ -946,16 +941,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                      backgroundColor: '#1E1D24',
-                      borderRadius: 10,
-                      margin: 4,
-                    }
+                        backgroundColor: '#1E1D24',
+                        borderRadius: 10,
+                        margin: 4,
+                      }
                     : {
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      margin: 4,
-                      color: 'grey',
-                    }
+                        backgroundColor: 'black',
+                        borderRadius: 10,
+                        margin: 4,
+                        color: 'grey',
+                      }
                 }
                 onClick={() => setIsBuy(false)}
                 type="button"
