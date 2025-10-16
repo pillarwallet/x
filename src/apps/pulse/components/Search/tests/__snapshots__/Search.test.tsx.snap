@@ -58,7 +58,7 @@ exports[`<Search /> > renders correctly and matches snapshot 1`] = `
         >
           <button
             aria-label="Refresh"
-            className="flex h-[18px] w-[18px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-not-allowed opacity-50"
+            className="flex w-[36px] h-[34px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-not-allowed opacity-50"
             data-testid="pulse-refresh-button"
             disabled={true}
             type="button"

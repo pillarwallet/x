@@ -25,7 +25,7 @@ exports[`<PreviewSell /> > renders correctly and matches snapshot 1`] = `
         >
           <button
             aria-label="Refresh"
-            className="flex h-[18px] w-[18px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-pointer"
+            className="flex w-[36px] h-[34px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-pointer"
             data-testid="pulse-refresh-button"
             disabled={false}
             onClick={[Function]}
