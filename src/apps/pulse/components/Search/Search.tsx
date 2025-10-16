@@ -308,7 +308,10 @@ export default function Search({
             )}
           </div>
           <div className="ml-3 bg-black rounded-[10px] w-10 h-10 justify-center items-center flex p-[2px_2px_4px_2px]">
-            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+            <div
+              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+              data-testid="pulse-search-refresh-button"
+            >
               <Refresh
                 isLoading={walletPortfolioFetching}
                 onClick={refetchWalletPortfolio}

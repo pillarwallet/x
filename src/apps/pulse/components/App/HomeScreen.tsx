@@ -982,6 +982,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                     display: 'flex',
                     justifyContent: 'center',
                   }}
+                  data-testid="pulse-refresh-button-homescreen"
                 >
                   <Refresh
                     onClick={handleRefresh}

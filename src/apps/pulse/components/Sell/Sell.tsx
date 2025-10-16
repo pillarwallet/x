@@ -259,7 +259,10 @@ const Sell = (props: SellProps) => {
                       )}
                   </div>
                   <div className="flex">
-                    <p className="text-[10px] font-normal text-white h-[10px] opacity-50">
+                    <p
+                      className="text-[10px] font-normal text-white h-[10px] opacity-50"
+                      data-testid="pulse-sell-token-selector-price"
+                    >
                       ${formatExponentialSmallNumber(token.usdValue)}
                     </p>
                   </div>
@@ -273,12 +276,15 @@ const Sell = (props: SellProps) => {
               </div>
             ) : (
               <div className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]">
-                <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
+                <div
+                  className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end"
+                  data-testid="pulse-sell-token-selector-placeholder"
+                >
                   Select token
                 </div>
                 <div
                   className="flex ml-1.5"
-                  data-testid="pulse-sell-token-selector-arrow"
+                  data-testid="pulse-sell-token-selector-arrow-placeholder"
                 >
                   <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
