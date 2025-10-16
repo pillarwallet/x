@@ -15,33 +15,29 @@ exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
   }
   type="button"
 >
-  <span
-    className="text-base font-medium tracking-tight leading-none text-center"
+  <div
+    className="flex items-center justify-center gap-1 text-base"
   >
-    <div
-      className="flex items-center justify-center gap-1 text-base"
+    <span>
+      Buy
+    </span>
+    <p
+      className="text-white text-base"
     >
-      <span>
-        Buy
-      </span>
-      <p
-        className="text-white text-base"
-      >
-        1
-      </p>
-      <span>
-        TEST
-      </span>
-      <span>
-        for
-      </span>
-      <p
-        className="text-white text-base"
-      >
-        $
-        100
-      </p>
-    </div>
-  </span>
+      1
+    </p>
+    <span>
+      TEST
+    </span>
+    <span>
+      for
+    </span>
+    <p
+      className="text-white text-base"
+    >
+      $
+      100
+    </p>
+  </div>
 </button>
 `;

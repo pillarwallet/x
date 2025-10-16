@@ -85,7 +85,7 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
             value=""
           />
           <span
-            className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-grey"
+            className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-[#FFFFFF4D]"
           >
             USD
           </span>
@@ -223,11 +223,7 @@ exports[`<Buy /> > renders correctly and matches snapshot 1`] = `
       }
       type="button"
     >
-      <span
-        className="text-base font-medium tracking-tight leading-none text-center"
-      >
-        Buy TEST
-      </span>
+      Buy TEST
     </button>
   </div>
 </div>

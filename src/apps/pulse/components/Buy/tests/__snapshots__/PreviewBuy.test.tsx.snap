@@ -24,16 +24,10 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         >
           <button
             aria-label="Refresh"
-            className="flex items-center justify-center bg-[#1E1D24] rounded-[8px] cursor-pointer"
+            className="flex h-[18px] w-[18px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-pointer"
             data-testid="pulse-refresh-button"
             disabled={false}
             onClick={[Function]}
-            style={
-              {
-                "height": 18,
-                "width": 18,
-              }
-            }
             type="button"
           >
             <img
