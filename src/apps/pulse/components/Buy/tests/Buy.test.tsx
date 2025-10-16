@@ -279,7 +279,7 @@ describe('<Buy />', () => {
     it('without token selected', () => {
       renderWithProviders({ token: null });
 
-      expect(screen.getByText('Select token')).toBeInTheDocument();
+      expect(screen.getAllByText('Select token').length).toBeGreaterThan(0);
       expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument();
     });
@@ -288,7 +288,7 @@ describe('<Buy />', () => {
       renderWithProviders();
 
       expect(screen.getByText('TEST')).toBeInTheDocument();
-      expect(screen.getByText('Test T...')).toBeInTheDocument();
+      // Token name is not shown when symbol.length + name.length > 13
       expect(screen.getByText('$100.00')).toBeInTheDocument();
       expect(screen.getByText('$10050.00')).toBeInTheDocument();
     });
@@ -319,13 +319,13 @@ describe('<Buy />', () => {
       const tenDollarButton = screen.getByText('$10');
       fireEvent.click(tenDollarButton);
 
-      expect(screen.getByDisplayValue('10.00')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('10')).toBeInTheDocument();
     });
 
     it('MAX button', () => {
       renderWithProviders();
 
-      const maxButton = screen.getByText('$MAX');
+      const maxButton = screen.getByText('MAX');
       fireEvent.click(maxButton);
 
       expect(screen.getByDisplayValue('10050.00')).toBeInTheDocument();

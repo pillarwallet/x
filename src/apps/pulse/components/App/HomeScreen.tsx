@@ -24,7 +24,7 @@ import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
 
 // components
-import SearchIcon from '../../assets/seach-icon.svg';
+import SearchIcon from '../../assets/search-icon.png';
 import Buy from '../Buy/Buy';
 import PreviewBuy from '../Buy/PreviewBuy';
 import Refresh from '../Misc/Refresh';
@@ -788,7 +788,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const renderPreview = () => {
     if (previewBuy) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewBuy
             closePreview={closePreviewBuy}
             buyToken={buyToken}
@@ -805,7 +805,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (previewSell) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewSell
             closePreview={closePreviewSell}
             showTransactionStatus={showTransactionStatus}
@@ -821,7 +821,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (transactionStatus) {
       return (
-        <div className="w-full h-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full h-full flex justify-center px-3 md:p-3 mb-[70px]">
           <TransactionStatus
             closeTransactionStatus={closeTransactionStatus}
             userOpHash={userOpHash}
@@ -856,16 +856,15 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <>
-        <p className="flex text-base font-normal text-white/[.5] max-w-[442px] text-center mb-6">
+      <div className="w-full max-w-[446px] md:px-0">
+        <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
           You&apos;re trying out the beta version of Pulse: expect improvements
           ahead. Thank you.
         </p>
         <button
-          className="flex items-center justify-center"
+          className="flex items-center justify-center w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
             height: 40,
             backgroundColor: '#121116',
             borderRadius: 10,
@@ -876,30 +875,37 @@ export default function HomeScreen(props: HomeScreenProps) {
           type="button"
           data-testid="pulse-search-button-homescreen"
         >
-          <span style={{ marginLeft: 10 }}>
-            <img src={SearchIcon} alt="search-icon" />
+          <span style={{ marginLeft: 14, marginRight: 10 }}>
+            <img src={SearchIcon} alt="search-icon" width={12} height={12} />
           </span>
-          <div className="flex-1 w-fit" style={{ color: 'grey' }}>
+          <div
+            className="flex-1"
+            style={{
+              color: 'grey',
+              textAlign: 'left',
+              opacity: 0.5,
+              height: 20,
+              fontSize: 13,
+            }}
+          >
             Search by token or paste address
           </div>
         </button>
         <div
-          className="flex flex-col"
+          className="flex flex-col w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
-            height: 264,
-            backgroundColor: '#121116',
-            borderRadius: 10,
+            minHeight: 264,
+            backgroundColor: '#1E1D24',
+            borderRadius: 16,
             marginTop: 40,
           }}
         >
           {/* buy/sell, refresh, settings */}
-          <div className="flex">
+          <div className="flex justify-between">
             <div
-              className="flex"
+              className="flex flex-1 max-w-[318px]"
               style={{
-                width: 318,
                 height: 40,
                 backgroundColor: 'black',
                 borderRadius: 10,
@@ -913,7 +919,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -927,7 +933,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(true)}
                 type="button"
               >
-                <p className="text-center">Buy</p>
+                <span className="text-center font-medium text-sm">Buy</span>
               </button>
               <button
                 className="flex-1 items-center justify-center"
@@ -935,7 +941,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -949,10 +955,10 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(false)}
                 type="button"
               >
-                <p className="text-center">Sell</p>
+                <span className="text-center font-medium text-sm">Sell</span>
               </button>
             </div>
-            <div className="flex" style={{ marginTop: 10 }}>
+            <div className="flex mt-2.5 mr-2.5">
               <div
                 style={{
                   marginLeft: 12,
@@ -960,15 +966,30 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
-                data-testid="pulse-refresh-button-homescreen"
               >
-                <Refresh
-                  onClick={handleRefresh}
-                  isLoading={isRefreshingHome}
-                  disabled={isRefreshingHome || (!buyToken && !sellToken)}
-                />
+                <div
+                  style={{
+                    padding: '8px 1px',
+                    width: 36,
+                    height: 34,
+                    backgroundColor: '#1E1D24',
+                    borderRadius: 8,
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                  data-testid="pulse-refresh-button-homescreen"
+                >
+                  <Refresh
+                    onClick={handleRefresh}
+                    isLoading={isRefreshingHome}
+                    disabled={isRefreshingHome || (!buyToken && !sellToken)}
+                  />
+                </div>
               </div>
 
               <div
@@ -978,6 +999,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
               >
@@ -1014,7 +1038,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             />
           )}
         </div>
-      </>
+      </div>
     );
   };
 

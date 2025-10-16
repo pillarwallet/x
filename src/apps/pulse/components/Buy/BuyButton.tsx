@@ -21,7 +21,7 @@ function getButtonText(
 ) {
   if (areModulesInstalled === false && payingToken && !isInstalling) {
     return (
-      <div className="flex items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
+      <div className="flex text-sm items-center justify-center">{`Enable Trading on ${getChainName(payingToken.chainId)}`}</div>
     );
   }
 
@@ -49,26 +49,31 @@ function getButtonText(
     const limitedTokenAmount = limitDigitsNumber(tokenAmount);
 
     return (
-      <div className="flex items-center justify-center gap-1">
-        <span>Buy</span>
+      <div className="flex items-center justify-center gap-1 text-base">
+        <span>{selectedToken ? 'Buy' : 'Select token'}</span>
         <HighDecimalsFormatted
           value={limitedTokenAmount}
-          styleNumber="text-white"
-          styleZeros="text-white/70 text-xs"
+          styleNumber="text-white text-base"
+          styleZeros="text-white/70 text-sm"
         />
         <span>{selectedToken?.symbol}</span>
         <span>for</span>
         <HighDecimalsFormatted
           value={limitedUsdAmount}
           moneySymbol="$"
-          styleNumber="text-white"
-          styleZeros="text-white/70 text-xs"
+          styleNumber="text-white text-base"
+          styleZeros="text-white/70 text-sm"
         />
       </div>
     );
   }
 
-  return selectedToken?.symbol ? `Buy ${selectedToken.symbol}` : 'Buy';
+  // eslint-disable-next-line no-nested-ternary
+  return selectedToken?.symbol
+    ? `Buy ${selectedToken.symbol}`
+    : selectedToken === null
+      ? 'Select token'
+      : 'Buy';
 }
 
 export interface BuyButtonProps {

@@ -16,13 +16,13 @@ exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
   type="button"
 >
   <div
-    className="flex items-center justify-center gap-1"
+    className="flex items-center justify-center gap-1 text-base"
   >
     <span>
       Buy
     </span>
     <p
-      className="text-white"
+      className="text-white text-base"
     >
       1
     </p>
@@ -33,7 +33,7 @@ exports[`<BuyButton /> > renders correctly and matches snapshot 1`] = `
       for
     </span>
     <p
-      className="text-white"
+      className="text-white text-base"
     >
       $
       100

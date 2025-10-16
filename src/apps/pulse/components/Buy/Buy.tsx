@@ -478,17 +478,12 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <div className="flex flex-col" data-testid="pulse-buy-component">
-      <div
-        style={{
-          margin: 10,
-          backgroundColor: 'black',
-          width: 422,
-          height: 100,
-          borderRadius: 10,
-        }}
-      >
-        <div className="flex p-3">
+    <div
+      className="flex flex-col w-full desktop:min-w-[442px]"
+      data-testid="pulse-buy-component"
+    >
+      <div className="m-2.5 bg-[#121116] min-h-[100px] rounded-lg">
+        <div className="flex p-3 justify-between">
           <button
             onClick={() => {
               setSearching(true);
@@ -498,134 +493,82 @@ export default function Buy(props: BuyProps) {
           >
             {token ? (
               <div
-                className="flex items-center justify-center"
-                style={{
-                  width: 150,
-                  height: 36,
-                  backgroundColor: '#1E1D24',
-                  borderRadius: 10,
-                }}
+                className="flex items-center mobile:w-32 xs:w-32 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
                 data-testid={`pulse-buy-token-selected-${token.chainId}-${token.name}`}
               >
-                <div style={{ position: 'relative', display: 'inline-block' }}>
+                <div className="relative inline-block">
                   {token.logo ? (
                     <img
                       src={token.logo}
                       alt="Main"
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
+                      className="w-6 h-6 ml-1 mr-1 rounded-full"
                     />
                   ) : (
-                    <div
-                      className="w-full h-full overflow-hidden rounded-full"
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
-                    >
+                    <div className="w-6 h-6 ml-1 mr-1 overflow-hidden rounded-full">
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-2px',
-                      right: '-2px',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                    }}
+                    className="w-2.5 h-2.5 absolute bottom-[-2px] right-[2px] rounded-full"
                     alt="Chain Logo"
                   />
                 </div>
-                <div
-                  className="flex flex-col"
-                  style={{ marginLeft: 5, marginTop: 5, height: 36 }}
-                >
+                <div className="flex flex-col mt-2.5 h-10 w-[91px]">
                   <div className="flex">
-                    <p style={{ fontSize: 12, fontWeight: 400 }}>
+                    <p className="font-normal desktop:text-sm mobile:text-xs xs:text-xs">
                       {token.symbol}
                     </p>
-                    <p
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 400,
-                        marginLeft: 3,
-                        color: 'grey',
-                      }}
-                    >
-                      {token.name.length >= 10
-                        ? `${token.name.slice(0, 6)}...`
-                        : token.name}
-                    </p>
+                    {token.symbol.length + token.name.length <= 13 && (
+                      <p className="ml-1 opacity-30 font-normal desktop:text-sm mobile:text-xs xs:text-xs text-white">
+                        {token.name}
+                      </p>
+                    )}
                   </div>
                   <div className="flex">
-                    <p
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 400,
-                        color: 'grey',
-                        height: 10,
-                      }}
-                    >
+                    <p className="opacity-50 font-normal text-white h-[10px] text-[10px]">
                       ${token.usdValue}
                     </p>
                   </div>
                 </div>
-                <img src={ArrowDown} alt="arrow-down" />
+                <div className="flex m-1.5">
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
+                </div>
               </div>
             ) : (
-              <div
-                className="flex items-center justify-center"
-                style={{
-                  width: 150,
-                  height: 36,
-                  backgroundColor: '#1E1D24',
-                  borderRadius: 10,
-                }}
-              >
+              <div className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]">
                 {isSearchingToken ? (
                   <div className="flex items-center">
                     <TailSpin width={16} height={16} />
-                    <div className="flex font-normal text-xs">Searching...</div>
+                    <div className="flex font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs">
+                      Searching...
+                    </div>
                   </div>
                 ) : (
                   <>
-                    <div
-                      className="flex"
-                      style={{ fontWeight: 400, fontSize: 12, marginLeft: 5 }}
-                    >
+                    <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
                       Select token
                     </div>
-                    <div className="flex ml-2">
-                      <img src={ArrowDown} alt="arrow-down" />
+                    <div className="flex ml-1.5">
+                      <img
+                        src={ArrowDown}
+                        className="w-2 h-1"
+                        alt="arrow-down"
+                      />
                     </div>
                   </>
                 )}
               </div>
             )}
           </button>
-          <div className="flex-1">
-            <div
-              className="flex"
-              style={{ height: 36, fontSize: 36, width: 189 }}
-            >
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden">
+            <div className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0 h-9">
               <input
-                className="no-spinner"
+                className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right"
                 placeholder={inputPlaceholder}
-                style={{ width: 185, textAlign: 'right' }}
                 onChange={handleUsdAmountChange}
                 value={usdAmount}
                 type="text"
@@ -633,11 +576,13 @@ export default function Buy(props: BuyProps) {
                 onFocus={() => setInputPlaceholder('')}
                 data-testid="pulse-buy-amount-input"
               />
-              <p style={{ lineHeight: 1, color: 'grey' }}>USD</p>
+              <span className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-[#FFFFFF4D]">
+                USD
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex justify-between" style={{ margin: 10 }}>
+        <div className="flex justify-between p-3">
           <div className="flex">
             {(() => {
               const showError =
@@ -675,12 +620,7 @@ export default function Buy(props: BuyProps) {
                     data-testid="pulse-buy-warning-icon"
                   />
                   <span
-                    style={{
-                      textDecoration: 'underline',
-                      color: '#FF366C',
-                      fontSize: 12,
-                      marginLeft: 5,
-                    }}
+                    className="text-xs m-1 underline text-[#FF366C]"
                     data-testid="pulse-buy-error-message"
                   >
                     {message}
@@ -689,18 +629,15 @@ export default function Buy(props: BuyProps) {
               );
             })()}
           </div>
-          <div className="flex" style={{ float: 'right' }}>
+          <div className="flex items-center">
             <img
               src={WalletIcon}
+              className="w-4 h-3"
               alt="wallet-icon"
               data-testid="pulse-buy-wallet-icon"
             />
             <div
-              style={{
-                color: '#8A77FF',
-                marginLeft: 5,
-                fontSize: 12,
-              }}
+              className="ml-1 text-xs text-[#8A77FF]"
               data-testid="pulse-buy-wallet-balance"
             >
               ${sumOfStableBalance.toFixed(2)}
@@ -709,7 +646,7 @@ export default function Buy(props: BuyProps) {
         </div>
       </div>
       {/* amounts */}
-      <div className="flex">
+      <div className="flex w-full">
         {['10', '20', '50', '100', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const isDisabled = !token;
@@ -717,7 +654,7 @@ export default function Buy(props: BuyProps) {
           return (
             <div
               key={item}
-              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+              className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${
@@ -730,7 +667,7 @@ export default function Buy(props: BuyProps) {
                     if (isMax) {
                       setUsdAmount(sumOfStableBalance.toFixed(2));
                     } else {
-                      setUsdAmount(parseFloat(item).toFixed(2));
+                      setUsdAmount(item);
                     }
                   }
                 }}
@@ -738,7 +675,9 @@ export default function Buy(props: BuyProps) {
                 disabled={isDisabled}
                 data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
-                ${item}
+                <span className="opacity-50 font-normal text-sm">
+                  {isMax ? 'MAX' : `$${item}`}
+                </span>
               </button>
             </div>
           );
@@ -746,17 +685,7 @@ export default function Buy(props: BuyProps) {
       </div>
 
       {/* buy/sell button */}
-      <div
-        className="flex"
-        style={{
-          margin: 10,
-          width: 422,
-          height: 50,
-          borderRadius: 10,
-          backgroundColor: 'black',
-          padding: '2px 2px 4px 2px',
-        }}
-      >
+      <div className="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5">
         <BuyButton
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}

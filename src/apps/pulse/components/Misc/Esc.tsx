@@ -22,7 +22,7 @@ export default function Esc(props: EscProps) {
 
   return (
     <button
-      className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px]"
+      className="flex items-center justify-center w-[18px] h-[18px] bg-[#1E1D24] rounded-[8px]"
       onClick={onClose}
       type="button"
       aria-label="Close"

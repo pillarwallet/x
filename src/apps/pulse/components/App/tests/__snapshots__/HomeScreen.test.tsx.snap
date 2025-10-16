@@ -10,419 +10,400 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
     }
   }
 >
-  <p
-    className="flex text-base font-normal text-white/[.5] max-w-[442px] text-center mb-6"
-  >
-    You're trying out the beta version of Pulse: expect improvements ahead. Thank you.
-  </p>
-  <button
-    className="flex items-center justify-center"
-    data-testid="pulse-search-button-homescreen"
-    onClick={[Function]}
-    style={
-      {
-        "backgroundColor": "#121116",
-        "border": "2px solid #1E1D24",
-        "borderRadius": 10,
-        "height": 40,
-        "width": 446,
-      }
-    }
-    type="button"
-  >
-    <span
-      style={
-        {
-          "marginLeft": 10,
-        }
-      }
-    >
-      <img
-        alt="search-icon"
-        src="data:image/svg+xml,%3csvg%20class='feather%20feather-search'%20fill='none'%20height='24'%20stroke='white'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='2'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='11'%20cy='11'%20r='8'/%3e%3cline%20x1='21'%20x2='16.65'%20y1='21'%20y2='16.65'/%3e%3c/svg%3e"
-      />
-    </span>
-    <div
-      className="flex-1 w-fit"
-      style={
-        {
-          "color": "grey",
-        }
-      }
-    >
-      Search by token or paste address
-    </div>
-  </button>
   <div
-    className="flex flex-col"
-    style={
-      {
-        "backgroundColor": "#121116",
-        "border": "2px solid #1E1D24",
-        "borderRadius": 10,
-        "height": 264,
-        "marginTop": 40,
-        "width": 446,
-      }
-    }
+    className="w-full max-w-[446px] md:px-0"
   >
+    <p
+      className="flex text-base font-normal text-white/[.5] w-full text-center mb-6"
+    >
+      You're trying out the beta version of Pulse: expect improvements ahead. Thank you.
+    </p>
+    <button
+      className="flex items-center justify-center w-full"
+      data-testid="pulse-search-button-homescreen"
+      onClick={[Function]}
+      style={
+        {
+          "backgroundColor": "#121116",
+          "border": "2px solid #1E1D24",
+          "borderRadius": 10,
+          "height": 40,
+        }
+      }
+      type="button"
+    >
+      <span
+        style={
+          {
+            "marginLeft": 14,
+            "marginRight": 10,
+          }
+        }
+      >
+        <img
+          alt="search-icon"
+          height={12}
+          src="/src/apps/pulse/assets/search-icon.png"
+          width={12}
+        />
+      </span>
+      <div
+        className="flex-1"
+        style={
+          {
+            "color": "grey",
+            "fontSize": 13,
+            "height": 20,
+            "opacity": 0.5,
+            "textAlign": "left",
+          }
+        }
+      >
+        Search by token or paste address
+      </div>
+    </button>
     <div
-      className="flex"
+      className="flex flex-col w-full"
+      style={
+        {
+          "backgroundColor": "#1E1D24",
+          "border": "2px solid #1E1D24",
+          "borderRadius": 16,
+          "marginTop": 40,
+          "minHeight": 264,
+        }
+      }
     >
       <div
-        className="flex"
-        style={
-          {
-            "backgroundColor": "black",
-            "borderRadius": 10,
-            "height": 40,
-            "marginLeft": 10,
-            "marginTop": 10,
-            "width": 318,
-          }
-        }
-      >
-        <button
-          className="flex-1"
-          data-testid="pulse-buy-toggle-button"
-          onClick={[Function]}
-          style={
-            {
-              "backgroundColor": "#121116",
-              "borderRadius": 10,
-              "margin": 4,
-            }
-          }
-          type="button"
-        >
-          <p
-            className="text-center"
-          >
-            Buy
-          </p>
-        </button>
-        <button
-          className="flex-1 items-center justify-center"
-          data-testid="pulse-sell-toggle-button"
-          onClick={[Function]}
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "color": "grey",
-              "margin": 4,
-            }
-          }
-          type="button"
-        >
-          <p
-            className="text-center"
-          >
-            Sell
-          </p>
-        </button>
-      </div>
-      <div
-        className="flex"
-        style={
-          {
-            "marginTop": 10,
-          }
-        }
+        className="flex justify-between"
       >
         <div
-          data-testid="pulse-refresh-button-homescreen"
+          className="flex flex-1 max-w-[318px]"
           style={
             {
               "backgroundColor": "black",
               "borderRadius": 10,
               "height": 40,
-              "marginLeft": 12,
-              "padding": "2px 2px 4px 2px",
-              "width": 40,
+              "marginLeft": 10,
+              "marginTop": 10,
             }
           }
         >
           <button
-            aria-label="Refresh"
-            className="flex items-center justify-center w-[36px] h-[34px] bg-[#1E1D24] rounded-[8px] cursor-not-allowed opacity-50"
-            data-testid="pulse-refresh-button"
-            disabled={true}
+            className="flex-1"
+            data-testid="pulse-buy-toggle-button"
             onClick={[Function]}
-            type="button"
-          >
-            <img
-              alt="refresh-icon"
-              src="data:image/svg+xml,%3csvg%20width='20'%20height='18'%20viewBox='0%200%2020%2018'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20d='M1.93781%209.03579C1.94148%207.2726%202.52824%205.55746%203.6071%204.1564C4.68595%202.75533%206.19659%201.74663%207.90475%201.28674C9.6129%200.826854%2011.4231%200.941474%2013.0546%201.61283C14.6861%202.28419%2016.0477%203.47475%2016.9282%204.99989M16.9282%204.99989L13.7631%204.51784M16.9282%204.99989L16.7272%201.65181'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M18.0619%208.96372C18.0583%2010.7269%2017.4715%2012.442%2016.3927%2013.8431C15.3138%2015.2442%2013.8032%2016.2529%2012.095%2016.7128C10.3869%2017.1727%208.57666%2017.058%206.94518%2016.3867C5.31369%2015.7153%203.9521%2014.5248%203.07156%2012.9996M3.07156%2012.9996L6.23662%2013.4817M3.07156%2012.9996L3.27252%2016.3477'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
-            />
-          </button>
-        </div>
-        <div
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 40,
-              "marginLeft": 12,
-              "padding": "2px 2px 4px 2px",
-              "width": 40,
+            style={
+              {
+                "backgroundColor": "#1E1D24",
+                "borderRadius": 10,
+                "margin": 4,
+              }
             }
-          }
-        >
-          <button
-            aria-label="Save"
-            className="flex items-center justify-center w-full h-full bg-[#121116] rounded-[10px]"
             type="button"
           >
-            <img
-              alt="settings-icon"
-              src="data:image/svg+xml,%3csvg%20width='18'%20height='16'%20viewBox='0%200%2018%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M0.519592%207.2541V8.7459C0.519592%209.62742%201.24006%2010.3564%202.13006%2010.3564C3.66424%2010.3564%204.29148%2011.4413%203.52015%2012.7721C3.07939%2013.5349%203.34215%2014.5266%204.11348%2014.9674L5.57985%2015.8065C6.24947%2016.2049%207.11404%2015.9676%207.51241%2015.298L7.60565%2015.1369C8.37698%2013.8062%209.63145%2013.8062%2010.3943%2015.1369L10.4875%2015.298C10.8859%2015.9676%2011.7505%2016.2049%2012.4201%2015.8065L13.8865%2014.9674C14.6578%2014.5266%2014.9206%2013.5434%2014.4798%2012.7721C13.7085%2011.4413%2014.3357%2010.3564%2015.8699%2010.3564C16.7599%2010.3564%2017.4804%209.62742%2017.4804%208.7459V7.2541C17.4804%206.36411%2016.7514%205.64363%2015.8699%205.64363C14.3357%205.64363%2013.7085%204.55869%2014.4798%203.22793C14.9206%202.46508%2014.6578%201.47337%2013.8865%201.03261L12.4201%200.193471C11.7505%20-0.204908%2010.8859%200.0324241%2010.4875%200.70204L10.3943%200.863086C9.62297%202.19384%208.3685%202.19384%207.60565%200.863086L7.51241%200.70204C7.11404%200.0324241%206.24947%20-0.204908%205.57985%200.193471L4.11348%201.03261C3.34215%201.47337%203.07939%202.46508%203.52015%203.22793C4.29148%204.55869%203.66424%205.64363%202.13006%205.64363C1.24006%205.64363%200.519592%206.37258%200.519592%207.2541ZM8.99574%2010.5433C10.4001%2010.5433%2011.5386%209.40485%2011.5386%208.00047C11.5386%206.5961%2010.4001%205.45763%208.99574%205.45763C7.59137%205.45763%206.4529%206.5961%206.4529%208.00047C6.4529%209.40485%207.59137%2010.5433%208.99574%2010.5433Z'%20fill='white'/%3e%3c/svg%3e"
-            />
+            <span
+              className="text-center font-medium text-sm"
+            >
+              Buy
+            </span>
+          </button>
+          <button
+            className="flex-1 items-center justify-center"
+            data-testid="pulse-sell-toggle-button"
+            onClick={[Function]}
+            style={
+              {
+                "backgroundColor": "black",
+                "borderRadius": 10,
+                "color": "grey",
+                "margin": 4,
+              }
+            }
+            type="button"
+          >
+            <span
+              className="text-center font-medium text-sm"
+            >
+              Sell
+            </span>
           </button>
         </div>
-      </div>
-    </div>
-    <div
-      className="flex flex-col"
-      data-testid="pulse-buy-component"
-    >
-      <div
-        style={
-          {
-            "backgroundColor": "black",
-            "borderRadius": 10,
-            "height": 100,
-            "margin": 10,
-            "width": 422,
-          }
-        }
-      >
         <div
-          className="flex p-3"
+          className="flex mt-2.5 mr-2.5"
         >
-          <button
-            data-testid="pulse-buy-token-selector"
-            onClick={[Function]}
-            type="button"
+          <div
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "black",
+                "borderRadius": 10,
+                "display": "flex",
+                "height": 40,
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "padding": "2px 2px 4px 2px",
+                "width": 40,
+              }
+            }
           >
             <div
-              className="flex items-center justify-center"
+              data-testid="pulse-refresh-button-homescreen"
               style={
                 {
                   "backgroundColor": "#1E1D24",
-                  "borderRadius": 10,
-                  "height": 36,
-                  "width": 150,
+                  "borderRadius": 8,
+                  "display": "flex",
+                  "height": 34,
+                  "justifyContent": "center",
+                  "padding": "8px 1px",
+                  "width": 36,
                 }
               }
             >
-              <div
-                className="flex"
-                style={
-                  {
-                    "fontSize": 12,
-                    "fontWeight": 400,
-                    "marginLeft": 5,
-                  }
-                }
-              >
-                Select token
-              </div>
-              <div
-                className="flex ml-2"
+              <button
+                aria-label="Refresh"
+                className="flex w-[36px] h-[34px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-not-allowed opacity-50"
+                data-testid="pulse-refresh-button"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
               >
                 <img
-                  alt="arrow-down"
-                  src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+                  alt="refresh-icon"
+                  height={18}
+                  src="data:image/svg+xml,%3csvg%20width='22'%20height='24'%20viewBox='0%200%2022%2024'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.93785%2012.0354C2.94151%2010.2722%203.52828%208.55707%204.60713%207.156C5.68598%205.75494%207.19662%204.74624%208.90478%204.28635C10.6129%203.82646%2012.4231%203.94108%2014.0546%204.61243C15.6861%205.28379%2017.0477%206.47436%2017.9282%207.99949M17.9282%207.99949L14.7632%207.51744M17.9282%207.99949L17.7273%204.65142'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M19.0619%2011.9636C19.0582%2013.7268%2018.4714%2015.442%2017.3926%2016.843C16.3137%2018.2441%2014.8031%2019.2528%2013.0949%2019.7127C11.3868%2020.1726%209.5766%2020.0579%207.94512%2019.3866C6.31363%2018.7152%204.95204%2017.5247%204.0715%2015.9995M4.0715%2015.9995L7.23656%2016.4816M4.0715%2015.9995L4.27246%2019.3476'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+                  width={18}
+                />
+              </button>
+            </div>
+          </div>
+          <div
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "black",
+                "borderRadius": 10,
+                "display": "flex",
+                "height": 40,
+                "justifyContent": "center",
+                "marginLeft": 12,
+                "padding": "2px 2px 4px 2px",
+                "width": 40,
+              }
+            }
+          >
+            <button
+              aria-label="Save"
+              className="flex items-center justify-center rounded-[10px] w-9 h-[34px] content-center"
+              type="button"
+            >
+              <div
+                className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+              >
+                <img
+                  alt="settings-icon"
+                  height={18}
+                  src="data:image/svg+xml,%3csvg%20width='18'%20height='16'%20viewBox='0%200%2018%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20fill-rule='evenodd'%20clip-rule='evenodd'%20d='M0.519592%207.2541V8.7459C0.519592%209.62742%201.24006%2010.3564%202.13006%2010.3564C3.66424%2010.3564%204.29148%2011.4413%203.52015%2012.7721C3.07939%2013.5349%203.34215%2014.5266%204.11348%2014.9674L5.57985%2015.8065C6.24947%2016.2049%207.11404%2015.9676%207.51241%2015.298L7.60565%2015.1369C8.37698%2013.8062%209.63145%2013.8062%2010.3943%2015.1369L10.4875%2015.298C10.8859%2015.9676%2011.7505%2016.2049%2012.4201%2015.8065L13.8865%2014.9674C14.6578%2014.5266%2014.9206%2013.5434%2014.4798%2012.7721C13.7085%2011.4413%2014.3357%2010.3564%2015.8699%2010.3564C16.7599%2010.3564%2017.4804%209.62742%2017.4804%208.7459V7.2541C17.4804%206.36411%2016.7514%205.64363%2015.8699%205.64363C14.3357%205.64363%2013.7085%204.55869%2014.4798%203.22793C14.9206%202.46508%2014.6578%201.47337%2013.8865%201.03261L12.4201%200.193471C11.7505%20-0.204908%2010.8859%200.0324241%2010.4875%200.70204L10.3943%200.863086C9.62297%202.19384%208.3685%202.19384%207.60565%200.863086L7.51241%200.70204C7.11404%200.0324241%206.24947%20-0.204908%205.57985%200.193471L4.11348%201.03261C3.34215%201.47337%203.07939%202.46508%203.52015%203.22793C4.29148%204.55869%203.66424%205.64363%202.13006%205.64363C1.24006%205.64363%200.519592%206.37258%200.519592%207.2541ZM8.99574%2010.5433C10.4001%2010.5433%2011.5386%209.40485%2011.5386%208.00047C11.5386%206.5961%2010.4001%205.45763%208.99574%205.45763C7.59137%205.45763%206.4529%206.5961%206.4529%208.00047C6.4529%209.40485%207.59137%2010.5433%208.99574%2010.5433Z'%20fill='white'/%3e%3c/svg%3e"
+                  width={18}
                 />
               </div>
-            </div>
-          </button>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        className="flex flex-col w-full desktop:min-w-[442px]"
+        data-testid="pulse-buy-component"
+      >
+        <div
+          className="m-2.5 bg-[#121116] min-h-[100px] rounded-lg"
+        >
           <div
-            className="flex-1"
+            className="flex p-3 justify-between"
+          >
+            <button
+              data-testid="pulse-buy-token-selector"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]"
+              >
+                <div
+                  className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end"
+                >
+                  Select token
+                </div>
+                <div
+                  className="flex ml-1.5"
+                >
+                  <img
+                    alt="arrow-down"
+                    className="w-2 h-1"
+                    src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+                  />
+                </div>
+              </div>
+            </button>
+            <div
+              className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden"
+            >
+              <div
+                className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0 h-9"
+              >
+                <input
+                  className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right"
+                  data-testid="pulse-buy-amount-input"
+                  disabled={false}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  placeholder="0.00"
+                  type="text"
+                  value=""
+                />
+                <span
+                  className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-[#FFFFFF4D]"
+                >
+                  USD
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex justify-between p-3"
           >
             <div
               className="flex"
-              style={
-                {
-                  "fontSize": 36,
-                  "height": 36,
-                  "width": 189,
-                }
-              }
-            >
-              <input
-                className="no-spinner"
-                data-testid="pulse-buy-amount-input"
-                disabled={false}
-                onChange={[Function]}
-                onFocus={[Function]}
-                placeholder="0.00"
-                style={
-                  {
-                    "textAlign": "right",
-                    "width": 185,
-                  }
-                }
-                type="text"
-                value=""
-              />
-              <p
-                style={
-                  {
-                    "color": "grey",
-                    "lineHeight": 1,
-                  }
-                }
-              >
-                USD
-              </p>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex justify-between"
-          style={
-            {
-              "margin": 10,
-            }
-          }
-        >
-          <div
-            className="flex"
-          />
-          <div
-            className="flex"
-            style={
-              {
-                "float": "right",
-              }
-            }
-          >
-            <img
-              alt="wallet-icon"
-              data-testid="pulse-buy-wallet-icon"
-              src="data:image/svg+xml,%3csvg%20width='18'%20height='12'%20viewBox='0%200%2018%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M1%203.5C1%202.39543%201.89543%201.5%203%201.5H15C16.1046%201.5%2017%202.39543%2017%203.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V3.5Z'%20fill='%238A77FF'/%3e%3cpath%20d='M5%200.25C6.79493%200.25%208.25%201.70507%208.25%203.5C8.25%205.29493%206.79493%206.75%205%206.75C3.20507%206.75%201.75%205.29493%201.75%203.5C1.75%201.70507%203.20507%200.25%205%200.25Z'%20fill='%230052FF'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M4.99638%205.49985C6.10288%205.49985%206.99988%204.6044%206.99988%203.49985C6.99988%202.39528%206.10288%201.49985%204.99638%201.49985C3.94661%201.49985%203.08541%202.30583%202.99988%203.33172H5.64802V3.66795H2.99988C3.08541%204.69386%203.94661%205.49985%204.99638%205.49985Z'%20fill='%23E3E7E9'/%3e%3cpath%20d='M13%200.25C14.7949%200.25%2016.25%201.70507%2016.25%203.5C16.25%205.29491%2014.7949%206.75%2013%206.75C11.2051%206.75%209.75%205.29491%209.75%203.5C9.75%201.70507%2011.2051%200.25%2013%200.25Z'%20fill='white'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M13%200.5C11.3431%200.5%2010%201.84315%2010%203.5C10%205.15684%2011.3431%206.5%2013%206.5C14.6568%206.5%2016%205.15684%2016%203.5C16%201.84315%2014.6568%200.5%2013%200.5ZM13%205.02748V6.28022C11.8105%206.28022%2010.8462%205.3159%2010.8462%204.12637C10.8462%202.93684%2011.8105%201.97253%2013%201.97253V0.71978C14.1895%200.71978%2015.1538%201.68409%2015.1538%202.87363C15.1538%204.06316%2014.1895%205.02748%2013%205.02748ZM14.033%203.49039V3.5096C13.5777%203.73652%2013.2365%204.07765%2013.0096%204.53296H12.9904C12.7635%204.07765%2012.4223%203.73652%2011.967%203.5096V3.49039C12.4223%203.26347%2012.7635%202.92234%2012.9904%202.46703H13.0096C13.2365%202.92234%2013.5777%203.26347%2014.033%203.49039Z'%20fill='%23FF0420'/%3e%3cpath%20d='M9%200.25C10.7949%200.25%2012.25%201.70507%2012.25%203.5C12.25%205.29493%2010.7949%206.75%209%206.75C7.20507%206.75%205.75%205.29493%205.75%203.5C5.75%201.70507%207.20507%200.25%209%200.25Z'%20fill='%23627EEA'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M9.0929%201.25V2.91312L10.4986%203.54125L9.0929%201.25Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%201.25L7.6875%203.54125L9.09337%202.91312V1.25Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.61986V5.74993L10.4995%203.80386L9.0929%204.61986Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%205.74993V4.61968L7.6875%203.80386L9.09337%205.74993Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.35718L10.4986%203.54099L9.0929%202.91324V4.35718Z'%20fill='white'%20fill-opacity='0.2'/%3e%3cpath%20d='M7.6875%203.54099L9.09337%204.35718V2.91324L7.6875%203.54099Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M4.5%204.25C5.2082%204.25%205.87488%204.58383%206.2998%205.15039L6.90039%205.9502C7.04204%206.13886%207.26406%206.25%207.5%206.25H10.5C10.7359%206.25%2010.958%206.13886%2011.0996%205.9502L11.7002%205.15039C12.1251%204.58383%2012.7918%204.25%2013.5%204.25H16C16.6904%204.25%2017.25%204.80964%2017.25%205.5V9.5C17.25%2010.7426%2016.2426%2011.75%2015%2011.75H3C1.75736%2011.75%200.75%2010.7426%200.75%209.5V5.5C0.75%204.80964%201.30964%204.25%202%204.25H4.5Z'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M1%205.5C1%204.94772%201.44772%204.5%202%204.5H4.5C5.12951%204.5%205.72229%204.79639%206.1%205.3L6.7%206.1C6.88885%206.35181%207.18524%206.5%207.5%206.5H10.5C10.8148%206.5%2011.1111%206.35181%2011.3%206.1L11.9%205.3C12.2777%204.79639%2012.8705%204.5%2013.5%204.5H16C16.5523%204.5%2017%204.94772%2017%205.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V5.5Z'%20fill='%234E448A'/%3e%3c/svg%3e"
             />
             <div
-              data-testid="pulse-buy-wallet-balance"
-              style={
-                {
-                  "color": "#8A77FF",
-                  "fontSize": 12,
-                  "marginLeft": 5,
-                }
-              }
+              className="flex items-center"
             >
-              $
-              0.00
+              <img
+                alt="wallet-icon"
+                className="w-4 h-3"
+                data-testid="pulse-buy-wallet-icon"
+                src="data:image/svg+xml,%3csvg%20width='18'%20height='12'%20viewBox='0%200%2018%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M1%203.5C1%202.39543%201.89543%201.5%203%201.5H15C16.1046%201.5%2017%202.39543%2017%203.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V3.5Z'%20fill='%238A77FF'/%3e%3cpath%20d='M5%200.25C6.79493%200.25%208.25%201.70507%208.25%203.5C8.25%205.29493%206.79493%206.75%205%206.75C3.20507%206.75%201.75%205.29493%201.75%203.5C1.75%201.70507%203.20507%200.25%205%200.25Z'%20fill='%230052FF'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M4.99638%205.49985C6.10288%205.49985%206.99988%204.6044%206.99988%203.49985C6.99988%202.39528%206.10288%201.49985%204.99638%201.49985C3.94661%201.49985%203.08541%202.30583%202.99988%203.33172H5.64802V3.66795H2.99988C3.08541%204.69386%203.94661%205.49985%204.99638%205.49985Z'%20fill='%23E3E7E9'/%3e%3cpath%20d='M13%200.25C14.7949%200.25%2016.25%201.70507%2016.25%203.5C16.25%205.29491%2014.7949%206.75%2013%206.75C11.2051%206.75%209.75%205.29491%209.75%203.5C9.75%201.70507%2011.2051%200.25%2013%200.25Z'%20fill='white'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M13%200.5C11.3431%200.5%2010%201.84315%2010%203.5C10%205.15684%2011.3431%206.5%2013%206.5C14.6568%206.5%2016%205.15684%2016%203.5C16%201.84315%2014.6568%200.5%2013%200.5ZM13%205.02748V6.28022C11.8105%206.28022%2010.8462%205.3159%2010.8462%204.12637C10.8462%202.93684%2011.8105%201.97253%2013%201.97253V0.71978C14.1895%200.71978%2015.1538%201.68409%2015.1538%202.87363C15.1538%204.06316%2014.1895%205.02748%2013%205.02748ZM14.033%203.49039V3.5096C13.5777%203.73652%2013.2365%204.07765%2013.0096%204.53296H12.9904C12.7635%204.07765%2012.4223%203.73652%2011.967%203.5096V3.49039C12.4223%203.26347%2012.7635%202.92234%2012.9904%202.46703H13.0096C13.2365%202.92234%2013.5777%203.26347%2014.033%203.49039Z'%20fill='%23FF0420'/%3e%3cpath%20d='M9%200.25C10.7949%200.25%2012.25%201.70507%2012.25%203.5C12.25%205.29493%2010.7949%206.75%209%206.75C7.20507%206.75%205.75%205.29493%205.75%203.5C5.75%201.70507%207.20507%200.25%209%200.25Z'%20fill='%23627EEA'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M9.0929%201.25V2.91312L10.4986%203.54125L9.0929%201.25Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%201.25L7.6875%203.54125L9.09337%202.91312V1.25Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.61986V5.74993L10.4995%203.80386L9.0929%204.61986Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M9.09337%205.74993V4.61968L7.6875%203.80386L9.09337%205.74993Z'%20fill='white'/%3e%3cpath%20d='M9.0929%204.35718L10.4986%203.54099L9.0929%202.91324V4.35718Z'%20fill='white'%20fill-opacity='0.2'/%3e%3cpath%20d='M7.6875%203.54099L9.09337%204.35718V2.91324L7.6875%203.54099Z'%20fill='white'%20fill-opacity='0.602'/%3e%3cpath%20d='M4.5%204.25C5.2082%204.25%205.87488%204.58383%206.2998%205.15039L6.90039%205.9502C7.04204%206.13886%207.26406%206.25%207.5%206.25H10.5C10.7359%206.25%2010.958%206.13886%2011.0996%205.9502L11.7002%205.15039C12.1251%204.58383%2012.7918%204.25%2013.5%204.25H16C16.6904%204.25%2017.25%204.80964%2017.25%205.5V9.5C17.25%2010.7426%2016.2426%2011.75%2015%2011.75H3C1.75736%2011.75%200.75%2010.7426%200.75%209.5V5.5C0.75%204.80964%201.30964%204.25%202%204.25H4.5Z'%20stroke='%23121116'%20stroke-width='0.5'/%3e%3cpath%20d='M1%205.5C1%204.94772%201.44772%204.5%202%204.5H4.5C5.12951%204.5%205.72229%204.79639%206.1%205.3L6.7%206.1C6.88885%206.35181%207.18524%206.5%207.5%206.5H10.5C10.8148%206.5%2011.1111%206.35181%2011.3%206.1L11.9%205.3C12.2777%204.79639%2012.8705%204.5%2013.5%204.5H16C16.5523%204.5%2017%204.94772%2017%205.5V9.5C17%2010.6046%2016.1046%2011.5%2015%2011.5H3C1.89543%2011.5%201%2010.6046%201%209.5V5.5Z'%20fill='%234E448A'/%3e%3c/svg%3e"
+              />
+              <div
+                className="ml-1 text-xs text-[#8A77FF]"
+                data-testid="pulse-buy-wallet-balance"
+              >
+                $
+                0.00
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div
-        className="flex"
-      >
         <div
-          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          className="flex w-full"
         >
-          <button
-            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
-            data-testid="pulse-buy-percentage-button-10"
-            disabled={true}
-            onClick={[Function]}
-            type="button"
+          <div
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
           >
-            $
-            10
-          </button>
+            <button
+              className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+              data-testid="pulse-buy-percentage-button-10"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="opacity-50 font-normal text-sm"
+              >
+                $10
+              </span>
+            </button>
+          </div>
+          <div
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          >
+            <button
+              className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+              data-testid="pulse-buy-percentage-button-20"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="opacity-50 font-normal text-sm"
+              >
+                $20
+              </span>
+            </button>
+          </div>
+          <div
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          >
+            <button
+              className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+              data-testid="pulse-buy-percentage-button-50"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="opacity-50 font-normal text-sm"
+              >
+                $50
+              </span>
+            </button>
+          </div>
+          <div
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          >
+            <button
+              className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+              data-testid="pulse-buy-percentage-button-100"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="opacity-50 font-normal text-sm"
+              >
+                $100
+              </span>
+            </button>
+          </div>
+          <div
+            className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          >
+            <button
+              className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
+              data-testid="pulse-buy-percentage-button-max"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              <span
+                className="opacity-50 font-normal text-sm"
+              >
+                MAX
+              </span>
+            </button>
+          </div>
         </div>
         <div
-          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+          className="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5"
         >
           <button
-            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
-            data-testid="pulse-buy-percentage-button-20"
+            className="flex-1 items-center justify-center"
+            data-testid="pulse-buy-button"
             disabled={true}
             onClick={[Function]}
-            type="button"
-          >
-            $
-            20
-          </button>
-        </div>
-        <div
-          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
-        >
-          <button
-            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
-            data-testid="pulse-buy-percentage-button-50"
-            disabled={true}
-            onClick={[Function]}
-            type="button"
-          >
-            $
-            50
-          </button>
-        </div>
-        <div
-          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
-        >
-          <button
-            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
-            data-testid="pulse-buy-percentage-button-100"
-            disabled={true}
-            onClick={[Function]}
-            type="button"
-          >
-            $
-            100
-          </button>
-        </div>
-        <div
-          className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
-        >
-          <button
-            className="flex-1 items-center justify-center rounded-[10px] bg-[#1E1D24] text-grey cursor-not-allowed"
-            data-testid="pulse-buy-percentage-button-max"
-            disabled={true}
-            onClick={[Function]}
-            type="button"
-          >
-            $
-            MAX
-          </button>
-        </div>
-      </div>
-      <div
-        className="flex"
-        style={
-          {
-            "backgroundColor": "black",
-            "borderRadius": 10,
-            "height": 50,
-            "margin": 10,
-            "padding": "2px 2px 4px 2px",
-            "width": 422,
-          }
-        }
-      >
-        <button
-          className="flex-1 items-center justify-center"
-          data-testid="pulse-buy-button"
-          disabled={true}
-          onClick={[Function]}
-          style={
-            {
-              "backgroundColor": "#29292F",
-              "borderRadius": 8,
-              "color": "grey",
+            style={
+              {
+                "backgroundColor": "#29292F",
+                "borderRadius": 8,
+                "color": "grey",
+              }
             }
-          }
-          type="button"
-        >
-          Buy
-        </button>
+            type="button"
+          >
+            Select token
+          </button>
+        </div>
       </div>
     </div>
   </div>

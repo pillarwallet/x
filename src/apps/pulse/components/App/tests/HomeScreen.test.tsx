@@ -120,7 +120,7 @@ describe('<HomeScreen />', () => {
 
     // Check button styles for Buy state
     expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveStyle({
-      backgroundColor: 'rgb(18, 17, 22)',
+      backgroundColor: 'rgb(30, 29, 36)', // #1E1D24
     });
     expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveStyle({
       backgroundColor: 'black',
@@ -148,7 +148,7 @@ describe('<HomeScreen />', () => {
       color: 'grey',
     });
     expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveStyle({
-      backgroundColor: 'rgb(18, 17, 22)',
+      backgroundColor: 'rgb(30, 29, 36)', // #1E1D24
     });
   });
 

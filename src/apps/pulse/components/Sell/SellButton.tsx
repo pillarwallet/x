@@ -44,11 +44,11 @@ function getButtonText(
     const limitedUsdcAmount = limitDigitsNumber(sellOffer.tokenAmountToReceive);
 
     return (
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex items-center justify-center gap-1 text-base">
         <span>Sell</span>
         <HighDecimalsFormatted
           value={limitedAmount}
-          styleNumber="text-white"
+          styleNumber="text-white text-base"
           styleZeros="text-white/70 text-xs"
         />
         <span>{selectedToken?.symbol}</span>
@@ -56,7 +56,7 @@ function getButtonText(
         <HighDecimalsFormatted
           value={limitedUsdcAmount}
           moneySymbol=""
-          styleNumber="text-white"
+          styleNumber="text-white text-base"
           styleZeros="text-white/70 text-xs"
         />
         <span>USDC</span>
@@ -111,7 +111,7 @@ const SellButton = (props: SellButtonProps) => {
 
   return (
     <button
-      className="flex-1 items-center justify-center"
+      className="flex-1 items-center justify-center font-medium text-base"
       onClick={handleSellClick}
       disabled={isDisabled()}
       style={{
