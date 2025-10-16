@@ -352,7 +352,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
             data-testid="pulse-preview-buy-refresh-button"
           >
-            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+            <div className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
               <Refresh
                 onClick={refreshPreviewBuyData}
                 isLoading={isRefreshingPreview}
