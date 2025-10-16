@@ -3,21 +3,12 @@ import SettingsIcon from '../../assets/setting-icon.svg';
 export default function Settings() {
   return (
     <button
-      className="flex items-center justify-center rounded-[10px]"
-      style={{ width: 36, height: 34, alignContent: 'center' }}
+      className="flex items-center justify-center rounded-[10px] w-9 h-[34px] content-center"
       type="button"
       aria-label="Save"
     >
       <div
-        style={{
-          padding: '8px 1px',
-          width: 36,
-          height: 34,
-          backgroundColor: '#1E1D24',
-          borderRadius: 8,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
+        className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
       >
         <img src={SettingsIcon} width={18} height={18} alt="settings-icon" />
       </div>

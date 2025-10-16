@@ -307,33 +307,11 @@ export default function Search({
               <Close onClose={handleClose} />
             )}
           </div>
-          {/* <div
-            className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
-            data-testid="pulse-search-refresh-button"
-          > */}
           <div
-            style={{
-              marginLeft: 12,
-              backgroundColor: 'black',
-              borderRadius: 10,
-              width: 40,
-              height: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-              display: 'flex',
-              padding: '2px 2px 4px 2px',
-            }}
+            className="ml-3 bg-black rounded-[10px] w-10 h-10 justify-center items-center flex p-[2px_2px_4px_2px]"
           >
             <div
-              style={{
-                padding: '8px 1px',
-                width: 36,
-                height: 34,
-                backgroundColor: '#1E1D24',
-                borderRadius: 8,
-                display: 'flex',
-                justifyContent: 'center',
-              }}
+              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
             >
               <Refresh
                 isLoading={walletPortfolioFetching}
@@ -397,22 +375,20 @@ export default function Search({
                 className="flex bg-black w-[100px] h-10 rounded-[10px]"
               >
                 <button
-                  className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${
-                    searchType && item.includes(searchType)
+                  className={`flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 ${searchType && item.includes(searchType)
                       ? 'bg-[#2E2A4A]'
                       : 'bg-[#1E1D24]'
-                  }`}
+                    }`}
                   type="button"
                   onClick={() => {
                     handleSearchTypeChange(actualIndex);
                   }}
                 >
                   <p
-                    className={`text-xs font-normal text-center ${
-                      searchType && item.includes(searchType)
+                    className={`text-xs font-normal text-center ${searchType && item.includes(searchType)
                         ? 'text-white'
                         : 'text-white opacity-50'
-                    }`}
+                      }`}
                   >
                     {item}
                   </p>

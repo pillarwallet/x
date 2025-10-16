@@ -138,18 +138,16 @@ export default function BuyButton(props: BuyButtonProps) {
       type="button"
       data-testid="pulse-buy-button"
     >
-      <span className="text-base font-medium tracking-tight leading-none text-center">
-        {getButtonText(
-          isLoading,
-          isInstalling,
-          isFetching,
-          areModulesInstalled,
-          token,
-          debouncedUsdAmount,
-          payingTokens.length > 0 ? payingTokens[0] : undefined,
-          isDisabled()
-        )}
-      </span>
+      {getButtonText(
+        isLoading,
+        isInstalling,
+        isFetching,
+        areModulesInstalled,
+        token,
+        debouncedUsdAmount,
+        payingTokens.length > 0 ? payingTokens[0] : undefined,
+        isDisabled()
+      )}
     </button>
   );
 }

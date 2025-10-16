@@ -14,12 +14,11 @@ export default function Refresh({
 }: RefreshProps) {
   return (
     <button
-      className={`flex items-center justify-center bg-[#1E1D24] rounded-[8px] ${
+      className={`flex h-[18px] w-[18px] items-center justify-center rounded-[8px] bg-[#1E1D24] ${
         disabled || isLoading
           ? 'cursor-not-allowed opacity-50'
           : 'cursor-pointer'
       }`}
-      style={{ width: 18, height: 18 }}
       type="button"
       aria-label="Refresh"
       onClick={onClick}

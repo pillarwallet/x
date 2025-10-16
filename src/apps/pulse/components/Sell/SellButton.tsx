@@ -122,16 +122,14 @@ const SellButton = (props: SellButtonProps) => {
       type="button"
       data-testid="pulse-sell-button"
     >
-      <span>
-        {getButtonText(
-          isLoadingOffer,
-          isInitialized,
-          token,
-          tokenAmount,
-          sellOffer,
-          isDisabled()
-        )}
-      </span>
+      {getButtonText(
+        isLoadingOffer,
+        isInitialized,
+        token,
+        tokenAmount,
+        sellOffer,
+        isDisabled()
+      )}
     </button>
   );
 };

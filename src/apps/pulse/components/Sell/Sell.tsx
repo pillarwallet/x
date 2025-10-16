@@ -222,11 +222,8 @@ const Sell = (props: SellProps) => {
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 ml-1 mr-1"
+                      className="w-6 h-6 ml-1 mr-1 rounded-full"
                       data-testid="pulse-sell-token-selector-logo"
-                      style={{
-                        borderRadius: '50%',
-                      }}
                     />
                   ) : (
                     <div className="w-full h-full overflow-hidden rounded-full w-[34px] h-6 ml-1 mr-1">
@@ -238,19 +235,13 @@ const Sell = (props: SellProps) => {
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    className="absolute w-2.5 h-2.5"
-                    style={{
-                      bottom: '-2px',
-                      right: '2px',
-                      borderRadius: '50%',
-                    }}
+                    className="absolute w-2.5 h-2.5 bottom-[-2px] right-[2px] rounded-full"
                     alt="Chain Logo"
                     data-testid="pulse-sell-token-selector-chain-logo"
                   />
                 </div>
                 <div
-                  className="flex flex-col mt-2.5"
-                  style={{ height: 40, width: 91 }}
+                  className="flex flex-col mt-2.5 h-10 w-[91px]"
                 >
                   <div className="flex">
                     <p
@@ -259,12 +250,9 @@ const Sell = (props: SellProps) => {
                     >
                       {token.symbol}
                     </p>
-                    {token.symbol.length + token.name.length <= 13 && (
+                    {token.name && token.symbol.length + token.name.length <= 13 && (
                       <p
-                        className="opacity-30 desktop:text-sm mobile:text-xs xs:text-xs font-normal ml-1"
-                        style={{
-                          color: '#FFFFFF',
-                        }}
+                        className="opacity-30 desktop:text-sm mobile:text-xs xs:text-xs font-normal ml-1 text-white"
                         data-testid="pulse-sell-token-selector-name"
                       >
                         {token.name}
@@ -273,35 +261,24 @@ const Sell = (props: SellProps) => {
                   </div>
                   <div className="flex">
                     <p
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 400,
-                        color: '#FFFFFF',
-                        height: 10,
-                        opacity: 0.5,
-                      }}
+                      className="text-[10px] font-normal text-white h-[10px] opacity-50"
                     >
-                      ${token.usdValue}
+                      ${formatExponentialSmallNumber(token.usdValue)}
                     </p>
                   </div>
                 </div>
-                <div className="flex ml-1.5">
+                <div className="flex ml-1.5" data-testid="pulse-sell-token-selector-arrow">
                   <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
             ) : (
               <div
-                className="flex items-center justify-center max-w-[150px] w-32"
-                style={{
-                  height: 36,
-                  backgroundColor: '#1E1D24',
-                  borderRadius: 10,
-                }}
+                className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]"
               >
                 <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
                   Select token
                 </div>
-                <div className="flex ml-1.5">
+                <div className="flex ml-1.5" data-testid="pulse-sell-token-selector-arrow">
                   <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
@@ -309,8 +286,7 @@ const Sell = (props: SellProps) => {
           </button>
           <div className="flex flex-1 max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto items-right ml-auto">
             <div
-              className="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0"
-              style={{ height: 36 }}
+              className="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0 h-9"
             >
               {showNumInP ? (
                 <>
@@ -386,14 +362,10 @@ const Sell = (props: SellProps) => {
               {token && (
                 <div className="relative flex-shrink-0 max-w-[80px]">
                   <p
-                    className="text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help"
+                    className="text-[#FFFFFF4D] flex ml-1 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help max-w-full text-clip"
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
-                    style={{
-                      maxWidth: '100%',
-                      textOverflow: 'clip',
-                    }}
                   >
                     {token.symbol.slice(0, 3)}
                   </p>
@@ -518,14 +490,7 @@ const Sell = (props: SellProps) => {
 
       {/* sell button */}
       <div
-        className="flex w-full m-2.5"
-        style={{
-          width: 'auto',
-          height: 50,
-          borderRadius: 10,
-          backgroundColor: 'black',
-          padding: '2px 2px 6px 2px',
-        }}
+        className="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5"
         data-testid="pulse-sell-button-container"
       >
         <SellButton

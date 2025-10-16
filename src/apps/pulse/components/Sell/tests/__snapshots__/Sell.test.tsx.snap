@@ -26,22 +26,19 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
             >
               <img
                 alt="Main"
-                class="w-6 h-6 ml-1 mr-1"
+                class="w-6 h-6 ml-1 mr-1 rounded-full"
                 data-testid="pulse-sell-token-selector-logo"
                 src="test-logo.png"
-                style="border-radius: 50%;"
               />
               <img
                 alt="Chain Logo"
-                class="absolute w-2.5 h-2.5"
+                class="absolute w-2.5 h-2.5 bottom-[-2px] right-[2px] rounded-full"
                 data-testid="pulse-sell-token-selector-chain-logo"
                 src="/src/assets/images/logo-ethereum.png"
-                style="bottom: -2px; right: 2px; border-radius: 50%;"
               />
             </div>
             <div
-              class="flex flex-col mt-2.5"
-              style="height: 40px; width: 91px;"
+              class="flex flex-col mt-2.5 h-10 w-[91px]"
             >
               <div
                 class="flex"
@@ -57,15 +54,16 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
                 class="flex"
               >
                 <p
-                  style="font-size: 10px; font-weight: 400; color: rgb(255, 255, 255); height: 10px; opacity: 0.5;"
+                  class="text-[10px] font-normal text-white h-[10px] opacity-50"
                 >
                   $
-                  100.00
+                  100
                 </p>
               </div>
             </div>
             <div
               class="flex ml-1.5"
+              data-testid="pulse-sell-token-selector-arrow"
             >
               <img
                 alt="arrow-down"
@@ -79,8 +77,7 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           class="flex flex-1 max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto items-right ml-auto"
         >
           <div
-            class="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0"
-            style="height: 36px;"
+            class="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0 h-9"
           >
             <input
               class="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full"
@@ -93,9 +90,8 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
               class="relative flex-shrink-0 max-w-[80px]"
             >
               <p
-                class="text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help"
+                class="text-grey flex ml-1 opacity-50 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help max-w-full text-clip"
                 data-testid="pulse-sell-token-symbol"
-                style="max-width: 100%; text-overflow: clip;"
               >
                 TES
               </p>
@@ -220,9 +216,8 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex w-full m-2.5"
+      class="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5"
       data-testid="pulse-sell-button-container"
-      style="width: auto; height: 50px; border-radius: 10px; background-color: black; padding: 2px 2px 6px 2px;"
     >
       <button
         class="flex-1 items-center justify-center font-medium text-base"
