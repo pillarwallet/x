@@ -279,7 +279,7 @@ export default function Search({
         className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
         data-testid="pulse-search-modal"
       >
-        <div className="flex w-full">
+        <div className="flex w-full items-center">
           <div className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]">
             <span className="ml-2.5">
               <img src={SearchIcon} alt="search-icon" />
@@ -307,20 +307,22 @@ export default function Search({
               <Close onClose={handleClose} />
             )}
           </div>
-          <div
-            className="mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5"
-            data-testid="pulse-search-refresh-button"
-          >
-            <Refresh
-              isLoading={walletPortfolioFetching}
-              onClick={refetchWalletPortfolio}
-              disabled={!refetchWalletPortfolio || walletPortfolioFetching}
-            />
+          <div className="ml-3 bg-black rounded-[10px] w-10 h-10 justify-center items-center flex p-[2px_2px_4px_2px]">
+            <div
+              className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+              data-testid="pulse-search-refresh-button"
+            >
+              <Refresh
+                isLoading={walletPortfolioFetching}
+                onClick={refetchWalletPortfolio}
+                disabled={!refetchWalletPortfolio || walletPortfolioFetching}
+              />
+            </div>
           </div>
           {isBuy ? (
             <div
               ref={chainButtonRef}
-              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
+              className="ml-1.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
               onClick={() => {
                 const rect = chainButtonRef?.current?.getBoundingClientRect();
                 setShowChainOverlay(true);
@@ -337,10 +339,12 @@ export default function Search({
             </div>
           ) : (
             <div
+              className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
               data-testid="pulse-esc-button-search-modal"
-              className="ml-1.5 mt-2.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
             >
-              <Esc onClose={handleClose} />
+              <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+                <Esc onClose={handleClose} />
+              </div>
             </div>
           )}
         </div>

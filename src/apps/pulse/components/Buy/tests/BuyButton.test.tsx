@@ -73,12 +73,12 @@ describe('<BuyButton />', () => {
       expect(screen.getByText('$100')).toBeInTheDocument();
     });
 
-    it('shows "Buy" when no token selected', () => {
+    it('shows "Select token" when no token selected', () => {
       render(
         <BuyButton {...mockProps} token={null} debouncedUsdAmount="100.00" />
       );
 
-      expect(screen.getByRole('button')).toHaveTextContent('Buy');
+      expect(screen.getByRole('button')).toHaveTextContent('Select token');
     });
 
     it('shows "Buy" when no amount entered', () => {

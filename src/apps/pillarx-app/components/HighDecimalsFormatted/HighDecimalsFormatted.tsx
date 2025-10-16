@@ -3,12 +3,14 @@ type HighDecimalsFormattedProps = {
   moneySymbol?: string;
   styleNumber?: string;
   styleZeros?: string;
+  setTruncatedFlag?: (flag: boolean) => void;
 };
 const HighDecimalsFormatted = ({
   value,
   moneySymbol,
   styleNumber,
   styleZeros,
+  setTruncatedFlag,
 }: HighDecimalsFormattedProps) => {
   const formatNumber = (num: number) => {
     const [integer, decimals] = num.toString().split('.');
@@ -21,10 +23,13 @@ const HighDecimalsFormatted = ({
     const zeroCount = match ? match[0].length : 0;
 
     if (zeroCount < 2) {
+      if (setTruncatedFlag) setTruncatedFlag(false);
       return num.toString();
     }
 
     const remainingDecimals = decimals.slice(zeroCount);
+
+    if (setTruncatedFlag) setTruncatedFlag(true);
 
     return (
       <>

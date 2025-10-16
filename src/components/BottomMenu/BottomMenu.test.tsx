@@ -23,7 +23,6 @@ import AccountTransactionHistoryProvider from '../../providers/AccountTransactio
 import BottomMenuModalProvider from '../../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../../providers/LanguageProvider';
-import { PrivateKeyLoginProvider } from '../../providers/PrivateKeyLoginProvider';
 import SelectedChainsHistoryProvider from '../../providers/SelectedChainsHistoryProvider';
 
 // services and store
@@ -60,13 +59,11 @@ describe('<BottomMenu />', () => {
               <ThemeProvider theme={defaultTheme}>
                 <LanguageProvider>
                   <GlobalTransactionsBatchProvider>
-                    <PrivateKeyLoginProvider>
-                      <BottomMenuModalProvider>
-                        <SelectedChainsHistoryProvider>
-                          <BottomMenu />
-                        </SelectedChainsHistoryProvider>
-                      </BottomMenuModalProvider>
-                    </PrivateKeyLoginProvider>
+                    <BottomMenuModalProvider>
+                      <SelectedChainsHistoryProvider>
+                        <BottomMenu />
+                      </SelectedChainsHistoryProvider>
+                    </BottomMenuModalProvider>
                   </GlobalTransactionsBatchProvider>
                 </LanguageProvider>
               </ThemeProvider>
@@ -101,13 +98,11 @@ describe('<BottomMenu />', () => {
           <ThemeProvider theme={defaultTheme}>
             <LanguageProvider>
               <GlobalTransactionsBatchProvider>
-                <PrivateKeyLoginProvider>
-                  <BottomMenuModalProvider>
-                    <SelectedChainsHistoryProvider>
-                      <BottomMenu />
-                    </SelectedChainsHistoryProvider>
-                  </BottomMenuModalProvider>
-                </PrivateKeyLoginProvider>
+                <BottomMenuModalProvider>
+                  <SelectedChainsHistoryProvider>
+                    <BottomMenu />
+                  </SelectedChainsHistoryProvider>
+                </BottomMenuModalProvider>
               </GlobalTransactionsBatchProvider>
             </LanguageProvider>
           </ThemeProvider>

@@ -349,26 +349,30 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
           <div
-            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]"
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
             data-testid="pulse-preview-buy-refresh-button"
           >
-            <Refresh
-              onClick={refreshPreviewBuyData}
-              isLoading={isRefreshingPreview}
-              disabled={
-                !buyToken ||
-                !totalPay ||
-                isRefreshingPreview ||
-                isWaitingForSignature
-              }
-            />
+            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+              <Refresh
+                onClick={refreshPreviewBuyData}
+                isLoading={isRefreshingPreview}
+                disabled={
+                  !buyToken ||
+                  !totalPay ||
+                  isRefreshingPreview ||
+                  isWaitingForSignature
+                }
+              />
+            </div>
           </div>
 
           <div
-            className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]"
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
             data-testid="pulse-preview-buy-esc-button"
           >
-            <Esc onClose={closePreview} />
+            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+              <Esc onClose={closePreview} />
+            </div>
           </div>
         </div>
       </div>
