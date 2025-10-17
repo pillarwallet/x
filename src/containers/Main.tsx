@@ -26,6 +26,7 @@ import LanguageProvider from '../providers/LanguageProvider';
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
 import { setupPillarWalletMessaging } from '../utils/pillarWalletMessaging';
+import { createPrivateKeyProvider } from '../utils/privateKeyProvider';
 
 // pages
 import Advertising from '../pages/Advertising';
@@ -263,10 +264,21 @@ const AuthLayout = () => {
         const account = privateKeyToAccount(privateKey as `0x${string}`);
         const walletChainId = 1; // default chain id is 1 (mainnet)
 
-        const newProvider = createWalletClient({
+        // Create a wallet client with http transport for read operations
+        const walletClientForReads = createWalletClient({
           account,
           chain: getNetworkViem(walletChainId),
           transport: http(),
+        });
+
+        // Wrap it in an EIP-1193 provider for signing operations
+        const eip1193Provider = createPrivateKeyProvider(walletClientForReads);
+
+        // Create the final provider with custom transport using the EIP-1193 wrapper
+        const newProvider = createWalletClient({
+          account,
+          chain: getNetworkViem(walletChainId),
+          transport: custom(eip1193Provider),
         });
 
         setProvider(newProvider);
@@ -278,7 +290,7 @@ const AuthLayout = () => {
 
         Sentry.addBreadcrumb({
           category: 'authentication',
-          message: 'Private key provider setup completed',
+          message: 'Private key provider setup completed with EIP-1193 wrapper',
           level: 'info',
           data: {
             providerSetupId,
@@ -287,6 +299,7 @@ const AuthLayout = () => {
             finalChainId: isWithinVisibleChains
               ? walletChainId
               : visibleChains[0].id,
+            transport: 'custom(eip1193Provider)',
           },
         });
 
@@ -673,7 +686,6 @@ const AuthLayout = () => {
           <Authorized
             chainId={chainId}
             provider={provider}
-            privateKey={privateKey}
           />
         ),
         children: [
