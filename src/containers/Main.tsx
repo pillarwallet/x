@@ -682,12 +682,7 @@ const AuthLayout = () => {
     const authorizedRoutesDefinition = [
       {
         path: '/',
-        element: (
-          <Authorized
-            chainId={chainId}
-            provider={provider}
-          />
-        ),
+        element: <Authorized chainId={chainId} provider={provider} />,
         children: [
           {
             index: true,
