@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Asset } from '../types';
-import { formatBalance, formatUsdValue, sendTransaction } from '../utils/blockchain';
+import {
+  formatBalance,
+  formatUsdValue,
+  sendTransaction,
+  switchChain,
+  getCurrentChainId,
+  getChainById,
+} from '../utils/blockchain';
 import defaultLogo from '../images/logo-unknown.png';
 
 interface SendAssetModalProps {
@@ -20,6 +27,18 @@ const SendAssetModal = ({
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentChainId, setCurrentChainId] = useState<number | null>(null);
+
+  // Get current chain when modal opens
+  useEffect(() => {
+    const checkChain = async () => {
+      if (walletProvider) {
+        const chainId = await getCurrentChainId(walletProvider);
+        setCurrentChainId(chainId);
+      }
+    };
+    checkChain();
+  }, [walletProvider]);
 
   // Reset form when asset changes
   useEffect(() => {
@@ -29,6 +48,9 @@ const SendAssetModal = ({
   }, [asset]);
 
   if (!asset) return null;
+
+  const isWrongChain = currentChainId !== null && currentChainId !== asset.chainId;
+  const targetChain = getChainById(asset.chainId);
 
   const handleMaxClick = () => {
     setAmount(asset.balance.toString());
@@ -72,6 +94,32 @@ const SendAssetModal = ({
     setError('');
 
     try {
+      // Check current chain
+      const currentChainId = await getCurrentChainId(walletProvider);
+      const targetChain = getChainById(asset.chainId);
+
+      // If on wrong chain, request to switch
+      if (currentChainId !== asset.chainId) {
+        setError(
+          `Switching to ${targetChain.name}... Please approve in your wallet.`
+        );
+        
+        try {
+          await switchChain(asset.chainId, walletProvider);
+          setError(''); // Clear the switching message
+        } catch (switchError) {
+          console.error('Chain switch error:', switchError);
+          setError(
+            switchError instanceof Error
+              ? switchError.message
+              : `Please switch to ${targetChain.name} in your wallet and try again.`
+          );
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Send transaction
       const txHash = await sendTransaction(
         asset,
         recipient,
@@ -136,6 +184,23 @@ const SendAssetModal = ({
               </div>
             </div>
           </div>
+
+          {/* Chain Warning */}
+          {isWrongChain && (
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
+              <div className="flex items-start gap-2">
+                <span className="text-yellow-400 text-lg">⚠️</span>
+                <div className="flex-1">
+                  <p className="text-sm text-yellow-400 font-medium">
+                    Wrong Network
+                  </p>
+                  <p className="text-xs text-yellow-400/80 mt-1">
+                    You'll be prompted to switch to {targetChain.name} when sending.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Recipient Input */}
           <div>
@@ -206,7 +271,13 @@ const SendAssetModal = ({
               type="button"
               disabled={isLoading || !walletProvider}
             >
-              {isLoading ? 'Sending...' : !walletProvider ? 'Connecting...' : 'Send'}
+              {isLoading
+                ? 'Sending...'
+                : !walletProvider
+                  ? 'Connecting...'
+                  : isWrongChain
+                    ? `Switch & Send`
+                    : 'Send'}
             </button>
           </div>
         </div>

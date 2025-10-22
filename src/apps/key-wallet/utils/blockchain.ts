@@ -32,6 +32,80 @@ export const isNativeAsset = (contractAddress: string): boolean => {
   );
 };
 
+/**
+ * Switch the wallet to a specific chain
+ * If the chain is not added to the wallet, it will be added automatically
+ */
+export const switchChain = async (
+  chainId: number,
+  walletProvider: any
+): Promise<void> => {
+  // Check if provider has request method (EIP-1193)
+  if (!walletProvider?.request) {
+    throw new Error('Wallet provider does not support chain switching');
+  }
+
+  const targetChain = getChainById(chainId);
+  const chainIdHex = `0x${chainId.toString(16)}`;
+
+  try {
+    // Attempt to switch to the target chain
+    await walletProvider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: chainIdHex }],
+    });
+  } catch (switchError: any) {
+    // Error code 4902 means the chain hasn't been added to the wallet yet
+    if (switchError.code === 4902) {
+      try {
+        // Add the chain to the wallet
+        await walletProvider.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: chainIdHex,
+              chainName: targetChain.name,
+              nativeCurrency: targetChain.nativeCurrency,
+              rpcUrls: targetChain.rpcUrls.default.http,
+              blockExplorerUrls: targetChain.blockExplorers?.default?.url
+                ? [targetChain.blockExplorers.default.url]
+                : undefined,
+            },
+          ],
+        });
+      } catch (addError) {
+        console.error('Failed to add chain to wallet:', addError);
+        throw new Error(`Failed to add ${targetChain.name} to your wallet`);
+      }
+    } else {
+      console.error('Failed to switch chain:', switchError);
+      throw new Error(
+        `Failed to switch to ${targetChain.name}. Please switch manually in your wallet.`
+      );
+    }
+  }
+};
+
+/**
+ * Get the current chain ID from the wallet provider
+ */
+export const getCurrentChainId = async (
+  walletProvider: any
+): Promise<number | null> => {
+  try {
+    if (!walletProvider?.request) {
+      return null;
+    }
+    const chainIdHex = await walletProvider.request({
+      method: 'eth_chainId',
+    });
+    return parseInt(chainIdHex, 16);
+  } catch (error) {
+    console.error('Failed to get current chain ID:', error);
+    return null;
+  }
+};
+
 export const sendTransaction = async (
   asset: Asset,
   recipient: string,
