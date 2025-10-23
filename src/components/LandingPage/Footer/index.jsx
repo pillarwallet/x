@@ -39,7 +39,7 @@ const Footer = () => {
                 >
                   <img
                     src="https://cdn.pillarx.app/social-telegram.svg"
-                    alt="home-image"
+                    alt="telegram-image"
                   />
                 </a>
                 <a
