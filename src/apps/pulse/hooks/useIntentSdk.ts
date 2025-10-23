@@ -1,4 +1,4 @@
-import { IntentSdk, Options } from '@etherspot/intent-sdk';
+import { IntentSdk, Options, sleep } from '@etherspot/intent-sdk';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useCallback, useEffect, useState } from 'react';
 import { Hex, createWalletClient, custom } from 'viem';
@@ -7,8 +7,22 @@ import { useAccount, useConnect } from 'wagmi';
 // hooks
 import useTransactionKit from '../../../hooks/useTransactionKit';
 
-export default function useIntentSdk() {
-  const { walletAddress: accountAddress } = useTransactionKit();
+// types
+import { PayingToken } from '../types/tokens';
+
+interface IntentProps {
+  payingTokens: PayingToken[];
+}
+
+interface Transactions {
+  action: string;
+  calldata: string;
+  target: string;
+}
+
+export default function useIntentSdk(props: IntentProps) {
+  const { payingTokens } = props;
+  const { walletAddress: accountAddress, kit } = useTransactionKit();
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const { isConnected: isWagmiConnected } = useAccount();
@@ -21,6 +35,32 @@ export default function useIntentSdk() {
   );
   const [intentSdk, setIntentSdk] = useState<IntentSdk | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [areModulesInstalled, setAreModulesInstalled] = useState<boolean>(false);
+  const [isInstalling, setIsInstalling] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
+  const sendTransactions = async (transactions: Transactions[], chainId: number) => {
+    try {
+      const txns = [];
+      let txnHash;
+      const batchName = 'pulse-install-modules';
+      for (let tx of transactions) {
+        kit.transaction({
+          to: tx.target,
+          data: tx.calldata,
+          chainId: chainId,
+        }).name({ transactionName: tx.action }).addToBatch({ batchName });
+      }
+      const response = await kit.sendBatches({ onlyBatchNames: [ batchName ] });
+      const userOpHash = response.batches[batchName].userOpHash ?? '';
+      if (userOpHash) txnHash = await kit.getTransactionHash(userOpHash, chainId);
+      console.log('response from tx kit: ', response, txnHash);
+      return true;
+    } catch (err) {
+      console.error('err on sending Install modules: ', err);
+      return false;
+    }
+  }
 
   useEffect(() => {
     const initializeSdk = async () => {
@@ -97,9 +137,65 @@ export default function useIntentSdk() {
     connectors,
   ]);
 
+  useEffect(() => {
+    if (!areModulesInstalled && intentSdk && payingTokens && payingTokens.length > 0) {
+      const { chainId } = payingTokens[0];
+      setIsFetching(true);
+      intentSdk.isWalletReadyForPulse(chainId)
+        .then((res) => {
+          if (res) {
+            console.log('isWalletReadyForPulse: ', res);
+            setAreModulesInstalled(true);
+          } else {
+            setAreModulesInstalled(false);
+          }
+          setIsFetching(false);
+        })
+        .catch((err) => {
+          console.error('err:: ', err);
+          setIsFetching(false);
+          setAreModulesInstalled(false);
+        });
+    }
+  }, [intentSdk, payingTokens, areModulesInstalled]);
+
+  const installModules = async () => {
+    if (!payingTokens) return;
+    const { chainId } = payingTokens[0];
+    setIsInstalling(true);
+    intentSdk?.enablePulseTrading(chainId)
+      .then(res => {
+        console.log(res);
+        sendTransactions(res, chainId)
+          .then(res => {
+            setIsInstalling(false);
+            if (res)
+              setAreModulesInstalled(true);
+            else setAreModulesInstalled(false);
+          })
+          .catch((err) => {
+            console.error(err);
+            setAreModulesInstalled(false);
+            setIsInstalling(false);
+          })
+      })
+      .catch((err) => {
+        console.error('Installation failed:: ', err);
+        setIsInstalling(false);
+      });
+  };
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  return { intentSdk, error, clearError };
+  return { 
+    intentSdk,
+    error,
+    clearError,
+    installModules,
+    areModulesInstalled,
+    isInstalling,
+    isFetching
+  };
 }

@@ -94,7 +94,6 @@ export default function HomeScreen(props: HomeScreenProps) {
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
-  const { intentSdk } = useIntentSdk();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -110,6 +109,9 @@ export default function HomeScreen(props: HomeScreenProps) {
     isBuy: boolean;
   } | null>(null);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
+  const { intentSdk } = useIntentSdk({
+    payingTokens
+  });
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
@@ -919,16 +921,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
+                      backgroundColor: '#1E1D24',
+                      borderRadius: 10,
+                      margin: 4,
+                    }
                     : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
+                      backgroundColor: 'black',
+                      borderRadius: 10,
+                      margin: 4,
+                      color: 'grey',
+                    }
                 }
                 onClick={() => setIsBuy(true)}
                 type="button"
@@ -941,16 +943,16 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
+                      backgroundColor: '#1E1D24',
+                      borderRadius: 10,
+                      margin: 4,
+                    }
                     : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
+                      backgroundColor: 'black',
+                      borderRadius: 10,
+                      margin: 4,
+                      color: 'grey',
+                    }
                 }
                 onClick={() => setIsBuy(false)}
                 type="button"

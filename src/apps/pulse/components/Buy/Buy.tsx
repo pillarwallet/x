@@ -31,7 +31,6 @@ import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
 import { STABLE_CURRENCIES } from '../../constants/tokens';
 import useIntentSdk from '../../hooks/useIntentSdk';
-import useModularSdk from '../../hooks/useModularSdk';
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
@@ -80,7 +79,9 @@ export default function Buy(props: BuyProps) {
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
-  const { intentSdk } = useIntentSdk();
+  const { intentSdk, areModulesInstalled, isInstalling, installModules, isFetching } = useIntentSdk({
+    payingTokens
+  });
 
   // Simple background search for token-atlas
   const location = useLocation();
@@ -107,11 +108,6 @@ export default function Buy(props: BuyProps) {
         skip: !fromTokenAtlas || !tokenToSearch || !!token,
       }
     );
-
-  const { areModulesInstalled, isInstalling, installModules, isFetching } =
-    useModularSdk({
-      payingTokens,
-    });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
@@ -200,7 +196,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+        chainIdOfMaxStableBalance && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -657,11 +653,10 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
                     ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
                     : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {

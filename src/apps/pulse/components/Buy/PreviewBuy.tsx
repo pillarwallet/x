@@ -72,7 +72,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const [isTransactionRejected, setIsTransactionRejected] = useState(false);
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
 
-  const { intentSdk, error, clearError } = useIntentSdk();
+  const { intentSdk, error, clearError } = useIntentSdk({
+    payingTokens
+  });
   const { walletAddress: accountAddress } = useTransactionKit();
 
   useEffect(() => {
