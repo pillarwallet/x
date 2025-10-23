@@ -73,7 +73,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
 
   const { intentSdk, error, clearError } = useIntentSdk({
-    payingTokens
+    payingTokens,
   });
   const { walletAddress: accountAddress } = useTransactionKit();
 

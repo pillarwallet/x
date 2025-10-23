@@ -1,4 +1,4 @@
-import { IntentSdk, Options, sleep } from '@etherspot/intent-sdk';
+import { IntentSdk, Options } from '@etherspot/intent-sdk';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useCallback, useEffect, useState } from 'react';
 import { Hex, createWalletClient, custom } from 'viem';
@@ -35,32 +35,40 @@ export default function useIntentSdk(props: IntentProps) {
   );
   const [intentSdk, setIntentSdk] = useState<IntentSdk | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [areModulesInstalled, setAreModulesInstalled] = useState<boolean>(false);
+  const [areModulesInstalled, setAreModulesInstalled] =
+    useState<boolean>(false);
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  const sendTransactions = async (transactions: Transactions[], chainId: number) => {
+  const sendTransactions = async (
+    transactions: Transactions[],
+    chainId: number
+  ) => {
     try {
-      const txns = [];
       let txnHash;
       const batchName = 'pulse-install-modules';
-      for (let tx of transactions) {
-        kit.transaction({
-          to: tx.target,
-          data: tx.calldata,
-          chainId: chainId,
-        }).name({ transactionName: tx.action }).addToBatch({ batchName });
+      for (let i = 0; i < transactions.length; i += 1) {
+        kit
+          .transaction({
+            to: transactions[i].target,
+            data: transactions[i].calldata,
+            chainId,
+          })
+          .name({ transactionName: transactions[i].action })
+          .addToBatch({ batchName });
       }
-      const response = await kit.sendBatches({ onlyBatchNames: [ batchName ] });
+      const response = await kit.sendBatches({ onlyBatchNames: [batchName] });
       const userOpHash = response.batches[batchName].userOpHash ?? '';
-      if (userOpHash) txnHash = await kit.getTransactionHash(userOpHash, chainId);
-      console.log('response from tx kit: ', response, txnHash);
+      if (userOpHash)
+        txnHash = await kit.getTransactionHash(userOpHash, chainId);
+      // eslint-disable-next-line no-console
+      console.log('response from tx kit: ', response, userOpHash, txnHash);
       return true;
     } catch (err) {
       console.error('err on sending Install modules: ', err);
       return false;
     }
-  }
+  };
 
   useEffect(() => {
     const initializeSdk = async () => {
@@ -138,12 +146,19 @@ export default function useIntentSdk(props: IntentProps) {
   ]);
 
   useEffect(() => {
-    if (!areModulesInstalled && intentSdk && payingTokens && payingTokens.length > 0) {
+    if (
+      !areModulesInstalled &&
+      intentSdk &&
+      payingTokens &&
+      payingTokens.length > 0
+    ) {
       const { chainId } = payingTokens[0];
       setIsFetching(true);
-      intentSdk.isWalletReadyForPulse(chainId)
+      intentSdk
+        .isWalletReadyForPulse(chainId)
         .then((res) => {
           if (res) {
+            // eslint-disable-next-line no-console
             console.log('isWalletReadyForPulse: ', res);
             setAreModulesInstalled(true);
           } else {
@@ -163,21 +178,20 @@ export default function useIntentSdk(props: IntentProps) {
     if (!payingTokens) return;
     const { chainId } = payingTokens[0];
     setIsInstalling(true);
-    intentSdk?.enablePulseTrading(chainId)
-      .then(res => {
-        console.log(res);
+    intentSdk
+      ?.enablePulseTrading(chainId)
+      .then((res: Transactions[]) => {
         sendTransactions(res, chainId)
-          .then(res => {
+          .then((response: boolean) => {
             setIsInstalling(false);
-            if (res)
-              setAreModulesInstalled(true);
+            if (response) setAreModulesInstalled(true);
             else setAreModulesInstalled(false);
           })
           .catch((err) => {
             console.error(err);
             setAreModulesInstalled(false);
             setIsInstalling(false);
-          })
+          });
       })
       .catch((err) => {
         console.error('Installation failed:: ', err);
@@ -189,13 +203,13 @@ export default function useIntentSdk(props: IntentProps) {
     setError(null);
   }, []);
 
-  return { 
+  return {
     intentSdk,
     error,
     clearError,
     installModules,
     areModulesInstalled,
     isInstalling,
-    isFetching
+    isFetching,
   };
 }
