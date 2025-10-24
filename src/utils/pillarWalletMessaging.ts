@@ -97,13 +97,13 @@ export const createWebViewMessageHandler = (
           authRequestId,
           messageType: data?.type,
           hasValue: !!data?.value,
+          rawData: event.data,
         },
       });
 
       // Check if this is the private key response
       if (data?.type === 'pillarWalletPkResponse' && data?.value?.pk) {
         const privateKey = data.value.pk;
-
         Sentry.addBreadcrumb({
           category: 'authentication',
           message: 'Private key received from Pillar Wallet webview',
@@ -226,6 +226,54 @@ export const setupPillarWalletMessaging = (
   // Add event listener for webview messages
   window.addEventListener('message', messageHandler);
 
+  // For React Native webview, we also need to listen for direct document events
+  // React Native webview messages sometimes come through document events
+  const documentMessageHandler = (event: MessageEvent) => {
+    // Check if this is a React Native webview message
+    if (event.data && typeof event.data === 'string') {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data?.type === 'pillarWalletPkResponse') {
+          // Create a proper MessageEvent and call our handler
+          const messageEvent = new MessageEvent('message', {
+            data: event.data,
+          });
+          messageHandler(messageEvent);
+        }
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    }
+  };
+
+  // Listen for document events (React Native webview specific)
+  // Note: document.addEventListener('message') is not standard, but some React Native webviews use it
+  (document as any).addEventListener('message', documentMessageHandler);
+
+  // Also listen for custom events that might be triggered by React Native
+  const customEventHandler = (event: CustomEvent) => {
+    if (event.detail && typeof event.detail === 'string') {
+      try {
+        const data = JSON.parse(event.detail);
+
+        if (data?.type === 'pillarWalletPkResponse') {
+          const messageEvent = new MessageEvent('message', {
+            data: event.detail,
+          });
+          messageHandler(messageEvent);
+        }
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    }
+  };
+
+  window.addEventListener(
+    'pillarWalletMessage',
+    customEventHandler as EventListener
+  );
+
   // Request private key after a short delay to ensure webview is ready
   const requestTimer = setTimeout(() => {
     requestPrivateKey(authRequestId);
@@ -234,6 +282,11 @@ export const setupPillarWalletMessaging = (
   // Return cleanup function
   return () => {
     window.removeEventListener('message', messageHandler);
+    (document as any).removeEventListener('message', documentMessageHandler);
+    window.removeEventListener(
+      'pillarWalletMessage',
+      customEventHandler as EventListener
+    );
     clearTimeout(requestTimer);
   };
 };
