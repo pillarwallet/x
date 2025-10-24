@@ -7,8 +7,22 @@ import { useAccount, useConnect } from 'wagmi';
 // hooks
 import useTransactionKit from '../../../hooks/useTransactionKit';
 
-export default function useIntentSdk() {
-  const { walletAddress: accountAddress } = useTransactionKit();
+// types
+import { PayingToken } from '../types/tokens';
+
+interface IntentProps {
+  payingTokens: PayingToken[];
+}
+
+interface Transactions {
+  action: string;
+  calldata: string;
+  target: string;
+}
+
+export default function useIntentSdk(props: IntentProps) {
+  const { payingTokens } = props;
+  const { walletAddress: accountAddress, kit } = useTransactionKit();
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const { isConnected: isWagmiConnected } = useAccount();
@@ -21,6 +35,40 @@ export default function useIntentSdk() {
   );
   const [intentSdk, setIntentSdk] = useState<IntentSdk | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [areModulesInstalled, setAreModulesInstalled] =
+    useState<boolean>(false);
+  const [isInstalling, setIsInstalling] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
+  const sendTransactions = async (
+    transactions: Transactions[],
+    chainId: number
+  ) => {
+    try {
+      let txnHash;
+      const batchName = 'pulse-install-modules';
+      for (let i = 0; i < transactions.length; i += 1) {
+        kit
+          .transaction({
+            to: transactions[i].target,
+            data: transactions[i].calldata,
+            chainId,
+          })
+          .name({ transactionName: transactions[i].action })
+          .addToBatch({ batchName });
+      }
+      const response = await kit.sendBatches({ onlyBatchNames: [batchName] });
+      const userOpHash = response.batches[batchName].userOpHash ?? '';
+      if (userOpHash)
+        txnHash = await kit.getTransactionHash(userOpHash, chainId);
+      // eslint-disable-next-line no-console
+      console.log('response from tx kit: ', response, userOpHash, txnHash);
+      return true;
+    } catch (err) {
+      console.error('err on sending Install modules: ', err);
+      return false;
+    }
+  };
 
   useEffect(() => {
     const initializeSdk = async () => {
@@ -98,9 +146,62 @@ export default function useIntentSdk() {
     connectors,
   ]);
 
+  useEffect(() => {
+    if (
+      !areModulesInstalled &&
+      intentSdk &&
+      payingTokens &&
+      payingTokens.length > 0
+    ) {
+      const { chainId } = payingTokens[0];
+      setIsFetching(true);
+      intentSdk
+        .isWalletReadyForPulse(chainId)
+        .then((res) => {
+          if (res) {
+            // eslint-disable-next-line no-console
+            console.log('isWalletReadyForPulse: ', res);
+            setAreModulesInstalled(true);
+          } else {
+            setAreModulesInstalled(false);
+          }
+          setIsFetching(false);
+        })
+        .catch((err) => {
+          console.error('err:: ', err);
+          setIsFetching(false);
+          setAreModulesInstalled(false);
+        });
+    }
+  }, [intentSdk, payingTokens, areModulesInstalled]);
+
+  const installModules = async () => {
+    if (!payingTokens?.length || !intentSdk) return;
+    const { chainId } = payingTokens[0];
+    setIsInstalling(true);
+    try {
+      const res: Transactions[] = await intentSdk.enablePulseTrading(chainId);
+      const ok = await sendTransactions(res, chainId);
+      setAreModulesInstalled(ok);
+    } catch (err) {
+      console.error('Installation failed:: ', err);
+      setAreModulesInstalled(false);
+    } finally {
+      setIsInstalling(false);
+    }
+  };
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  return { intentSdk, error, clearError };
+  return {
+    intentSdk,
+    error,
+    clearError,
+    installModules,
+    areModulesInstalled,
+    isInstalling,
+    isFetching,
+  };
 }

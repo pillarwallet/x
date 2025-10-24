@@ -7,7 +7,6 @@ import { vi } from 'vitest';
 // hooks
 import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import useIntentSdk from '../../../hooks/useIntentSdk';
-import useModularSdk from '../../../hooks/useModularSdk';
 
 // types
 import { WalletPortfolioMobulaResponse } from '../../../../../types/api';
@@ -25,9 +24,9 @@ vi.mock('../../../hooks/useIntentSdk', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('../../../hooks/useModularSdk', () => ({
-  default: vi.fn(),
-}));
+// vi.mock('../../../hooks/useModularSdk', () => ({
+//   default: vi.fn(),
+// }));
 
 // useTransactionKit is mocked globally in setupTests.ts
 
@@ -238,9 +237,6 @@ const defaultMocks = () => {
         bids: [{ bidHash: '0xBidHash123456789' }],
       }),
     },
-  });
-
-  (useModularSdk as any).mockReturnValue({
     areModulesInstalled: true,
     isInstalling: false,
     installModules: vi.fn(),
@@ -343,7 +339,13 @@ describe('<Buy />', () => {
 
   describe('handles different states', () => {
     it('shows not enough liquidity warning', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -366,7 +368,13 @@ describe('<Buy />', () => {
     });
 
     it('resets liquidity state when amount changes', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -400,7 +408,13 @@ describe('<Buy />', () => {
     });
 
     it('handles loading state', () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -445,7 +459,13 @@ describe('<Buy />', () => {
     });
 
     it('shows not enough USDC warning with max amount suggestion', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -692,7 +712,13 @@ describe('<Buy />', () => {
   describe('handles buy submission', () => {
     it('installs modules when not installed', async () => {
       const mockInstallModules = vi.fn().mockResolvedValue(undefined);
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: false,
         isInstalling: false,
         installModules: mockInstallModules,
