@@ -121,8 +121,6 @@ const EnterAmount = ({
 
   // Gets the best swap offer
   const getOffer = async () => {
-    // Remove verbose logging to save quota
-
     const params = {
       fromAmount: amountSwap ?? 0,
       fromTokenAddress: swapToken?.contract ?? '',
@@ -157,10 +155,8 @@ const EnterAmount = ({
 
     if (offer && Object.keys(offer as SwapOffer).length && receiveToken) {
       dispatch(setAmountReceive(offer?.tokenAmountToReceive));
-      // Remove verbose logging to save quota
     } else {
       setIsNoOffer(true);
-      // Remove verbose logging to save quota
     }
 
     dispatch(setIsOfferLoading(false));
@@ -213,7 +209,6 @@ const EnterAmount = ({
   const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setInputValue(value);
-    // Remove verbose logging to save quota
 
     if (type === CardPosition.SWAP && swapToken) {
       dispatch(setAmountSwap(Number(value)));
@@ -221,7 +216,6 @@ const EnterAmount = ({
 
     if (tokenBalance && Number(value) > tokenBalance - (deploymentCost ?? 0)) {
       dispatch(setIsAboveLimit(true));
-      // Remove verbose logging to save quota
     }
     if (tokenBalance && Number(value) <= tokenBalance - (deploymentCost ?? 0)) {
       dispatch(setIsAboveLimit(false));

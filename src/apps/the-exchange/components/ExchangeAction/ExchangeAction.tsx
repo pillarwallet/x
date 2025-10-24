@@ -19,7 +19,7 @@ import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
-import { logExchangeError, startExchangeTransaction } from '../../utils/sentry';
+import { logExchangeError } from '../../utils/sentry';
 
 // types
 import { PortfolioData } from '../../../../types/api';
@@ -88,7 +88,6 @@ const ExchangeAction = () => {
    * transaction building, and batch submission
    */
   const onClickToExchange = async () => {
-    startExchangeTransaction();
     setErrorMessage('');
 
     /**
@@ -122,8 +121,6 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
-      // Remove verbose logging to save quota
-
       /**
        * Step 2: Convert wallet portfolio data
        * Transform the portfolio data into the format expected by the transaction builder
@@ -150,8 +147,6 @@ const ExchangeAction = () => {
         stepTransactions
       );
 
-      // Remove verbose logging to save quota
-
       if (!stepTransactions || stepTransactions.length === 0) {
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
@@ -160,8 +155,6 @@ const ExchangeAction = () => {
       }
 
       if (stepTransactions.length) {
-        // Remove verbose logging to save quota
-
         /**
          * Step 4: Add transactions to batch
          * Process each transaction step and add it to the batch for execution
@@ -240,8 +233,6 @@ const ExchangeAction = () => {
          * Step 5: Open batch modal
          * Show the batch modal to user for transaction review and execution
          */
-        // Remove verbose logging to save quota
-
         setShowBatchSendModal(true);
         showSend();
       }
@@ -250,8 +241,21 @@ const ExchangeAction = () => {
        * Error handling for transaction execution
        * Log the error and provide user-friendly error message
        */
-      // Log only critical errors
-      logExchangeError(error as string);
+      // Log only critical errors with essential context
+      logExchangeError(
+        error instanceof Error ? error : String(error),
+        {
+          operation: 'exchange_click',
+          swapToken: swapToken?.symbol,
+          receiveToken: receiveToken?.symbol,
+          amountSwap,
+          walletAddress,
+        },
+        {
+          component: 'ExchangeAction',
+          method: 'onClickToExchange',
+        }
+      );
 
       transactionDebugLog('Swap batch error:', error);
       setErrorMessage(

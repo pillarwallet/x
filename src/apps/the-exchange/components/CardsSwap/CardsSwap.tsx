@@ -47,8 +47,6 @@ const CardsSwap = () => {
 
   // swapCards allow the user to switch between Swap and Receive cards
   const swapCardsAction = () => {
-    // Remove verbose logging to save quota
-
     setCardPosition((prevPosition) => ({
       swap: prevPosition.receive,
       receive: prevPosition.swap,
@@ -57,8 +55,6 @@ const CardsSwap = () => {
 
   // handleOpenTokenList opens the list for selecting tokens
   const handleOpenTokenList = async (position: CardPosition) => {
-    // Remove verbose logging to save quota
-
     dispatch(setSearchTokenResult(undefined));
 
     if (position === CardPosition.SWAP) {

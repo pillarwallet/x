@@ -30,10 +30,6 @@ if (import.meta.env.VITE_VERSION) {
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
-  integrations: [
-    // Remove replay integration to save quota
-    // Sentry.replayIntegration(),
-  ],
   enabled: true,
   environment: import.meta.env.VITE_SENTRY_ENVIRONMENT ?? 'staging',
   // Dramatically reduce trace sampling to save quota

@@ -7,6 +7,8 @@ export const initSentryForExchange = () => {
 };
 
 // Utility to get fallback wallet address for logging
+// This function should be called from within a React component context
+// where the wallet address is available
 export const fallbackWalletAddressForLogging = (): string => {
   return 'unknown_wallet_address';
 };
@@ -58,18 +60,3 @@ export const useWalletAddressForLogging = () => {
   // This hook is kept for compatibility but returns minimal data
   return 'unknown_wallet_address';
 };
-
-// Remove all breadcrumb and performance monitoring functions
-// These were consuming significant quota
-
-// Minimal transaction monitoring - only for critical errors
-export const startExchangeTransaction = () => {
-  // Return a minimal span that doesn't send data unless there's an error
-  return {
-    finish: () => {
-      // No-op to prevent quota consumption
-    },
-  };
-};
-
-// Removed all breadcrumb utilities - they consume too much quota

@@ -34,7 +34,6 @@ import {
   processEth,
   toWei,
 } from '../utils/blockchain';
-import { startExchangeTransaction } from '../utils/sentry';
 import {
   getWrappedTokenAddressIfNative,
   isNativeToken,
@@ -61,8 +60,6 @@ const useOffer = () => {
     feeAmount: string;
     slippage?: number;
   }) => {
-    startExchangeTransaction();
-
     try {
       /**
        * Create route request to find the best path for converting

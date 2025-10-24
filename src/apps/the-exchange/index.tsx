@@ -42,7 +42,6 @@ export const App = () => {
    */
   useEffect(() => {
     initSentryForExchange();
-    // Remove verbose logging to save quota
   }, [walletAddress, isSwapOpen, isReceiveOpen]);
 
   /**
@@ -75,8 +74,6 @@ export const App = () => {
              * Implements EIP-1193 standard for wallet chain switching
              */
             switchChain: async (chainId) => {
-              // Remove verbose logging to save quota
-
               try {
                 /**
                  * Step 1: Validate chain support
@@ -139,10 +136,8 @@ export const App = () => {
                   }
                 }
 
-                // Remove verbose logging to save quota
-
                 /**
-                 * Step 5: Return the provider for LiFi SDK
+                 * Step 4: Return the provider for LiFi SDK
                  * The LiFi SDK expects a specific client type, so we cast accordingly
                  */
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
