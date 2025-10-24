@@ -703,9 +703,8 @@ ul li:last-child {
 .footer__wrapper {
   padding: calc(var(--padding) * 10) 0 calc(var(--padding) * 4) 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 3rem;
 }
 
 @media only screen and (max-width: 767px) {
@@ -713,6 +712,26 @@ ul li:last-child {
     padding: calc(var(--padding) * 4) 0;
   }
 }
+
+.footer__disclaimer {
+  flex: 1;
+  width: 100%;
+}
+
+.footer__disclaimer p {
+  font-size: 1.2rem;
+  font-style: italic;
+  text-align: left;
+  max-width: 120ch;
+}
+
+.footer__links_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
 
 .footer__links a {
   font-size: 1.4rem;

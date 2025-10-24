@@ -135,7 +135,11 @@ const AuthLayout = () => {
   useEffect(() => {
     // Check if request is from React Native app
     const searchParams = new URLSearchParams(window.location.search);
-    const devicePlatform = searchParams.get('devicePlatform');
+    const devicePlatformFromUrl = searchParams.get('devicePlatform');
+    const devicePlatformFromStorage = localStorage.getItem('DEVICE_PLATFORM');
+
+    // Check both URL params and localStorage to determine if we're in React Native
+    const devicePlatform = devicePlatformFromUrl || devicePlatformFromStorage;
     const isReactNativeApp =
       devicePlatform === 'ios' || devicePlatform === 'android';
 
@@ -144,6 +148,8 @@ const AuthLayout = () => {
       message: 'Checking if Pillar Wallet messaging should be enabled',
       level: 'info',
       data: {
+        devicePlatformFromUrl,
+        devicePlatformFromStorage,
         devicePlatform,
         isReactNativeApp,
       },
@@ -152,7 +158,9 @@ const AuthLayout = () => {
     // Only set up messaging if coming from React Native app
     if (isReactNativeApp) {
       // Store device platform in localStorage for persistence across navigation
-      localStorage.setItem('DEVICE_PLATFORM', devicePlatform);
+      if (devicePlatformFromUrl) {
+        localStorage.setItem('DEVICE_PLATFORM', devicePlatformFromUrl);
+      }
 
       Sentry.addBreadcrumb({
         category: 'authentication',
