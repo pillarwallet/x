@@ -137,7 +137,7 @@ const AuthLayout = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const devicePlatformFromUrl = searchParams.get('devicePlatform');
     const devicePlatformFromStorage = localStorage.getItem('DEVICE_PLATFORM');
-    
+
     // Check both URL params and localStorage to determine if we're in React Native
     const devicePlatform = devicePlatformFromUrl || devicePlatformFromStorage;
     const isReactNativeApp =

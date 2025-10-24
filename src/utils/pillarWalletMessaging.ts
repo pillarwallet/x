@@ -42,6 +42,17 @@ declare global {
       postMessage: (message: string) => void;
     };
   }
+
+  interface Document {
+    addEventListener(
+      type: 'message',
+      listener: (event: MessageEvent) => void
+    ): void;
+    removeEventListener(
+      type: 'message',
+      listener: (event: MessageEvent) => void
+    ): void;
+  }
 }
 
 /**
@@ -249,7 +260,7 @@ export const setupPillarWalletMessaging = (
 
   // Listen for document events (React Native webview specific)
   // Note: document.addEventListener('message') is not standard, but some React Native webviews use it
-  (document as any).addEventListener('message', documentMessageHandler);
+  document.addEventListener('message', documentMessageHandler);
 
   // Also listen for custom events that might be triggered by React Native
   const customEventHandler = (event: CustomEvent) => {
@@ -282,7 +293,7 @@ export const setupPillarWalletMessaging = (
   // Return cleanup function
   return () => {
     window.removeEventListener('message', messageHandler);
-    (document as any).removeEventListener('message', documentMessageHandler);
+    document.removeEventListener('message', documentMessageHandler);
     window.removeEventListener(
       'pillarWalletMessage',
       customEventHandler as EventListener
