@@ -31,23 +31,58 @@ if (import.meta.env.VITE_VERSION) {
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
+    // Remove replay integration to save quota
+    // Sentry.replayIntegration(),
   ],
   enabled: true,
   environment: import.meta.env.VITE_SENTRY_ENVIRONMENT ?? 'staging',
-  tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+  // Dramatically reduce trace sampling to save quota
+  tracesSampleRate: 0.01, // Only capture 1% of performance traces
+  // Disable replay completely to save quota
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
   release: sentryReleaseTag,
-  // Only send error-level events to Sentry
+  // Enhanced beforeSend filter to drop more events and reduce data
   beforeSend(event) {
-    // Only send events with error level or higher
+    // Only send error-level events to Sentry
     if (event.level && event.level !== 'error' && event.level !== 'fatal') {
       return null; // Drop the event
     }
 
-    return event;
+    // Create a copy to avoid mutating the original event
+    const filteredEvent = { ...event };
+
+    // Remove large breadcrumb arrays to reduce payload size
+    if (filteredEvent.breadcrumbs && filteredEvent.breadcrumbs.length > 10) {
+      filteredEvent.breadcrumbs = filteredEvent.breadcrumbs.slice(-10); // Keep only last 10 breadcrumbs
+    }
+
+    // Remove excessive context data
+    if (filteredEvent.contexts) {
+      // Keep only essential contexts
+      const essentialContexts = ['runtime', 'browser'];
+      const filteredContexts = { ...filteredEvent.contexts };
+      Object.keys(filteredContexts).forEach((key) => {
+        if (!essentialContexts.includes(key)) {
+          delete filteredContexts[key];
+        }
+      });
+      filteredEvent.contexts = filteredContexts;
+    }
+
+    // Remove large extra data
+    if (filteredEvent.extra && Object.keys(filteredEvent.extra).length > 5) {
+      const essentialKeys = ['error_data', 'exchange_error_data'];
+      const filteredExtra: Record<string, unknown> = {};
+      essentialKeys.forEach((key) => {
+        if (filteredEvent.extra && filteredEvent.extra[key]) {
+          filteredExtra[key] = filteredEvent.extra[key];
+        }
+      });
+      filteredEvent.extra = filteredExtra;
+    }
+
+    return filteredEvent;
   },
 });
 

@@ -1,12 +1,9 @@
-import useTransactionKit from '../../../../hooks/useTransactionKit';
-
 // types
 import { CardPosition } from '../../utils/types';
 
 // utils
 import { getChainName } from '../../../../utils/blockchain';
 import { limitDigits } from '../../../token-atlas/utils/converters';
-import { addExchangeBreadcrumb, logUserInteraction } from '../../utils/sentry';
 
 // components
 import Body from '../Typography/Body';
@@ -33,29 +30,7 @@ const SelectToken = ({
   tokenPrice,
   onClick,
 }: SelectTokenProps) => {
-  const { walletAddress } = useTransactionKit();
-
   const handleClick = () => {
-    logUserInteraction('token_selected', {
-      type,
-      tokenName,
-      tokenChain,
-      tokenBalance,
-      tokenPrice,
-      walletAddress,
-    });
-
-    addExchangeBreadcrumb(
-      `Token selected: ${tokenName || type}`,
-      'user_interaction',
-      {
-        type,
-        tokenName,
-        tokenChain,
-        walletAddress,
-      }
-    );
-
     if (onClick) {
       onClick();
     }

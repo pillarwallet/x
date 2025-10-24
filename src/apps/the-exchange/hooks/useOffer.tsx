@@ -23,7 +23,6 @@ import { StepTransaction, SwapOffer, SwapType } from '../utils/types';
 import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // utils
-import useTransactionKit from '../../../hooks/useTransactionKit';
 import {
   Token,
   chainNameToChainIdTokensData,
@@ -35,10 +34,7 @@ import {
   processEth,
   toWei,
 } from '../utils/blockchain';
-import {
-  addExchangeBreadcrumb,
-  startExchangeTransaction,
-} from '../utils/sentry';
+import { startExchangeTransaction } from '../utils/sentry';
 import {
   getWrappedTokenAddressIfNative,
   isNativeToken,
@@ -48,7 +44,6 @@ import {
 const useOffer = () => {
   const { isZeroAddress } = EtherspotUtils;
   const { transactionDebugLog } = useTransactionDebugLogger();
-  const { walletAddress } = useTransactionKit();
 
   /**
    * Get native fee estimation for ERC20 tokens
@@ -66,26 +61,9 @@ const useOffer = () => {
     feeAmount: string;
     slippage?: number;
   }) => {
-    startExchangeTransaction(
-      'get_native_fee',
-      {
-        tokenAddress,
-        chainId,
-        feeAmount,
-        slippage,
-      },
-      walletAddress
-    );
+    startExchangeTransaction();
 
     try {
-      addExchangeBreadcrumb('Getting native fee for ERC20', 'offer', {
-        tokenAddress,
-        chainId,
-        feeAmount,
-        slippage,
-        walletAddress,
-      });
-
       /**
        * Create route request to find the best path for converting
        * the ERC20 token to native token for fee payment

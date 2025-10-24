@@ -2,7 +2,6 @@
 import { CircularProgress } from '@mui/material';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
-import { formatEther } from 'viem';
 
 // services
 import {
@@ -20,13 +19,7 @@ import useOffer from '../../hooks/useOffer';
 import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
-import {
-  addExchangeBreadcrumb,
-  logExchangeError,
-  logSwapOperation,
-  logUserInteraction,
-  startExchangeTransaction,
-} from '../../utils/sentry';
+import { logExchangeError, startExchangeTransaction } from '../../utils/sentry';
 
 // types
 import { PortfolioData } from '../../../../types/api';
@@ -95,37 +88,8 @@ const ExchangeAction = () => {
    * transaction building, and batch submission
    */
   const onClickToExchange = async () => {
-    startExchangeTransaction(
-      'exchange_click',
-      {
-        isOfferLoading,
-        isNoValidOffer,
-        bestOffer: bestOffer ? 'available' : 'not_available',
-        swapToken: swapToken?.symbol,
-        receiveToken: receiveToken?.symbol,
-        amountSwap,
-      },
-      walletAddress
-    );
-
+    startExchangeTransaction();
     setErrorMessage('');
-
-    // Log user interaction
-    logUserInteraction('exchange_button_clicked', {
-      isOfferLoading,
-      isNoValidOffer,
-      bestOffer: bestOffer ? 'available' : 'not_available',
-      swapToken: swapToken?.symbol,
-      receiveToken: receiveToken?.symbol,
-      amountSwap,
-      walletAddress,
-    });
-
-    addExchangeBreadcrumb('Exchange button clicked', 'user_interaction', {
-      isOfferLoading,
-      isNoValidOffer,
-      walletAddress,
-    });
 
     /**
      * Step 1: Validate required data before proceeding
@@ -133,42 +97,22 @@ const ExchangeAction = () => {
      */
     if (!swapToken || !receiveToken) {
       const errorMsg = 'Please select both tokens before proceeding.';
-      logSwapOperation('exchange_missing_tokens_error', {
-        error: errorMsg,
-        swapToken: swapToken?.symbol,
-        receiveToken: receiveToken?.symbol,
-        walletAddress,
-      });
       setErrorMessage(errorMsg);
       return;
     }
 
     if (amountSwap <= 0) {
       const errorMsg = 'Please enter a valid amount to swap.';
-      logSwapOperation('exchange_invalid_amount_error', {
-        error: errorMsg,
-        amountSwap,
-        walletAddress,
-      });
       setErrorMessage(errorMsg);
       return;
     }
 
     if (isOfferLoading) {
-      logSwapOperation('exchange_loading_error', {
-        error: 'Please wait until the offer is found.',
-        walletAddress,
-      });
       setErrorMessage('Please wait until the offer is found.');
       return;
     }
 
     if (isNoValidOffer) {
-      logSwapOperation('exchange_no_offer_error', {
-        error:
-          'No offer was found! Please try changing the amounts to try again.',
-        walletAddress,
-      });
       setErrorMessage(
         'No offer was found! Please try changing the amounts to try again.'
       );
@@ -178,12 +122,7 @@ const ExchangeAction = () => {
     try {
       setIsAddingToBatch(true);
 
-      addExchangeBreadcrumb('Getting step transactions', 'exchange', {
-        swapToken: swapToken?.symbol,
-        receiveToken: receiveToken?.symbol,
-        amountSwap,
-        walletAddress,
-      });
+      // Remove verbose logging to save quota
 
       /**
        * Step 2: Convert wallet portfolio data
@@ -211,20 +150,9 @@ const ExchangeAction = () => {
         stepTransactions
       );
 
-      logSwapOperation('step_transactions_retrieved', {
-        stepTransactionsCount: stepTransactions.length,
-        swapToken: swapToken?.symbol,
-        receiveToken: receiveToken?.symbol,
-        amountSwap,
-        walletAddress,
-      });
+      // Remove verbose logging to save quota
 
       if (!stepTransactions || stepTransactions.length === 0) {
-        logSwapOperation('no_step_transactions', {
-          error:
-            'We were not able to add this to the queue at the moment. Please try again.',
-          walletAddress,
-        });
         setErrorMessage(
           'We were not able to add this to the queue at the moment. Please try again.'
         );
@@ -232,13 +160,7 @@ const ExchangeAction = () => {
       }
 
       if (stepTransactions.length) {
-        logSwapOperation('adding_transactions_to_batch', {
-          transactionCount: stepTransactions.length,
-          swapToken: swapToken?.symbol,
-          receiveToken: receiveToken?.symbol,
-          amountSwap,
-          walletAddress,
-        });
+        // Remove verbose logging to save quota
 
         /**
          * Step 4: Add transactions to batch
@@ -272,23 +194,9 @@ const ExchangeAction = () => {
             bigIntValue = BigInt(0);
           }
 
-          const integerValue = formatEther(bigIntValue);
-
           transactionDebugLog(
             'The Exchange - Adding transaction to batch:',
             transactionData
-          );
-
-          addExchangeBreadcrumb(
-            `Adding transaction ${i + 1}/${stepTransactions.length} to batch`,
-            'exchange',
-            {
-              transactionIndex: i,
-              totalTransactions: stepTransactions.length,
-              value: integerValue,
-              to: transactionData.to,
-              walletAddress,
-            }
           );
 
           /**
@@ -332,13 +240,7 @@ const ExchangeAction = () => {
          * Step 5: Open batch modal
          * Show the batch modal to user for transaction review and execution
          */
-        logSwapOperation('batch_modal_opened', {
-          transactionCount: stepTransactions.length,
-          swapToken: swapToken?.symbol,
-          receiveToken: receiveToken?.symbol,
-          amountSwap,
-          walletAddress,
-        });
+        // Remove verbose logging to save quota
 
         setShowBatchSendModal(true);
         showSend();
@@ -348,22 +250,8 @@ const ExchangeAction = () => {
        * Error handling for transaction execution
        * Log the error and provide user-friendly error message
        */
-      const exchangeErrorMessage =
-        error instanceof Error ? error.message : String(error);
-      logExchangeError(
-        exchangeErrorMessage,
-        {
-          operation: 'exchange_click',
-          swapToken: swapToken?.symbol,
-          receiveToken: receiveToken?.symbol,
-          amountSwap,
-          walletAddress,
-        },
-        {
-          component: 'ExchangeAction',
-          method: 'onClickToExchange',
-        }
-      );
+      // Log only critical errors
+      logExchangeError(error as string);
 
       transactionDebugLog('Swap batch error:', error);
       setErrorMessage(

@@ -12,11 +12,7 @@ import { useAppSelector } from './hooks/useReducerHooks';
 
 // utils
 import { supportedChains } from '../../utils/blockchain';
-import {
-  addExchangeBreadcrumb,
-  initSentryForExchange,
-  logExchangeEvent,
-} from './utils/sentry';
+import { initSentryForExchange, logExchangeError } from './utils/sentry';
 
 // components
 import CardsSwap from './components/CardsSwap/CardsSwap';
@@ -42,30 +38,11 @@ export const App = () => {
 
   /**
    * Initialize Sentry for the-exchange app
-   * This sets up error tracking and logging for the exchange functionality
+   * Minimal setup to avoid quota issues
    */
   useEffect(() => {
     initSentryForExchange();
-
-    // Log app initialization
-    logExchangeEvent(
-      'The Exchange app initialized',
-      'info',
-      {
-        walletAddress,
-        isSwapOpen,
-        isReceiveOpen,
-      },
-      {
-        component: 'App',
-        action: 'initialization',
-      }
-    );
-
-    addExchangeBreadcrumb('The Exchange app loaded', 'app', {
-      walletAddress,
-      timestamp: new Date().toISOString(),
-    });
+    // Remove verbose logging to save quota
   }, [walletAddress, isSwapOpen, isReceiveOpen]);
 
   /**
@@ -98,22 +75,7 @@ export const App = () => {
              * Implements EIP-1193 standard for wallet chain switching
              */
             switchChain: async (chainId) => {
-              // Log chain switching initiation
-              logExchangeEvent(
-                'Chain switching initiated',
-                'info',
-                {
-                  walletAddress,
-                  chainId,
-                  currentChain: supportedChains.find(
-                    (chain) => chain.id === chainId
-                  ),
-                },
-                {
-                  component: 'App',
-                  action: 'chain_switch',
-                }
-              );
+              // Remove verbose logging to save quota
 
               try {
                 /**
@@ -177,23 +139,7 @@ export const App = () => {
                   }
                 }
 
-                /**
-                 * Step 4: Log successful chain switch
-                 * Record the successful chain switch for monitoring and debugging
-                 */
-                logExchangeEvent(
-                  'Chain switching completed',
-                  'info',
-                  {
-                    walletAddress,
-                    chainId,
-                    newChain: targetChain,
-                  },
-                  {
-                    component: 'App',
-                    action: 'chain_switch_success',
-                  }
-                );
+                // Remove verbose logging to save quota
 
                 /**
                  * Step 5: Return the provider for LiFi SDK
@@ -202,22 +148,13 @@ export const App = () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return provider as any;
               } catch (error) {
-                /**
-                 * Error handling for chain switching failures
-                 * Log the error and re-throw for proper error handling
-                 */
-                logExchangeEvent(
-                  'Chain switching failed',
-                  'error',
+                // Log only critical errors
+                logExchangeError(
+                  error instanceof Error ? error : String(error),
                   {
-                    walletAddress,
+                    operation: 'chain_switch',
                     chainId,
-                    error:
-                      error instanceof Error ? error.message : String(error),
-                  },
-                  {
-                    component: 'App',
-                    action: 'chain_switch_error',
+                    walletAddress,
                   }
                 );
                 throw error;
@@ -236,18 +173,10 @@ export const App = () => {
        * Log the error and continue with app functionality
        */
       console.error('Failed to initialize LiFi config:', error);
-      logExchangeEvent(
-        'LiFi config initialization failed',
-        'error',
-        {
-          walletAddress,
-          error: error instanceof Error ? error.message : String(error),
-        },
-        {
-          component: 'App',
-          action: 'config_init_error',
-        }
-      );
+      logExchangeError(error instanceof Error ? error : String(error), {
+        operation: 'lifi_config_init',
+        walletAddress,
+      });
     }
   }, [provider, walletAddress]);
 
