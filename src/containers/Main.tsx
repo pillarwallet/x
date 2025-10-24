@@ -75,58 +75,34 @@ const AuthLayout = () => {
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
 
-  // Sentry context for authentication state
+  // Minimal Sentry context for authentication state - only set on errors
   useEffect(() => {
-    Sentry.setContext('authentication_state', {
-      ready,
-      authenticated,
-      hasUser: !!user,
-      hasWallets: wallets.length > 0,
-      wagmiIsConnected,
-      isAppReady,
-      isAuthenticated,
-      previouslyAuthenticated,
-      userAgent: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    });
-
-    if (isAuthenticated) {
-      Sentry.addBreadcrumb({
-        category: 'authentication',
-        message: 'User authenticated',
-        level: 'info',
-        data: {
-          authenticated,
-          wagmiIsConnected,
-          walletsCount: wallets.length,
-        },
+    // Only set context if there's an authentication error
+    if (!isAuthenticated && ready && isAppReady) {
+      Sentry.setContext('authentication_state', {
+        ready,
+        authenticated,
+        isAppReady,
+        isAuthenticated,
+        timestamp: new Date().toISOString(),
+        wagmiIsConnected,
+        hasUser: !!user,
+        userAddress: user?.wallet?.address,
       });
     }
   }, [
     ready,
     authenticated,
-    user,
-    wagmiIsConnected,
     isAppReady,
     isAuthenticated,
-    previouslyAuthenticated,
-    wallets.length,
+    user,
+    wagmiIsConnected,
   ]);
 
   useEffect(() => {
     if (!authenticated) return;
     sessionStorage.setItem('loginPageReloaded', 'false');
-
-    Sentry.addBreadcrumb({
-      category: 'authentication',
-      message: 'Privy authentication detected',
-      level: 'info',
-      data: {
-        hasUser: !!user,
-        walletsCount: wallets.length,
-      },
-    });
-  }, [authenticated, user, wallets.length]);
+  }, [authenticated]);
 
   /**
    * Set up Pillar Wallet webview messaging to receive private keys
