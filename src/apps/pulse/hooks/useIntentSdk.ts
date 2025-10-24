@@ -176,28 +176,19 @@ export default function useIntentSdk(props: IntentProps) {
   }, [intentSdk, payingTokens, areModulesInstalled]);
 
   const installModules = async () => {
-    if (!payingTokens) return;
+    if (!payingTokens?.length || !intentSdk) return;
     const { chainId } = payingTokens[0];
     setIsInstalling(true);
-    intentSdk
-      ?.enablePulseTrading(chainId)
-      .then((res: Transactions[]) => {
-        sendTransactions(res, chainId)
-          .then((response: boolean) => {
-            setIsInstalling(false);
-            if (response) setAreModulesInstalled(true);
-            else setAreModulesInstalled(false);
-          })
-          .catch((err) => {
-            console.error(err);
-            setAreModulesInstalled(false);
-            setIsInstalling(false);
-          });
-      })
-      .catch((err) => {
-        console.error('Installation failed:: ', err);
-        setIsInstalling(false);
-      });
+    try {
+      const res: Transactions[] = await intentSdk.enablePulseTrading(chainId);
+      const ok = await sendTransactions(res, chainId);
+      setAreModulesInstalled(ok);
+    } catch (err) {
+      console.error('Installation failed:: ', err);
+      setAreModulesInstalled(false);
+    } finally {
+      setIsInstalling(false);
+    }
   };
 
   const clearError = useCallback(() => {
