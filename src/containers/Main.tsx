@@ -85,9 +85,19 @@ const AuthLayout = () => {
         isAppReady,
         isAuthenticated,
         timestamp: new Date().toISOString(),
+        wagmiIsConnected,
+        hasUser: !!user,
+        userAddress: user?.wallet?.address,
       });
     }
-  }, [ready, authenticated, isAppReady, isAuthenticated]);
+  }, [
+    ready,
+    authenticated,
+    isAppReady,
+    isAuthenticated,
+    user,
+    wagmiIsConnected,
+  ]);
 
   useEffect(() => {
     if (!authenticated) return;
