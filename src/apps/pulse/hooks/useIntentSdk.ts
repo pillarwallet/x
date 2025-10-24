@@ -29,6 +29,7 @@ export default function useIntentSdk() {
       const options: Options = {
         bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY || '',
         modularAccount: accountAddress as Hex,
+        pulseNodeUrl: import.meta.env.VITE_PULSE_NODE_URL || '',
       };
 
       try {
