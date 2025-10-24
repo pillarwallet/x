@@ -144,7 +144,11 @@ export const setupPillarWalletMessaging = (
           messageHandler(messageEvent);
         }
       } catch (e) {
-        // Ignore parsing errors
+        console.error('Error parsing document message, retrying in 5s:', e);
+        // Retry request every 5 seconds on parsing errors
+        setTimeout(() => {
+          requestPrivateKey();
+        }, 5000);
       }
     }
   };
@@ -166,7 +170,11 @@ export const setupPillarWalletMessaging = (
           messageHandler(messageEvent);
         }
       } catch (e) {
-        // Ignore parsing errors
+        console.error('Error parsing custom event, retrying in 5s:', e);
+        // Retry request every 5 seconds on parsing errors
+        setTimeout(() => {
+          requestPrivateKey();
+        }, 5000);
       }
     }
   };
