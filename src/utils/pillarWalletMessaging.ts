@@ -56,9 +56,8 @@ declare global {
 
 /**
  * Requests a private key from the React Native webview
- * @param authRequestId - Unique identifier for this authentication request
  */
-export const requestPrivateKey = (authRequestId: string): void => {
+export const requestPrivateKey = (): void => {
   const message: PillarWalletAuthRequest = {
     type: 'pillarXAuthRequest',
     value: 'pk',
@@ -75,13 +74,11 @@ export const requestPrivateKey = (authRequestId: string): void => {
 
 /**
  * Creates a message handler for receiving private keys from the Pillar Wallet webview
- * @param authRequestId - Unique identifier for this authentication request
  * @param onSuccess - Callback function to execute when private key is successfully received
  * @param onError - Callback function to execute when an error occurs
  * @returns Event handler function
  */
 export const createWebViewMessageHandler = (
-  authRequestId: string,
   onSuccess: OnPrivateKeyReceivedCallback,
   onError: OnErrorCallback
 ) => {
@@ -125,14 +122,8 @@ export const setupPillarWalletMessaging = (
   onSuccess: OnPrivateKeyReceivedCallback,
   onError: OnErrorCallback
 ): (() => void) => {
-  const authRequestId = `pillar_wallet_auth_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
   // Create the message handler
-  const messageHandler = createWebViewMessageHandler(
-    authRequestId,
-    onSuccess,
-    onError
-  );
+  const messageHandler = createWebViewMessageHandler(onSuccess, onError);
 
   // Add event listener for webview messages
   window.addEventListener('message', messageHandler);
@@ -187,7 +178,7 @@ export const setupPillarWalletMessaging = (
 
   // Request private key after a short delay to ensure webview is ready
   const requestTimer = setTimeout(() => {
-    requestPrivateKey(authRequestId);
+    requestPrivateKey();
   }, 100);
 
   // Return cleanup function
