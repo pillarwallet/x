@@ -102,7 +102,6 @@ const AuthLayout = () => {
   useEffect(() => {
     if (!authenticated) return;
     sessionStorage.setItem('loginPageReloaded', 'false');
-    // Remove breadcrumb logging to save quota
   }, [authenticated]);
 
   /**

@@ -36,20 +36,15 @@ const SendModalBottomButtons = ({
 }: SendModalBottomButtonsProps) => {
   const [t] = useTranslation();
 
-  // Remove Sentry context logging to save quota
-
   const handleSendClick = (ignoreSafetyWarning?: boolean) => {
-    // Remove breadcrumb logging to save quota
     onSend(ignoreSafetyWarning);
   };
 
   const handleAddToBatchClick = () => {
-    // Remove breadcrumb logging to save quota
     onAddToBatch?.();
   };
 
   const handleCancelClick = () => {
-    // Remove breadcrumb logging to save quota
     onCancel?.();
   };
 

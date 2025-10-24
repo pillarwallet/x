@@ -32,9 +32,7 @@ Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   enabled: true,
   environment: import.meta.env.VITE_SENTRY_ENVIRONMENT ?? 'staging',
-  // Dramatically reduce trace sampling to save quota
   tracesSampleRate: 0.01, // Only capture 1% of performance traces
-  // Disable replay completely to save quota
   replaysSessionSampleRate: 0,
   replaysOnErrorSampleRate: 0,
   release: sentryReleaseTag,

@@ -52,9 +52,6 @@ export const logExchangeError = (
   });
 };
 
-// Remove all other logging functions to save quota
-// Only keep error logging for critical failures
-
 // Hook to get wallet address for logging
 export const useWalletAddressForLogging = () => {
   // This hook is kept for compatibility but returns minimal data
