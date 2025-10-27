@@ -70,7 +70,7 @@ const AuthLayout = () => {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
   const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
-  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
