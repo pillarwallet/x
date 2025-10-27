@@ -7,29 +7,68 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
 // services
 import { useGetWalletPortfolioQuery } from '../../../../services/pillarXApiWalletPortfolio';
+import { getUserOperationStatus } from '../../../../services/userOpStatus';
+import {
+  convertPortfolioAPIResponseToToken,
+  PortfolioToken,
+} from '../../../../services/tokensData';
 
 // types
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames } from '../../utils/constants';
 
 // components
-import SearchIcon from '../../assets/seach-icon.svg';
+import SearchIcon from '../../assets/search-icon.png';
 import Buy from '../Buy/Buy';
 import PreviewBuy from '../Buy/PreviewBuy';
 import Refresh from '../Misc/Refresh';
 import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
-import TransactionStatus from '../Sell/TransactionStatus';
+import TransactionStatus from '../Transaction/TransactionStatus';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+
+// types
+type TransactionStatusState =
+  | 'Starting Transaction'
+  | 'Transaction Pending'
+  | 'Transaction Complete'
+  | 'Transaction Failed';
+
+type BidStatus =
+  | 'PENDING'
+  | 'SHORTLISTING_INITIATED'
+  | 'SHORTLISTED'
+  | 'EXECUTED'
+  | 'CLAIMED'
+  | 'RESOURCE_LOCK_RELEASED'
+  | 'FAILED_EXECUTION'
+  | 'SHORTLISTING_FAILED';
+
+type ResourceLockStatus =
+  | 'PENDING_USER_OPS_CREATION'
+  | 'USER_OPS_CREATION_INITIATED'
+  | 'USER_OPS_EXECUTION_SUCCESSFUL'
+  | 'USER_OPS_EXECUTION_FAILED';
+
+type UserOpStatus =
+  | 'New'
+  | 'Pending'
+  | 'Submitted'
+  | 'OnChain'
+  | 'Finalized'
+  | 'Cancelled'
+  | 'Reverted';
 
 interface HomeScreenProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -55,6 +94,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
+  const { intentSdk } = useIntentSdk();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -62,8 +102,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [transactionGasFee, setTransactionGasFee] = useState<string>('≈ $0.00');
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
+    buyToken: SelectedToken | null;
     tokenAmount: string;
     sellOffer: SellOffer | null;
+    payingTokens: PayingToken[];
+    usdAmount: string;
     isBuy: boolean;
   } | null>(null);
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
@@ -79,10 +122,71 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [buyRefreshCallback, setBuyRefreshCallback] = useState<
     (() => Promise<void>) | null
   >(null);
+  const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
+
+  // Transaction status polling state
+  const [currentTransactionStatus, setCurrentTransactionStatus] =
+    useState<TransactionStatusState>('Starting Transaction');
+  const [errorDetails, setErrorDetails] = useState<string>('');
+  const [submittedAt, setSubmittedAt] = useState<Date | undefined>(undefined);
+  const [pendingCompletedAt, setPendingCompletedAt] = useState<
+    Date | undefined
+  >(undefined);
+  const [blockchainTxHash, setBlockchainTxHash] = useState<string | undefined>(
+    undefined
+  );
+  const [resourceLockTxHash, setResourceLockTxHash] = useState<
+    string | undefined
+  >(undefined);
+  const [completedTxHash, setCompletedTxHash] = useState<string | undefined>(
+    undefined
+  );
+  const [completedChainId, setCompletedChainId] = useState<number | undefined>(
+    undefined
+  );
+  const [resourceLockChainId, setResourceLockChainId] = useState<
+    number | undefined
+  >(undefined);
+  const [resourceLockCompletedAt, setResourceLockCompletedAt] = useState<
+    Date | undefined
+  >(undefined);
+  const [isResourceLockFailed, setIsResourceLockFailed] =
+    useState<boolean>(false);
+  const [isPollingActive, setIsPollingActive] = useState<boolean>(false);
+  const [statusStartTime, setStatusStartTime] = useState<number>(Date.now());
+  const [hasSeenSuccess, setHasSeenSuccess] = useState<boolean>(false);
+  const [failureTimeoutId, setFailureTimeoutId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const [isBackgroundPolling, setIsBackgroundPolling] =
+    useState<boolean>(false);
+  const [portfolioTokens, setPortfolioTokens] = useState<PortfolioToken[]>([]);
+  const [shouldAutoReopen, setShouldAutoReopen] = useState<boolean>(false);
+  const hasSeenSuccessRef = useRef<boolean>(false);
+  const blockchainTxHashRef = useRef<string | undefined>(undefined);
+  const failureGraceExpiryRef = useRef<number | null>(null);
+
+  // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
+  // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
+  useEffect(() => {
+    if (isBuy && buyToken && payingTokens.length > 0) {
+      const tokenUsdValue = parseFloat(buyToken.usdValue || '0');
+      if (tokenUsdValue > 0) {
+        const totalPay = payingTokens.reduce(
+          (acc, curr) => acc + curr.totalUsd,
+          0
+        );
+        const calculatedAmount = totalPay / tokenUsdValue;
+        setTokenAmount(calculatedAmount.toFixed(6));
+      }
+    } else if (isBuy) {
+      setTokenAmount('');
+    }
+  }, [isBuy, buyToken, payingTokens]);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
-    if (isRefreshingHome) {
+    if (isRefreshingHome || isSellFlowPaused) {
       return;
     }
 
@@ -93,7 +197,13 @@ export default function HomeScreen(props: HomeScreenProps) {
       await refetchWalletPortfolio();
 
       // If we have the required data, refresh the sell offer
-      if (!isBuy && sellToken && tokenAmount && isInitialized) {
+      if (
+        !isBuy &&
+        sellToken &&
+        tokenAmount &&
+        isInitialized &&
+        !isSellFlowPaused
+      ) {
         try {
           const newOffer = await getBestSellOffer({
             fromAmount: tokenAmount,
@@ -128,41 +238,497 @@ export default function HomeScreen(props: HomeScreenProps) {
     buyRefreshCallback,
     previewBuy,
     isRefreshingHome,
+    isSellFlowPaused,
   ]);
+
+  // Stop transaction status polling
+  const stopTransactionPolling = useCallback(() => {
+    setIsPollingActive(false);
+    setIsBackgroundPolling(false);
+    setShouldAutoReopen(false);
+    setTransactionData(null);
+  }, []);
 
   const closePreviewBuy = () => {
     setPreviewBuy(false);
+    stopTransactionPolling();
   };
 
   const closePreviewSell = () => {
     setPreviewSell(false);
     setSellOffer(null);
     setTokenAmount('');
+    stopTransactionPolling();
   };
 
   const showTransactionStatus = useCallback(
     (userOperationHash: string, gasFee?: string) => {
+      stopTransactionPolling();
+
       // Store transaction data before clearing preview
       setTransactionData({
         sellToken,
+        buyToken,
         tokenAmount,
         sellOffer,
+        payingTokens,
+        usdAmount,
         isBuy,
       });
       setPreviewSell(false);
+      setPreviewBuy(false);
       setTransactionStatus(true);
       setUserOpHash(userOperationHash);
       if (gasFee) {
         setTransactionGasFee(gasFee);
       }
+      // Start polling for transaction status
+      setCurrentTransactionStatus('Starting Transaction');
+      setErrorDetails('');
+      setSubmittedAt(undefined);
+      setPendingCompletedAt(undefined);
+      setBlockchainTxHash(undefined);
+      setResourceLockTxHash(undefined);
+      setCompletedTxHash(undefined);
+      setCompletedChainId(undefined);
+      setResourceLockChainId(undefined);
+      setResourceLockCompletedAt(undefined);
+      setIsResourceLockFailed(false);
+      setStatusStartTime(Date.now());
+      setHasSeenSuccess(false);
+      hasSeenSuccessRef.current = false;
+      setFailureTimeoutId(null);
+      setIsPollingActive(true);
+      setIsBackgroundPolling(false);
+      setShouldAutoReopen(false);
+      blockchainTxHashRef.current = undefined;
+      failureGraceExpiryRef.current = null;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sellToken, tokenAmount, sellOffer, isBuy]
   );
 
   const closeTransactionStatus = () => {
     setTransactionStatus(false);
-    setTransactionData(null);
+
+    const isFinalStatus =
+      currentTransactionStatus === 'Transaction Complete' ||
+      currentTransactionStatus === 'Transaction Failed';
+
+    if (isFinalStatus) {
+      stopTransactionPolling();
+    } else {
+      setIsBackgroundPolling(true);
+      setShouldAutoReopen(true);
+    }
   };
+
+  // Helper function to map BidStatus to TransactionStatusState
+  const mapBidStatusToTransactionStatus = (
+    status: BidStatus
+  ): TransactionStatusState => {
+    if (status === 'FAILED_EXECUTION' || status === 'SHORTLISTING_FAILED') {
+      return 'Transaction Failed';
+    }
+    if (
+      status === 'EXECUTED' ||
+      status === 'CLAIMED' ||
+      status === 'RESOURCE_LOCK_RELEASED'
+    ) {
+      return 'Transaction Complete';
+    }
+    if (
+      status === 'SHORTLISTED' ||
+      status === 'SHORTLISTING_INITIATED' ||
+      status === 'PENDING'
+    ) {
+      return 'Transaction Pending';
+    }
+    return 'Starting Transaction';
+  };
+
+  // Function to map UserOp status to TransactionStatus state
+  const mapUserOpStatusToTransactionStatus = (
+    status: UserOpStatus
+  ): TransactionStatusState => {
+    if (status === 'New') {
+      return 'Starting Transaction';
+    }
+    if (status === 'Submitted' || status === 'Pending') {
+      return 'Transaction Pending';
+    }
+    if (status === 'OnChain' || status === 'Finalized') {
+      return 'Transaction Complete';
+    }
+    if (status === 'Cancelled' || status === 'Reverted') {
+      return 'Transaction Failed';
+    }
+    return 'Starting Transaction'; // fallback
+  };
+
+  // Function to update status with minimum display duration (EXACT COPY FROM ORIGINAL)
+  const updateStatusWithDelay = (newStatus: TransactionStatusState) => {
+    const now = Date.now();
+    const timeSinceLastStatus = now - statusStartTime;
+    const minDisplayTime = 2000; // 2 seconds
+    const failureConfirmationTime = 10000; // 10 seconds for failed status
+
+    // If we're already on a final status, stop polling
+    const isFinalStatus =
+      currentTransactionStatus === 'Transaction Complete' ||
+      currentTransactionStatus === 'Transaction Failed';
+    if (isFinalStatus) {
+      setIsPollingActive(false);
+      // If we're in background polling and should auto-reopen, reopen the modal
+      if (isBackgroundPolling && shouldAutoReopen) {
+        setTransactionStatus(true);
+        setIsBackgroundPolling(false);
+        setShouldAutoReopen(false);
+      }
+      return;
+    }
+
+    // If we get a success status, cancel any pending failure timeout
+    if (newStatus === 'Transaction Complete') {
+      if (failureTimeoutId) {
+        clearTimeout(failureTimeoutId);
+        setFailureTimeoutId(null);
+      }
+      setHasSeenSuccess(true);
+      hasSeenSuccessRef.current = true;
+      // If we're currently showing pending due to a failure confirmation,
+      // immediately show the success status
+      if (currentTransactionStatus === 'Transaction Pending') {
+        setCurrentTransactionStatus('Transaction Complete');
+        setStatusStartTime(now);
+        setIsPollingActive(false);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
+        return;
+      }
+    }
+
+    // Special handling for failed status - wait 10 seconds before confirming
+    if (newStatus === ('Transaction Failed' as TransactionStatusState)) {
+      // If we've already seen success, ignore failure statuses
+      if (hasSeenSuccess || hasSeenSuccessRef.current) {
+        return;
+      }
+
+      // Start the confirmation timer for failed status
+      setCurrentTransactionStatus('Transaction Pending'); // Keep showing pending while we wait
+      setStatusStartTime(now);
+
+      // After 10 seconds, confirm the failure
+      const timeoutId = setTimeout(() => {
+        // Double-check that we haven't seen success in the meantime
+        if (hasSeenSuccessRef.current) {
+          setFailureTimeoutId(null);
+          return;
+        }
+        setCurrentTransactionStatus('Transaction Failed');
+        setStatusStartTime(Date.now());
+        setIsPollingActive(false); // Stop polling after confirming failure
+        setFailureTimeoutId(null);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
+      }, failureConfirmationTime);
+      setFailureTimeoutId(timeoutId);
+      return;
+    }
+
+    // If this is a final status and we haven't shown intermediate states yet,
+    // we need to show them first
+    if (
+      (newStatus === 'Transaction Complete' ||
+        newStatus === 'Transaction Failed') &&
+      (currentTransactionStatus === 'Starting Transaction' ||
+        currentTransactionStatus === 'Transaction Pending')
+    ) {
+      // Show intermediate states first
+      if (currentTransactionStatus === 'Starting Transaction') {
+        setCurrentTransactionStatus('Transaction Pending');
+        setStatusStartTime(now);
+
+        // After 2 seconds, show the final status
+        setTimeout(() => {
+          setCurrentTransactionStatus(newStatus);
+          setStatusStartTime(Date.now());
+          setIsPollingActive(false); // Stop polling after showing final status
+          // If we're in background polling and should auto-reopen, reopen the modal
+          if (isBackgroundPolling && shouldAutoReopen) {
+            setTransactionStatus(true);
+            setIsBackgroundPolling(false);
+            setShouldAutoReopen(false);
+          }
+        }, minDisplayTime);
+        return;
+      }
+    }
+
+    if (timeSinceLastStatus < minDisplayTime) {
+      // If not enough time has passed, delay the status update
+      const remainingTime = minDisplayTime - timeSinceLastStatus;
+      setTimeout(() => {
+        setCurrentTransactionStatus(newStatus);
+        setStatusStartTime(Date.now());
+      }, remainingTime);
+    } else {
+      // Enough time has passed, update immediately
+      setCurrentTransactionStatus(newStatus);
+      setStatusStartTime(now);
+
+      // Stop polling for final statuses
+      if (
+        newStatus === 'Transaction Complete' ||
+        newStatus === ('Transaction Failed' as TransactionStatusState)
+      ) {
+        setIsPollingActive(false);
+        // If we're in background polling and should auto-reopen, reopen the modal
+        if (isBackgroundPolling && shouldAutoReopen) {
+          setTransactionStatus(true);
+          setIsBackgroundPolling(false);
+          setShouldAutoReopen(false);
+        }
+      }
+    }
+  };
+
+  // Track when each step actually completes (EXACT COPY FROM ORIGINAL)
+  useEffect(() => {
+    const now = new Date();
+
+    // Submitted step completes when status moves to Transaction Pending, Complete, or Failed
+    if (
+      currentTransactionStatus === 'Transaction Pending' ||
+      currentTransactionStatus === 'Transaction Complete' ||
+      currentTransactionStatus === 'Transaction Failed'
+    ) {
+      setSubmittedAt((prev) => prev || now);
+    }
+
+    // For Buy: Resource lock step completes when we get resource lock hash
+    if (
+      transactionData?.isBuy &&
+      resourceLockTxHash &&
+      !resourceLockCompletedAt
+    ) {
+      setResourceLockCompletedAt(now);
+    }
+
+    // Pending step completes when status moves to Transaction Complete or Failed
+    if (
+      currentTransactionStatus === 'Transaction Complete' ||
+      currentTransactionStatus === 'Transaction Failed'
+    ) {
+      setPendingCompletedAt((prev) => prev || now);
+    }
+  }, [
+    currentTransactionStatus,
+    transactionData?.isBuy,
+    resourceLockTxHash,
+    resourceLockCompletedAt,
+  ]);
+
+  // Polling effect for both Sell (UserOp) and Buy (Bid) flows (EXACT COPY FROM ORIGINAL)
+  useEffect(() => {
+    const chainId = transactionData?.isBuy
+      ? transactionData?.buyToken?.chainId || 1
+      : transactionData?.sellToken?.chainId || 1;
+    const isBuyTransaction = transactionData?.isBuy || false;
+    if (!userOpHash || !chainId || (!isPollingActive && !isBackgroundPolling)) {
+      return undefined;
+    }
+
+    const pollStatus = async () => {
+      // Check if polling is still active before making the API call
+      if (!isPollingActive && !isBackgroundPolling) {
+        return;
+      }
+
+      try {
+        if (isBuyTransaction) {
+          if (!intentSdk) {
+            return;
+          }
+
+          // Get bid status
+          const bids = await intentSdk.searchBidByBidHash(
+            userOpHash as `0x${string}`
+          );
+          const bid = bids?.[0];
+          const bidStatus: BidStatus | undefined = bid?.bidStatus;
+
+          // Get resource lock info
+          const resourceLock = await intentSdk.getResourceLockInfoByBidHash(
+            userOpHash as `0x${string}`
+          );
+          const lock = resourceLock?.resourceLockInfo?.resourceLocks?.[0];
+          const lockHash: string | undefined = lock?.transactionHash;
+          const lockChainId: number | undefined = lock?.chainId
+            ? Number(lock.chainId)
+            : undefined;
+          const resourceLockStatus: ResourceLockStatus | undefined =
+            resourceLock?.resourceLockInfo?.status as ResourceLockStatus;
+
+          if (lockHash) {
+            setResourceLockTxHash(lockHash);
+            if (lockChainId) setResourceLockChainId(lockChainId);
+          }
+
+          // Process resource lock status first (this determines the final outcome)
+          if (resourceLockStatus) {
+            if (resourceLockStatus === 'USER_OPS_EXECUTION_FAILED') {
+              // Resource lock failed → Transaction failed
+              setIsResourceLockFailed(true);
+              updateStatusWithDelay('Transaction Failed');
+              setErrorDetails('Resource lock failed');
+              return;
+            }
+
+            if (resourceLockStatus === 'USER_OPS_EXECUTION_SUCCESSFUL') {
+              // Resource lock succeeded → Set hash and completion time
+              if (lockHash) {
+                setResourceLockTxHash(lockHash);
+                if (lockChainId) setResourceLockChainId(lockChainId);
+                setResourceLockCompletedAt(new Date());
+              }
+            }
+          }
+
+          // If resource lock is still pending, check bid status for intermediate states
+          if (bidStatus) {
+            const newTransactionStatus =
+              mapBidStatusToTransactionStatus(bidStatus);
+
+            // For Buy transactions, set completed transaction hash from execution result
+            if (newTransactionStatus === 'Transaction Complete') {
+              const execTxHash: string | undefined =
+                bid?.executionResult?.executedTransactions?.[0]
+                  ?.transactionHash;
+              if (execTxHash) {
+                setCompletedTxHash(execTxHash);
+                setCompletedChainId(chainId);
+              }
+              setHasSeenSuccess(true);
+            }
+
+            // If we've already seen success, ignore any failure statuses
+            if (
+              hasSeenSuccess &&
+              newTransactionStatus === 'Transaction Failed'
+            ) {
+              return;
+            }
+
+            updateStatusWithDelay(newTransactionStatus);
+
+            if (newTransactionStatus === 'Transaction Failed') {
+              setErrorDetails('Transaction failed');
+            }
+          }
+        } else {
+          const response = await getUserOperationStatus(chainId, userOpHash);
+          if (response?.status) {
+            const newUserOpStatus = response.status as UserOpStatus;
+            const newTransactionStatus =
+              mapUserOpStatusToTransactionStatus(newUserOpStatus);
+
+            // Track if we've seen success - once we have, ignore any failure statuses
+            if (newTransactionStatus === 'Transaction Complete') {
+              setHasSeenSuccess(true);
+              hasSeenSuccessRef.current = true;
+            }
+
+            // If we've already seen success, ignore any failure statuses
+            // Both state and ref to ensure we catch the success
+            if (
+              (hasSeenSuccess || hasSeenSuccessRef.current) &&
+              newTransactionStatus === 'Transaction Failed'
+            ) {
+              return;
+            }
+
+            // Extract actual transaction hash if available and mirror into ref (do this before failure guard)
+            if (response.transaction) {
+              const firstObservation = !blockchainTxHashRef.current;
+              setBlockchainTxHash(response.transaction);
+              blockchainTxHashRef.current = response.transaction;
+              if (firstObservation && failureGraceExpiryRef.current == null) {
+                failureGraceExpiryRef.current = Date.now() + 10000; // start grace on first hash
+              }
+            }
+
+            // Additional protection using refs and single-use grace window
+            // If we have a blockchain transaction hash, it means the transaction was actually
+            // submitted and might be successful even if the status shows as 'Reverted' temporarily
+            if (newTransactionStatus === 'Transaction Failed') {
+              const nowTs = Date.now();
+              const hasOnChainHash = Boolean(blockchainTxHashRef.current);
+              if (hasOnChainHash) {
+                // Initialize grace window if not set
+                if (failureGraceExpiryRef.current == null) {
+                  failureGraceExpiryRef.current = nowTs + 10000; // 10s grace
+                  return; // skip once immediately when hash first observed
+                }
+                if (nowTs < failureGraceExpiryRef.current) {
+                  return; // still within grace window
+                }
+              }
+            }
+
+            // Always use delayed update to ensure all states are shown
+            updateStatusWithDelay(newTransactionStatus);
+
+            // Capture error details if transaction failed
+            if (newTransactionStatus === 'Transaction Failed') {
+              const errorMessage =
+                response.reason ||
+                response.error ||
+                'Transaction failed. Please try again.';
+              setErrorDetails(errorMessage);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to get transaction status:', error);
+        setCurrentTransactionStatus('Transaction Failed');
+        setErrorDetails(
+          error instanceof Error
+            ? error.message
+            : 'Failed to get transaction status'
+        );
+      }
+    };
+
+    // Poll immediately
+    pollStatus();
+
+    // Set up polling every 2 seconds
+    const interval = setInterval(pollStatus, 2000);
+
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    userOpHash,
+    transactionData?.sellToken?.chainId,
+    transactionData?.buyToken?.chainId,
+    isPollingActive,
+    isBackgroundPolling,
+    hasSeenSuccess,
+    transactionData?.isBuy,
+    intentSdk,
+  ]);
 
   const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
@@ -172,9 +738,25 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   );
 
+  useEffect(() => {
+    if (!walletPortfolioData) return;
+
+    const tokens = convertPortfolioAPIResponseToToken(
+      walletPortfolioData.result.data
+    );
+
+    setPortfolioTokens(tokens);
+  }, [walletPortfolioData]);
+
   // Auto-refresh when in sell mode every 15 seconds
   useEffect(() => {
-    if (!isBuy && sellToken && tokenAmount && isInitialized) {
+    if (
+      !isBuy &&
+      sellToken &&
+      tokenAmount &&
+      isInitialized &&
+      !isSellFlowPaused
+    ) {
       const interval = setInterval(() => {
         handleRefresh();
       }, 15000); // 15 seconds
@@ -182,7 +764,14 @@ export default function HomeScreen(props: HomeScreenProps) {
       return () => clearInterval(interval);
     }
     return undefined;
-  }, [isBuy, sellToken, tokenAmount, isInitialized, handleRefresh]);
+  }, [
+    isBuy,
+    sellToken,
+    tokenAmount,
+    isInitialized,
+    handleRefresh,
+    isSellFlowPaused,
+  ]);
 
   // Auto-refresh when in buy mode every 15 seconds
   useEffect(() => {
@@ -199,7 +788,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const renderPreview = () => {
     if (previewBuy) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewBuy
             closePreview={closePreviewBuy}
             buyToken={buyToken}
@@ -208,6 +797,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             setExpressIntentResponse={setExpressIntentResponse}
             usdAmount={usdAmount}
             dispensableAssets={dispensableAssets}
+            showTransactionStatus={showTransactionStatus}
           />
         </div>
       );
@@ -215,7 +805,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (previewSell) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewSell
             closePreview={closePreviewSell}
             showTransactionStatus={showTransactionStatus}
@@ -223,6 +813,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
             onSellOfferUpdate={setSellOffer}
+            setSellFlowPaused={setIsSellFlowPaused}
           />
         </div>
       );
@@ -230,28 +821,50 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     if (transactionStatus) {
       return (
-        <div className="w-full flex justify-center p-3 mb-[70px]">
+        <div className="w-full h-full flex justify-center px-3 md:p-3 mb-[70px]">
           <TransactionStatus
             closeTransactionStatus={closeTransactionStatus}
             userOpHash={userOpHash}
-            chainId={transactionData?.sellToken?.chainId || 1}
+            chainId={
+              transactionData?.isBuy
+                ? transactionData?.buyToken?.chainId || 1
+                : transactionData?.sellToken?.chainId || 1
+            }
             gasFee={transactionGasFee}
             isBuy={transactionData?.isBuy || false}
             sellToken={transactionData?.sellToken}
+            buyToken={transactionData?.buyToken}
             tokenAmount={transactionData?.tokenAmount}
             sellOffer={transactionData?.sellOffer}
+            payingTokens={transactionData?.payingTokens}
+            usdAmount={transactionData?.usdAmount}
+            // Externalized polling state
+            currentStatus={currentTransactionStatus}
+            errorDetails={errorDetails}
+            submittedAt={submittedAt}
+            pendingCompletedAt={pendingCompletedAt}
+            blockchainTxHash={blockchainTxHash}
+            resourceLockTxHash={resourceLockTxHash}
+            completedTxHash={completedTxHash}
+            completedChainId={completedChainId}
+            resourceLockChainId={resourceLockChainId}
+            resourceLockCompletedAt={resourceLockCompletedAt}
+            isResourceLockFailed={isResourceLockFailed}
           />
         </div>
       );
     }
 
     return (
-      <>
+      <div className="w-full max-w-[446px] md:px-0">
+        <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
+          You&apos;re trying out the beta version of Pulse: expect improvements
+          ahead. Thank you.
+        </p>
         <button
-          className="flex items-center justify-center"
+          className="flex items-center justify-center w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
             height: 40,
             backgroundColor: '#121116',
             borderRadius: 10,
@@ -260,31 +873,39 @@ export default function HomeScreen(props: HomeScreenProps) {
             setSearching(true);
           }}
           type="button"
+          data-testid="pulse-search-button-homescreen"
         >
-          <span style={{ marginLeft: 10 }}>
-            <img src={SearchIcon} alt="search-icon" />
+          <span style={{ marginLeft: 14, marginRight: 10 }}>
+            <img src={SearchIcon} alt="search-icon" width={12} height={12} />
           </span>
-          <div className="flex-1 w-fit" style={{ color: 'grey' }}>
+          <div
+            className="flex-1"
+            style={{
+              color: 'grey',
+              textAlign: 'left',
+              opacity: 0.5,
+              height: 20,
+              fontSize: 13,
+            }}
+          >
             Search by token or paste address
           </div>
         </button>
         <div
-          className="flex flex-col"
+          className="flex flex-col w-full"
           style={{
             border: '2px solid #1E1D24',
-            width: 446,
-            height: 264,
-            backgroundColor: '#121116',
-            borderRadius: 10,
+            minHeight: 264,
+            backgroundColor: '#1E1D24',
+            borderRadius: 16,
             marginTop: 40,
           }}
         >
           {/* buy/sell, refresh, settings */}
-          <div className="flex">
+          <div className="flex justify-between">
             <div
-              className="flex"
+              className="flex flex-1 max-w-[318px]"
               style={{
-                width: 318,
                 height: 40,
                 backgroundColor: 'black',
                 borderRadius: 10,
@@ -298,7 +919,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -312,7 +933,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(true)}
                 type="button"
               >
-                <p className="text-center">Buy</p>
+                <span className="text-center font-medium text-sm">Buy</span>
               </button>
               <button
                 className="flex-1 items-center justify-center"
@@ -320,7 +941,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                 style={
                   !isBuy
                     ? {
-                        backgroundColor: '#121116',
+                        backgroundColor: '#1E1D24',
                         borderRadius: 10,
                         margin: 4,
                       }
@@ -334,10 +955,10 @@ export default function HomeScreen(props: HomeScreenProps) {
                 onClick={() => setIsBuy(false)}
                 type="button"
               >
-                <p className="text-center">Sell</p>
+                <span className="text-center font-medium text-sm">Sell</span>
               </button>
             </div>
-            <div className="flex" style={{ marginTop: 10 }}>
+            <div className="flex mt-2.5 mr-2.5">
               <div
                 style={{
                   marginLeft: 12,
@@ -345,14 +966,29 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
               >
-                <Refresh
-                  onClick={handleRefresh}
-                  isLoading={isRefreshingHome}
-                  disabled={isRefreshingHome || (!buyToken && !sellToken)}
-                />
+                <div
+                  style={{
+                    width: 36,
+                    height: 34,
+                    backgroundColor: '#1E1D24',
+                    borderRadius: 8,
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                  data-testid="pulse-refresh-button-homescreen"
+                >
+                  <Refresh
+                    onClick={handleRefresh}
+                    isLoading={isRefreshingHome}
+                    disabled={isRefreshingHome || (!buyToken && !sellToken)}
+                  />
+                </div>
               </div>
 
               <div
@@ -362,6 +998,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                   borderRadius: 10,
                   width: 40,
                   height: 40,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
                   padding: '2px 2px 4px 2px',
                 }}
               >
@@ -375,6 +1014,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               token={buyToken}
               walletPortfolioData={walletPortfolioData}
               payingTokens={payingTokens}
+              portfolioTokens={portfolioTokens}
               setPreviewBuy={setPreviewBuy}
               setPayingTokens={setPayingTokens}
               setExpressIntentResponse={setExpressIntentResponse}
@@ -389,6 +1029,7 @@ export default function HomeScreen(props: HomeScreenProps) {
               setSearching={setSearching}
               token={sellToken}
               walletPortfolioData={walletPortfolioData}
+              portfolioTokens={portfolioTokens}
               setPreviewSell={setPreviewSell}
               setSellOffer={setSellOffer}
               setTokenAmount={setTokenAmount}
@@ -396,7 +1037,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             />
           )}
         </div>
-      </>
+      </div>
     );
   };
 

@@ -1,12 +1,16 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
-[
+<div
+  data-testid="pulse-portfolio-token-list"
+>
   <div
     className="flex w-full pt-3 pr-3 pb-0 pl-3"
+    data-testid="pulse-portfolio-headers"
   >
     <div
       className="flex items-center w-[250px]"
+      data-testid="pulse-portfolio-header-token-price"
     >
       <p
         className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]"
@@ -16,6 +20,7 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex items-center ml-auto mr-2.5"
+      data-testid="pulse-portfolio-header-balance"
     >
       <p
         className="text-[13px] font-normal text-white opacity-50 tracking-[-0.26px]"
@@ -23,14 +28,16 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         Balance
       </p>
     </div>
-  </div>,
+  </div>
   <button
     className="flex w-full hover:bg-[#25232D] rounded-[10px] transition-colors h-[60px] p-3"
+    data-testid="pulse-portfolio-token-item-ethereum-another token"
     onClick={[Function]}
     type="button"
   >
     <div
       className="flex items-center w-[250px]"
+      data-testid="pulse-portfolio-token-info"
     >
       <div
         className="relative inline-block"
@@ -117,6 +124,7 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         <img
           alt="chain logo"
           className="absolute -bottom-px -right-px w-3.5 h-3.5 rounded-full border-[0.88px] border-[#25232D]"
+          data-testid="pulse-portfolio-chain-logo"
           src="/src/assets/images/logo-ethereum.png"
         />
       </div>
@@ -128,11 +136,13 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         >
           <p
             className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap"
+            data-testid="pulse-portfolio-token-symbol"
           >
             ANOTHER
           </p>
           <p
             className="text-[13px] font-normal tracking-[-0.26px] ml-2 text-white opacity-50 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]"
+            data-testid="pulse-portfolio-token-name"
             title="Another Token"
           >
             Another Token
@@ -140,6 +150,7 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         </div>
         <p
           className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left"
+          data-testid="pulse-portfolio-token-price"
         >
           $
           2
@@ -148,27 +159,32 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex flex-col ml-auto mr-2.5 items-end"
+      data-testid="pulse-portfolio-token-balance"
     >
       <p
         className="text-[13px] font-normal tracking-[-0.26px] text-white text-right"
+        data-testid="pulse-portfolio-balance-usd"
       >
         $
         4
       </p>
       <p
         className="text-xs font-normal tracking-[-0.24px] text-white text-right"
+        data-testid="pulse-portfolio-balance-token"
       >
         2
       </p>
     </div>
-  </button>,
+  </button>
   <button
     className="flex w-full hover:bg-[#25232D] rounded-[10px] transition-colors h-[60px] p-3"
+    data-testid="pulse-portfolio-token-item-ethereum-test token"
     onClick={[Function]}
     type="button"
   >
     <div
       className="flex items-center w-[250px]"
+      data-testid="pulse-portfolio-token-info"
     >
       <div
         className="relative inline-block"
@@ -176,11 +192,13 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         <img
           alt="token logo"
           className="w-8 h-8 rounded-full"
+          data-testid="pulse-portfolio-token-logo"
           src="https://example.com/logo.png"
         />
         <img
           alt="chain logo"
           className="absolute -bottom-px -right-px w-3.5 h-3.5 rounded-full border-[0.88px] border-[#25232D]"
+          data-testid="pulse-portfolio-chain-logo"
           src="/src/assets/images/logo-ethereum.png"
         />
       </div>
@@ -192,11 +210,13 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         >
           <p
             className="text-[13px] font-normal text-white tracking-[-0.26px] whitespace-nowrap"
+            data-testid="pulse-portfolio-token-symbol"
           >
             TEST
           </p>
           <p
             className="text-[13px] font-normal tracking-[-0.26px] ml-2 text-white opacity-50 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]"
+            data-testid="pulse-portfolio-token-name"
             title="Test Token"
           >
             Test Token
@@ -204,6 +224,7 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
         </div>
         <p
           className="text-xs font-normal tracking-[-0.24px] text-white opacity-50 text-left"
+          data-testid="pulse-portfolio-token-price"
         >
           $
           1.5
@@ -212,19 +233,22 @@ exports[`<PortfolioTokenList /> > renders correctly and matches snapshot 1`] = `
     </div>
     <div
       className="flex flex-col ml-auto mr-2.5 items-end"
+      data-testid="pulse-portfolio-token-balance"
     >
       <p
         className="text-[13px] font-normal tracking-[-0.26px] text-white text-right"
+        data-testid="pulse-portfolio-balance-usd"
       >
         $
         1.5
       </p>
       <p
         className="text-xs font-normal tracking-[-0.24px] text-white text-right"
+        data-testid="pulse-portfolio-balance-token"
       >
         1
       </p>
     </div>
-  </button>,
-]
+  </button>
+</div>
 `;

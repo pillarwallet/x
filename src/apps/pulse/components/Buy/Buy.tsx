@@ -15,7 +15,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Hex, getAddress, isAddress } from 'viem';
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
-import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
+import {
+  chainNameToChainIdTokensData,
+  PortfolioToken,
+} from '../../../../services/tokensData';
 import {
   PairResponse,
   TokenAssetResponse,
@@ -33,12 +36,18 @@ import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import BuyButton from './BuyButton';
+import {
+  ChainNames,
+  isNativeToken,
+  NativeSymbols,
+} from '../../utils/blockchain';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
   token: SelectedToken | null;
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
   payingTokens: PayingToken[];
+  portfolioTokens: PortfolioToken[];
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
   setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>;
   setExpressIntentResponse: Dispatch<
@@ -63,6 +72,7 @@ export default function Buy(props: BuyProps) {
     setDispensableAssets: setParentDispensableAssets,
     setBuyRefreshCallback,
     token,
+    portfolioTokens,
     walletPortfolioData,
     payingTokens,
     setBuyToken,
@@ -108,52 +118,112 @@ export default function Buy(props: BuyProps) {
   const [notEnoughLiquidity, setNoEnoughLiquidity] = useState(false);
   const [insufficientWalletBalance, setInsufficientWalletBalance] =
     useState(false);
+  const [minimumStableBalance, setMinimumStableBalance] = useState(false);
+  const [minGasFee, setMinGasFee] = useState(false);
+  const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
+    chainId: number;
+    balance: number;
+  }>({ chainId: 1, balance: 2 }); // Default to 2 to allow trading initially
+  const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [dispensableAssets, setDispensableAssets] = useState<
     DispensableAsset[]
   >([]);
   const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
+  const [sumOfStableBalance, setSumOfStableBalance] = useState<number>(0);
 
   // Helper function to calculate stable currency balance
-  const getStableCurrencyBalance = () => {
-    return (
-      walletPortfolioData?.result.data.assets
-        ?.filter((asset) =>
-          asset.contracts_balances.some((contract) =>
-            STABLE_CURRENCIES.some(
-              (stable) =>
-                stable.address.toLowerCase() ===
-                  contract.address.toLowerCase() &&
-                stable.chainId === Number(contract.chainId.split(':').at(-1))
-            )
+  const getStableCurrencyBalanceOnEachChain = () => {
+    // get the list of chainIds from STABLE_CURRENCIES
+    const chainIds = Array.from(
+      new Set(STABLE_CURRENCIES.map((currency) => currency.chainId))
+    );
+
+    // create a map to hold the balance for each chainId
+    const balanceMap: { [chainId: number]: number } = {};
+    chainIds.forEach((chainId) => {
+      balanceMap[chainId] = 0;
+    });
+    // calculate the balance for each chainId
+    walletPortfolioData?.result.data.assets
+      ?.filter((asset) =>
+        asset.contracts_balances.some((contract) =>
+          STABLE_CURRENCIES.some(
+            (stable) =>
+              stable.address.toLowerCase() === contract.address.toLowerCase() &&
+              stable.chainId === Number(contract.chainId.split(':').at(-1))
           )
         )
-        .reduce((total, asset) => {
-          const stableContracts = asset.contracts_balances.filter((contract) =>
-            STABLE_CURRENCIES.some(
-              (stable) =>
-                stable.address.toLowerCase() ===
-                  contract.address.toLowerCase() &&
-                stable.chainId === Number(contract.chainId.split(':').at(-1))
-            )
-          );
-          return (
-            total +
-            stableContracts.reduce(
-              (sum, contract) => sum + asset.price * contract.balance,
-              0
-            )
-          );
-        }, 0) || 0
-    );
+      )
+      .forEach((asset) => {
+        const stableContracts = asset.contracts_balances.filter((contract) =>
+          STABLE_CURRENCIES.some(
+            (stable) =>
+              stable.address.toLowerCase() === contract.address.toLowerCase() &&
+              stable.chainId === Number(contract.chainId.split(':').at(-1))
+          )
+        );
+        stableContracts.forEach((contract) => {
+          const chainId = Number(contract.chainId.split(':').at(-1));
+          balanceMap[chainId] += asset.price * contract.balance;
+        });
+      });
+
+    return balanceMap;
   };
+
+  useEffect(() => {
+    if (!portfolioTokens || portfolioTokens.length === 0) {
+      console.warn('No wallet portfolio data');
+      return;
+    }
+    const stableBalance = getStableCurrencyBalanceOnEachChain();
+    const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
+    const maxStableBalance = Math.max(...Object.values(stableBalance));
+    const chainIdOfMaxStableBalance = Number(
+      Object.keys(stableBalance).find(
+        (key) => stableBalance[Number(key)] === maxStableBalance
+      ) || '1'
+    );
+    setMaxStableCoinBalance({
+      chainId: chainIdOfMaxStableBalance,
+      balance: maxStableBalance,
+    });
+    setSumOfStableBalance(sum);
+    if (maxStableBalance < 2) {
+      setMinimumStableBalance(true);
+      return;
+    }
+    setMinimumStableBalance(false);
+
+    const nativeToken = portfolioTokens.find(
+      (t) =>
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+    );
+
+    if (!nativeToken) {
+      setMinGasFee(true);
+      return;
+    }
+    const nativeTokenUSDBalance =
+      (nativeToken.balance ?? 0) * (nativeToken.price ?? 0);
+
+    if (!nativeTokenUSDBalance || nativeTokenUSDBalance < 1) {
+      setMinGasFee(true);
+      return;
+    }
+    setMinGasFee(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioTokens]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setUsdAmount(input);
+      setBelowMinimumAmount(false);
       setNoEnoughLiquidity(false);
       setInsufficientWalletBalance(false);
     }
@@ -171,12 +241,23 @@ export default function Buy(props: BuyProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
+        const amount = parseFloat(usdAmount);
+
+        if (amount < 2) {
+          setBelowMinimumAmount(true);
+          setNoEnoughLiquidity(false);
+          setInsufficientWalletBalance(false);
+          return;
+        }
+
+        setBelowMinimumAmount(false);
         setNoEnoughLiquidity(false);
         setInsufficientWalletBalance(false);
         setDebouncedUsdAmount(usdAmount);
         const [dAssets, pChains, pTokens] = getDispensableAssets(
           usdAmount,
-          walletPortfolioData?.result.data
+          walletPortfolioData?.result.data,
+          maxStableCoinBalance.chainId
         );
         if (
           pChains.length === 0 ||
@@ -186,34 +267,24 @@ export default function Buy(props: BuyProps) {
           setNoEnoughLiquidity(true);
           return;
         }
-        if (
-          payingTokens.length > 0 &&
-          pTokens[0].chainId === payingTokens[0].chainId &&
-          pTokens[0].name === payingTokens[0].name &&
-          pTokens[0].symbol === payingTokens[0].symbol
-        ) {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        } else {
-          setDispensableAssets(dAssets);
-          setPermittedChains(pChains);
-          setPayingTokens(pTokens);
-          setParentDispensableAssets(dAssets);
-          setParentUsdAmount(usdAmount);
-        }
+
+        // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
+        setDispensableAssets(dAssets);
+        setPermittedChains(pChains);
+        setPayingTokens(pTokens);
+        setParentDispensableAssets(dAssets);
+        setParentUsdAmount(usdAmount);
       }
     }, 1000);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    sumOfStableBalance,
     usdAmount,
     setPayingTokens,
     walletPortfolioData?.result.data,
     dispensableAssets.length,
-    payingTokens,
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
@@ -234,10 +305,9 @@ export default function Buy(props: BuyProps) {
     }
 
     const inputAmount = parseFloat(debouncedUsdAmount);
-    const stableCurrencyBalance = getStableCurrencyBalance();
 
     // Check if input amount higher than stable currency balance
-    if (inputAmount > stableCurrencyBalance) {
+    if (inputAmount > maxStableCoinBalance.balance) {
       setInsufficientWalletBalance(true);
       setNoEnoughLiquidity(false);
       return;
@@ -409,168 +479,119 @@ export default function Buy(props: BuyProps) {
   ]);
 
   return (
-    <div className="flex flex-col" data-testid="pulse-buy-component">
-      <div
-        style={{
-          margin: 10,
-          backgroundColor: 'black',
-          width: 422,
-          height: 100,
-          borderRadius: 10,
-        }}
-      >
-        <div className="flex p-3">
+    <div
+      className="flex flex-col w-full desktop:min-w-[442px]"
+      data-testid="pulse-buy-component"
+    >
+      <div className="m-2.5 bg-[#121116] min-h-[100px] rounded-lg">
+        <div className="flex p-3 justify-between">
           <button
             onClick={() => {
               setSearching(true);
             }}
             type="button"
+            data-testid="pulse-buy-token-selector"
           >
             {token ? (
               <div
-                className="flex items-center justify-center"
-                style={{
-                  width: 150,
-                  height: 36,
-                  backgroundColor: '#1E1D24',
-                  borderRadius: 10,
-                }}
+                className="flex items-center mobile:w-32 xs:w-32 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
+                data-testid={`pulse-buy-token-selected-${token.chainId}-${token.name}`}
               >
-                <div style={{ position: 'relative', display: 'inline-block' }}>
+                <div className="relative inline-block">
                   {token.logo ? (
                     <img
                       src={token.logo}
                       alt="Main"
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
+                      className="w-6 h-6 ml-1 mr-1 rounded-full"
                     />
                   ) : (
-                    <div
-                      className="w-full h-full overflow-hidden rounded-full"
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 50,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
-                    >
+                    <div className="w-6 h-6 ml-1 mr-1 overflow-hidden rounded-full">
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-2px',
-                      right: '-2px',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                    }}
+                    className="w-2.5 h-2.5 absolute bottom-[-2px] right-[2px] rounded-full"
                     alt="Chain Logo"
                   />
                 </div>
-                <div
-                  className="flex flex-col"
-                  style={{ marginLeft: 5, marginTop: 5, height: 36 }}
-                >
+                <div className="flex flex-col mt-2.5 h-10 w-[91px]">
                   <div className="flex">
-                    <p style={{ fontSize: 12, fontWeight: 400 }}>
+                    <p className="font-normal desktop:text-sm mobile:text-xs xs:text-xs">
                       {token.symbol}
                     </p>
-                    <p
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 400,
-                        marginLeft: 3,
-                        color: 'grey',
-                      }}
-                    >
-                      {token.name.length >= 10
-                        ? `${token.name.slice(0, 6)}...`
-                        : token.name}
-                    </p>
+                    {token.symbol.length + token.name.length <= 13 && (
+                      <p className="ml-1 opacity-30 font-normal desktop:text-sm mobile:text-xs xs:text-xs text-white">
+                        {token.name}
+                      </p>
+                    )}
                   </div>
                   <div className="flex">
-                    <p
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 400,
-                        color: 'grey',
-                        height: 10,
-                      }}
-                    >
+                    <p className="opacity-50 font-normal text-white h-[10px] text-[10px]">
                       ${token.usdValue}
                     </p>
                   </div>
                 </div>
-                <img src={ArrowDown} alt="arrow-down" />
+                <div className="flex m-1.5">
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
+                </div>
               </div>
             ) : (
-              <div
-                className="flex items-center justify-center"
-                style={{
-                  width: 150,
-                  height: 36,
-                  backgroundColor: '#1E1D24',
-                  borderRadius: 10,
-                }}
-              >
+              <div className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]">
                 {isSearchingToken ? (
                   <div className="flex items-center">
                     <TailSpin width={16} height={16} />
-                    <div className="flex font-normal text-xs">Searching...</div>
+                    <div className="flex font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs">
+                      Searching...
+                    </div>
                   </div>
                 ) : (
                   <>
-                    <div
-                      className="flex"
-                      style={{ fontWeight: 400, fontSize: 12, marginLeft: 5 }}
-                    >
+                    <div className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end">
                       Select token
                     </div>
-                    <div className="flex ml-2">
-                      <img src={ArrowDown} alt="arrow-down" />
+                    <div className="flex ml-1.5">
+                      <img
+                        src={ArrowDown}
+                        className="w-2 h-1"
+                        alt="arrow-down"
+                      />
                     </div>
                   </>
                 )}
               </div>
             )}
           </button>
-          <div className="flex-1">
-            <div
-              className="flex"
-              style={{ height: 36, fontSize: 36, width: 189 }}
-            >
+          <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden">
+            <div className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0 h-9">
               <input
-                className="no-spinner"
+                className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right"
                 placeholder={inputPlaceholder}
-                style={{ width: 185, textAlign: 'right' }}
                 onChange={handleUsdAmountChange}
                 value={usdAmount}
                 type="text"
                 disabled={isLoading}
                 onFocus={() => setInputPlaceholder('')}
+                data-testid="pulse-buy-amount-input"
               />
-              <p style={{ lineHeight: 1, color: 'grey' }}>USD</p>
+              <span className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-[#FFFFFF4D]">
+                USD
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex justify-between" style={{ margin: 10 }}>
+        <div className="flex justify-between p-3">
           <div className="flex">
             {(() => {
               const showError =
+                belowMinimumAmount ||
                 insufficientWalletBalance ||
                 (notEnoughLiquidity && token) ||
+                minimumStableBalance ||
+                minGasFee ||
                 (!isLoading &&
                   expressIntentResponse &&
                   expressIntentResponse.bids?.length === 0);
@@ -578,50 +599,55 @@ export default function Buy(props: BuyProps) {
               if (!showError) return null;
 
               let message = '';
-              if (insufficientWalletBalance) {
+              if (belowMinimumAmount) {
+                message = 'Min. amount 2 USD';
+              } else if (insufficientWalletBalance) {
                 message = 'Insufficient wallet balance';
               } else if (notEnoughLiquidity && token) {
-                message = 'Not enough liquidity';
+                message = `Not enough USDC to buy, reduce to ${Math.floor(maxStableCoinBalance.balance * 100) / 100}`;
+              } else if (minimumStableBalance) {
+                message = 'You need $2 USDC to trade, deposit USDC';
+              } else if (minGasFee) {
+                message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else {
                 message = 'No available routes for this amount';
               }
 
               return (
-                <>
-                  <div className="flex items-center justify-center">
-                    <img src={WarningIcon} alt="warning" />
-                  </div>
-
-                  <div
-                    style={{
-                      textDecoration: 'underline',
-                      color: '#FF366C',
-                      fontSize: 12,
-                      marginLeft: 5,
-                    }}
+                <div className="flex items-center justify-center">
+                  <img
+                    src={WarningIcon}
+                    alt="warning"
+                    data-testid="pulse-buy-warning-icon"
+                  />
+                  <span
+                    className="text-xs m-1 underline text-[#FF366C]"
+                    data-testid="pulse-buy-error-message"
                   >
                     {message}
-                  </div>
-                </>
+                  </span>
+                </div>
               );
             })()}
           </div>
-          <div className="flex" style={{ float: 'right' }}>
-            <img src={WalletIcon} alt="wallet-icon" />
+          <div className="flex items-center">
+            <img
+              src={WalletIcon}
+              className="w-4 h-3"
+              alt="wallet-icon"
+              data-testid="pulse-buy-wallet-icon"
+            />
             <div
-              style={{
-                color: '#8A77FF',
-                marginLeft: 5,
-                fontSize: 12,
-              }}
+              className="ml-1 text-xs text-[#8A77FF]"
+              data-testid="pulse-buy-wallet-balance"
             >
-              ${getStableCurrencyBalance().toFixed(2)}
+              ${sumOfStableBalance.toFixed(2)}
             </div>
           </div>
         </div>
       </div>
       {/* amounts */}
-      <div className="flex">
+      <div className="flex w-full">
         {['10', '20', '50', '100', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const isDisabled = !token;
@@ -629,7 +655,7 @@ export default function Buy(props: BuyProps) {
           return (
             <div
               key={item}
-              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+              className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${
@@ -640,9 +666,9 @@ export default function Buy(props: BuyProps) {
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
-                      setUsdAmount(getStableCurrencyBalance().toFixed(2));
+                      setUsdAmount(sumOfStableBalance.toFixed(2));
                     } else {
-                      setUsdAmount(parseFloat(item).toFixed(2));
+                      setUsdAmount(item);
                     }
                   }
                 }}
@@ -650,7 +676,9 @@ export default function Buy(props: BuyProps) {
                 disabled={isDisabled}
                 data-testid={`pulse-buy-percentage-button-${item.toLowerCase()}`}
               >
-                ${item}
+                <span className="opacity-50 font-normal text-sm">
+                  {isMax ? 'MAX' : `$${item}`}
+                </span>
               </button>
             </div>
           );
@@ -658,17 +686,7 @@ export default function Buy(props: BuyProps) {
       </div>
 
       {/* buy/sell button */}
-      <div
-        className="flex"
-        style={{
-          margin: 10,
-          width: 422,
-          height: 50,
-          borderRadius: 10,
-          backgroundColor: 'black',
-          padding: '2px 2px 4px 2px',
-        }}
-      >
+      <div className="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5">
         <BuyButton
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}
@@ -677,7 +695,13 @@ export default function Buy(props: BuyProps) {
           isFetching={isFetching}
           isInstalling={isInstalling}
           isLoading={isLoading}
-          notEnoughLiquidity={notEnoughLiquidity || insufficientWalletBalance}
+          notEnoughLiquidity={
+            belowMinimumAmount ||
+            notEnoughLiquidity ||
+            insufficientWalletBalance ||
+            minimumStableBalance ||
+            minGasFee
+          }
           payingTokens={payingTokens}
           token={token}
           usdAmount={usdAmount}

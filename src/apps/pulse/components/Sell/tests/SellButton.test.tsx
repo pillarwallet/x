@@ -26,6 +26,8 @@ const mockToken: SelectedToken = {
 
 const mockSellOffer: SellOffer = {
   tokenAmountToReceive: 50.0,
+  minimumReceive: 45.0,
+  slippageTolerance: 0.5,
   offer: {
     errors: undefined,
     fees: undefined,

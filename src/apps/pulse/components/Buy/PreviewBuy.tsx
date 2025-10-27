@@ -37,7 +37,6 @@ import { getDesiredAssetValue } from '../../utils/intent';
 import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import Tooltip from '../Misc/Tooltip';
-import IntentTracker from '../Status/IntentTracker';
 import PayingToken from './PayingToken';
 
 interface PreviewBuyProps {
@@ -48,6 +47,7 @@ interface PreviewBuyProps {
   setExpressIntentResponse: (response: ExpressIntentResponse | null) => void;
   usdAmount: string;
   dispensableAssets: DispensableAsset[];
+  showTransactionStatus: (userOperationHash: string, gasFee?: string) => void;
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -59,13 +59,13 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     setExpressIntentResponse,
     usdAmount,
     dispensableAssets,
+    showTransactionStatus,
   } = props;
   const totalPay = payingTokens
     .reduce((acc, curr) => acc + curr.totalUsd, 0)
     .toFixed(2);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [showTracker, setShowTracker] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isBuyTokenAddressCopied, setIsBuyTokenAddressCopied] = useState(false);
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
@@ -175,7 +175,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         expressIntentResponse?.intentHash!,
         expressIntentResponse?.bids[0].bidHash!
       );
-      setShowTracker(true);
+      showTransactionStatus(expressIntentResponse?.bids[0].bidHash!);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
 
@@ -343,37 +343,36 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
       : 0;
 
-  if (showTracker) {
-    return (
-      <IntentTracker
-        closePreview={closePreview}
-        bidHash={expressIntentResponse?.bids[0].bidHash!}
-        token={buyToken!}
-        isBuy
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">
       <div className="flex justify-between mb-6">
         <div className="text-xl font-normal">Confirm Transaction</div>
         <div className="flex">
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px]">
-            <Refresh
-              onClick={refreshPreviewBuyData}
-              isLoading={isRefreshingPreview}
-              disabled={
-                !buyToken ||
-                !totalPay ||
-                isRefreshingPreview ||
-                isWaitingForSignature
-              }
-            />
+          <div
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
+            data-testid="pulse-preview-buy-refresh-button"
+          >
+            <div className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+              <Refresh
+                onClick={refreshPreviewBuyData}
+                isLoading={isRefreshingPreview}
+                disabled={
+                  !buyToken ||
+                  !totalPay ||
+                  isRefreshingPreview ||
+                  isWaitingForSignature
+                }
+              />
+            </div>
           </div>
 
-          <div className="bg-[#121116] rounded-[10px] w-10 h-10 p-[2px_2px_4px_2px] ml-[10px]">
-            <Esc onClose={closePreview} />
+          <div
+            className="justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
+            data-testid="pulse-preview-buy-esc-button"
+          >
+            <div className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center">
+              <Esc onClose={closePreview} />
+            </div>
           </div>
         </div>
       </div>
@@ -395,7 +394,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
       <div className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
         <div className="flex items-center">
-          <div className="relative inline-block mr-2">
+          <div
+            className="relative inline-block mr-2"
+            data-testid={`pulse-preview-buy-buying-token-${buyToken.chainId}-${buyToken.name}`}
+          >
             {buyToken?.logo ? (
               <img
                 src={buyToken?.logo}
@@ -528,6 +530,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             onClick={shortlistBid}
             disabled={isLoading}
             type="submit"
+            data-testid="pulse-preview-buy-confirm-button"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">

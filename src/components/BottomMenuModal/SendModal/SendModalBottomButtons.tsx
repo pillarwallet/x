@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as Sentry from '@sentry/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -29,80 +28,23 @@ const SendModalBottomButtons = ({
   isSending,
   errorMessage,
   estimatedCostFormatted,
+  // Disabled line check here as we may need this in future
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allowBatching = true,
   onAddToBatch,
   onCancel,
 }: SendModalBottomButtonsProps) => {
   const [t] = useTranslation();
 
-  // Sentry context for bottom buttons
-  React.useEffect(() => {
-    Sentry.setContext('send_buttons', {
-      isSendDisabled,
-      isSending,
-      hasError: !!errorMessage,
-      hasSafetyWarning: !!safetyWarningMessage,
-      allowBatching,
-      estimatedCostFormatted,
-      userAgent: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    });
-  }, [
-    isSendDisabled,
-    isSending,
-    errorMessage,
-    safetyWarningMessage,
-    allowBatching,
-    estimatedCostFormatted,
-  ]);
-
   const handleSendClick = (ignoreSafetyWarning?: boolean) => {
-    const buttonId = ignoreSafetyWarning ? 'send_anyway' : 'send';
-
-    Sentry.addBreadcrumb({
-      category: 'send_buttons',
-      message: 'Send button clicked',
-      level: 'info',
-      data: {
-        buttonId,
-        ignoreSafetyWarning,
-        isSendDisabled,
-        isSending,
-        hasError: !!errorMessage,
-        hasSafetyWarning: !!safetyWarningMessage,
-      },
-    });
-
     onSend(ignoreSafetyWarning);
   };
 
   const handleAddToBatchClick = () => {
-    Sentry.addBreadcrumb({
-      category: 'send_buttons',
-      message: 'Add to batch button clicked',
-      level: 'info',
-      data: {
-        isSendDisabled,
-        isSending,
-        hasError: !!errorMessage,
-      },
-    });
-
     onAddToBatch?.();
   };
 
   const handleCancelClick = () => {
-    Sentry.addBreadcrumb({
-      category: 'send_buttons',
-      message: 'Cancel button clicked',
-      level: 'info',
-      data: {
-        isSendDisabled,
-        isSending,
-        hasError: !!errorMessage,
-      },
-    });
-
     onCancel?.();
   };
 

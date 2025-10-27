@@ -17,15 +17,25 @@ import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
 } from '../../../../utils/number';
+import { getChainId, MobulaChainNames } from '../../utils/constants';
+import {
+  ChainNames,
+  isNativeToken,
+  NativeSymbols,
+} from '../../utils/blockchain';
 
 // components
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WarningIcon from '../../assets/warning.svg';
 import SellButton from './SellButton';
 
 // hooks
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+
+// services
+import { PortfolioToken } from '../../../../services/tokensData';
 
 interface SellProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -35,6 +45,7 @@ interface SellProps {
   setSellOffer: Dispatch<SetStateAction<SellOffer | null>>;
   setTokenAmount: Dispatch<SetStateAction<string>>;
   isRefreshing?: boolean;
+  portfolioTokens: PortfolioToken[];
 }
 
 const Sell = (props: SellProps) => {
@@ -46,14 +57,18 @@ const Sell = (props: SellProps) => {
     setSellOffer,
     setTokenAmount: setParentTokenAmount,
     isRefreshing = false,
+    portfolioTokens = [],
   } = props;
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
   const [notEnoughLiquidity, setNotEnoughLiquidity] = useState<boolean>(false);
+  const [minGasAmount, setMinGasAmount] = useState<boolean>(false);
+  const [showNumInP, setShowNumInP] = useState(false);
   const [sellOffer, setLocalSellOffer] = useState<SellOffer | null>(null);
   const [isLoadingOffer, setIsLoadingOffer] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const [truncatedFlag, setTruncatedFlag] = useState<boolean>(false);
 
   const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
 
@@ -115,6 +130,28 @@ const Sell = (props: SellProps) => {
     }
   };
 
+  useEffect(() => {
+    if (!token || portfolioTokens.length === 0) {
+      setMinGasAmount(false);
+      return;
+    }
+
+    const nativeToken = portfolioTokens.find(
+      (t) =>
+        Number(getChainId(t.blockchain as MobulaChainNames)) ===
+          token.chainId && isNativeToken(t.contract)
+    );
+    if (!nativeToken) {
+      setMinGasAmount(true);
+      return;
+    }
+    if ((nativeToken?.price || 0) * (nativeToken?.balance || 0) < 1) {
+      setMinGasAmount(true);
+    } else {
+      setMinGasAmount(false);
+    }
+  }, [portfolioTokens, token]);
+
   const tokenBalance = getTokenBalance();
 
   const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,9 +201,9 @@ const Sell = (props: SellProps) => {
   }, [fetchSellOffer]);
 
   return (
-    <div className="flex flex-col" data-testid="pulse-sell-component">
-      <div className="m-2.5 bg-black w-[422px] h-[100px] rounded-[10px]">
-        <div className="flex items-center gap-3 p-3">
+    <div className="flex flex-col w-full" data-testid="pulse-sell-component">
+      <div className="bg-[#121116] m-2.5 rounded-[10px]">
+        <div className="flex items-center p-3">
           <button
             onClick={() => {
               setSearching(true);
@@ -176,69 +213,150 @@ const Sell = (props: SellProps) => {
             data-testid="pulse-sell-token-selector"
           >
             {token ? (
-              <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
+              <div
+                className="flex items-center mobile:w-32 xs:w-28 desktop:w-36 h-9 bg-[#1E1D24] rounded-md"
+                data-testid={`pulse-sell-token-selected-${token.chainId}-${token.name}`}
+              >
                 <div className="relative inline-block">
                   {token.logo ? (
                     <img
                       src={token.logo}
                       alt="Main"
-                      className="w-6 h-6 rounded-full ml-1.5 mr-1.5"
+                      className="w-6 h-6 ml-1 mr-1 rounded-full"
+                      data-testid="pulse-sell-token-selector-logo"
                     />
                   ) : (
-                    <div className="w-full h-full overflow-hidden rounded-full w-6 h-6 ml-1.5 mr-1.5">
+                    <div className="w-full h-full overflow-hidden rounded-full w-[34px] h-6 ml-1 mr-1">
                       <RandomAvatar name={token.name || ''} />
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold">
+                      <span className="absolute inset-0 flex items-center justify-center text-white text-xs">
                         {token.name?.slice(0, 2)}
                       </span>
                     </div>
                   )}
                   <img
                     src={getLogoForChainId(token.chainId)}
-                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full"
+                    className="absolute w-2.5 h-2.5 bottom-[-2px] right-[2px] rounded-full"
                     alt="Chain Logo"
+                    data-testid="pulse-sell-token-selector-chain-logo"
                   />
                 </div>
-                <div className="flex flex-col ml-1.5 mt-1.5 h-9">
+                <div className="flex flex-col mt-2.5 h-10 w-[91px]">
                   <div className="flex">
-                    <p className="text-xs font-normal">{token.symbol}</p>
-                    <p className="text-xs font-normal ml-0.5 text-grey">
-                      {token.name.length >= 10
-                        ? `${token.name.slice(0, 6)}...`
-                        : token.name}
+                    <p
+                      className="desktop:text-sm mobile:text-xs xs:text-xs font-normal"
+                      data-testid="pulse-sell-token-selector-symbol"
+                    >
+                      {token.symbol}
                     </p>
+                    {token.name &&
+                      token.symbol.length + token.name.length <= 13 && (
+                        <p
+                          className="opacity-30 desktop:text-sm mobile:text-xs xs:text-xs font-normal ml-1 text-white"
+                          data-testid="pulse-sell-token-selector-name"
+                        >
+                          {token.name}
+                        </p>
+                      )}
                   </div>
                   <div className="flex">
-                    <p className="text-[10px] font-normal text-grey h-2.5">
+                    <p
+                      className="text-[10px] font-normal text-white h-[10px] opacity-50"
+                      data-testid="pulse-sell-token-selector-price"
+                    >
                       ${formatExponentialSmallNumber(token.usdValue)}
                     </p>
                   </div>
                 </div>
-                <img src={ArrowDown} alt="arrow-down" />
+                <div
+                  className="flex ml-1.5"
+                  data-testid="pulse-sell-token-selector-arrow"
+                >
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
+                </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center w-[150px] h-9 bg-[#1E1D24] rounded-[10px]">
-                <div className="flex font-normal text-xs ml-1.5">
+              <div className="flex items-center justify-center max-w-[150px] w-32 h-9 bg-[#1E1D24] rounded-[10px]">
+                <div
+                  className="flex ml-1.5 font-normal desktop:text-sm tablet:text-sm mobile:text-xs xs:text-xs justify-items-end"
+                  data-testid="pulse-sell-token-selector-placeholder"
+                >
                   Select token
                 </div>
-                <div className="flex ml-2">
-                  <img src={ArrowDown} alt="arrow-down" />
+                <div
+                  className="flex ml-1.5"
+                  data-testid="pulse-sell-token-selector-arrow-placeholder"
+                >
+                  <img src={ArrowDown} className="w-2 h-1" alt="arrow-down" />
                 </div>
               </div>
             )}
           </button>
-          <div className="flex-1 min-w-0">
-            <div
-              className="flex items-center justify-between"
-              style={{ height: 36 }}
-            >
-              <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="flex flex-1 max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto items-right ml-auto">
+            <div className="flex items-center flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-auto text-right justify-end bg-transparent outline-none pr-0 h-9">
+              {showNumInP ? (
+                <>
+                  <div
+                    className="text-right mobile:hidden xs:hidden desktop:flex tablet:flex items-center justify-end flex-1 desktop:w-40 tablet:w-40 overflow-hidden whitespace-nowrap"
+                    onClick={() => setShowNumInP(false)}
+                  >
+                    <div className="inline-block whitespace-nowrap">
+                      <HighDecimalsFormatted
+                        value={limitDigitsNumber(Number(tokenAmount))}
+                        styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
+                        styleZeros="text-white/70 text-xs"
+                        setTruncatedFlag={(flag: boolean) =>
+                          setTruncatedFlag(flag)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="text-right desktop:hidden tablet:hidden mobile:flex xs:flex items-center justify-end flex-1 mobile:w-32 xs:w-auto overflow-hidden whitespace-nowrap"
+                    onClick={() => setShowNumInP(false)}
+                  >
+                    <div className="inline-block whitespace-nowrap">
+                      {(() => {
+                        const roundOffFn = () => {
+                          const roundedTokenAmount = tokenAmount;
+                          const [, decimals] = tokenAmount
+                            .toString()
+                            .split('.');
+                          if (!decimals) {
+                            return roundedTokenAmount;
+                          }
+                          const match = decimals.match(/^(0+)/);
+                          const zeroCount = match ? match[0].length : 0;
+                          if (zeroCount < 2) {
+                            return Number(roundedTokenAmount).toFixed(
+                              decimals.length > 3 ? 3 : decimals.length
+                            );
+                          }
+                          return Number(roundedTokenAmount).toFixed(
+                            zeroCount + 2
+                          );
+                        };
+                        const amount = roundOffFn();
+                        return (
+                          <HighDecimalsFormatted
+                            value={limitDigitsNumber(Number(amount))}
+                            styleNumber={`text-white text-4xl ${truncatedFlag ? 'mt-1.5' : ''}`}
+                            styleZeros="text-white/70 text-xs"
+                            setTruncatedFlag={(flag: boolean) =>
+                              setTruncatedFlag(flag)
+                            }
+                          />
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </>
+              ) : (
                 <input
-                  className="w-full no-spinner text-right bg-transparent outline-none pr-0"
-                  style={{
-                    fontSize: '36px',
-                    lineHeight: '1.2',
-                    fontWeight: '500',
-                  }}
+                  className={`no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl font-medium text-right ${
+                    token
+                      ? 'flex-1 desktop:w-40 tablet:w-40 mobile:w-32 xs:w-full'
+                      : 'flex-1 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-full'
+                  }`}
                   placeholder={inputPlaceholder}
                   onChange={handleTokenAmountChange}
                   value={tokenAmount}
@@ -246,20 +364,18 @@ const Sell = (props: SellProps) => {
                   onFocus={() => setInputPlaceholder('')}
                   data-testid="pulse-sell-amount-input"
                 />
-              </div>
+              )}
               {token && (
-                <div className="relative">
+                <div className="relative flex-shrink-0 max-w-[80px]">
                   <p
-                    className="text-grey ml-0 flex-shrink-0 opacity-50 cursor-help text-4xl font-medium"
+                    className="text-[#FFFFFF4D] flex ml-1 mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl overflow-hidden font-medium whitespace-nowrap cursor-help max-w-full text-clip"
                     data-testid="pulse-sell-token-symbol"
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                   >
-                    {token.symbol.length > 4
-                      ? `${token.symbol.slice(0, 3)}...`
-                      : token.symbol}
+                    {token.symbol.slice(0, 3)}
                   </p>
-                  {showTooltip && token.symbol.length > 4 && (
+                  {showTooltip && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
                       {token.symbol}
                     </div>
@@ -269,43 +385,53 @@ const Sell = (props: SellProps) => {
             </div>
           </div>
         </div>
-        <div className="flex justify-between m-2.5">
+        <div className="flex justify-between items-center p-3">
           <div className="flex">
-            {(notEnoughLiquidity || relayError) && (
+            {(notEnoughLiquidity || relayError || minGasAmount) && (
               <>
                 <div className="flex items-center justify-center">
-                  <img src={WarningIcon} alt="warning" />
+                  <img
+                    src={WarningIcon}
+                    alt="warning"
+                    data-testid="pulse-sell-warning-icon"
+                  />
                 </div>
-                <div className="underline text-[#FF366C] text-xs ml-1.5">
+                <div
+                  className="underline text-[#FF366C] text-xs ml-1"
+                  data-testid="pulse-sell-error-message"
+                >
                   {relayError ||
-                    (notEnoughLiquidity ? 'Not enough liquidity' : '')}
+                    (notEnoughLiquidity ? 'Not enough balance' : '') ||
+                    (minGasAmount && token
+                      ? `Min. $1 ${NativeSymbols[token.chainId]} required on ${ChainNames[token.chainId]}`
+                      : '')}
                 </div>
               </>
             )}
           </div>
-          <div className="flex float-right">
+          <div className="flex items-center">
             {token && (
               <img
                 src={token.logo}
                 alt={token.symbol}
-                className="w-3.5 h-3.5 rounded-full"
+                className="w-2.5 h-2.5 rounded-full"
+                data-testid="pulse-sell-token-logo"
               />
             )}
             <div
-              className="text-[#8A77FF] ml-1.5 text-xs"
+              className="text-[#8A77FF] ml-1 text-xs items-center"
               data-testid="pulse-sell-token-balance"
             >
               {token ? (
-                <>
-                  {formatExponentialSmallNumber(
-                    limitDigitsNumber(tokenBalance)
-                  )}{' '}
-                  {token.symbol} ($
-                  {formatExponentialSmallNumber(
-                    limitDigitsNumber(tokenBalance * parseFloat(token.usdValue))
-                  )}
-                  )
-                </>
+                <span className="flex items-center justify-end gap-1">
+                  <HighDecimalsFormatted
+                    value={limitDigitsNumber(tokenBalance)}
+                    styleNumber="text-white"
+                    styleZeros="text-white/70 text-[8px]"
+                  />
+                  {` ${token.symbol}`}($
+                  {(tokenBalance * parseFloat(token.usdValue)).toFixed(2)})
+                </span>
               ) : (
                 '0.00($0.00)'
               )}
@@ -315,7 +441,7 @@ const Sell = (props: SellProps) => {
       </div>
 
       {/* amounts */}
-      <div className="flex">
+      <div className="flex w-full" data-testid="pulse-sell-percentage-buttons">
         {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
           const isMax = item === 'MAX';
           const percentage = isMax ? 100 : parseInt(item);
@@ -324,7 +450,7 @@ const Sell = (props: SellProps) => {
           return (
             <div
               key={item}
-              className="flex bg-black ml-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
+              className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
                 className={`flex-1 items-center justify-center rounded-[10px] ${
@@ -334,6 +460,7 @@ const Sell = (props: SellProps) => {
                 }`}
                 onClick={() => {
                   if (!isDisabled) {
+                    setShowNumInP(true);
                     if (isMax) {
                       const decimals = token?.decimals || 18;
                       const multiplier = 10 ** decimals;
@@ -359,7 +486,9 @@ const Sell = (props: SellProps) => {
                 disabled={isDisabled}
                 data-testid={`pulse-sell-percentage-button-${item.toLowerCase()}`}
               >
-                {item}
+                <span className="font-normal text-center opacity-50 text-sm">
+                  {item}
+                </span>
               </button>
             </div>
           );
@@ -368,13 +497,13 @@ const Sell = (props: SellProps) => {
 
       {/* sell button */}
       <div
-        className="flex m-2.5 w-[422px] h-[50px] rounded-[10px] bg-black p-0.5 pb-1 pt-0.5"
+        className="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5"
         data-testid="pulse-sell-button-container"
       >
         <SellButton
           token={token}
           tokenAmount={tokenAmount}
-          notEnoughLiquidity={notEnoughLiquidity}
+          notEnoughLiquidity={notEnoughLiquidity || minGasAmount}
           setPreviewSell={setPreviewSell}
           setSellOffer={setSellOffer}
           sellOffer={sellOffer}

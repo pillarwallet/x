@@ -21,7 +21,8 @@ export function getDesiredAssetValue(
 
 export function getDispensableAssets(
   input: string,
-  portfolioData: PortfolioData | undefined
+  portfolioData: PortfolioData | undefined,
+  maxStablecoinChainId?: number
 ): [DispensableAsset[], bigint[], PayingToken[]] {
   // TODO: build a logic to use multiple tokens from different chains.
   if (!portfolioData?.assets) {
@@ -42,7 +43,11 @@ export function getDispensableAssets(
           x.address.toLowerCase() === tokenItem.address.toLowerCase() &&
           x.chainId === tokenItem.chainId
       );
-      if (usdEq > Number(input) && t) {
+      if (
+        maxStablecoinChainId === tokenItem.chainId &&
+        usdEq > Number(input) &&
+        t
+      ) {
         return [
           [
             {

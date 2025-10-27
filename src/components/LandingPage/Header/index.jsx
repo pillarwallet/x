@@ -1,6 +1,7 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from 'react';
 import { Link, NavLink, ScrollRestoration } from 'react-router-dom';
 
@@ -42,7 +43,10 @@ const Header = () => {
       >
         <div className="container">
           <Link to="/" className="header__logo">
-            <img src="/landing-images/pillarXLogo.png" alt="pillar-x-logo" />
+            <img
+              src="https://cdn.pillarx.app/pillarXLogo.png"
+              alt="pillar-x-logo"
+            />
           </Link>
 
           <nav
@@ -54,15 +58,26 @@ const Header = () => {
           >
             <ul id="menu" onClick={() => setShowMobileMenu(!showMobileMenu)}>
               <li>
-                <NavLink
-                  to="/developers"
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                >
-                  For dApps
+                <NavLink to="/#superpowers">Superpowers</NavLink>
+              </li>
+              <li>
+                <NavLink to="/#about" className="active--no-style">
+                  About
                 </NavLink>
               </li>
               <li>
                 <a href="https://blog.pillarx.app/">Blog</a>
+              </li>
+              <li>
+                <a>Cooperation</a>
+                <ul>
+                  <li>
+                    <NavLink to="/developers">For dApp</NavLink>
+                  </li>
+                  <li>
+                    <NavLink to="/advertising">Advertising</NavLink>
+                  </li>
+                </ul>
               </li>
             </ul>
 

@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<TransactionErrorBox /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="w-full h-fit rounded-[10px] p-3 gap-4 border border-[#FF366C] bg-[#FF366C]/5 flex flex-col"
+  data-testid="pulse-transaction-details-error-box"
+>
+  <div
+    className="flex gap-1.5 items-center pb-4 border-b border-[#FF366C]"
+  >
+    <img
+      alt="Error"
+      className="w-8 h-8"
+      src="data:image/svg+xml,%3csvg%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M19.8805%205.28645C18.7761%203.92816%2017.5784%203%2015.999%203C14.4197%203%2013.2219%203.92816%2012.1175%205.28645C11.2944%206.29879%2010.424%207.67476%209.40787%209.36588L8.34016%2011.1615L5.77375%2015.4883L5.71027%2015.5953C4.17873%2018.1773%202.96993%2020.2152%202.29719%2021.8593C1.61236%2023.5332%201.36572%2025.0744%202.16437%2026.4844L2.32192%2026.7396C3.14633%2027.9667%204.52351%2028.4891%206.19692%2028.7383C7.95489%2029%2010.3283%2029%2013.335%2029H13.4326H18.5654H18.663C21.6697%2029%2024.0432%2029%2025.801%2028.7383C27.5861%2028.4724%2029.0342%2027.8956%2029.8337%2026.4844L29.9717%2026.2188C30.6001%2024.8815%2030.3429%2023.4285%2029.7009%2021.8593C29.1893%2020.6092%2028.3684%2019.1311%2027.331%2017.3593L26.2242%2015.4883L23.6578%2011.1615L23.5961%2011.0574C22.1258%208.57852%2020.9629%206.61771%2019.8805%205.28645Z'%20fill='%23FF366C'/%3e%3cpath%20d='M14.6655%2018.0003V12.0003C14.6655%2011.264%2015.2625%2010.667%2015.9989%2010.667C16.7353%2010.667%2017.3322%2011.264%2017.3322%2012.0003V18.0003C17.3322%2018.7367%2016.7353%2019.3337%2015.9989%2019.3337C15.2625%2019.3337%2014.6655%2018.7367%2014.6655%2018.0003Z'%20fill='white'/%3e%3cpath%20d='M14.6655%2022.6696V22.6566C14.6655%2021.9202%2015.2625%2021.3232%2015.9989%2021.3232C16.7353%2021.3232%2017.3322%2021.9202%2017.3322%2022.6566V22.6696C17.3322%2023.4059%2016.7353%2024.003%2015.9989%2024.003C15.2625%2024.003%2014.6655%2023.4059%2014.6655%2022.6696Z'%20fill='white'/%3e%3c/svg%3e"
+    />
+    <div
+      className="flex flex-col"
+    >
+      <p
+        className="text-[13px] font-normal text-[#FF366C]"
+      >
+        Transaction failed.
+      </p>
+      <p
+        className="text-[13px] font-normal text-white"
+      >
+        Something went wrong. Please try again.
+      </p>
+    </div>
+  </div>
+  <div
+    className="flex justify-between"
+  >
+    <button
+      className="px-2 py-1.5 rounded-[6px] bg-[#FF366C]/30 text-white text-[13px] font-normal flex items-center gap-2"
+      onClick={[Function]}
+      type="button"
+    >
+      Technical Details
+      <span
+        className="transform transition-transform "
+      >
+        <img
+          alt="arrow-down"
+          className="w-2 h-2"
+          src="data:image/svg+xml,%3csvg%20width='10'%20height='6'%20viewBox='0%200%2010%206'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20opacity='0.5'%20d='M1%201L4.64645%204.64645C4.84171%204.84171%205.15829%204.84171%205.35355%204.64645L9%201'%20stroke='white'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+        />
+      </span>
+    </button>
+    <button
+      data-testid="copy-button"
+      onClick={[Function]}
+      type="button"
+    >
+      <button
+        className="px-2 py-1.5 rounded-[6px] bg-[#FF366C]/30 text-white text-[13px] font-normal flex items-center gap-2"
+        type="button"
+      >
+        Copy
+        <img
+          alt="copy-icon"
+          className="w-[10px] h-3"
+          src="data:image/svg+xml,%3csvg%20width='10'%20height='12'%20viewBox='0%200%2010%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3cpath%20opacity='0.5'%20d='M4%201.50004C4%200.671611%204.67157%203.76701e-05%205.5%203.76701e-05H8.5C9.32843%203.76701e-05%2010%200.671611%2010%201.50004V6.50004C10%207.32846%209.32843%208.00004%208.5%208.00004H7V5C7%203.89543%206.10457%203%205%203H4L4%201.50004Z'%20fill='white'/%3e%3cpath%20d='M0%205.5C0%204.67157%200.671573%204%201.5%204H4.5C5.32843%204%206%204.67157%206%205.5V10.5C6%2011.3284%205.32843%2012%204.5%2012H1.5C0.671573%2012%200%2011.3284%200%2010.5V5.5Z'%20fill='white'/%3e%3c/g%3e%3c/svg%3e"
+        />
+      </button>
+    </button>
+  </div>
+</div>
+`;

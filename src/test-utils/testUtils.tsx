@@ -28,7 +28,6 @@ import AccountTransactionHistoryProvider from '../providers/AccountTransactionHi
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
 import GlobalTransactionsBatchProvider from '../providers/GlobalTransactionsBatchProvider';
 import LanguageProvider from '../providers/LanguageProvider';
-import { PrivateKeyLoginProvider } from '../providers/PrivateKeyLoginProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
 
 // Create a test store with all reducers
@@ -123,7 +122,7 @@ export const TestWrapper = ({ children }: { children: React.ReactNode }) => (
             <BottomMenuModalProvider>
               <GlobalTransactionsBatchProvider>
                 <SelectedChainsHistoryProvider>
-                  <PrivateKeyLoginProvider>{children}</PrivateKeyLoginProvider>
+                  {children}
                 </SelectedChainsHistoryProvider>
               </GlobalTransactionsBatchProvider>
             </BottomMenuModalProvider>

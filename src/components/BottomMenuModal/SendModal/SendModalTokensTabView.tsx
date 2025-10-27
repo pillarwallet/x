@@ -164,6 +164,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     decimals: number;
     tokenPrice?: string;
     balance?: string;
+    id: string;
   }>();
   const [feeAssetOptions, setFeeAssetOptions] = React.useState<
     TokenAssetSelectOption[]
@@ -201,7 +202,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       wallet: accountAddress || '',
       isPnl: false,
     },
-    { skip: !accountAddress }
+    { skip: !accountAddress, refetchOnFocus: false }
   );
 
   /**
@@ -262,7 +263,6 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     // Reset paymaster context when asset changes to ensure clean state
     setPaymasterContext(null);
     setIsPaymaster(false);
-    setSelectedFeeAsset(undefined); // Clear selected fee asset
     setSelectedPaymasterAddress(''); // Clear selected paymaster address
     setPaymasterContext(null);
     setIsPaymaster(false);
@@ -327,11 +327,40 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
             if (selectedFeeType === 'Gasless') {
               // If Gasless is selected, set up the first gasless option to ensure gasless state is properly restored after asset switches
               const firstOption = feeOptions[0];
+              if (selectedFeeAsset?.token) {
+                // Fee asset already selected by user, try to keep it if available
+                const userSelectedOption = feeOptions.find(
+                  (value) =>
+                    value.asset.contract.toLowerCase() ===
+                    selectedFeeAsset.token.toLowerCase()
+                );
+                if (userSelectedOption) {
+                  // Keep user's selected fee asset
+                  setSelectedFeeAsset({
+                    token: userSelectedOption.asset.contract,
+                    decimals: userSelectedOption.asset.decimals,
+                    tokenPrice: userSelectedOption.asset.price?.toString(),
+                    balance: userSelectedOption.value?.toString(),
+                    id: userSelectedOption.id,
+                  });
+                  setSelectedPaymasterAddress(
+                    userSelectedOption.id.split('-')[2]
+                  );
+                  setPaymasterContext({
+                    mode: 'commonerc20',
+                    token: userSelectedOption.asset.contract,
+                  });
+                  setIsPaymaster(true);
+                  setIsLoadingFeeOptions(false);
+                  return; // Exit early
+                }
+              }
               setSelectedFeeAsset({
                 token: firstOption.asset.contract,
                 decimals: firstOption.asset.decimals,
                 tokenPrice: firstOption.asset.price?.toString(),
                 balance: firstOption.value?.toString(),
+                id: firstOption.id,
               });
               setSelectedPaymasterAddress(firstOption.id.split('-')[2]);
               setPaymasterContext({
@@ -2170,9 +2199,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         decimals: Number(values[3]) ?? 18,
         tokenPrice: tokenOption.asset.price?.toString(),
         balance: tokenOption.value?.toString(),
+        id: tokenOption.id,
       });
       const paymasterAddress = value.id.split('-')[2];
       setSelectedPaymasterAddress(paymasterAddress);
+      setPaymasterContext({
+        mode: 'commonerc20',
+        token: tokenAddress,
+      });
     },
     [feeAssetOptions]
   );
@@ -2286,7 +2320,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                       onChange={handleOnChange}
                       options={feeAssetOptions}
                       isLoadingOptions={isLoadingFeeOptions}
-                      defaultSelectedId={feeAssetOptions[0]?.id}
+                      defaultSelectedId={
+                        selectedFeeAsset?.id ?? feeAssetOptions[0]?.id
+                      }
                     />
                   </>
                 )}

@@ -15,12 +15,14 @@ interface UseGasEstimationProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
+  isPaused?: boolean;
 }
 
 export default function useGasEstimation({
   sellToken,
   sellOffer,
   tokenAmount,
+  isPaused = false,
 }: UseGasEstimationProps) {
   const [isEstimatingGas, setIsEstimatingGas] = useState(false);
   const [gasEstimationError, setGasEstimationError] = useState<string | null>(
@@ -41,7 +43,7 @@ export default function useGasEstimation({
     }
 
     // Prevent multiple simultaneous estimations
-    if (isEstimatingRef.current) {
+    if (isEstimatingRef.current || isPaused) {
       return;
     }
 
@@ -136,7 +138,7 @@ export default function useGasEstimation({
       isEstimatingRef.current = false;
       setIsEstimatingGas(false);
     }
-  }, [sellToken, kit, sellOffer, tokenAmount, buildSellTransactions]);
+  }, [sellToken, kit, sellOffer, tokenAmount, buildSellTransactions, isPaused]);
 
   // Store the latest function in ref to avoid infinite loops
   estimateGasFeesRef.current = estimateGasFees;
@@ -148,11 +150,12 @@ export default function useGasEstimation({
       sellToken &&
       kit &&
       tokenAmount &&
-      estimateGasFeesRef.current
+      estimateGasFeesRef.current &&
+      !isPaused
     ) {
       estimateGasFeesRef.current();
     }
-  }, [sellOffer, sellToken, kit, tokenAmount]);
+  }, [sellOffer, sellToken, kit, tokenAmount, isPaused]);
 
   return {
     isEstimatingGas,
