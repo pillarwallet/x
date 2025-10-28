@@ -17,16 +17,16 @@ import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
 } from '../../../../utils/number';
-import { getChainId, MobulaChainNames } from '../../utils/constants';
 import {
   ChainNames,
-  isNativeToken,
   NativeSymbols,
+  isNativeToken,
 } from '../../utils/blockchain';
+import { MobulaChainNames, getChainId } from '../../utils/constants';
 
 // components
-import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
+import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import ArrowDown from '../../assets/arrow-down.svg';
 import WarningIcon from '../../assets/warning.svg';
 import SellButton from './SellButton';

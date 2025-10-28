@@ -283,7 +283,9 @@ const SendModalBatchesTabView = () => {
         },
       });
 
-      const newUserOpHash = sentBatch?.userOpHash;
+      // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+      // have one chainGroup per batch
+      const newUserOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
       transactionDebugLog('Transaction batch new userOpHash:', newUserOpHash);
       if (!newUserOpHash) {
         Sentry.captureMessage('Failed to get UserOp hash for batch', {

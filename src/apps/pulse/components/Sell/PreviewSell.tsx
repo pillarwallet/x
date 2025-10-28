@@ -375,7 +375,9 @@ const PreviewSell = (props: PreviewSellProps) => {
         const sentBatch = batchSend.batches[batchName];
 
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
-          const userOpHash = sentBatch?.userOpHash;
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
           if (userOpHash) {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);

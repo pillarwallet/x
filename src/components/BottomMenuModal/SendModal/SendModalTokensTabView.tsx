@@ -1203,7 +1203,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         for (let batchIdx = 0; batchIdx < batchNames.length; batchIdx++) {
           const batchName = batchNames[batchIdx];
           const sentBatch = batchSend.batches[batchName];
-          const userOpHash = sentBatch?.userOpHash;
+
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
           if (userOpHash) {
             allUserOpHashes.push(userOpHash);
             const chainIdForTxHash = payload.batches[batchIdx].chainId;
@@ -1723,7 +1726,10 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
         // Extract userOpHash
         const sentBatch = batchSend.batches[batchName];
-        const userOpHash = sentBatch?.userOpHash;
+
+        // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+        // have one chainGroup per batch
+        const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
 
         transactionDebugLog('Transaction new userOpHash:', userOpHash);
         const chainIdForTxHash = selectedAsset.chainId;

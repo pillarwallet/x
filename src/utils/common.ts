@@ -73,3 +73,38 @@ export const transactionDescription = (
 
   return payload?.description;
 };
+
+/**
+ * Sanitizes error messages by removing sensitive information like private keys.
+ * @param error - The error to sanitize
+ * @param sensitiveData - Optional sensitive data (e.g., private key) to redact from the error
+ * @returns A sanitized error message string
+ */
+export const sanitizeError = (
+  error: unknown,
+  sensitiveData?: string
+): string => {
+  let errorMessage = 'Unknown error';
+
+  if (error instanceof Error) {
+    errorMessage = error.message;
+  } else if (typeof error === 'string') {
+    errorMessage = error;
+  } else if (error && typeof error === 'object') {
+    try {
+      errorMessage = JSON.stringify(error);
+    } catch {
+      errorMessage = 'Unknown error';
+    }
+  }
+
+  // Remove sensitive data from error message if present
+  if (sensitiveData && errorMessage.includes(sensitiveData)) {
+    errorMessage = errorMessage.replace(
+      new RegExp(sensitiveData.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      '[SENSITIVE_DATA_REDACTED]'
+    );
+  }
+
+  return errorMessage;
+};
