@@ -1095,93 +1095,137 @@ export const useWalletConnect = () => {
       const chainIdNumber = Number(chainId.replace('eip155:', ''));
       let requestResponse: string | undefined;
 
-      const eSdk = await kit.getSdk(chainIdNumber);
-
-      if (request.method === PERSONAL_SIGN) {
-        const requestParamsMessage = request.params[0];
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const humanReadableMessage =
-          ethers.utils.toUtf8String(requestParamsMessage);
-
-        const message = request.params.filter(
-          (p: string) => !ethers.utils.isAddress(p)
-        )[0];
-
-        requestResponse = await eSdk.signMessage({
-          message,
-        });
-      }
-
-      if (
-        request.method === ETH_SIGN_TYPED_DATA ||
-        request.method === ETH_SIGN_TYPED_DATA_V4
-      ) {
-        const requestParamsMessage = await request.params[1];
-
-        const parseRequest =
-          typeof requestParamsMessage === 'string'
-            ? JSON.parse(requestParamsMessage)
-            : requestParamsMessage;
-
-        const { domain } = parseRequest;
-        const { types } = parseRequest;
-        const { primaryType } = parseRequest;
-        const { message } = parseRequest;
-
-        requestResponse = await eSdk.signTypedData({
-          domain,
-          types,
-          primaryType,
-          message,
-        });
-      }
-
-      if (request.method === ETH_SEND_TX) {
-        const transaction = request.params[0];
-
-        const isApprovalTransaction =
-          !!transaction.data.startsWith('0x095ea7b3');
-
-        if (isApprovalTransaction) {
-          const approvalRequest = {
-            title: 'WalletConnect Approval Request',
-            description: `${dAppName} is requesting approval for a contract.`,
-            transaction: {
-              to: checksumAddress(transaction.to),
-              data: transaction.data,
-              chainId: chainIdNumber,
-            },
-          };
-
-          showTransactionConfirmation(approvalRequest);
-
-          setWalletConnectPayload(approvalRequest);
-
-          requestResponse = await getTransactionHash();
-        } else {
-          const transactionRequest = {
-            title: 'WalletConnect Transaction Request',
-            description: `${dAppName} wants to send a transaction`,
-            transaction: {
-              to: checksumAddress(transaction.to),
-              value: transaction.value
-                ? formatEther(hexToBigInt(transaction.value))
-                : '0',
-              data: transaction.data,
-              chainId: chainIdNumber,
-            },
-          };
-
-          showTransactionConfirmation(transactionRequest);
-
-          setWalletConnectPayload(transactionRequest);
-
-          requestResponse = await getTransactionHash();
-        }
-      }
-
       try {
+        // Get wallet mode
+        const { walletMode } = kit.getEtherspotProvider().getConfig();
+        const isDelegatedEoa = walletMode === 'delegatedEoa';
+
+        if (request.method === PERSONAL_SIGN) {
+          const requestParamsMessage = request.params[0];
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const humanReadableMessage =
+            ethers.utils.toUtf8String(requestParamsMessage);
+
+          const message = request.params.filter(
+            (p: string) => !ethers.utils.isAddress(p)
+          )[0];
+
+          if (isDelegatedEoa) {
+            // In delegatedEoa mode, use wallet client directly
+            const walletClient = await kit
+              .getEtherspotProvider()
+              .getWalletClient();
+
+            const { account } = walletClient;
+            if (!account) {
+              throw new Error('Wallet client does not have an account');
+            }
+
+            requestResponse = await walletClient.signMessage({
+              account,
+              message: message as `0x${string}` | string,
+            });
+          } else {
+            // In modular mode, use SDK
+            const eSdk = await kit.getSdk(chainIdNumber);
+            requestResponse = await eSdk.signMessage({
+              message,
+            });
+          }
+        }
+
+        if (
+          request.method === ETH_SIGN_TYPED_DATA ||
+          request.method === ETH_SIGN_TYPED_DATA_V4
+        ) {
+          const requestParamsMessage = await request.params[1];
+
+          const parseRequest =
+            typeof requestParamsMessage === 'string'
+              ? JSON.parse(requestParamsMessage)
+              : requestParamsMessage;
+
+          const { domain } = parseRequest;
+          const { types } = parseRequest;
+          const { primaryType } = parseRequest;
+          const { message } = parseRequest;
+
+          if (isDelegatedEoa) {
+            // In delegatedEoa mode, use wallet client directly
+            const walletClient = await kit
+              .getEtherspotProvider()
+              .getWalletClient();
+
+            const { account } = walletClient;
+            if (!account) {
+              throw new Error('Wallet client does not have an account');
+            }
+
+            requestResponse = await walletClient.signTypedData({
+              account,
+              domain,
+              types,
+              primaryType,
+              message,
+            });
+          } else {
+            // In modular mode, use SDK
+            const eSdk = await kit.getSdk(chainIdNumber);
+            requestResponse = await eSdk.signTypedData({
+              domain,
+              types,
+              primaryType,
+              message,
+            });
+          }
+        }
+
+        if (request.method === ETH_SEND_TX) {
+          const transaction = request.params[0];
+
+          const isApprovalTransaction =
+            !!transaction.data?.startsWith('0x095ea7b3');
+
+          if (isApprovalTransaction) {
+            const approvalRequest = {
+              title: 'WalletConnect Approval Request',
+              description: `${dAppName} is requesting approval for a contract.`,
+              transaction: {
+                to: checksumAddress(transaction.to),
+                data: transaction.data,
+                chainId: chainIdNumber,
+              },
+            };
+
+            showTransactionConfirmation(approvalRequest);
+
+            setWalletConnectPayload(approvalRequest);
+
+            requestResponse = await getTransactionHash();
+          } else {
+            const transactionRequest = {
+              title: 'WalletConnect Transaction Request',
+              description: `${dAppName} wants to send a transaction`,
+              transaction: {
+                to: checksumAddress(transaction.to),
+                value: transaction.value
+                  ? formatEther(hexToBigInt(transaction.value))
+                  : '0',
+                data: transaction.data,
+                chainId: chainIdNumber,
+              },
+            };
+
+            showTransactionConfirmation(transactionRequest);
+
+            setWalletConnectPayload(transactionRequest);
+
+            requestResponse = await getTransactionHash();
+          }
+        }
+
+        // Respond with success
         await walletKit?.respondSessionRequest({
           topic,
           response: formatJsonRpcResult(id, requestResponse),
@@ -1190,10 +1234,18 @@ export const useWalletConnect = () => {
         setWalletConnectPayload(undefined);
       } catch (e: any) {
         console.error('WalletConnect session request error:', e.message);
-        await walletKit?.respondSessionRequest({
-          topic,
-          response: formatJsonRpcError(id, e),
-        });
+        try {
+          await walletKit?.respondSessionRequest({
+            topic,
+            response: formatJsonRpcError(id, e),
+          });
+        } catch (responseError) {
+          console.error(
+            'Error responding to WalletConnect request:',
+            responseError
+          );
+        }
+
         setWalletConnectTxHash(undefined);
         setWalletConnectPayload(undefined);
         showToast({
@@ -1204,7 +1256,7 @@ export const useWalletConnect = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, kit.getSdk]
+    [walletKit, kit]
   );
 
   const onSessionRequestExpires = useCallback(
@@ -1251,7 +1303,7 @@ export const useWalletConnect = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [walletKit, kit.getSdk]
+    [walletKit, kit]
   );
 
   useEffect(() => {
