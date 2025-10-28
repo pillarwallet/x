@@ -22,15 +22,9 @@ const EIP7702UpgradeStatus: React.FC<EIP7702UpgradeStatusProps> = ({
   const statusConfig = getStatusConfig(status);
 
   return (
-    <div
-      className="flex flex-col items-center justify-center h-full"
-      data-testid="pulse-transaction-status-container"
-    >
+    <div className="flex flex-col items-center justify-center h-full">
       <EIP7702UpgradeStatusIcon status={status} />
-      <div
-        className="text-white font-normal text-[20px] mt-3"
-        data-testid="pulse-transaction-status-text"
-      >
+      <div className="text-white font-normal text-[20px] mt-3">
         {statusConfig.label}
       </div>
       <EIP7702UpgradeStatusButton status={status} onClick={onViewDetails} />

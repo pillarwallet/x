@@ -99,7 +99,6 @@ const EIP7702UpgradeStatusButton: React.FC<EIP7702UpgradeStatusButtonProps> = ({
       style={springs}
       type="button"
       onClick={onClick}
-      data-testid="pulse-transaction-status-button"
     >
       {renderIcon()}
       <span className={`${config.textColor} font-normal text-[13px]`}>
