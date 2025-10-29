@@ -20,7 +20,7 @@ exports[`<PreviewBuy /> > renders correctly and matches snapshot 1`] = `
         data-testid="pulse-preview-buy-refresh-button"
       >
         <div
-          className="py-2 px-px w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+          className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
         >
           <button
             aria-label="Refresh"

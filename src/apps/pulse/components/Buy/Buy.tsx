@@ -256,7 +256,8 @@ export default function Buy(props: BuyProps) {
         setDebouncedUsdAmount(usdAmount);
         const [dAssets, pChains, pTokens] = getDispensableAssets(
           usdAmount,
-          walletPortfolioData?.result.data
+          walletPortfolioData?.result.data,
+          maxStableCoinBalance.chainId
         );
         if (
           pChains.length === 0 ||
