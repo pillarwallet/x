@@ -139,6 +139,8 @@ export default function useModularSdk(props: ModularSdkProps) {
             res.resourceLockValidator
           ) {
             setAreModulesInstalled(true);
+          } else {
+            setAreModulesInstalled(false);
           }
           setIsFetching(false);
         })
