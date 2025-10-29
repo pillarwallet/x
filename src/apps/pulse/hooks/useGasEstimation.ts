@@ -3,6 +3,7 @@ import { formatUnits } from 'viem';
 
 // utils
 import { getNativeAssetForChainId } from '../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authorization';
 
 // hooks
 import useTransactionKit from '../../../hooks/useTransactionKit';
@@ -90,8 +91,13 @@ export default function useGasEstimation({
           .addToBatch({ batchName });
       }
 
+      const authorization = await getEIP7702AuthorizationIfNeeded(
+        kit,
+        sellToken.chainId
+      );
       const estimation = await kit.estimateBatches({
         onlyBatchNames: [batchName],
+        authorization: authorization || undefined,
       });
 
       const batchEst = estimation.batches[batchName];

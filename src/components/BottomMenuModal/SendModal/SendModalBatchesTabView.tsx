@@ -35,6 +35,7 @@ import {
   getLogoForChainId,
   getNativeAssetForChainId,
 } from '../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authorization';
 import { formatAmountDisplay } from '../../../utils/number';
 
 const SendModalBatchesTabView = () => {
@@ -165,9 +166,13 @@ const SendModalBatchesTabView = () => {
     setErrorMessage((prev) => ({ ...prev, [chainId]: '' }));
     transactionDebugLog('Preparing to send batch:', batchName);
     try {
+      // Get authorization if needed for this chainId
+      const authorization = await getEIP7702AuthorizationIfNeeded(kit, chainId);
+
       // 1. Estimate the batch
       const batchEstimate = await kit.estimateBatches({
         onlyBatchNames: [batchName],
+        authorization: authorization || undefined,
       });
       const batchEst = batchEstimate.batches[batchName];
       if (!batchEstimate.isEstimatedSuccessfully || batchEst?.errorMessage) {
@@ -243,7 +248,10 @@ const SendModalBatchesTabView = () => {
         });
       }
       // 3. Send the batch
-      const batchSend = await kit.sendBatches({ onlyBatchNames: [batchName] });
+      const batchSend = await kit.sendBatches({
+        onlyBatchNames: [batchName],
+        authorization: authorization || undefined,
+      });
       const sentBatch = batchSend.batches[batchName];
       if (!batchSend.isSentSuccessfully || sentBatch?.errorMessage) {
         Sentry.captureMessage('Batch sending error during send', {
