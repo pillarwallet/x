@@ -54,7 +54,7 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
         await createApp(data).unwrap();
         navigate('/developer-apps');
       } else if (existingApp) {
-        const { appId, ownerEoaAddress, createdAt, updatedAt, ...updateData } = prepareSubmitData(eoaAddress);
+        const { appId, ownerEoaAddress, ...updateData } = prepareSubmitData(eoaAddress);
         await updateApp({
           appId: existingApp.appId,
           data: {
@@ -108,10 +108,13 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 mb-20">
         {/* Basic Info Section */}
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-purple-900/30 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-white mb-6">Basic Information</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            The basic information is used to display your app in the Web3 App Store listings and inside the PillarX action bar.
+          </p>
           <div className="space-y-5">
             {/* App Name */}
             <div>
@@ -126,6 +129,9 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 placeholder="My Awesome App"
               />
               {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
+              <p className="mt-1 text-xs text-gray-500">
+                This is the public name of your app that will be displayed to users.
+              </p>
             </div>
 
             {/* App ID */}
@@ -142,7 +148,7 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 placeholder="my-awesome-app"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Lowercase letters, numbers, hyphens, and underscores only. Cannot be changed after creation.
+                This becomes part of the PillarX URL. Lowercase letters, numbers, hyphens, and underscores only. Cannot be changed after creation.
               </p>
               {errors.appId && <p className="mt-1 text-sm text-red-400">{errors.appId}</p>}
             </div>
@@ -161,7 +167,7 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 placeholder="A brief description of your app (max 200 characters)"
               />
               <div className="flex justify-between items-center mt-1">
-                <p className="text-xs text-gray-500">Brief overview shown in listings</p>
+                <p className="text-xs text-gray-500">Brief overview - shown in the Web3 App Store listings</p>
                 <p className="text-xs text-gray-500">{formData.shortDescription.length}/200</p>
               </div>
               {errors.shortDescription && (
@@ -181,7 +187,7 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 className="w-full px-4 py-2 bg-gray-900/50 border border-purple-700/30 rounded text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors resize-none"
                 placeholder="A detailed description of your app's features and benefits"
               />
-              <p className="mt-1 text-xs text-gray-500">Detailed information about your app</p>
+              <p className="mt-1 text-xs text-gray-500">Detailed information - shown in the Web3 App Store listings</p>
             </div>
 
             {/* Tags */}
@@ -196,15 +202,39 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 className="w-full px-4 py-2 bg-gray-900/50 border border-purple-700/30 rounded text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors"
                 placeholder="defi, trading, wallet"
               />
-              <p className="mt-1 text-xs text-gray-500">Comma-separated tags (e.g. defi, trading, nft)</p>
+              <p className="mt-1 text-xs text-gray-500">Comma-separated tags (e.g. defi, trading, nft) - shown and used for search and filtering in the Web3 App Store listings</p>
               {errors.tags && <p className="mt-1 text-sm text-red-400">{errors.tags}</p>}
             </div>
           </div>
         </div>
 
+        {/* Launch URL Section */}
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-purple-900/30 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-white mb-2">Launch URL</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            The launch URL is the URL of where your app is hosted. This will be launched inside PillarX when a user launches your app.
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Launch URL <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="url"
+              value={formData.launchUrl}
+              onChange={(e) => updateField('launchUrl', e.target.value)}
+              className="w-full px-4 py-2 bg-gray-900/50 border border-purple-700/30 rounded text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors"
+              placeholder="https://example.com"
+            />
+            {errors.launchUrl && <p className="mt-1 text-sm text-red-400">{errors.launchUrl}</p>}
+          </div>
+        </div>
+
         {/* Images Section */}
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-purple-900/30 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">Images</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Images</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            The images are used to display your app in the Web3 App Store listings and inside the PillarX action bar.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ImageUpload
               label="Logo"
@@ -218,7 +248,7 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
               label="Banner"
               value={formData.banner}
               onChange={(value) => updateField('banner', value)}
-              error={errors.banner}
+              error={(errors as Record<string, string | undefined>).banner}
               description="Wide image, recommended 1200x400px (PNG, JPG, or GIF, max 5MB)"
             />
           </div>
@@ -226,7 +256,10 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
 
         {/* Contact Section */}
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-purple-900/30 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">Contact & Links</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Contact & Links</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            The support email is the email address that will be used to contact you for support.
+          </p>
           <div className="space-y-5">
             {/* Support Email */}
             <div>
@@ -244,27 +277,15 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
                 <p className="mt-1 text-sm text-red-400">{errors.supportEmail}</p>
               )}
             </div>
-
-            {/* Launch URL */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Launch URL <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="url"
-                value={formData.launchUrl}
-                onChange={(e) => updateField('launchUrl', e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900/50 border border-purple-700/30 rounded text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors"
-                placeholder="https://example.com"
-              />
-              {errors.launchUrl && <p className="mt-1 text-sm text-red-400">{errors.launchUrl}</p>}
-            </div>
           </div>
         </div>
 
         {/* Social Links Section */}
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-purple-900/30 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">Social Links (Optional)</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Social Links</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            The social links are used to display your app in the Web3 App Store listings and inside the PillarX action bar.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Telegram */}
             <div>
