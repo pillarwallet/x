@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 // components
+import { useWallets } from '@privy-io/react-auth';
 import AppIcon from './AppIcon';
 import Label from './Form/Label';
 import SkeletonLoader from './SkeletonLoader';
@@ -17,7 +18,6 @@ import { AppManifest } from '../types';
 import useAllowedApps from '../hooks/useAllowedApps';
 import useBottomMenuModal from '../hooks/useBottomMenuModal';
 import useTransactionKit from '../hooks/useTransactionKit';
-import { useWallets } from '@privy-io/react-auth';
 
 // services
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
@@ -25,11 +25,12 @@ import { useGetAllDeveloperAppsQuery } from '../apps/developer-apps/api/develope
 
 // utils
 import { loadApps } from '../apps';
-import { isTestnet } from '../utils/blockchain';
 import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
-  const [apps, setApps] = React.useState<Record<string, AppManifest | ApiAllowedApp>>({});
+  const [apps, setApps] = React.useState<
+    Record<string, AppManifest | ApiAllowedApp>
+  >({});
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
   const { hide } = useBottomMenuModal();
@@ -40,12 +41,13 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const ownerEoaAddress = wallets?.[0]?.address;
 
   // Use RTK Query for developer apps
-  const { 
-    data: developerAppsData, 
-    isLoading: isLoadingDeveloperApps 
-  } = useGetAllDeveloperAppsQuery({ eoaAddress: ownerEoaAddress }, {
-    skip: !ownerEoaAddress
-  });
+  const { data: developerAppsData, isLoading: isLoadingDeveloperApps } =
+    useGetAllDeveloperAppsQuery(
+      { eoaAddress: ownerEoaAddress },
+      {
+        skip: !ownerEoaAddress,
+      }
+    );
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -65,7 +67,9 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
   const developerApps = React.useMemo(() => {
     if (!developerAppsData?.data || !ownerEoaAddress) return [];
     return developerAppsData.data.filter(
-      (a) => a?.ownerEoaAddress && a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
+      (a) =>
+        a?.ownerEoaAddress &&
+        a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
     );
   }, [developerAppsData, ownerEoaAddress]);
 
@@ -110,7 +114,7 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
                           value: devApp.appId,
                         });
                       }
-                      navigate('/' + devApp.appId);
+                      navigate(`/${devApp.appId}`);
                       // window.open(devApp.launchUrl, '_blank', 'noopener,noreferrer');
                     }}
                   >
@@ -144,31 +148,34 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
             .filter((appId) => {
               // Filter out developer apps that are already shown in the developer apps section
               const app = apps[appId];
-              return !(app as ApiAllowedApp).type || (app as ApiAllowedApp).type !== 'app-external';
+              return (
+                !(app as ApiAllowedApp).type ||
+                (app as ApiAllowedApp).type !== 'app-external'
+              );
             })
             .map((appId) => (
-            <AppListItem
-              id="app-list-item"
-              key={appId}
-              onClick={() => {
-                hide();
-                // Fire (and forget) the recordPresence mutation
-                if (accountAddress) {
-                  recordPresence({
-                    address: accountAddress,
-                    action: 'appOpened',
-                    value: appId,
-                  });
-                }
-                setIsAnimated(true);
-                // eslint-disable-next-line prefer-template
-                navigate('/' + appId);
-              }}
-            >
-              <AppIcon app={apps[appId]} appId={appId} />
-              <AppTitle>{apps[appId].title}</AppTitle>
-            </AppListItem>
-          ))}
+              <AppListItem
+                id="app-list-item"
+                key={appId}
+                onClick={() => {
+                  hide();
+                  // Fire (and forget) the recordPresence mutation
+                  if (accountAddress) {
+                    recordPresence({
+                      address: accountAddress,
+                      action: 'appOpened',
+                      value: appId,
+                    });
+                  }
+                  setIsAnimated(true);
+                  // eslint-disable-next-line prefer-template
+                  navigate('/' + appId);
+                }}
+              >
+                <AppIcon app={apps[appId]} appId={appId} />
+                <AppTitle>{apps[appId].title}</AppTitle>
+              </AppListItem>
+            ))}
       </AppsListWrapper>
     </Wrapper>
   );
@@ -238,7 +245,11 @@ const PlaceholderLogo = styled.div`
   width: 94px;
   height: 94px;
   border-radius: 6px;
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(109, 40, 217, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(147, 51, 234, 0.15),
+    rgba(109, 40, 217, 0.08)
+  );
   border: 1px dashed rgba(147, 51, 234, 0.24);
 `;
 

@@ -56,17 +56,17 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
           ? [11155111]
           : CompatibleChains.map((chain) => chain.chainId);
         const chainIdsQuery = chainIds.map((id) => `chainIds=${id}`).join('&');
-        
+
         // Get EOA address from user
         const eoaAddress = user?.wallet?.address;
-        
+
         // Build query parameters
         const queryParams = new URLSearchParams();
         queryParams.append('testnets', String(isTestnet));
         if (eoaAddress) {
           queryParams.append('eoaAddress', eoaAddress);
         }
-        
+
         const finalQueryString = `${chainIdsQuery}&${queryParams.toString()}`;
 
         const { data } = await axios.get(

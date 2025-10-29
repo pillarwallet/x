@@ -15,6 +15,7 @@ import Alert from '../../components/Text/Alert';
 // apps
 import { loadApp } from '../../apps';
 import { ApiAllowedApp } from '../../providers/AllowedAppsProvider';
+import { SendModalData } from '../../types';
 
 type AnimatedAppTitleProps = {
   text: string;
@@ -64,7 +65,14 @@ const App = ({ id }: { id: string }) => {
   const [t] = useTranslation();
   const { isAnimated, allowed, setIsAnimated } = useAllowedApps();
   const [app, setApp] = useState<ApiAllowedApp | null>();
-  const { setShowBatchSendModal, showAccount, showHistory, showApps, showSend, showTransactionConfirmation } = useBottomMenuModal();
+  const {
+    setShowBatchSendModal,
+    showAccount,
+    showHistory,
+    showApps,
+    showSend,
+    showTransactionConfirmation,
+  } = useBottomMenuModal();
   const { walletAddress } = useTransactionKit();
 
   const [springs, api] = useSpring(() => ({
@@ -74,10 +82,9 @@ const App = ({ id }: { id: string }) => {
 
   useEffect(() => {
     const fetchApp = async () => {
-      const foundApp = allowed.find((app) => app.appId === id);
+      const foundApp = allowed.find((thisApp) => thisApp.appId === id);
       if (!foundApp) return;
       const loadedApp = await loadApp(foundApp);
-      console.log('loadedApp', loadedApp);
       setApp(loadedApp as ApiAllowedApp);
 
       // Start the spring animation with reset, immediate, and configuration
@@ -97,88 +104,109 @@ const App = ({ id }: { id: string }) => {
 
   // Reset the animated loading flag after the initial animation finishes
   useEffect(() => {
-    if (!isAnimated) return;
+    if (!isAnimated) {
+      return () => {
+        // No cleanup needed
+      };
+    }
     const timeout = setTimeout(() => setIsAnimated(false), 1500);
     return () => clearTimeout(timeout);
   }, [isAnimated, setIsAnimated]);
 
-  // External App Iframe Component
-  const ExternalAppIframe = React.useMemo(() => {
-    if (app?.type !== 'app-external' || !app.launchUrl) return null;
+  type ExternalAppIframeProps = {
+    launchUrl: string;
+    title: string;
+    walletAddress: string | undefined;
+    onShowAccount: () => void;
+    onShowHistory: () => void;
+    onShowApps: () => void;
+    onShowSend: () => void;
+    onShowTransactionConfirmation: (payload: SendModalData) => void;
+    onShowBatchSendModal: () => void;
+  };
 
-    return () => {
-      const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const ExternalAppIframe: React.FC<ExternalAppIframeProps> = ({
+    launchUrl,
+    title,
+    walletAddress: walletAddressProp,
+    onShowAccount,
+    onShowHistory,
+    onShowApps,
+    onShowSend,
+    onShowTransactionConfirmation,
+    onShowBatchSendModal,
+  }) => {
+    const iframeRef = React.useRef<HTMLIFrameElement>(null);
 
-      React.useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-          console.log('incoming event', event.data);
-          // Verify origin for security
-          if (!app.launchUrl || event.origin !== new URL(app.launchUrl).origin) return;
+    React.useEffect(() => {
+      const { origin } = new URL(launchUrl);
+      const handleMessage = (event: MessageEvent) => {
+        // Verify origin for security
+        if (event.origin !== origin) return;
 
-          if (event.data?.type === 'showAccount') {
-            showAccount();
-          }
-
-          if (event.data?.type === 'showHistory') {
-            showHistory();
-          }
-
-          if (event.data?.type === 'showApps') {
-            showApps();
-          }
-
-          if (event.data?.type === 'showSend') {
-            showSend();
-          }
-
-          if (event.data?.type === 'showTransactionConfirmation') {
-            showTransactionConfirmation(event.data.payload);
-          }
-
-          if (event.data?.type === 'showBatchSendModal') {
-            setShowBatchSendModal(true);
-          }
-
-          /**
-           * If the app asks for the account data, return the account data
-           */
-          if (event.data?.type === 'getWalletAddresses') {
-            iframeRef.current?.contentWindow?.postMessage({
-              type: 'walletAddresses',
-              payload: [{
-                address: walletAddress,
-                type: 'smart'
-              }],
-            }, '*');
-          }
+        const { type, payload } = (event.data || {}) as {
+          type?: string;
+          payload?: SendModalData;
         };
 
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-      }, [app.launchUrl]);
+        if (type === 'showAccount') onShowAccount();
+        if (type === 'showHistory') onShowHistory();
+        if (type === 'showApps') onShowApps();
+        if (type === 'showSend') onShowSend();
+        if (type === 'showTransactionConfirmation' && payload)
+          onShowTransactionConfirmation(payload);
+        if (type === 'showBatchSendModal') onShowBatchSendModal();
 
-      return (
-        <iframe
-          ref={iframeRef}
-          src={app.launchUrl}
-          style={{
-            all: 'unset',
-            width: '100vw',
-            height: '100vh',
-            border: 'none',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            zIndex: 1,
-            background: 'white',
-            display: 'block'
-          }}
-          title={app.title || app.name}
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-        />
-      );
-    };
-  }, [app?.type, app?.launchUrl, app?.title, app?.name]);
+        if (type === 'getWalletAddresses') {
+          iframeRef.current?.contentWindow?.postMessage(
+            {
+              type: 'walletAddresses',
+              payload: [
+                {
+                  address: walletAddressProp,
+                  type: 'smart',
+                },
+              ],
+            },
+            '*'
+          );
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, [
+      launchUrl,
+      onShowAccount,
+      onShowHistory,
+      onShowApps,
+      onShowSend,
+      onShowTransactionConfirmation,
+      onShowBatchSendModal,
+      walletAddressProp,
+    ]);
+
+    return (
+      <iframe
+        ref={iframeRef}
+        src={launchUrl}
+        style={{
+          all: 'unset',
+          width: '100vw',
+          height: '100vh',
+          border: 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 1,
+          background: 'white',
+          display: 'block',
+        }}
+        title={title}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+      />
+    );
+  };
 
   const ComponentToRender = React.lazy(async () => {
     await new Promise((resolve) => {
@@ -195,8 +223,20 @@ const App = ({ id }: { id: string }) => {
   });
 
   // If it's an external app, render the iframe directly
-  if (app?.type === 'app-external' && ExternalAppIframe) {
-    return <ExternalAppIframe />;
+  if (app?.type === 'app-external' && app.launchUrl) {
+    return (
+      <ExternalAppIframe
+        launchUrl={app.launchUrl}
+        title={app.title || app.name || 'App'}
+        walletAddress={walletAddress}
+        onShowAccount={showAccount}
+        onShowHistory={showHistory}
+        onShowApps={showApps}
+        onShowSend={showSend}
+        onShowTransactionConfirmation={showTransactionConfirmation}
+        onShowBatchSendModal={() => setShowBatchSendModal(true)}
+      />
+    );
   }
 
   return (
