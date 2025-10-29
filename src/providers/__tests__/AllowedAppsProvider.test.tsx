@@ -46,9 +46,7 @@ describe('AllowedAppsProvider', () => {
       expect(result.current.isLoading).toEqual(false);
     });
 
-    expect(result.current.allowed).toEqual(
-      allowedAppsMock.map((app) => app.appId)
-    );
+    expect(result.current.allowed).toEqual(allowedAppsMock);
   });
 
   afterEach(() => {
