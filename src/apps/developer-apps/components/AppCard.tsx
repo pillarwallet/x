@@ -37,6 +37,22 @@ const AppCard: React.FC<AppCardProps> = ({ app, onEdit, onDelete }) => {
         </div>
       </div>
 
+      {/* Status Indicator */}
+      <div className="flex items-center gap-2 mb-3">
+        <div
+          className={`w-2 h-2 rounded-full ${
+            app.isApproved ? 'bg-green-500' : 'bg-red-500'
+          }`}
+        />
+        <span
+          className={`text-xs font-semibold ${
+            app.isApproved ? 'text-green-400' : 'text-red-400'
+          }`}
+        >
+          {app.isApproved ? 'LIVE' : 'Unpublished'}
+        </span>
+      </div>
+
       {/* Description */}
       <p className="text-gray-300 text-sm mb-4 line-clamp-2">{app.shortDescription}</p>
 

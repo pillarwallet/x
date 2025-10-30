@@ -18,6 +18,7 @@ export interface DeveloperApp {
   socialX?: string;
   socialFacebook?: string;
   socialTiktok?: string;
+  isApproved: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -53,6 +54,7 @@ export interface DeveloperAppUpdateRequest {
   socialX?: string;
   socialFacebook?: string;
   socialTiktok?: string;
+  isApproved?: boolean; // Only privileged users can update this
 }
 
 export interface DeveloperAppDeleteRequest {
