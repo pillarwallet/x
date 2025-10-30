@@ -947,7 +947,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <div className="w-full max-w-[446px] md:px-0">
+      <div className="w-full max-w-[446px] p-1.5">
         {displaySettingsMenu ? (
           <SettingsMenu
             closeSettingsMenu={() => setDisplaySettingsMenu(false)}

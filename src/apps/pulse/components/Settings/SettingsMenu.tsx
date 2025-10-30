@@ -137,8 +137,8 @@ export default function SettingsMenu(props: SettingsMenuProps) {
       data-testid="pulse-settings-menu-component"
     >
       {/* Header inside the box */}
-      <div className="flex justify-between p-3">
-        <div className="flex items-center h-10 rounded-lg flex-1 max-w-[318px] ml-0">
+      <div className="flex justify-between p-3 ml-1">
+        <div className="flex items-center h-10 rounded-lg flex-1 max-w-[318px]">
           <h2 className="text-xl font-medium text-white">Settings</h2>
         </div>
         <div className="flex ml-3">
@@ -174,7 +174,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
       {/* Settings Content */}
       <div className="flex flex-col w-full p-3">
         {/* Default Settlement Section */}
-        <div className="mb-6">
+        <div className="mb-3 ml-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 relative">
               <span className="text-[13px] font-normal leading-[14px] tracking-[-0.02em] align-middle text-white/50">
@@ -271,8 +271,8 @@ export default function SettingsMenu(props: SettingsMenuProps) {
         </div>
 
         {/* Custom Buy Amount Section */}
-        <div className="mb-6">
-          <div className="flex items-center mb-3">
+        <div className="mb-3">
+          <div className="flex items-center mb-3 ml-1">
             <span className="text-[13px] font-normal leading-[14px] tracking-[-0.02em] align-middle text-white/50">
               Custom Buy Amount
             </span>
@@ -306,7 +306,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
                       item.setter(['10', '20', '50', '100'][index]);
                     }
                   }}
-                  className="flex-1 bg-transparent text-white text-sm font-medium outline-none w-full"
+                  className="flex-1 bg-transparent text-white !text-[13px] font-medium outline-none w-full"
                   data-testid={`pulse-settings-buy-amount-${index + 1}`}
                 />
               </div>
@@ -315,8 +315,8 @@ export default function SettingsMenu(props: SettingsMenuProps) {
         </div>
 
         {/* Custom Sell Amount Section */}
-        <div className="mb-6">
-          <div className="flex items-center mb-3">
+        <div className="mb-3">
+          <div className="flex items-center mb-3 ml-1">
             <span className="text-[13px] font-normal leading-[14px] tracking-[-0.02em] align-middle text-white/50">
               Custom Sell Amount
             </span>
@@ -353,7 +353,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
                       item.setter(['10', '25', '50', '75'][index]);
                     }
                   }}
-                  className="flex-1 bg-transparent text-white text-sm font-medium outline-none w-full"
+                  className="flex-1 bg-transparent text-white !text-[13px] font-medium outline-none w-full"
                   data-testid={`pulse-settings-sell-percent-${index + 1}`}
                 />
                 <span className="text-white/50 text-sm ml-1">%</span>

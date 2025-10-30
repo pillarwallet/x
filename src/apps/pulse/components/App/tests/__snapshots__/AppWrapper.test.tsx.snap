@@ -11,7 +11,7 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
   }
 >
   <div
-    className="w-full max-w-[446px] md:px-0"
+    className="w-full max-w-[446px] p-1.5"
   >
     <p
       className="flex text-base font-normal text-white/[.5] w-full text-center mb-6"
