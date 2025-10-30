@@ -83,8 +83,8 @@ const EIP7702UpgradeDetails = ({
       <p className="text-xl text-white font-normal">Upgrade Details</p>
 
       {errorDetails && (
-        <div className="bg-red-500/10 border border-red-500 rounded-lg p-3">
-          <p className="text-red-500 text-sm">{errorDetails}</p>
+        <div className="bg-[#FF366C]/30 border border-[#FF366C] rounded-lg p-3">
+          <p className="text-white text-sm">{errorDetails}</p>
         </div>
       )}
 

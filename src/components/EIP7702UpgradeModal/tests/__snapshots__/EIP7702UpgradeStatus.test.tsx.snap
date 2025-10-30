@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EIP7702UpgradeStatus /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col items-center justify-center h-full"
+>
+  <div
+    data-testid="status-icon-upgrading"
+  >
+    Status Icon
+  </div>
+  <div
+    className="text-white font-normal text-[20px] mt-3"
+  >
+    Upgrade Pending
+  </div>
+  <button
+    data-testid="status-button-upgrading"
+    onClick={[MockFunction spy]}
+    type="button"
+  >
+    Status Button
+  </button>
+</div>
+`;
