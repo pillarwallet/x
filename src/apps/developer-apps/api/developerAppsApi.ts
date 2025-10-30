@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addMiddleware } from '../../../store';
+import { signPayloadForHeader } from '../../../services/requestSignature';
 import { isTestnet } from '../../../utils/blockchain';
 
 export interface DeveloperApp {
@@ -103,11 +104,29 @@ export const developerAppsApi = createApi({
       ApiResponse<DeveloperApp>,
       DeveloperAppCreateRequest
     >({
-      query: (body) => ({
-        url: '/',
-        method: 'POST',
-        body,
-      }),
+      async queryFn(arg, _api, _extra, baseQuery) {
+        try {
+          const signature = await signPayloadForHeader(arg);
+          const result = await baseQuery({
+            url: '/',
+            method: 'POST',
+            body: arg,
+            headers: { 'x-signature': signature },
+          });
+          
+          // Check for 401 unauthorized response
+          if ('error' in result && result.error && typeof result.error === 'object') {
+            const error = result.error as { status?: number; data?: unknown };
+            if (error.status === 401) {
+              alert('You are not authorized to perform this operation. Please ensure you are connected with the correct wallet.');
+            }
+          }
+          
+          return result as any;
+        } catch (error) {
+          return { error } as any;
+        }
+      },
       invalidatesTags: ['DeveloperApp'],
     }),
 
@@ -116,11 +135,29 @@ export const developerAppsApi = createApi({
       ApiResponse<DeveloperApp>,
       { appId: string; data: DeveloperAppUpdateRequest }
     >({
-      query: ({ appId, data }) => ({
-        url: `/${appId}`,
-        method: 'PUT',
-        body: data,
-      }),
+      async queryFn(arg, _api, _extra, baseQuery) {
+        try {
+          const signature = await signPayloadForHeader(arg.data);
+          const result = await baseQuery({
+            url: `/${arg.appId}`,
+            method: 'PUT',
+            body: arg.data,
+            headers: { 'x-signature': signature },
+          });
+          
+          // Check for 401 unauthorized response
+          if ('error' in result && result.error && typeof result.error === 'object') {
+            const error = result.error as { status?: number; data?: unknown };
+            if (error.status === 401) {
+              alert('You are not authorized to perform this operation. Please ensure you are connected with the correct wallet.');
+            }
+          }
+          
+          return result as any;
+        } catch (error) {
+          return { error } as any;
+        }
+      },
       invalidatesTags: (_result, _error, { appId }) => [
         { type: 'DeveloperApp', id: appId },
         'DeveloperApp',
@@ -132,11 +169,29 @@ export const developerAppsApi = createApi({
       ApiResponse<void>,
       { appId: string; data: DeveloperAppDeleteRequest }
     >({
-      query: ({ appId, data }) => ({
-        url: `/${appId}`,
-        method: 'DELETE',
-        body: data,
-      }),
+      async queryFn(arg, _api, _extra, baseQuery) {
+        try {
+          const signature = await signPayloadForHeader(arg.data);
+          const result = await baseQuery({
+            url: `/${arg.appId}`,
+            method: 'DELETE',
+            body: arg.data,
+            headers: { 'x-signature': signature },
+          });
+          
+          // Check for 401 unauthorized response
+          if ('error' in result && result.error && typeof result.error === 'object') {
+            const error = result.error as { status?: number; data?: unknown };
+            if (error.status === 401) {
+              alert('You are not authorized to perform this operation. Please ensure you are connected with the correct wallet.');
+            }
+          }
+          
+          return result as any;
+        } catch (error) {
+          return { error } as any;
+        }
+      },
       invalidatesTags: ['DeveloperApp'],
     }),
   }),

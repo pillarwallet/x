@@ -54,7 +54,17 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
         await createApp(data).unwrap();
         navigate('/developer-apps');
       } else if (existingApp) {
+        // For updates, exclude appId from the data to be signed
         const { appId, ownerEoaAddress, ...updateData } = prepareSubmitData(eoaAddress);
+        
+        console.log('📝 UPDATE - Data being sent for update:', {
+          appId: existingApp.appId,
+          data: {
+            ownerEoaAddress: eoaAddress,
+            ...updateData,
+          }
+        });
+        
         await updateApp({
           appId: existingApp.appId,
           data: {
@@ -66,6 +76,16 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
       }
     } catch (err: unknown) {
       console.error('Failed to save app:', err);
+      
+      // Check for MetaMask signature rejection
+      if (err && typeof err === 'object' && 'message' in err) {
+        const errorMessage = err.message as string;
+        if (errorMessage.includes('MetaMask') || errorMessage.includes('signature required')) {
+          alert('Please approve the signature request in MetaMask to save the app.');
+          return;
+        }
+      }
+      
       const errorMessage = err && typeof err === 'object' && 'data' in err
         ? (err.data as { error?: string })?.error || 'Failed to save app'
         : 'Failed to save app';
