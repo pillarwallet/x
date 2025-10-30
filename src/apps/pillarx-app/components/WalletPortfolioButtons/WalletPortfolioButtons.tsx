@@ -2,6 +2,9 @@ import { usePrivy } from '@privy-io/react-auth';
 import { RiArrowDownLine } from 'react-icons/ri';
 import { useAccount } from 'wagmi';
 
+// hooks
+import { useEIP7702Upgrade } from '../../../../hooks/useEIP7702Upgrade';
+
 // reducer
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
@@ -15,6 +18,7 @@ const WalletPortfolioButtons = () => {
   const dispatch = useAppDispatch();
   const { user } = usePrivy();
   const { isConnected } = useAccount();
+  const { isEligible, handleUpgradeClick } = useEIP7702Upgrade();
 
   // Check if Privy user is connected via WalletConnect using linkedAccounts
   const isPrivyConnectedViaWalletConnect = user?.linkedAccounts?.some(
@@ -42,6 +46,18 @@ const WalletPortfolioButtons = () => {
           <RiArrowDownLine size={16} color="white" />
         </div>
       </button>
+      {isEligible && (
+        <button
+          type="button"
+          className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+          onClick={handleUpgradeClick}
+        >
+          <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
+            <BodySmall>Upgrade</BodySmall>
+            <RiArrowDownLine size={16} color="white" className="rotate-180" />
+          </div>
+        </button>
+      )}
       {shouldShowWalletConnectDropdown && <WalletConnectDropdown />}
     </div>
   );
