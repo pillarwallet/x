@@ -130,6 +130,7 @@ const mockProps = {
   walletPortfolioData: mockWalletPortfolioData,
   onRefresh: vi.fn(),
   showTransactionStatus: vi.fn(),
+  selectedChainIdForSettlement: 10,
 };
 
 const renderWithProviders = (props = {}) => {
@@ -243,6 +244,7 @@ describe('<PreviewSell />', () => {
       expect(mockExecuteSell).toHaveBeenCalledWith(
         mockToken,
         '10.5',
+        10,
         undefined
       );
     });

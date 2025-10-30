@@ -103,7 +103,7 @@ describe('<HomeScreen />', () => {
     expect(screen.getByTestId('pulse-buy-toggle-button')).toBeInTheDocument();
     expect(screen.getByTestId('pulse-sell-toggle-button')).toBeInTheDocument();
     expect(screen.getByLabelText('Refresh')).toBeInTheDocument();
-    expect(screen.getByLabelText('Save')).toBeInTheDocument();
+    expect(screen.getByLabelText('Settings')).toBeInTheDocument();
 
     // Ensure preview components are not shown initially (no preview state)
     expect(screen.queryByText('No offer was found')).not.toBeInTheDocument();

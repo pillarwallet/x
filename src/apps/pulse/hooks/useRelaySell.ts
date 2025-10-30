@@ -47,6 +47,7 @@ interface SellParams {
   fromTokenAddress: string;
   fromChainId: number;
   fromTokenDecimals: number;
+  toChainId: number;
   slippage?: number;
 }
 
@@ -134,6 +135,7 @@ export default function useRelaySell() {
       fromTokenAddress,
       fromChainId,
       fromTokenDecimals,
+      toChainId,
       slippage = 0.03,
     }: SellParams): Promise<SellOffer | null> => {
       if (!isInitialized) {
@@ -141,7 +143,7 @@ export default function useRelaySell() {
         return null;
       }
 
-      const usdcAddress = getUSDCAddress(fromChainId);
+      const usdcAddress = getUSDCAddress(toChainId);
       if (!usdcAddress) {
         setError('Unable to get quote. Please try again.');
         return null;
@@ -178,7 +180,7 @@ export default function useRelaySell() {
           user: accountAddress,
           chainId: fromChainId,
           currency: normalizedFromTokenAddress,
-          toChainId: fromChainId,
+          toChainId,
           toCurrency: usdcAddress,
           amount: fromAmountInWei.toString(), // Use full amount - we'll take fee from USDC output
           tradeType: 'EXACT_INPUT' as const,
@@ -296,6 +298,7 @@ export default function useRelaySell() {
       sellOffer: SellOffer,
       token: SelectedToken,
       amount: string,
+      toChainId: number,
       userPortfolio?: Token[]
     ) => {
       const transactions = [];
@@ -331,7 +334,7 @@ export default function useRelaySell() {
       }
 
       // Get USDC address for the chain
-      const usdcAddress = getUSDCAddress(token.chainId);
+      const usdcAddress = getUSDCAddress(toChainId);
       if (!usdcAddress) {
         throw new Error('USDC address not found for chain');
       }
@@ -762,7 +765,7 @@ export default function useRelaySell() {
           to: usdcAddress,
           value: BigInt(0),
           data: feeTransferCalldata,
-          chainId: fromTokenChainId,
+          chainId: toChainId,
         };
 
         transactions.push({
@@ -796,6 +799,7 @@ export default function useRelaySell() {
   const executeSell = async (
     token: SelectedToken,
     amount: string,
+    toChainId: number,
     userPortfolio?: Token[]
   ): Promise<boolean | string> => {
     if (!isInitialized || !accountAddress || !walletAddress) {
@@ -820,6 +824,7 @@ export default function useRelaySell() {
         fromTokenAddress: token.address,
         fromChainId: token.chainId,
         fromTokenDecimals: token.decimals,
+        toChainId,
       });
 
       if (!sellOffer) {
@@ -833,6 +838,7 @@ export default function useRelaySell() {
         sellOffer,
         token,
         amount,
+        toChainId,
         userPortfolio
       );
 

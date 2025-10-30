@@ -193,8 +193,10 @@ exports[`<AppWrapper /> > renders correctly and matches snapshot 1`] = `
             }
           >
             <button
-              aria-label="Save"
+              aria-label="Settings"
               className="flex items-center justify-center rounded-[10px] w-9 h-[34px] content-center"
+              data-testid="pulse-settings-button"
+              onClick={[Function]}
               type="button"
             >
               <div

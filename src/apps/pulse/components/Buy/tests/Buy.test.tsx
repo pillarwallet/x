@@ -195,6 +195,11 @@ const mockProps = {
   walletPortfolioData: mockWalletPortfolioData,
   payingTokens: [mockPayingToken],
   portfolioTokens: mockPortfolioTokens,
+  maxStableCoinBalance: {
+    chainId: 1,
+    balance: 10050,
+  },
+  customBuyAmounts: ['10', '20', '50', '100', 'MAX'],
   setPreviewBuy: vi.fn(),
   setPayingTokens: vi.fn(),
   setExpressIntentResponse: vi.fn(),
@@ -394,7 +399,10 @@ describe('<Buy />', () => {
     });
 
     it('handles missing wallet portfolio data', () => {
-      renderWithProviders({ walletPortfolioData: undefined });
+      renderWithProviders({
+        walletPortfolioData: undefined,
+        portfolioTokens: [],
+      });
 
       expect(screen.getByText('$0.00')).toBeInTheDocument();
     });
@@ -570,6 +578,10 @@ describe('<Buy />', () => {
       renderWithProviders({
         walletPortfolioData: lowBalanceWalletData,
         portfolioTokens: lowBalancePortfolioTokens,
+        maxStableCoinBalance: {
+          chainId: 1,
+          balance: 1, // Less than $2
+        },
       });
 
       // The warning should appear immediately when the component mounts with low balance data
