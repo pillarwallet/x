@@ -32,15 +32,15 @@ import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
 import TransactionStatus from '../Transaction/TransactionStatus';
+import SettingsMenu from '../Settings/SettingsMenu';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
-// constants
-import { STABLE_CURRENCIES } from '../../constants/tokens';
-import SettingsMenu from '../Settings/SettingsMenu';
+// utils
+import { getStableCurrencyBalanceOnEachChain } from '../../utils/utils';
 
 // types
 type TransactionStatusState =
@@ -198,52 +198,17 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
   );
 
-  // Helper function to calculate stable currency balance
-  const getStableCurrencyBalanceOnEachChain = () => {
-    // get the list of chainIds from STABLE_CURRENCIES
-    const chainIds = Array.from(
-      new Set(STABLE_CURRENCIES.map((currency) => currency.chainId))
-    );
-
-    // create a map to hold the balance for each chainId
-    const balanceMap: { [chainId: number]: number } = {};
-    chainIds.forEach((chainId) => {
-      balanceMap[chainId] = 0;
-    });
-    // calculate the balance for each chainId
-    walletPortfolioData?.result.data.assets
-      ?.filter((asset) =>
-        asset.contracts_balances.some((contract) =>
-          STABLE_CURRENCIES.some(
-            (stable) =>
-              stable.address.toLowerCase() === contract.address.toLowerCase() &&
-              stable.chainId === Number(contract.chainId.split(':').at(-1))
-          )
-        )
-      )
-      .forEach((asset) => {
-        const stableContracts = asset.contracts_balances.filter((contract) =>
-          STABLE_CURRENCIES.some(
-            (stable) =>
-              stable.address.toLowerCase() === contract.address.toLowerCase() &&
-              stable.chainId === Number(contract.chainId.split(':').at(-1))
-          )
-        );
-        stableContracts.forEach((contract) => {
-          const chainId = Number(contract.chainId.split(':').at(-1));
-          balanceMap[chainId] += asset.price * contract.balance;
-        });
-      });
-
-    return balanceMap;
-  };
-
   useEffect(() => {
-    if (!portfolioTokens || portfolioTokens.length === 0) {
+    if (
+      !portfolioTokens ||
+      portfolioTokens.length === 0 ||
+      !walletPortfolioData
+    ) {
       console.warn('No wallet portfolio data');
       return;
     }
-    const stableBalance = getStableCurrencyBalanceOnEachChain();
+    const stableBalance =
+      getStableCurrencyBalanceOnEachChain(walletPortfolioData);
     const maxStableBalance = Math.max(...Object.values(stableBalance));
     const chainIdOfMaxStableBalance = Number(
       Object.keys(stableBalance).find(
