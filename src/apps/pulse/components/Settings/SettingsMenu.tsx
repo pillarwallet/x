@@ -74,7 +74,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
   // Handle refresh button click
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    // Simulate a refresh action - you can add actual refresh logic here
+    // TODO: Refresh logic goes here
     await new Promise((resolve) => {
       setTimeout(resolve, 1000);
     });
