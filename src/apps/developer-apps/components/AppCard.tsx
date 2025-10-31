@@ -5,9 +5,10 @@ interface AppCardProps {
   app: DeveloperApp;
   onEdit: (appId: string) => void;
   onDelete: (appId: string) => void;
+  onSendForReview: (appId: string) => void;
 }
 
-const AppCard: React.FC<AppCardProps> = ({ app, onEdit, onDelete }) => {
+const AppCard: React.FC<AppCardProps> = ({ app, onEdit, onDelete, onSendForReview }) => {
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -49,8 +50,21 @@ const AppCard: React.FC<AppCardProps> = ({ app, onEdit, onDelete }) => {
             app.isApproved ? 'text-green-400' : 'text-red-400'
           }`}
         >
-          {app.isApproved ? 'LIVE' : 'Unpublished'}
+          {app.isApproved ? 'LIVE' : 'Unpublished:'}
         </span>
+        {!app.isApproved && !app.isInReview && (
+          <button
+            onClick={() => onSendForReview(app.appId)}
+            className="text-xs text-purple-400 hover:text-purple-300 underline transition-colors"
+          >
+            Send for review?
+          </button>
+        )}
+        {app.isInReview && (
+          <span className="text-xs text-yellow-400 font-semibold">
+            (In Review)
+          </span>
+        )}
       </div>
 
       {/* Description */}

@@ -19,6 +19,7 @@ export interface DeveloperApp {
   socialFacebook?: string;
   socialTiktok?: string;
   isApproved: boolean;
+  isInReview: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -55,6 +56,7 @@ export interface DeveloperAppUpdateRequest {
   socialFacebook?: string;
   socialTiktok?: string;
   isApproved?: boolean; // Only privileged users can update this
+  isInReview?: boolean; // App owners can update this
 }
 
 export interface DeveloperAppDeleteRequest {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallets } from '@privy-io/react-auth';
-import { useGetAllDeveloperAppsQuery, useDeleteDeveloperAppMutation } from '../api/developerAppsApi';
+import { useGetAllDeveloperAppsQuery, useDeleteDeveloperAppMutation, useUpdateDeveloperAppMutation } from '../api/developerAppsApi';
 import AppCard from './AppCard';
 
 const AppsList: React.FC = () => {
@@ -11,6 +11,7 @@ const AppsList: React.FC = () => {
 
   const { data, isLoading, error } = useGetAllDeveloperAppsQuery({ eoaAddress });
   const [deleteApp, { isLoading: isDeleting }] = useDeleteDeveloperAppMutation();
+  const [updateApp] = useUpdateDeveloperAppMutation();
 
   const myApps = React.useMemo(() => {
     if (!data?.data || !eoaAddress) return [];
@@ -51,6 +52,29 @@ const AppsList: React.FC = () => {
 
   const handleCreateNew = () => {
     navigate('/developer-apps/create');
+  };
+
+  const handleSendForReview = async (appId: string) => {
+    if (!eoaAddress) {
+      alert('Wallet not connected');
+      return;
+    }
+
+    try {
+      await updateApp({
+        appId,
+        data: {
+          ownerEoaAddress: eoaAddress,
+          isInReview: true,
+        },
+      }).unwrap();
+    } catch (err: unknown) {
+      console.error('Failed to send app for review:', err);
+      const errorMessage = err && typeof err === 'object' && 'data' in err 
+        ? (err.data as { error?: string })?.error || 'Failed to send app for review'
+        : 'Failed to send app for review';
+      alert(errorMessage);
+    }
   };
 
   if (!eoaAddress) {
@@ -175,6 +199,7 @@ const AppsList: React.FC = () => {
             app={app}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onSendForReview={handleSendForReview}
           />
         ))}
       </div>
