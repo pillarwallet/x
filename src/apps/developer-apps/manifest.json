@@ -1,0 +1,43 @@
+{
+  "title": "Developer Hub",
+  "description": "Create and manage your PillarX applications. Register your apps, update details, and manage your developer portfolio.",
+  "support": {
+    "email": "developers@pillarproject.io",
+    "telegram": "https://t.me/pillarproject",
+    "x": "https://x.com/pillarproject"
+  },
+  "translations": {
+    "en": {
+      "title": "Developer Hub",
+      "description": "Manage your PillarX applications",
+      "myApps": "My Applications",
+      "createApp": "Create New App",
+      "editApp": "Edit Application",
+      "deleteApp": "Delete Application",
+      "noApps": "You haven't registered any apps yet",
+      "getStarted": "Get started by creating your first app",
+      "appName": "App Name",
+      "appId": "App ID",
+      "shortDescription": "Short Description",
+      "longDescription": "Long Description",
+      "tags": "Tags",
+      "supportEmail": "Support Email",
+      "launchUrl": "Launch URL",
+      "logo": "Logo",
+      "banner": "Banner",
+      "socialLinks": "Social Links",
+      "telegram": "Telegram",
+      "x": "X (Twitter)",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "loading": "Loading...",
+      "connectWallet": "Connect your wallet to manage apps"
+    }
+  }
+}
+

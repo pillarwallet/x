@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import {
@@ -11,9 +12,8 @@ import { ThemeProvider } from 'styled-components';
 import { createWalletClient, custom, http, WalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
+import { createConfig, useAccount, useConnect, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
-import * as Sentry from '@sentry/react';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -70,7 +70,7 @@ const AuthLayout = () => {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
   const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
-  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
+  const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
@@ -712,6 +712,18 @@ const AuthLayout = () => {
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}/*`,
         element: <App id={appId} />,
+      });
+    });
+
+    /**
+     * Add the external apps to the route definition.
+     * We need to load the allowed apps
+     */
+    const externalApps = allowed.filter((app) => app.type === 'app-external');
+    externalApps.forEach((app) => {
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${app.appId}`,
+        element: <App id={app.appId} />,
       });
     });
 
