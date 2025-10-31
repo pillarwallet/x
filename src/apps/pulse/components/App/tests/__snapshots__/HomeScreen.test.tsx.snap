@@ -2,13 +2,8 @@
 
 exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
 <div
-  className="flex flex-col items-center justify-center min-h-screen"
+  className="flex flex-col items-center justify-center min-h-screen bg-black"
   data-testid="pulse-home-view"
-  style={
-    {
-      "backgroundColor": "black",
-    }
-  }
 >
   <div
     className="w-full max-w-[446px] p-1.5"
@@ -19,26 +14,13 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
       You're trying out the beta version of Pulse: expect improvements ahead. Thank you.
     </p>
     <button
-      className="flex items-center justify-center w-full"
+      className="flex items-center justify-center w-full border-2 border-[#1E1D24] h-10 bg-[#121116] rounded-[10px]"
       data-testid="pulse-search-button-homescreen"
       onClick={[Function]}
-      style={
-        {
-          "backgroundColor": "#121116",
-          "border": "2px solid #1E1D24",
-          "borderRadius": 10,
-          "height": 40,
-        }
-      }
       type="button"
     >
       <span
-        style={
-          {
-            "marginLeft": 14,
-            "marginRight": 10,
-          }
-        }
+        className="ml-3.5 mr-2.5"
       >
         <img
           alt="search-icon"
@@ -48,58 +30,24 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
         />
       </span>
       <div
-        className="flex-1"
-        style={
-          {
-            "color": "grey",
-            "fontSize": 13,
-            "height": 20,
-            "opacity": 0.5,
-            "textAlign": "left",
-          }
-        }
+        className="flex-1 text-grey text-left opacity-50 h-5 text-[13px]"
       >
         Search by token or paste address
       </div>
     </button>
     <div
-      className="flex flex-col w-full"
-      style={
-        {
-          "backgroundColor": "#1E1D24",
-          "border": "2px solid #1E1D24",
-          "borderRadius": 16,
-          "marginTop": 40,
-          "minHeight": 264,
-        }
-      }
+      className="flex flex-col w-full border-2 border-[#1E1D24] min-h-[264px] bg-[#1E1D24] rounded-2xl mt-10"
     >
       <div
         className="flex justify-between"
       >
         <div
-          className="flex flex-1 max-w-[318px]"
-          style={
-            {
-              "backgroundColor": "black",
-              "borderRadius": 10,
-              "height": 40,
-              "marginLeft": 10,
-              "marginTop": 10,
-            }
-          }
+          className="flex flex-1 max-w-[318px] h-10 bg-black rounded-[10px] mt-2.5 ml-2.5"
         >
           <button
-            className="flex-1"
+            className="flex-1 rounded-[10px] m-1 bg-[#1E1D24]"
             data-testid="pulse-buy-toggle-button"
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "#1E1D24",
-                "borderRadius": 10,
-                "margin": 4,
-              }
-            }
             type="button"
           >
             <span
@@ -109,17 +57,9 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
             </span>
           </button>
           <button
-            className="flex-1 items-center justify-center"
+            className="flex-1 items-center justify-center rounded-[10px] m-1 bg-black text-grey"
             data-testid="pulse-sell-toggle-button"
             onClick={[Function]}
-            style={
-              {
-                "backgroundColor": "black",
-                "borderRadius": 10,
-                "color": "grey",
-                "margin": 4,
-              }
-            }
             type="button"
           >
             <span
@@ -133,32 +73,11 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
           className="flex mt-2.5 mr-2.5"
         >
           <div
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "black",
-                "borderRadius": 10,
-                "display": "flex",
-                "height": 40,
-                "justifyContent": "center",
-                "marginLeft": 12,
-                "padding": "2px 2px 4px 2px",
-                "width": 40,
-              }
-            }
+            className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]"
           >
             <div
+              className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
               data-testid="pulse-refresh-button-homescreen"
-              style={
-                {
-                  "backgroundColor": "#1E1D24",
-                  "borderRadius": 8,
-                  "display": "flex",
-                  "height": 34,
-                  "justifyContent": "center",
-                  "width": 36,
-                }
-              }
             >
               <button
                 aria-label="Refresh"
@@ -178,19 +97,7 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
             </div>
           </div>
           <div
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "black",
-                "borderRadius": 10,
-                "display": "flex",
-                "height": 40,
-                "justifyContent": "center",
-                "marginLeft": 12,
-                "padding": "2px 2px 4px 2px",
-                "width": 40,
-              }
-            }
+            className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]"
           >
             <button
               aria-label="Settings"

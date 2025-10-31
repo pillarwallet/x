@@ -965,20 +965,14 @@ export default function HomeScreen(props: HomeScreenProps) {
               improvements ahead. Thank you.
             </p>
             <button
-              className="flex items-center justify-center w-full"
-              style={{
-                border: '2px solid #1E1D24',
-                height: 40,
-                backgroundColor: '#121116',
-                borderRadius: 10,
-              }}
+              className="flex items-center justify-center w-full border-2 border-[#1E1D24] h-10 bg-[#121116] rounded-[10px]"
               onClick={() => {
                 setSearching(true);
               }}
               type="button"
               data-testid="pulse-search-button-homescreen"
             >
-              <span style={{ marginLeft: 14, marginRight: 10 }}>
+              <span className="ml-3.5 mr-2.5">
                 <img
                   src={SearchIcon}
                   alt="search-icon"
@@ -986,80 +980,29 @@ export default function HomeScreen(props: HomeScreenProps) {
                   height={12}
                 />
               </span>
-              <div
-                className="flex-1"
-                style={{
-                  color: 'grey',
-                  textAlign: 'left',
-                  opacity: 0.5,
-                  height: 20,
-                  fontSize: 13,
-                }}
-              >
+              <div className="flex-1 text-grey text-left opacity-50 h-5 text-[13px]">
                 Search by token or paste address
               </div>
             </button>
-            <div
-              className="flex flex-col w-full"
-              style={{
-                border: '2px solid #1E1D24',
-                minHeight: 264,
-                backgroundColor: '#1E1D24',
-                borderRadius: 16,
-                marginTop: 40,
-              }}
-            >
+            <div className="flex flex-col w-full border-2 border-[#1E1D24] min-h-[264px] bg-[#1E1D24] rounded-2xl mt-10">
               {/* buy/sell, refresh, settings */}
               <div className="flex justify-between">
-                <div
-                  className="flex flex-1 max-w-[318px]"
-                  style={{
-                    height: 40,
-                    backgroundColor: 'black',
-                    borderRadius: 10,
-                    marginTop: 10,
-                    marginLeft: 10,
-                  }}
-                >
+                <div className="flex flex-1 max-w-[318px] h-10 bg-black rounded-[10px] mt-2.5 ml-2.5">
                   <button
-                    className="flex-1"
+                    className={`flex-1 rounded-[10px] m-1 ${
+                      isBuy ? 'bg-[#1E1D24]' : 'bg-black text-grey'
+                    }`}
                     data-testid="pulse-buy-toggle-button"
-                    style={
-                      isBuy
-                        ? {
-                            backgroundColor: '#1E1D24',
-                            borderRadius: 10,
-                            margin: 4,
-                          }
-                        : {
-                            backgroundColor: 'black',
-                            borderRadius: 10,
-                            margin: 4,
-                            color: 'grey',
-                          }
-                    }
                     onClick={() => setIsBuy(true)}
                     type="button"
                   >
                     <span className="text-center font-medium text-sm">Buy</span>
                   </button>
                   <button
-                    className="flex-1 items-center justify-center"
+                    className={`flex-1 items-center justify-center rounded-[10px] m-1 ${
+                      !isBuy ? 'bg-[#1E1D24]' : 'bg-black text-grey'
+                    }`}
                     data-testid="pulse-sell-toggle-button"
-                    style={
-                      !isBuy
-                        ? {
-                            backgroundColor: '#1E1D24',
-                            borderRadius: 10,
-                            margin: 4,
-                          }
-                        : {
-                            backgroundColor: 'black',
-                            borderRadius: 10,
-                            margin: 4,
-                            color: 'grey',
-                          }
-                    }
                     onClick={() => setIsBuy(false)}
                     type="button"
                   >
@@ -1069,28 +1012,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                   </button>
                 </div>
                 <div className="flex mt-2.5 mr-2.5">
-                  <div
-                    style={{
-                      marginLeft: 12,
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      display: 'flex',
-                      padding: '2px 2px 4px 2px',
-                    }}
-                  >
+                  <div className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]">
                     <div
-                      style={{
-                        width: 36,
-                        height: 34,
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 8,
-                        display: 'flex',
-                        justifyContent: 'center',
-                      }}
+                      className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
                       data-testid="pulse-refresh-button-homescreen"
                     >
                       <Refresh
@@ -1101,19 +1025,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      marginLeft: 12,
-                      backgroundColor: 'black',
-                      borderRadius: 10,
-                      width: 40,
-                      height: 40,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      display: 'flex',
-                      padding: '2px 2px 4px 2px',
-                    }}
-                  >
+                  <div className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]">
                     <Settings onClick={() => setDisplaySettingsMenu(true)} />
                   </div>
                 </div>
@@ -1159,8 +1071,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen"
-      style={{ backgroundColor: 'black' }}
+      className="flex flex-col items-center justify-center min-h-screen bg-black"
       data-testid="pulse-home-view"
     >
       {renderPreview()}
