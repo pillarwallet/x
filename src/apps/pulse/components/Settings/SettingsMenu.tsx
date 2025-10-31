@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, SetStateAction, useState, useRef } from 'react';
 import EscIcon from '../../assets/esc-icon.svg';
 import Refresh from '../Misc/Refresh';
 import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
@@ -8,6 +8,8 @@ import {
   CompatibleChains,
 } from '../../../../utils/blockchain';
 import Tooltip from '../Misc/Tooltip';
+import { useClickOutside } from '../../hooks/useClickOutside';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 interface SettingsMenuProps {
   closeSettingsMenu: () => void;
@@ -39,6 +41,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
 
   const [showChainDropdown, setShowChainDropdown] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const chainDropdownRef = useRef<HTMLDivElement>(null);
 
   // Local state for buy amounts
   const [buyAmount1, setBuyAmount1] = useState(customBuyAmounts[0] || '10');
@@ -94,42 +97,22 @@ export default function SettingsMenu(props: SettingsMenuProps) {
   };
 
   // Handle ESC key to close settings
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (showChainDropdown) {
-          setShowChainDropdown(false);
-        } else {
-          closeSettingsMenu();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [closeSettingsMenu, showChainDropdown]);
-
-  // Handle click outside to close dropdown and tooltip
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+  useKeyboardNavigation({
+    onEscape: () => {
       if (showChainDropdown) {
-        const target = e.target as HTMLElement;
-        if (
-          !target.closest('[data-testid="pulse-settings-chain-selector"]') &&
-          !target.closest('.absolute')
-        ) {
-          setShowChainDropdown(false);
-        }
+        setShowChainDropdown(false);
+      } else {
+        closeSettingsMenu();
       }
-    };
+    },
+  });
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showChainDropdown]);
+  // Handle click outside to close dropdown
+  useClickOutside({
+    ref: chainDropdownRef,
+    callback: () => setShowChainDropdown(false),
+    condition: showChainDropdown,
+  });
 
   return (
     <div
@@ -189,7 +172,7 @@ export default function SettingsMenu(props: SettingsMenuProps) {
                 </div>
               </Tooltip>
             </div>
-            <div className="relative">
+            <div className="relative" ref={chainDropdownRef}>
               <button
                 type="button"
                 onClick={() => setShowChainDropdown(!showChainDropdown)}
