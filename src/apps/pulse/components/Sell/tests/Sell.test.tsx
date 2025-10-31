@@ -75,6 +75,13 @@ const mockProps = {
   setPreviewSell: vi.fn(),
   setSellOffer: vi.fn(),
   setTokenAmount: vi.fn(),
+  portfolioTokens: [],
+  maxStableCoinBalance: {
+    chainId: 1,
+    balance: 100,
+  },
+  customSellAmounts: ['10%', '25%', '50%', '75%'],
+  selectedChainIdForSettlement: 10,
 };
 
 const defaultMocks = () => {
@@ -167,7 +174,10 @@ describe('<Sell />', () => {
     });
 
     it('MAX button', () => {
-      renderWithProviders();
+      // Render with MAX button included in customSellAmounts
+      renderWithProviders({
+        customSellAmounts: ['10%', '25%', '50%', '75%', 'MAX'],
+      });
 
       const maxButton = screen.getByTestId('pulse-sell-percentage-button-max');
       fireEvent.click(maxButton);
@@ -195,7 +205,6 @@ describe('<Sell />', () => {
         'pulse-sell-percentage-button-25%',
         'pulse-sell-percentage-button-50%',
         'pulse-sell-percentage-button-75%',
-        'pulse-sell-percentage-button-max',
       ];
 
       buttons.forEach((testId) => {

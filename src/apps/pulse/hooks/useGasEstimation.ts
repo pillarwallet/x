@@ -15,6 +15,7 @@ interface UseGasEstimationProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
+  toChainId: number;
   isPaused?: boolean;
 }
 
@@ -22,6 +23,7 @@ export default function useGasEstimation({
   sellToken,
   sellOffer,
   tokenAmount,
+  toChainId,
   isPaused = false,
 }: UseGasEstimationProps) {
   const [isEstimatingGas, setIsEstimatingGas] = useState(false);
@@ -57,6 +59,7 @@ export default function useGasEstimation({
         sellOffer,
         sellToken,
         tokenAmount,
+        toChainId,
         undefined
       );
 
@@ -138,7 +141,15 @@ export default function useGasEstimation({
       isEstimatingRef.current = false;
       setIsEstimatingGas(false);
     }
-  }, [sellToken, kit, sellOffer, tokenAmount, buildSellTransactions, isPaused]);
+  }, [
+    sellToken,
+    kit,
+    sellOffer,
+    tokenAmount,
+    buildSellTransactions,
+    isPaused,
+    toChainId,
+  ]);
 
   // Store the latest function in ref to avoid infinite loops
   estimateGasFeesRef.current = estimateGasFees;

@@ -200,21 +200,6 @@ exports[`<Sell /> > renders correctly and matches snapshot 1`] = `
           </span>
         </button>
       </div>
-      <div
-        class="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
-      >
-        <button
-          class="flex-1 items-center justify-center rounded-[10px] bg-[#121116] text-white cursor-pointer"
-          data-testid="pulse-sell-percentage-button-max"
-          type="button"
-        >
-          <span
-            class="font-normal text-center opacity-50 text-sm"
-          >
-            MAX
-          </span>
-        </button>
-      </div>
     </div>
     <div
       class="flex w-auto h-[50px] rounded-[10px] bg-black p-[2px_2px_6px_2px] m-2.5"

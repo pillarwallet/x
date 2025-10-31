@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import EscIcon from '../../assets/esc-icon.svg';
 
 interface EscProps {
   onClose: () => void;
@@ -22,15 +23,13 @@ export default function Esc(props: EscProps) {
 
   return (
     <button
-      className="flex items-center justify-center w-[18px] h-[18px] bg-[#1E1D24] rounded-[8px]"
       onClick={onClose}
       type="button"
-      aria-label="Close"
+      className="flex items-center justify-center"
       data-testid="esc-button"
+      aria-label="Close"
     >
-      <p className="text-white/50 font-medium text-[13px] leading-[100%] tracking-[-0.02em] text-center">
-        ESC
-      </p>
+      <img src={EscIcon} alt="ESC" className="w-9 h-[34px]" />
     </button>
   );
 }

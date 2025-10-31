@@ -382,6 +382,7 @@ describe('useRelaySell', () => {
       fromTokenAddress: mockSelectedToken.address,
       fromChainId: mockSelectedToken.chainId,
       fromTokenDecimals: mockSelectedToken.decimals,
+      toChainId: 1,
     });
 
     expect(sellOffer).toBe(null);
@@ -436,8 +437,9 @@ describe('useRelaySell', () => {
     const sellOffer = await result.current.getBestSellOffer({
       fromAmount: '1.0',
       fromTokenAddress: mockSelectedToken.address,
-      fromChainId: 999, // Unsupported chain
+      fromChainId: mockSelectedToken.chainId,
       fromTokenDecimals: mockSelectedToken.decimals,
+      toChainId: 999, // Unsupported settlement chain
     });
 
     expect(sellOffer).toBe(null);
@@ -507,6 +509,7 @@ describe('useRelaySell', () => {
       fromTokenAddress: mockSelectedToken.address,
       fromChainId: mockSelectedToken.chainId,
       fromTokenDecimals: mockSelectedToken.decimals,
+      toChainId: 1,
     });
 
     expect(sellOffer).toEqual({
@@ -578,6 +581,7 @@ describe('useRelaySell', () => {
       fromTokenAddress: mockSelectedToken.address,
       fromChainId: mockSelectedToken.chainId,
       fromTokenDecimals: mockSelectedToken.decimals,
+      toChainId: 1,
     });
 
     expect(sellOffer).toBe(null);
