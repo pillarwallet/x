@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import { Asset } from '../types';
 
@@ -25,8 +25,8 @@ const SearchAssets = ({ assets, onFilteredAssetsChange }: SearchAssetsProps) => 
     return new Fuse(assets, options);
   }, [assets]);
 
-  // Filter assets based on search query
-  useMemo(() => {
+  // Filter assets based on search query - use useEffect for side effects
+  useEffect(() => {
     if (!searchQuery.trim()) {
       onFilteredAssetsChange(assets);
     } else {

@@ -1,0 +1,137 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<SendAssetModal /> > renders correctly and matches snapshot 1`] = `
+<div
+  className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+>
+  <div
+    className="w-full max-w-md bg-gradient-to-b from-[#1a1a2e] to-[#16213e] rounded-2xl shadow-2xl border border-white/10 max-h-[90vh] overflow-y-auto"
+  >
+    <div
+      className="flex items-center justify-between p-6 border-b border-white/10"
+    >
+      <h2
+        className="text-2xl font-bold text-white"
+      >
+        Send Asset
+      </h2>
+      <button
+        className="text-white/60 hover:text-white transition-colors text-2xl"
+        onClick={[MockFunction spy]}
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+    <div
+      className="p-6 space-y-6"
+    >
+      <div
+        className="bg-white/5 rounded-xl p-4"
+      >
+        <div
+          className="flex items-center gap-4"
+        >
+          <img
+            alt="ETH"
+            className="w-12 h-12 rounded-full object-cover"
+            onError={[Function]}
+            src="/src/apps/key-wallet/images/logo-unknown.png"
+          />
+          <div
+            className="flex-1"
+          >
+            <h3
+              className="text-lg font-semibold text-white"
+            >
+              ETH
+            </h3>
+            <p
+              className="text-sm text-white/60"
+            >
+              Ethereum
+            </p>
+          </div>
+          <div
+            className="text-right"
+          >
+            <p
+              className="text-sm text-white/60"
+            >
+              Balance
+            </p>
+            <p
+              className="text-base font-semibold text-white"
+            >
+              2.5000
+            </p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label
+          className="block text-sm font-medium text-white/80 mb-2"
+        >
+          Recipient Address
+        </label>
+        <input
+          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple_medium transition-colors"
+          disabled={false}
+          onChange={[Function]}
+          placeholder="0x..."
+          type="text"
+          value=""
+        />
+      </div>
+      <div>
+        <label
+          className="block text-sm font-medium text-white/80 mb-2"
+        >
+          Amount
+        </label>
+        <div
+          className="relative"
+        >
+          <input
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple_medium transition-colors pr-20"
+            disabled={false}
+            onChange={[Function]}
+            placeholder="0.0"
+            step="any"
+            type="number"
+            value=""
+          />
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple_medium hover:bg-purple_light rounded-lg text-xs font-medium transition-colors"
+            disabled={false}
+            onClick={[Function]}
+            type="button"
+          >
+            MAX
+          </button>
+        </div>
+      </div>
+      <div
+        className="flex gap-3"
+      >
+        <button
+          className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white font-medium transition-colors"
+          disabled={false}
+          onClick={[MockFunction spy]}
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_light rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={false}
+          onClick={[Function]}
+          type="button"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
