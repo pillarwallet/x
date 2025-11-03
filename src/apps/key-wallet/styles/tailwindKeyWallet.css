@@ -47,7 +47,7 @@ input:where(:not([type])) {
 [multiple]:focus,
 textarea:focus,
 select:focus {
-  --tw-ring-color: '#8A77FF';
-  border-color: '#8A77FF';
+  --tw-ring-color: #8A77FF;
+  border-color: #8A77FF;
 }
 

@@ -3,7 +3,6 @@
 module.exports = {
   content: [
     './src/apps/key-wallet/**/**/*.{js,ts,jsx,tsx,html,mdx}',
-    './src/apps/key-wallet/**/*.{js,ts,jsx,tsx,html,mdx}',
   ],
   darkMode: 'class',
   theme: {

@@ -1,4 +1,4 @@
-import { createWalletClient, custom, encodeFunctionData, parseUnits } from 'viem';
+import { createWalletClient, createPublicClient, custom, encodeFunctionData, parseUnits, http, isAddress } from 'viem';
 import { erc20Abi } from 'viem';
 import {
   arbitrum,
@@ -22,7 +22,13 @@ export const chains = allChains.filter(
 );
 
 export const getChainById = (chainId: number) => {
-  return chains.find((chain) => chain.id === chainId) || mainnet;
+  const chain = chains.find((chain) => chain.id === chainId);
+
+  if (!chain) {
+    throw new Error(`Unsupported chain ID: ${chainId}`);
+  }
+
+  return chain;
 };
 
 export const isNativeAsset = (contractAddress: string): boolean => {
@@ -112,6 +118,32 @@ export const sendTransaction = async (
   amount: string,
   walletProvider: any
 ): Promise<string> => {
+  // Validate recipient address
+  if (!isAddress(recipient)) {
+    throw new Error('Invalid recipient address');
+  }
+
+  // Validate and parse amount
+  let amountInWei: bigint;
+  try {
+    amountInWei = parseUnits(amount, asset.decimals);
+  } catch (error) {
+    throw new Error('Amount must be a positive number');
+  }
+
+  // Ensure amount is positive
+  if (amountInWei <= BigInt(0)) {
+    throw new Error('Amount must be a positive number');
+  }
+
+  // Convert asset balance to wei for comparison
+  const balanceInWei = parseUnits(asset.balance.toString(), asset.decimals);
+  
+  // Ensure amount doesn't exceed balance
+  if (amountInWei > balanceInWei) {
+    throw new Error('Insufficient balance');
+  }
+
   const chain = getChainById(asset.chainId);
 
   const walletClient = createWalletClient({
@@ -126,31 +158,65 @@ export const sendTransaction = async (
     throw new Error('No account found');
   }
 
+  // Create public client for gas estimation
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
   // Check if native asset
   if (isNativeAsset(asset.contract)) {
     // Send native token
-    const value = parseUnits(amount, asset.decimals);
-    const txHash = await walletClient.sendTransaction({
+    const baseTransactionRequest = {
       account,
       to: recipient as `0x${string}`,
-      value,
-      data: '0x',
+      value: amountInWei,
+      data: '0x' as `0x${string}`,
+    };
+
+    // Estimate gas before sending
+    let gasEstimate: bigint;
+    try {
+      gasEstimate = await publicClient.estimateGas(baseTransactionRequest);
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error';
+      console.error('Gas estimation failed:', error);
+      throw new Error(`Gas estimation failed: ${errorMessage}`);
+    }
+
+    const txHash = await walletClient.sendTransaction({
+      ...baseTransactionRequest,
+      gas: gasEstimate,
     });
     return txHash;
   } else {
     // Send ERC-20 token
-    const amountInWei = parseUnits(amount, asset.decimals);
     const calldata = encodeFunctionData({
       abi: erc20Abi,
       functionName: 'transfer',
       args: [recipient as `0x${string}`, amountInWei],
     });
 
-    const txHash = await walletClient.sendTransaction({
+    const baseTransactionRequest = {
       account,
       to: asset.contract as `0x${string}`,
       value: BigInt(0),
       data: calldata,
+    };
+
+    // Estimate gas before sending
+    let gasEstimate: bigint;
+    try {
+      gasEstimate = await publicClient.estimateGas(baseTransactionRequest);
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error';
+      console.error('Gas estimation failed:', error);
+      throw new Error(`Gas estimation failed: ${errorMessage}`);
+    }
+
+    const txHash = await walletClient.sendTransaction({
+      ...baseTransactionRequest,
+      gas: gasEstimate,
     });
     return txHash;
   }

@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { createPublicClient, http } from 'viem';
 import { useWallets } from '@privy-io/react-auth';
 
 // Styles
@@ -18,6 +19,7 @@ import TransactionStatus from './components/TransactionStatus';
 
 // Utils
 import { transformPortfolioToAssets, getTotalPortfolioValue } from './utils/portfolio';
+import { getChainById } from './utils/blockchain';
 
 // Types
 import { Asset, TransactionStatus as TxStatus } from './types';
@@ -35,6 +37,19 @@ const App = () => {
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [transactions, setTransactions] = useState<TxStatus[]>([]);
   const [walletProvider, setWalletProvider] = useState<any>(null);
+
+  const isMountedRef = useRef(true);
+  const refetchTimeoutRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (refetchTimeoutRef.current) {
+        clearTimeout(refetchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Get Ethereum provider from Privy wallet
   useEffect(() => {
@@ -96,18 +111,49 @@ const App = () => {
     setTransactions((prev) => [newTransaction, ...prev]);
 
     // Refetch portfolio after a delay to show updated balance
-    setTimeout(() => {
+    if (refetchTimeoutRef.current) {
+      clearTimeout(refetchTimeoutRef.current);
+    }
+    refetchTimeoutRef.current = window.setTimeout(() => {
+      if (!isMountedRef.current) return;
       refetchPortfolio();
     }, 3000);
 
-    // Update transaction status after some time (simulated)
-    setTimeout(() => {
-      setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.hash === txHash ? { ...tx, status: 'success' as const } : tx
-        )
-      );
-    }, 10000);
+    // Wait for real on-chain receipt and update status accordingly
+    const chain = getChainById(chainId);
+    const publicClient = createPublicClient({ chain, transport: http() });
+
+    (async () => {
+      try {
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash: txHash as `0x${string}`,
+          timeout: 60000,
+        });
+        if (!isMountedRef.current) return;
+        const succeeded = receipt.status === 'success';
+        setTransactions((prev) =>
+          prev.map((tx) =>
+            tx.hash === txHash ? { ...tx, status: (succeeded ? 'success' : 'failed') } : tx
+          )
+        );
+      } catch (error: any) {
+        if (!isMountedRef.current) return;
+        const name = (error?.name || '').toString().toLowerCase();
+        const message = (error?.message || '').toString().toLowerCase();
+        // If wait times out, leave as pending (user can retry/check later)
+        if (name.includes('timeout') || message.includes('timeout')) {
+          console.warn('waitForTransactionReceipt timed out for', txHash, error);
+          return;
+        }
+        console.error('Error while waiting for transaction receipt', txHash, error);
+        // Mark as failed on explicit errors
+        setTransactions((prev) =>
+          prev.map((tx) =>
+            tx.hash === txHash ? { ...tx, status: 'failed' } : tx
+          )
+        );
+      }
+    })();
   };
 
   // Handle clear transaction
