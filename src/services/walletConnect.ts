@@ -42,8 +42,8 @@ import {
 } from '../utils/walletConnect';
 
 // utils
+import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { useComprehensiveLogout } from '../utils/logout';
-import { mainnet } from 'viem/chains';
 
 // Helper function to capture Sentry events with context
 const captureWithContext = (
@@ -1131,18 +1131,20 @@ export const useWalletConnect = () => {
             });
 
             const publicClient = createPublicClient({
-              chain: mainnet,
-              transport: http()
+              chain: getNetworkViem(chainIdNumber),
+              transport: http(),
             });
 
-            const valid = await publicClient.verifyMessage({ 
+            const valid = await publicClient.verifyMessage({
               address: account.address,
               message: { raw: message as `0x${string}` },
               signature: requestResponse as `0x${string}`,
             });
 
-            // For debugging - remove as needed
-            console.log('Signature valid:', valid);
+            if (!valid) {
+              // eslint-disable-next-line no-console
+              console.error('Signature verification failed');
+            }
           } else {
             // In modular mode, use SDK
             const eSdk = await kit.getSdk(chainIdNumber);
@@ -1327,7 +1329,8 @@ export const useWalletConnect = () => {
   const handleUnknownEvent = useCallback((error: any) => {
     // Silently handle WalletConnect Relay errors for unknown payloads
     // These are often from expired sessions or incompatible dApps
-    console.debug('WalletConnect unknown event/error:', error);
+    // eslint-disable-next-line no-console
+    console.error('WalletConnect unknown event/error:', error);
   }, []);
 
   useEffect(() => {
@@ -1338,7 +1341,7 @@ export const useWalletConnect = () => {
     walletKit.on('session_request', onSessionRequest);
     walletKit.on('proposal_expire', hideModal);
     walletKit.on('session_request_expire', onSessionRequestExpires);
-    
+
     // Catch any unknown/error events from WalletConnect Core
     if ((walletKit as any).core) {
       (walletKit as any).core.relayer.on('relayer_error', handleUnknownEvent);
@@ -1356,9 +1359,12 @@ export const useWalletConnect = () => {
       walletKit.off('session_request', onSessionRequest);
       walletKit.off('proposal_expire', hideModal);
       walletKit.off('session_request_expire', onSessionRequestExpires);
-      
+
       if ((walletKit as any).core) {
-        (walletKit as any).core.relayer.off('relayer_error', handleUnknownEvent);
+        (walletKit as any).core.relayer.off(
+          'relayer_error',
+          handleUnknownEvent
+        );
       }
     };
   }, [
