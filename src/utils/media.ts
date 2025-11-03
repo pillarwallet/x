@@ -24,10 +24,6 @@ export const useMediaQuery = (query: string): boolean => {
     };
     setMatches(mediaQuery.matches);
     mediaQuery.addEventListener('change', handler);
-    const cleanup = () => {
-      mediaQuery.removeEventListener('change', handler);
-    };
-    return cleanup;
   }, [query]);
 
   return matches;
