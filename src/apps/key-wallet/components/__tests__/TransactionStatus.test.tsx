@@ -1,14 +1,28 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import TransactionStatus from '../TransactionStatus';
 import { TransactionStatus as TxStatus } from '../../types';
+
+// Fixed timestamp for consistent test results
+const FIXED_TIMESTAMP = new Date('2023-01-01T12:00:00Z').getTime();
+// Fixed date string to match what toLocaleString() will return (mocked to this value)
+// Using a standard format that matches most locales: "1/1/2023, 12:00:00 PM"
+const FIXED_DATE_STRING = '1/1/2023, 12:00:00 PM';
 
 describe('<TransactionStatus />', () => {
   const mockOnClear = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock Date.now() to return fixed timestamp
+    vi.spyOn(Date, 'now').mockReturnValue(FIXED_TIMESTAMP);
+    // Mock toLocaleString to return fixed string for consistency across locales
+    vi.spyOn(Date.prototype, 'toLocaleString').mockReturnValue(FIXED_DATE_STRING);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('returns null when no transactions', () => {
@@ -24,7 +38,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'pending',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
     const tree = renderer
@@ -39,7 +53,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'pending',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -55,7 +69,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'success',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -71,7 +85,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'failed',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -87,7 +101,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'pending',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -98,19 +112,18 @@ describe('<TransactionStatus />', () => {
   });
 
   it('displays timestamp', () => {
-    const timestamp = Date.now();
     const transactions: TxStatus[] = [
       {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'pending',
-        timestamp,
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
     render(<TransactionStatus transactions={transactions} onClear={mockOnClear} />);
 
-    expect(screen.getByText(new Date(timestamp).toLocaleString())).toBeInTheDocument();
+    expect(screen.getByText(FIXED_DATE_STRING)).toBeInTheDocument();
   });
 
   it('displays block explorer link for Ethereum', () => {
@@ -119,7 +132,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 1,
         status: 'success',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -138,7 +151,7 @@ describe('<TransactionStatus />', () => {
         hash: '0x1234567890123456789012345678901234567890123456789012345678901234',
         chainId: 137,
         status: 'success',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -157,7 +170,7 @@ describe('<TransactionStatus />', () => {
         hash: '0xtxhash',
         chainId: 1,
         status: 'pending',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 
@@ -176,13 +189,13 @@ describe('<TransactionStatus />', () => {
         hash: '0xhash1',
         chainId: 1,
         status: 'success',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
       {
         hash: '0xhash2',
         chainId: 137,
         status: 'pending',
-        timestamp: Date.now(),
+        timestamp: FIXED_TIMESTAMP,
       },
     ];
 

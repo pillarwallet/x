@@ -43,7 +43,7 @@ exports[`<TransactionStatus /> > renders correctly and matches snapshot 1`] = `
           <p
             className="text-xs text-white/40 mt-1"
           >
-            11/3/2025, 11:35:21 PM
+            1/1/2023, 12:00:00 PM
           </p>
         </div>
         <div
