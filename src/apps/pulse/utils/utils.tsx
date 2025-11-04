@@ -245,7 +245,9 @@ export const getStableCurrencyBalanceOnEachChain = (
       );
       stableContracts.forEach((contract) => {
         const chainId = Number(contract.chainId.split(':').at(-1));
-        balanceMap[chainId] += asset.price * contract.balance;
+        const price = asset.price ?? 0;
+        const balance = contract.balance ?? 0;
+        balanceMap[chainId] += price * balance;
       });
     });
 
