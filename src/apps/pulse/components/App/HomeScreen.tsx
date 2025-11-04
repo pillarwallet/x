@@ -199,7 +199,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   );
 
   useEffect(() => {
-    if (!walletPortfolioData || !portfolioTokens || portfolioTokens.length === 0) {
+    if (
+      !walletPortfolioData ||
+      !portfolioTokens ||
+      portfolioTokens.length === 0
+    ) {
       return;
     }
     const stableBalance =
