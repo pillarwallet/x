@@ -199,12 +199,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   );
 
   useEffect(() => {
-    if (
-      !portfolioTokens ||
-      portfolioTokens.length === 0 ||
-      !walletPortfolioData
-    ) {
-      console.warn('No wallet portfolio data');
+    if (!walletPortfolioData || !portfolioTokens || portfolioTokens.length === 0) {
       return;
     }
     const stableBalance =
@@ -219,8 +214,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       chainId: chainIdOfMaxStableBalance,
       balance: maxStableBalance,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [portfolioTokens]);
+  }, [portfolioTokens, walletPortfolioData]);
 
   // Sync selectedChainId with maxStableCoinBalance.chainId
   useEffect(() => {
