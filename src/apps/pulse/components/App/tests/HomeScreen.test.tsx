@@ -103,7 +103,7 @@ describe('<HomeScreen />', () => {
     expect(screen.getByTestId('pulse-buy-toggle-button')).toBeInTheDocument();
     expect(screen.getByTestId('pulse-sell-toggle-button')).toBeInTheDocument();
     expect(screen.getByLabelText('Refresh')).toBeInTheDocument();
-    expect(screen.getByLabelText('Save')).toBeInTheDocument();
+    expect(screen.getByLabelText('Settings')).toBeInTheDocument();
 
     // Ensure preview components are not shown initially (no preview state)
     expect(screen.queryByText('No offer was found')).not.toBeInTheDocument();
@@ -118,14 +118,16 @@ describe('<HomeScreen />', () => {
       screen.queryByTestId('pulse-sell-component')
     ).not.toBeInTheDocument();
 
-    // Check button styles for Buy state
-    expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveStyle({
-      backgroundColor: 'rgb(30, 29, 36)', // #1E1D24
-    });
-    expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveStyle({
-      backgroundColor: 'black',
-      color: 'grey',
-    });
+    // Check button classes for Buy state
+    expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveClass(
+      'bg-[#1E1D24]'
+    );
+    expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveClass(
+      'bg-black'
+    );
+    expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveClass(
+      'text-grey'
+    );
 
     // Switch to Sell state
     rerender(
@@ -142,14 +144,16 @@ describe('<HomeScreen />', () => {
     expect(screen.getByTestId('pulse-sell-component')).toBeInTheDocument();
     expect(screen.queryByTestId('pulse-buy-component')).not.toBeInTheDocument();
 
-    // Check button styles for Sell state
-    expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveStyle({
-      backgroundColor: 'black',
-      color: 'grey',
-    });
-    expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveStyle({
-      backgroundColor: 'rgb(30, 29, 36)', // #1E1D24
-    });
+    // Check button classes for Sell state
+    expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveClass(
+      'bg-black'
+    );
+    expect(screen.getByTestId('pulse-buy-toggle-button')).toHaveClass(
+      'text-grey'
+    );
+    expect(screen.getByTestId('pulse-sell-toggle-button')).toHaveClass(
+      'bg-[#1E1D24]'
+    );
   });
 
   it('renders Buy component with correct props when isBuy is true', () => {

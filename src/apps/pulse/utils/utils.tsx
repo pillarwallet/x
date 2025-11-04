@@ -7,6 +7,7 @@ import {
   STATUS_COLORS,
   STATUS_CONFIG,
 } from '../constants/constants';
+import { STABLE_CURRENCIES } from '../constants/tokens';
 
 // types
 import {
@@ -14,6 +15,7 @@ import {
   TransactionStatusState,
   TransactionStep,
 } from '../types/types';
+import { WalletPortfolioMobulaResponse } from '../../../types/api';
 
 /**
  * Truncates a hash string to show first 6 and last 4 characters
@@ -206,4 +208,48 @@ export const canCloseTransaction = (
   status: TransactionStatusState
 ): boolean => {
   return status === 'Transaction Complete' || status === 'Transaction Failed';
+};
+
+// Helper function to calculate stable currency balance
+export const getStableCurrencyBalanceOnEachChain = (
+  walletPortfolioData: WalletPortfolioMobulaResponse
+): { [chainId: number]: number } => {
+  // get the list of chainIds from STABLE_CURRENCIES
+  const chainIds = Array.from(
+    new Set(STABLE_CURRENCIES.map((currency) => currency.chainId))
+  );
+
+  // create a map to hold the balance for each chainId
+  const balanceMap: { [chainId: number]: number } = {};
+  chainIds.forEach((chainId) => {
+    balanceMap[chainId] = 0;
+  });
+  // calculate the balance for each chainId
+  walletPortfolioData?.result.data.assets
+    ?.filter((asset) =>
+      asset.contracts_balances.some((contract) =>
+        STABLE_CURRENCIES.some(
+          (stable) =>
+            stable.address.toLowerCase() === contract.address.toLowerCase() &&
+            stable.chainId === Number(contract.chainId.split(':').at(-1))
+        )
+      )
+    )
+    .forEach((asset) => {
+      const stableContracts = asset.contracts_balances.filter((contract) =>
+        STABLE_CURRENCIES.some(
+          (stable) =>
+            stable.address.toLowerCase() === contract.address.toLowerCase() &&
+            stable.chainId === Number(contract.chainId.split(':').at(-1))
+        )
+      );
+      stableContracts.forEach((contract) => {
+        const chainId = Number(contract.chainId.split(':').at(-1));
+        const price = asset.price ?? 0;
+        const balance = contract.balance ?? 0;
+        balanceMap[chainId] += price * balance;
+      });
+    });
+
+  return balanceMap;
 };

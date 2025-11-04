@@ -46,6 +46,8 @@ interface SellProps {
   setTokenAmount: Dispatch<SetStateAction<string>>;
   isRefreshing?: boolean;
   portfolioTokens: PortfolioToken[];
+  customSellAmounts: string[];
+  selectedChainIdForSettlement: number;
 }
 
 const Sell = (props: SellProps) => {
@@ -58,6 +60,8 @@ const Sell = (props: SellProps) => {
     setTokenAmount: setParentTokenAmount,
     isRefreshing = false,
     portfolioTokens = [],
+    customSellAmounts,
+    selectedChainIdForSettlement,
   } = props;
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [debouncedTokenAmount, setDebouncedTokenAmount] = useState<string>('');
@@ -87,6 +91,7 @@ const Sell = (props: SellProps) => {
           fromTokenAddress: token.address,
           fromChainId: token.chainId,
           fromTokenDecimals: token.decimals,
+          toChainId: selectedChainIdForSettlement,
         });
         setLocalSellOffer(offer);
       } catch (error) {
@@ -442,7 +447,7 @@ const Sell = (props: SellProps) => {
 
       {/* amounts */}
       <div className="flex w-full" data-testid="pulse-sell-percentage-buttons">
-        {['10%', '25%', '50%', '75%', 'MAX'].map((item) => {
+        {customSellAmounts.map((item) => {
           const isMax = item === 'MAX';
           const percentage = isMax ? 100 : parseInt(item);
           const isDisabled = !token;

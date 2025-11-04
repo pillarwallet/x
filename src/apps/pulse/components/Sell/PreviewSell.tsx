@@ -36,6 +36,7 @@ interface PreviewSellProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
+  selectedChainIdForSettlement: number;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
   setSellFlowPaused?: (paused: boolean) => void;
 }
@@ -47,6 +48,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellToken,
     sellOffer,
     tokenAmount,
+    selectedChainIdForSettlement,
     onSellOfferUpdate,
     setSellFlowPaused,
   } = props;
@@ -79,6 +81,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     isPaused: isWaitingForSignature || isExecuting,
+    toChainId: selectedChainIdForSettlement,
   });
 
   useEffect(() => {
@@ -210,7 +213,7 @@ const PreviewSell = (props: PreviewSellProps) => {
   //   }
   // };
 
-  const usdcAddress = getUSDCAddress(sellToken?.chainId || 0);
+  const usdcAddress = getUSDCAddress(selectedChainIdForSettlement || 0);
 
   // Clean up pulse-sell batch when component unmounts or preview closes
   useEffect(() => {
@@ -246,6 +249,7 @@ const PreviewSell = (props: PreviewSellProps) => {
           fromTokenAddress: sellToken.address,
           fromChainId: sellToken.chainId,
           fromTokenDecimals: sellToken.decimals,
+          toChainId: selectedChainIdForSettlement,
         });
         onSellOfferUpdate(newOffer);
       }
@@ -362,7 +366,12 @@ const PreviewSell = (props: PreviewSellProps) => {
 
     try {
       // First, prepare the batch using the existing executeSell logic (without showing batch modal)
-      const result = await executeSell(sellToken, tokenAmount, undefined);
+      const result = await executeSell(
+        sellToken,
+        tokenAmount,
+        selectedChainIdForSettlement,
+        undefined
+      );
 
       if (result) {
         // If executeSell succeeded, it means the batch was prepared
@@ -583,7 +592,7 @@ const PreviewSell = (props: PreviewSellProps) => {
 
       <div
         className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
-        data-testid={`pulse-preview-sell-receiving-token-${sellToken?.chainId}-usdc`}
+        data-testid={`pulse-preview-sell-receiving-token-${selectedChainIdForSettlement}-usdc`}
       >
         <div className="flex items-center">
           <div
@@ -592,7 +601,7 @@ const PreviewSell = (props: PreviewSellProps) => {
           >
             <img src={UsdcLogo} alt="USDC" className="w-8 h-8 rounded-full" />
             <img
-              src={getLogoForChainId(sellToken?.chainId)}
+              src={getLogoForChainId(selectedChainIdForSettlement)}
               className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"
               alt="Chain logo"
             />
