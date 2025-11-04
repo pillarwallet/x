@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { useRef } from 'react';
 
 // types
@@ -5,9 +6,6 @@ import { UpgradeStatus } from './types';
 
 // components
 import EIP7702UpgradeProgressStep from './EIP7702UpgradeProgressStep';
-
-// utils
-import { formatStepTimestamp } from '../../utils/upgrade';
 
 interface EIP7702UpgradeDetailsProps {
   onClose: () => void;
@@ -17,6 +15,31 @@ interface EIP7702UpgradeDetailsProps {
   pendingCompletedAt?: Date;
   errorDetails?: string;
 }
+
+/**
+ * Formats timestamp for progress steps
+ */
+interface FormatStepTimestampProps {
+  date: Date;
+  step: UpgradeStatus;
+}
+
+export const FormatStepTimestamp = ({
+  date,
+  step,
+}: FormatStepTimestampProps): React.ReactNode => {
+  if (step === 'submitted') {
+    return (
+      <>
+        <span className="text-white">{format(date, 'MMM d, yyyy')}</span>
+        <span className="text-white"> • </span>
+        <span className="text-white/50">{format(date, 'HH:mm')}</span>
+      </>
+    );
+  }
+
+  return <span className="text-white/50">{format(date, 'HH:mm')}</span>;
+};
 
 const EIP7702UpgradeDetails = ({
   onClose,
@@ -68,11 +91,11 @@ const EIP7702UpgradeDetails = ({
 
     // Show timestamp for completed intermediate steps
     if (step === 'Submitted' && submittedAt) {
-      return formatStepTimestamp(submittedAt, 'submitted');
+      return <FormatStepTimestamp date={submittedAt} step="submitted" />;
     }
 
     if (step === 'Upgrading' && pendingCompletedAt) {
-      return formatStepTimestamp(pendingCompletedAt, 'upgrading');
+      return <FormatStepTimestamp date={pendingCompletedAt} step="upgrading" />;
     }
 
     return undefined;

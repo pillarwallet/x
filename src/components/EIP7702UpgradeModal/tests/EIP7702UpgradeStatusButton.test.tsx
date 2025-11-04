@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import EIP7702UpgradeStatusButton from '../EIP7702UpgradeStatusButton';
 
 // Mock dependencies
-vi.mock('../../utils/upgrade', () => ({
+vi.mock('../../../utils/upgrade', () => ({
   getButtonConfig: vi.fn((status) => {
     if (status === 'completed') {
       return {
@@ -38,11 +38,11 @@ vi.mock('react-loader-spinner', () => ({
   TailSpin: () => <div data-testid="tail-spin">Loading</div>,
 }));
 
-vi.mock('../../assets/images/confirmed-icon.svg', () => ({
+vi.mock('../../../assets/images/confirmed-icon.svg', () => ({
   default: 'confirmed-icon.svg',
 }));
 
-vi.mock('../../assets/images/failed-icon.svg', () => ({
+vi.mock('../../../assets/images/failed-icon.svg', () => ({
   default: 'failed-icon.svg',
 }));
 

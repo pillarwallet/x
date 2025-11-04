@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { createPublicClient, formatEther, http } from 'viem';
-import { mainnet } from 'viem/chains';
 
 // hooks
 import { useEIP7702Info } from './useEIP7702Info';
@@ -8,6 +7,7 @@ import { useTransactionDebugLogger } from './useTransactionDebugLogger';
 import useTransactionKit from './useTransactionKit';
 
 // reducer
+import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import {
   useAppDispatch,
   useAppSelector,
@@ -24,7 +24,13 @@ export interface GasUpgradeInfo {
   hasEnoughEth: boolean;
 }
 
-export const useEIP7702Upgrade = () => {
+type EIP7702UpgradeProps = {
+  chainId?: number;
+};
+
+export const useEIP7702Upgrade = ({
+  chainId = 1,
+}: EIP7702UpgradeProps = {}) => {
   const [isCheckingGas, setIsCheckingGas] = useState<boolean>(false);
   const [gasUpgradeInfo, setGasUpgradeInfo] = useState<
     GasUpgradeInfo | undefined
@@ -51,11 +57,12 @@ export const useEIP7702Upgrade = () => {
       return false;
     }
 
-    const mainnetEIP7702Info = eip7702Info[1]; // Mainnet chainId is 1
-    const hasMainnetEIP7702 = mainnetEIP7702Info?.hasImplementation || false;
+    const selectedChainEIP7702Info = eip7702Info[chainId]; // Default mainnet chainId is 1
+    const hasSelectedChainEIP7702 =
+      selectedChainEIP7702Info?.hasImplementation || false;
 
     const eligible =
-      !hasMainnetEIP7702 &&
+      !hasSelectedChainEIP7702 &&
       Object.keys(eip7702Info).length > 0 &&
       !!walletAddress;
 
@@ -79,7 +86,7 @@ export const useEIP7702Upgrade = () => {
 
     try {
       const publicClient = createPublicClient({
-        chain: mainnet,
+        chain: getNetworkViem(chainId),
         transport: http(),
       });
 

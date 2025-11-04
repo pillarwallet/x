@@ -2,13 +2,13 @@
 
 exports[`<EIP7702UpgradeStatusIcon /> > Rendering > renders correctly and matches snapshot 1`] = `
 <div
-  className="w-[90px] h-[90px] rounded-full bg-[#8A77FF] flex items-center justify-center flex-shrink-0"
+  className="pending-container"
   data-testid="animated-div"
 >
   <img
     alt="upgrading"
-    className="w-[60px] h-[60px]"
-    src="/src/assets/images/upgrade-diagonal-arrows.svg"
+    className="pending-icon"
+    src="pending-icon.svg"
   />
 </div>
 `;

@@ -32,4 +32,4 @@ const EIP7702UpgradeStatus: React.FC<EIP7702UpgradeStatusProps> = ({
   );
 };
 
-export default React.memo(EIP7702UpgradeStatus);
+export default EIP7702UpgradeStatus;

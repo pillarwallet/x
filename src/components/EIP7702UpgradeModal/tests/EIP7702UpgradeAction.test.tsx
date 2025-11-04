@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import EIP7702UpgradeAction from '../EIP7702UpgradeAction';
 
 // Mock dependencies
-vi.mock('../../utils/number', () => ({
+vi.mock('../../../utils/number', () => ({
   limitDigitsNumber: vi.fn((num: number) => num),
 }));
 
@@ -15,11 +15,11 @@ vi.mock('react-loader-spinner', () => ({
   TailSpin: () => <div data-testid="tail-spin">Loading</div>,
 }));
 
-vi.mock('../../assets/images/logo-ethereum.png', () => ({
+vi.mock('../../../assets/images/logo-ethereum.png', () => ({
   default: 'logo-ethereum.png',
 }));
 
-vi.mock('../../assets/images/upgrade-green-logo.svg', () => ({
+vi.mock('../../../assets/images/upgrade-green-logo.svg', () => ({
   default: 'upgrade-green-logo.svg',
 }));
 

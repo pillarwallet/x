@@ -12,6 +12,7 @@ const useTransactionKit = vi.fn(() => ({
     })),
     getEtherspotProvider: vi.fn(() => ({
       getChainId: vi.fn(() => 1),
+      getWalletMode: vi.fn(() => 'modular'),
     })),
     transaction: vi.fn(() => ({
       name: vi.fn(() => ({

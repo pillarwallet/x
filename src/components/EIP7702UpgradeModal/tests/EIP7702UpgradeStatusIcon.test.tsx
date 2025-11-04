@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import EIP7702UpgradeStatusIcon from '../EIP7702UpgradeStatusIcon';
 
 // Mock dependencies
-vi.mock('../../utils/upgrade', () => ({
+vi.mock('../../../utils/upgrade', () => ({
   getStatusConfig: vi.fn((status) => {
     if (status === 'completed') {
       return {
@@ -31,15 +31,15 @@ vi.mock('../../utils/upgrade', () => ({
   }),
 }));
 
-vi.mock('../../assets/images/confirmed-icon.svg', () => ({
+vi.mock('../../../assets/images/confirmed-icon.svg', () => ({
   default: 'confirmed-icon.svg',
 }));
 
-vi.mock('../../assets/images/failed-icon.svg', () => ({
+vi.mock('../../../assets/images/failed-icon.svg', () => ({
   default: 'failed-icon.svg',
 }));
 
-vi.mock('../../assets/images/upgrade-diagonal-arrows.svg', () => ({
+vi.mock('../../../assets/images/upgrade-diagonal-arrows.svg', () => ({
   default: 'pending-icon.svg',
 }));
 

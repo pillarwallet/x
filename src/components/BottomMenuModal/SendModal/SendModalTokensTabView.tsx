@@ -59,6 +59,7 @@ import {
   getNativeAssetForChainId,
   isValidEthereumAddress,
   safeBigIntConversion,
+  supportedChains,
 } from '../../../utils/blockchain';
 import {
   pasteFromClipboard,
@@ -1096,10 +1097,22 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           new Set(payload.batches.map((batch) => batch.chainId))
         );
         const firstChainId = uniqueChainIds[0];
-        const authorization =
-          firstChainId !== undefined
-            ? await getEIP7702AuthorizationIfNeeded(kit, firstChainId)
-            : undefined;
+
+        if (
+          !firstChainId ||
+          typeof firstChainId !== 'number' ||
+          !supportedChains.some((chain) => chain.id === firstChainId)
+        ) {
+          handleError(
+            'Invalid or unsupported chain ID in batch payload. Cannot proceed with transaction.'
+          );
+          return;
+        }
+
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          firstChainId
+        );
 
         transactionDebugLog('Estimating payload batches:', batchNames);
         const batchEstimate = await kit.estimateBatches({
@@ -1373,6 +1386,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           data: payloadTx?.data || undefined,
         };
         const chainIdToUse = payloadTx?.chainId;
+
+        if (
+          !chainIdToUse ||
+          typeof chainIdToUse !== 'number' ||
+          !supportedChains.some((chain) => chain.id === chainIdToUse)
+        ) {
+          handleError(
+            'Invalid or unsupported chain ID in transaction payload. Cannot proceed with transaction.'
+          );
+          return;
+        }
 
         kit
           .transaction({
@@ -1876,6 +1900,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       });
       // Use the correct chainId for the fee payment method
       const feeChainId = selectedAsset.chainId;
+
+      if (
+        !feeChainId ||
+        typeof feeChainId !== 'number' ||
+        !supportedChains.some((chain) => chain.id === feeChainId)
+      ) {
+        handleError(
+          'Invalid or unsupported chain ID for selected asset. Cannot proceed with transaction.'
+        );
+        return;
+      }
 
       kit
         .transaction({

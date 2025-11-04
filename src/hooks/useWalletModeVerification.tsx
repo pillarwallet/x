@@ -6,10 +6,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 // utils
 import { visibleChains } from '../utils/blockchain';
 import { sanitizeError } from '../utils/common';
-
-// From KernelVersionToAddressesMap[KERNEL_V3_3].accountImplementationAddress
-const OUR_EIP7702_IMPLEMENTATION_ADDRESS =
-  '0xd6CEDDe84be40893d153Be9d467CD6aD37875b28';
+import { OUR_EIP7702_IMPLEMENTATION_ADDRESS } from '../utils/eip7702Authorization';
 
 type WalletMode = 'modular' | 'delegatedEoa';
 
@@ -44,13 +41,17 @@ export const useWalletModeVerification = ({
   const [eip7702Info, setEip7702Info] = useState<EIP7702Info>({});
 
   useEffect(() => {
+    let cancelled = false;
+
     const verifyWalletMode = async () => {
       if (!privateKey || !kit) {
+        if (cancelled) return;
         setWalletMode('modular');
         setEip7702Info({});
         return;
       }
 
+      if (cancelled) return;
       setIsLoading(true);
       setError(null);
 
@@ -61,6 +62,7 @@ export const useWalletModeVerification = ({
 
         // Get counterfactual address from kit (in modular mode)
         const counterfactualAddress = await kit.getWalletAddress();
+        if (cancelled) return;
 
         // Check all supported chains
         let shouldRemainModular = false;
@@ -96,6 +98,7 @@ export const useWalletModeVerification = ({
             return { shouldRemainModular: false, chainId: chain.id };
           })
         );
+        if (cancelled) return;
 
         // Check if any chain indicates we should remain modular
         shouldRemainModular = deploymentChecks.some(
@@ -103,6 +106,8 @@ export const useWalletModeVerification = ({
         );
 
         if (shouldRemainModular) {
+          if (cancelled) return;
+          setEip7702Info({});
           setWalletMode('modular');
           return;
         }
@@ -149,6 +154,7 @@ export const useWalletModeVerification = ({
             };
           })
         );
+        if (cancelled) return;
 
         // Build per-chain implementation details
         const perChainData: EIP7702Info = {};
@@ -164,22 +170,31 @@ export const useWalletModeVerification = ({
         });
 
         // Update EIP-7702 info state
+        if (cancelled) return;
         setEip7702Info(perChainData);
 
         // Since we reached this point, smart account is not deployed and has no assets
         // Therefore, we always use delegatedEoa mode regardless of EIP-7702 status
         setWalletMode('delegatedEoa');
       } catch (err) {
+        if (cancelled) return;
         const sanitizedError = sanitizeError(err, privateKey);
         console.error('Wallet mode verification failed:', sanitizedError);
+        setEip7702Info({});
         setError(sanitizedError);
         setWalletMode('modular'); // Default to modular on error
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     verifyWalletMode();
+
+    return () => {
+      cancelled = true;
+    };
   }, [privateKey, kit]);
 
   return {

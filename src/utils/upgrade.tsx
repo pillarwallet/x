@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-import React from 'react';
 import { UpgradeStatus } from '../components/EIP7702UpgradeModal/types';
 
 // components
@@ -109,24 +107,4 @@ export const getStatusConfig = (status: UpgradeStatus) => {
  */
 export const getButtonConfig = (status: UpgradeStatus) => {
   return BUTTON_CONFIG[status];
-};
-
-/**
- * Formats timestamp for progress steps
- */
-export const formatStepTimestamp = (
-  date: Date,
-  step: UpgradeStatus
-): React.ReactNode => {
-  if (step === 'submitted') {
-    return (
-      <>
-        <span className="text-white">{format(date, 'MMM d, yyyy')}</span>
-        <span className="text-white"> • </span>
-        <span className="text-white/50">{format(date, 'HH:mm')}</span>
-      </>
-    );
-  }
-
-  return <span className="text-white/50">{format(date, 'HH:mm')}</span>;
 };

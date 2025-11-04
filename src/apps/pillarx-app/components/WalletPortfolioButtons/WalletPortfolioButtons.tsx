@@ -10,6 +10,7 @@ import { useAppDispatch } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
 // components
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 import ReceiveModal from '../ReceiveModal/ReceiveModal';
 import BodySmall from '../Typography/BodySmall';
 import WalletConnectDropdown from '../WalletConnectDropdown/WalletConnectDropdown';
@@ -19,6 +20,7 @@ const WalletPortfolioButtons = () => {
   const { user } = usePrivy();
   const { isConnected } = useAccount();
   const { isEligible, handleUpgradeClick } = useEIP7702Upgrade();
+  const { kit } = useTransactionKit();
 
   // Check if Privy user is connected via WalletConnect using linkedAccounts
   const isPrivyConnectedViaWalletConnect = user?.linkedAccounts?.some(
@@ -30,8 +32,11 @@ const WalletPortfolioButtons = () => {
   );
 
   // Don't show WalletConnectDropdown if user is connected via Wagmi or Privy with WalletConnect
+  // or if user is in delegatedEoa mode
   const shouldShowWalletConnectDropdown =
-    !isConnected && !isPrivyConnectedViaWalletConnect;
+    !isConnected &&
+    !isPrivyConnectedViaWalletConnect &&
+    kit.getEtherspotProvider().getWalletMode() !== 'delegatedEoa';
 
   return (
     <div className="flex w-full desktop:gap-x-2.5 tablet:gap-x-2.5">

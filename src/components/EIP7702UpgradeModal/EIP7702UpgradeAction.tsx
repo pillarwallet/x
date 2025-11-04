@@ -1,4 +1,3 @@
-import { isNaN } from 'lodash';
 import { TailSpin } from 'react-loader-spinner';
 
 // images
@@ -102,7 +101,7 @@ const EIP7702UpgradeAction = ({
             <TailSpin color="#FFFFFF" height={12} width={12} />
           ) : (
             <p className="text-[13px] text-white font-normal">
-              {gasFeeEstimates && !isNaN(Number(gasFeeEstimates))
+              {gasFeeEstimates && !Number.isNaN(Number(gasFeeEstimates))
                 ? limitDigitsNumber(Number(gasFeeEstimates))
                 : '-'}{' '}
               ETH

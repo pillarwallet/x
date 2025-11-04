@@ -2,7 +2,7 @@ import { EtherspotTransactionKit } from '@etherspot/transaction-kit';
 import { SignAuthorizationReturnType } from 'viem/accounts';
 
 // From KernelVersionToAddressesMap[KERNEL_V3_3].accountImplementationAddress
-const OUR_EIP7702_IMPLEMENTATION_ADDRESS =
+export const OUR_EIP7702_IMPLEMENTATION_ADDRESS =
   '0xd6CEDDe84be40893d153Be9d467CD6aD37875b28';
 
 /**

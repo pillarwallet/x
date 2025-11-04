@@ -1125,9 +1125,14 @@ export const useWalletConnect = () => {
               throw new Error('Wallet client does not have an account');
             }
 
+            const messagePayload =
+              typeof message === 'string' && message.startsWith('0x')
+                ? { raw: message as `0x${string}` }
+                : message;
+
             requestResponse = await walletClient.signMessage({
               account,
-              message: { raw: message as `0x${string}` },
+              message: messagePayload,
             });
 
             const publicClient = createPublicClient({
@@ -1137,7 +1142,7 @@ export const useWalletConnect = () => {
 
             const valid = await publicClient.verifyMessage({
               address: account.address,
-              message: { raw: message as `0x${string}` },
+              message: messagePayload,
               signature: requestResponse as `0x${string}`,
             });
 

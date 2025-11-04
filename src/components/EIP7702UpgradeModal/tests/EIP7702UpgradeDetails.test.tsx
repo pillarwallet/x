@@ -8,21 +8,6 @@ import { vi } from 'vitest';
 import EIP7702UpgradeDetails from '../EIP7702UpgradeDetails';
 
 // Mock dependencies
-vi.mock('../../utils/upgrade', () => ({
-  formatStepTimestamp: vi.fn((date: Date, step: string) => {
-    if (step === 'submitted') {
-      return (
-        <>
-          <span>Jan 1, 2023</span>
-          <span> • </span>
-          <span>12:00</span>
-        </>
-      );
-    }
-    return <span>12:00</span>;
-  }),
-}));
-
 vi.mock('../EIP7702UpgradeProgressStep', () => ({
   default: ({ status, label, timestamp }: any) => {
     // Determine the actual displayed label based on status when label is 'Completed'
