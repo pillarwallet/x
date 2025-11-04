@@ -70,7 +70,7 @@ export const useEIP7702Upgrade = ({
 
     return eligible;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eip7702Info, walletAddress, isEligible, hasCompletedUpgrade]);
+  }, [eip7702Info, walletAddress, isEligible, hasCompletedUpgrade, chainId]);
 
   // Calculate gas costs
   const calculateGas = useCallback(async () => {
@@ -126,7 +126,7 @@ export const useEIP7702Upgrade = ({
       setIsCheckingGas(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [chainId, walletAddress]);
 
   // Check eligibility and optionally show modal
   const checkEligibilityAndShowModal = useCallback(
