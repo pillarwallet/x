@@ -107,7 +107,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
     chainId: number;
     balance: number;
-  }>({ chainId: 1, balance: 2 }); // Default to 2 to allow trading initially
+  }>();
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
     buyToken: SelectedToken | null;
@@ -117,22 +117,22 @@ export default function HomeScreen(props: HomeScreenProps) {
     usdAmount: string;
     isBuy: boolean;
   } | null>(null);
-  const [customBuyAmounts, setCustomBuyAmounts] = useState<string[]>([
-    '10',
-    '20',
-    '50',
-    '100',
-  ]);
-  const [customSellAmounts, setCustomSellAmounts] = useState<string[]>([
-    '10%',
-    '25%',
-    '50%',
-    '75%',
-  ]);
+  // Load settings from localStorage or use defaults
+  const [customBuyAmounts, setCustomBuyAmounts] = useState<string[]>(() => {
+    const stored = localStorage.getItem('pulse_customBuyAmounts');
+    return stored ? JSON.parse(stored) : ['10', '20', '50', '100'];
+  });
+  const [customSellAmounts, setCustomSellAmounts] = useState<string[]>(() => {
+    const stored = localStorage.getItem('pulse_customSellAmounts');
+    return stored ? JSON.parse(stored) : ['10%', '25%', '50%', '75%'];
+  });
   const [displaySettingsMenu, setDisplaySettingsMenu] =
     useState<boolean>(false);
   const [selectedChainIdForSettlement, setSelectedChainIdForSettlement] =
-    useState<number>(maxStableCoinBalance.chainId);
+    useState<number>(() => {
+      const stored = localStorage.getItem('pulse_selectedChainIdForSettlement');
+      return stored ? parseInt(stored, 10) : 1; // Will be updated by useEffect once maxStableCoinBalance is calculated
+    });
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
@@ -189,6 +189,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const hasSeenSuccessRef = useRef<boolean>(false);
   const blockchainTxHashRef = useRef<string | undefined>(undefined);
   const failureGraceExpiryRef = useRef<number | null>(null);
+  const hasInitializedChainIdRef = useRef<boolean>(false);
 
   const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
     { wallet: accountAddress || '', isPnl: false },
@@ -220,10 +221,27 @@ export default function HomeScreen(props: HomeScreenProps) {
     });
   }, [portfolioTokens, walletPortfolioData]);
 
-  // Sync selectedChainId with maxStableCoinBalance.chainId
+  // Sync selectedChainId with maxStableCoinBalance.chainId on first load or when no preference is stored
   useEffect(() => {
-    setSelectedChainIdForSettlement(maxStableCoinBalance.chainId);
-  }, [maxStableCoinBalance.chainId]);
+    console.log('Max stable coin balance chain ID:', maxStableCoinBalance);
+    const storedChainId = localStorage.getItem(
+      'pulse_selectedChainIdForSettlement'
+    );
+    console.log('Stored chain ID for settlement:', storedChainId);
+    // If no stored preference and haven't initialized yet, use the chain with max stable balance
+    if (
+      !storedChainId &&
+      !hasInitializedChainIdRef.current &&
+      maxStableCoinBalance?.chainId
+    ) {
+      setSelectedChainIdForSettlement(maxStableCoinBalance.chainId);
+      // Save it to localStorage so we know user hasn't manually changed it yet
+      localStorage.setItem(
+        'pulse_selectedChainIdForSettlement',
+        maxStableCoinBalance.chainId.toString()
+      );
+    }
+  }, [maxStableCoinBalance?.chainId]);
 
   // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
   // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
@@ -242,6 +260,31 @@ export default function HomeScreen(props: HomeScreenProps) {
       setTokenAmount('');
     }
   }, [isBuy, buyToken, payingTokens]);
+
+  // Save customBuyAmounts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      'pulse_customBuyAmounts',
+      JSON.stringify(customBuyAmounts)
+    );
+  }, [customBuyAmounts]);
+
+  // Save customSellAmounts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      'pulse_customSellAmounts',
+      JSON.stringify(customSellAmounts)
+    );
+  }, [customSellAmounts]);
+
+  // Save selectedChainIdForSettlement to localStorage whenever it changes
+  useEffect(() => {
+    if (maxStableCoinBalance?.chainId)
+      localStorage.setItem(
+        'pulse_selectedChainIdForSettlement',
+        selectedChainIdForSettlement.toString()
+      );
+  }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
@@ -910,7 +953,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <div className="w-full max-w-[446px] p-1.5">
+      <div className="w-full max-w-[446px]">
         {displaySettingsMenu ? (
           <SettingsMenu
             closeSettingsMenu={() => setDisplaySettingsMenu(false)}
@@ -1000,7 +1043,9 @@ export default function HomeScreen(props: HomeScreenProps) {
                   walletPortfolioData={walletPortfolioData}
                   payingTokens={payingTokens}
                   portfolioTokens={portfolioTokens}
-                  maxStableCoinBalance={maxStableCoinBalance}
+                  maxStableCoinBalance={
+                    maxStableCoinBalance ?? { chainId: 1, balance: 2 }
+                  }
                   customBuyAmounts={[...customBuyAmounts, 'MAX']}
                   setPreviewBuy={setPreviewBuy}
                   setPayingTokens={setPayingTokens}
