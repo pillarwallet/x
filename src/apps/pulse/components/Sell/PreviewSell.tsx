@@ -5,6 +5,7 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../../utils/eip7702Authorization';
 import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
@@ -378,13 +379,20 @@ const PreviewSell = (props: PreviewSellProps) => {
         // Now execute the batch directly
         const batchName = `pulse-sell-batch-${sellToken.chainId}`;
 
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          sellToken.chainId
+        );
         const batchSend = await kit.sendBatches({
           onlyBatchNames: [batchName],
+          authorization: authorization || undefined,
         });
         const sentBatch = batchSend.batches[batchName];
 
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
-          const userOpHash = sentBatch?.userOpHash;
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
           if (userOpHash) {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);

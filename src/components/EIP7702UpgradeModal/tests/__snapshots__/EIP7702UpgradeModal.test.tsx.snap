@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EIP7702UpgradeModal /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="fixed inset-0 flex items-center justify-center pt-4 pb-20 z-50"
+  style={
+    {
+      "backdropFilter": "blur(10px)",
+      "backgroundColor": "rgba(18, 17, 22, 0.8)",
+    }
+  }
+>
+  <div
+    className="flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto py-6"
+  >
+    <div
+      data-testid="upgrade-action"
+    >
+      <button
+        data-testid="upgrade-button"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Upgrade
+      </button>
+      <button
+        data-testid="close-button"
+        onClick={[Function]}
+        type="button"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+`;
