@@ -86,12 +86,13 @@ const WalletPortfolioButtons = () => {
 
       // Call Coinbase API to create onramp session (via Vite proxy to avoid CORS)
       const response = await fetch(
-        '/api/coinbase/platform/v2/onramp/sessions',
+        'https://api.cdp.coinbase.com/platform/v2/onramp/sessions',
         {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
             purchaseCurrency: 'USDC',
