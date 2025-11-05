@@ -28,7 +28,6 @@ export default defineConfig({
   },
   server: {
     https: false,
-    host: '0.0.0.0',
     proxy: {
       '/api/coinbase': {
         target: 'https://api.cdp.coinbase.com',
