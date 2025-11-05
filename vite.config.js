@@ -10,6 +10,9 @@ export default defineConfig({
   build: {
     outDir: 'build',
     commonjsOptions: { transformMixedEsModules: true },
+    rollupOptions: {
+      external: ['/functions/**'],
+    },
   },
   resolve: {
     alias: {
@@ -27,7 +30,7 @@ export default defineConfig({
     pool: 'forks',
   },
   server: {
-    https: false,
+    https: true,
     host: '0.0.0.0',
     proxy: {
       '/api/coinbase': {
