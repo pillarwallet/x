@@ -1,0 +1,3 @@
+# Proxy Coinbase API requests to avoid CORS in production
+# This works on Cloudflare Pages
+/api/coinbase/*  https://api.cdp.coinbase.com/:splat  200
