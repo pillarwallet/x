@@ -27,7 +27,7 @@ export default defineConfig({
     pool: 'forks',
   },
   server: {
-    https: false,
+    https: true,
     proxy: {
       '/api/coinbase': {
         target: 'https://api.cdp.coinbase.com',
