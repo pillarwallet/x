@@ -92,7 +92,8 @@ const WalletPortfolioButtons = () => {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin':
+              'https://feature-pro-3781-add-cash.x-e62.pages.dev',
           },
           body: JSON.stringify({
             purchaseCurrency: 'USDC',
