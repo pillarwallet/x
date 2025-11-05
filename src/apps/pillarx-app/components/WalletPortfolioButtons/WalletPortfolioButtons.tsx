@@ -86,20 +86,23 @@ const WalletPortfolioButtons = () => {
 
       // Call Coinbase API to create onramp session (via proxy to avoid CORS)
       // This uses Vite proxy in dev and Cloudflare Pages Function in production
-      const response = await fetch('/api/coinbase/platform/v2/onramp/sessions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          purchaseCurrency: 'USDC',
-          destinationNetwork: 'base',
-          destinationAddress: accountAddress,
-          paymentCurrency: 'USD',
-          clientIp: clientIp,
-        }),
-      });
+      const response = await fetch(
+        '/api/coinbase/platform/v2/onramp/sessions',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            purchaseCurrency: 'USDC',
+            destinationNetwork: 'base',
+            destinationAddress: accountAddress,
+            paymentCurrency: 'USD',
+            clientIp,
+          }),
+        }
+      );
 
       const data = await response.json();
 
