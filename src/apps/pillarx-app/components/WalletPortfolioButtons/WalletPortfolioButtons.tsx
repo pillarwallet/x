@@ -4,19 +4,16 @@ import { useAccount } from 'wagmi';
 
 // hooks
 import { useEIP7702Upgrade } from '../../../../hooks/useEIP7702Upgrade';
+import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 // reducer
 import { useAppDispatch } from '../../hooks/useReducerHooks';
 import { setIsReceiveModalOpen } from '../../reducer/WalletPortfolioSlice';
 
 // components
-import useTransactionKit from '../../../../hooks/useTransactionKit';
 import ReceiveModal from '../ReceiveModal/ReceiveModal';
 import BodySmall from '../Typography/BodySmall';
 import WalletConnectDropdown from '../WalletConnectDropdown/WalletConnectDropdown';
-
-// hooks
-import useTransactionKit from '../../../../hooks/useTransactionKit';
 
 const WalletPortfolioButtons = () => {
   const dispatch = useAppDispatch();
@@ -75,8 +72,6 @@ const WalletPortfolioButtons = () => {
         throw new Error('No token received from backend');
       }
 
-      console.log('Received token from backend:', token);
-
       // Get user's current IP address
       let clientIp = '127.0.0.1'; // fallback
       try {
@@ -84,10 +79,9 @@ const WalletPortfolioButtons = () => {
         if (ipResponse.ok) {
           const ipData = await ipResponse.json();
           clientIp = ipData.ip;
-          console.log('Client IP:', clientIp);
         }
       } catch (ipError) {
-        console.warn('Failed to fetch client IP, using fallback:', ipError);
+        // Silently fall back to default IP
       }
 
       // Call Coinbase API to create onramp session (via Vite proxy to avoid CORS)
@@ -110,22 +104,22 @@ const WalletPortfolioButtons = () => {
       );
 
       const data = await response.json();
-      console.log('Coinbase API response for onramp session:', data);
-
-      console.log('Onramp session created successfully');
 
       const onrampUrl = data?.session?.onrampUrl;
 
       if (!onrampUrl) {
         throw new Error('No URL received from Coinbase API');
-        return;
       }
-      console.log('Opening onramp URL:', onrampUrl);
+
       window.open(onrampUrl, '_blank', 'noopener,noreferrer');
     } catch (error) {
-      console.error('Error opening add cash URL:', error);
-      // Optionally show user-friendly error message
-      alert(error instanceof Error ? error.message : 'Failed to open add cash');
+      // TODO: Replace with toast notification or proper error UI
+      // For now, silently fail - user can try again
+      // Error is logged for debugging in development
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Error opening add cash URL:', error);
+      }
     }
   };
 

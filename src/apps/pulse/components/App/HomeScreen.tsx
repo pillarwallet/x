@@ -223,11 +223,9 @@ export default function HomeScreen(props: HomeScreenProps) {
 
   // Sync selectedChainId with maxStableCoinBalance.chainId on first load or when no preference is stored
   useEffect(() => {
-    console.log('Max stable coin balance chain ID:', maxStableCoinBalance);
     const storedChainId = localStorage.getItem(
       'pulse_selectedChainIdForSettlement'
     );
-    console.log('Stored chain ID for settlement:', storedChainId);
     // If no stored preference and haven't initialized yet, use the chain with max stable balance
     if (
       !storedChainId &&
@@ -240,8 +238,9 @@ export default function HomeScreen(props: HomeScreenProps) {
         'pulse_selectedChainIdForSettlement',
         maxStableCoinBalance.chainId.toString()
       );
+      hasInitializedChainIdRef.current = true;
     }
-  }, [maxStableCoinBalance?.chainId]);
+  }, [maxStableCoinBalance]);
 
   // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
   // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
