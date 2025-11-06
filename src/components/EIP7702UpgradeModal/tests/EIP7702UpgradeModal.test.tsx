@@ -8,27 +8,32 @@ import { vi } from 'vitest';
 import EIP7702UpgradeModal from '../EIP7702UpgradeModal';
 
 // Mock dependencies
-vi.mock('../../../hooks/useEIP7702Upgrade', () => ({
-  useEIP7702Upgrade: vi.fn(() => ({
-    calculateGasFees: vi.fn().mockResolvedValue({
-      balanceInEth: 0.1,
-      gasCostInEth: 0.001,
-      requiredEth: 0.002,
-      hasEnoughEth: true,
-    }),
-    setGasUpgradeInfo: vi.fn(),
-    gasUpgradeInfo: {
-      balanceInEth: 0.1,
-      gasCostInEth: 0.001,
-      requiredEth: 0.002,
-      hasEnoughEth: true,
-    },
-    isCheckingGas: false,
-    isEligible: true,
-    handleUpgradeClick: vi.fn(),
-    checkOnLogin: vi.fn(),
-  })),
-}));
+vi.mock('../../../hooks/useEIP7702Upgrade', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../../hooks/useEIP7702Upgrade')>();
+  return {
+    ...actual,
+    useEIP7702Upgrade: vi.fn(() => ({
+      calculateGasFees: vi.fn().mockResolvedValue({
+        balanceInEth: 0.1,
+        gasCostInEth: 0.001,
+        requiredEth: 0.002,
+        hasEnoughEth: true,
+      }),
+      setGasUpgradeInfo: vi.fn(),
+      gasUpgradeInfo: {
+        balanceInEth: 0.1,
+        gasCostInEth: 0.001,
+        requiredEth: 0.002,
+        hasEnoughEth: true,
+      },
+      isCheckingGas: false,
+      isEligible: true,
+      handleUpgradeClick: vi.fn(),
+      checkOnLogin: vi.fn(),
+    })),
+  };
+});
 
 vi.mock('../../../hooks/useTransactionKit', () => ({
   default: vi.fn(() => ({

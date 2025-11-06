@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // hooks
 import { useAppDispatch } from '../../apps/pillarx-app/hooks/useReducerHooks';
-import { useEIP7702Upgrade } from '../../hooks/useEIP7702Upgrade';
+import {
+  getEIP7702DismissedKey,
+  useEIP7702Upgrade,
+} from '../../hooks/useEIP7702Upgrade';
 import { useTransactionDebugLogger } from '../../hooks/useTransactionDebugLogger';
 import useTransactionKit from '../../hooks/useTransactionKit';
 
@@ -33,7 +36,7 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
   onClose,
 }) => {
   const dispatch = useAppDispatch();
-  const { kit } = useTransactionKit();
+  const { kit, walletAddress } = useTransactionKit();
   const { transactionDebugLog } = useTransactionDebugLogger();
   const [upgradeStatus, setUpgradeStatus] = useState<UpgradeStatus>('ready');
   const { calculateGasFees, setGasUpgradeInfo, gasUpgradeInfo, isCheckingGas } =
@@ -58,10 +61,11 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
 
   // Handle close with localStorage persistence
   const handleClose = useCallback(() => {
-    // Mark that user dismissed the upgrade modal
-    localStorage.setItem('eip7702_upgrade_dismissed', 'true');
+    // Mark that user dismissed the upgrade modal for this wallet address
+    const dismissedKey = getEIP7702DismissedKey(walletAddress);
+    localStorage.setItem(dismissedKey, 'true');
     onClose();
-  }, [onClose]);
+  }, [onClose, walletAddress]);
 
   // Map UserOp status to UpgradeStatus
   const mapUserOpStatusToUpgradeStatus = (
@@ -398,10 +402,11 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
       // Mark as not eligible to hide the upgrade button
       dispatch(setIsEIP7702Eligible(false));
       // Clear dismissal flag since upgrade is now complete
-      localStorage.removeItem('eip7702_upgrade_dismissed');
+      const dismissedKey = getEIP7702DismissedKey(walletAddress);
+      localStorage.removeItem(dismissedKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upgradeStatus, dispatch, userOpHash]);
+  }, [upgradeStatus, dispatch, userOpHash, walletAddress]);
 
   // Track when steps complete - this runs every time status changes
   useEffect(() => {

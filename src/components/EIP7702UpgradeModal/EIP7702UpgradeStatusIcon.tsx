@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 // assets
 import ConfirmedIcon from '../../assets/images/confirmed-icon.svg';
 import FailedIcon from '../../assets/images/failed-icon.svg';
-import PendingIcon from '../../assets/images/upgrade-diagonal-arrows.svg';
+import PendingIcon from '../../assets/images/upgrade-diagonal-arrows.png';
 
 // types
 import { UpgradeStatus } from './types';
