@@ -91,7 +91,7 @@ const Sell = (props: SellProps) => {
     ) {
       setIsLoadingOffer(true);
       try {
-        if (token.chainId !== selectedChainIdForSettlement) {
+        if (token.chainId === selectedChainIdForSettlement) {
           const offer = await getBestSellOffer({
             fromAmount: debouncedTokenAmount,
             fromTokenAddress: token.address,
