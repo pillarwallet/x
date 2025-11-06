@@ -106,6 +106,12 @@ const WalletPortfolioButtons = () => {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(
+          `Coinbase API error (${response.status}): ${data.error || JSON.stringify(data)}`
+        );
+      }
+
       const onrampUrl = data?.session?.onrampUrl;
 
       if (!onrampUrl) {

@@ -11,7 +11,10 @@ export async function onRequestPost(context) {
     const authHeader = context.request.headers.get('Authorization');
 
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+      return new Response(JSON.stringify({
+        error: 'Missing Authorization header',
+        debug: 'No Authorization header found in request'
+      }), {
         status: 401,
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +33,20 @@ export async function onRequestPost(context) {
       body: JSON.stringify(body),
     });
 
-    // Get the response data
-    const data = await coinbaseResponse.json();
+    // Get the response data - handle both JSON and text responses
+    let data;
+    const contentType = coinbaseResponse.headers.get('content-type');
+
+    if (contentType && contentType.includes('application/json')) {
+      data = await coinbaseResponse.json();
+    } else {
+      // If response is not JSON, get it as text and wrap it
+      const textData = await coinbaseResponse.text();
+      data = {
+        error: textData || 'Unauthorized',
+        status: coinbaseResponse.status
+      };
+    }
 
     // Return the response with CORS headers
     return new Response(JSON.stringify(data), {
@@ -44,7 +59,9 @@ export async function onRequestPost(context) {
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({
+      error: error.message
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
