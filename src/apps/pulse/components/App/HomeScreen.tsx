@@ -910,6 +910,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             selectedChainIdForSettlement={selectedChainIdForSettlement}
             onSellOfferUpdate={setSellOffer}
             setSellFlowPaused={setIsSellFlowPaused}
+            userPortfolio={portfolioTokens}
           />
         </div>
       );

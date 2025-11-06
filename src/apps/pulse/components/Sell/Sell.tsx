@@ -74,7 +74,12 @@ const Sell = (props: SellProps) => {
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [truncatedFlag, setTruncatedFlag] = useState<boolean>(false);
 
-  const { getBestSellOffer, isInitialized, error: relayError } = useRelaySell();
+  const {
+    getBestSellOffer,
+    getBestSellOfferWithBridge,
+    isInitialized,
+    error: relayError,
+  } = useRelaySell();
 
   const fetchSellOffer = useCallback(async () => {
     if (
@@ -86,14 +91,25 @@ const Sell = (props: SellProps) => {
     ) {
       setIsLoadingOffer(true);
       try {
-        const offer = await getBestSellOffer({
-          fromAmount: debouncedTokenAmount,
-          fromTokenAddress: token.address,
-          fromChainId: token.chainId,
-          fromTokenDecimals: token.decimals,
-          toChainId: selectedChainIdForSettlement,
-        });
-        setLocalSellOffer(offer);
+        if (token.chainId !== selectedChainIdForSettlement) {
+          const offer = await getBestSellOffer({
+            fromAmount: debouncedTokenAmount,
+            fromTokenAddress: token.address,
+            fromChainId: token.chainId,
+            fromTokenDecimals: token.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          setLocalSellOffer(offer);
+        } else {
+          const offer = await getBestSellOfferWithBridge({
+            fromAmount: debouncedTokenAmount,
+            fromTokenAddress: token.address,
+            fromChainId: token.chainId,
+            fromTokenDecimals: token.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          setLocalSellOffer(offer);
+        }
       } catch (error) {
         console.error('Failed to fetch sell offer:', error);
         setLocalSellOffer(null);
