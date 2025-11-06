@@ -39,7 +39,7 @@ vi.mock('../../../assets/images/failed-icon.svg', () => ({
   default: 'failed-icon.svg',
 }));
 
-vi.mock('../../../assets/images/upgrade-diagonal-arrows.svg', () => ({
+vi.mock('../../../assets/images/upgrade-diagonal-arrows.png', () => ({
   default: 'pending-icon.svg',
 }));
 

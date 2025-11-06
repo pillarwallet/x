@@ -28,6 +28,16 @@ type EIP7702UpgradeProps = {
   chainId?: number;
 };
 
+// Helper function to get wallet-address-specific localStorage key
+export const getEIP7702DismissedKey = (
+  walletAddress: string | undefined
+): string => {
+  if (!walletAddress) {
+    return 'eip7702_upgrade_dismissed';
+  }
+  return `eip7702_upgrade_dismissed_${walletAddress.toLowerCase()}`;
+};
+
 export const useEIP7702Upgrade = ({
   chainId = 1,
 }: EIP7702UpgradeProps = {}) => {
@@ -145,8 +155,9 @@ export const useEIP7702Upgrade = ({
         return;
       }
 
-      // Check if user previously dismissed the upgrade modal
-      const wasDismissed = localStorage.getItem('eip7702_upgrade_dismissed');
+      // Check if user previously dismissed the upgrade modal for this wallet address
+      const dismissedKey = getEIP7702DismissedKey(walletAddress);
+      const wasDismissed = localStorage.getItem(dismissedKey);
 
       // Don't auto-show modal if it's already open or user dismissed it
       if (isModalOpen || wasDismissed) {
@@ -163,7 +174,7 @@ export const useEIP7702Upgrade = ({
         dispatch(setIsUpgradeWalletModalOpen(shouldShowAutoModal));
       }
     },
-    [checkEligibility, calculateGas, dispatch, isModalOpen]
+    [checkEligibility, calculateGas, dispatch, isModalOpen, walletAddress]
   );
 
   // Manual button click handler
