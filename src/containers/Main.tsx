@@ -19,7 +19,6 @@ import type {
   TypedData,
 } from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
-import { verifyAuthorization } from 'viem/utils';
 import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 import * as Sentry from '@sentry/react';
