@@ -140,6 +140,7 @@ const WalletPortfolioButtons = () => {
             destinationAddress: accountAddress,
             paymentCurrency: 'USD',
             clientIp,
+            redirectUrl: window.location.origin,
           }),
         }
       );
@@ -147,7 +148,11 @@ const WalletPortfolioButtons = () => {
       const data = await response.json();
 
       // eslint-disable-next-line no-console
-      console.log('Coinbase API response:', { status: response.status, data });
+      console.log('Coinbase API response:', {
+        status: response.status,
+        data,
+        redirectUrl: window.location.origin,
+      });
 
       if (!response.ok) {
         const errorMsg = `Coinbase API error (${response.status}): ${data.error || JSON.stringify(data)}`;
