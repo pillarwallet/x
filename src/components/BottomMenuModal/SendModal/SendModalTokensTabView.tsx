@@ -1933,7 +1933,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       transactionDebugLog('Single transaction estimated:', estimated);
       if (estimated.errorMessage) {
         transactionDebugLog(
-          'Single transaction estimation error:',
+          'Estimated single transaction error message:',
           estimated.errorMessage
         );
         Sentry.captureMessage('Estimation error during send', {

@@ -9,8 +9,17 @@ import {
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { createWalletClient, custom, http, WalletClient } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { privateKeyToAccount, toAccount } from 'viem/accounts';
+import type {
+  Account,
+  AuthorizationRequest,
+  Hash,
+  SignedAuthorization,
+  TransactionSerializable,
+  TypedData,
+} from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
+import { verifyAuthorization } from 'viem/utils';
 import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
 import * as Sentry from '@sentry/react';
@@ -25,7 +34,12 @@ import LanguageProvider from '../providers/LanguageProvider';
 // utils
 import { getNetworkViem } from '../apps/deposit/utils/blockchain';
 import { isTestnet, visibleChains } from '../utils/blockchain';
-import { setupPillarWalletMessaging } from '../utils/pillarWalletMessaging';
+import {
+  signAuthorizationViaWebView,
+  signMessageViaWebView,
+  signTransactionViaWebView,
+  signTypedDataViaWebView,
+} from '../utils/pillarWalletMessaging';
 
 // pages
 import Advertising from '../pages/Advertising';
@@ -44,6 +58,7 @@ import useAllowedApps from '../hooks/useAllowedApps';
 
 // UI
 import App from '../pages/App';
+import { OUR_EIP7702_IMPLEMENTATION_ADDRESS } from '../utils/eip7702Authorization';
 
 /**
  * @name AuthLayout
@@ -68,12 +83,19 @@ const AuthLayout = () => {
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
+  const [eoaAddress, setEoaAddress] = useState<string | undefined>(undefined);
+  const [customAccount, setCustomAccount] = useState<Account | undefined>(
+    undefined
+  );
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
-  const isAuthenticated = authenticated || wagmiIsConnected || !!pkAccount;
+  const isAuthenticated =
+    authenticated || wagmiIsConnected || !!pkAccount || !!eoaAddress;
 
   // Minimal Sentry context for authentication state - only set on errors
   useEffect(() => {
@@ -105,7 +127,7 @@ const AuthLayout = () => {
   }, [authenticated]);
 
   /**
-   * Set up Pillar Wallet webview messaging to receive private keys
+   * Set up Pillar Wallet webview messaging and extract eoaAddress
    * Only activate when coming from React Native app (iOS or Android)
    */
   useEffect(() => {
@@ -113,6 +135,7 @@ const AuthLayout = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const devicePlatformFromUrl = searchParams.get('devicePlatform');
     const devicePlatformFromStorage = localStorage.getItem('DEVICE_PLATFORM');
+    const eoaAddressFromUrl = searchParams.get('eoaAddress');
 
     // Check both URL params and localStorage to determine if we're in React Native
     const devicePlatform = devicePlatformFromUrl || devicePlatformFromStorage;
@@ -128,6 +151,7 @@ const AuthLayout = () => {
         devicePlatformFromStorage,
         devicePlatform,
         isReactNativeApp,
+        eoaAddressFromUrl,
       },
     });
 
@@ -138,71 +162,50 @@ const AuthLayout = () => {
         localStorage.setItem('DEVICE_PLATFORM', devicePlatformFromUrl);
       }
 
-      Sentry.addBreadcrumb({
-        category: 'authentication',
-        message: 'Setting up Pillar Wallet webview messaging',
-        level: 'info',
-        data: {
-          devicePlatform,
-        },
-      });
-
-      const cleanup = setupPillarWalletMessaging(
-        (address: string, pk: string) => {
-          // Success callback - private key received
-          // Store in memory only (state) - NEVER persist private keys to localStorage
-          setPkAccount(address);
-          setPrivateKey(pk);
-
-          // Store only the account address for session detection (NOT the private key)
-          localStorage.setItem('ACCOUNT_VIA_PK', address);
-
-          Sentry.addBreadcrumb({
-            category: 'authentication',
-            message: 'Private key received and stored in memory only',
-            level: 'info',
-            data: {
-              accountAddress: address,
-              devicePlatform,
-              securityNote: 'Private key kept in memory only, not persisted',
-            },
-          });
-        },
-        (error: Error) => {
-          // Error callback
-          console.error('Pillar Wallet authentication error:', error);
-
-          Sentry.captureException(error, {
-            tags: {
-              component: 'authentication',
-              action: 'pillar_wallet_setup_error',
-              devicePlatform: devicePlatform || 'unknown',
-            },
-          });
+      // Extract and store eoaAddress from URL query string
+      if (eoaAddressFromUrl) {
+        localStorage.setItem('EOA_ADDRESS', eoaAddressFromUrl);
+        setEoaAddress(eoaAddressFromUrl);
+      } else {
+        // Try to restore from localStorage if URL doesn't have it (e.g., on reload)
+        const storedEoaAddress = localStorage.getItem('EOA_ADDRESS');
+        if (storedEoaAddress) {
+          setEoaAddress(storedEoaAddress);
         }
-      );
+      }
 
-      return cleanup;
-    }
-
-    // If user was previously authenticated (ACCOUNT_VIA_PK exists) but we're not in RN context,
-    // the private key will need to be re-requested on next RN webview load.
-    // We never restore private keys from localStorage for security reasons.
-    const storedAccount = localStorage.getItem('ACCOUNT_VIA_PK');
-    if (storedAccount && !isReactNativeApp) {
       Sentry.addBreadcrumb({
         category: 'authentication',
         message:
-          'Previous RN authentication detected, but private key not available',
+          'Setting up Pillar Wallet webview messaging (custom account mode)',
         level: 'info',
         data: {
-          accountAddress: storedAccount,
-          securityNote: 'Private key must be re-requested from RN app',
+          devicePlatform,
+          eoaAddress: eoaAddressFromUrl || localStorage.getItem('EOA_ADDRESS'),
+        },
+      });
+
+      // Note: We no longer request private keys - signing is handled via custom account
+      // The private key remains stored securely in the React Native app
+    }
+
+    // If user was previously authenticated (EOA_ADDRESS exists) but we're not in RN context,
+    // the eoaAddress will need to be re-requested on next RN webview load.
+    const storedEoaAddress = localStorage.getItem('EOA_ADDRESS');
+    if (storedEoaAddress && !isReactNativeApp) {
+      Sentry.addBreadcrumb({
+        category: 'authentication',
+        message:
+          'Previous RN authentication detected, but eoaAddress not available',
+        level: 'info',
+        data: {
+          eoaAddress: storedEoaAddress,
+          securityNote: 'eoaAddress must be re-requested from RN app',
         },
       });
     }
 
-    // No cleanup needed if messaging wasn't set up
+    // No cleanup needed
     return undefined;
   }, []);
 
@@ -232,7 +235,160 @@ const AuthLayout = () => {
 
     // Handle both Privy wallets and WalletConnect connections
     const updateProvider = async () => {
-      // PRIORITY 1: Private key authentication (takes precedence over all other methods)
+      // PRIORITY 1: React Native custom account (takes precedence over all other methods)
+      if (eoaAddress) {
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message:
+            'Setting up React Native custom account (priority authentication)',
+          level: 'info',
+          data: {
+            providerSetupId,
+            accountAddress: eoaAddress,
+          },
+        });
+
+        /**
+         * @description Creates a custom account that delegates signing to the React Native app
+         * @returns The custom account object
+         */
+        const account = toAccount({
+          address: eoaAddress as `0x${string}`,
+          // Low-level sign method for signing raw hashes
+          async sign({ hash }: { hash: Hash }) {
+            // Sign the raw hash directly (not as EIP-191 message)
+            // Pass as { raw: hash } to indicate it's a raw hash that
+            // shouldn't have EIP-191 prefix
+            const signatureHex = await signMessageViaWebView({ raw: hash });
+            return signatureHex;
+          },
+          /**
+           * @description Signs a message via the React Native webview
+           * @param message - The message object
+           * @returns Promise that resolves with the signed message object
+           */
+          async signMessage({ message }) {
+            return signMessageViaWebView(message);
+          },
+          /**
+           * @description Signs a transaction via the React Native webview
+           * @param transaction - The transaction object
+           * @returns Promise that resolves with the signed transaction object
+           */
+          async signTransaction(transaction) {
+            // Note: serializer is not used in our case since we send the
+            // transaction to RN
+            return signTransactionViaWebView(
+              transaction as TransactionSerializable
+            );
+          },
+          /**
+           * @description Signs a typed data object via the React Native webview
+           * @param typedData - The typed data object
+           * @returns Promise that resolves with the signed typed data object
+           */
+          async signTypedData(typedData) {
+            return signTypedDataViaWebView(typedData as unknown as TypedData);
+          },
+          /**
+           * @description Signs an EIP-7702 authorization via the React Native webview
+           * @param parameters - The authorization request parameters
+           * @returns Promise that resolves with the signed authorization object
+           */
+          async signAuthorization(
+            parameters: AuthorizationRequest
+          ): Promise<SignedAuthorization> {
+            // Ensure address is set (supports both 'address' and 'contractAddress' as
+            // per viem's AuthorizationRequest type)
+            // Use OUR_EIP7702_IMPLEMENTATION_ADDRESS as fallback if not provided
+            const address =
+              parameters.contractAddress ??
+              parameters.address ??
+              OUR_EIP7702_IMPLEMENTATION_ADDRESS;
+
+            // Build authorization params - use either address or contractAddress, not both
+            const authorizationParams: AuthorizationRequest =
+              parameters.contractAddress
+                ? {
+                    contractAddress: address,
+                    chainId: parameters.chainId,
+                    nonce: parameters.nonce,
+                  }
+                : {
+                    address,
+                    chainId: parameters.chainId,
+                    nonce: parameters.nonce,
+                  };
+
+            // Delegate signing to React Native app via webview
+            // The RN app will handle hashing and signing using the private key account
+            const signedAuthorization =
+              await signAuthorizationViaWebView(authorizationParams);
+
+            /**
+             * NOTE: This is commented out but is being left in
+             * just incase we need to verify the signature again
+             * in future.
+             */
+            // Optional: Verify the signature (for debugging)
+            // Serialize the signature to hex format for verification
+            // if (!signedAuthorization.v) {
+            //   throw new Error('Signature missing v value');
+            // }
+            // const vHex = signedAuthorization.v.toString(16).padStart(2, '0');
+            // const signatureHex =
+            //   `0x${signedAuthorization.r.slice(2)}${signedAuthorization.s.slice(2)}${vHex}` as `0x${string}`;
+
+            // const valid = await verifyAuthorization({
+            //   address: eoaAddress as `0x${string}`,
+            //   authorization: {
+            //     chainId: signedAuthorization.chainId,
+            //     address: signedAuthorization.address,
+            //     nonce: signedAuthorization.nonce,
+            //   },
+            //   signature: signatureHex,
+            // });
+
+            return signedAuthorization;
+          },
+        });
+
+        // Store the account for passing to EtherspotTransactionKit
+        setCustomAccount(account);
+
+        const walletChainId = 1; // default chain id is 1 (mainnet)
+
+        const newProvider = createWalletClient({
+          account,
+          chain: getNetworkViem(walletChainId),
+          transport: http(),
+        });
+
+        setProvider(newProvider);
+
+        const isWithinVisibleChains = visibleChains.some(
+          (chain) => chain.id === walletChainId
+        );
+        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
+
+        Sentry.addBreadcrumb({
+          category: 'authentication',
+          message: 'React Native custom account provider setup completed',
+          level: 'info',
+          data: {
+            providerSetupId,
+            walletChainId,
+            isWithinVisibleChains,
+            finalChainId: isWithinVisibleChains
+              ? walletChainId
+              : visibleChains[0].id,
+          },
+        });
+
+        return;
+      } // END if (eoaAddress)
+
+      // PRIORITY 2: Private key authentication (legacy support for non-RN flows)
       if (privateKey && pkAccount) {
         Sentry.addBreadcrumb({
           category: 'authentication',
@@ -622,7 +778,7 @@ const AuthLayout = () => {
     updateProvider();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, wagmiIsConnected, privateKey, pkAccount]);
+  }, [wallets, user, wagmiIsConnected, privateKey, pkAccount, eoaAddress]);
 
   /**
    * If all the following variables are truthy within the if
@@ -658,6 +814,8 @@ const AuthLayout = () => {
             chainId={chainId}
             provider={provider}
             privateKey={privateKey}
+            eoaAddress={eoaAddress}
+            customAccount={customAccount}
           />
         ),
         children: [
