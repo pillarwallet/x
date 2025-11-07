@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { createWalletClient, custom, http, WalletClient } from 'viem';
-import { privateKeyToAccount, toAccount } from 'viem/accounts';
+import { toAccount } from 'viem/accounts';
 import type {
   Account,
   AuthorizationRequest,
@@ -82,10 +82,6 @@ const AuthLayout = () => {
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [privateKey, setPrivateKey] = useState<string | undefined>(undefined);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pkAccount, setPkAccount] = useState<string | undefined>(undefined);
   const [eoaAddress, setEoaAddress] = useState<string | undefined>(undefined);
   const [customAccount, setCustomAccount] = useState<Account | undefined>(
     undefined
@@ -93,8 +89,7 @@ const AuthLayout = () => {
   const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
-  const isAuthenticated =
-    authenticated || wagmiIsConnected || !!pkAccount || !!eoaAddress;
+  const isAuthenticated = authenticated || wagmiIsConnected || !!eoaAddress;
 
   // Minimal Sentry context for authentication state - only set on errors
   useEffect(() => {
@@ -386,51 +381,6 @@ const AuthLayout = () => {
 
         return;
       } // END if (eoaAddress)
-
-      // PRIORITY 2: Private key authentication (legacy support for non-RN flows)
-      if (privateKey && pkAccount) {
-        Sentry.addBreadcrumb({
-          category: 'authentication',
-          message: 'Setting up private key provider (priority authentication)',
-          level: 'info',
-          data: {
-            providerSetupId,
-            accountAddress: pkAccount,
-          },
-        });
-
-        const account = privateKeyToAccount(privateKey as `0x${string}`);
-        const walletChainId = 1; // default chain id is 1 (mainnet)
-
-        const newProvider = createWalletClient({
-          account,
-          chain: getNetworkViem(walletChainId),
-          transport: http(),
-        });
-
-        setProvider(newProvider);
-
-        const isWithinVisibleChains = visibleChains.some(
-          (chain) => chain.id === walletChainId
-        );
-        setChainId(isWithinVisibleChains ? walletChainId : visibleChains[0].id);
-
-        Sentry.addBreadcrumb({
-          category: 'authentication',
-          message: 'Private key provider setup completed',
-          level: 'info',
-          data: {
-            providerSetupId,
-            walletChainId,
-            isWithinVisibleChains,
-            finalChainId: isWithinVisibleChains
-              ? walletChainId
-              : visibleChains[0].id,
-          },
-        });
-
-        return;
-      } // END if (privateKey && pkAccount)
 
       // Don't run provider setup if Privy is still initializing and we're not using WalletConnect
       if (!ready && !wagmiIsConnected) {
@@ -777,7 +727,7 @@ const AuthLayout = () => {
     updateProvider();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, user, wagmiIsConnected, privateKey, pkAccount, eoaAddress]);
+  }, [wallets, user, wagmiIsConnected, eoaAddress]);
 
   /**
    * If all the following variables are truthy within the if
@@ -812,7 +762,6 @@ const AuthLayout = () => {
           <Authorized
             chainId={chainId}
             provider={provider}
-            privateKey={privateKey}
             eoaAddress={eoaAddress}
             customAccount={customAccount}
           />
