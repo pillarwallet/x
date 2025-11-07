@@ -3,6 +3,7 @@
 exports[`<EIP7702UpgradeModal /> > Rendering > renders correctly and matches snapshot 1`] = `
 <div
   className="fixed inset-0 flex items-center justify-center pt-4 pb-20 z-50"
+  onClick={[Function]}
   style={
     {
       "backdropFilter": "blur(10px)",
@@ -11,7 +12,7 @@ exports[`<EIP7702UpgradeModal /> > Rendering > renders correctly and matches sna
   }
 >
   <div
-    className="flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto py-6"
+    className="relative flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto py-6"
   >
     <div
       data-testid="upgrade-action"

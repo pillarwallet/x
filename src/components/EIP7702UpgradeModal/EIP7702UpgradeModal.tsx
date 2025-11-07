@@ -23,6 +23,7 @@ import { UpgradeStatus, UserOpUpgradeStatus } from './types';
 
 // components
 import EIP7702UpgradeAction from './EIP7702UpgradeAction';
+import EIP7702UpgradeCloseButton from './EIP7702UpgradeCloseButton';
 import EIP7702UpgradeDetails from './EIP7702UpgradeDetails';
 import EIP7702UpgradeStatus from './EIP7702UpgradeStatus';
 
@@ -519,11 +520,26 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
     );
   };
 
+  const handleBackdropClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
+
+      if (upgradeStatus === 'completed' || upgradeStatus === 'failed') {
+        onClose();
+      }
+    },
+    [onClose, upgradeStatus]
+  );
+
   // Early return after all hooks have been called
   if (!isOpen) return null;
 
   // Determine padding based on what's being shown
   const shouldShowLargePadding = !showDetails && upgradeStatus !== 'ready';
+  const shouldShowCloseButton =
+    upgradeStatus === 'completed' || upgradeStatus === 'failed';
 
   return (
     <div
@@ -532,10 +548,16 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
         backgroundColor: 'rgba(18, 17, 22, 0.8)',
         backdropFilter: 'blur(10px)',
       }}
+      onClick={handleBackdropClick}
     >
       <div
-        className={`flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto ${shouldShowLargePadding ? 'py-20' : 'py-6'}`}
+        className={`relative flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto ${shouldShowLargePadding ? 'py-20' : 'py-6'}`}
       >
+        {shouldShowCloseButton && (
+          <div className="absolute top-4 right-4 justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3">
+            <EIP7702UpgradeCloseButton onClose={onClose} />
+          </div>
+        )}
         {renderContent()}
       </div>
     </div>

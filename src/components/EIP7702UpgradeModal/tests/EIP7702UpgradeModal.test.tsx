@@ -109,13 +109,18 @@ vi.mock('../EIP7702UpgradeStatus', () => ({
   default: ({
     status,
     onViewDetails,
+    onClose,
   }: {
     status: string;
     onViewDetails: () => void;
+    onClose: () => void;
   }) => (
     <div data-testid={`upgrade-status-${status}`}>
       <button type="button" data-testid="view-details" onClick={onViewDetails}>
         View Details
+      </button>
+      <button type="button" data-testid="status-close" onClick={onClose}>
+        Close Status
       </button>
     </div>
   ),
