@@ -48,6 +48,11 @@ const WalletPortfolioButtons = () => {
     if (isAddCashLoading) return;
 
     setIsAddCashLoading(true);
+
+    // Open window immediately to preserve user gesture for mobile browsers
+    // We'll redirect it once we have the URL
+    const newWindow = window.open('about:blank', '_blank', 'noopener,noreferrer');
+
     try {
       // Validate wallet address
       if (!accountAddress) {
@@ -127,8 +132,19 @@ const WalletPortfolioButtons = () => {
         throw new Error('No URL received from Coinbase API');
       }
 
-      window.open(onrampUrl, '_blank', 'noopener,noreferrer');
+      // Redirect the pre-opened window to the Coinbase URL
+      if (newWindow) {
+        newWindow.location.href = onrampUrl;
+      } else {
+        // Fallback: if popup was blocked, try direct window.open
+        window.open(onrampUrl, '_blank', 'noopener,noreferrer');
+      }
     } catch (error) {
+      // Close the blank window if we opened one and then failed
+      if (newWindow) {
+        newWindow.close();
+      }
+
       // TODO: Replace with toast notification or proper error UI
       // For now, silently fail - user can try again
       // Error is logged for debugging in development
