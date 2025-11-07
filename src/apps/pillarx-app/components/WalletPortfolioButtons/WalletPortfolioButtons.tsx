@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { RiArrowDownLine } from 'react-icons/ri';
 import { useAccount } from 'wagmi';
+import { TailSpin } from 'react-loader-spinner';
 
 // hooks
 import { useEIP7702Upgrade } from '../../../../hooks/useEIP7702Upgrade';
@@ -15,12 +17,16 @@ import ReceiveModal from '../ReceiveModal/ReceiveModal';
 import BodySmall from '../Typography/BodySmall';
 import WalletConnectDropdown from '../WalletConnectDropdown/WalletConnectDropdown';
 
+// icons
+import FrameIcon from '../../images/Frame.svg';
+
 const WalletPortfolioButtons = () => {
   const dispatch = useAppDispatch();
   const { user } = usePrivy();
   const { isConnected } = useAccount();
   const { isEligible, handleUpgradeClick } = useEIP7702Upgrade();
   const { walletAddress: accountAddress, kit } = useTransactionKit();
+  const [isAddCashLoading, setIsAddCashLoading] = useState(false);
 
   // Check if Privy user is connected via WalletConnect using linkedAccounts
   const isPrivyConnectedViaWalletConnect = user?.linkedAccounts?.some(
@@ -39,6 +45,9 @@ const WalletPortfolioButtons = () => {
     kit.getEtherspotProvider().getWalletMode() !== 'delegatedEoa';
 
   const handleAddCash = async () => {
+    if (isAddCashLoading) return;
+
+    setIsAddCashLoading(true);
     try {
       // Validate wallet address
       if (!accountAddress) {
@@ -127,44 +136,65 @@ const WalletPortfolioButtons = () => {
         // eslint-disable-next-line no-console
         console.error('Error opening add cash URL:', error);
       }
+    } finally {
+      setIsAddCashLoading(false);
     }
   };
 
   return (
-    <div className="flex w-full desktop:gap-x-2.5 tablet:gap-x-2.5">
-      <ReceiveModal />
-      <button
-        type="button"
-        className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
-        onClick={() => dispatch(setIsReceiveModalOpen(true))}
-      >
-        <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
-          <BodySmall>Receive</BodySmall>
-          <RiArrowDownLine size={16} color="white" />
-        </div>
-      </button>
-      <button
-        type="button"
-        className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
-        onClick={() => handleAddCash()}
-      >
-        <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
-          <BodySmall>Add Cash</BodySmall>
-        </div>
-      </button>
-      {isEligible && (
+    <div className="flex flex-col w-full gap-y-2.5">
+      <div className="flex w-full desktop:gap-x-2.5 tablet:gap-x-2.5">
+        <ReceiveModal />
         <button
           type="button"
           className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
-          onClick={handleUpgradeClick}
+          onClick={() => dispatch(setIsReceiveModalOpen(true))}
         >
           <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
-            <BodySmall>Upgrade</BodySmall>
-            <RiArrowDownLine size={16} color="white" className="rotate-180" />
+            <BodySmall>Receive</BodySmall>
+            <RiArrowDownLine size={16} color="white" />
           </div>
         </button>
-      )}
-      {shouldShowWalletConnectDropdown && <WalletConnectDropdown />}
+        {shouldShowWalletConnectDropdown && <WalletConnectDropdown />}
+      </div>
+      <div className="flex w-full desktop:gap-x-2.5 tablet:gap-x-2.5">
+        <button
+          type="button"
+          className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleAddCash}
+          disabled={isAddCashLoading}
+        >
+          <div className="flex gap-2 items-center justify-center rounded-lg">
+            {isAddCashLoading ? (
+              <>
+                <span className="text-white font-medium text-[14px] leading-[14px] tracking-[-0.02em] text-center align-bottom">
+                  Add Cash
+                </span>
+                <TailSpin color="#FFFFFF" height={16} width={16} />
+              </>
+            ) : (
+              <>
+                <span className="text-white font-medium text-[14px] leading-[14px] tracking-[-0.02em] text-center align-bottom">
+                  Add Cash
+                </span>
+                <img src={FrameIcon} alt="Add Cash" width={16} height={16} />
+              </>
+            )}
+          </div>
+        </button>
+        {isEligible && (
+          <button
+            type="button"
+            className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+            onClick={handleUpgradeClick}
+          >
+            <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
+              <BodySmall>Upgrade</BodySmall>
+              <RiArrowDownLine size={16} color="white" className="rotate-180" />
+            </div>
+          </button>
+        )}
+      </div>
     </div>
   );
 };
