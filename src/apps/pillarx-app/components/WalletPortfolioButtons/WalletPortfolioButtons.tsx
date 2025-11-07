@@ -172,7 +172,7 @@ const WalletPortfolioButtons = () => {
       console.log('Opening onramp URL:', onrampUrl);
 
       // Open the URL directly - simpler approach that works on all browsers
-      window.open(onrampUrl, '_blank', 'noreferrer');
+      window.open(onrampUrl, '_top', 'noreferrer');
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error opening add cash URL:', error);
