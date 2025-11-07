@@ -554,10 +554,7 @@ const EIP7702UpgradeModal: React.FC<EIP7702UpgradeModalProps> = ({
         className={`relative flex flex-col bg-[#1E1D24] rounded-2xl px-3 max-w-md mx-4 w-full items-center gap-9 max-h-[calc(100vh-6rem)] overflow-y-auto ${shouldShowLargePadding ? 'py-20' : 'py-6'}`}
       >
         {shouldShowCloseButton && (
-          <div
-            className="absolute top-4 right-4 justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3"
-            data-testid="pulse-transaction-details-close-button"
-          >
+          <div className="absolute top-4 right-4 justify-center items-center bg-[#121116] rounded-[10px] p-[2px_2px_4px_2px] flex w-10 h-10 ml-3">
             <EIP7702UpgradeCloseButton onClose={onClose} />
           </div>
         )}
