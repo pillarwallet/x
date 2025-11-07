@@ -28,11 +28,13 @@ interface WalletModeVerificationResult {
 
 interface UseWalletModeVerificationProps {
   privateKey?: string;
+  eoaAddress?: string;
   kit: EtherspotTransactionKit | null;
 }
 
 export const useWalletModeVerification = ({
   privateKey,
+  eoaAddress,
   kit,
 }: UseWalletModeVerificationProps): WalletModeVerificationResult => {
   const [walletMode, setWalletMode] = useState<WalletMode>('modular');
@@ -44,7 +46,8 @@ export const useWalletModeVerification = ({
     let cancelled = false;
 
     const verifyWalletMode = async () => {
-      if (!privateKey || !kit) {
+      // Need either privateKey or eoaAddress, and kit
+      if ((!privateKey && !eoaAddress) || !kit) {
         if (cancelled) return;
         setWalletMode('modular');
         setEip7702Info({});
@@ -56,12 +59,20 @@ export const useWalletModeVerification = ({
       setError(null);
 
       try {
-        // Get EOA address from private key
-        const eoaAccount = privateKeyToAccount(privateKey as `0x${string}`);
-        const eoaAddress = eoaAccount.address;
+        // Get EOA address from privateKey
+        let resolvedEoaAddress: string;
+        if (privateKey) {
+          const eoaAccount = privateKeyToAccount(privateKey as `0x${string}`);
+          resolvedEoaAddress = eoaAccount.address;
+        }
 
         // Get counterfactual address from kit (in modular mode)
         const counterfactualAddress = await kit.getWalletAddress();
+
+        if (eoaAddress) {
+          resolvedEoaAddress = eoaAddress;
+        }
+
         if (cancelled) return;
 
         // Check all supported chains
@@ -122,7 +133,7 @@ export const useWalletModeVerification = ({
             });
 
             const senderCode = await publicClient.getCode({
-              address: eoaAddress as `0x${string}`,
+              address: resolvedEoaAddress as `0x${string}`,
             });
 
             const hasEIP7702Designation =
@@ -195,7 +206,7 @@ export const useWalletModeVerification = ({
     return () => {
       cancelled = true;
     };
-  }, [privateKey, kit]);
+  }, [privateKey, eoaAddress, kit]);
 
   return {
     walletMode,

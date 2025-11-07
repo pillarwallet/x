@@ -39,8 +39,8 @@ const BottomMenu = () => {
   const overlayRef = React.useRef<HTMLDivElement>(null);
   const [isDebugMode, setIsDebugMode] = useState(false);
 
-  // Check if user is logged in via private key (React Native app)
-  const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
+  // Check if user is authenticated via React Native delegated account
+  const hasCustomAccount = !!localStorage.getItem('EOA_ADDRESS');
 
   useEffect(() => {
     const localRef = overlayRef.current;
@@ -82,7 +82,7 @@ const BottomMenu = () => {
   }, []);
 
   // Only hide menu if user is not authenticated via any method
-  if (!authenticated && !isConnected && !isPkAccount) return null;
+  if (!authenticated && !isConnected && !hasCustomAccount) return null;
 
   const isHomeActive =
     active === null && navLocation.pathname === navigationRoute.home;

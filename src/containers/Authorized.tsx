@@ -7,7 +7,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import { WalletClient } from 'viem';
+import { Account, WalletClient } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 // components
@@ -39,10 +39,14 @@ export default function Authorized({
   provider,
   chainId,
   privateKey,
+  eoaAddress,
+  customAccount,
 }: {
   provider: WalletClient;
   chainId: number;
   privateKey?: string;
+  eoaAddress?: string;
+  customAccount?: Account;
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
@@ -84,6 +88,7 @@ export default function Authorized({
     eip7702Info,
   } = useWalletModeVerification({
     privateKey,
+    eoaAddress,
     kit: tempKit,
   });
 
@@ -156,10 +161,11 @@ export default function Authorized({
         provider,
         chainId,
         privateKey,
+        viemLocalAccount: customAccount,
         bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
         walletMode,
       }) as EtherspotTransactionKitConfig,
-    [provider, chainId, privateKey, walletMode]
+    [provider, chainId, privateKey, customAccount, walletMode]
   );
 
   if (showAnimation || isVerifyingWalletMode) {
