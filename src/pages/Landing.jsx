@@ -10,7 +10,6 @@ import { Footer } from '../components/LandingPage/Footer';
 import { MailChimp } from '../components/LandingPage/MailChimp';
 
 // utils
-import { setupPillarWalletMessaging } from '../utils/pillarWalletMessaging';
 
 // Styled components for loading state
 const LoadingContainer = styled.div`
@@ -60,6 +59,7 @@ export default function LandingPage() {
       devicePlatform === 'ios' || devicePlatform === 'android';
     const hasDevicePlatformInStorage =
       !!localStorage.getItem('DEVICE_PLATFORM');
+    const eoaAddress = searchParams.get('eoaAddress');
 
     const isReactNativeApp =
       hasDevicePlatformInUrl || hasDevicePlatformInStorage;
@@ -72,22 +72,13 @@ export default function LandingPage() {
         localStorage.setItem('DEVICE_PLATFORM', devicePlatform);
       }
 
-      // Set up messaging to request private key
-      const cleanup = setupPillarWalletMessaging(
-        (address) => {
-          // Success - store account address only (NOT the private key for security)
-          localStorage.setItem('ACCOUNT_VIA_PK', address);
-          // Private key will be stored in Main.tsx state (in-memory only)
-          navigate('/');
-        },
-        (error) => {
-          // Error - still redirect but without auth
-          console.error('Failed to get private key:', error);
-          navigate('/');
-        }
-      );
+      // If eoaAddress provided, persist it so Main can pick it up
+      if (eoaAddress) {
+        localStorage.setItem('EOA_ADDRESS', eoaAddress);
+      }
 
-      return cleanup;
+      navigate('/');
+      return undefined;
     }
     return undefined;
   }, [navigate]);
