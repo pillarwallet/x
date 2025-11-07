@@ -49,24 +49,27 @@ const WalletPortfolioButtons = () => {
 
     setIsAddCashLoading(true);
 
-    // Open window immediately to preserve user gesture for mobile browsers
-    // We'll redirect it once we have the URL
-    const newWindow = window.open('about:blank', '_blank', 'noopener,noreferrer');
-
     try {
       // Validate wallet address
       if (!accountAddress) {
-        throw new Error('Wallet address is not available');
+        // eslint-disable-next-line no-alert
+        alert('Wallet address is not available');
+        return;
       }
 
       // Check if address is a valid Ethereum address (0x followed by 40 hex characters)
       const isValidAddress = /^0x[a-fA-F0-9]{40}$/.test(accountAddress);
       if (!isValidAddress) {
-        throw new Error('Invalid wallet address format');
+        // eslint-disable-next-line no-alert
+        alert('Invalid wallet address format');
+        return;
       }
 
       // Get token from backend API
       const tokenUrl = new URL(import.meta.env.VITE_ONRAMP_JWT_URL);
+
+      // eslint-disable-next-line no-console
+      console.log('Fetching JWT token from:', tokenUrl.toString());
 
       const tokenResponse = await fetch(tokenUrl.toString(), {
         method: 'GET',
@@ -76,15 +79,32 @@ const WalletPortfolioButtons = () => {
       });
 
       if (!tokenResponse.ok) {
-        throw new Error('Failed to get token from backend');
+        // eslint-disable-next-line no-console
+        console.error(
+          'Token response not OK:',
+          tokenResponse.status,
+          tokenResponse.statusText
+        );
+        // eslint-disable-next-line no-alert
+        alert(
+          `Failed to get token: ${tokenResponse.status} ${tokenResponse.statusText}`
+        );
+        return;
       }
 
       const tokenData = await tokenResponse.json();
       const { token } = tokenData;
 
       if (!token) {
-        throw new Error('No token received from backend');
+        // eslint-disable-next-line no-console
+        console.error('No token in response:', tokenData);
+        // eslint-disable-next-line no-alert
+        alert('No token received from backend');
+        return;
       }
+
+      // eslint-disable-next-line no-console
+      console.log('JWT token received successfully');
 
       // Get user's current IP address
       let clientIp = '127.0.0.1'; // fallback
@@ -93,13 +113,19 @@ const WalletPortfolioButtons = () => {
         if (ipResponse.ok) {
           const ipData = await ipResponse.json();
           clientIp = ipData.ip;
+          // eslint-disable-next-line no-console
+          console.log('Client IP:', clientIp);
         }
       } catch (ipError) {
-        // Silently fall back to default IP
+        // eslint-disable-next-line no-console
+        console.warn('Failed to get IP, using fallback:', ipError);
       }
 
       // Call Coinbase API to create onramp session (via proxy to avoid CORS)
       // This uses Vite proxy in dev and Cloudflare Pages Function in production
+      // eslint-disable-next-line no-console
+      console.log('Creating Coinbase onramp session...');
+
       const response = await fetch(
         '/api/coinbase/platform/v2/onramp/sessions',
         {
@@ -120,38 +146,40 @@ const WalletPortfolioButtons = () => {
 
       const data = await response.json();
 
+      // eslint-disable-next-line no-console
+      console.log('Coinbase API response:', { status: response.status, data });
+
       if (!response.ok) {
-        throw new Error(
-          `Coinbase API error (${response.status}): ${data.error || JSON.stringify(data)}`
-        );
+        const errorMsg = `Coinbase API error (${response.status}): ${data.error || JSON.stringify(data)}`;
+        // eslint-disable-next-line no-console
+        console.error(errorMsg);
+        // eslint-disable-next-line no-alert
+        alert(errorMsg);
+        return;
       }
 
       const onrampUrl = data?.session?.onrampUrl;
 
       if (!onrampUrl) {
-        throw new Error('No URL received from Coinbase API');
-      }
-
-      // Redirect the pre-opened window to the Coinbase URL
-      if (newWindow) {
-        newWindow.location.href = onrampUrl;
-      } else {
-        // Fallback: if popup was blocked, try direct window.open
-        window.open(onrampUrl, '_blank', 'noopener,noreferrer');
-      }
-    } catch (error) {
-      // Close the blank window if we opened one and then failed
-      if (newWindow) {
-        newWindow.close();
-      }
-
-      // TODO: Replace with toast notification or proper error UI
-      // For now, silently fail - user can try again
-      // Error is logged for debugging in development
-      if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
-        console.error('Error opening add cash URL:', error);
+        console.error('No URL in response:', data);
+        // eslint-disable-next-line no-alert
+        alert('No URL received from Coinbase API');
+        return;
       }
+
+      // eslint-disable-next-line no-console
+      console.log('Opening onramp URL:', onrampUrl);
+
+      // Open the URL directly - simpler approach that works on all browsers
+      window.open(onrampUrl, '_blank', 'noreferrer');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error opening add cash URL:', error);
+      // eslint-disable-next-line no-alert
+      alert(
+        `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     } finally {
       setIsAddCashLoading(false);
     }
