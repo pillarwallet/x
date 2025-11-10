@@ -1,5 +1,10 @@
+// Core
 import { useState, useEffect } from 'react';
+
+// Types
 import { Asset } from '../types';
+
+// Utils
 import {
   formatBalance,
   formatUsdValue,
@@ -8,6 +13,8 @@ import {
   getCurrentChainId,
   getChainById,
 } from '../utils/blockchain';
+
+// Assets
 import defaultLogo from '../images/logo-unknown.png';
 
 interface SendAssetModalProps {

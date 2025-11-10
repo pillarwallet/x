@@ -1,6 +1,13 @@
+// Core
 import { useState, useCallback, useEffect } from 'react';
+
+// Types
 import { Asset } from '../types';
+
+// Utils
 import { formatUsdValue } from '../utils/blockchain';
+
+// Components
 import AssetRow from './AssetRow';
 import SearchAssets from './SearchAssets';
 

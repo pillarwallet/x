@@ -88,7 +88,6 @@ Key Wallet supports all chains that PillarX supports:
 - Mobile-first responsive design
 - Clean, modern UI using Tailwind CSS
 - Master-detail view pattern (list → detail modal)
-- Accessible and intuitive navigation
 - Loading states and error handling
 - Smooth transitions and hover effects
 

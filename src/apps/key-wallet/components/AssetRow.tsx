@@ -1,5 +1,10 @@
+// Types
 import { Asset } from '../types';
+
+// Utils
 import { formatBalance, formatUsdValue } from '../utils/blockchain';
+
+// Assets
 import defaultLogo from '../images/logo-unknown.png';
 
 interface AssetRowProps {
@@ -8,8 +13,14 @@ interface AssetRowProps {
 }
 
 const AssetRow = ({ asset, onClick }: AssetRowProps) => {
+  const priceChange =
+    typeof asset.price_change_24h === 'number' ? asset.price_change_24h : null;
   const priceChangeColor =
-    asset.price_change_24h >= 0 ? 'text-green-400' : 'text-red-400';
+    priceChange !== null
+      ? priceChange >= 0
+        ? 'text-green-400'
+        : 'text-red-400'
+      : 'text-white/60';
 
   return (
     <button
@@ -22,7 +33,7 @@ const AssetRow = ({ asset, onClick }: AssetRowProps) => {
         <div className="flex-shrink-0">
           <img
             src={asset.logo || defaultLogo}
-            alt={asset.symbol || 'token'}
+            alt={asset.symbol || 'token symbol'}
             className="w-12 h-12 rounded-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -52,10 +63,10 @@ const AssetRow = ({ asset, onClick }: AssetRowProps) => {
           <p className="text-sm text-white/60">
             {formatUsdValue(asset.usdBalance)}
           </p>
-          {asset.price_change_24h !== 0 && (
+          {priceChange !== null && priceChange !== 0 && (
             <p className={`text-xs ${priceChangeColor}`}>
-              {asset.price_change_24h > 0 ? '+' : ''}
-              {asset.price_change_24h.toFixed(2)}%
+              {priceChange > 0 ? '+' : ''}
+              {priceChange.toFixed(2)}%
             </p>
           )}
         </div>

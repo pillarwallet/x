@@ -1,4 +1,7 @@
+// Types
 import { TransactionStatus as TxStatus } from '../types';
+
+// Utils
 import { getBlockExplorerUrl, shortenAddress } from '../utils/blockchain';
 
 interface TransactionStatusProps {

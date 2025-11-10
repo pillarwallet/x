@@ -1,5 +1,10 @@
+// Core
 import { useState, useMemo, useEffect } from 'react';
+
+// Vendors
 import Fuse from 'fuse.js';
+
+// Types
 import { Asset } from '../types';
 
 interface SearchAssetsProps {
