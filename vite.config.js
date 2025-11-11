@@ -10,11 +10,14 @@ export default defineConfig({
   build: {
     outDir: 'build',
     commonjsOptions: { transformMixedEsModules: true },
+    rollupOptions: {
+      external: ['/functions/**'],
+    },
   },
   resolve: {
     alias: {
       '@': path.join(__dirname, 'src/apps'),
-      'crypto': 'crypto-browserify'
+      crypto: 'crypto-browserify',
     },
   },
   test: {
@@ -29,5 +32,13 @@ export default defineConfig({
   server: {
     https: true,
     host: '0.0.0.0',
-  }
+    proxy: {
+      '/api/coinbase': {
+        target: 'https://api.cdp.coinbase.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/coinbase/, ''),
+        secure: true,
+      },
+    },
+  },
 });

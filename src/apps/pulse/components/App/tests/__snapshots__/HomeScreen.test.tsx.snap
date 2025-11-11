@@ -6,7 +6,7 @@ exports[`<HomeScreen /> > renders correctly and matches snapshot 1`] = `
   data-testid="pulse-home-view"
 >
   <div
-    className="w-full max-w-[446px] p-1.5"
+    className="w-full max-w-[446px]"
   >
     <p
       className="flex text-base font-normal text-white/[.5] w-full text-center mb-6"

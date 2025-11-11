@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:functions": "wrangler pages dev build --port 5173 --live-reload",
     "build": "VITE_COMMIT_SHA=$CF_PAGES_COMMIT_SHA VITE_VERSION=$npm_package_version vite build",
     "preview": "vite preview",
     "test": "vitest",
@@ -139,7 +140,8 @@
     "typescript": "5.5.4",
     "vite": "7.0.0",
     "vite-plugin-dynamic-import": "1.6.0",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "wrangler": "^4.45.4"
   },
   "eslintConfig": {
     "extends": [

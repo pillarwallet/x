@@ -1264,12 +1264,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           const batchName = batchNames[batchIdx];
           const sentBatch = batchSend.batches[batchName];
 
+          const chainIdForTxHash = payload.batches[batchIdx].chainId;
+
           // In PillarX we only batch transactions per chainId, this is why sendBatch should only
           // have one chainGroup per batch
-          const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash =
+            sentBatch?.chainGroups?.[chainIdForTxHash]?.userOpHash;
           if (userOpHash) {
             allUserOpHashes.push(userOpHash);
-            const chainIdForTxHash = payload.batches[batchIdx].chainId;
 
             Sentry.addBreadcrumb({
               category: 'send_flow',
@@ -1807,13 +1810,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
         // Extract userOpHash
         const sentBatch = batchSend.batches[batchName];
+        const chainIdForTxHash = selectedAsset.chainId;
 
         // In PillarX we only batch transactions per chainId, this is why sendBatch should only
         // have one chainGroup per batch
-        const userOpHash = sentBatch?.chainGroups?.[0]?.userOpHash;
+        // chainGroups is an object keyed by chainId, not an array
+        const userOpHash =
+          sentBatch?.chainGroups?.[chainIdForTxHash]?.userOpHash;
 
         transactionDebugLog('Transaction new userOpHash:', userOpHash);
-        const chainIdForTxHash = selectedAsset.chainId;
         if (!userOpHash) {
           transactionDebugLog('No userOpHash returned after batch send');
 
