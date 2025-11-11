@@ -180,7 +180,7 @@ const WalletPortfolioButtons = () => {
       <ReceiveModal />
       <button
         type="button"
-        className="flex py-[9px] px-3 w-fit h-[40px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+        className="flex py-[9px] px-3 w-fit h-[44px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
         onClick={() => dispatch(setIsReceiveModalOpen(true))}
       >
         <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
@@ -191,7 +191,7 @@ const WalletPortfolioButtons = () => {
       {shouldShowWalletConnectDropdown && <WalletConnectDropdown />}
       <button
         type="button"
-        className="flex py-[9px] px-3 w-fit h-[40px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex py-[9px] px-3 w-fit h-[44px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleAddCash}
         disabled={isAddCashLoading || !accountAddress}
       >
@@ -210,7 +210,7 @@ const WalletPortfolioButtons = () => {
       {isEligible && (
         <button
           type="button"
-          className="flex py-[9px] px-3 w-fit h-[40px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+          className="flex py-[9px] px-3 w-fit h-[44px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
           onClick={handleUpgradeClick}
         >
           <div className="flex gap-2 items-center justify-center rounded-lg cursor-pointer">
