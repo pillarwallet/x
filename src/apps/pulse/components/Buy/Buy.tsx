@@ -29,8 +29,10 @@ import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAva
 import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
+import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useModularSdk from '../../hooks/useModularSdk';
+import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
@@ -87,6 +89,13 @@ export default function Buy(props: BuyProps) {
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
   const { intentSdk } = useIntentSdk();
+
+  // Get feature flag from Firebase Remote Config
+  const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
+
+  // Relay Buy states
+  const [buyOffer, setBuyOffer] = useState<BuyOffer | null>(null);
+  const { getBestOffer, isInitialized: isRelayInitialized, error: relayError } = useRelayBuy();
 
   // Simple background search for token-atlas
   const location = useLocation();
@@ -181,11 +190,21 @@ export default function Buy(props: BuyProps) {
   };
 
   const handleBuySubmit = async () => {
-    if (!areModulesInstalled) {
-      await installModules();
+    if (USE_RELAY_BUY) {
+      // For Relay Buy, we use the buyOffer instead of expressIntentResponse
+      // Convert buyOffer to a compatible format for PreviewBuy
+      if (buyOffer) {
+        setExInResp(buyOffer as any);
+        setPreviewBuy(true);
+      }
     } else {
-      setExInResp(expressIntentResponse);
-      setPreviewBuy(true);
+      // Original Intent SDK flow
+      if (!areModulesInstalled) {
+        await installModules();
+      } else {
+        setExInResp(expressIntentResponse);
+        setPreviewBuy(true);
+      }
     }
   };
 
@@ -238,6 +257,51 @@ export default function Buy(props: BuyProps) {
     dispensableAssets.length,
   ]);
 
+  // Relay Buy: Fetch buy offer
+  const fetchBuyOffer = useCallback(async () => {
+    if (
+      debouncedUsdAmount &&
+      token &&
+      isRelayInitialized &&
+      parseFloat(debouncedUsdAmount) > 0 &&
+      !notEnoughLiquidity
+    ) {
+      setIsLoading(true);
+      try {
+        // Calculate token amount from USD amount
+        const tokenPrice = parseFloat(token.usdValue) || 0;
+        if (tokenPrice <= 0) {
+          console.error('Invalid token price');
+          setBuyOffer(null);
+          return;
+        }
+        const tokenAmount = (parseFloat(debouncedUsdAmount) / tokenPrice).toString();
+
+        const offer = await getBestOffer({
+          toAmount: tokenAmount,
+          toTokenAddress: token.address,
+          toChainId: token.chainId,
+          toTokenDecimals: token.decimals,
+          fromChainId: maxStableCoinBalance.chainId,
+        });
+        setBuyOffer(offer);
+      } catch (error) {
+        console.error('Failed to fetch buy offer:', error);
+        setBuyOffer(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [
+    debouncedUsdAmount,
+    token,
+    isRelayInitialized,
+    notEnoughLiquidity,
+    getBestOffer,
+    maxStableCoinBalance.chainId,
+  ]);
+
+  // Intent SDK: Refresh buy intent
   const refreshBuyIntent = useCallback(async () => {
     // Prevent multiple simultaneous calls
     if (isLoading) {
@@ -325,11 +389,15 @@ export default function Buy(props: BuyProps) {
     walletPortfolioData?.result.data.total_wallet_balance,
   ]);
 
-  // Call refreshBuyIntent when input changes
+  // Call the appropriate refresh function based on feature flag
   useEffect(() => {
-    // Only call refreshBuyIntent if we have a token selected
+    // Only call if we have a token selected
     if (token) {
-      refreshBuyIntent();
+      if (USE_RELAY_BUY) {
+        fetchBuyOffer();
+      } else {
+        refreshBuyIntent();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -340,19 +408,20 @@ export default function Buy(props: BuyProps) {
     areModulesInstalled,
     dispensableAssets,
     permittedChains,
+    USE_RELAY_BUY,
   ]);
 
   // Register refresh callback with HomeScreen
   useEffect(() => {
     if (setBuyRefreshCallback) {
-      setBuyRefreshCallback(() => refreshBuyIntent);
+      setBuyRefreshCallback(() => USE_RELAY_BUY ? fetchBuyOffer : refreshBuyIntent);
     }
     return () => {
       if (setBuyRefreshCallback) {
         setBuyRefreshCallback(null);
       }
     };
-  }, [setBuyRefreshCallback, refreshBuyIntent]);
+  }, [setBuyRefreshCallback, refreshBuyIntent, fetchBuyOffer]);
 
   // Start searching when coming from token-atlas
   useEffect(() => {
@@ -545,7 +614,9 @@ export default function Buy(props: BuyProps) {
                 minGasFee ||
                 (!isLoading &&
                   expressIntentResponse &&
-                  expressIntentResponse.bids?.length === 0);
+                  expressIntentResponse.bids?.length === 0) ||
+                (USE_RELAY_BUY && relayError) ||
+                (USE_RELAY_BUY && !isLoading && buyOffer === null && debouncedUsdAmount && token);
 
               if (!showError) return null;
 
@@ -560,6 +631,10 @@ export default function Buy(props: BuyProps) {
                 message = 'You need $2 USDC to trade, deposit USDC';
               } else if (minGasFee) {
                 message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
+              } else if (USE_RELAY_BUY && relayError) {
+                message = relayError;
+              } else if (USE_RELAY_BUY && !isLoading && buyOffer === null && debouncedUsdAmount && token) {
+                message = 'No available routes for this amount';
               } else {
                 message = 'No available routes for this amount';
               }
@@ -641,7 +716,7 @@ export default function Buy(props: BuyProps) {
         <BuyButton
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}
-          expressIntentResponse={expressIntentResponse}
+          expressIntentResponse={USE_RELAY_BUY ? (buyOffer as any) : expressIntentResponse}
           handleBuySubmit={handleBuySubmit}
           isFetching={isFetching}
           isInstalling={isInstalling}
@@ -651,7 +726,8 @@ export default function Buy(props: BuyProps) {
             notEnoughLiquidity ||
             insufficientWalletBalance ||
             minimumStableBalance ||
-            minGasFee
+            minGasFee ||
+            (USE_RELAY_BUY && (relayError !== null || buyOffer === null))
           }
           payingTokens={payingTokens}
           token={token}
