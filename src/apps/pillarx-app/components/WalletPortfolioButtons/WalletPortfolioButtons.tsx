@@ -3,6 +3,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { RiArrowDownLine } from 'react-icons/ri';
 import { useAccount } from 'wagmi';
 import { TailSpin } from 'react-loader-spinner';
+import { isAddress } from 'viem';
 
 // hooks
 import { useEIP7702Upgrade } from '../../../../hooks/useEIP7702Upgrade';
@@ -53,13 +54,16 @@ const WalletPortfolioButtons = () => {
       // Validate wallet address
       if (!accountAddress) {
         console.error('Wallet address is not available');
+        // eslint-disable-next-line no-alert
+        alert('Wallet address is not available. Please try again shortly.');
         return;
       }
 
-      // Check if address is a valid Ethereum address (0x followed by 40 hex characters)
-      const isValidAddress = /^0x[a-fA-F0-9]{40}$/.test(accountAddress);
-      if (!isValidAddress) {
+      // Check if address is a valid Ethereum address
+      if (!isAddress(accountAddress)) {
         console.error('Invalid wallet address format');
+        // eslint-disable-next-line no-alert
+        alert('Invalid wallet address format. Please try again shortly.');
         return;
       }
 
@@ -80,6 +84,8 @@ const WalletPortfolioButtons = () => {
           tokenResponse.status,
           tokenResponse.statusText
         );
+        // eslint-disable-next-line no-alert
+        alert('Unable to reach the server. Please try again shortly.');
         return;
       }
 
@@ -89,6 +95,10 @@ const WalletPortfolioButtons = () => {
       if (!token) {
         // eslint-disable-next-line no-console
         console.error('No token in response:', tokenData);
+        // eslint-disable-next-line no-alert
+        alert(
+          'Something went wrong on fetching session token. Please try again shortly.'
+        );
         return;
       }
 
@@ -132,6 +142,10 @@ const WalletPortfolioButtons = () => {
         const errorMsg = `Coinbase API error (${response.status}): ${data.error || JSON.stringify(data)}`;
         // eslint-disable-next-line no-console
         console.error(errorMsg);
+        // eslint-disable-next-line no-alert
+        alert(
+          'Something went wrong while fetching coinbase API. Please try again later.'
+        );
         return;
       }
 
@@ -140,6 +154,10 @@ const WalletPortfolioButtons = () => {
       if (!onrampUrl) {
         // eslint-disable-next-line no-console
         console.error('No URL in response:', data);
+        // eslint-disable-next-line no-alert
+        alert(
+          'Something went wrong while fetching coinbase API url. Please try again shortly.'
+        );
         return;
       }
 
@@ -148,6 +166,10 @@ const WalletPortfolioButtons = () => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error opening add cash URL:', error);
+      // eslint-disable-next-line no-alert
+      alert(
+        'Error occurred while opening add cash page. Please try again shortly.'
+      );
     } finally {
       setIsAddCashLoading(false);
     }
@@ -171,23 +193,17 @@ const WalletPortfolioButtons = () => {
         type="button"
         className="flex py-[9px] px-3 w-fit h-[40px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleAddCash}
-        disabled={isAddCashLoading}
+        disabled={isAddCashLoading || !accountAddress}
       >
         <div className="flex gap-2 items-center justify-center rounded-lg">
-          {isAddCashLoading ? (
-            <>
-              <span className="text-white font-medium text-[14px] leading-[14px] tracking-[-0.02em] text-center align-bottom">
-                Add Cash
-              </span>
-              <TailSpin color="#FFFFFF" height={16} width={16} />
-            </>
-          ) : (
-            <>
-              <span className="text-white font-medium text-[14px] leading-[14px] tracking-[-0.02em] text-center align-bottom">
-                Add Cash
-              </span>
-              <img src={FrameIcon} alt="Add Cash" width={16} height={16} />
-            </>
+          <span className="text-white font-medium text-[14px] leading-[14px] tracking-[-0.02em] text-center align-bottom">
+            Add Cash
+          </span>
+          {isAddCashLoading && (
+            <TailSpin color="#FFFFFF" height={16} width={16} />
+          )}
+          {!isAddCashLoading && (
+            <img src={FrameIcon} alt="Add Cash" width={16} height={16} />
           )}
         </div>
       </button>

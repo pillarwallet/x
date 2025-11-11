@@ -30,7 +30,7 @@ export default defineConfig({
     pool: 'forks',
   },
   server: {
-    https: false,
+    https: true,
     host: '0.0.0.0',
     proxy: {
       '/api/coinbase': {
