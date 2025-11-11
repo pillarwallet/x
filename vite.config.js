@@ -17,7 +17,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.join(__dirname, 'src/apps'),
-      'crypto': 'crypto-browserify'
+      crypto: 'crypto-browserify',
     },
   },
   test: {
@@ -30,7 +30,7 @@ export default defineConfig({
     pool: 'forks',
   },
   server: {
-    https: true,
+    https: false,
     host: '0.0.0.0',
     proxy: {
       '/api/coinbase': {
@@ -38,7 +38,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/coinbase/, ''),
         secure: true,
-      }
-    }
+      },
+    },
   },
 });
