@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import {
+  EtherspotTransactionKit,
+  EtherspotTransactionKitConfig,
+} from '@etherspot/transaction-kit';
 import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import { WalletClient } from 'viem';
+import { Account, WalletClient } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 // components
@@ -12,9 +16,13 @@ import ConnectionDebug, { DebugInfo } from '../components/ConnectionDebug';
 import DebugPanel from '../components/DebugPanel';
 import Loading from '../pages/Loading';
 
+// hooks
+import { useWalletModeVerification } from '../hooks/useWalletModeVerification';
+
 // providers
 import AccountTransactionHistoryProvider from '../providers/AccountTransactionHistoryProvider';
 import BottomMenuModalProvider from '../providers/BottomMenuModalProvider';
+import { EIP7702Provider } from '../providers/EIP7702Provider';
 import { EtherspotTransactionKitProvider } from '../providers/EtherspotTransactionKitProvider';
 import GlobalTransactionBatchesProvider from '../providers/GlobalTransactionsBatchProvider';
 import SelectedChainsHistoryProvider from '../providers/SelectedChainsHistoryProvider';
@@ -31,13 +39,18 @@ export default function Authorized({
   provider,
   chainId,
   privateKey,
+  eoaAddress,
+  customAccount,
 }: {
   provider: WalletClient;
   chainId: number;
   privateKey?: string;
+  eoaAddress?: string;
+  customAccount?: Account;
 }) {
   const [showAnimation, setShowAnimation] = useState(true);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
+  const [tempKit, setTempKit] = useState<EtherspotTransactionKit | null>(null);
 
   // Get hooks for debug info
   const { authenticated, ready, user } = usePrivy();
@@ -48,6 +61,36 @@ export default function Authorized({
   const walletConnectConnector = connectors.find(
     ({ id }) => id === 'walletConnect'
   );
+
+  // Create temporary kit for wallet mode verification
+  // Only recreate when provider or privateKey changes
+  useEffect(() => {
+    if (provider && chainId) {
+      const tempKitConfig = {
+        provider,
+        chainId,
+        privateKey,
+        bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
+        walletMode: 'modular' as const, // Always start with modular for verification
+      } as unknown as EtherspotTransactionKitConfig;
+
+      const kit = new EtherspotTransactionKit(tempKitConfig);
+      setTempKit(kit);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, privateKey]);
+
+  // Use wallet mode verification hook
+  const {
+    walletMode,
+    isLoading: isVerifyingWalletMode,
+    error: walletModeError,
+    eip7702Info,
+  } = useWalletModeVerification({
+    privateKey,
+    eoaAddress,
+    kit: tempKit,
+  });
 
   useEffect(() => {
     // Check if we're coming from token-atlas
@@ -113,50 +156,60 @@ export default function Authorized({
 
   // Memoize the config to prevent unnecessary kit recreation
   const kitConfig = useMemo(
-    () => ({
-      provider,
-      chainId,
-      privateKey,
-      bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
-    }),
-    [provider, chainId, privateKey]
+    () =>
+      ({
+        provider,
+        chainId,
+        privateKey,
+        viemLocalAccount: customAccount,
+        bundlerApiKey: import.meta.env.VITE_ETHERSPOT_BUNDLER_API_KEY,
+        walletMode,
+      }) as EtherspotTransactionKitConfig,
+    [provider, chainId, privateKey, customAccount, walletMode]
   );
 
-  if (showAnimation) {
+  if (showAnimation || isVerifyingWalletMode) {
     return <Loading type="enter" />;
+  }
+
+  // Show error if wallet mode verification failed
+  if (walletModeError) {
+    console.error('Wallet mode verification error:', walletModeError);
   }
 
   return (
     <EtherspotTransactionKitProvider config={kitConfig}>
-      <AccountTransactionHistoryProvider>
-        <GlobalTransactionBatchesProvider>
-          <BottomMenuModalProvider>
-            <SelectedChainsHistoryProvider>
-              <WalletConnectToastProvider>
-                <WalletConnectModalProvider>
-                  <AuthContentWrapper>
-                    <Outlet />
-                  </AuthContentWrapper>
-                  <BottomMenu />
+      <EIP7702Provider eip7702Info={eip7702Info}>
+        <AccountTransactionHistoryProvider>
+          <GlobalTransactionBatchesProvider>
+            <BottomMenuModalProvider>
+              <SelectedChainsHistoryProvider>
+                <WalletConnectToastProvider>
+                  <WalletConnectModalProvider>
+                    <AuthContentWrapper>
+                      <Outlet />
+                    </AuthContentWrapper>
+                    <BottomMenu />
 
-                  {/* Debug Panel - shown when debug_connections is enabled */}
-                  {localStorage.getItem('debug_connections') === 'true' && (
-                    <DebugPanel title="Connection Debug">
-                      <ConnectionDebug
-                        debugInfo={debugInfo}
-                        onDisconnect={() => {
-                          // This will be handled by the comprehensive logout utility
-                          // when the user logs out through the normal flow
-                        }}
-                      />
-                    </DebugPanel>
-                  )}
-                </WalletConnectModalProvider>
-              </WalletConnectToastProvider>
-            </SelectedChainsHistoryProvider>
-          </BottomMenuModalProvider>
-        </GlobalTransactionBatchesProvider>
-      </AccountTransactionHistoryProvider>
+                    {/* Debug Panel - shown when debug_connections is enabled */}
+                    {localStorage.getItem('debug_connections') === 'true' && (
+                      <DebugPanel title="Connection Debug">
+                        <ConnectionDebug
+                          debugInfo={debugInfo}
+                          onDisconnect={() => {
+                            // This will be handled by the comprehensive logout utility
+                            // when the user logs out through the normal flow
+                          }}
+                        />
+                      </DebugPanel>
+                    )}
+                  </WalletConnectModalProvider>
+                </WalletConnectToastProvider>
+              </SelectedChainsHistoryProvider>
+            </BottomMenuModalProvider>
+          </GlobalTransactionBatchesProvider>
+        </AccountTransactionHistoryProvider>
+      </EIP7702Provider>
     </EtherspotTransactionKitProvider>
   );
 }

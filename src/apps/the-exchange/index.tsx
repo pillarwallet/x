@@ -25,7 +25,11 @@ import XBackground from './images/x-background.svg';
 
 export const App = () => {
   const { kit, walletAddress } = useTransactionKit();
-  const provider = kit.getProvider();
+  const { walletMode } = kit.getEtherspotProvider().getConfig();
+  const provider =
+    walletMode === 'modular'
+      ? kit.getProvider()
+      : kit.getEtherspotProvider().getWalletClient();
   const isSwapOpen = useAppSelector(
     (state) => state.swap.isSwapOpen as boolean
   );

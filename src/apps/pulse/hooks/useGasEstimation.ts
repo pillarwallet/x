@@ -3,6 +3,7 @@ import { formatUnits } from 'viem';
 
 // utils
 import { getNativeAssetForChainId } from '../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authorization';
 
 // hooks
 import useTransactionKit from '../../../hooks/useTransactionKit';
@@ -10,19 +11,24 @@ import useRelaySell, { SellOffer } from './useRelaySell';
 
 // types
 import { SelectedToken } from '../types/tokens';
+import { Token } from '../../../services/tokensData';
 
 interface UseGasEstimationProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
+  toChainId: number;
   isPaused?: boolean;
+  userPortfolio?: Token[];
 }
 
 export default function useGasEstimation({
   sellToken,
   sellOffer,
   tokenAmount,
+  toChainId,
   isPaused = false,
+  userPortfolio,
 }: UseGasEstimationProps) {
   const [isEstimatingGas, setIsEstimatingGas] = useState(false);
   const [gasEstimationError, setGasEstimationError] = useState<string | null>(
@@ -35,10 +41,19 @@ export default function useGasEstimation({
   const estimateGasFeesRef = useRef<() => Promise<void>>();
 
   const { kit } = useTransactionKit();
-  const { buildSellTransactions } = useRelaySell();
+  const {
+    buildSellTransactions,
+    buildSellTransactionWithBridge,
+    isInitialized,
+  } = useRelaySell();
 
   const estimateGasFees = useCallback(async () => {
     if (!sellToken || !kit || !sellOffer || !tokenAmount) {
+      return;
+    }
+
+    // For cross-chain sells, wait for Relay SDK to be initialized
+    if (sellToken.chainId !== toChainId && !isInitialized) {
       return;
     }
 
@@ -52,13 +67,25 @@ export default function useGasEstimation({
     setGasEstimationError(null);
 
     try {
-      // Build the transactions without executing them
-      const transactions = await buildSellTransactions(
-        sellOffer,
-        sellToken,
-        tokenAmount,
-        undefined
-      );
+      let transactions = [];
+      if (sellToken.chainId === toChainId) {
+        // Build the transactions without executing them
+        transactions = await buildSellTransactions(
+          sellOffer,
+          sellToken,
+          tokenAmount,
+          userPortfolio
+        );
+      } else {
+        const { transactions: bridgeTransactions } =
+          await buildSellTransactionWithBridge(
+            tokenAmount,
+            sellToken,
+            toChainId,
+            userPortfolio
+          );
+        transactions = bridgeTransactions;
+      }
 
       if (transactions.length === 0) {
         setGasCostNative('0');
@@ -90,8 +117,13 @@ export default function useGasEstimation({
           .addToBatch({ batchName });
       }
 
+      const authorization = await getEIP7702AuthorizationIfNeeded(
+        kit,
+        sellToken.chainId
+      );
       const estimation = await kit.estimateBatches({
         onlyBatchNames: [batchName],
+        authorization: authorization || undefined,
       });
 
       const batchEst = estimation.batches[batchName];
@@ -138,24 +170,46 @@ export default function useGasEstimation({
       isEstimatingRef.current = false;
       setIsEstimatingGas(false);
     }
-  }, [sellToken, kit, sellOffer, tokenAmount, buildSellTransactions, isPaused]);
+  }, [
+    sellToken,
+    kit,
+    sellOffer,
+    tokenAmount,
+    buildSellTransactions,
+    buildSellTransactionWithBridge,
+    isPaused,
+    toChainId,
+    isInitialized,
+    userPortfolio,
+  ]);
 
   // Store the latest function in ref to avoid infinite loops
   estimateGasFeesRef.current = estimateGasFees;
 
   // Estimate gas fees when dependencies change
   useEffect(() => {
-    if (
+    // For cross-chain, also wait for isInitialized
+    const isReadyForEstimation =
       sellOffer &&
       sellToken &&
       kit &&
       tokenAmount &&
       estimateGasFeesRef.current &&
-      !isPaused
-    ) {
+      !isPaused &&
+      (sellToken.chainId === toChainId || isInitialized);
+
+    if (isReadyForEstimation && estimateGasFeesRef.current) {
       estimateGasFeesRef.current();
     }
-  }, [sellOffer, sellToken, kit, tokenAmount, isPaused]);
+  }, [
+    sellOffer,
+    sellToken,
+    kit,
+    tokenAmount,
+    isPaused,
+    isInitialized,
+    toChainId,
+  ]);
 
   return {
     isEstimatingGas,

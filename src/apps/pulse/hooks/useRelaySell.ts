@@ -47,6 +47,7 @@ interface SellParams {
   fromTokenAddress: string;
   fromChainId: number;
   fromTokenDecimals: number;
+  toChainId: number;
   slippage?: number;
 }
 
@@ -63,48 +64,45 @@ export default function useRelaySell() {
    * Check if token allowance is set for a specific spender
    * This function verifies if the wallet has approved a contract to spend tokens
    */
-  const isAllowanceSet = async ({
-    owner,
-    spender,
-    tokenAddress,
-    chainId,
-  }: {
-    owner: string;
-    spender: string;
-    tokenAddress: string;
-    chainId: number;
-  }) => {
-    if (isZeroAddress(tokenAddress)) return undefined;
+  const isAllowanceSet = useCallback(
+    async ({
+      owner,
+      spender,
+      tokenAddress,
+      chainId,
+    }: {
+      owner: string;
+      spender: string;
+      tokenAddress: string;
+      chainId: number;
+    }) => {
+      if (isZeroAddress(tokenAddress)) return undefined;
 
-    // Validate inputs
-    if (!owner || !spender || !tokenAddress) {
-      console.warn('Invalid inputs for allowance check:', {
-        owner,
-        spender,
-        tokenAddress,
-      });
-      return undefined;
-    }
+      // Validate inputs
+      if (!owner || !spender || !tokenAddress) {
+        return undefined;
+      }
 
-    try {
-      const publicClient = createPublicClient({
-        chain: getNetworkViem(chainId),
-        transport: http(),
-      });
+      try {
+        const publicClient = createPublicClient({
+          chain: getNetworkViem(chainId),
+          transport: http(),
+        });
 
-      const allowance = await publicClient.readContract({
-        address: tokenAddress as `0x${string}`,
-        abi: erc20Abi,
-        functionName: 'allowance',
-        args: [owner as `0x${string}`, spender as `0x${string}`],
-      });
+        const allowance = await publicClient.readContract({
+          address: tokenAddress as `0x${string}`,
+          abi: erc20Abi,
+          functionName: 'allowance',
+          args: [owner as `0x${string}`, spender as `0x${string}`],
+        });
 
-      return allowance === BigInt(0) ? undefined : allowance;
-    } catch (e) {
-      console.error('Failed to check token allowance:', e);
-      return undefined;
-    }
-  };
+        return allowance === BigInt(0) ? undefined : allowance;
+      } catch (e) {
+        return undefined;
+      }
+    },
+    [isZeroAddress]
+  );
 
   // Clear errors when SDK initializes successfully
   useEffect(() => {
@@ -116,12 +114,12 @@ export default function useRelaySell() {
   /**
    * Get the USDC address for a specific chain
    */
-  const getUSDCAddress = (chainId: number): string | null => {
+  const getUSDCAddress = useCallback((chainId: number): string | null => {
     const stableCurrency = STABLE_CURRENCIES.find(
       (currency) => currency.chainId === chainId
     );
     return stableCurrency?.address || null;
-  };
+  }, []);
 
   /**
    * Get the best sell offer for swapping a token to USDC
@@ -134,6 +132,7 @@ export default function useRelaySell() {
       fromTokenAddress,
       fromChainId,
       fromTokenDecimals,
+      toChainId,
       slippage = 0.03,
     }: SellParams): Promise<SellOffer | null> => {
       if (!isInitialized) {
@@ -141,7 +140,7 @@ export default function useRelaySell() {
         return null;
       }
 
-      const usdcAddress = getUSDCAddress(fromChainId);
+      const usdcAddress = getUSDCAddress(toChainId);
       if (!usdcAddress) {
         setError('Unable to get quote. Please try again.');
         return null;
@@ -178,7 +177,7 @@ export default function useRelaySell() {
           user: accountAddress,
           chainId: fromChainId,
           currency: normalizedFromTokenAddress,
-          toChainId: fromChainId,
+          toChainId,
           toCurrency: usdcAddress,
           amount: fromAmountInWei.toString(), // Use full amount - we'll take fee from USDC output
           tradeType: 'EXACT_INPUT' as const,
@@ -421,10 +420,13 @@ export default function useRelaySell() {
           );
         }
       } else if (userSelectedNative && userNativeBalance === BigInt(0)) {
-        // If we can't get the balance, log a warning but don't fail
-        console.warn(
-          'Could not validate native balance - proceeding with transaction'
-        );
+        // If we can't get the balance, only warn if portfolio was actually provided
+        // (if portfolio is undefined/empty, balance validation is expected to be skipped)
+        if (userPortfolio && userPortfolio.length > 0) {
+          console.warn(
+            'Could not validate native balance - proceeding with transaction'
+          );
+        }
       }
 
       /**
@@ -796,6 +798,7 @@ export default function useRelaySell() {
   const executeSell = async (
     token: SelectedToken,
     amount: string,
+    toChainId: number,
     userPortfolio?: Token[]
   ): Promise<boolean | string> => {
     if (!isInitialized || !accountAddress || !walletAddress) {
@@ -814,27 +817,42 @@ export default function useRelaySell() {
         walletAddress,
       });
 
-      // Get the sell offer
-      const sellOffer = await getBestSellOffer({
-        fromAmount: amount,
-        fromTokenAddress: token.address,
-        fromChainId: token.chainId,
-        fromTokenDecimals: token.decimals,
-      });
+      let transactions = [];
+      let sellOffer;
 
-      if (!sellOffer) {
-        setError('Unable to execute transaction. Please try again.');
-        return false;
+      if (token.chainId === toChainId) {
+        // Get the sell offer
+        sellOffer = await getBestSellOffer({
+          fromAmount: amount,
+          fromTokenAddress: token.address,
+          fromChainId: token.chainId,
+          fromTokenDecimals: token.decimals,
+          toChainId,
+        });
+
+        if (!sellOffer) {
+          setError('Unable to execute transaction. Please try again.');
+          return false;
+        }
+
+        transactionDebugLog('Sell quote obtained:', sellOffer);
+        transactions = await buildSellTransactions(
+          sellOffer,
+          token,
+          amount,
+          userPortfolio
+        );
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        const result = await buildSellTransactionWithBridge(
+          amount,
+          token,
+          toChainId,
+          userPortfolio
+        );
+        transactions = result.transactions;
+        sellOffer = result.finalSellOffer;
       }
-
-      transactionDebugLog('Sell quote obtained:', sellOffer);
-
-      const transactions = await buildSellTransactions(
-        sellOffer,
-        token,
-        amount,
-        userPortfolio
-      );
 
       if (transactions.length === 0) {
         setError('No transactions to execute. Please try again.');
@@ -941,6 +959,638 @@ export default function useRelaySell() {
     }
   };
 
+  /**
+   * Get the best sell offer with cross-chain bridge
+   * This calculates the final amount user will receive after:
+   * 1. Swapping token to USDC on same chain
+   * 2. Taking 1% fee from received USDC
+   * 3. Bridging remaining 99% USDC to target chain
+   */
+  const getBestSellOfferWithBridge = useCallback(
+    async ({
+      fromAmount,
+      fromTokenAddress,
+      fromChainId,
+      fromTokenDecimals,
+      toChainId,
+      slippage = 0.03,
+    }: SellParams): Promise<SellOffer | null> => {
+      if (!isInitialized) {
+        setError('Unable to get quote. Please try again.');
+        return null;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Step 1: Get quote for token -> USDC on same chain
+        const firstSwapOffer = await getBestSellOffer({
+          fromAmount,
+          fromTokenAddress,
+          fromChainId,
+          fromTokenDecimals,
+          toChainId: fromChainId, // Same chain swap
+          slippage,
+        });
+
+        if (!firstSwapOffer) {
+          setError('Unable to get quote for first swap');
+          return null;
+        }
+
+        // Step 2: Calculate USDC after first swap and fee (1%)
+        // User gets 99% of the USDC from the first swap
+        const usdcAfterFirstSwap = firstSwapOffer.tokenAmountToReceive;
+        const usdcAfterFee = usdcAfterFirstSwap * 0.99; // 1% fee taken
+
+        // Step 3: Get quote for bridging USDC to target chain
+        const usdcAddress = getUSDCAddress(fromChainId);
+        if (!usdcAddress) {
+          setError('Unable to get USDC address for source chain');
+          return null;
+        }
+
+        const bridgeOffer = await getBestSellOffer({
+          fromAmount: usdcAfterFee.toString(),
+          fromTokenAddress: usdcAddress,
+          fromChainId,
+          fromTokenDecimals: 6,
+          toChainId, // Target chain
+          slippage,
+        });
+
+        if (!bridgeOffer) {
+          setError('Unable to get quote for bridge');
+          return null;
+        }
+
+        // Step 4: Calculate final amounts
+        // The bridge offer already includes the 1% fee taken by getBestSellOffer
+        // So bridgeOffer.tokenAmountToReceive is what user actually receives
+        const finalAmountToReceive = bridgeOffer.tokenAmountToReceive;
+        const finalMinimumReceive = bridgeOffer.minimumReceive;
+
+        // Step 5: Calculate combined price impact
+        // Price impact from first swap + price impact from bridge
+        let combinedPriceImpact: number | undefined;
+        if (
+          firstSwapOffer.priceImpact !== undefined &&
+          bridgeOffer.priceImpact !== undefined
+        ) {
+          // Combine the two price impacts
+          combinedPriceImpact =
+            firstSwapOffer.priceImpact + bridgeOffer.priceImpact;
+        } else if (firstSwapOffer.priceImpact !== undefined) {
+          combinedPriceImpact = firstSwapOffer.priceImpact;
+        } else if (bridgeOffer.priceImpact !== undefined) {
+          combinedPriceImpact = bridgeOffer.priceImpact;
+        }
+
+        // Return the final offer that reflects what user will actually receive
+        const finalOffer: SellOffer = {
+          tokenAmountToReceive: finalAmountToReceive,
+          minimumReceive: finalMinimumReceive,
+          slippageTolerance: slippage,
+          priceImpact: combinedPriceImpact,
+          offer: bridgeOffer.offer, // Use bridge offer as the main offer
+        };
+
+        return finalOffer;
+      } catch (err) {
+        console.error('Failed to get sell offer with bridge:', err);
+        setError('Unable to get quote. Please try again.');
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isInitialized, getBestSellOffer, getUSDCAddress]
+  );
+
+  /**
+   * Build transactions for selling token with cross-chain bridge
+   * 1. Swap input token to USDC on same chain
+   * 2. Take 1% fee from received USDC
+   * 3. Bridge remaining 99% USDC to target chain
+   *
+   * Note: This function fetches fresh quotes internally. For gas estimation,
+   * the quotes may be stale but that's acceptable for estimation purposes.
+   */
+  const buildSellTransactionWithBridge = useCallback(
+    async (
+      inputAmount: string,
+      fromToken: SelectedToken,
+      toChainId: number,
+      userPortfolio?: Token[]
+    ) => {
+      if (!isInitialized) {
+        throw new Error(
+          'Relay SDK not initialized. Please wait and try again.'
+        );
+      }
+
+      const transactions = [];
+      const fromChainId = fromToken.chainId;
+
+      // ====================================
+      // FIRST SWAP: Token -> USDC (same chain)
+      // ====================================
+
+      // Step 1: Get quote for token -> USDC on same chain
+      // For gas estimation, we need fresh quotes to build accurate transactions
+      let firstSwapOffer: SellOffer | null = null;
+      try {
+        firstSwapOffer = await getBestSellOffer({
+          fromAmount: inputAmount,
+          fromTokenAddress: fromToken.address,
+          fromChainId,
+          fromTokenDecimals: fromToken.decimals,
+          toChainId: fromChainId, // Same chain swap
+        });
+      } catch (err) {
+        // Error getting first swap quote - will be handled below
+      }
+
+      if (!firstSwapOffer) {
+        throw new Error(
+          'Unable to get quote for first swap. Please try again.'
+        );
+      }
+
+      const { steps: firstSwapSteps } = firstSwapOffer.offer;
+
+      if (!firstSwapSteps || firstSwapSteps.length === 0) {
+        throw new Error('No execution steps found in first swap quote');
+      }
+
+      // Step 2: Check if wrapping is required for first swap
+      const isWrapRequired =
+        isWrappedToken(
+          firstSwapOffer.offer.details?.currencyIn?.currency?.address || '',
+          fromToken.chainId
+        ) && !isWrappedToken(fromToken.address, fromToken.chainId);
+
+      const fromAmountBigInt = parseUnits(inputAmount, fromToken.decimals);
+
+      // Step 3: Get USDC address
+      const usdcAddress = getUSDCAddress(fromChainId);
+      if (!usdcAddress) {
+        throw new Error('USDC address not found for source chain');
+      }
+
+      // Step 4: Calculate fee for first swap (1% of USDC received)
+      const feeReceiver = import.meta.env.VITE_SWAP_FEE_RECEIVER;
+      if (!feeReceiver) {
+        throw new Error('Fee receiver address is not configured');
+      }
+
+      const actualUsdcReceived = BigInt(
+        firstSwapOffer.offer.details?.currencyOut?.minimumAmount ||
+          firstSwapOffer.offer.details?.currencyOut?.amount ||
+          '0'
+      );
+      const firstSwapFeeAmount = (actualUsdcReceived * BigInt(1)) / BigInt(100);
+      const usdcAfterFirstSwapFee = actualUsdcReceived - firstSwapFeeAmount;
+
+      // Step 5: Balance checks for first swap
+      const userSelectedNative = isNativeToken(fromToken.address);
+      let userNativeBalance = BigInt(0);
+
+      try {
+        const nativeBalance =
+          getNativeBalanceFromPortfolio(userPortfolio, fromChainId) || '0';
+        userNativeBalance = toWei(nativeBalance, 18);
+      } catch (e) {
+        console.warn(
+          'Unable to fetch balances from portfolio, skipping balance validation:',
+          e
+        );
+      }
+
+      if (userSelectedNative && userNativeBalance > BigInt(0)) {
+        let totalNativeRequired = fromAmountBigInt;
+        if (isWrapRequired) {
+          totalNativeRequired += fromAmountBigInt;
+        }
+
+        if (userNativeBalance < totalNativeRequired) {
+          throw new Error(
+            'Insufficient native token balance to cover swap and wrapping.'
+          );
+        }
+      }
+
+      // Step 6: Add wrap transaction if required
+      if (isWrapRequired) {
+        const wrappedTokenAddress = getWrappedTokenAddressIfNative(
+          fromToken.address,
+          fromToken.chainId
+        );
+        if (!wrappedTokenAddress) {
+          throw new Error('Wrapped token address not found');
+        }
+
+        const wrapCalldata = encodeFunctionData({
+          abi: [
+            {
+              name: 'deposit',
+              type: 'function',
+              stateMutability: 'payable',
+              inputs: [],
+              outputs: [],
+            },
+          ],
+          functionName: 'deposit',
+        });
+
+        transactions.push({
+          to: wrappedTokenAddress,
+          data: wrapCalldata,
+          value: fromAmountBigInt,
+          chainId: fromChainId,
+        });
+
+        transactionDebugLog('Pushed wrap transaction for first swap:', {
+          to: wrappedTokenAddress,
+          value: fromAmountBigInt.toString(),
+          chainId: fromChainId,
+        });
+      }
+
+      // Step 7: Check for approval in first swap
+      const hasFirstSwapRelayApprovalStep = firstSwapSteps.some(
+        (step) => step.id === 'approve'
+      );
+
+      if (!hasFirstSwapRelayApprovalStep) {
+        const tokenToApprove = isWrapRequired
+          ? getWrappedTokenAddressIfNative(fromToken.address, fromToken.chainId)
+          : fromToken.address;
+
+        if (!tokenToApprove) {
+          throw new Error('Token address for approval not found');
+        }
+
+        // Find spender address from swap steps
+        let spenderAddress = '';
+        for (let i = 0; i < firstSwapSteps.length; i += 1) {
+          const step = firstSwapSteps[i];
+          if (
+            step.kind === 'transaction' &&
+            step.items &&
+            step.items.length > 0
+          ) {
+            for (let j = 0; j < step.items.length; j += 1) {
+              const item = step.items[j];
+              if (item.data?.to && item.data.to !== tokenToApprove) {
+                spenderAddress = item.data.to;
+                break;
+              }
+            }
+            if (spenderAddress) break;
+          }
+        }
+
+        if (spenderAddress) {
+          const isAllowance = await isAllowanceSet({
+            owner: walletAddress || '',
+            spender: spenderAddress,
+            tokenAddress: tokenToApprove,
+            chainId: fromChainId,
+          });
+
+          const isEnoughAllowance = isAllowance
+            ? isAllowance >= fromAmountBigInt
+            : undefined;
+
+          if (!isEnoughAllowance) {
+            const calldata = encodeFunctionData({
+              abi: [
+                {
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: 'spender',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: 'value',
+                      type: 'uint256',
+                    },
+                  ],
+                  name: 'approve',
+                  outputs: [
+                    {
+                      internalType: 'bool',
+                      name: '',
+                      type: 'bool',
+                    },
+                  ],
+                  stateMutability: 'nonpayable',
+                  type: 'function',
+                },
+              ],
+              functionName: 'approve',
+              args: [spenderAddress as `0x${string}`, fromAmountBigInt],
+            });
+
+            transactions.push({
+              data: calldata,
+              value: BigInt(0),
+              to: tokenToApprove,
+              chainId: fromChainId,
+              transactionType: 'approval',
+              stepDescription: `Approve ${fromToken.symbol}`,
+            });
+
+            transactionDebugLog('Added approval for first swap:', {
+              tokenAddress: tokenToApprove,
+              spender: spenderAddress,
+              amount: fromAmountBigInt.toString(),
+            });
+          }
+        }
+      }
+
+      // Step 8: Add first swap transactions
+      for (let i = 0; i < firstSwapSteps.length; i += 1) {
+        const step = firstSwapSteps[i];
+
+        if (
+          step.kind === 'transaction' &&
+          step.items &&
+          step.items.length > 0
+        ) {
+          for (let j = 0; j < step.items.length; j += 1) {
+            const item = step.items[j];
+
+            if (item.data) {
+              const { to, value, data, chainId } = item.data;
+
+              const bigIntValue =
+                typeof value === 'string' ? BigInt(value) : BigInt(value || 0);
+
+              const isApprovalStep = step.id === 'approve';
+
+              if (isApprovalStep) {
+                transactions.push({
+                  chainId,
+                  to: to as `0x${string}`,
+                  value: bigIntValue,
+                  data: data || '0x',
+                  stepIndex: i,
+                  itemIndex: j,
+                  stepDescription:
+                    step.description || `Approve ${fromToken.symbol}`,
+                  transactionType: 'approval',
+                });
+              } else {
+                transactions.push({
+                  chainId,
+                  to: to as `0x${string}`,
+                  value: bigIntValue,
+                  data: data || '0x',
+                  stepIndex: i,
+                  itemIndex: j,
+                  stepDescription: step.description || `Step ${i + 1}`,
+                });
+              }
+
+              transactionDebugLog('Added first swap transaction:', {
+                stepIndex: i,
+                itemIndex: j,
+                to,
+                chainId,
+              });
+            }
+          }
+        }
+      }
+
+      // Step 9: Add USDC fee transfer (1% from first swap)
+      if (actualUsdcReceived > BigInt(0) && firstSwapFeeAmount > BigInt(0)) {
+        const feeTransferCalldata = encodeFunctionData({
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [feeReceiver as `0x${string}`, firstSwapFeeAmount],
+        });
+
+        transactions.push({
+          to: usdcAddress,
+          value: BigInt(0),
+          data: feeTransferCalldata,
+          chainId: fromChainId,
+          stepDescription: 'USDC Fee Transfer (1%)',
+          transactionType: 'usdc_fee_transfer',
+        });
+
+        transactionDebugLog('Added USDC fee transfer from first swap:', {
+          feeAmount: firstSwapFeeAmount.toString(),
+          recipient: feeReceiver,
+        });
+      }
+
+      // ====================================
+      // SECOND SWAP: USDC (fromChain) -> USDC (toChain)
+      // ====================================
+
+      // Step 10: Get quote for USDC bridge
+      const usdcToBridgeFormatted = (
+        Number(usdcAfterFirstSwapFee) /
+        10 ** 6
+      ).toString();
+
+      let bridgeOffer: SellOffer | null = null;
+      try {
+        bridgeOffer = await getBestSellOffer({
+          fromAmount: usdcToBridgeFormatted,
+          fromTokenAddress: usdcAddress,
+          fromChainId,
+          fromTokenDecimals: 6,
+          toChainId, // Target chain
+        });
+      } catch (err) {
+        // Error getting bridge quote - will be handled below
+      }
+
+      if (!bridgeOffer) {
+        throw new Error('Unable to get quote for bridge. Please try again.');
+      }
+
+      const { steps: bridgeSteps } = bridgeOffer.offer;
+
+      if (!bridgeSteps || bridgeSteps.length === 0) {
+        throw new Error('No execution steps found in bridge quote');
+      }
+
+      // Step 11: Check for approval in bridge
+      const hasBridgeRelayApprovalStep = bridgeSteps.some(
+        (step) => step.id === 'approve'
+      );
+
+      if (!hasBridgeRelayApprovalStep) {
+        // Find spender address from bridge steps
+        let bridgeSpenderAddress = '';
+        for (let i = 0; i < bridgeSteps.length; i += 1) {
+          const step = bridgeSteps[i];
+          if (
+            step.kind === 'transaction' &&
+            step.items &&
+            step.items.length > 0
+          ) {
+            for (let j = 0; j < step.items.length; j += 1) {
+              const item = step.items[j];
+              if (item.data?.to && item.data.to !== usdcAddress) {
+                bridgeSpenderAddress = item.data.to;
+                break;
+              }
+            }
+            if (bridgeSpenderAddress) break;
+          }
+        }
+
+        if (bridgeSpenderAddress) {
+          const usdcAmountBigInt = parseUnits(usdcToBridgeFormatted, 6);
+
+          const isAllowance = await isAllowanceSet({
+            owner: walletAddress || '',
+            spender: bridgeSpenderAddress,
+            tokenAddress: usdcAddress,
+            chainId: fromChainId,
+          });
+
+          const isEnoughAllowance = isAllowance
+            ? isAllowance >= usdcAmountBigInt
+            : undefined;
+
+          if (!isEnoughAllowance) {
+            const calldata = encodeFunctionData({
+              abi: [
+                {
+                  inputs: [
+                    {
+                      internalType: 'address',
+                      name: 'spender',
+                      type: 'address',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: 'value',
+                      type: 'uint256',
+                    },
+                  ],
+                  name: 'approve',
+                  outputs: [
+                    {
+                      internalType: 'bool',
+                      name: '',
+                      type: 'bool',
+                    },
+                  ],
+                  stateMutability: 'nonpayable',
+                  type: 'function',
+                },
+              ],
+              functionName: 'approve',
+              args: [bridgeSpenderAddress as `0x${string}`, usdcAmountBigInt],
+            });
+
+            transactions.push({
+              data: calldata,
+              value: BigInt(0),
+              to: usdcAddress,
+              chainId: fromChainId,
+              transactionType: 'approval',
+              stepDescription: 'Approve USDC for bridge',
+            });
+
+            transactionDebugLog('Added approval for bridge:', {
+              tokenAddress: usdcAddress,
+              spender: bridgeSpenderAddress,
+              amount: usdcAmountBigInt.toString(),
+            });
+          }
+        }
+      }
+
+      // Step 13: Add bridge transactions
+      for (let i = 0; i < bridgeSteps.length; i += 1) {
+        const step = bridgeSteps[i];
+
+        if (
+          step.kind === 'transaction' &&
+          step.items &&
+          step.items.length > 0
+        ) {
+          for (let j = 0; j < step.items.length; j += 1) {
+            const item = step.items[j];
+
+            if (item.data) {
+              const { to, value, data, chainId } = item.data;
+
+              const bigIntValue =
+                typeof value === 'string' ? BigInt(value) : BigInt(value || 0);
+
+              const isApprovalStep = step.id === 'approve';
+
+              if (isApprovalStep) {
+                transactions.push({
+                  chainId,
+                  to: to as `0x${string}`,
+                  value: bigIntValue,
+                  data: data || '0x',
+                  stepIndex: i,
+                  itemIndex: j,
+                  stepDescription: step.description || 'Approve USDC',
+                  transactionType: 'approval',
+                });
+              } else {
+                transactions.push({
+                  chainId,
+                  to: to as `0x${string}`,
+                  value: bigIntValue,
+                  data: data || '0x',
+                  stepIndex: i,
+                  itemIndex: j,
+                  stepDescription: step.description || `Bridge Step ${i + 1}`,
+                });
+              }
+
+              transactionDebugLog('Added bridge transaction:', {
+                stepIndex: i,
+                itemIndex: j,
+                to,
+                chainId,
+              });
+            }
+          }
+        }
+      }
+
+      transactionDebugLog('Built sell transaction with bridge:', {
+        firstSwapUsdcReceived: actualUsdcReceived.toString(),
+        firstSwapFee: firstSwapFeeAmount.toString(),
+        usdcToBridge: usdcAfterFirstSwapFee.toString(),
+        totalTransactions: transactions.length,
+      });
+
+      return {
+        transactions,
+        finalSellOffer: bridgeOffer,
+      };
+    },
+    [
+      getBestSellOffer,
+      getUSDCAddress,
+      isAllowanceSet,
+      walletAddress,
+      transactionDebugLog,
+      isInitialized,
+    ]
+  );
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -948,8 +1598,10 @@ export default function useRelaySell() {
   return {
     getUSDCAddress,
     getBestSellOffer,
+    getBestSellOfferWithBridge,
     executeSell,
     buildSellTransactions,
+    buildSellTransactionWithBridge,
     isLoading,
     error,
     isInitialized,
