@@ -5,6 +5,7 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../../utils/eip7702Authorization';
 import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
@@ -24,6 +25,7 @@ import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 // types
 import { SelectedToken } from '../../types/tokens';
+import { PortfolioToken } from '../../../../services/tokensData';
 
 // components
 import Esc from '../Misc/Esc';
@@ -39,6 +41,7 @@ interface PreviewSellProps {
   selectedChainIdForSettlement: number;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
   setSellFlowPaused?: (paused: boolean) => void;
+  userPortfolio?: PortfolioToken[];
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -51,6 +54,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     selectedChainIdForSettlement,
     onSellOfferUpdate,
     setSellFlowPaused,
+    userPortfolio,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -67,6 +71,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     error,
     clearError,
     getBestSellOffer,
+    getBestSellOfferWithBridge,
     isInitialized,
   } = useRelaySell();
   const { kit } = useTransactionKit();
@@ -82,6 +87,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     tokenAmount,
     isPaused: isWaitingForSignature || isExecuting,
     toChainId: selectedChainIdForSettlement,
+    userPortfolio,
   });
 
   useEffect(() => {
@@ -244,14 +250,25 @@ const PreviewSell = (props: PreviewSellProps) => {
     try {
       // Only fetch new sell offer - wallet portfolio is already fresh from HomeScreen
       if (sellToken && tokenAmount && isInitialized && onSellOfferUpdate) {
-        const newOffer = await getBestSellOffer({
-          fromAmount: tokenAmount,
-          fromTokenAddress: sellToken.address,
-          fromChainId: sellToken.chainId,
-          fromTokenDecimals: sellToken.decimals,
-          toChainId: selectedChainIdForSettlement,
-        });
-        onSellOfferUpdate(newOffer);
+        if (sellToken.chainId === selectedChainIdForSettlement) {
+          const newOffer = await getBestSellOffer({
+            fromAmount: tokenAmount,
+            fromTokenAddress: sellToken.address,
+            fromChainId: sellToken.chainId,
+            fromTokenDecimals: sellToken.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          onSellOfferUpdate(newOffer);
+        } else {
+          const newOffer = await getBestSellOfferWithBridge({
+            fromAmount: tokenAmount,
+            fromTokenAddress: sellToken.address,
+            fromChainId: sellToken.chainId,
+            fromTokenDecimals: sellToken.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          onSellOfferUpdate(newOffer);
+        }
       }
 
       // Also estimate gas fees after refreshing the offer
@@ -370,7 +387,7 @@ const PreviewSell = (props: PreviewSellProps) => {
         sellToken,
         tokenAmount,
         selectedChainIdForSettlement,
-        undefined
+        userPortfolio
       );
 
       if (result) {
@@ -378,13 +395,21 @@ const PreviewSell = (props: PreviewSellProps) => {
         // Now execute the batch directly
         const batchName = `pulse-sell-batch-${sellToken.chainId}`;
 
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          sellToken.chainId
+        );
         const batchSend = await kit.sendBatches({
           onlyBatchNames: [batchName],
+          authorization: authorization || undefined,
         });
         const sentBatch = batchSend.batches[batchName];
-
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
-          const userOpHash = sentBatch?.userOpHash;
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash =
+            sentBatch?.chainGroups?.[sellToken.chainId]?.userOpHash;
           if (userOpHash) {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);

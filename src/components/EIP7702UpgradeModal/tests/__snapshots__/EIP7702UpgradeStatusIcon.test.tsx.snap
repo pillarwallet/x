@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EIP7702UpgradeStatusIcon /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="pending-container"
+  data-testid="animated-div"
+>
+  <img
+    alt="upgrading"
+    className="pending-icon"
+    src="pending-icon.svg"
+  />
+</div>
+`;
