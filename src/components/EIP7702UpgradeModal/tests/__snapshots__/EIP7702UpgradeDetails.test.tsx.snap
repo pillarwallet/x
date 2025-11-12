@@ -1,0 +1,83 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EIP7702UpgradeDetails /> > Rendering > renders correctly and matches snapshot 1`] = `
+<div
+  className="flex flex-col gap-4 h-full w-full"
+>
+  <p
+    className="text-xl text-white font-normal"
+  >
+    Upgrade Details
+  </p>
+  <div
+    className="flex h-full w-full rounded-[10px] border border-dashed border-[#25232D] p-3"
+  >
+    <div
+      className="flex flex-col items-center justify-center w-full"
+    >
+      <div
+        className="flex flex-col w-full"
+      >
+        <div
+          data-testid="progress-step-Submitted"
+        >
+          <span
+            data-testid="step-Submitted-status"
+          >
+            completed
+          </span>
+          <span
+            data-testid="step-Submitted-label"
+          >
+            Submitted
+          </span>
+          <div
+            data-testid="step-Submitted-timestamp"
+          >
+            Submitted
+          </div>
+        </div>
+        <div
+          data-testid="progress-step-Upgrading"
+        >
+          <span
+            data-testid="step-Upgrading-status"
+          >
+            upgrading
+          </span>
+          <span
+            data-testid="step-Upgrading-label"
+          >
+            Upgrading
+          </span>
+        </div>
+        <div
+          data-testid="progress-step-Completed"
+        >
+          <span
+            data-testid="step-Completed-status"
+          >
+            submitted
+          </span>
+          <span
+            data-testid="step-Completed-label"
+          >
+            Completed
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]"
+  >
+    <button
+      className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF] text-white font-normal text-[14px]"
+      onClick={[Function]}
+      type="button"
+    >
+      Done
+    </button>
+  </div>
+</div>
+`;
