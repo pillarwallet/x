@@ -36,6 +36,7 @@ const TransactionDetails = ({
   sellOffer,
   payingTokens,
   usdAmount,
+  useRelayBuy = false,
   submittedAt,
   pendingCompletedAt,
   resourceLockCompletedAt,
@@ -57,6 +58,7 @@ const TransactionDetails = ({
     resourceLockTxHash,
     completedTxHash,
     isResourceLockFailed,
+    useRelayBuy,
   });
 
   const technicalDetails = useTechnicalDetails({
@@ -220,7 +222,7 @@ const TransactionDetails = ({
                 status={getStepStatusForStep('Submitted')}
                 label="Submitted"
                 lineStatus={
-                  isBuy
+                  isBuy && !useRelayBuy
                     ? getStepStatusForStep('ResourceLock')
                     : getStepStatusForStep('Pending')
                 }
@@ -228,7 +230,7 @@ const TransactionDetails = ({
                 data-testid="pulse-transaction-details-step-submitted"
               />
 
-              {isBuy ? (
+              {isBuy && !useRelayBuy ? (
                 <>
                   <ProgressStep
                     step="ResourceLock"
@@ -298,6 +300,7 @@ const TransactionDetails = ({
           completedTxHash={completedTxHash}
           resourceLockChainId={resourceLockChainId}
           completedChainId={completedChainId}
+          useRelayBuy={useRelayBuy}
         />
       </div>
 

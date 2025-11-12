@@ -8,6 +8,9 @@ import GlobalTransactionsBatchProvider from '../GlobalTransactionsBatchProvider'
 // hooks
 import useGlobalTransactionsBatch from '../../hooks/useGlobalTransactionsBatch';
 
+// Unmock for this specific test file since we're testing the provider itself
+vi.unmock('../../hooks/useGlobalTransactionsBatch');
+
 describe('GlobalTransactionsBatchProvider', () => {
   let wrapper: React.FC;
 

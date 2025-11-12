@@ -194,7 +194,6 @@ export default function useRelayBuy() {
           // Extract USDC amount needed from the quote response
           const { currencyIn } = quote.details;
           let usdcNeeded = 0;
-          let maximumAmount = 0;
 
           // Get the estimated USDC amount needed (prefer formatted, fallback to raw amount)
           if (currencyIn.amountFormatted) {
@@ -203,10 +202,6 @@ export default function useRelayBuy() {
             // Convert from raw units to readable format
             usdcNeeded = parseFloat(currencyIn.amount) / 10 ** 6; // USDC has 6 decimals
           }
-
-          // Calculate maximum amount with slippage tolerance
-          // For EXACT_OUTPUT trades, we need to consider slippage on the input (USDC)
-          maximumAmount = usdcNeeded * (1 + slippage);
 
           // Validate the quote
           if (usdcNeeded <= 0) {
@@ -312,8 +307,7 @@ export default function useRelayBuy() {
 
       // Calculate total USDC needed (including 1% fee)
       // Formula: totalUsdc = usdcForSwap / 0.99
-      const totalUsdcNeeded =
-        (usdcNeededForSwap * BigInt(100)) / BigInt(99);
+      const totalUsdcNeeded = (usdcNeededForSwap * BigInt(100)) / BigInt(99);
       const usdcFeeAmount = totalUsdcNeeded - usdcNeededForSwap; // 1% fee
 
       // Debug: Log fee calculation for troubleshooting
@@ -344,8 +338,9 @@ export default function useRelayBuy() {
       try {
         // Get USDC balance from portfolio
         const usdcToken = userPortfolio?.find(
-          (t) => t.contract.toLowerCase() === usdcAddress.toLowerCase() &&
-                 t.blockchain === `chain-${fromChainId}`
+          (t) =>
+            t.contract.toLowerCase() === usdcAddress.toLowerCase() &&
+            t.blockchain === `chain-${fromChainId}`
         );
         if (usdcToken && usdcToken.balance) {
           userUsdcBalance = toWei(usdcToken.balance.toString(), 6); // USDC has 6 decimals
@@ -369,9 +364,7 @@ export default function useRelayBuy() {
 
       // Validate USDC balance
       if (userUsdcBalance > BigInt(0) && userUsdcBalance < totalUsdcNeeded) {
-        throw new Error(
-          'Insufficient USDC balance to cover swap and fee.'
-        );
+        throw new Error('Insufficient USDC balance to cover swap and fee.');
       }
 
       /**
@@ -702,7 +695,8 @@ export default function useRelayBuy() {
         }
 
         // Set transaction metadata
-        const usdcNeeded = buyOffer.offer.details?.currencyIn?.amountFormatted || '0';
+        const usdcNeeded =
+          buyOffer.offer.details?.currencyIn?.amountFormatted || '0';
         const title =
           transactions.length === 1
             ? `Buy ${amount} ${token.symbol} with USDC`

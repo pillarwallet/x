@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getUseRelayBuyFlag, initializeRemoteConfig } from '../services/firebase';
+import {
+  getUseRelayBuyFlag,
+  initializeRemoteConfig,
+} from '../services/firebase';
 
 /**
  * Hook to get remote config values
@@ -12,13 +15,10 @@ export const useRemoteConfig = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      console.log('useRemoteConfig: Starting initialization...');
       await initializeRemoteConfig();
-      console.log('useRemoteConfig: initializeRemoteConfig completed');
 
       // Get the value after initialization completes
       const flagValue = getUseRelayBuyFlag();
-      console.log('useRemoteConfig: Flag value from getUseRelayBuyFlag:', flagValue);
 
       // Update state after we have the value
       setUseRelayBuy(flagValue);
@@ -27,8 +27,6 @@ export const useRemoteConfig = () => {
 
     initialize();
   }, []);
-
-  console.log('useRemoteConfig: Current state -', { isInitialized, useRelayBuy });
 
   return {
     isInitialized,

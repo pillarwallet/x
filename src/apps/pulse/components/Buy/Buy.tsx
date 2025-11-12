@@ -93,12 +93,13 @@ export default function Buy(props: BuyProps) {
   // Get feature flag from Firebase Remote Config
   const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
 
-  // Console log the feature flag value
-  console.log('USE_RELAY_BUY from Firebase Remote Config:', USE_RELAY_BUY);
-
   // Relay Buy states
   const [buyOffer, setBuyOffer] = useState<BuyOffer | null>(null);
-  const { getBestOffer, isInitialized: isRelayInitialized, error: relayError } = useRelayBuy();
+  const {
+    getBestOffer,
+    isInitialized: isRelayInitialized,
+    error: relayError,
+  } = useRelayBuy();
 
   // Simple background search for token-atlas
   const location = useLocation();
@@ -197,17 +198,15 @@ export default function Buy(props: BuyProps) {
       // For Relay Buy, we use the buyOffer instead of expressIntentResponse
       // Convert buyOffer to a compatible format for PreviewBuy
       if (buyOffer) {
-        setExInResp(buyOffer as any);
+        setExInResp(buyOffer as ExpressIntentResponse);
         setPreviewBuy(true);
       }
+    } else if (!areModulesInstalled) {
+      // Original Intent SDK flow - install modules first
+      await installModules();
     } else {
-      // Original Intent SDK flow
-      if (!areModulesInstalled) {
-        await installModules();
-      } else {
-        setExInResp(expressIntentResponse);
-        setPreviewBuy(true);
-      }
+      setExInResp(expressIntentResponse);
+      setPreviewBuy(true);
     }
   };
 
@@ -278,7 +277,9 @@ export default function Buy(props: BuyProps) {
           setBuyOffer(null);
           return;
         }
-        const tokenAmount = (parseFloat(debouncedUsdAmount) / tokenPrice).toString();
+        const tokenAmount = (
+          parseFloat(debouncedUsdAmount) / tokenPrice
+        ).toString();
 
         const offer = await getBestOffer({
           toAmount: tokenAmount,
@@ -417,14 +418,16 @@ export default function Buy(props: BuyProps) {
   // Register refresh callback with HomeScreen
   useEffect(() => {
     if (setBuyRefreshCallback) {
-      setBuyRefreshCallback(() => USE_RELAY_BUY ? fetchBuyOffer : refreshBuyIntent);
+      setBuyRefreshCallback(() =>
+        USE_RELAY_BUY ? fetchBuyOffer : refreshBuyIntent
+      );
     }
     return () => {
       if (setBuyRefreshCallback) {
         setBuyRefreshCallback(null);
       }
     };
-  }, [setBuyRefreshCallback, refreshBuyIntent, fetchBuyOffer]);
+  }, [setBuyRefreshCallback, refreshBuyIntent, fetchBuyOffer, USE_RELAY_BUY]);
 
   // Start searching when coming from token-atlas
   useEffect(() => {
@@ -619,7 +622,11 @@ export default function Buy(props: BuyProps) {
                   expressIntentResponse &&
                   expressIntentResponse.bids?.length === 0) ||
                 (USE_RELAY_BUY && relayError) ||
-                (USE_RELAY_BUY && !isLoading && buyOffer === null && debouncedUsdAmount && token);
+                (USE_RELAY_BUY &&
+                  !isLoading &&
+                  buyOffer === null &&
+                  debouncedUsdAmount &&
+                  token);
 
               if (!showError) return null;
 
@@ -636,7 +643,13 @@ export default function Buy(props: BuyProps) {
                 message = `Min. $1 ${NativeSymbols[maxStableCoinBalance.chainId]} required on ${ChainNames[maxStableCoinBalance.chainId]}`;
               } else if (USE_RELAY_BUY && relayError) {
                 message = relayError;
-              } else if (USE_RELAY_BUY && !isLoading && buyOffer === null && debouncedUsdAmount && token) {
+              } else if (
+                USE_RELAY_BUY &&
+                !isLoading &&
+                buyOffer === null &&
+                debouncedUsdAmount &&
+                token
+              ) {
                 message = 'No available routes for this amount';
               } else {
                 message = 'No available routes for this amount';
@@ -719,7 +732,11 @@ export default function Buy(props: BuyProps) {
         <BuyButton
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}
-          expressIntentResponse={USE_RELAY_BUY ? (buyOffer as any) : expressIntentResponse}
+          expressIntentResponse={
+            USE_RELAY_BUY
+              ? (buyOffer as ExpressIntentResponse)
+              : expressIntentResponse
+          }
           handleBuySubmit={handleBuySubmit}
           isFetching={isFetching}
           isInstalling={isInstalling}

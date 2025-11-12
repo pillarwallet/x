@@ -83,6 +83,8 @@ export interface TransactionStatusProps {
   sellOffer?: SellOffer | null;
   payingTokens?: PayingToken[];
   usdAmount?: string;
+  // Feature flags
+  useRelayBuy?: boolean;
   // Externalized polling state
   currentStatus: TransactionStatusState;
   errorDetails: string;
@@ -110,6 +112,8 @@ export interface TransactionDetailsProps {
   sellOffer?: SellOffer | null;
   payingTokens?: PayingToken[];
   usdAmount?: string;
+  // Feature flags
+  useRelayBuy?: boolean;
   submittedAt?: Date;
   pendingCompletedAt?: Date;
   resourceLockCompletedAt?: Date;
@@ -136,6 +140,7 @@ export interface TransactionInfoProps {
   resourceLockChainId?: number;
   completedTxHash?: string;
   completedChainId?: number;
+  useRelayBuy?: boolean;
 }
 
 export interface ProgressStepProps {

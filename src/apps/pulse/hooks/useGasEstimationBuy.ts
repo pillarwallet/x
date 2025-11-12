@@ -41,10 +41,7 @@ export default function useGasEstimationBuy({
   const estimateGasFeesRef = useRef<() => Promise<void>>();
 
   const { kit } = useTransactionKit();
-  const {
-    buildBuyTransactionsForEstimation,
-    isInitialized,
-  } = useRelayBuy();
+  const { buildBuyTransactionsForEstimation, isInitialized } = useRelayBuy();
 
   const estimateGasFees = useCallback(async () => {
     if (!buyToken || !kit || !buyOffer || !tokenAmount) {
@@ -73,7 +70,9 @@ export default function useGasEstimationBuy({
         setNativeTokenSymbol('');
         return;
       }
-      const calculatedTokenAmount = (parseFloat(tokenAmount) / tokenPrice).toString();
+      const calculatedTokenAmount = (
+        parseFloat(tokenAmount) / tokenPrice
+      ).toString();
 
       // Build the transactions without executing them
       const transactions = await buildBuyTransactionsForEstimation(
@@ -196,14 +195,7 @@ export default function useGasEstimationBuy({
     if (isReadyForEstimation && estimateGasFeesRef.current) {
       estimateGasFeesRef.current();
     }
-  }, [
-    buyOffer,
-    buyToken,
-    kit,
-    tokenAmount,
-    isPaused,
-    isInitialized,
-  ]);
+  }, [buyOffer, buyToken, kit, tokenAmount, isPaused, isInitialized]);
 
   return {
     isEstimatingGas,

@@ -25,6 +25,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     sellOffer,
     payingTokens,
     usdAmount,
+    useRelayBuy,
     // Externalized polling state
     currentStatus,
     errorDetails,
@@ -149,13 +150,14 @@ const TransactionStatus = (props: TransactionStatusProps) => {
           sellOffer={sellOffer}
           payingTokens={payingTokens}
           usdAmount={usdAmount}
+          useRelayBuy={useRelayBuy}
           submittedAt={submittedAt}
           pendingCompletedAt={pendingCompletedAt}
-          txHash={isBuy ? undefined : blockchainTxHash}
+          txHash={isBuy && !useRelayBuy ? undefined : blockchainTxHash}
           gasFee={gasFee}
           errorDetails={errorDetails}
           resourceLockTxHash={resourceLockTxHash}
-          completedTxHash={isBuy ? completedTxHash : undefined}
+          completedTxHash={isBuy && !useRelayBuy ? completedTxHash : undefined}
           resourceLockChainId={resourceLockChainId}
           completedChainId={completedChainId}
           resourceLockCompletedAt={resourceLockCompletedAt}

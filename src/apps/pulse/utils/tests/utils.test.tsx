@@ -355,6 +355,283 @@ describe('Transaction Utils', () => {
         )
       ).toBe('inactive');
     });
+
+    describe('Relay Buy (useRelayBuy=true)', () => {
+      it('should treat Relay Buy like Sell for Starting Transaction status', () => {
+        // Relay Buy should not show ResourceLock step
+        expect(
+          getStepStatus(
+            'Submitted',
+            'Starting Transaction',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+        expect(
+          getStepStatus(
+            'Pending',
+            'Starting Transaction',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+        expect(
+          getStepStatus(
+            'Completed',
+            'Starting Transaction',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Starting Transaction',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+      });
+
+      it('should treat Relay Buy like Sell for Transaction Pending status', () => {
+        // Relay Buy: Submitted is completed, Pending is pending, Completed is inactive
+        expect(
+          getStepStatus(
+            'Submitted',
+            'Transaction Pending',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        expect(
+          getStepStatus(
+            'Pending',
+            'Transaction Pending',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+        expect(
+          getStepStatus(
+            'Completed',
+            'Transaction Pending',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('inactive');
+        // ResourceLock should be pending (not used in UI but should handle gracefully)
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Pending',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+      });
+
+      it('should treat Relay Buy like Sell for Transaction Complete status', () => {
+        // All steps completed for Relay Buy
+        expect(
+          getStepStatus(
+            'Submitted',
+            'Transaction Complete',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        expect(
+          getStepStatus(
+            'Pending',
+            'Transaction Complete',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        expect(
+          getStepStatus(
+            'Completed',
+            'Transaction Complete',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        // ResourceLock should be inactive for Relay Buy
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Complete',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('inactive');
+      });
+
+      it('should treat Relay Buy like Sell for Transaction Failed status', () => {
+        // Relay Buy failure: Submitted completed, Pending completed, Completed failed
+        expect(
+          getStepStatus(
+            'Submitted',
+            'Transaction Failed',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        expect(
+          getStepStatus(
+            'Pending',
+            'Transaction Failed',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('completed');
+        expect(
+          getStepStatus(
+            'Completed',
+            'Transaction Failed',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('failed');
+        // ResourceLock should be inactive for Relay Buy
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Failed',
+            true,
+            undefined,
+            undefined,
+            false,
+            true
+          )
+        ).toBe('inactive');
+      });
+
+      it('should ignore resourceLockTxHash for Relay Buy', () => {
+        // Even with resourceLockTxHash, Relay Buy should not use ResourceLock steps
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Pending',
+            true,
+            '0x123',
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Complete',
+            true,
+            '0x123',
+            undefined,
+            false,
+            true
+          )
+        ).toBe('inactive');
+      });
+
+      it('should ignore completedTxHash for Relay Buy Completed step', () => {
+        // Relay Buy uses txHash, not completedTxHash
+        expect(
+          getStepStatus(
+            'Completed',
+            'Transaction Pending',
+            true,
+            undefined,
+            '0xabc',
+            false,
+            true
+          )
+        ).toBe('inactive');
+        expect(
+          getStepStatus(
+            'Completed',
+            'Transaction Complete',
+            true,
+            undefined,
+            '0xabc',
+            false,
+            true
+          )
+        ).toBe('completed');
+      });
+
+      it('should differentiate between Intent SDK Buy and Relay Buy', () => {
+        // Intent SDK Buy (useRelayBuy=false) uses ResourceLock
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Pending',
+            true,
+            '0x123',
+            undefined,
+            false,
+            false
+          )
+        ).toBe('completed');
+
+        // Relay Buy (useRelayBuy=true) does NOT use ResourceLock
+        expect(
+          getStepStatus(
+            'ResourceLock',
+            'Transaction Pending',
+            true,
+            '0x123',
+            undefined,
+            false,
+            true
+          )
+        ).toBe('pending');
+      });
+    });
   });
 
   describe('determineFailureStep', () => {

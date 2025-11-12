@@ -31,10 +31,12 @@ const TransactionInfo = ({
   resourceLockChainId,
   completedTxHash,
   completedChainId,
+  useRelayBuy = false,
 }: TransactionInfoProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
-  const displayTxHash = isBuy ? completedTxHash || '-' : txHash;
+  // For Intent SDK Buy, use completedTxHash; for Relay Buy and Sell, use txHash
+  const displayTxHash = isBuy && !useRelayBuy ? completedTxHash || '-' : txHash;
 
   useEffect(() => {
     if (isCopied) {
@@ -137,7 +139,7 @@ const TransactionInfo = ({
       {status === 'Transaction Complete' &&
         completedAt &&
         detailsEntry('Time', format(completedAt, 'MMM d, yyyy HH:mm'))}
-      {isBuy ? (
+      {isBuy && !useRelayBuy ? (
         <>
           {detailsEntry(
             'Resource Lock',
@@ -162,8 +164,8 @@ const TransactionInfo = ({
         detailsEntry(
           'Tx Hash',
           truncateHash(displayTxHash || '-'),
-          true,
-          true,
+          !!displayTxHash,
+          !!displayTxHash,
           '',
           displayTxHash,
           chainId

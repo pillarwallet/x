@@ -941,6 +941,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellOffer={transactionData?.sellOffer}
             payingTokens={transactionData?.payingTokens}
             usdAmount={transactionData?.usdAmount}
+            useRelayBuy={USE_RELAY_BUY}
             // Externalized polling state
             currentStatus={currentTransactionStatus}
             errorDetails={errorDetails}

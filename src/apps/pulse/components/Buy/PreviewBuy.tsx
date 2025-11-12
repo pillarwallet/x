@@ -120,19 +120,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const clearError = USE_RELAY_BUY ? clearRelayError : clearIntentError;
 
   // Gas estimation for Relay Buy
-  const {
-    isEstimatingGas,
-    gasCostNative,
-    nativeTokenSymbol,
-    estimateGasFees,
-  } = useGasEstimationBuy({
-    buyToken: buyToken || null,
-    buyOffer: buyOffer,
-    tokenAmount: usdAmount,
-    fromChainId: fromChainId || 1,
-    isPaused: isWaitingForSignature || isExecuting,
-    userPortfolio,
-  });
+  const { isEstimatingGas, gasCostNative, nativeTokenSymbol, estimateGasFees } =
+    useGasEstimationBuy({
+      buyToken: buyToken || null,
+      buyOffer,
+      tokenAmount: usdAmount,
+      fromChainId: fromChainId || 1,
+      isPaused: isWaitingForSignature || isExecuting,
+      userPortfolio,
+    });
 
   useEffect(() => {
     if (isCopied) {
@@ -186,14 +182,14 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     if (USE_RELAY_BUY && setBuyFlowPaused) {
       setBuyFlowPaused(isWaitingForSignature || isExecuting);
     }
-  }, [isWaitingForSignature, isExecuting, setBuyFlowPaused]);
+  }, [isWaitingForSignature, isExecuting, setBuyFlowPaused, USE_RELAY_BUY]);
 
   // Ensure pause resets on unmount (Relay Buy only)
   useEffect(() => {
     return () => {
       if (USE_RELAY_BUY && setBuyFlowPaused) setBuyFlowPaused(false);
     };
-  }, [setBuyFlowPaused]);
+  }, [setBuyFlowPaused, USE_RELAY_BUY]);
 
   // Utility function to clean up batch (Relay Buy only)
   const cleanupBatch = useCallback(
@@ -224,7 +220,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         cleanupBatch(buyToken.chainId, 'unmount');
       }
     };
-  }, [buyToken, cleanupBatch]);
+  }, [buyToken, cleanupBatch, USE_RELAY_BUY]);
 
   const detailsEntry = (
     lhs: string,
@@ -316,12 +312,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Relay Buy: execute buy directly
   const executeBuyDirectly = async () => {
     if (!buyToken || !buyOffer || !kit || !fromChainId) {
-      console.log('Missing required params for buy', {
-        buyToken: !!buyToken,
-        buyOffer: !!buyOffer,
-        kit: !!kit,
-        fromChainId,
-      });
       return;
     }
 
@@ -337,16 +327,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     if (setBuyFlowPaused) setBuyFlowPaused(true);
 
     try {
-      console.log('Starting buy execution...');
-
       // Calculate token amount from USD amount
       const tokenPrice = parseFloat(buyToken.usdValue) || 0;
       if (tokenPrice <= 0) {
         throw new Error('Invalid token price');
       }
       const tokenAmount = (parseFloat(usdAmount) / tokenPrice).toString();
-
-      console.log('Token amount calculated:', tokenAmount);
 
       // First, prepare the batch using the existing executeBuy logic
       const result = await executeBuy(
@@ -356,13 +342,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         userPortfolio
       );
 
-      console.log('executeBuy result:', result);
-
       if (result) {
         // If executeBuy succeeded, execute the batch directly
         const batchName = `pulse-buy-batch-${buyToken.chainId}`;
-
-        console.log('Sending batches...', batchName);
 
         const authorization = await getEIP7702AuthorizationIfNeeded(
           kit,
@@ -373,8 +355,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           authorization: authorization || undefined,
         });
 
-        console.log('Batch send result:', batchSend);
-
         const sentBatch = batchSend.batches[batchName];
 
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
@@ -383,8 +363,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           // chainGroups is an object keyed by chainId, not an array
           const userOpHash =
             sentBatch?.chainGroups?.[buyToken.chainId]?.userOpHash;
-
-          console.log('UserOpHash:', userOpHash);
 
           if (userOpHash) {
             setIsTransactionSuccess(true);
@@ -440,23 +418,13 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // Unified confirm handler
   const handleConfirmBuy = async () => {
-    console.log('handleConfirmBuy called', {
-      buyToken,
-      expressIntentResponse,
-      buyOffer,
-      USE_RELAY_BUY,
-    });
-
     if (!buyToken || !expressIntentResponse) {
-      console.log('Missing buyToken or expressIntentResponse, returning');
       return;
     }
 
     if (USE_RELAY_BUY) {
-      console.log('Executing buy with Relay');
       await executeBuyDirectly();
     } else {
-      console.log('Executing buy with Intent SDK');
       await shortlistBid();
     }
   };
@@ -584,6 +552,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     isExecuting,
     estimateGasFees,
     cleanupBatch,
+    USE_RELAY_BUY,
   ]);
 
   // Auto-refresh buy offer every 15 seconds (disabled when waiting for signature or executing)
@@ -599,17 +568,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       ) {
         return undefined;
       }
-    } else {
+    } else if (
       // Intent SDK: check required dependencies
-      if (
-        !buyToken ||
-        !usdAmount ||
-        !intentSdk ||
-        !accountAddress ||
-        dispensableAssets.length === 0
-      ) {
-        return undefined;
-      }
+      !buyToken ||
+      !usdAmount ||
+      !intentSdk ||
+      !accountAddress ||
+      dispensableAssets.length === 0
+    ) {
+      return undefined;
     }
 
     // Don't auto-refresh when waiting for signature or executing transaction
@@ -634,6 +601,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     isRelayInitialized,
     onBuyOfferUpdate,
     fromChainId,
+    USE_RELAY_BUY,
   ]);
 
   if (!buyToken || !expressIntentResponse) {
@@ -849,11 +817,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         )}
         {detailsEntry(
           'Gas fee',
-          USE_RELAY_BUY && gasCostNative && nativeTokenSymbol
-            ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
-            : USE_RELAY_BUY
-            ? 'Paid from gas tank'
-            : '≈ $0.00',
+          (() => {
+            if (USE_RELAY_BUY && gasCostNative && nativeTokenSymbol) {
+              return `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`;
+            }
+            if (USE_RELAY_BUY) {
+              return 'Paid from gas tank';
+            }
+            return '≈ $0.00';
+          })(),
           false,
           '',
           USE_RELAY_BUY ? isEstimatingGas : false,
