@@ -12,14 +12,23 @@ export const useRemoteConfig = () => {
 
   useEffect(() => {
     const initialize = async () => {
+      console.log('useRemoteConfig: Starting initialization...');
       await initializeRemoteConfig();
+      console.log('useRemoteConfig: initializeRemoteConfig completed');
+
+      // Get the value after initialization completes
+      const flagValue = getUseRelayBuyFlag();
+      console.log('useRemoteConfig: Flag value from getUseRelayBuyFlag:', flagValue);
+
+      // Update state after we have the value
+      setUseRelayBuy(flagValue);
       setIsInitialized(true);
-      // Get the initial value
-      setUseRelayBuy(getUseRelayBuyFlag());
     };
 
     initialize();
   }, []);
+
+  console.log('useRemoteConfig: Current state -', { isInitialized, useRelayBuy });
 
   return {
     isInitialized,

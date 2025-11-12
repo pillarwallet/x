@@ -36,6 +36,7 @@ import SettingsMenu from '../Settings/SettingsMenu';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
@@ -99,6 +100,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
   const { intentSdk } = useIntentSdk();
+  const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -658,7 +660,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       }
 
       try {
-        if (isBuyTransaction) {
+        if (isBuyTransaction && !USE_RELAY_BUY) {
           if (!intentSdk) {
             return;
           }
@@ -889,10 +891,14 @@ export default function HomeScreen(props: HomeScreenProps) {
             buyToken={buyToken}
             payingTokens={payingTokens}
             expressIntentResponse={expressIntentResponse}
-            setExpressIntentResponse={setExpressIntentResponse}
+            setExpressIntentResponse={(response) =>
+              setExpressIntentResponse(response as ExpressIntentResponse | null)
+            }
             usdAmount={usdAmount}
             dispensableAssets={dispensableAssets}
             showTransactionStatus={showTransactionStatus}
+            fromChainId={maxStableCoinBalance?.chainId}
+            userPortfolio={portfolioTokens}
           />
         </div>
       );

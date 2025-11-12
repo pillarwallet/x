@@ -754,11 +754,36 @@ export default function useRelayBuy() {
     setError(null);
   }, []);
 
+  /**
+   * Build buy transactions for gas estimation only
+   * Returns transactions without adding them to batch
+   */
+  const buildBuyTransactionsForEstimation = useCallback(
+    async (
+      buyOffer: BuyOffer,
+      token: SelectedToken,
+      amount: string,
+      fromChainId: number,
+      userPortfolio?: Token[]
+    ) => {
+      // Reuse the existing buildTransactions logic
+      return buildTransactions(
+        buyOffer,
+        token,
+        amount,
+        fromChainId,
+        userPortfolio
+      );
+    },
+    [buildTransactions]
+  );
+
   return {
     getUSDCAddress,
     getBestOffer,
     executeBuy,
     buildTransactions,
+    buildBuyTransactionsForEstimation,
     isLoading,
     error,
     isInitialized,

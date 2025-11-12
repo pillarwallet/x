@@ -93,6 +93,9 @@ export default function Buy(props: BuyProps) {
   // Get feature flag from Firebase Remote Config
   const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
 
+  // Console log the feature flag value
+  console.log('USE_RELAY_BUY from Firebase Remote Config:', USE_RELAY_BUY);
+
   // Relay Buy states
   const [buyOffer, setBuyOffer] = useState<BuyOffer | null>(null);
   const { getBestOffer, isInitialized: isRelayInitialized, error: relayError } = useRelayBuy();

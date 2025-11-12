@@ -13,6 +13,7 @@ import {
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../../utils/eip7702Authorization';
 import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
@@ -27,7 +28,7 @@ import MoreInfo from '../../assets/moreinfo-icon.svg';
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
-import useGasEstimation from '../../hooks/useGasEstimation';
+import useGasEstimationBuy from '../../hooks/useGasEstimationBuy';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
 
@@ -36,6 +37,7 @@ import {
   PayingToken as PayingTokenType,
   SelectedToken,
 } from '../../types/tokens';
+import { Token } from '../../../../services/tokensData';
 
 // utils
 import { getDesiredAssetValue } from '../../utils/intent';
@@ -60,6 +62,7 @@ interface PreviewBuyProps {
   fromChainId?: number; // For Relay Buy: chainId where USDC is taken from
   onBuyOfferUpdate?: (offer: BuyOffer | null) => void; // For Relay Buy: callback to update offer
   setBuyFlowPaused?: (paused: boolean) => void; // For Relay Buy: pause background refresh
+  userPortfolio?: Token[]; // For Relay Buy: user's token portfolio
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -75,6 +78,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     fromChainId,
     onBuyOfferUpdate,
     setBuyFlowPaused,
+    userPortfolio,
   } = props;
   const totalPay = payingTokens
     .reduce((acc, curr) => acc + curr.totalUsd, 0)
@@ -115,24 +119,19 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const error = USE_RELAY_BUY ? relayError : intentError;
   const clearError = USE_RELAY_BUY ? clearRelayError : clearIntentError;
 
-  // Gas estimation for Relay Buy (similar to PreviewSell)
+  // Gas estimation for Relay Buy
   const {
     isEstimatingGas,
-    gasEstimationError,
     gasCostNative,
     nativeTokenSymbol,
     estimateGasFees,
-  } = useGasEstimation({
-    sellToken: buyToken || null,
-    sellOffer: buyOffer
-      ? {
-          ...buyOffer,
-          offer: buyOffer.offer,
-        }
-      : null,
+  } = useGasEstimationBuy({
+    buyToken: buyToken || null,
+    buyOffer: buyOffer,
     tokenAmount: usdAmount,
+    fromChainId: fromChainId || 1,
     isPaused: isWaitingForSignature || isExecuting,
-    toChainId: fromChainId || 1,
+    userPortfolio,
   });
 
   useEffect(() => {
@@ -316,7 +315,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // Relay Buy: execute buy directly
   const executeBuyDirectly = async () => {
-    if (!buyToken || !buyOffer || !kit || !fromChainId) return;
+    if (!buyToken || !buyOffer || !kit || !fromChainId) {
+      console.log('Missing required params for buy', {
+        buyToken: !!buyToken,
+        buyOffer: !!buyOffer,
+        kit: !!kit,
+        fromChainId,
+      });
+      return;
+    }
 
     // Clear any existing errors and states
     if (error) {
@@ -326,9 +333,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     setIsTransactionSuccess(false);
     setIsWaitingForSignature(true);
     setIsExecuting(true);
+    setIsLoading(true);
     if (setBuyFlowPaused) setBuyFlowPaused(true);
 
     try {
+      console.log('Starting buy execution...');
+
       // Calculate token amount from USD amount
       const tokenPrice = parseFloat(buyToken.usdValue) || 0;
       if (tokenPrice <= 0) {
@@ -336,25 +346,46 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       }
       const tokenAmount = (parseFloat(usdAmount) / tokenPrice).toString();
 
+      console.log('Token amount calculated:', tokenAmount);
+
       // First, prepare the batch using the existing executeBuy logic
       const result = await executeBuy(
         buyToken,
         tokenAmount,
         fromChainId,
-        undefined
+        userPortfolio
       );
+
+      console.log('executeBuy result:', result);
 
       if (result) {
         // If executeBuy succeeded, execute the batch directly
         const batchName = `pulse-buy-batch-${buyToken.chainId}`;
 
+        console.log('Sending batches...', batchName);
+
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          buyToken.chainId
+        );
         const batchSend = await kit.sendBatches({
           onlyBatchNames: [batchName],
+          authorization: authorization || undefined,
         });
+
+        console.log('Batch send result:', batchSend);
+
         const sentBatch = batchSend.batches[batchName];
 
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
-          const userOpHash = sentBatch?.userOpHash;
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash =
+            sentBatch?.chainGroups?.[buyToken.chainId]?.userOpHash;
+
+          console.log('UserOpHash:', userOpHash);
+
           if (userOpHash) {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);
@@ -409,11 +440,23 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // Unified confirm handler
   const handleConfirmBuy = async () => {
-    if (!buyToken || !expressIntentResponse) return;
+    console.log('handleConfirmBuy called', {
+      buyToken,
+      expressIntentResponse,
+      buyOffer,
+      USE_RELAY_BUY,
+    });
+
+    if (!buyToken || !expressIntentResponse) {
+      console.log('Missing buyToken or expressIntentResponse, returning');
+      return;
+    }
 
     if (USE_RELAY_BUY) {
+      console.log('Executing buy with Relay');
       await executeBuyDirectly();
     } else {
+      console.log('Executing buy with Intent SDK');
       await shortlistBid();
     }
   };
@@ -808,6 +851,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           'Gas fee',
           USE_RELAY_BUY && gasCostNative && nativeTokenSymbol
             ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+            : USE_RELAY_BUY
+            ? 'Paid from gas tank'
             : '≈ $0.00',
           false,
           '',
