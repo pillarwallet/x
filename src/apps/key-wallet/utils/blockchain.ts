@@ -22,6 +22,10 @@ import {
 // types
 import { Asset } from '../types';
 import { getBlockScan } from '../../../utils/blockchain';
+import type {
+  WalletProviderLike,
+  Eip1193LikeProvider,
+} from '../../../types/walletProvider';
 
 const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
 
@@ -63,7 +67,7 @@ export const isNativeAsset = (contractAddress: string): boolean => {
  */
 export const switchChain = async (
   chainId: number,
-  walletProvider: any
+  walletProvider: WalletProviderLike
 ): Promise<void> => {
   const targetChain = getChainById(chainId);
 
@@ -76,8 +80,10 @@ export const switchChain = async (
     );
   }
 
+  const eip1193Provider = walletProvider as Eip1193LikeProvider;
+
   // Check if provider has request method (EIP-1193)
-  if (!walletProvider?.request) {
+  if (typeof eip1193Provider.request !== 'function') {
     throw new Error('Wallet provider does not support chain switching');
   }
 
@@ -85,7 +91,7 @@ export const switchChain = async (
 
   try {
     // Attempt to switch to the target chain
-    await walletProvider.request({
+    await eip1193Provider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: chainIdHex }],
     });
@@ -94,7 +100,7 @@ export const switchChain = async (
     if (switchError.code === 4902) {
       try {
         // Add the chain to the wallet
-        await walletProvider.request({
+        await eip1193Provider.request({
           method: 'wallet_addEthereumChain',
           params: [
             {
@@ -125,17 +131,19 @@ export const switchChain = async (
  * Get the current chain ID from the wallet provider
  */
 export const getCurrentChainId = async (
-  walletProvider: any
+  walletProvider: WalletProviderLike | null | undefined
 ): Promise<number | null> => {
   try {
     if (isViemWalletClient(walletProvider) && walletProvider.chain?.id) {
       return walletProvider.chain.id;
     }
 
-    if (!walletProvider?.request) {
+    const eip1193Provider = walletProvider as Eip1193LikeProvider | null | undefined;
+
+    if (!eip1193Provider || typeof eip1193Provider.request !== 'function') {
       return null;
     }
-    const chainIdHex = await walletProvider.request({
+    const chainIdHex = await eip1193Provider.request<string>({
       method: 'eth_chainId',
     });
     return parseInt(chainIdHex, 16);
@@ -149,7 +157,7 @@ export const sendTransaction = async (
   asset: Asset,
   recipient: string,
   amount: string,
-  walletProvider: any
+  walletProvider: WalletProviderLike
 ): Promise<string> => {
   // Validate recipient address
   if (!isAddress(recipient)) {

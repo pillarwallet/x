@@ -40,8 +40,8 @@ const WalletAddress = ({ address }: WalletAddressProps) => {
       <h2 className="text-sm text-white/60 mb-2">Your Key Wallet Address</h2>
       <div className="flex items-center justify-between gap-4">
         <p className="text-lg font-mono text-white break-all">
-          <span className="block sm:hidden">{shortenedAddress}</span>
-          <span className="hidden sm:inline">{address}</span>
+          <span className="hidden mobile:block">{shortenedAddress}</span>
+          <span className="block mobile:hidden">{address}</span>
         </p>
         <button
           onClick={handleCopy}

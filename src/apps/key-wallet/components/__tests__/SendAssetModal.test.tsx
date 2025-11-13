@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import SendAssetModal from '../SendAssetModal';
 import { Asset } from '../../types';
+import type { WalletProviderLike } from '../../../types/walletProvider';
 
 vi.mock('../../../hooks/useTransactionKit', () => ({
   default: () => ({
@@ -50,7 +51,7 @@ describe('<SendAssetModal />', () => {
   const mockOnSuccess = vi.fn();
   const mockWalletProvider = {
     request: vi.fn(),
-  };
+  } as unknown as WalletProviderLike;
 
   beforeEach(async () => {
     vi.clearAllMocks();

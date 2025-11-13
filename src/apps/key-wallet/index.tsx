@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { createPublicClient, http } from 'viem';
+import type { WalletClient } from 'viem';
 import { useWallets } from '@privy-io/react-auth';
 
 // Styles
@@ -7,6 +8,10 @@ import './styles/tailwindKeyWallet.css';
 
 // Hooks
 import useTransactionKit from '../../hooks/useTransactionKit';
+import type {
+  WalletProviderLike,
+  Eip1193LikeProvider,
+} from '../../types/walletProvider';
 
 // Services
 import { pillarXApiWalletPortfolio } from '../../services/pillarXApiWalletPortfolio';
@@ -28,13 +33,13 @@ const { useGetWalletPortfolioQuery } = pillarXApiWalletPortfolio;
 
 const App = () => {
   const transactionKit = useTransactionKit();
-  const contextProvider = transactionKit?.walletProvider;
+  const contextProvider = transactionKit?.walletProvider as WalletProviderLike | undefined;
   const { wallets } = useWallets();
 
   // State
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [transactions, setTransactions] = useState<TxStatus[]>([]);
-  const [walletProvider, setWalletProvider] = useState<any>(null);
+  const [walletProvider, setWalletProvider] = useState<WalletProviderLike | null>(null);
   const [eoaAddress, setEoaAddress] = useState<string>(() => {
     if (wallets?.[0]?.address) {
       return wallets[0].address;
@@ -89,7 +94,7 @@ const App = () => {
         try {
           const provider = await wallets[0].getEthereumProvider();
           if (!cancelled && isMountedRef.current) {
-            setWalletProvider(provider);
+            setWalletProvider(provider as WalletProviderLike);
           }
         } catch (error) {
           console.error('Failed to get Ethereum provider:', error);
@@ -102,23 +107,32 @@ const App = () => {
 
       if (contextProvider) {
         if (!cancelled && isMountedRef.current) {
-          setWalletProvider(contextProvider);
+          setWalletProvider(contextProvider ?? null);
         }
 
         if (!wallets?.[0] && !eoaAddress && isMountedRef.current) {
           try {
             let detectedAddress: string | undefined;
 
-            if (typeof (contextProvider as any)?.getAddresses === 'function') {
-              const addresses = await (contextProvider as any).getAddresses();
+            const walletClientCandidate = contextProvider as WalletClient;
+
+            if (typeof walletClientCandidate.getAddresses === 'function') {
+              const addresses = await walletClientCandidate.getAddresses();
               detectedAddress = addresses?.[0];
-            } else if (typeof (contextProvider as any)?.request === 'function') {
-              const accounts = await (contextProvider as any).request({
+            } else if (
+              'request' in contextProvider &&
+              typeof (contextProvider as Eip1193LikeProvider).request === 'function'
+            ) {
+              const eipProvider = contextProvider as Eip1193LikeProvider;
+              const accounts = await eipProvider.request<string[]>({
                 method: 'eth_accounts',
               });
               detectedAddress = accounts?.[0];
-            } else if ((contextProvider as any)?.account?.address) {
-              detectedAddress = (contextProvider as any).account.address;
+            } else if (
+              walletClientCandidate.account &&
+              'address' in walletClientCandidate.account
+            ) {
+              detectedAddress = walletClientCandidate.account.address;
             }
 
             if (detectedAddress) {

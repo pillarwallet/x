@@ -26,10 +26,11 @@ import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authoriza
 
 // Assets
 import defaultLogo from '../images/logo-unknown.png';
+import type { WalletProviderLike } from '../../../types/walletProvider';
 
 interface SendAssetModalProps {
   asset: Asset | null;
-  walletProvider: any;
+  walletProvider: WalletProviderLike | null;
   onClose: () => void;
   onSuccess: (txHash: string, chainId: number) => void;
 }
@@ -42,14 +43,14 @@ const SendAssetModal = ({
 }: SendAssetModalProps) => {
   const transactionKit = useTransactionKit();
   const kit = transactionKit?.kit;
-  const contextProvider = transactionKit?.walletProvider;
+  const contextProvider = transactionKit?.walletProvider as WalletProviderLike | undefined;
 
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentChainId, setCurrentChainId] = useState<number | null>(null);
-  const [resolvedProvider, setResolvedProvider] = useState<any>(
+  const [resolvedProvider, setResolvedProvider] = useState<WalletProviderLike | null>(
     walletProvider ?? contextProvider ?? null
   );
 
@@ -218,6 +219,9 @@ const SendAssetModal = ({
       let txHash: string | undefined;
 
       if (!isDelegatedEoa) {
+        if (!resolvedProvider) {
+          throw new Error('Wallet provider not ready. Please try again.');
+        }
         // Check current chain
         const currentChainId = await getCurrentChainId(resolvedProvider);
 

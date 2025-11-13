@@ -16,12 +16,12 @@ exports[`<WalletAddress /> > renders correctly and matches snapshot 1`] = `
       className="text-lg font-mono text-white break-all"
     >
       <span
-        className="block sm:hidden"
+        className="hidden mobile:block"
       >
         0x1234...7890
       </span>
       <span
-        className="hidden sm:inline"
+        className="block mobile:hidden"
       >
         0x1234567890123456789012345678901234567890
       </span>
