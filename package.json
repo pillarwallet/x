@@ -82,7 +82,7 @@
     "slick-carousel": "1.8.1",
     "styled-components": "6.1.1",
     "terser-webpack-plugin": "5.3.14",
-    "type-fest": "^0.16.0",
+    "type-fest": "0.16.0",
     "use-mailchimp-form": "3.1.0",
     "viem": "2.37.1",
     "vite-plugin-svgr": "4.3.0",

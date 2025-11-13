@@ -58,11 +58,10 @@ export default function useIntentSdk(props: IntentProps) {
           .addToBatch({ batchName });
       }
       const response = await kit.sendBatches({ onlyBatchNames: [batchName] });
-      const userOpHash = response.batches[batchName].userOpHash ?? '';
+      const userOpHash =
+        response.batches[batchName].chainGroups?.[chainId]?.userOpHash ?? '';
       if (userOpHash)
         txnHash = await kit.getTransactionHash(userOpHash, chainId);
-      // eslint-disable-next-line no-console
-      console.log('response from tx kit: ', response, userOpHash, txnHash);
       return true;
     } catch (err) {
       console.error('err on sending Install modules: ', err);
@@ -159,8 +158,6 @@ export default function useIntentSdk(props: IntentProps) {
         .isWalletReadyForPulse(chainId)
         .then((res) => {
           if (res) {
-            // eslint-disable-next-line no-console
-            console.log('isWalletReadyForPulse: ', res);
             setAreModulesInstalled(true);
           } else {
             setAreModulesInstalled(false);
@@ -168,7 +165,7 @@ export default function useIntentSdk(props: IntentProps) {
           setIsFetching(false);
         })
         .catch((err) => {
-          console.error('err:: ', err);
+          console.error('Error on checking the pulse wallet: ', err);
           setIsFetching(false);
           setAreModulesInstalled(false);
         });
@@ -184,7 +181,7 @@ export default function useIntentSdk(props: IntentProps) {
       const ok = await sendTransactions(res, chainId);
       setAreModulesInstalled(ok);
     } catch (err) {
-      console.error('Installation failed:: ', err);
+      console.error('Pulse trading - Installation failed:: ', err);
       setAreModulesInstalled(false);
     } finally {
       setIsInstalling(false);

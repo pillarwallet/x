@@ -24,10 +24,6 @@ vi.mock('../../../hooks/useIntentSdk', () => ({
   default: vi.fn(),
 }));
 
-// vi.mock('../../../hooks/useModularSdk', () => ({
-//   default: vi.fn(),
-// }));
-
 // useTransactionKit is mocked globally in setupTests.ts
 
 vi.mock('../../../../services/pillarXApiSearchTokens', () => ({
