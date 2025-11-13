@@ -265,8 +265,7 @@ export default function Buy(props: BuyProps) {
       debouncedUsdAmount &&
       token &&
       isRelayInitialized &&
-      parseFloat(debouncedUsdAmount) > 0 &&
-      !notEnoughLiquidity
+      parseFloat(debouncedUsdAmount) > 0
     ) {
       setIsLoading(true);
       try {
@@ -291,7 +290,6 @@ export default function Buy(props: BuyProps) {
     debouncedUsdAmount,
     token,
     isRelayInitialized,
-    notEnoughLiquidity,
     getBestOffer,
     maxStableCoinBalance.chainId,
   ]);
@@ -724,9 +722,7 @@ export default function Buy(props: BuyProps) {
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}
           expressIntentResponse={
-            USE_RELAY_BUY
-              ? (buyOffer as unknown as ExpressIntentResponse)
-              : expressIntentResponse
+            USE_RELAY_BUY ? buyOffer : expressIntentResponse
           }
           handleBuySubmit={handleBuySubmit}
           isFetching={isFetching}

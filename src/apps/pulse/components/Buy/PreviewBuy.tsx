@@ -341,7 +341,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         userPortfolio
       );
 
-      if (result) {
+      if (result === true) {
         // If executeBuy succeeded, execute the batch directly
         const batchName = `pulse-buy-batch-${fromChainId}`;
 

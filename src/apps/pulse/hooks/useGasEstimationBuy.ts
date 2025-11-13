@@ -132,7 +132,7 @@ export default function useGasEstimationBuy({
         const totalCostBN = batchEst.totalCost;
         if (totalCostBN) {
           // Get the native asset for the chain
-          const nativeAsset = getNativeAssetForChainId(buyToken.chainId);
+          const nativeAsset = getNativeAssetForChainId(fromChainId);
 
           // Convert from wei to native token units using the correct decimals
           const estimatedCostInNativeToken = formatUnits(
