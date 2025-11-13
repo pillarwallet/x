@@ -6,6 +6,7 @@ import { useAccount, useConnect } from 'wagmi';
 
 // hooks
 import useTransactionKit from '../../../hooks/useTransactionKit';
+import { useTransactionDebugLogger } from '../../../hooks/useTransactionDebugLogger';
 
 // types
 import { PayingToken } from '../types/tokens';
@@ -39,6 +40,7 @@ export default function useIntentSdk(props: IntentProps) {
     useState<boolean>(false);
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const { transactionDebugLog } = useTransactionDebugLogger();
 
   const sendTransactions = async (
     transactions: Transactions[],
@@ -60,8 +62,10 @@ export default function useIntentSdk(props: IntentProps) {
       const response = await kit.sendBatches({ onlyBatchNames: [batchName] });
       const userOpHash =
         response.batches[batchName].chainGroups?.[chainId]?.userOpHash ?? '';
-      if (userOpHash)
+      if (userOpHash) {
         txnHash = await kit.getTransactionHash(userOpHash, chainId);
+        transactionDebugLog('Install modules txn hash: ', txnHash);
+      }
       return true;
     } catch (err) {
       console.error('err on sending Install modules: ', err);
@@ -157,6 +161,7 @@ export default function useIntentSdk(props: IntentProps) {
       intentSdk
         .isWalletReadyForPulse(chainId)
         .then((res) => {
+          transactionDebugLog('Pulse wallet modules installed: ', res);
           if (res) {
             setAreModulesInstalled(true);
           } else {
@@ -178,7 +183,9 @@ export default function useIntentSdk(props: IntentProps) {
     setIsInstalling(true);
     try {
       const res: Transactions[] = await intentSdk.enablePulseTrading(chainId);
+      transactionDebugLog('Enable pulse trading transactions: ', res);
       const ok = await sendTransactions(res, chainId);
+      transactionDebugLog('Pulse trading modules installed: ', ok);
       setAreModulesInstalled(ok);
     } catch (err) {
       console.error('Pulse trading - Installation failed:: ', err);
