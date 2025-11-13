@@ -362,7 +362,7 @@ const SendAssetModal = ({
               />
               <button
                 onClick={handleMaxClick}
-                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple_medium hover:bg-purple_light rounded-lg text-xs font-medium transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple_medium hover:bg-purple_medium/50 rounded-lg text-xs font-medium transition-colors"
                 type="button"
                 disabled={isLoading}
               >
@@ -395,7 +395,7 @@ const SendAssetModal = ({
             </button>
             <button
               onClick={handleSend}
-              className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_light rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:opacity-90"
+              className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_medium/50 rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:opacity-90"
               type="button"
               disabled={isLoading || (!resolvedProvider && !isDelegatedEoa)}
             >
