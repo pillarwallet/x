@@ -39,21 +39,26 @@ jobs:
             npm run test:all
 
       - run:
-          name: Move test report
+          name: Move blob report
           when: always
           command: |
-            mv /root/x-e2e/mochawesome-report /tmp/
-            chmod 777 -R /tmp/mochawesome-report
+            if [ -d "/root/x-e2e/blob-report" ]; then
+              mv /root/x-e2e/blob-report /tmp/blob-report
+              chmod 777 -R /tmp/blob-report
+            else
+              echo "blob-report folder not found!"
+            fi
 
       - store_artifacts:
-          path: /tmp/mochawesome-report
+          path: /tmp/blob-report
           when: always
+
 
       - run:
           name: Parse and send test results to Slack
           when: always
           command: |
-            wget https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.json
+            wget https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/blob-report/mochawesome.json
 
             MOCHAWESOME_JSON_FILE=./mochawesome.json
             FAILED_TESTS_FILE=failed-tests.txt
