@@ -3,11 +3,6 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import renderer from 'react-test-renderer';
 import WalletAddress from '../WalletAddress';
 
-// Mock useIsMobile
-vi.mock('../../../../utils/media', () => ({
-  useIsMobile: vi.fn(() => false),
-}));
-
 describe('<WalletAddress />', () => {
   const mockAddress = '0x1234567890123456789012345678901234567890';
   const mockShortenedAddress = '0x1234...7890';
@@ -30,16 +25,9 @@ describe('<WalletAddress />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('displays the full address on desktop', () => {
+  it('renders both full and shortened address versions for responsive display', () => {
     render(<WalletAddress address={mockAddress} />);
     expect(screen.getByText(mockAddress)).toBeInTheDocument();
-  });
-
-  it('displays shortened address on mobile', async () => {
-    const { useIsMobile } = await import('../../../../utils/media');
-    vi.mocked(useIsMobile).mockReturnValueOnce(true);
-
-    render(<WalletAddress address={mockAddress} />);
     expect(screen.getByText(mockShortenedAddress)).toBeInTheDocument();
   });
 

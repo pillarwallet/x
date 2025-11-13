@@ -15,7 +15,16 @@ exports[`<WalletAddress /> > renders correctly and matches snapshot 1`] = `
     <p
       className="text-lg font-mono text-white break-all"
     >
-      0x1234567890123456789012345678901234567890
+      <span
+        className="block sm:hidden"
+      >
+        0x1234...7890
+      </span>
+      <span
+        className="hidden sm:inline"
+      >
+        0x1234567890123456789012345678901234567890
+      </span>
     </p>
     <button
       className="flex-shrink-0 px-4 py-2 bg-purple_medium hover:bg-purple_medium/50 rounded-lg transition-colors text-sm font-medium"
