@@ -22,16 +22,21 @@ jobs:
           no_output_timeout: 90m
           command: |
             cd ~
-            git clone -b main --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
+            git clone -b pillarx-playwright --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
             cd x-e2e
             git pull 
             cat cypress.config.js
             sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
             sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
             sed -i "s|test_mail_apikey_value|$TESTMAIL_API_KEY|g" .env
+            sed -i "s|staging_url_value|$STAGING_URL|g" .env
+            sed -i "s|sushi_url_value|$SUSHI_URL|g" .env
+            sed -i "s|ci_value|$CI|g" .env
+            sed -i "s|headed_value|$HEADED|g" .env
+            sed -i "s|debug_value|$DEBUG|g" .env
             npm install
             npx playwright install --with-deps
-            npm run test-all-chrome-headless
+            npm run test:all
 
       - run:
           name: Move test report
@@ -218,9 +223,9 @@ workflows:
           filters:
             branches:
               only:
-                - staging
+                - e2e-playwright
       - e2e-playwright:
           filters:
             branches:
               only:
-                - staging
+                - e2e-playwright
