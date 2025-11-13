@@ -150,6 +150,34 @@ describe('<SendAssetModal />', () => {
     expect(amountInput.value).toBe('2.5');
   });
 
+  it('sets max amount with up to 18 decimal places', () => {
+    const preciseAsset: Asset = {
+      ...mockAsset,
+      balance: 0.123456789012345678,
+      decimals: 18,
+    };
+
+    const expectedValue = preciseAsset.balance
+      .toFixed(18)
+      .replace(/(?:\.|,)?0+$/, '')
+      .replace(/\.$/, '');
+
+    render(
+      <SendAssetModal
+        asset={preciseAsset}
+        walletProvider={mockWalletProvider}
+        onClose={mockOnClose}
+        onSuccess={mockOnSuccess}
+      />
+    );
+
+    const maxButton = screen.getByRole('button', { name: /max/i });
+    fireEvent.click(maxButton);
+
+    const amountInput = screen.getByPlaceholderText('0.0') as HTMLInputElement;
+    expect(amountInput.value).toBe(expectedValue);
+  });
+
   it('validates recipient address', async () => {
     render(
       <SendAssetModal

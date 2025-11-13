@@ -35,6 +35,27 @@ interface SendAssetModalProps {
   onSuccess: (txHash: string, chainId: number) => void;
 }
 
+const clampDecimals = (decimals: number | undefined, max: number) => {
+  if (typeof decimals !== 'number' || Number.isNaN(decimals)) {
+    return max;
+  }
+  return Math.max(0, Math.min(decimals, max));
+};
+
+const formatMaxBalance = (balance: number, decimals: number | undefined) => {
+  const decimalsToUse = clampDecimals(decimals, 18);
+  if (decimalsToUse === 0) {
+    return balance.toString();
+  }
+
+  const fixed = balance.toFixed(decimalsToUse);
+  const trimmed = fixed.replace(/(?:\.|,)?0+$/, '');
+  if (trimmed === '' || trimmed === '.') {
+    return '0';
+  }
+  return trimmed;
+};
+
 const SendAssetModal = ({
   asset,
   walletProvider,
@@ -106,7 +127,7 @@ const SendAssetModal = ({
   const targetChain = getChainById(asset.chainId);
 
   const handleMaxClick = () => {
-    setAmount(asset.balance.toString());
+    setAmount(formatMaxBalance(asset.balance, asset.decimals));
   };
 
   const validateForm = (): boolean => {

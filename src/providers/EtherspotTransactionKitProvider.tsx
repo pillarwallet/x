@@ -34,7 +34,9 @@ export const EtherspotTransactionKitProvider: React.FC<
 > = ({ config, children }) => {
   const [walletAddress, setWalletAddress] = useState<string>();
   const kitRef = useRef<EtherspotTransactionKit | null>(null);
-  const [externalProvider, setExternalProvider] = useState<WalletProviderLike | undefined>(() =>
+  const [externalProvider, setExternalProvider] = useState<
+    WalletProviderLike | undefined
+  >(() =>
     'provider' in config
       ? (config as { provider?: WalletProviderLike }).provider
       : undefined
