@@ -29,7 +29,6 @@ import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAva
 import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
-import { STABLE_CURRENCIES } from '../../constants/tokens';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
@@ -47,6 +46,11 @@ interface BuyProps {
   walletPortfolioData: WalletPortfolioMobulaResponse | undefined;
   payingTokens: PayingToken[];
   portfolioTokens: PortfolioToken[];
+  maxStableCoinBalance: {
+    chainId: number;
+    balance: number;
+  };
+  customBuyAmounts: string[];
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
   setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>;
   setExpressIntentResponse: Dispatch<
@@ -76,6 +80,8 @@ export default function Buy(props: BuyProps) {
     payingTokens,
     setBuyToken,
     setChains,
+    maxStableCoinBalance,
+    customBuyAmounts,
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
@@ -122,10 +128,6 @@ export default function Buy(props: BuyProps) {
     useState(false);
   const [minimumStableBalance, setMinimumStableBalance] = useState(false);
   const [minGasFee, setMinGasFee] = useState(false);
-  const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
-    chainId: number;
-    balance: number;
-  }>({ chainId: 1, balance: 2 }); // Default to 2 to allow trading initially
   const [belowMinimumAmount, setBelowMinimumAmount] = useState(false);
   const { walletAddress: accountAddress } = useTransactionKit();
   const [inputPlaceholder, setInputPlaceholder] = useState<string>('0.00');
@@ -135,65 +137,14 @@ export default function Buy(props: BuyProps) {
   const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
   const [sumOfStableBalance, setSumOfStableBalance] = useState<number>(0);
 
-  // Helper function to calculate stable currency balance
-  const getStableCurrencyBalanceOnEachChain = () => {
-    // get the list of chainIds from STABLE_CURRENCIES
-    const chainIds = Array.from(
-      new Set(STABLE_CURRENCIES.map((currency) => currency.chainId))
-    );
-
-    // create a map to hold the balance for each chainId
-    const balanceMap: { [chainId: number]: number } = {};
-    chainIds.forEach((chainId) => {
-      balanceMap[chainId] = 0;
-    });
-    // calculate the balance for each chainId
-    walletPortfolioData?.result.data.assets
-      ?.filter((asset) =>
-        asset.contracts_balances.some((contract) =>
-          STABLE_CURRENCIES.some(
-            (stable) =>
-              stable.address.toLowerCase() === contract.address.toLowerCase() &&
-              stable.chainId === Number(contract.chainId.split(':').at(-1))
-          )
-        )
-      )
-      .forEach((asset) => {
-        const stableContracts = asset.contracts_balances.filter((contract) =>
-          STABLE_CURRENCIES.some(
-            (stable) =>
-              stable.address.toLowerCase() === contract.address.toLowerCase() &&
-              stable.chainId === Number(contract.chainId.split(':').at(-1))
-          )
-        );
-        stableContracts.forEach((contract) => {
-          const chainId = Number(contract.chainId.split(':').at(-1));
-          balanceMap[chainId] += asset.price * contract.balance;
-        });
-      });
-
-    return balanceMap;
-  };
-
   useEffect(() => {
     if (!portfolioTokens || portfolioTokens.length === 0) {
       console.warn('No wallet portfolio data');
       return;
     }
-    const stableBalance = getStableCurrencyBalanceOnEachChain();
-    const sum = Object.values(stableBalance).reduce((a, b) => a + b, 0);
-    const maxStableBalance = Math.max(...Object.values(stableBalance));
-    const chainIdOfMaxStableBalance = Number(
-      Object.keys(stableBalance).find(
-        (key) => stableBalance[Number(key)] === maxStableBalance
-      ) || '1'
-    );
-    setMaxStableCoinBalance({
-      chainId: chainIdOfMaxStableBalance,
-      balance: maxStableBalance,
-    });
-    setSumOfStableBalance(sum);
-    if (maxStableBalance < 2) {
+
+    setSumOfStableBalance(maxStableCoinBalance.balance);
+    if (maxStableCoinBalance.balance < 2) {
       setMinimumStableBalance(true);
       return;
     }
@@ -202,7 +153,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          chainIdOfMaxStableBalance && isNativeToken(t.contract)
+          maxStableCoinBalance.chainId && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -218,7 +169,7 @@ export default function Buy(props: BuyProps) {
     }
     setMinGasFee(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [portfolioTokens]);
+  }, [portfolioTokens, maxStableCoinBalance]);
 
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -650,7 +601,7 @@ export default function Buy(props: BuyProps) {
       </div>
       {/* amounts */}
       <div className="flex w-full">
-        {['10', '20', '50', '100', 'MAX'].map((item) => {
+        {customBuyAmounts.map((item) => {
           const isMax = item === 'MAX';
           const isDisabled = !token;
 

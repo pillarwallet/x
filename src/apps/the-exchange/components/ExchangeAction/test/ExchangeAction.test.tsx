@@ -149,11 +149,6 @@ vi.mock('../../../utils/sentry', () => ({
   logExchangeError: vi.fn(),
   logUserInteraction: vi.fn(),
   addExchangeBreadcrumb: vi.fn(),
-  startExchangeTransaction: vi.fn(() => ({
-    finish: vi.fn(),
-    setTag: vi.fn(),
-    setData: vi.fn(),
-  })),
 }));
 
 describe('<ExchangeAction />', () => {

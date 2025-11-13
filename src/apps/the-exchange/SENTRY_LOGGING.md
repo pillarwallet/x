@@ -64,7 +64,6 @@ Located in `src/apps/the-exchange/utils/sentry.ts`:
 - `getWalletAddressForLogging()` - Get wallet address with fallback
 - `useWalletAddressForLogging()` - Hook for wallet address
 - `addExchangeBreadcrumb()` - Add breadcrumbs for debugging
-- `startExchangeTransaction()` - Start performance monitoring
 
 ### Component Integration
 
@@ -210,21 +209,6 @@ logUserInteraction('token_selected', {
   tokenSymbol: 'ETH',
   tokenChain: 'ethereum',
 });
-```
-
-### Performance Monitoring
-
-```typescript
-import { startExchangeTransaction } from './utils/sentry';
-
-const transaction = startExchangeTransaction('get_offer', {
-  swapToken: 'ETH',
-  receiveToken: 'USDC',
-});
-
-// ... operation ...
-
-transaction.finish();
 ```
 
 ## Configuration

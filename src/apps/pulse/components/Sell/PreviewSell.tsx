@@ -5,6 +5,7 @@ import { TailSpin } from 'react-loader-spinner';
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../../utils/eip7702Authorization';
 import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
@@ -24,6 +25,7 @@ import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
 
 // types
 import { SelectedToken } from '../../types/tokens';
+import { PortfolioToken } from '../../../../services/tokensData';
 
 // components
 import Esc from '../Misc/Esc';
@@ -36,8 +38,10 @@ interface PreviewSellProps {
   sellToken: SelectedToken | null;
   sellOffer: SellOffer | null;
   tokenAmount: string;
+  selectedChainIdForSettlement: number;
   onSellOfferUpdate?: (offer: SellOffer | null) => void;
   setSellFlowPaused?: (paused: boolean) => void;
+  userPortfolio?: PortfolioToken[];
 }
 
 const PreviewSell = (props: PreviewSellProps) => {
@@ -47,8 +51,10 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellToken,
     sellOffer,
     tokenAmount,
+    selectedChainIdForSettlement,
     onSellOfferUpdate,
     setSellFlowPaused,
+    userPortfolio,
   } = props;
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -65,6 +71,7 @@ const PreviewSell = (props: PreviewSellProps) => {
     error,
     clearError,
     getBestSellOffer,
+    getBestSellOfferWithBridge,
     isInitialized,
   } = useRelaySell();
   const { kit } = useTransactionKit();
@@ -79,6 +86,8 @@ const PreviewSell = (props: PreviewSellProps) => {
     sellOffer,
     tokenAmount,
     isPaused: isWaitingForSignature || isExecuting,
+    toChainId: selectedChainIdForSettlement,
+    userPortfolio,
   });
 
   useEffect(() => {
@@ -210,7 +219,7 @@ const PreviewSell = (props: PreviewSellProps) => {
   //   }
   // };
 
-  const usdcAddress = getUSDCAddress(sellToken?.chainId || 0);
+  const usdcAddress = getUSDCAddress(selectedChainIdForSettlement || 0);
 
   // Clean up pulse-sell batch when component unmounts or preview closes
   useEffect(() => {
@@ -241,13 +250,25 @@ const PreviewSell = (props: PreviewSellProps) => {
     try {
       // Only fetch new sell offer - wallet portfolio is already fresh from HomeScreen
       if (sellToken && tokenAmount && isInitialized && onSellOfferUpdate) {
-        const newOffer = await getBestSellOffer({
-          fromAmount: tokenAmount,
-          fromTokenAddress: sellToken.address,
-          fromChainId: sellToken.chainId,
-          fromTokenDecimals: sellToken.decimals,
-        });
-        onSellOfferUpdate(newOffer);
+        if (sellToken.chainId === selectedChainIdForSettlement) {
+          const newOffer = await getBestSellOffer({
+            fromAmount: tokenAmount,
+            fromTokenAddress: sellToken.address,
+            fromChainId: sellToken.chainId,
+            fromTokenDecimals: sellToken.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          onSellOfferUpdate(newOffer);
+        } else {
+          const newOffer = await getBestSellOfferWithBridge({
+            fromAmount: tokenAmount,
+            fromTokenAddress: sellToken.address,
+            fromChainId: sellToken.chainId,
+            fromTokenDecimals: sellToken.decimals,
+            toChainId: selectedChainIdForSettlement,
+          });
+          onSellOfferUpdate(newOffer);
+        }
       }
 
       // Also estimate gas fees after refreshing the offer
@@ -362,20 +383,33 @@ const PreviewSell = (props: PreviewSellProps) => {
 
     try {
       // First, prepare the batch using the existing executeSell logic (without showing batch modal)
-      const result = await executeSell(sellToken, tokenAmount, undefined);
+      const result = await executeSell(
+        sellToken,
+        tokenAmount,
+        selectedChainIdForSettlement,
+        userPortfolio
+      );
 
       if (result) {
         // If executeSell succeeded, it means the batch was prepared
         // Now execute the batch directly
         const batchName = `pulse-sell-batch-${sellToken.chainId}`;
 
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          sellToken.chainId
+        );
         const batchSend = await kit.sendBatches({
           onlyBatchNames: [batchName],
+          authorization: authorization || undefined,
         });
         const sentBatch = batchSend.batches[batchName];
-
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
-          const userOpHash = sentBatch?.userOpHash;
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash =
+            sentBatch?.chainGroups?.[sellToken.chainId]?.userOpHash;
           if (userOpHash) {
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);
@@ -583,7 +617,7 @@ const PreviewSell = (props: PreviewSellProps) => {
 
       <div
         className="flex justify-between w-full border border-[#25232D] rounded-[10px] p-3 mb-6"
-        data-testid={`pulse-preview-sell-receiving-token-${sellToken?.chainId}-usdc`}
+        data-testid={`pulse-preview-sell-receiving-token-${selectedChainIdForSettlement}-usdc`}
       >
         <div className="flex items-center">
           <div
@@ -592,7 +626,7 @@ const PreviewSell = (props: PreviewSellProps) => {
           >
             <img src={UsdcLogo} alt="USDC" className="w-8 h-8 rounded-full" />
             <img
-              src={getLogoForChainId(sellToken?.chainId)}
+              src={getLogoForChainId(selectedChainIdForSettlement)}
               className="absolute -bottom-px right-0.5 w-3 h-3 rounded-full border border-[#1E1D24]"
               alt="Chain logo"
             />

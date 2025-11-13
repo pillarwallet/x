@@ -59,11 +59,13 @@ import {
   getNativeAssetForChainId,
   isValidEthereumAddress,
   safeBigIntConversion,
+  supportedChains,
 } from '../../../utils/blockchain';
 import {
   pasteFromClipboard,
   transactionDescription,
 } from '../../../utils/common';
+import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authorization';
 import { formatAmountDisplay, isValidAmount } from '../../../utils/number';
 
 // types
@@ -173,8 +175,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
   const [approveData, setApproveData] = React.useState<string>('');
   const [gasPrice, setGasPrice] = React.useState<string>();
   const [feeMin, setFeeMin] = React.useState<string>();
-  const [selectedFeeType, setSelectedFeeType] =
-    React.useState<string>('Gasless');
+  const isDelegatedEoa = React.useMemo(
+    () => kit.getEtherspotProvider().getWalletMode() === 'delegatedEoa',
+    [kit]
+  );
+
+  const [selectedFeeType, setSelectedFeeType] = React.useState<string>(
+    isDelegatedEoa ? 'Native Token' : 'Gasless'
+  );
   const [isLoadingFeeOptions, setIsLoadingFeeOptions] =
     React.useState<boolean>(false);
 
@@ -248,12 +256,25 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     []
   );
 
-  const [feeType, setFeeType] = React.useState(feeTypeOptions);
+  const [feeType, setFeeType] = React.useState(
+    isDelegatedEoa ? [feeTypeOptions[1]] : feeTypeOptions
+  );
 
-  // Set the default fee type
+  // Initialize fee type list based on wallet mode
   React.useEffect(() => {
-    setSelectedFeeType('Gasless');
-  }, []);
+    if (isDelegatedEoa) {
+      setFeeType([feeTypeOptions[1]]); // Only Native Token
+      setSelectedFeeType('Native Token');
+      setIsPaymaster(false);
+      setPaymasterContext(null);
+      setSelectedPaymasterAddress('');
+      setSelectedFeeAsset(undefined);
+    } else {
+      setFeeType(feeTypeOptions);
+      setSelectedFeeType('Gasless');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDelegatedEoa]);
 
   useEffect(() => {
     if (!walletPortfolio) return;
@@ -266,6 +287,14 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
     setSelectedPaymasterAddress(''); // Clear selected paymaster address
     setPaymasterContext(null);
     setIsPaymaster(false);
+
+    // If in delegatedEoa mode, disable gasless and skip paymaster fetching
+    if (isDelegatedEoa) {
+      setFeeType([feeTypeOptions[1]]);
+      setSelectedFeeType('Native Token');
+      setIsLoadingFeeOptions(false);
+      return;
+    }
 
     setQueryString(`?chainId=${selectedAsset.chainId}`);
     setIsLoadingFeeOptions(true);
@@ -387,7 +416,12 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         setIsLoadingFeeOptions(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAsset?.id, selectedAsset?.chainId, walletPortfolio]);
+  }, [
+    selectedAsset?.id,
+    selectedAsset?.chainId,
+    walletPortfolio,
+    isDelegatedEoa,
+  ]);
 
   const setApprovalData = async (gasCost: number) => {
     if (selectedFeeAsset && gasPrice && gasCost) {
@@ -1056,9 +1090,34 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         const batchNames = payload.batches.map(
           (batch) => `batch-${batch.chainId}`
         );
+
+        // Get authorization for each unique chainId in batches
+        // Since batches in this repo are per chainId, we get authorization for each unique chainId
+        const uniqueChainIds = Array.from(
+          new Set(payload.batches.map((batch) => batch.chainId))
+        );
+        const firstChainId = uniqueChainIds[0];
+
+        if (
+          !firstChainId ||
+          typeof firstChainId !== 'number' ||
+          !supportedChains.some((chain) => chain.id === firstChainId)
+        ) {
+          handleError(
+            'Invalid or unsupported chain ID in batch payload. Cannot proceed with transaction.'
+          );
+          return;
+        }
+
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          firstChainId
+        );
+
         transactionDebugLog('Estimating payload batches:', batchNames);
         const batchEstimate = await kit.estimateBatches({
           onlyBatchNames: batchNames,
+          authorization: authorization || undefined,
         });
         transactionDebugLog('Payload batches estimated:', batchEstimate);
 
@@ -1164,6 +1223,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         transactionDebugLog('Sending payload batches:', batchNames);
         const batchSend = await kit.sendBatches({
           onlyBatchNames: batchNames,
+          authorization: authorization || undefined,
         });
         transactionDebugLog('Payload batches sent:', batchSend);
 
@@ -1203,10 +1263,16 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         for (let batchIdx = 0; batchIdx < batchNames.length; batchIdx++) {
           const batchName = batchNames[batchIdx];
           const sentBatch = batchSend.batches[batchName];
-          const userOpHash = sentBatch?.userOpHash;
+
+          const chainIdForTxHash = payload.batches[batchIdx].chainId;
+
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash =
+            sentBatch?.chainGroups?.[chainIdForTxHash]?.userOpHash;
           if (userOpHash) {
             allUserOpHashes.push(userOpHash);
-            const chainIdForTxHash = payload.batches[batchIdx].chainId;
 
             Sentry.addBreadcrumb({
               category: 'send_flow',
@@ -1324,6 +1390,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         };
         const chainIdToUse = payloadTx?.chainId;
 
+        if (
+          !chainIdToUse ||
+          typeof chainIdToUse !== 'number' ||
+          !supportedChains.some((chain) => chain.id === chainIdToUse)
+        ) {
+          handleError(
+            'Invalid or unsupported chain ID in transaction payload. Cannot proceed with transaction.'
+          );
+          return;
+        }
+
         kit
           .transaction({
             chainId: chainIdToUse,
@@ -1333,9 +1410,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
           })
           .name({ transactionName: 'tx-payload-single-send' });
 
+        // Get authorization if needed for this chainId
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          chainIdToUse
+        );
+
         // Estimate (no paymasterDetails)
         transactionDebugLog('Estimating single payload transaction');
-        const estimated = await kit.estimate();
+        const estimated = await kit.estimate({
+          authorization: authorization || undefined,
+        });
         transactionDebugLog('Single payload transaction estimated:', estimated);
         if (estimated.errorMessage) {
           Sentry.captureMessage('Estimation error during send', {
@@ -1380,7 +1465,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         transactionDebugLog('Sending single payload transaction');
         let sent;
         try {
-          sent = await kit.send();
+          sent = await kit.send({
+            authorization: authorization || undefined,
+          });
           transactionDebugLog('Single payload transaction sent:', sent);
 
           if (sent.errorMessage) {
@@ -1723,10 +1810,15 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
         // Extract userOpHash
         const sentBatch = batchSend.batches[batchName];
-        const userOpHash = sentBatch?.userOpHash;
+        const chainIdForTxHash = selectedAsset.chainId;
+
+        // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+        // have one chainGroup per batch
+        // chainGroups is an object keyed by chainId, not an array
+        const userOpHash =
+          sentBatch?.chainGroups?.[chainIdForTxHash]?.userOpHash;
 
         transactionDebugLog('Transaction new userOpHash:', userOpHash);
-        const chainIdForTxHash = selectedAsset.chainId;
         if (!userOpHash) {
           transactionDebugLog('No userOpHash returned after batch send');
 
@@ -1814,6 +1906,17 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
       // Use the correct chainId for the fee payment method
       const feeChainId = selectedAsset.chainId;
 
+      if (
+        !feeChainId ||
+        typeof feeChainId !== 'number' ||
+        !supportedChains.some((chain) => chain.id === feeChainId)
+      ) {
+        handleError(
+          'Invalid or unsupported chain ID for selected asset. Cannot proceed with transaction.'
+        );
+        return;
+      }
+
       kit
         .transaction({
           chainId: feeChainId,
@@ -1824,11 +1927,18 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
         .name({ transactionName: 'tx-single-send' });
 
       transactionDebugLog('Estimating single transaction');
-      const estimated = await kit.estimate();
+      // Get authorization if needed for this chainId in delegatedEoa mode
+      const singleFlowAuthorization = await getEIP7702AuthorizationIfNeeded(
+        kit,
+        feeChainId
+      );
+      const estimated = await kit.estimate({
+        authorization: singleFlowAuthorization || undefined,
+      });
       transactionDebugLog('Single transaction estimated:', estimated);
       if (estimated.errorMessage) {
         transactionDebugLog(
-          'Single transaction estimation error:',
+          'Estimated single transaction error message:',
           estimated.errorMessage
         );
         Sentry.captureMessage('Estimation error during send', {
@@ -1889,7 +1999,9 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
 
       // Send
       transactionDebugLog('Sending single transaction');
-      const sent = await kit.send();
+      const sent = await kit.send({
+        authorization: singleFlowAuthorization || undefined,
+      });
 
       transactionDebugLog('Single transaction sent:', sent);
       if (sent.errorMessage) {

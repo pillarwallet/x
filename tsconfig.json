@@ -23,5 +23,6 @@
     "sourceRoot": "/",
     "types": ["vite/client", "node", "vitest/globals"]
   },
-  "include": ["vite.config.ts", "src", "__mocks__"]
+  "include": ["vite.config.ts", "src", "__mocks__"],
+  "exclude": ["functions"]
 }

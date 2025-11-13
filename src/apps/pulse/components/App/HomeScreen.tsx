@@ -32,11 +32,15 @@ import Settings from '../Misc/Settings';
 import PreviewSell from '../Sell/PreviewSell';
 import Sell from '../Sell/Sell';
 import TransactionStatus from '../Transaction/TransactionStatus';
+import SettingsMenu from '../Settings/SettingsMenu';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+
+// utils
+import { getStableCurrencyBalanceOnEachChain } from '../../utils/utils';
 
 // types
 type TransactionStatusState =
@@ -99,6 +103,10 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [transactionStatus, setTransactionStatus] = useState(false);
   const [userOpHash, setUserOpHash] = useState<string>('');
   const [transactionGasFee, setTransactionGasFee] = useState<string>('≈ $0.00');
+  const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
+    chainId: number;
+    balance: number;
+  }>();
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
     buyToken: SelectedToken | null;
@@ -108,6 +116,22 @@ export default function HomeScreen(props: HomeScreenProps) {
     usdAmount: string;
     isBuy: boolean;
   } | null>(null);
+  // Load settings from localStorage or use defaults
+  const [customBuyAmounts, setCustomBuyAmounts] = useState<string[]>(() => {
+    const stored = localStorage.getItem('pulse_customBuyAmounts');
+    return stored ? JSON.parse(stored) : ['10', '20', '50', '100'];
+  });
+  const [customSellAmounts, setCustomSellAmounts] = useState<string[]>(() => {
+    const stored = localStorage.getItem('pulse_customSellAmounts');
+    return stored ? JSON.parse(stored) : ['10%', '25%', '50%', '75%'];
+  });
+  const [displaySettingsMenu, setDisplaySettingsMenu] =
+    useState<boolean>(false);
+  const [selectedChainIdForSettlement, setSelectedChainIdForSettlement] =
+    useState<number>(() => {
+      const stored = localStorage.getItem('pulse_selectedChainIdForSettlement');
+      return stored ? parseInt(stored, 10) : 1; // Will be updated by useEffect once maxStableCoinBalance is calculated
+    });
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const { intentSdk } = useIntentSdk({
     payingTokens,
@@ -167,6 +191,58 @@ export default function HomeScreen(props: HomeScreenProps) {
   const hasSeenSuccessRef = useRef<boolean>(false);
   const blockchainTxHashRef = useRef<string | undefined>(undefined);
   const failureGraceExpiryRef = useRef<number | null>(null);
+  const hasInitializedChainIdRef = useRef<boolean>(false);
+
+  const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
+    { wallet: accountAddress || '', isPnl: false },
+    {
+      skip: !accountAddress,
+      refetchOnFocus: false,
+    }
+  );
+
+  useEffect(() => {
+    if (
+      !walletPortfolioData ||
+      !portfolioTokens ||
+      portfolioTokens.length === 0
+    ) {
+      return;
+    }
+    const stableBalance =
+      getStableCurrencyBalanceOnEachChain(walletPortfolioData);
+    const maxStableBalance = Math.max(...Object.values(stableBalance));
+    const chainIdOfMaxStableBalance = Number(
+      Object.keys(stableBalance).find(
+        (key) => stableBalance[Number(key)] === maxStableBalance
+      ) || '1'
+    );
+    setMaxStableCoinBalance({
+      chainId: chainIdOfMaxStableBalance,
+      balance: maxStableBalance,
+    });
+  }, [portfolioTokens, walletPortfolioData]);
+
+  // Sync selectedChainId with maxStableCoinBalance.chainId on first load or when no preference is stored
+  useEffect(() => {
+    const storedChainId = localStorage.getItem(
+      'pulse_selectedChainIdForSettlement'
+    );
+    // If no stored preference and haven't initialized yet, use the chain with max stable balance
+    if (
+      !storedChainId &&
+      !hasInitializedChainIdRef.current &&
+      maxStableCoinBalance?.chainId
+    ) {
+      setSelectedChainIdForSettlement(maxStableCoinBalance.chainId);
+      // Save it to localStorage so we know user hasn't manually changed it yet
+      localStorage.setItem(
+        'pulse_selectedChainIdForSettlement',
+        maxStableCoinBalance.chainId.toString()
+      );
+      hasInitializedChainIdRef.current = true;
+    }
+  }, [maxStableCoinBalance]);
 
   // Calculate token amount for Buy mode when usdAmount, buyToken, or payingTokens changes
   // Using the same calculation as PreviewBuy: totalPay / tokenUsdValue
@@ -185,6 +261,31 @@ export default function HomeScreen(props: HomeScreenProps) {
       setTokenAmount('');
     }
   }, [isBuy, buyToken, payingTokens]);
+
+  // Save customBuyAmounts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      'pulse_customBuyAmounts',
+      JSON.stringify(customBuyAmounts)
+    );
+  }, [customBuyAmounts]);
+
+  // Save customSellAmounts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      'pulse_customSellAmounts',
+      JSON.stringify(customSellAmounts)
+    );
+  }, [customSellAmounts]);
+
+  // Save selectedChainIdForSettlement to localStorage whenever it changes
+  useEffect(() => {
+    if (maxStableCoinBalance?.chainId)
+      localStorage.setItem(
+        'pulse_selectedChainIdForSettlement',
+        selectedChainIdForSettlement.toString()
+      );
+  }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
@@ -212,6 +313,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             fromTokenAddress: sellToken.address,
             fromChainId: sellToken.chainId,
             fromTokenDecimals: sellToken.decimals,
+            toChainId: selectedChainIdForSettlement,
           });
           setSellOffer(newOffer);
         } catch (error) {
@@ -241,6 +343,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     previewBuy,
     isRefreshingHome,
     isSellFlowPaused,
+    selectedChainIdForSettlement,
   ]);
 
   // Stop transaction status polling
@@ -732,14 +835,6 @@ export default function HomeScreen(props: HomeScreenProps) {
     intentSdk,
   ]);
 
-  const { data: walletPortfolioData } = useGetWalletPortfolioQuery(
-    { wallet: accountAddress || '', isPnl: false },
-    {
-      skip: !accountAddress,
-      refetchOnFocus: false,
-    }
-  );
-
   useEffect(() => {
     if (!walletPortfolioData) return;
 
@@ -814,8 +909,10 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellToken={sellToken}
             sellOffer={sellOffer}
             tokenAmount={tokenAmount}
+            selectedChainIdForSettlement={selectedChainIdForSettlement}
             onSellOfferUpdate={setSellOffer}
             setSellFlowPaused={setIsSellFlowPaused}
+            userPortfolio={portfolioTokens}
           />
         </div>
       );
@@ -858,195 +955,133 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
 
     return (
-      <div className="w-full max-w-[446px] md:px-0">
-        <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
-          You&apos;re trying out the beta version of Pulse: expect improvements
-          ahead. Thank you.
-        </p>
-        <button
-          className="flex items-center justify-center w-full"
-          style={{
-            border: '2px solid #1E1D24',
-            height: 40,
-            backgroundColor: '#121116',
-            borderRadius: 10,
-          }}
-          onClick={() => {
-            setSearching(true);
-          }}
-          type="button"
-          data-testid="pulse-search-button-homescreen"
-        >
-          <span style={{ marginLeft: 14, marginRight: 10 }}>
-            <img src={SearchIcon} alt="search-icon" width={12} height={12} />
-          </span>
-          <div
-            className="flex-1"
-            style={{
-              color: 'grey',
-              textAlign: 'left',
-              opacity: 0.5,
-              height: 20,
-              fontSize: 13,
-            }}
-          >
-            Search by token or paste address
-          </div>
-        </button>
-        <div
-          className="flex flex-col w-full"
-          style={{
-            border: '2px solid #1E1D24',
-            minHeight: 264,
-            backgroundColor: '#1E1D24',
-            borderRadius: 16,
-            marginTop: 40,
-          }}
-        >
-          {/* buy/sell, refresh, settings */}
-          <div className="flex justify-between">
-            <div
-              className="flex flex-1 max-w-[318px]"
-              style={{
-                height: 40,
-                backgroundColor: 'black',
-                borderRadius: 10,
-                marginTop: 10,
-                marginLeft: 10,
+      <div className="w-full max-w-[446px]">
+        {displaySettingsMenu ? (
+          <SettingsMenu
+            closeSettingsMenu={() => setDisplaySettingsMenu(false)}
+            setCustomBuyAmounts={setCustomBuyAmounts}
+            customBuyAmounts={customBuyAmounts}
+            setCustomSellAmounts={setCustomSellAmounts}
+            customSellAmounts={customSellAmounts}
+            selectedChainId={selectedChainIdForSettlement}
+            setSelectedChainId={setSelectedChainIdForSettlement}
+          />
+        ) : (
+          <>
+            <p className="flex text-base font-normal text-white/[.5] w-full text-center mb-6">
+              You&apos;re trying out the beta version of Pulse: expect
+              improvements ahead. Thank you.
+            </p>
+            <button
+              className="flex items-center justify-center w-full border-2 border-[#1E1D24] h-10 bg-[#121116] rounded-[10px]"
+              onClick={() => {
+                setSearching(true);
               }}
+              type="button"
+              data-testid="pulse-search-button-homescreen"
             >
-              <button
-                className="flex-1"
-                data-testid="pulse-buy-toggle-button"
-                style={
-                  isBuy
-                    ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
-                    : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
-                }
-                onClick={() => setIsBuy(true)}
-                type="button"
-              >
-                <span className="text-center font-medium text-sm">Buy</span>
-              </button>
-              <button
-                className="flex-1 items-center justify-center"
-                data-testid="pulse-sell-toggle-button"
-                style={
-                  !isBuy
-                    ? {
-                        backgroundColor: '#1E1D24',
-                        borderRadius: 10,
-                        margin: 4,
-                      }
-                    : {
-                        backgroundColor: 'black',
-                        borderRadius: 10,
-                        margin: 4,
-                        color: 'grey',
-                      }
-                }
-                onClick={() => setIsBuy(false)}
-                type="button"
-              >
-                <span className="text-center font-medium text-sm">Sell</span>
-              </button>
-            </div>
-            <div className="flex mt-2.5 mr-2.5">
-              <div
-                style={{
-                  marginLeft: 12,
-                  backgroundColor: 'black',
-                  borderRadius: 10,
-                  width: 40,
-                  height: 40,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  display: 'flex',
-                  padding: '2px 2px 4px 2px',
-                }}
-              >
-                <div
-                  style={{
-                    width: 36,
-                    height: 34,
-                    backgroundColor: '#1E1D24',
-                    borderRadius: 8,
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                  data-testid="pulse-refresh-button-homescreen"
-                >
-                  <Refresh
-                    onClick={handleRefresh}
-                    isLoading={isRefreshingHome}
-                    disabled={isRefreshingHome || (!buyToken && !sellToken)}
-                  />
+              <span className="ml-3.5 mr-2.5">
+                <img
+                  src={SearchIcon}
+                  alt="search-icon"
+                  width={12}
+                  height={12}
+                />
+              </span>
+              <div className="flex-1 text-grey text-left opacity-50 h-5 text-[13px]">
+                Search by token or paste address
+              </div>
+            </button>
+            <div className="flex flex-col w-full border-2 border-[#1E1D24] min-h-[264px] bg-[#1E1D24] rounded-2xl mt-10">
+              {/* buy/sell, refresh, settings */}
+              <div className="flex justify-between">
+                <div className="flex flex-1 max-w-[318px] h-10 bg-black rounded-[10px] mt-2.5 ml-2.5">
+                  <button
+                    className={`flex-1 rounded-[10px] m-1 ${
+                      isBuy ? 'bg-[#1E1D24]' : 'bg-black text-grey'
+                    }`}
+                    data-testid="pulse-buy-toggle-button"
+                    onClick={() => setIsBuy(true)}
+                    type="button"
+                  >
+                    <span className="text-center font-medium text-sm">Buy</span>
+                  </button>
+                  <button
+                    className={`flex-1 items-center justify-center rounded-[10px] m-1 ${
+                      !isBuy ? 'bg-[#1E1D24]' : 'bg-black text-grey'
+                    }`}
+                    data-testid="pulse-sell-toggle-button"
+                    onClick={() => setIsBuy(false)}
+                    type="button"
+                  >
+                    <span className="text-center font-medium text-sm">
+                      Sell
+                    </span>
+                  </button>
+                </div>
+                <div className="flex mt-2.5 mr-2.5">
+                  <div className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]">
+                    <div
+                      className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
+                      data-testid="pulse-refresh-button-homescreen"
+                    >
+                      <Refresh
+                        onClick={handleRefresh}
+                        isLoading={isRefreshingHome}
+                        disabled={isRefreshingHome || (!buyToken && !sellToken)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="ml-3 bg-black rounded-[10px] w-10 h-10 flex justify-center items-center p-[2px_2px_4px_2px]">
+                    <Settings onClick={() => setDisplaySettingsMenu(true)} />
+                  </div>
                 </div>
               </div>
-
-              <div
-                style={{
-                  marginLeft: 12,
-                  backgroundColor: 'black',
-                  borderRadius: 10,
-                  width: 40,
-                  height: 40,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  display: 'flex',
-                  padding: '2px 2px 4px 2px',
-                }}
-              >
-                <Settings />
-              </div>
+              {isBuy ? (
+                <Buy
+                  setSearching={setSearching}
+                  token={buyToken}
+                  walletPortfolioData={walletPortfolioData}
+                  payingTokens={payingTokens}
+                  portfolioTokens={portfolioTokens}
+                  maxStableCoinBalance={
+                    maxStableCoinBalance ?? { chainId: 1, balance: 2 }
+                  }
+                  customBuyAmounts={[...customBuyAmounts, 'MAX']}
+                  setPreviewBuy={setPreviewBuy}
+                  setPayingTokens={setPayingTokens}
+                  setExpressIntentResponse={setExpressIntentResponse}
+                  setUsdAmount={setUsdAmount}
+                  setDispensableAssets={setDispensableAssets}
+                  setBuyRefreshCallback={setBuyRefreshCallback}
+                  setBuyToken={setBuyToken}
+                  setChains={setChains}
+                />
+              ) : (
+                <Sell
+                  setSearching={setSearching}
+                  token={sellToken}
+                  walletPortfolioData={walletPortfolioData}
+                  portfolioTokens={portfolioTokens}
+                  customSellAmounts={[...customSellAmounts, 'MAX']}
+                  selectedChainIdForSettlement={selectedChainIdForSettlement}
+                  setPreviewSell={setPreviewSell}
+                  setSellOffer={setSellOffer}
+                  setTokenAmount={setTokenAmount}
+                  isRefreshing={isRefreshingHome}
+                />
+              )}
             </div>
-          </div>
-          {isBuy ? (
-            <Buy
-              setSearching={setSearching}
-              token={buyToken}
-              walletPortfolioData={walletPortfolioData}
-              payingTokens={payingTokens}
-              portfolioTokens={portfolioTokens}
-              setPreviewBuy={setPreviewBuy}
-              setPayingTokens={setPayingTokens}
-              setExpressIntentResponse={setExpressIntentResponse}
-              setUsdAmount={setUsdAmount}
-              setDispensableAssets={setDispensableAssets}
-              setBuyRefreshCallback={setBuyRefreshCallback}
-              setBuyToken={setBuyToken}
-              setChains={setChains}
-            />
-          ) : (
-            <Sell
-              setSearching={setSearching}
-              token={sellToken}
-              walletPortfolioData={walletPortfolioData}
-              portfolioTokens={portfolioTokens}
-              setPreviewSell={setPreviewSell}
-              setSellOffer={setSellOffer}
-              setTokenAmount={setTokenAmount}
-              isRefreshing={isRefreshingHome}
-            />
-          )}
-        </div>
+          </>
+        )}
       </div>
     );
   };
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen"
-      style={{ backgroundColor: 'black' }}
+      className="flex flex-col items-center justify-center min-h-screen bg-black"
       data-testid="pulse-home-view"
     >
       {renderPreview()}
