@@ -21,6 +21,7 @@ import {
 
 // types
 import { Asset } from '../types';
+import { getBlockScan } from '../../../utils/blockchain';
 
 const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
 
@@ -276,25 +277,10 @@ export const sendTransaction = async (
   }
 };
 
+// After: reuse shared utility
 export const getBlockExplorerUrl = (chainId: number, txHash: string): string => {
-  switch (chainId) {
-    case 1:
-      return `https://etherscan.io/tx/${txHash}`;
-    case 137:
-      return `https://polygonscan.com/tx/${txHash}`;
-    case 8453:
-      return `https://basescan.org/tx/${txHash}`;
-    case 100:
-      return isGnosisEnabled ? `https://gnosisscan.io/tx/${txHash}` : '';
-    case 56:
-      return `https://bscscan.com/tx/${txHash}`;
-    case 10:
-      return `https://optimistic.etherscan.io/tx/${txHash}`;
-    case 42161:
-      return `https://arbiscan.io/tx/${txHash}`;
-    default:
-      return '';
-  }
+  const baseUrl = getBlockScan(chainId, false);
+  return baseUrl ? `${baseUrl}${txHash}` : '';
 };
 
 export const formatBalance = (balance: number, decimals: number = 4): string => {

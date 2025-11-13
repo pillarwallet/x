@@ -239,7 +239,7 @@ export const getBlockScan = (chain: number, isAddress: boolean = false) => {
     case 10:
       return `https://optimistic.etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 42161:
-      return `http://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
+      return `https://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
     default:
       return '';
   }
