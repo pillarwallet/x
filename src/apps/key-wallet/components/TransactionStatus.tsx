@@ -64,7 +64,7 @@ const TransactionStatus = ({
                       href={explorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1 bg-purple_medium hover:bg-purple_light rounded-lg text-xs font-medium transition-colors"
+                      className="px-3 py-1 bg-purple_medium hover:bg-purple_medium/50 rounded-lg text-xs font-medium transition-colors"
                     >
                       View
                     </a>

@@ -253,7 +253,7 @@ const App = () => {
         <div className="text-4xl mb-4">🔑</div>
         <h2 className="text-2xl font-bold text-white mb-2">Key Wallet</h2>
         <p className="text-white/60 text-center">
-          Connecting to your wallet...
+          Sorry, we can't find your wallet address. Please try reloading the site or logging out and back in.
         </p>
       </div>
     );

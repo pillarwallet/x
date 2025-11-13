@@ -136,7 +136,7 @@ const SendAssetModal = ({
 
   const sendWithTransactionKit = async (): Promise<string> => {
     if (!kit) {
-      throw new Error('Wallet provider not ready. Please try again.');
+      throw new Error('Sorry, PillarX is not connected to a wallet - please try reloading the site or logging out and back in.');
     }
 
     kit.reset();
@@ -290,7 +290,7 @@ const SendAssetModal = ({
             <div className="flex items-center gap-4">
               <img
                 src={asset.logo || defaultLogo}
-                alt={asset.symbol || 'token'}
+                alt={asset.symbol || 'token-symbol'}
                 className="w-12 h-12 rounded-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;

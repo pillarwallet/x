@@ -42,7 +42,7 @@ const WalletAddress = ({ address }: WalletAddressProps) => {
         <p className="text-lg font-mono text-white break-all">{isMobile ? shortenAddress(address) : address}</p>
         <button
           onClick={handleCopy}
-          className="flex-shrink-0 px-4 py-2 bg-purple_medium hover:bg-purple_light rounded-lg transition-colors text-sm font-medium"
+          className="flex-shrink-0 px-4 py-2 bg-purple_medium hover:bg-purple_medium/50 rounded-lg transition-colors text-sm font-medium"
           type="button"
         >
           {copied ? '✓ Copied' : 'Copy'}
