@@ -102,7 +102,7 @@ exports[`<SendAssetModal /> > renders correctly and matches snapshot 1`] = `
             value=""
           />
           <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple_medium hover:bg-purple_light rounded-lg text-xs font-medium transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple_medium hover:bg-purple_medium/50 rounded-lg text-xs font-medium transition-colors"
             disabled={false}
             onClick={[Function]}
             type="button"
@@ -123,7 +123,7 @@ exports[`<SendAssetModal /> > renders correctly and matches snapshot 1`] = `
           Cancel
         </button>
         <button
-          className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_light rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_medium/50 rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:opacity-90"
           disabled={false}
           onClick={[Function]}
           type="button"
