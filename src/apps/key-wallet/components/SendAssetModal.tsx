@@ -1,5 +1,8 @@
 // Core
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+
+// Viem
+import { encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 
 // Types
 import { Asset } from '../types';
@@ -12,7 +15,14 @@ import {
   switchChain,
   getCurrentChainId,
   getChainById,
+  isNativeAsset,
 } from '../utils/blockchain';
+
+// Hooks
+import useTransactionKit from '../../../hooks/useTransactionKit';
+
+// Services
+import { getEIP7702AuthorizationIfNeeded } from '../../../utils/eip7702Authorization';
 
 // Assets
 import defaultLogo from '../images/logo-unknown.png';
@@ -30,22 +40,54 @@ const SendAssetModal = ({
   onClose,
   onSuccess,
 }: SendAssetModalProps) => {
+  const transactionKit = useTransactionKit();
+  const kit = transactionKit?.kit;
+  const contextProvider = transactionKit?.walletProvider;
+
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentChainId, setCurrentChainId] = useState<number | null>(null);
+  const [resolvedProvider, setResolvedProvider] = useState<any>(
+    walletProvider ?? contextProvider ?? null
+  );
+
+  const isDelegatedEoa = useMemo(() => {
+    try {
+      return (
+        kit?.getEtherspotProvider?.().getWalletMode?.() === 'delegatedEoa'
+      );
+    } catch (delegatedCheckError) {
+      console.warn('Failed to determine wallet mode:', delegatedCheckError);
+      return false;
+    }
+  }, [kit]);
+
+  useEffect(() => {
+    setResolvedProvider(walletProvider ?? contextProvider ?? null);
+  }, [walletProvider, contextProvider]);
 
   // Get current chain when modal opens
   useEffect(() => {
     const checkChain = async () => {
-      if (walletProvider) {
-        const chainId = await getCurrentChainId(walletProvider);
+      if (resolvedProvider) {
+        const chainId = await getCurrentChainId(resolvedProvider);
         setCurrentChainId(chainId);
+        return;
       }
+
+      if (isDelegatedEoa && kit && asset) {
+        const delegatedChainId =
+          kit.getEtherspotProvider?.().getChainId?.() ?? asset.chainId ?? null;
+        setCurrentChainId(delegatedChainId ?? null);
+        return;
+      }
+
+      setCurrentChainId(null);
     };
     checkChain();
-  }, [walletProvider]);
+  }, [resolvedProvider, isDelegatedEoa, kit, asset]);
 
   // Reset form when asset changes
   useEffect(() => {
@@ -56,7 +98,10 @@ const SendAssetModal = ({
 
   if (!asset) return null;
 
-  const isWrongChain = currentChainId !== null && currentChainId !== asset.chainId;
+  const isWrongChain =
+    !!resolvedProvider &&
+    currentChainId !== null &&
+    currentChainId !== asset.chainId;
   const targetChain = getChainById(asset.chainId);
 
   const handleMaxClick = () => {
@@ -89,10 +134,79 @@ const SendAssetModal = ({
     return true;
   };
 
+  const sendWithTransactionKit = async (): Promise<string> => {
+    if (!kit) {
+      throw new Error('Wallet provider not ready. Please try again.');
+    }
+
+    kit.reset();
+
+    const amountInWei = parseUnits(amount, asset.decimals);
+    const nativeAsset = isNativeAsset(asset.contract);
+    const txTo = nativeAsset
+      ? (recipient as `0x${string}`)
+      : (asset.contract as `0x${string}`);
+    const txValue = nativeAsset ? amountInWei.toString() : '0';
+    const txData = nativeAsset
+      ? ('0x' as `0x${string}`)
+      : (encodeFunctionData({
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [recipient as `0x${string}`, amountInWei],
+        }) as `0x${string}`);
+
+    const transactionName = `key-wallet-send-${Date.now()}`;
+
+    kit
+      .transaction({
+        chainId: asset.chainId,
+        to: txTo,
+        value: txValue,
+        data: txData,
+      })
+      .name({ transactionName });
+
+    const authorization =
+      (await getEIP7702AuthorizationIfNeeded(kit, asset.chainId)) || undefined;
+
+    const estimated = await kit.estimate({ authorization });
+    if (estimated.errorMessage) {
+      throw new Error(estimated.errorMessage);
+    }
+
+    const sent = await kit.send({ authorization });
+    if (sent.errorMessage) {
+      throw new Error(sent.errorMessage);
+    }
+
+    const userOpHash = sent.userOpHash;
+    if (!userOpHash) {
+      throw new Error(
+        'Transaction submitted but awaiting confirmation. Please check your history shortly.'
+      );
+    }
+
+    const txHash =
+      (await kit.getTransactionHash(
+        userOpHash,
+        asset.chainId,
+        120000,
+        3000
+      )) || undefined;
+
+    if (!txHash) {
+      throw new Error(
+        'Transaction submitted but unable to fetch hash yet. Please check your history shortly.'
+      );
+    }
+
+    return txHash;
+  };
+
   const handleSend = async () => {
     if (!validateForm()) return;
 
-    if (!walletProvider) {
+    if (!resolvedProvider && !isDelegatedEoa) {
       setError('Wallet provider not ready. Please try again.');
       return;
     }
@@ -101,38 +215,44 @@ const SendAssetModal = ({
     setError('');
 
     try {
-      // Check current chain
-      const currentChainId = await getCurrentChainId(walletProvider);
-      const targetChain = getChainById(asset.chainId);
+      let txHash: string | undefined;
 
-      // If on wrong chain, request to switch
-      if (currentChainId !== asset.chainId) {
-        setError(
-          `Switching to ${targetChain.name}... Please approve in your wallet.`
-        );
-        
-        try {
-          await switchChain(asset.chainId, walletProvider);
-          setError(''); // Clear the switching message
-        } catch (switchError) {
-          console.error('Chain switch error:', switchError);
+      if (!isDelegatedEoa) {
+        // Check current chain
+        const currentChainId = await getCurrentChainId(resolvedProvider);
+
+        if (currentChainId !== asset.chainId) {
           setError(
-            switchError instanceof Error
-              ? switchError.message
-              : `Please switch to ${targetChain.name} in your wallet and try again.`
+            `Switching to ${targetChain.name}... Please approve in your wallet.`
           );
-          setIsLoading(false);
-          return;
+
+          try {
+            await switchChain(asset.chainId, resolvedProvider);
+            setError(''); // Clear the switching message
+          } catch (switchError) {
+            console.error('Chain switch error:', switchError);
+            setError(
+              switchError instanceof Error
+                ? switchError.message
+                : `Please switch to ${targetChain.name} in your wallet and try again.`
+            );
+            return;
+          }
         }
+
+        txHash = await sendTransaction(
+          asset,
+          recipient,
+          amount,
+          resolvedProvider
+        );
+      } else {
+        txHash = await sendWithTransactionKit();
       }
 
-      // Send transaction
-      const txHash = await sendTransaction(
-        asset,
-        recipient,
-        amount,
-        walletProvider
-      );
+      if (!txHash) {
+        throw new Error('Failed to send transaction. Please try again.');
+      }
 
       onSuccess(txHash, asset.chainId);
       onClose();
@@ -202,7 +322,8 @@ const SendAssetModal = ({
                     Wrong Network
                   </p>
                   <p className="text-xs text-yellow-400/80 mt-1">
-                    You'll be prompted to switch to {targetChain.name} when sending.
+                    You'll be prompted to switch to {targetChain.name} when
+                    sending.
                   </p>
                 </div>
               </div>
@@ -274,13 +395,18 @@ const SendAssetModal = ({
             </button>
             <button
               onClick={handleSend}
-              className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_light rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 bg-purple_medium hover:bg-purple_light rounded-xl text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:opacity-90"
               type="button"
-              disabled={isLoading || !walletProvider}
+              disabled={isLoading || (!resolvedProvider && !isDelegatedEoa)}
             >
               {isLoading
-                ? 'Sending...'
-                : !walletProvider
+                ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                    <span>Sending...</span>
+                  </span>
+                  )
+                : !resolvedProvider && !isDelegatedEoa
                   ? 'Connecting...'
                   : isWrongChain
                     ? `Switch & Send`
@@ -294,4 +420,3 @@ const SendAssetModal = ({
 };
 
 export default SendAssetModal;
-

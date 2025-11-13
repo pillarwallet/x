@@ -27,16 +27,23 @@ import { Asset, TransactionStatus as TxStatus } from './types';
 const { useGetWalletPortfolioQuery } = pillarXApiWalletPortfolio;
 
 const App = () => {
-  const { walletAddress } = useTransactionKit();
+  const transactionKit = useTransactionKit();
+  const contextProvider = transactionKit?.walletProvider;
   const { wallets } = useWallets();
 
-  // Get the EOA address (Privy wallet)
-  const eoaAddress = wallets?.[0]?.address || '';
-  
   // State
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [transactions, setTransactions] = useState<TxStatus[]>([]);
   const [walletProvider, setWalletProvider] = useState<any>(null);
+  const [eoaAddress, setEoaAddress] = useState<string>(() => {
+    if (wallets?.[0]?.address) {
+      return wallets[0].address;
+    }
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('EOA_ADDRESS') || '';
+    }
+    return '';
+  });
 
   const isMountedRef = useRef(true);
   const refetchTimeoutRef = useRef<number | undefined>(undefined);
@@ -51,20 +58,97 @@ const App = () => {
     };
   }, []);
 
-  // Get Ethereum provider from Privy wallet
   useEffect(() => {
-    const getProvider = async () => {
+    if (wallets?.[0]?.address) {
+      const address = wallets[0].address;
+      setEoaAddress((prev) => (prev === address ? prev : address));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('EOA_ADDRESS', address);
+      }
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const storedAddress = localStorage.getItem('EOA_ADDRESS');
+      if (storedAddress && storedAddress !== eoaAddress) {
+        setEoaAddress(storedAddress);
+      }
+    }
+  }, [wallets, eoaAddress]);
+
+  // Resolve wallet provider from Privy or TransactionKit (EOA mode)
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolveProvider = async () => {
+      if (!isMountedRef.current || cancelled) {
+        return;
+      }
+
       if (wallets?.[0]) {
         try {
           const provider = await wallets[0].getEthereumProvider();
-          setWalletProvider(provider);
+          if (!cancelled && isMountedRef.current) {
+            setWalletProvider(provider);
+          }
         } catch (error) {
           console.error('Failed to get Ethereum provider:', error);
+          if (!cancelled && isMountedRef.current) {
+            setWalletProvider(null);
+          }
         }
+        return;
+      }
+
+      if (contextProvider) {
+        if (!cancelled && isMountedRef.current) {
+          setWalletProvider(contextProvider);
+        }
+
+        if (!wallets?.[0] && !eoaAddress && isMountedRef.current) {
+          try {
+            let detectedAddress: string | undefined;
+
+            if (typeof (contextProvider as any)?.getAddresses === 'function') {
+              const addresses = await (contextProvider as any).getAddresses();
+              detectedAddress = addresses?.[0];
+            } else if (typeof (contextProvider as any)?.request === 'function') {
+              const accounts = await (contextProvider as any).request({
+                method: 'eth_accounts',
+              });
+              detectedAddress = accounts?.[0];
+            } else if ((contextProvider as any)?.account?.address) {
+              detectedAddress = (contextProvider as any).account.address;
+            }
+
+            if (detectedAddress) {
+              setEoaAddress((prev) => prev || detectedAddress);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('EOA_ADDRESS', detectedAddress);
+              }
+            }
+          } catch (addressError) {
+            console.warn(
+              'Failed to derive EOA address from delegated provider:',
+              addressError
+            );
+          }
+        }
+
+        return;
+      }
+
+      if (!cancelled && isMountedRef.current) {
+        setWalletProvider(null);
       }
     };
-    getProvider();
-  }, [wallets]);
+
+    resolveProvider();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [wallets, contextProvider, eoaAddress]);
 
   // Fetch portfolio data for the EOA address
   const {
@@ -205,7 +289,9 @@ const App = () => {
         assets={assets}
         totalValue={totalValue}
         isLoading={isLoading}
+        isRefreshing={isPortfolioFetching}
         onAssetClick={handleAssetClick}
+        onRefresh={refetchPortfolio}
       />
 
       {/* Send Asset Modal */}

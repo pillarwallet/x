@@ -4,6 +4,15 @@ import renderer from 'react-test-renderer';
 import SendAssetModal from '../SendAssetModal';
 import { Asset } from '../../types';
 
+vi.mock('../../../hooks/useTransactionKit', () => ({
+  default: () => ({
+    kit: undefined,
+    walletAddress: undefined,
+    setWalletAddress: vi.fn(),
+    walletProvider: null,
+  }),
+}));
+
 // Mock blockchain utils
 vi.mock('../../utils/blockchain', async () => {
   const actual = await vi.importActual('../../utils/blockchain');

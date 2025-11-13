@@ -1,4 +1,13 @@
-import { createWalletClient, createPublicClient, custom, encodeFunctionData, parseUnits, http, isAddress } from 'viem';
+import {
+  createWalletClient,
+  createPublicClient,
+  custom,
+  encodeFunctionData,
+  parseUnits,
+  http,
+  isAddress,
+} from 'viem';
+import type { WalletClient } from 'viem';
 import { erc20Abi } from 'viem';
 import {
   arbitrum,
@@ -20,6 +29,15 @@ const allChains = [mainnet, polygon, gnosis, base, bsc, optimism, arbitrum];
 export const chains = allChains.filter(
   (chain) => isGnosisEnabled || chain.id !== 100
 );
+
+const isViemWalletClient = (provider: unknown): provider is WalletClient => {
+  return Boolean(
+    provider &&
+      typeof provider === 'object' &&
+      'sendTransaction' in provider &&
+      'transport' in provider
+  );
+};
 
 export const getChainById = (chainId: number) => {
   const chain = chains.find((chain) => chain.id === chainId);
@@ -46,12 +64,22 @@ export const switchChain = async (
   chainId: number,
   walletProvider: any
 ): Promise<void> => {
+  const targetChain = getChainById(chainId);
+
+  if (isViemWalletClient(walletProvider)) {
+    if (walletProvider.chain?.id === chainId) {
+      return;
+    }
+    throw new Error(
+      `Please switch to ${targetChain.name} in your wallet to continue.`
+    );
+  }
+
   // Check if provider has request method (EIP-1193)
   if (!walletProvider?.request) {
     throw new Error('Wallet provider does not support chain switching');
   }
 
-  const targetChain = getChainById(chainId);
   const chainIdHex = `0x${chainId.toString(16)}`;
 
   try {
@@ -99,6 +127,10 @@ export const getCurrentChainId = async (
   walletProvider: any
 ): Promise<number | null> => {
   try {
+    if (isViemWalletClient(walletProvider) && walletProvider.chain?.id) {
+      return walletProvider.chain.id;
+    }
+
     if (!walletProvider?.request) {
       return null;
     }
@@ -146,13 +178,33 @@ export const sendTransaction = async (
 
   const chain = getChainById(asset.chainId);
 
-  const walletClient = createWalletClient({
-    chain,
-    transport: custom(walletProvider),
-  });
+  if (!walletProvider) {
+    throw new Error('Wallet provider not available');
+  }
 
-  const accounts = await walletClient.getAddresses();
-  const account = accounts[0];
+  const isWalletClient = isViemWalletClient(walletProvider);
+
+  if (
+    isWalletClient &&
+    walletProvider.chain?.id &&
+    walletProvider.chain.id !== chain.id
+  ) {
+    throw new Error(
+      `Connected wallet is on a different network. Please switch to ${chain.name} in your wallet and try again.`
+    );
+  }
+
+  const walletClient: WalletClient = isWalletClient
+    ? walletProvider
+    : (createWalletClient({
+        chain,
+        transport: custom(walletProvider),
+      }) as WalletClient);
+
+  const addresses = walletClient.account
+    ? [walletClient.account.address]
+    : await walletClient.getAddresses();
+  const account = addresses[0];
 
   if (!account) {
     throw new Error('No account found');
@@ -187,6 +239,7 @@ export const sendTransaction = async (
     const txHash = await walletClient.sendTransaction({
       ...baseTransactionRequest,
       gas: gasEstimate,
+      chain: walletClient.chain ?? chain,
     });
     return txHash;
   } else {
@@ -217,6 +270,7 @@ export const sendTransaction = async (
     const txHash = await walletClient.sendTransaction({
       ...baseTransactionRequest,
       gas: gasEstimate,
+      chain: walletClient.chain ?? chain,
     });
     return txHash;
   }

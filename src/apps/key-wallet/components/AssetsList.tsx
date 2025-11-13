@@ -15,14 +15,18 @@ interface AssetsListProps {
   assets: Asset[];
   totalValue: number;
   isLoading: boolean;
+  isRefreshing?: boolean;
   onAssetClick: (asset: Asset) => void;
+  onRefresh?: () => void;
 }
 
 const AssetsList = ({
   assets,
   totalValue,
   isLoading,
+  isRefreshing = false,
   onAssetClick,
+  onRefresh,
 }: AssetsListProps) => {
   const [filteredAssets, setFilteredAssets] = useState<Asset[]>(assets);
 
@@ -92,6 +96,19 @@ const AssetsList = ({
           Your wallet doesn't have any assets yet. Send some assets to your
           address to get started!
         </p>
+        {onRefresh && (
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isRefreshing && (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent" />
+            )}
+            <span>{isRefreshing ? 'Checking...' : 'Check for assets again'}</span>
+          </button>
+        )}
       </div>
     );
   }
