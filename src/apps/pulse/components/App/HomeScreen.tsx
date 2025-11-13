@@ -137,8 +137,9 @@ export default function HomeScreen(props: HomeScreenProps) {
       return stored ? parseInt(stored, 10) : 1; // Will be updated by useEffect once maxStableCoinBalance is calculated
     });
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
-  const [expressIntentResponse, setExpressIntentResponse] =
-    useState<ExpressIntentResponse | BuyOffer | null>(null);
+  const [expressIntentResponse, setExpressIntentResponse] = useState<
+    ExpressIntentResponse | BuyOffer | null
+  >(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [isRefreshingHome, setIsRefreshingHome] = useState(false);
@@ -290,12 +291,9 @@ export default function HomeScreen(props: HomeScreenProps) {
   }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
   // Callback to handle buy offer updates from Buy component or PreviewBuy refresh
-  const handleBuyOfferUpdate = useCallback(
-    (offer: BuyOffer | null) => {
-      setExpressIntentResponse(offer);
-    },
-    []
-  );
+  const handleBuyOfferUpdate = useCallback((offer: BuyOffer | null) => {
+    setExpressIntentResponse(offer);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls

@@ -691,7 +691,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     : 3; // 3% slippage for Intent SDK
   const maxSlippageDecimal = maxSlippagePercentage / 100; // Convert to decimal (0.03)
   const minimumReceiveAmount = USE_RELAY_BUY
-    ? buyOffer?.minimumReceive || estimatedTokenAmount * (1 - maxSlippageDecimal)
+    ? buyOffer?.minimumReceive ||
+      estimatedTokenAmount * (1 - maxSlippageDecimal)
     : estimatedTokenAmount * (1 - maxSlippageDecimal);
 
   // Example: If estimated to receive 100 tokens with 3% slippage:
@@ -758,11 +759,14 @@ export default function PreviewBuy(props: PreviewBuyProps) {
             payingToken={{
               name: 'USDC',
               symbol: 'USDC',
-              address: buyOffer?.offer.details?.currencyIn?.currency?.address || '',
+              address:
+                buyOffer?.offer.details?.currencyIn?.currency?.address || '',
               logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
               chainId: fromChainId || 1,
-              actualBal: buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
-              totalRaw: buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
+              actualBal:
+                buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
+              totalRaw:
+                buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
               totalUsd: parseFloat(usdAmount || '0'),
             }}
             key="usdc-relay-buy"
