@@ -223,7 +223,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         cleanupBatch(fromChainId, 'unmount');
       }
     };
-  }, [buyToken, cleanupBatch, USE_RELAY_BUY]);
+  }, [buyToken, cleanupBatch, USE_RELAY_BUY, fromChainId]);
 
   const detailsEntry = (
     lhs: string,
@@ -314,15 +314,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // Relay Buy: execute buy directly
   const executeBuyDirectly = async () => {
-    console.log('executeBuyDirectly called', {
-      buyToken,
-      buyOffer,
-      fromChainId,
-      usdAmount,
-    });
-
     if (!buyToken || !buyOffer || !kit || !fromChainId) {
-      console.log('Missing required params for executeBuyDirectly');
       return;
     }
 
@@ -340,7 +332,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     try {
       // For Relay Buy EXACT_INPUT, we use the USD amount directly (not token amount)
       // The executeBuy function will get a fresh quote with the USD amount
-      console.log('Calling executeBuy with usdAmount:', usdAmount);
 
       // First, prepare the batch using the existing executeBuy logic
       const result = await executeBuy(
@@ -350,8 +341,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         userPortfolio
       );
 
-      console.log('executeBuy result:', result);
-
       if (result) {
         // If executeBuy succeeded, execute the batch directly
         const batchName = `pulse-buy-batch-${fromChainId}`;
@@ -360,22 +349,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           kit,
           fromChainId
         );
-        console.log(
-          'Executing buy batch with these transactions:',
-          kit.batch({ batchName }).getState()
-        );
         const batchSend = await kit.sendBatches({
           onlyBatchNames: [batchName],
           authorization: authorization || undefined,
         });
 
-        console.log('Batch send result:', {
-          isSentSuccessfully: batchSend.isSentSuccessfully,
-          batchSend,
-        });
-
         const sentBatch = batchSend.batches[batchName];
-        console.log('Sent batch details:', sentBatch);
 
         if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
           // In PillarX we only batch transactions per chainId, this is why sendBatch should only
@@ -383,14 +362,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           // chainGroups is an object keyed by chainId, not an array
           const userOpHash = sentBatch?.chainGroups?.[fromChainId]?.userOpHash;
 
-          console.log('Transaction result:', {
-            userOpHash,
-            fromChainId,
-            chainGroups: sentBatch?.chainGroups,
-          });
-
           if (userOpHash) {
-            console.log('Transaction successful! UserOpHash:', userOpHash);
             setIsTransactionSuccess(true);
             setIsWaitingForSignature(false);
             setIsExecuting(false);
@@ -405,10 +377,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
                 ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
                 : '≈ 0.00';
 
-            console.log('Showing transaction status with:', {
-              userOpHash,
-              gasFeeString,
-            });
             showTransactionStatus(userOpHash, gasFeeString);
             return;
           }
@@ -463,19 +431,11 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // Refresh function for PreviewBuy component
   const refreshPreviewBuyData = useCallback(async () => {
-    console.log('refreshPreviewBuyData called', {
-      isWaitingForSignature,
-      isExecuting,
-      USE_RELAY_BUY,
-    });
-
     // Pause both quote refresh and gas estimation while awaiting signature or executing
     if (isWaitingForSignature || isExecuting) {
-      console.log('Skipping refresh - waiting for signature or executing');
       return;
     }
 
-    console.log('Starting refresh...');
     setIsRefreshingPreview(true);
     // Reset transaction states to allow retry
     setIsTransactionRejected(false);
@@ -484,14 +444,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
     if (USE_RELAY_BUY) {
       // Relay Buy flow
-      console.log('Relay Buy refresh - checking dependencies:', {
-        hasBuyToken: !!buyToken,
-        hasUsdAmount: !!usdAmount,
-        isRelayInitialized,
-        hasOnBuyOfferUpdate: !!onBuyOfferUpdate,
-        hasFromChainId: !!fromChainId,
-      });
-
       if (
         !buyToken ||
         !usdAmount ||
@@ -499,7 +451,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         !onBuyOfferUpdate ||
         !fromChainId
       ) {
-        console.log('Missing required dependencies for Relay Buy refresh');
         setIsRefreshingPreview(false);
         return;
       }
@@ -510,13 +461,6 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       }
 
       try {
-        console.log('Refreshing Relay Buy offer with params:', {
-          fromAmount: usdAmount,
-          toTokenAddress: buyToken.address,
-          toChainId: buyToken.chainId,
-          fromChainId,
-        });
-
         // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
         // The quote will tell us how many tokens we'll receive
         const newOffer = await getBestOffer({
@@ -526,13 +470,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           fromChainId,
         });
 
-        console.log('Received new Relay Buy offer:', newOffer);
         onBuyOfferUpdate(newOffer);
 
         // Also estimate gas fees after refreshing the offer
-        console.log('Estimating gas fees after refresh...');
         await estimateGasFees();
-        console.log('Gas fees estimated');
       } catch (e) {
         console.error('Failed to refresh buy offer:', e);
         onBuyOfferUpdate(null);
@@ -677,11 +618,14 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
   // For Intent SDK Buy: calculate from totalPay and token USD value
   // For Relay Buy: use tokenAmountToReceive from the offer
-  const buyTokenAmount = USE_RELAY_BUY
-    ? buyOffer?.tokenAmountToReceive.toFixed(6) || '0.000000'
-    : buyToken?.usdValue
-      ? (Number(totalPay) / Number(buyToken.usdValue)).toFixed(6)
-      : '0.000000';
+  let buyTokenAmount: string;
+  if (USE_RELAY_BUY) {
+    buyTokenAmount = buyOffer?.tokenAmountToReceive.toFixed(6) || '0.000000';
+  } else if (buyToken?.usdValue) {
+    buyTokenAmount = (Number(totalPay) / Number(buyToken.usdValue)).toFixed(6);
+  } else {
+    buyTokenAmount = '0.000000';
+  }
 
   // For Intent SDK Buy: calculate minimum receive and price impact manually
   // For Relay Buy: use values from the offer
@@ -707,11 +651,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Price impact calculation: (Total Received Value - Total Paid Value) / Total Paid Value × 100
   // Negative % means you're paying more than market rate (common due to slippage)
   // Positive % means you're getting more value than you paid (rare, usually arbitrage)
-  const priceImpact = USE_RELAY_BUY
-    ? buyOffer?.priceImpact || 0
-    : totalPaidValue > 0
-      ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
-      : 0;
+  let priceImpact: number;
+  if (USE_RELAY_BUY) {
+    priceImpact = buyOffer?.priceImpact || 0;
+  } else if (totalPaidValue > 0) {
+    priceImpact =
+      ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100;
+  } else {
+    priceImpact = 0;
+  }
 
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">

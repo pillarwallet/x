@@ -128,14 +128,6 @@ export default function useRelayBuy() {
       fromChainId,
       slippage = 0.03,
     }: BuyParams): Promise<BuyOffer | null> => {
-      console.log('getBestOffer called with:', {
-        fromAmount,
-        toTokenAddress,
-        toChainId,
-        fromChainId,
-        slippage,
-      });
-
       if (!isInitialized) {
         setError('Unable to get quote. Please try again.');
         return null;
@@ -175,27 +167,16 @@ export default function useRelayBuy() {
           if (decimalPlaces > 6) {
             // Round to 6 decimal places to match USDC precision
             const roundedAmount = parseFloat(fromAmount).toFixed(6);
-            console.log(
-              `Rounding fromAmount from ${fromAmount} to ${roundedAmount} (USDC has 6 decimals)`
-            );
             fromAmountInWei = parseUnits(roundedAmount, 6);
           } else {
             fromAmountInWei = parseUnits(fromAmount, 6);
           }
-        } catch (error) {
-          console.error('Failed to parse fromAmount:', error);
+        } catch (parseError) {
+          console.error('Failed to parse fromAmount:', parseError);
           setError('Invalid amount. Please try again.');
           setIsLoading(false);
           return null;
         }
-
-        console.log('Quote request parameters:', {
-          fromAmount,
-          fromAmountInWei: fromAmountInWei.toString(),
-          fromAmountInWeiReadable: `${fromAmountInWei.toString()} (${fromAmount} USDC)`,
-          usdcAddress,
-          toTokenAddress: toTokenAddressWithWrappedCheck,
-        });
 
         // Create quote request for Relay SDK
         // Handle native ETH - use zero address instead of 0xeeee...
@@ -217,13 +198,9 @@ export default function useRelayBuy() {
           recipient: accountAddress,
         };
 
-        console.log('Sending quote request to Relay SDK:', quoteRequest);
-
         // Get quote from Relay SDK
         const client = getClient();
         const quote = await client.actions.getQuote(quoteRequest);
-
-        console.log('Received quote from Relay SDK:', quote);
 
         // Check for errors in the quote response
         if (quote?.errors && quote.errors.length > 0) {

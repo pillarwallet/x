@@ -270,13 +270,6 @@ export default function Buy(props: BuyProps) {
     ) {
       setIsLoading(true);
       try {
-        console.log('Fetching Relay Buy offer with params:', {
-          fromAmount: debouncedUsdAmount,
-          toTokenAddress: token.address,
-          toChainId: token.chainId,
-          fromChainId: maxStableCoinBalance.chainId,
-        });
-
         // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
         // The quote will tell us how many tokens we'll receive
         const offer = await getBestOffer({
@@ -286,7 +279,6 @@ export default function Buy(props: BuyProps) {
           fromChainId: maxStableCoinBalance.chainId,
         });
 
-        console.log('Received Relay Buy offer:', offer);
         setBuyOffer(offer);
       } catch (error) {
         console.error('Failed to fetch buy offer:', error);
