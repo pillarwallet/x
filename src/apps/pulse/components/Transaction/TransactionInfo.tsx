@@ -32,6 +32,7 @@ const TransactionInfo = ({
   completedTxHash,
   completedChainId,
   useRelayBuy = false,
+  fromChainId,
 }: TransactionInfoProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -168,7 +169,9 @@ const TransactionInfo = ({
           !!displayTxHash,
           '',
           displayTxHash,
-          chainId
+          // For Relay Buy, use fromChainId (where USDC is taken from)
+          // For Sell, use chainId (selling token's chain)
+          isBuy && useRelayBuy ? fromChainId || chainId : chainId
         )
       )}
       {detailsEntry(

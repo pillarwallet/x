@@ -38,6 +38,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
     resourceLockChainId,
     resourceLockCompletedAt,
     isResourceLockFailed,
+    fromChainId,
   } = props;
 
   const [showDetails, setShowDetails] = useState(false);
@@ -162,6 +163,7 @@ const TransactionStatus = (props: TransactionStatusProps) => {
           completedChainId={completedChainId}
           resourceLockCompletedAt={resourceLockCompletedAt}
           isResourceLockFailed={isResourceLockFailed}
+          fromChainId={fromChainId}
         />
       ) : (
         <TransactionStatusContainer

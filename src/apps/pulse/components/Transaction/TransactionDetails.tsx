@@ -48,6 +48,7 @@ const TransactionDetails = ({
   resourceLockChainId,
   completedChainId,
   isResourceLockFailed = false,
+  fromChainId,
 }: TransactionDetailsProps) => {
   const { walletAddress: accountAddress } = useTransactionKit();
   const detailsRef = useRef<HTMLDivElement>(null);
@@ -301,6 +302,7 @@ const TransactionDetails = ({
           resourceLockChainId={resourceLockChainId}
           completedChainId={completedChainId}
           useRelayBuy={useRelayBuy}
+          fromChainId={fromChainId}
         />
       </div>
 

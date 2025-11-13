@@ -57,7 +57,7 @@ interface BuyProps {
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
   setPayingTokens: Dispatch<SetStateAction<PayingToken[]>>;
   setExpressIntentResponse: Dispatch<
-    SetStateAction<ExpressIntentResponse | null>
+    SetStateAction<ExpressIntentResponse | BuyOffer | null>
   >;
   setUsdAmount: Dispatch<SetStateAction<string>>;
   setDispensableAssets: Dispatch<SetStateAction<DispensableAsset[]>>;
@@ -198,7 +198,7 @@ export default function Buy(props: BuyProps) {
       // For Relay Buy, we use the buyOffer instead of expressIntentResponse
       // Convert buyOffer to a compatible format for PreviewBuy
       if (buyOffer) {
-        setExInResp(buyOffer as ExpressIntentResponse);
+        setExInResp(buyOffer as unknown as ExpressIntentResponse);
         setPreviewBuy(true);
       }
     } else if (!areModulesInstalled) {
@@ -270,24 +270,23 @@ export default function Buy(props: BuyProps) {
     ) {
       setIsLoading(true);
       try {
-        // Calculate token amount from USD amount
-        const tokenPrice = parseFloat(token.usdValue) || 0;
-        if (tokenPrice <= 0) {
-          console.error('Invalid token price');
-          setBuyOffer(null);
-          return;
-        }
-        const tokenAmount = (
-          parseFloat(debouncedUsdAmount) / tokenPrice
-        ).toString();
-
-        const offer = await getBestOffer({
-          toAmount: tokenAmount,
+        console.log('Fetching Relay Buy offer with params:', {
+          fromAmount: debouncedUsdAmount,
           toTokenAddress: token.address,
           toChainId: token.chainId,
-          toTokenDecimals: token.decimals,
           fromChainId: maxStableCoinBalance.chainId,
         });
+
+        // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
+        // The quote will tell us how many tokens we'll receive
+        const offer = await getBestOffer({
+          fromAmount: debouncedUsdAmount,
+          toTokenAddress: token.address,
+          toChainId: token.chainId,
+          fromChainId: maxStableCoinBalance.chainId,
+        });
+
+        console.log('Received Relay Buy offer:', offer);
         setBuyOffer(offer);
       } catch (error) {
         console.error('Failed to fetch buy offer:', error);
@@ -734,7 +733,7 @@ export default function Buy(props: BuyProps) {
           debouncedUsdAmount={debouncedUsdAmount}
           expressIntentResponse={
             USE_RELAY_BUY
-              ? (buyOffer as ExpressIntentResponse)
+              ? (buyOffer as unknown as ExpressIntentResponse)
               : expressIntentResponse
           }
           handleBuySubmit={handleBuySubmit}

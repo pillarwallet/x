@@ -97,6 +97,7 @@ export interface TransactionStatusProps {
   resourceLockChainId?: number;
   resourceLockCompletedAt?: Date;
   isResourceLockFailed?: boolean;
+  fromChainId?: number; // For Relay Buy: chainId where USDC is taken from
 }
 
 export interface TransactionDetailsProps {
@@ -125,6 +126,7 @@ export interface TransactionDetailsProps {
   resourceLockChainId?: number;
   completedChainId?: number;
   isResourceLockFailed?: boolean;
+  fromChainId?: number; // For Relay Buy: chainId where USDC is taken from
 }
 
 export interface TransactionInfoProps {
@@ -141,6 +143,7 @@ export interface TransactionInfoProps {
   completedTxHash?: string;
   completedChainId?: number;
   useRelayBuy?: boolean;
+  fromChainId?: number; // For Relay Buy: chainId where USDC is taken from
 }
 
 export interface ProgressStepProps {

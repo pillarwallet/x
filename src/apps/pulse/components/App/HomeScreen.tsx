@@ -39,6 +39,7 @@ import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+import { BuyOffer } from '../../hooks/useRelayBuy';
 
 // utils
 import { getStableCurrencyBalanceOnEachChain } from '../../utils/utils';
@@ -137,7 +138,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     });
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
   const [expressIntentResponse, setExpressIntentResponse] =
-    useState<ExpressIntentResponse | null>(null);
+    useState<ExpressIntentResponse | BuyOffer | null>(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [isRefreshingHome, setIsRefreshingHome] = useState(false);
@@ -149,6 +150,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     (() => Promise<void>) | null
   >(null);
   const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
+  const [isBuyFlowPaused, setIsBuyFlowPaused] = useState<boolean>(false);
 
   // Transaction status polling state
   const [currentTransactionStatus, setCurrentTransactionStatus] =
@@ -287,9 +289,17 @@ export default function HomeScreen(props: HomeScreenProps) {
       );
   }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
+  // Callback to handle buy offer updates from Buy component or PreviewBuy refresh
+  const handleBuyOfferUpdate = useCallback(
+    (offer: BuyOffer | null) => {
+      setExpressIntentResponse(offer);
+    },
+    []
+  );
+
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
-    if (isRefreshingHome || isSellFlowPaused) {
+    if (isRefreshingHome || isSellFlowPaused || isBuyFlowPaused) {
       return;
     }
 
@@ -324,7 +334,7 @@ export default function HomeScreen(props: HomeScreenProps) {
 
       // If we have the required data, refresh the buy intent
       // Only refresh if PreviewBuy is not open (to avoid duplicate calls)
-      if (isBuy && buyRefreshCallback && !previewBuy) {
+      if (isBuy && buyRefreshCallback && !previewBuy && !isBuyFlowPaused) {
         await buyRefreshCallback();
       }
     } catch (error) {
@@ -343,6 +353,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     previewBuy,
     isRefreshingHome,
     isSellFlowPaused,
+    isBuyFlowPaused,
     selectedChainIdForSettlement,
   ]);
 
@@ -649,6 +660,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       ? transactionData?.buyToken?.chainId || 1
       : transactionData?.sellToken?.chainId || 1;
     const isBuyTransaction = transactionData?.isBuy || false;
+
     if (!userOpHash || !chainId || (!isPollingActive && !isBackgroundPolling)) {
       return undefined;
     }
@@ -741,7 +753,16 @@ export default function HomeScreen(props: HomeScreenProps) {
             }
           }
         } else {
-          const response = await getUserOperationStatus(chainId, userOpHash);
+          const fromChainId =
+            USE_RELAY_BUY && isBuy
+              ? maxStableCoinBalance?.chainId || 1
+              : chainId;
+
+          const response = await getUserOperationStatus(
+            fromChainId,
+            userOpHash
+          );
+
           if (response?.status) {
             const newUserOpStatus = response.status as UserOpStatus;
             const newTransactionStatus =
@@ -891,13 +912,13 @@ export default function HomeScreen(props: HomeScreenProps) {
             buyToken={buyToken}
             payingTokens={payingTokens}
             expressIntentResponse={expressIntentResponse}
-            setExpressIntentResponse={(response) =>
-              setExpressIntentResponse(response as ExpressIntentResponse | null)
-            }
+            setExpressIntentResponse={setExpressIntentResponse}
             usdAmount={usdAmount}
             dispensableAssets={dispensableAssets}
             showTransactionStatus={showTransactionStatus}
             fromChainId={maxStableCoinBalance?.chainId}
+            onBuyOfferUpdate={handleBuyOfferUpdate}
+            setBuyFlowPaused={setIsBuyFlowPaused}
             userPortfolio={portfolioTokens}
           />
         </div>
@@ -954,6 +975,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             resourceLockChainId={resourceLockChainId}
             resourceLockCompletedAt={resourceLockCompletedAt}
             isResourceLockFailed={isResourceLockFailed}
+            fromChainId={maxStableCoinBalance?.chainId}
           />
         </div>
       );

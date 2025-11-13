@@ -36,10 +36,9 @@ export interface BuyOffer {
 }
 
 interface BuyParams {
-  toAmount: string;
+  fromAmount: string; // USD amount to spend (will be converted to USDC)
   toTokenAddress: string;
   toChainId: number;
-  toTokenDecimals: number;
   fromChainId: number;
   slippage?: number;
 }
@@ -123,13 +122,20 @@ export default function useRelayBuy() {
    */
   const getBestOffer = useCallback(
     async ({
-      toAmount,
+      fromAmount,
       toTokenAddress,
       toChainId,
-      toTokenDecimals,
       fromChainId,
       slippage = 0.03,
     }: BuyParams): Promise<BuyOffer | null> => {
+      console.log('getBestOffer called with:', {
+        fromAmount,
+        toTokenAddress,
+        toChainId,
+        fromChainId,
+        slippage,
+      });
+
       if (!isInitialized) {
         setError('Unable to get quote. Please try again.');
         return null;
@@ -155,10 +161,41 @@ export default function useRelayBuy() {
         );
 
         /**
-         * Step 2: Convert amount to wei for processing
-         * This is the desired output amount the user wants to receive
+         * Step 2: Convert USD amount to USDC wei (6 decimals)
+         * This is the exact amount of USDC the user wants to spend
+         * We need to handle cases where fromAmount has more than 6 decimals
          */
-        const toAmountInWei = parseUnits(toAmount, toTokenDecimals);
+        let fromAmountInWei: bigint;
+        try {
+          // Check if fromAmount has more than 6 decimal places
+          const decimalPlaces = fromAmount.includes('.')
+            ? fromAmount.split('.')[1].length
+            : 0;
+
+          if (decimalPlaces > 6) {
+            // Round to 6 decimal places to match USDC precision
+            const roundedAmount = parseFloat(fromAmount).toFixed(6);
+            console.log(
+              `Rounding fromAmount from ${fromAmount} to ${roundedAmount} (USDC has 6 decimals)`
+            );
+            fromAmountInWei = parseUnits(roundedAmount, 6);
+          } else {
+            fromAmountInWei = parseUnits(fromAmount, 6);
+          }
+        } catch (error) {
+          console.error('Failed to parse fromAmount:', error);
+          setError('Invalid amount. Please try again.');
+          setIsLoading(false);
+          return null;
+        }
+
+        console.log('Quote request parameters:', {
+          fromAmount,
+          fromAmountInWei: fromAmountInWei.toString(),
+          fromAmountInWeiReadable: `${fromAmountInWei.toString()} (${fromAmount} USDC)`,
+          usdcAddress,
+          toTokenAddress: toTokenAddressWithWrappedCheck,
+        });
 
         // Create quote request for Relay SDK
         // Handle native ETH - use zero address instead of 0xeeee...
@@ -174,15 +211,19 @@ export default function useRelayBuy() {
           currency: usdcAddress,
           toChainId,
           toCurrency: normalizedToTokenAddress,
-          amount: toAmountInWei.toString(),
-          tradeType: 'EXACT_OUTPUT' as const, // We want exact output amount
+          amount: fromAmountInWei.toString(),
+          tradeType: 'EXACT_INPUT' as const, // We want to spend exact USDC amount
           slippageTolerance: Math.floor(slippage * 10000), // Convert to basis points
           recipient: accountAddress,
         };
 
+        console.log('Sending quote request to Relay SDK:', quoteRequest);
+
         // Get quote from Relay SDK
         const client = getClient();
         const quote = await client.actions.getQuote(quoteRequest);
+
+        console.log('Received quote from Relay SDK:', quote);
 
         // Check for errors in the quote response
         if (quote?.errors && quote.errors.length > 0) {
@@ -190,21 +231,23 @@ export default function useRelayBuy() {
           return null;
         }
 
-        if (quote && quote.details?.currencyIn) {
-          // Extract USDC amount needed from the quote response
-          const { currencyIn } = quote.details;
-          let usdcNeeded = 0;
+        if (quote && quote.details?.currencyOut) {
+          // Extract token amount we'll receive from the quote response
+          const { currencyOut } = quote.details;
+          let tokenAmountToReceive = 0;
 
-          // Get the estimated USDC amount needed (prefer formatted, fallback to raw amount)
-          if (currencyIn.amountFormatted) {
-            usdcNeeded = parseFloat(currencyIn.amountFormatted);
-          } else if (currencyIn.amount) {
+          // Get the estimated token amount we'll receive (prefer formatted, fallback to raw amount)
+          if (currencyOut.amountFormatted) {
+            tokenAmountToReceive = parseFloat(currencyOut.amountFormatted);
+          } else if (currencyOut.amount && currencyOut.currency?.decimals) {
             // Convert from raw units to readable format
-            usdcNeeded = parseFloat(currencyIn.amount) / 10 ** 6; // USDC has 6 decimals
+            tokenAmountToReceive =
+              parseFloat(currencyOut.amount) /
+              10 ** currencyOut.currency.decimals;
           }
 
           // Validate the quote
-          if (usdcNeeded <= 0) {
+          if (tokenAmountToReceive <= 0) {
             setError('Unable to get quote. Please try again.');
             return null;
           }
@@ -221,21 +264,20 @@ export default function useRelayBuy() {
           } else if (quote.details?.swapImpact?.percent) {
             priceImpact = parseFloat(quote.details.swapImpact.percent);
           } else {
-            // Fallback: Calculate price impact manually
-            const tokenAmountInUsd =
-              parseFloat(toAmount) *
-              (quote.details?.currencyOut?.amountUsd
-                ? parseFloat(quote.details.currencyOut.amountUsd)
-                : 0);
-            if (tokenAmountInUsd > 0) {
+            // Fallback: Calculate price impact manually if we have USD values
+            const tokenAmountInUsd = currencyOut.amountUsd
+              ? parseFloat(currencyOut.amountUsd)
+              : 0;
+            const usdcAmountInUsd = parseFloat(fromAmount);
+            if (usdcAmountInUsd > 0 && tokenAmountInUsd > 0) {
               priceImpact =
-                ((usdcNeeded - tokenAmountInUsd) / usdcNeeded) * 100;
+                ((usdcAmountInUsd - tokenAmountInUsd) / usdcAmountInUsd) * 100;
             }
           }
 
           const buyOffer: BuyOffer = {
-            tokenAmountToReceive: parseFloat(toAmount),
-            minimumReceive: parseFloat(toAmount) * (1 - slippage),
+            tokenAmountToReceive,
+            minimumReceive: tokenAmountToReceive * (1 - slippage),
             slippageTolerance: slippage,
             priceImpact,
             offer: quote,
@@ -609,16 +651,15 @@ export default function useRelayBuy() {
       transactionDebugLog('Starting buy execution', {
         token: token.symbol,
         amount,
-        chainId: token.chainId,
+        chainId: fromChainId,
         walletAddress,
       });
 
       // Get the buy offer
       const buyOffer = await getBestOffer({
-        toAmount: amount,
+        fromAmount: amount,
         toTokenAddress: token.address,
         toChainId: token.chainId,
-        toTokenDecimals: token.decimals,
         fromChainId,
       });
 
@@ -656,8 +697,8 @@ export default function useRelayBuy() {
         }
 
         // Create unique transaction name
-        const transactionName = `pulse-buy-${token.chainId}-${tx.data.slice(0, 10)}-${i}`;
-        const batchName = `pulse-buy-batch-${token.chainId}`;
+        const transactionName = `pulse-buy-${fromChainId}-${tx.data.slice(0, 10)}-${i}`;
+        const batchName = `pulse-buy-batch-${fromChainId}`;
 
         transactionDebugLog(
           `Adding transaction ${i + 1}/${transactions.length} to batch:`,
@@ -713,7 +754,7 @@ export default function useRelayBuy() {
 
       transactionDebugLog('All transactions added to batch successfully', {
         totalTransactions: transactions.length,
-        batchName: `pulse-buy-batch-${token.chainId}`,
+        batchName: `pulse-buy-batch-${fromChainId}`,
       });
 
       return true;
