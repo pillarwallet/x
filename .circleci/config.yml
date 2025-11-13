@@ -135,6 +135,7 @@ jobs:
             cd x-e2e
             git pull 
             # Inject environment variables into .env file
+            touch .env
             sed -i "s|base_url_value|$BASE_URL|g" .env
             sed -i "s|dry_run_value|$DRY_RUN|g" .env
             sed -i "s|master_email_value|$MASTER_EMAIL|g" .env
