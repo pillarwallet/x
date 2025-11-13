@@ -599,6 +599,7 @@ describe('<TransactionDetails />', () => {
         resourceLockTxHash: baseProps.resourceLockTxHash,
         completedTxHash: baseProps.completedTxHash,
         isResourceLockFailed: baseProps.isResourceLockFailed,
+        useRelayBuy: false,
       });
     });
 

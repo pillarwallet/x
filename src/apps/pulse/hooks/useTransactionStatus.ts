@@ -12,6 +12,7 @@ interface UseTransactionStatusOptions {
   resourceLockTxHash?: string;
   completedTxHash?: string;
   isResourceLockFailed?: boolean;
+  useRelayBuy?: boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export const useTransactionStatus = ({
   resourceLockTxHash,
   completedTxHash,
   isResourceLockFailed = false,
+  useRelayBuy = false,
 }: UseTransactionStatusOptions) => {
   const getStepStatusForStep = useMemo(() => {
     return (step: TransactionStep) =>
@@ -32,7 +34,8 @@ export const useTransactionStatus = ({
         isBuy,
         resourceLockTxHash,
         completedTxHash,
-        isResourceLockFailed
+        isResourceLockFailed,
+        useRelayBuy
       );
   }, [
     status,
@@ -40,6 +43,7 @@ export const useTransactionStatus = ({
     resourceLockTxHash,
     completedTxHash,
     isResourceLockFailed,
+    useRelayBuy,
   ]);
 
   const canClose = useMemo(() => {

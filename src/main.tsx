@@ -9,6 +9,14 @@ import { Provider } from 'react-redux';
 import Main from './containers/Main';
 import { store } from './store';
 
+// Firebase Remote Config
+import { initializeRemoteConfig } from './services/firebase';
+
+// Initialize Firebase Remote Config early
+initializeRemoteConfig().catch((error) => {
+  console.error('Failed to initialize Firebase Remote Config:', error);
+});
+
 if (typeof window !== 'undefined') {
   // @ts-expect-error: Browser does not exists in global
   window.Browser = {
