@@ -107,28 +107,34 @@ export default function BuyButton(props: BuyButtonProps) {
 
   const isDisabled = () => {
     if (isInstalling || isFetching) {
+      console.log('Button disabled: installing or fetching');
       return true;
     }
     if (notEnoughLiquidity) {
+      console.log('Button disabled: not enough liquidity');
       return true;
     }
     if (!areModulesInstalled && payingTokens.length > 0) {
+      console.log('Button enabled: modules need installation');
       return false;
     }
-    return (
+
+    const disabled =
       isLoading ||
       !token ||
       !(parseFloat(usdAmount) > 0) ||
-      !expressIntentResponse ||
-      !!(expressIntentResponse as { error: string }).error ||
-      (expressIntentResponse as ExpressIntentResponse)?.bids?.length === 0
-    );
+      !expressIntentResponse;
+
+    console.log('Final disabled state:', disabled);
+    return disabled;
   };
 
   return (
     <button
       className="flex-1 items-center justify-center"
-      onClick={handleBuySubmit}
+      onClick={() => {
+        handleBuySubmit();
+      }}
       disabled={isDisabled()}
       style={{
         backgroundColor: isDisabled() ? '#29292F' : '#8A77FF',

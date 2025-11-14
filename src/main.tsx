@@ -3,11 +3,18 @@ import * as Sentry from '@sentry/react';
 import { Buffer as ImportedBuffer } from 'buffer';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import eruda from 'eruda';
 
 // containers
 import { Provider } from 'react-redux';
 import Main from './containers/Main';
 import { store } from './store';
+
+// Initialize Eruda debug console for mobile debugging
+if (typeof window !== 'undefined') {
+  eruda.init();
+  console.log('Eruda debug console initialized - look for floating button on screen');
+}
 
 if (typeof window !== 'undefined') {
   // @ts-expect-error: Browser does not exists in global

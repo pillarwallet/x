@@ -28,7 +28,7 @@ export default function useModularSdk(props: ModularSdkProps) {
     (wallet) => wallet.address === privyWalletAddress
   );
   const [modularSdk, setModularSdk] = useState<ModularSdk | null>(null);
-  const [areModulesInstalled, setAreModulesInstalled] = useState<boolean>();
+  const [areModulesInstalled, setAreModulesInstalled] = useState<boolean>(true);
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
@@ -153,30 +153,31 @@ export default function useModularSdk(props: ModularSdkProps) {
   }, [modularSdk, payingTokens, areModulesInstalled]);
 
   const installModules = async () => {
-    const { chainId } = payingTokens[0];
-    setIsInstalling(true);
-    modularSdk?.pulse
-      .installPulseModules({
-        credibleAccountModuleAddress:
-          Networks[chainId].contracts.credibleAccountModule,
-        resourceLockValidatorAddress:
-          Networks[chainId].contracts.resourceLockValidator,
-      })
-      .then((userOpHash) => {
-        waitForReceipt(userOpHash)
-          .then(() => {
-            setIsInstalling(false);
-            setAreModulesInstalled(true);
-          })
-          .catch((err) => {
-            console.error('err:: ', err);
-            setIsInstalling(false);
-          });
-      })
-      .catch((err) => {
-        console.error('Installation failed:: ', err);
-        setIsInstalling(false);
-      });
+    // const { chainId } = payingTokens[0];
+    // setIsInstalling(true);
+    // modularSdk?.pulse
+    //   .installPulseModules({
+    //     credibleAccountModuleAddress:
+    //       Networks[chainId].contracts.credibleAccountModule,
+    //     resourceLockValidatorAddress:
+    //       Networks[chainId].contracts.resourceLockValidator,
+    //   })
+    //   .then((userOpHash) => {
+    //     waitForReceipt(userOpHash)
+    //       .then(() => {
+    //         setIsInstalling(false);
+    //         setAreModulesInstalled(true);
+    //       })
+    //       .catch((err) => {
+    //         console.error('err:: ', err);
+    //         setIsInstalling(false);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     console.error('Installation failed:: ', err);
+    //     setIsInstalling(false);
+    //   });
+    setAreModulesInstalled(true);
   };
 
   return {

@@ -101,6 +101,11 @@ export default function HomeScreen(props: HomeScreenProps) {
   const { intentSdk } = useIntentSdk();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
+
+  // Debug: Log previewBuy state changes
+  useEffect(() => {
+    console.log('=== HOMESCREEN: previewBuy state changed to:', previewBuy);
+  }, [previewBuy]);
   const [transactionStatus, setTransactionStatus] = useState(false);
   const [userOpHash, setUserOpHash] = useState<string>('');
   const [transactionGasFee, setTransactionGasFee] = useState<string>('≈ $0.00');
@@ -286,8 +291,16 @@ export default function HomeScreen(props: HomeScreenProps) {
   }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
   const handleRefresh = useCallback(async () => {
+    // console.log('=== HOMESCREEN: handleRefresh called ===');
+    // console.log('isRefreshingHome:', isRefreshingHome);
+    // console.log('isSellFlowPaused:', isSellFlowPaused);
+    // console.log('isBuy:', isBuy);
+    // console.log('previewBuy:', previewBuy);
+    // console.log('buyRefreshCallback:', !!buyRefreshCallback);
+
     // Prevent multiple simultaneous refresh calls
     if (isRefreshingHome || isSellFlowPaused) {
+      console.log('Refresh blocked: already refreshing or sell flow paused');
       return;
     }
 
@@ -295,7 +308,9 @@ export default function HomeScreen(props: HomeScreenProps) {
 
     try {
       // Always refresh wallet portfolio
+      // console.log('Refreshing wallet portfolio...');
       await refetchWalletPortfolio();
+      // console.log('Wallet portfolio refreshed');
 
       // If we have the required data, refresh the sell offer
       if (
@@ -305,6 +320,7 @@ export default function HomeScreen(props: HomeScreenProps) {
         isInitialized &&
         !isSellFlowPaused
       ) {
+        // console.log('Refreshing sell offer...');
         try {
           const newOffer = await getBestSellOffer({
             fromAmount: tokenAmount,
@@ -314,6 +330,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             toChainId: selectedChainIdForSettlement,
           });
           setSellOffer(newOffer);
+          // console.log('Sell offer refreshed:', newOffer);
         } catch (error) {
           console.error('Failed to refresh sell offer:', error);
           setSellOffer(null);
@@ -323,12 +340,21 @@ export default function HomeScreen(props: HomeScreenProps) {
       // If we have the required data, refresh the buy intent
       // Only refresh if PreviewBuy is not open (to avoid duplicate calls)
       if (isBuy && buyRefreshCallback && !previewBuy) {
+        // console.log('=== HOMESCREEN: Calling buyRefreshCallback ===');
         await buyRefreshCallback();
+        // console.log('=== HOMESCREEN: buyRefreshCallback completed ===');
+      } else {
+        console.log('Buy refresh skipped - conditions not met:', {
+          isBuy,
+          hasBuyRefreshCallback: !!buyRefreshCallback,
+          previewBuy,
+        });
       }
     } catch (error) {
       console.error('Refresh failed:', error);
     } finally {
       setIsRefreshingHome(false);
+      console.log('=== HOMESCREEN: handleRefresh completed ===');
     }
   }, [
     refetchWalletPortfolio,
@@ -660,6 +686,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       try {
         if (isBuyTransaction) {
           if (!intentSdk) {
+            console.error('Intent SDK not initialized');
             return;
           }
 
@@ -881,7 +908,14 @@ export default function HomeScreen(props: HomeScreenProps) {
   }, [isBuy, buyRefreshCallback, previewBuy, handleRefresh]);
 
   const renderPreview = () => {
+    console.log('=== HOMESCREEN: renderPreview called ===');
+    console.log('previewBuy:', previewBuy);
+    console.log('previewSell:', previewSell);
+    console.log('transactionStatus:', transactionStatus);
+    console.log('displaySettingsMenu:', displaySettingsMenu);
+
     if (previewBuy) {
+      console.log('=== HOMESCREEN: Rendering PreviewBuy ===');
       return (
         <div className="w-full flex justify-center px-3 md:p-3 mb-[70px]">
           <PreviewBuy
