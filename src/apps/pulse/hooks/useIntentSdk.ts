@@ -175,7 +175,7 @@ export default function useIntentSdk(props: IntentProps) {
           setAreModulesInstalled(false);
         });
     }
-  }, [intentSdk, payingTokens, areModulesInstalled]);
+  }, [intentSdk, payingTokens, areModulesInstalled, transactionDebugLog]);
 
   const installModules = async () => {
     if (!payingTokens?.length || !intentSdk) return;
