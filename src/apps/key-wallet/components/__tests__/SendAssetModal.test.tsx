@@ -400,6 +400,39 @@ describe('<SendAssetModal />', () => {
     });
   });
 
+  it('shows friendly message when smart account lacks funds', async () => {
+    const blockchain = await import('../../utils/blockchain');
+    vi.mocked(blockchain.sendTransaction).mockRejectedValue(
+      new Error("AA21 didn't pay prefund")
+    );
+
+    render(
+      <SendAssetModal
+        asset={mockAsset}
+        walletProvider={mockWalletProvider}
+        onClose={mockOnClose}
+        onSuccess={mockOnSuccess}
+      />
+    );
+
+    const recipientInput = screen.getByPlaceholderText('0x...');
+    fireEvent.change(recipientInput, {
+      target: { value: '0x1234567890123456789012345678901234567890' },
+    });
+
+    const amountInput = screen.getByPlaceholderText('0.0');
+    fireEvent.change(amountInput, { target: { value: '1.0' } });
+
+    const sendButton = screen.getByRole('button', { name: /send/i });
+    fireEvent.click(sendButton);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/key wallet does not have enough funds/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   it('shows warning when on wrong chain', async () => {
     const blockchain = await import('../../utils/blockchain');
     vi.mocked(blockchain.getCurrentChainId).mockResolvedValue(137); // Wrong chain

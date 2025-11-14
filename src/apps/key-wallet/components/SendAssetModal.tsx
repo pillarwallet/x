@@ -56,6 +56,53 @@ const formatMaxBalance = (balance: number, decimals: number | undefined) => {
   return trimmed;
 };
 
+const SMART_ACCOUNT_FUNDS_SUBSTRINGS = [
+  "AA21 didn't pay prefund",
+  'Smart Account does not have sufficient funds to execute the User Operation',
+];
+
+const SMART_ACCOUNT_FUNDS_MESSAGE =
+  'Your key wallet does not have enough funds to cover the required gas. Please add funds or reduce the amount and try again.';
+
+const extractErrorMessage = (error: unknown): string => {
+  const fallback = 'Failed to send transaction';
+  if (!error) {
+    return fallback;
+  }
+
+  const getMessageFromObject = (value: any): string | undefined => {
+    if (!value || typeof value !== 'object') {
+      return undefined;
+    }
+    return (
+      value.message ||
+      value.error?.message ||
+      value.data?.message ||
+      value.reason ||
+      value.cause?.message ||
+      value.cause?.reason
+    );
+  };
+
+  const rawMessage =
+    typeof error === 'string'
+      ? error
+      : error instanceof Error
+        ? error.message || error.toString()
+        : getMessageFromObject(error) || fallback;
+
+  if (
+    rawMessage &&
+    SMART_ACCOUNT_FUNDS_SUBSTRINGS.some((snippet) =>
+      rawMessage.toLowerCase().includes(snippet.toLowerCase())
+    )
+  ) {
+    return SMART_ACCOUNT_FUNDS_MESSAGE;
+  }
+
+  return rawMessage || fallback;
+};
+
 const SendAssetModal = ({
   asset,
   walletProvider,
@@ -283,9 +330,7 @@ const SendAssetModal = ({
       onClose();
     } catch (err) {
       console.error('Transaction error:', err);
-      setError(
-        err instanceof Error ? err.message : 'Failed to send transaction'
-      );
+      setError(extractErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
