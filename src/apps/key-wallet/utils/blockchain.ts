@@ -21,13 +21,11 @@ import {
 
 // types
 import { Asset } from '../types';
-import { getBlockScan } from '../../../utils/blockchain';
+import { getBlockScan, isGnosisEnabled } from '../../../utils/blockchain';
 import type {
   WalletProviderLike,
   Eip1193LikeProvider,
 } from '../../../types/walletProvider';
-
-const isGnosisEnabled = import.meta.env.VITE_FEATURE_FLAG_GNOSIS === 'true';
 
 const allChains = [mainnet, polygon, gnosis, base, bsc, optimism, arbitrum];
 
