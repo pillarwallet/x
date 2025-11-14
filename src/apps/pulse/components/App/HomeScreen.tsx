@@ -98,7 +98,6 @@ export default function HomeScreen(props: HomeScreenProps) {
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
-  const { intentSdk } = useIntentSdk();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -134,6 +133,9 @@ export default function HomeScreen(props: HomeScreenProps) {
       return stored ? parseInt(stored, 10) : 1; // Will be updated by useEffect once maxStableCoinBalance is calculated
     });
   const [payingTokens, setPayingTokens] = useState<PayingToken[]>([]);
+  const { intentSdk } = useIntentSdk({
+    payingTokens,
+  });
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);

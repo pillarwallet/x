@@ -30,7 +30,6 @@ import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
 import useIntentSdk from '../../hooks/useIntentSdk';
-import useModularSdk from '../../hooks/useModularSdk';
 import { PayingToken, SelectedToken } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
@@ -86,7 +85,15 @@ export default function Buy(props: BuyProps) {
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
-  const { intentSdk } = useIntentSdk();
+  const {
+    intentSdk,
+    areModulesInstalled,
+    isInstalling,
+    installModules,
+    isFetching,
+  } = useIntentSdk({
+    payingTokens,
+  });
 
   // Simple background search for token-atlas
   const location = useLocation();
@@ -113,11 +120,6 @@ export default function Buy(props: BuyProps) {
         skip: !fromTokenAtlas || !tokenToSearch || !!token,
       }
     );
-
-  const { areModulesInstalled, isInstalling, installModules, isFetching } =
-    useModularSdk({
-      payingTokens,
-    });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);
