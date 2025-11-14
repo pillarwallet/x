@@ -87,26 +87,43 @@ export default function useIntentSdk() {
         //     }
         //   }
         // }
-        const walletProvider = await kit?.getEtherspotProvider();
-        const walletClient = await walletProvider.getWalletClient();
-        if (walletProvider) {
-          console.log(
-            'walletProvider from Transaction Kit found',
-            walletClient
-          );
-          console.log(
-            'Initializing Intent SDK via Transaction Kit wallet provider'
-          );
-          const sdk = new IntentSdk(walletClient as any, options);
-          setIntentSdk(sdk);
-          console.log(
-            'Initialized Intent SDK via Transaction Kit wallet provider'
-          );
-          setError(null);
+
+        // 3: Check if Transaction Kit is available
+        if (!kit) {
+          console.log('Transaction Kit not yet available');
+          return;
         }
+
+        const walletProvider = await kit.getEtherspotProvider();
+
+        if (!walletProvider) {
+          console.log('Wallet provider not available from Transaction Kit');
+          return;
+        }
+
+        const walletClient = await walletProvider.getWalletClient();
+
+        if (!walletClient) {
+          console.log('Wallet client not available from wallet provider');
+          return;
+        }
+
+        console.log(
+          'walletProvider from Transaction Kit found',
+          walletClient
+        );
+        console.log(
+          'Initializing Intent SDK via Transaction Kit wallet provider'
+        );
+
+        const sdk = new IntentSdk(walletClient as any, options);
+        setIntentSdk(sdk);
+        console.log(
+          'Initialized Intent SDK via Transaction Kit wallet provider'
+        );
+        setError(null);
         console.log('Intent SDK initialization attempt finished');
       } catch (err) {
-        alert('Failed to initialize Intent SDK. Please try again.' + err);
         console.error('Failed to initialize Intent SDK:', err);
         setError('Failed to initialize Intent SDK. Please try again.');
       }
@@ -115,6 +132,7 @@ export default function useIntentSdk() {
     initializeSdk();
   }, [
     accountAddress,
+    kit,
     // ready,
     // authenticated,
     // walletProvider,
