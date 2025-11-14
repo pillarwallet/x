@@ -1,0 +1,11 @@
+{
+  "title": "Key Wallet",
+  "description": "Manage and send assets from your Key Wallet (EOA)",
+  "translations": {
+    "en": {
+      "title": "Key Wallet",
+      "description": "Manage and send assets from your Key Wallet (EOA)"
+    }
+  }
+}
+
