@@ -181,11 +181,24 @@ export default function Buy(props: BuyProps) {
   };
 
   const handleBuySubmit = async () => {
+    console.log('=== BUY BUTTON CLICKED ===');
+    console.log('areModulesInstalled:', areModulesInstalled);
+    console.log('expressIntentResponse:', expressIntentResponse);
+    console.log('token:', token);
+    console.log('debouncedUsdAmount:', debouncedUsdAmount);
+    console.log('payingTokens:', payingTokens);
+
     if (!areModulesInstalled) {
+      console.log('Modules not installed, installing...');
       await installModules();
+      console.log('Modules installation complete');
     } else {
+      console.log('Modules already installed, navigating to preview...');
+      console.log('Setting expressIntentResponse to:', expressIntentResponse);
       setExInResp(expressIntentResponse);
+      console.log('Setting previewBuy to true');
       setPreviewBuy(true);
+      console.log('=== PREVIEW BUY SHOULD NOW BE VISIBLE ===');
     }
   };
 
@@ -205,26 +218,38 @@ export default function Buy(props: BuyProps) {
         setNoEnoughLiquidity(false);
         setInsufficientWalletBalance(false);
         setDebouncedUsdAmount(usdAmount);
+        console.log(
+          '=== BUY: Calculating dispensable assets for usdAmount:',
+          usdAmount
+        );
         const [dAssets, pChains, pTokens] = getDispensableAssets(
           usdAmount,
           walletPortfolioData?.result.data,
           maxStableCoinBalance.chainId
         );
+        console.log('=== BUY: Dispensable assets calculated ===');
+        console.log('dispensableAssets:', dAssets);
+        console.log('permittedChains:', pChains);
+        console.log('payingTokens:', pTokens);
+
         if (
           pChains.length === 0 ||
           dAssets.length === 0 ||
           pTokens.length === 0
         ) {
+          console.log('BUY: Not enough liquidity - no assets/chains/tokens');
           setNoEnoughLiquidity(true);
           return;
         }
 
         // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
+        console.log('=== BUY: Updating state with calculated values ===');
         setDispensableAssets(dAssets);
         setPermittedChains(pChains);
         setPayingTokens(pTokens);
         setParentDispensableAssets(dAssets);
         setParentUsdAmount(usdAmount);
+        console.log('=== BUY: State updated ===');
       }
     }, 1000);
 
@@ -239,8 +264,17 @@ export default function Buy(props: BuyProps) {
   ]);
 
   const refreshBuyIntent = useCallback(async () => {
+    console.log('=== BUY: refreshBuyIntent called ===');
+    // console.log('isLoading:', isLoading);
+    // console.log('debouncedUsdAmount:', debouncedUsdAmount);
+    // console.log('token:', token);
+    // console.log('accountAddress:', accountAddress);
+    console.log('intentSdk:', intentSdk);
+    // console.log('areModulesInstalled:', areModulesInstalled);
+
     // Prevent multiple simultaneous calls
     if (isLoading) {
+      console.log('BUY: Refresh blocked - already loading');
       return;
     }
 
@@ -252,13 +286,17 @@ export default function Buy(props: BuyProps) {
       !areModulesInstalled ||
       parseFloat(debouncedUsdAmount) <= 0
     ) {
+      console.log('BUY: Refresh blocked - missing required data');
       return;
     }
 
     const inputAmount = parseFloat(debouncedUsdAmount);
+    console.log('inputAmount:', inputAmount);
+    console.log('maxStableCoinBalance:', maxStableCoinBalance);
 
     // Check if input amount higher than stable currency balance
     if (inputAmount > maxStableCoinBalance.balance) {
+      console.log('BUY: Insufficient wallet balance');
       setInsufficientWalletBalance(true);
       setNoEnoughLiquidity(false);
       return;
@@ -267,13 +305,19 @@ export default function Buy(props: BuyProps) {
     // Reset stable currency balance error if first check passes
     setInsufficientWalletBalance(false);
 
+    console.log('dispensableAssets:', dispensableAssets);
+    console.log('permittedChains:', permittedChains);
+    console.log('payingTokens:', payingTokens);
+
     // Check if enough dispensable assets liquidity
     if (dispensableAssets.length === 0 && permittedChains.length === 0) {
+      console.log('BUY: Not enough liquidity');
       setNoEnoughLiquidity(true);
       return;
     }
 
     if (notEnoughLiquidity) {
+      console.log('BUY: Blocked by notEnoughLiquidity flag');
       return;
     }
 
@@ -303,13 +347,27 @@ export default function Buy(props: BuyProps) {
           '0x000000000000000000000000000000000000000000000000000000000000000',
         account: accountAddress as Hex,
       };
+      console.log('=== BUY: Calling intentSdk.expressIntent ===');
+      console.log(
+        'Intent:',
+        JSON.stringify(
+          intent,
+          (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value,
+          2
+        )
+      );
       const response = await intentSdk.expressIntent(intent);
+      console.log('=== BUY: expressIntent response received ===');
+      console.log('Response bids count:', response?.bids?.length || 0);
+      console.log('Response:', response);
       setExpressIntentResponse(response);
     } catch (error) {
-      console.error('express intent failed:: ', error);
+      console.error('=== BUY: express intent failed ===', error);
       setExpressIntentResponse(null);
     } finally {
       setIsLoading(false);
+      console.log('=== BUY: refreshBuyIntent completed ===');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
