@@ -13,35 +13,47 @@ import {
 import { TailSpin } from 'react-loader-spinner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Hex, getAddress, isAddress } from 'viem';
+
+// components
+import BuyButton from './BuyButton';
+import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+
+// hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
+import useIntentSdk from '../../hooks/useIntentSdk';
+import useModularSdk from '../../hooks/useModularSdk';
+import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
+
+// services
 import { useGetSearchTokensQuery } from '../../../../services/pillarXApiSearchTokens';
 import {
   chainNameToChainIdTokensData,
   PortfolioToken,
 } from '../../../../services/tokensData';
+
+// types
 import {
   PairResponse,
   TokenAssetResponse,
   WalletPortfolioMobulaResponse,
 } from '../../../../types/api';
-import { getLogoForChainId } from '../../../../utils/blockchain';
-import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
+import { PayingToken, SelectedToken } from '../../types/tokens';
+
+// assets
 import ArrowDown from '../../assets/arrow-down.svg';
 import WalletIcon from '../../assets/wallet.svg';
 import WarningIcon from '../../assets/warning.svg';
-import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
-import useIntentSdk from '../../hooks/useIntentSdk';
-import useModularSdk from '../../hooks/useModularSdk';
-import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
-import { PayingToken, SelectedToken } from '../../types/tokens';
-import { MobulaChainNames, getChainId } from '../../utils/constants';
-import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
-import BuyButton from './BuyButton';
+
+// utils
 import {
   ChainNames,
   isNativeToken,
   NativeSymbols,
 } from '../../utils/blockchain';
+import { MobulaChainNames, getChainId } from '../../utils/constants';
+import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
+import { getLogoForChainId } from '../../../../utils/blockchain';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;

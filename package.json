@@ -51,7 +51,7 @@
     "crypto-browserify": "3.12.1",
     "date-fns": "4.1.0",
     "ethers": "5.7.2",
-    "firebase": "^10.13.1",
+    "firebase": "10.13.1",
     "fuse.js": "7.0.0",
     "i18next": "23.7.6",
     "iconsax-react": "0.0.8",

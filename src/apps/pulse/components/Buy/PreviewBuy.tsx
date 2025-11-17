@@ -24,6 +24,7 @@ import { formatNativeTokenAddress } from '../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import CopyIcon from '../../assets/copy-icon.svg';
 import MoreInfo from '../../assets/moreinfo-icon.svg';
+import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
@@ -197,7 +198,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Utility function to clean up batch (Relay Buy only)
   const cleanupBatch = useCallback(
     (chainId: number, context: string) => {
-      if (!kit || !buyToken) return;
+      if (!kit || !buyToken) {
+        console.error(
+          `Cannot clean up batch (${context}): missing kit or buyToken`
+        );
+        return;
+      }
 
       const batchName = `pulse-buy-batch-${chainId}`;
       try {
@@ -277,7 +283,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Intent SDK: shortlist bid
   const shortlistBid = async () => {
     const intentResponse = expressIntentResponse as ExpressIntentResponse;
-    if (!buyToken || !intentResponse) return;
+    if (!buyToken || !intentResponse) {
+      console.error('Missing required data to shortlist bid');
+      return;
+    }
 
     // Clear any existing errors and states before attempting to execute
     if (error) {
@@ -315,6 +324,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Relay Buy: execute buy directly
   const executeBuyDirectly = async () => {
     if (!buyToken || !buyOffer || !kit || !fromChainId) {
+      console.error('Missing required data to execute Relay Buy');
       return;
     }
 
@@ -419,6 +429,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Unified confirm handler
   const handleConfirmBuy = async () => {
     if (!buyToken || !expressIntentResponse) {
+      console.error('Missing required data to confirm buy');
       return;
     }
 
@@ -433,6 +444,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const refreshPreviewBuyData = useCallback(async () => {
     // Pause both quote refresh and gas estimation while awaiting signature or executing
     if (isWaitingForSignature || isExecuting) {
+      console.error(
+        'Cannot refresh preview while waiting for signature or executing'
+      );
       return;
     }
 
@@ -452,6 +466,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         !fromChainId
       ) {
         setIsRefreshingPreview(false);
+        console.error('Missing required data to refresh Relay Buy preview');
         return;
       }
 
@@ -476,6 +491,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         await estimateGasFees();
       } catch (e) {
         console.error('Failed to refresh buy offer:', e);
+
         onBuyOfferUpdate(null);
       } finally {
         setIsRefreshingPreview(false);
@@ -490,6 +506,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         dispensableAssets.length === 0
       ) {
         setIsRefreshingPreview(false);
+        console.error('Missing required data to refresh Intent SDK preview');
         return;
       }
 
@@ -709,7 +726,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
               symbol: 'USDC',
               address:
                 buyOffer?.offer.details?.currencyIn?.currency?.address || '',
-              logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
+              logo: UsdcLogo,
               chainId: fromChainId || 1,
               actualBal:
                 buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
