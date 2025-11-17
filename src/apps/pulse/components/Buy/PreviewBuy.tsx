@@ -38,6 +38,8 @@ import {
   PayingToken as PayingTokenType,
   SelectedToken,
 } from '../../types/tokens';
+
+// services
 import { Token } from '../../../../services/tokensData';
 
 // utils
