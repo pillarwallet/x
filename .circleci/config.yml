@@ -25,6 +25,7 @@ jobs:
             git clone -b pillarx-playwright --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
             cd x-e2e
             git pull
+
             touch .env
             sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
             sed -i "s|test_mail_username_value|$TESTMAIL_USERNAME|g" .env
@@ -34,6 +35,7 @@ jobs:
             sed -i "s|ci_value|$CI|g" .env
             sed -i "s|headed_value|$HEADED|g" .env
             sed -i "s|debug_value|$DEBUG|g" .env
+
             npm install
             npx playwright install --with-deps
             npm run test:all
@@ -45,8 +47,6 @@ jobs:
             if [ -d "/root/x-e2e/blob-report" ]; then
               mv /root/x-e2e/blob-report /tmp/blob-report
               chmod 777 -R /tmp/blob-report
-            else
-              echo "blob-report folder not found!"
             fi
 
             if [ -d "/root/x-e2e/test-results" ]; then
@@ -76,21 +76,26 @@ jobs:
             STATUS=$(jq -r '.status' $RESULTS_FILE)
             FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
 
+            JOB_URL="https://app.circleci.com/pipelines/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/workflows/${CIRCLE_WORKFLOW_ID}"
+            REPORT_URL="https://output.circle-artifacts.com/output/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}/artifacts/${CIRCLE_NODE_INDEX}/tmp/blob-report/index.html"
+
             if [ "$STATUS" == "passed" ]; then
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
+            *Job:* <${JOB_URL}|Open Job>
             *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/blob-report/index.html|View HTML Report>"
+            *Report:* <${REPORT_URL}|View HTML Report>"
             else
               SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Job:* <${JOB_URL}|Open Job>
             *Failed Tests:* ${FAILED_TESTS}
-            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/blob-report/index.html|View HTML Report>"
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Report:* <${REPORT_URL}|View HTML Report>"
             fi
             
             curl -X POST -H 'Content-type: application/json' \
@@ -118,6 +123,7 @@ jobs:
             git clone -b pillarx-playwright --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
             cd x-e2e
             git pull 
+
             touch .env
             sed -i "s|base_url_value|$BASE_URL|g" .env
             sed -i "s|dry_run_value|$DRY_RUN|g" .env
@@ -136,9 +142,11 @@ jobs:
             sed -i "s|staging_url_value|$STAGING_URL|g" .env
             sed -i "s|testmail_username_value|$TESTMAIL_USERNAME|g" .env
             sed -i "s|testmail_email_value|$TESTMAIL_EMAIL|g" .env
+
             npm install
             npx playwright install
             npm run test:metamask -- --reporter=list,html,json
+
 
       - run:
           name: Move Playwright reports
@@ -167,26 +175,37 @@ jobs:
           when: always
           command: |
             RESULTS_FILE="/tmp/test-results/.last-run.json"
+
+            if [ ! -f "$RESULTS_FILE" ]; then
+              echo ".last-run.json not found — cannot generate Slack report"
+              exit 0
+            fi
+
             STATUS=$(jq -r '.status' $RESULTS_FILE)
             FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
+
+            JOB_URL="https://app.circleci.com/pipelines/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/workflows/${CIRCLE_WORKFLOW_ID}"
+            REPORT_URL="https://output.circle-artifacts.com/output/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html"
 
             if [ "$STATUS" == "passed" ]; then
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
+            *Job:* <${JOB_URL}|Open Job>
             *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
-            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
+            *Report:* <${REPORT_URL}|View HTML Report>"
             else
               SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Job:* <${JOB_URL}|Open Job>
             *Failed Tests:* ${FAILED_TESTS}
-            *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/playwright-report/index.html|View HTML Report>"
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Report:* <${REPORT_URL}|View HTML Report>"
             fi
-
+            
             curl -X POST -H 'Content-type: application/json' \
               --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
 
@@ -198,10 +217,4 @@ workflows:
       - e2e-tests:
           filters:
             branches:
-              only:
-                - e2e-playwright
-      - e2e-playwright:
-          filters:
-            branches:
-              only:
-                - e2e-playwright
+              only: e2e-playwright
