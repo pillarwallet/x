@@ -134,7 +134,9 @@ export function parseFreshAndTrendingTokens(
         const isWrapped = isWrappedNativeToken(contractAddress, chainId);
         const originalName = j.leftColumn?.line1?.text1 || '';
         const originalSymbol = j.leftColumn?.line1?.text2 || '';
-        const displayName = isWrapped ? `Wrapped ${originalName}` : originalName;
+        const displayName = isWrapped
+          ? `Wrapped ${originalName}`
+          : originalName;
         const displaySymbol = isWrapped
           ? getWrappedTokenSymbol(chainId)
           : originalSymbol;
