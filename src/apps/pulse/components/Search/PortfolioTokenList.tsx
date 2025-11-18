@@ -9,7 +9,10 @@ import {
   chainNameToChainIdTokensData,
   Token,
 } from '../../../../services/tokensData';
-import { getLogoForChainId } from '../../../../utils/blockchain';
+import {
+  getLogoForChainId,
+  isWrappedNativeToken,
+} from '../../../../utils/blockchain';
 import {
   formatExponentialSmallNumber,
   limitDigitsNumber,
@@ -47,12 +50,19 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
     );
   };
 
-  // Filter out stable currencies and apply search filter
+  // Filter out stable currencies and wrapped native tokens, then apply search filter
   const getFilteredPortfolioTokens = () => {
     if (!walletPortfolioData?.assets) return [];
 
     let tokens = convertPortfolioAPIResponseToToken(walletPortfolioData)
-      .filter((token) => !isStableCurrency(token))
+      .filter(
+        (token) =>
+          !isStableCurrency(token) &&
+          !isWrappedNativeToken(
+            token.contract,
+            chainNameToChainIdTokensData(token.blockchain)
+          )
+      )
       .sort((a: Token, b: Token) => {
         const balanceUSDA = (a.price || 0) * (a.balance || 0);
         const balanceUSDB = (b.price || 0) * (b.balance || 0);
