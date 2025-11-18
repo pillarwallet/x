@@ -50,8 +50,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const [t] = useTranslation();
   const { logout } = useComprehensiveLogout();
 
-  // Check if user is logged in via private key
-  const isPkAccount = !!localStorage.getItem('ACCOUNT_VIA_PK');
+  // Check if user is logged in via React Native delegated account
+  const isCustomAccount = !!localStorage.getItem('EOA_ADDRESS');
 
   // Check if running inside React Native app
   const isReactNativeApp = !!localStorage.getItem('DEVICE_PLATFORM');
@@ -130,8 +130,8 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
   const onLogoutClick = useCallback(async () => {
     // Handle private key logout - clear account address from localStorage
     // (Private key is never stored in localStorage for security reasons)
-    if (isPkAccount) {
-      localStorage.removeItem('ACCOUNT_VIA_PK');
+    if (isCustomAccount) {
+      localStorage.removeItem('EOA_ADDRESS');
     }
 
     // Use comprehensive logout for both Privy and WAGMI
@@ -156,7 +156,7 @@ const AccountModal = ({ isContentVisible }: AccountModalProps) => {
     setTimeout(() => window.location.reload(), 500);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPkAccount, logout, navigate]);
+  }, [isCustomAccount, logout, navigate]);
 
   React.useEffect(() => {
     const addressCopyActionTimeout = setTimeout(() => {

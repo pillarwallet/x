@@ -47,7 +47,7 @@ const PortfolioTokenList = (props: PortfolioTokenListProps) => {
     );
   };
 
-  // Filter out stable currencies and apply search filter
+  // Filter out stable currencies and wrapped native tokens, then apply search filter
   const getFilteredPortfolioTokens = () => {
     if (!walletPortfolioData?.assets) return [];
 

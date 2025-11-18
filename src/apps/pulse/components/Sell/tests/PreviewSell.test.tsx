@@ -37,9 +37,16 @@ vi.mock('../../../../utils/number', () => ({
   formatExponentialSmallNumber: vi.fn((num: number) => num.toString()),
 }));
 
+vi.mock('../../../../utils/eip7702Authorization', () => ({
+  getEIP7702AuthorizationIfNeeded: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock('../../../../../hooks/useTransactionKit', () => ({
   default: vi.fn(() => ({
     kit: {
+      getEtherspotProvider: vi.fn(() => ({
+        getWalletMode: vi.fn(() => 'modular'),
+      })),
       estimateBatches: vi.fn().mockResolvedValue({
         isEstimatedSuccessfully: true,
         batches: {
@@ -56,7 +63,11 @@ vi.mock('../../../../../hooks/useTransactionKit', () => ({
         isSentSuccessfully: true,
         batches: {
           'pulse-sell-batch-1': {
-            userOpHash: '0xTransactionHash123456789',
+            chainGroups: [
+              {
+                userOpHash: '0xTransactionHash123456789',
+              },
+            ],
             errorMessage: null,
           },
         },
@@ -130,6 +141,7 @@ const mockProps = {
   walletPortfolioData: mockWalletPortfolioData,
   onRefresh: vi.fn(),
   showTransactionStatus: vi.fn(),
+  selectedChainIdForSettlement: 10,
 };
 
 const renderWithProviders = (props = {}) => {
@@ -243,6 +255,7 @@ describe('<PreviewSell />', () => {
       expect(mockExecuteSell).toHaveBeenCalledWith(
         mockToken,
         '10.5',
+        10,
         undefined
       );
     });

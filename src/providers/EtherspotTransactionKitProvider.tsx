@@ -3,7 +3,6 @@ import {
   EtherspotTransactionKit,
   EtherspotTransactionKitConfig,
 } from '@etherspot/transaction-kit';
-import {useSignMessage, useWallets} from '@privy-io/react-auth';
 
 import React, {
   createContext,
@@ -12,20 +11,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  setRequestSignature,
-  clearRequestSignature,
-} from '../services/requestSignature';
 
-type EthereumProvider = {
-  request: (args: { method: string; params?: unknown[] }) => Promise<string>;
-};
+import type { WalletProviderLike } from '../types/walletProvider';
 
 export interface EtherspotTransactionKitContextType {
   data: {
     kit: EtherspotTransactionKit;
     walletAddress: string | undefined;
     setWalletAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+    walletProvider: WalletProviderLike | undefined;
   };
 }
 
@@ -42,8 +36,13 @@ export const EtherspotTransactionKitProvider: React.FC<
 > = ({ config, children }) => {
   const [walletAddress, setWalletAddress] = useState<string>();
   const kitRef = useRef<EtherspotTransactionKit | null>(null);
-  const {signMessage} = useSignMessage();
-  const {wallets} = useWallets();
+  const [externalProvider, setExternalProvider] = useState<
+    WalletProviderLike | undefined
+  >(() =>
+    'provider' in config
+      ? (config as { provider?: WalletProviderLike }).provider
+      : undefined
+  );
 
   // Create kit with config
   const kit = useMemo(() => {
@@ -68,58 +67,22 @@ export const EtherspotTransactionKitProvider: React.FC<
     getWalletAddress();
   }, [kit]);
 
-  // Initialise request signing using the connected wallet
   useEffect(() => {
-    if (!kit) return undefined;
-
-    const setSigner = () => {
-      const signer = async (message: string): Promise<string> => {
-        console.log('🔐 SIGNING with Etherspot SDK signMessage');
-        
-        try {
-          // Use Etherspot SDK's signMessage method
-          const eSdk = await kit.getSdk?.(1);
-          if (!eSdk?.signMessage) {
-            throw new Error('Etherspot SDK signMessage not available');
-          }
-          
-          // const sig = await eSdk.signMessage({ message });
-          const uiOptions = {
-            title: 'You are voting for foobar project'
-          };
-          
-          const {signature: sig} = await signMessage(
-            {message: message},
-            {
-              uiOptions,
-              address: wallets[0].address
-            }
-          );
-          console.log('🔐 Etherspot SDK signature:', sig);
-          return sig;
-        } catch (e) {
-          console.error('🔐 Etherspot SDK signing failed:', e);
-          throw new Error('Failed to sign message with Etherspot SDK');
-        }
-      };
-
-      setRequestSignature(signer, () => walletAddress);
-    };
-
-    setSigner();
-
-    return () => {
-      clearRequestSignature();
-    };
-  }, [kit, walletAddress]);
+    setExternalProvider(
+      'provider' in config
+        ? (config as { provider?: WalletProviderLike }).provider
+        : undefined
+    );
+  }, [config]);
 
   const contextData = useMemo(
     () => ({
       walletAddress,
       setWalletAddress,
       kit,
+      walletProvider: externalProvider,
     }),
-    [walletAddress, kit]
+    [walletAddress, kit, externalProvider]
   );
 
   return (
