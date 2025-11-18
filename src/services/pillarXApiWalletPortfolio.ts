@@ -14,7 +14,12 @@ import {
 import { addMiddleware } from '../store';
 
 // utils
-import { CompatibleChains, isTestnet } from '../utils/blockchain';
+import {
+  CompatibleChains,
+  isTestnet,
+  isWrappedNativeToken,
+  getWrappedTokenSymbol,
+} from '../utils/blockchain';
 
 // services
 import { PortfolioToken, chainIdToChainNameTokensData } from './tokensData';
@@ -27,21 +32,31 @@ export const convertPortfolioAPIResponseToToken = (
   return portfolioData.assets.flatMap((asset) =>
     asset.contracts_balances
       .filter((contract) => contract.balance > 0)
-      .map((contract) => ({
-        id: asset.asset.id,
-        name: asset.asset.name,
-        symbol: asset.asset.symbol,
-        logo: asset.asset.logo,
-        blockchain: chainIdToChainNameTokensData(
-          Number(contract.chainId.split(':')[1])
-        ),
-        contract: contract.address,
-        decimals: contract.decimals,
-        balance: contract.balance,
-        price: asset.price,
-        price_change_24h: asset.price_change_24h,
-        cross_chain_balance: asset.token_balance,
-      }))
+      .map((contract) => {
+        const chainId = Number(contract.chainId.split(':')[1]);
+        const isWrapped = isWrappedNativeToken(contract.address, chainId);
+
+        const displayName = isWrapped
+          ? `Wrapped ${asset.asset.name}`
+          : asset.asset.name;
+        const displaySymbol = isWrapped
+          ? getWrappedTokenSymbol(chainId)
+          : asset.asset.symbol;
+
+        return {
+          id: asset.asset.id,
+          name: displayName,
+          symbol: displaySymbol,
+          logo: asset.asset.logo,
+          blockchain: chainIdToChainNameTokensData(chainId),
+          contract: contract.address,
+          decimals: contract.decimals,
+          balance: contract.balance,
+          price: asset.price,
+          price_change_24h: asset.price_change_24h,
+          cross_chain_balance: asset.token_balance,
+        };
+      })
   );
 };
 
