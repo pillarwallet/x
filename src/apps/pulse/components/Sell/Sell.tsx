@@ -23,6 +23,7 @@ import {
   isNativeToken,
 } from '../../utils/blockchain';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
+import { logPulseError } from '../../utils/sentry';
 
 // components
 import HighDecimalsFormatted from '../../../pillarx-app/components/HighDecimalsFormatted/HighDecimalsFormatted';
@@ -112,6 +113,28 @@ const Sell = (props: SellProps) => {
         }
       } catch (error) {
         console.error('Failed to fetch sell offer:', error);
+
+        // Only log actual errors, not user rejections
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        const isUserRejection =
+          errorMessage.toLowerCase().includes('reject') ||
+          errorMessage.toLowerCase().includes('denied');
+
+        if (!isUserRejection) {
+          logPulseError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              operation: 'fetch_relay_sell_offer',
+              sellToken: token.symbol,
+              amount: debouncedTokenAmount,
+              fromChainId: token.chainId,
+              toChainId: selectedChainIdForSettlement,
+            },
+            { operation_type: 'relay_sell_quote' }
+          );
+        }
+
         setLocalSellOffer(null);
       } finally {
         setIsLoadingOffer(false);
@@ -147,6 +170,18 @@ const Sell = (props: SellProps) => {
       return contractBalance?.balance || 0;
     } catch (error) {
       console.error('Error getting token balance:', error);
+
+      // Log portfolio data access errors
+      logPulseError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'get_token_balance',
+          sellToken: token?.symbol,
+          chainId: token?.chainId,
+        },
+        { operation_type: 'portfolio_data_access' }
+      );
+
       return 0;
     }
   };

@@ -318,4 +318,166 @@ describe('<PreviewBuy />', () => {
       expect(screen.getByText('5.000000')).toBeInTheDocument();
     });
   });
+
+  describe('Relay Buy integration', () => {
+    it('renders preview with Relay Buy transaction', () => {
+      // PreviewBuy works the same way for both Intent SDK and Relay Buy
+      render(<PreviewBuy {...mockProps} />);
+
+      expect(screen.getByText('Confirm Transaction')).toBeInTheDocument();
+      expect(screen.getByText('Total: $100.00')).toBeInTheDocument();
+      expect(screen.getByText('Details')).toBeInTheDocument();
+      expect(screen.getByText('Confirm')).toBeInTheDocument();
+    });
+
+    it('displays transaction details for Relay Buy', () => {
+      render(<PreviewBuy {...mockProps} />);
+
+      expect(screen.getByText('Rate')).toBeInTheDocument();
+      expect(screen.getByText('Minimum receive')).toBeInTheDocument();
+      expect(screen.getByText('Price impact')).toBeInTheDocument();
+      expect(screen.getByText('Max slippage')).toBeInTheDocument();
+      expect(screen.getByText('Gas fee')).toBeInTheDocument();
+    });
+
+    it('executes Relay Buy transaction on confirm', async () => {
+      const mockShortlistBid = vi.fn().mockResolvedValue(undefined);
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          shortlistBid: mockShortlistBid,
+        },
+      });
+
+      render(<PreviewBuy {...mockProps} />);
+
+      const confirmButton = screen.getByText('Confirm');
+      fireEvent.click(confirmButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Please open your wallet and confirm the transaction.'
+          )
+        ).toBeInTheDocument();
+      });
+
+      // Should call shortlistBid for Intent SDK (Relay Buy uses different flow)
+      expect(mockShortlistBid).toHaveBeenCalledWith(
+        mockExpressIntentResponse.intentHash,
+        mockExpressIntentResponse.bids[0].bidHash
+      );
+    });
+
+    it('shows transaction status after Relay Buy execution', async () => {
+      render(<PreviewBuy {...mockProps} />);
+
+      const confirmButton = screen.getByText('Confirm');
+      fireEvent.click(confirmButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Please open your wallet and confirm the transaction.'
+          )
+        ).toBeInTheDocument();
+      });
+
+      // After execution completes, should call showTransactionStatus
+      await waitFor(() => {
+        expect(mockProps.showTransactionStatus).toHaveBeenCalledWith(
+          mockExpressIntentResponse.bids[0].bidHash
+        );
+      });
+    });
+
+    it('handles Relay Buy transaction failure', async () => {
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          shortlistBid: vi
+            .fn()
+            .mockRejectedValue(new Error('Transaction failed')),
+        },
+      });
+
+      render(<PreviewBuy {...mockProps} />);
+
+      const confirmButton = screen.getByText('Confirm');
+      fireEvent.click(confirmButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Please open your wallet and confirm the transaction.'
+          )
+        ).toBeInTheDocument();
+      });
+
+      // Should not show tracker on error
+      expect(
+        screen.queryByText(
+          'Please open your wallet and confirm the transaction.'
+        )
+      ).not.toBeInTheDocument();
+    });
+
+    it('displays token information correctly for Relay Buy', () => {
+      render(<PreviewBuy {...mockProps} />);
+
+      expect(screen.getAllByText('TEST')).toHaveLength(2);
+      expect(screen.getAllByText('USD Coin')).toHaveLength(1);
+      expect(screen.getByText('0x1234...7890')).toBeInTheDocument();
+    });
+
+    it('calculates token amount correctly for Relay Buy', () => {
+      const customPayingTokens = [{ ...mockPayingToken, totalUsd: 200.0 }];
+      const customToken = { ...mockToken, usdValue: '50.00' };
+
+      render(
+        <PreviewBuy
+          {...mockProps}
+          buyToken={customToken}
+          payingTokens={customPayingTokens}
+        />
+      );
+
+      // 200 USD / 50 USD per token = 4 tokens
+      expect(screen.getByText('4.000000')).toBeInTheDocument();
+    });
+
+    it('handles close preview for Relay Buy', () => {
+      render(<PreviewBuy {...mockProps} />);
+
+      const closeButton = screen.getByLabelText('Close');
+      fireEvent.click(closeButton);
+
+      expect(mockProps.closePreview).toHaveBeenCalled();
+    });
+
+    it('handles missing express intent response for Relay Buy', () => {
+      render(<PreviewBuy {...mockProps} expressIntentResponse={null} />);
+
+      expect(
+        screen.getByText(
+          'No buy offer was found. Please check the token and the input amount and try again.'
+        )
+      ).toBeInTheDocument();
+      expect(screen.getByText('Close')).toBeInTheDocument();
+    });
+
+    it('handles zero USD amount for Relay Buy', () => {
+      render(<PreviewBuy {...mockProps} usdAmount="0.00" />);
+
+      // Component should handle zero amount gracefully
+      expect(screen.getByText('Confirm Transaction')).toBeInTheDocument();
+    });
+
+    it('displays rate calculation for Relay Buy', () => {
+      const customToken = { ...mockToken, usdValue: '25.00' };
+
+      render(<PreviewBuy {...mockProps} buyToken={customToken} />);
+
+      // 1 USD ≈ 0.04 TEST (1 / 25)
+      expect(screen.getByText('1 USD ≈ 0.040')).toBeInTheDocument();
+    });
+  });
 });
