@@ -5,17 +5,14 @@ import {
   TokenAssetResponse,
   TokensMarketData,
 } from '../../../types/api';
+import { chainNameToChainIdTokensData } from '../../../services/tokensData';
 import {
   getChainName,
   MOBULA_CHAIN_NAMES,
   MobulaChainNames,
 } from './constants';
 import { parseNumberString } from './number';
-import { chainNameToChainIdTokensData } from '../../../services/tokensData';
-import {
-  getWrappedTokenSymbol,
-  isWrappedNativeToken,
-} from '../../../utils/blockchain';
+import { isWrappedNativeToken } from '../../../utils/blockchain';
 
 export type Asset = {
   name: string;
@@ -46,25 +43,22 @@ export function parseAssetData(
       const chainId = chainNameToChainIdTokensData(blockchains[i]);
       const contractAddress = contracts[i];
 
-      const isWrapped = isWrappedNativeToken(contractAddress, chainId);
-      const displayName = isWrapped ? `Wrapped ${asset.name}` : asset.name;
-      const displaySymbol = isWrapped
-        ? getWrappedTokenSymbol(chainId)
-        : asset.symbol;
-
-      result.push({
-        name: displayName,
-        symbol: displaySymbol,
-        logo: asset.logo,
-        mCap: asset.market_cap,
-        volume: asset.volume,
-        price: asset.price,
-        liquidity: asset.liquidity,
-        chain: blockchains[i],
-        decimals: decimals[i],
-        contract: contractAddress,
-        priceChange24h: asset.price_change_24h,
-      });
+      // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
+      if (!isWrappedNativeToken(contractAddress, chainId)) {
+        result.push({
+          name: asset.name,
+          symbol: asset.symbol,
+          logo: asset.logo,
+          mCap: asset.market_cap,
+          volume: asset.volume,
+          price: asset.price,
+          liquidity: asset.liquidity,
+          chain: blockchains[i],
+          decimals: decimals[i],
+          contract: contracts[i],
+          priceChange24h: asset.price_change_24h,
+        });
+      }
     }
   }
 
@@ -79,25 +73,22 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
       const chainId = chainNameToChainIdTokensData(blockchains[i]);
       const contractAddress = contracts[i];
 
-      const isWrapped = isWrappedNativeToken(contractAddress, chainId);
-      const displayName = isWrapped ? `Wrapped ${asset.name}` : asset.name;
-      const displaySymbol = isWrapped
-        ? getWrappedTokenSymbol(chainId)
-        : asset.symbol;
-
-      result.push({
-        name: displayName,
-        symbol: displaySymbol,
-        logo: asset.logo,
-        mCap: asset.market_cap,
-        volume: asset.volume_24h,
-        price: asset.price,
-        liquidity: asset.liquidity,
-        chain: blockchains[i],
-        decimals: decimals[i],
-        contract: contractAddress,
-        priceChange24h: asset.price_change_24h,
-      });
+      // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
+      if (!isWrappedNativeToken(contractAddress, chainId)) {
+        result.push({
+          name: asset.name,
+          symbol: asset.symbol,
+          logo: asset.logo,
+          mCap: asset.market_cap,
+          volume: asset.volume_24h,
+          price: asset.price,
+          liquidity: asset.liquidity,
+          chain: blockchains[i],
+          decimals: decimals[i],
+          contract: contracts[i],
+          priceChange24h: asset.price_change_24h,
+        });
+      }
     }
   }
   return result;
@@ -125,40 +116,33 @@ export function parseFreshAndTrendingTokens(
 ): Asset[] {
   const res: Asset[] = [];
   for (const projection of projections) {
-    const chainId = +projection.id.split('-')[1];
+    const chainId = projection.id.split('-')[1];
     const { rows } = projection.data as TokensMarketData;
     if (rows) {
       for (const j of rows) {
         const contractAddress = j.leftColumn?.line1?.copyLink || '';
 
-        const isWrapped = isWrappedNativeToken(contractAddress, chainId);
-        const originalName = j.leftColumn?.line1?.text1 || '';
-        const originalSymbol = j.leftColumn?.line1?.text2 || '';
-        const displayName = isWrapped
-          ? `Wrapped ${originalName}`
-          : originalName;
-        const displaySymbol = isWrapped
-          ? getWrappedTokenSymbol(chainId)
-          : originalSymbol;
-
-        res.push({
-          chain: getChainName(chainId),
-          contract: contractAddress,
-          decimals: j.meta?.tokenData.decimals || 18,
-          liquidity: parseNumberString(
-            j.leftColumn?.line2?.liquidity || '0.00K'
-          ),
-          logo: j.leftColumn?.token?.primaryImage || null,
-          name: displayName,
-          price: Number(j.rightColumn?.line1?.price || 0),
-          priceChange24h:
-            Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
-            (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
-          symbol: displaySymbol,
-          volume: parseNumberString(j.leftColumn?.line2?.volume || '0.00K'),
-          mCap: j.meta?.tokenData.marketCap || 0,
-          timestamp: j.leftColumn?.line2?.timestamp,
-        });
+        // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
+        if (!isWrappedNativeToken(contractAddress, +chainId)) {
+          res.push({
+            chain: getChainName(+chainId),
+            contract: contractAddress,
+            decimals: j.meta?.tokenData.decimals || 18,
+            liquidity: parseNumberString(
+              j.leftColumn?.line2?.liquidity || '0.00K'
+            ),
+            logo: j.leftColumn?.token?.primaryImage || null,
+            name: j.leftColumn?.line1?.text1 || '',
+            price: Number(j.rightColumn?.line1?.price || 0),
+            priceChange24h:
+              Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
+              (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
+            symbol: j.leftColumn?.line1?.text2 || '',
+            volume: parseNumberString(j.leftColumn?.line2?.volume || '0.00K'),
+            mCap: j.meta?.tokenData.marketCap || 0,
+            timestamp: j.leftColumn?.line2?.timestamp,
+          });
+        }
       }
     }
   }
