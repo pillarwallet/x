@@ -175,7 +175,8 @@ export default function useIntentSdk(props: IntentProps) {
           setAreModulesInstalled(false);
         });
     }
-  }, [intentSdk, payingTokens, areModulesInstalled, transactionDebugLog]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intentSdk, payingTokens, areModulesInstalled]);
 
   const installModules = async () => {
     if (!payingTokens?.length || !intentSdk) return;
