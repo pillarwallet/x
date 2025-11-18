@@ -64,6 +64,20 @@ jobs:
           when: always
 
       - run:
+          name: Move Playwright HTML report
+          when: always
+          command: |
+            if [ -d "/root/x-e2e/playwright-report" ]; then
+              mv /root/x-e2e/playwright-report /tmp/playwright-report
+              chmod 777 -R /tmp/playwright-report
+            fi
+      
+      - store_artifacts:
+          path: /tmp/playwright-report
+          when: always
+          
+
+      - run:
           name: Parse Playwright results and send Slack
           when: always
           command: |
@@ -78,9 +92,8 @@ jobs:
             FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
       
             JOB_URL="https://app.circleci.com/pipelines/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/workflows/${CIRCLE_WORKFLOW_ID}"
-      
             # FIXED URL — uses build number
-            REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_BUILD_NUM}/artifacts/0/blob-report/index.html"
+            REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_BUILD_NUM}/artifacts/0/playwright-report/index.html"
       
             if [ "$STATUS" == "passed" ]; then
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
