@@ -43,6 +43,7 @@ import { BuyOffer } from '../../hooks/useRelayBuy';
 
 // utils
 import { getStableCurrencyBalanceOnEachChain } from '../../utils/utils';
+import { logPulseError } from '../../utils/sentry';
 
 // types
 type TransactionStatusState =
@@ -326,6 +327,20 @@ export default function HomeScreen(props: HomeScreenProps) {
           setSellOffer(newOffer);
         } catch (error) {
           console.error('Failed to refresh sell offer:', error);
+
+          // Log refresh sell offer errors
+          logPulseError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              operation: 'refresh_sell_offer',
+              sellToken: sellToken?.symbol,
+              amount: tokenAmount,
+              fromChainId: sellToken?.chainId,
+              toChainId: selectedChainIdForSettlement,
+            },
+            { operation_type: 'auto_refresh' }
+          );
+
           setSellOffer(null);
         }
       }
@@ -337,6 +352,17 @@ export default function HomeScreen(props: HomeScreenProps) {
       }
     } catch (error) {
       console.error('Refresh failed:', error);
+
+      // Log general refresh failures (portfolio fetch errors)
+      logPulseError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'refresh_home_data',
+          isBuy,
+          hasToken: isBuy ? !!buyToken : !!sellToken,
+        },
+        { operation_type: 'auto_refresh' }
+      );
     } finally {
       setIsRefreshingHome(false);
     }
@@ -344,6 +370,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     refetchWalletPortfolio,
     isBuy,
     sellToken,
+    buyToken,
     tokenAmount,
     isInitialized,
     getBestSellOffer,
@@ -824,6 +851,21 @@ export default function HomeScreen(props: HomeScreenProps) {
         }
       } catch (error) {
         console.error('Failed to get transaction status:', error);
+
+        // Log transaction status polling errors
+        logPulseError(
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            operation: 'poll_transaction_status',
+            userOpHash,
+            chainId: transactionData?.isBuy
+              ? transactionData?.buyToken?.chainId
+              : transactionData?.sellToken?.chainId,
+            isBuy: transactionData?.isBuy,
+          },
+          { operation_type: 'transaction_tracking' }
+        );
+
         setCurrentTransactionStatus('Transaction Failed');
         setErrorDetails(
           error instanceof Error

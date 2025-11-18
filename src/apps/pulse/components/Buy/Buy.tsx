@@ -54,6 +54,7 @@ import {
 import { MobulaChainNames, getChainId } from '../../utils/constants';
 import { getDesiredAssetValue, getDispensableAssets } from '../../utils/intent';
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { logPulseError } from '../../utils/sentry';
 
 interface BuyProps {
   setSearching: Dispatch<SetStateAction<boolean>>;
@@ -293,6 +294,28 @@ export default function Buy(props: BuyProps) {
         setBuyOffer(offer);
       } catch (error) {
         console.error('Failed to fetch buy offer:', error);
+
+        // Only log actual errors, not user rejections
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        const isUserRejection =
+          errorMessage.toLowerCase().includes('reject') ||
+          errorMessage.toLowerCase().includes('denied');
+
+        if (!isUserRejection) {
+          logPulseError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              operation: 'fetch_relay_buy_offer',
+              buyToken: token.symbol,
+              amount: debouncedUsdAmount,
+              toChainId: token.chainId,
+              fromChainId: maxStableCoinBalance.chainId,
+            },
+            { operation_type: 'relay_buy_quote' }
+          );
+        }
+
         setBuyOffer(null);
       } finally {
         setIsLoading(false);
@@ -376,6 +399,27 @@ export default function Buy(props: BuyProps) {
       setExpressIntentResponse(response);
     } catch (error) {
       console.error('express intent failed:: ', error);
+
+      // Only log actual errors, not user rejections
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const isUserRejection =
+        errorMessage.toLowerCase().includes('reject') ||
+        errorMessage.toLowerCase().includes('denied');
+
+      if (!isUserRejection) {
+        logPulseError(
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            operation: 'express_intent',
+            buyToken: token.symbol,
+            amount: debouncedUsdAmount,
+            chainId: token.chainId,
+          },
+          { operation_type: 'intent_sdk_quote' }
+        );
+      }
+
       setExpressIntentResponse(null);
     } finally {
       setIsLoading(false);

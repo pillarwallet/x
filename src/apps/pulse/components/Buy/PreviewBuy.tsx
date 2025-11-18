@@ -19,6 +19,7 @@ import {
   limitDigitsNumber,
 } from '../../../../utils/number';
 import { formatNativeTokenAddress } from '../../utils/blockchain';
+import { logPulseError } from '../../utils/sentry';
 
 // icons
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
@@ -287,6 +288,18 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     const intentResponse = expressIntentResponse as ExpressIntentResponse;
     if (!buyToken || !intentResponse) {
       console.error('Missing required data to shortlist bid');
+
+      // Log validation failures to Sentry for diagnostics
+      logPulseError(
+        new Error('Missing required data to shortlist bid'),
+        {
+          operation: 'shortlist_bid_validation',
+          hasBuyToken: !!buyToken,
+          hasIntentResponse: !!intentResponse,
+        },
+        { operation_type: 'validation_error' }
+      );
+
       return;
     }
 
@@ -315,7 +328,16 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         setIsTransactionRejected(true);
         setIsWaitingForSignature(false);
       } else {
-        // Other errors will be handled by the useIntentSdk hook
+        // Log error to Sentry - non-user-rejection errors only
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'shortlist_bid',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+          },
+          { operation_type: 'intent_sdk_buy' }
+        );
         setIsWaitingForSignature(false);
       }
     } finally {
@@ -327,6 +349,20 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const executeBuyDirectly = async () => {
     if (!buyToken || !buyOffer || !kit || !fromChainId) {
       console.error('Missing required data to execute Relay Buy');
+
+      // Log validation failures to Sentry for diagnostics
+      logPulseError(
+        new Error('Missing required data to execute Relay Buy'),
+        {
+          operation: 'execute_relay_buy_validation',
+          hasBuyToken: !!buyToken,
+          hasBuyOffer: !!buyOffer,
+          hasKit: !!kit,
+          hasFromChainId: !!fromChainId,
+        },
+        { operation_type: 'validation_error' }
+      );
+
       return;
     }
 
@@ -417,7 +453,18 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         setIsWaitingForSignature(false);
         setIsExecuting(false);
       } else {
-        // Other errors will be handled by the useRelayBuy hook
+        // Log error to Sentry - non-user-rejection errors only
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'execute_relay_buy',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+            fromChainId,
+            toChainId: buyToken?.chainId,
+          },
+          { operation_type: 'relay_buy' }
+        );
         setIsWaitingForSignature(false);
         setIsExecuting(false);
       }
@@ -544,7 +591,16 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         setExpressIntentResponse(response);
       } catch (err) {
         console.error('Failed to refresh buy offer:', err);
-        // Error will be handled by the useIntentSdk hook
+        // Log error to Sentry
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'refresh_intent_offer',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+          },
+          { operation_type: 'intent_sdk_refresh' }
+        );
       } finally {
         setIsRefreshingPreview(false);
       }
