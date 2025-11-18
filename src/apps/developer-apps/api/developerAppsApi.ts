@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addMiddleware } from '../../../store';
-import { signPayloadForHeader } from '../../../services/requestSignature';
 import { isTestnet } from '../../../utils/blockchain';
-
 export interface DeveloperApp {
   appId: string;
   ownerEoaAddress: string;
@@ -110,7 +108,7 @@ export const developerAppsApi = createApi({
     >({
       async queryFn(arg, _api, _extra, baseQuery) {
         try {
-          const signature = await signPayloadForHeader(arg);
+          const signature = '';
           const result = await baseQuery({
             url: '/',
             method: 'POST',
@@ -141,7 +139,7 @@ export const developerAppsApi = createApi({
     >({
       async queryFn(arg, _api, _extra, baseQuery) {
         try {
-          const signature = await signPayloadForHeader(arg.data);
+          const signature = '';
           const result = await baseQuery({
             url: `/${arg.appId}`,
             method: 'PUT',
@@ -175,7 +173,7 @@ export const developerAppsApi = createApi({
     >({
       async queryFn(arg, _api, _extra, baseQuery) {
         try {
-          const signature = await signPayloadForHeader(arg.data);
+          const signature = '';
           const result = await baseQuery({
             url: `/${arg.appId}`,
             method: 'DELETE',
