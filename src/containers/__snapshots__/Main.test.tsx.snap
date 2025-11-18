@@ -358,37 +358,9 @@ exports[`<Main /> > renders correctly 1`] = `
             Be the first to know about new features, smart token insights, and exclusive announcements!
           </p>
           <div
-            className="mailchimp_form"
-          >
-            <form
-              onSubmit={[Function]}
-            >
-              <label
-                htmlFor="EMAIL"
-              >
-                Email address
-              </label>
-              <input
-                id="EMAIL"
-                onChange={[Function]}
-                placeholder="Enter your email"
-                required={true}
-                type="email"
-                value=""
-              />
-              <button
-                className="cta mailchimp_form__cta"
-                type="submit"
-              >
-                <span>
-                  Subscribe
-                </span>
-              </button>
-            </form>
-            <p
-              className="mailchimp_form__message"
-            />
-          </div>
+            class="home_app__subscribe__form"
+            id="octopusForm"
+          />
         </div>
         <div
           className="home_app__download gradient_border"
