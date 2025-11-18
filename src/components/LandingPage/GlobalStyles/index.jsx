@@ -1205,6 +1205,9 @@ ul li:last-child {
   min-width: 12rem !important;
 }
 
+.emailoctopus-success-message, .emailoctopus-error-message {
+  color: var(--white) !important;
+}
 
 .home_app__subscribe .mailchimp_form {
   display: flex;
