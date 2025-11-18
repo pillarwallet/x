@@ -104,7 +104,15 @@ export default function Search({
   const location = useLocation();
 
   const removeQueryParams = () => {
-    navigate(location.pathname, { replace: true });
+    // Preserve relayBuy parameter if it exists
+    const relayBuyParam = query.get('relayBuy');
+    if (relayBuyParam) {
+      const newSearch = new URLSearchParams();
+      newSearch.set('relayBuy', relayBuyParam);
+      navigate(`${location.pathname}?${newSearch.toString()}`, { replace: true });
+    } else {
+      navigate(location.pathname, { replace: true });
+    }
   };
 
   const getUrl = (search?: SearchType) => {
