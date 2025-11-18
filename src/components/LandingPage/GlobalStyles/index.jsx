@@ -1206,7 +1206,7 @@ ul li:last-child {
 }
 
 [data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-error-message, [data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-success-message {
-  color: var(--white) !important;
+  color: var(--white) !important
 }
 
 .home_app__subscribe .mailchimp_form {
