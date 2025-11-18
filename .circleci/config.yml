@@ -73,16 +73,15 @@ jobs:
               echo ".last-run.json not found — cannot generate Slack report"
               exit 0
             fi
-
+      
             STATUS=$(jq -r '.status' $RESULTS_FILE)
             FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
-
-            # Correct Job URL
+      
             JOB_URL="https://app.circleci.com/pipelines/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/workflows/${CIRCLE_WORKFLOW_ID}"
-
-            # Correct Artifact URL (blob-report)
-            REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/blob-report/index.html"
-
+      
+            # FIXED URL — uses build number
+            REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_BUILD_NUM}/artifacts/0/blob-report/index.html"
+      
             if [ "$STATUS" == "passed" ]; then
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
             *Project:* ${CIRCLE_PROJECT_REPONAME}
@@ -101,10 +100,9 @@ jobs:
             *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
             *Report:* <${REPORT_URL}|View HTML Report>"
             fi
-
+      
             curl -X POST -H 'Content-type: application/json' \
               --data "{\"text\":\"${SLACK_MESSAGE//$'\n'/\\n}\"}" $E2E_SLACK_WEBHOOK_URL
-
 
 workflows:
   version: 2
