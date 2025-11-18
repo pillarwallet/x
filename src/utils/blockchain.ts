@@ -239,7 +239,7 @@ export const getBlockScan = (chain: number, isAddress: boolean = false) => {
     case 10:
       return `https://optimistic.etherscan.io/${isAddress ? 'address' : 'tx'}/`;
     case 42161:
-      return `http://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
+      return `https://arbiscan.io/${isAddress ? 'address' : 'tx'}/`;
     default:
       return '';
   }
@@ -490,4 +490,36 @@ export const buildTransactionData = ({
       `Failed to build transaction data: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
   }
+};
+
+// Wrapped native token addresses and their display information
+export const WRAPPED_NATIVE_TOKEN_ADDRESSES: Record<number, string> = {
+  1: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // Ethereum - WETH
+  137: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', // Polygon - WPOL
+  10: '0x4200000000000000000000000000000000000006', // Optimism - WETH
+  42161: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', // Arbitrum - WETH
+  8453: '0x4200000000000000000000000000000000000006', // Base - WETH
+  56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // BNB - WBNB
+};
+
+export const WRAPPED_NATIVE_TOKEN_SYMBOLS: Record<number, string> = {
+  1: 'WETH',
+  137: 'WPOL',
+  10: 'WETH',
+  42161: 'WETH',
+  8453: 'WETH',
+  56: 'WBNB',
+};
+
+export const isWrappedNativeToken = (
+  tokenAddress: string,
+  chainId: number
+): boolean => {
+  const wrappedAddress = WRAPPED_NATIVE_TOKEN_ADDRESSES[chainId];
+  if (!wrappedAddress) return false;
+  return tokenAddress.toLowerCase() === wrappedAddress.toLowerCase();
+};
+
+export const getWrappedTokenSymbol = (chainId: number): string => {
+  return WRAPPED_NATIVE_TOKEN_SYMBOLS[chainId] || '';
 };

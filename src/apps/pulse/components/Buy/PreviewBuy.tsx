@@ -13,22 +13,35 @@ import {
 
 // utils
 import { getLogoForChainId } from '../../../../utils/blockchain';
+import { getEIP7702AuthorizationIfNeeded } from '../../../../utils/eip7702Authorization';
+import {
+  formatExponentialSmallNumber,
+  limitDigitsNumber,
+} from '../../../../utils/number';
 import { formatNativeTokenAddress } from '../../utils/blockchain';
+import { logPulseError } from '../../utils/sentry';
 
 // icons
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import CopyIcon from '../../assets/copy-icon.svg';
 import MoreInfo from '../../assets/moreinfo-icon.svg';
+import UsdcLogo from '../../assets/usd-coin-usdc-logo.png';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
+import useGasEstimationBuy from '../../hooks/useGasEstimationBuy';
 import useIntentSdk from '../../hooks/useIntentSdk';
+import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
 
 // types
 import {
   PayingToken as PayingTokenType,
   SelectedToken,
 } from '../../types/tokens';
+
+// services
+import { Token } from '../../../../services/tokensData';
 
 // utils
 import { getDesiredAssetValue } from '../../utils/intent';
@@ -43,11 +56,17 @@ interface PreviewBuyProps {
   closePreview: () => void;
   buyToken?: SelectedToken | null;
   payingTokens: PayingTokenType[];
-  expressIntentResponse: ExpressIntentResponse | null;
-  setExpressIntentResponse: (response: ExpressIntentResponse | null) => void;
+  expressIntentResponse: ExpressIntentResponse | BuyOffer | null;
+  setExpressIntentResponse: (
+    response: ExpressIntentResponse | BuyOffer | null
+  ) => void;
   usdAmount: string;
   dispensableAssets: DispensableAsset[];
   showTransactionStatus: (userOperationHash: string, gasFee?: string) => void;
+  fromChainId?: number; // For Relay Buy: chainId where USDC is taken from
+  onBuyOfferUpdate?: (offer: BuyOffer | null) => void; // For Relay Buy: callback to update offer
+  setBuyFlowPaused?: (paused: boolean) => void; // For Relay Buy: pause background refresh
+  userPortfolio?: Token[]; // For Relay Buy: user's token portfolio
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -60,10 +79,11 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     usdAmount,
     dispensableAssets,
     showTransactionStatus,
+    fromChainId,
+    onBuyOfferUpdate,
+    setBuyFlowPaused,
+    userPortfolio,
   } = props;
-  const totalPay = payingTokens
-    .reduce((acc, curr) => acc + curr.totalUsd, 0)
-    .toFixed(2);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -71,11 +91,53 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   const [isRefreshingPreview, setIsRefreshingPreview] = useState(false);
   const [isTransactionRejected, setIsTransactionRejected] = useState(false);
   const [isWaitingForSignature, setIsWaitingForSignature] = useState(false);
+  const [isTransactionSuccess, setIsTransactionSuccess] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
 
-  const { intentSdk, error, clearError } = useIntentSdk({
+  const {
+    intentSdk,
+    error: intentError,
+    clearError: clearIntentError,
+  } = useIntentSdk({
     payingTokens,
   });
-  const { walletAddress: accountAddress } = useTransactionKit();
+  const { walletAddress: accountAddress, kit } = useTransactionKit();
+
+  // Get feature flag from Firebase Remote Config
+  const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
+
+  // For Intent SDK Buy: calculate from payingTokens
+  // For Relay Buy: use usdAmount directly
+  const totalPay = USE_RELAY_BUY
+    ? parseFloat(usdAmount || '0').toFixed(2)
+    : payingTokens.reduce((acc, curr) => acc + curr.totalUsd, 0).toFixed(2);
+
+  // Relay Buy hooks
+  const {
+    executeBuy,
+    error: relayError,
+    clearError: clearRelayError,
+    getBestOffer,
+    isInitialized: isRelayInitialized,
+  } = useRelayBuy();
+
+  // Get the appropriate offer based on feature flag
+  const buyOffer = USE_RELAY_BUY ? (expressIntentResponse as BuyOffer) : null;
+
+  // Unified error handling
+  const error = USE_RELAY_BUY ? relayError : intentError;
+  const clearError = USE_RELAY_BUY ? clearRelayError : clearIntentError;
+
+  // Gas estimation for Relay Buy
+  const { isEstimatingGas, gasCostNative, nativeTokenSymbol, estimateGasFees } =
+    useGasEstimationBuy({
+      buyToken: buyToken || null,
+      buyOffer,
+      tokenAmount: usdAmount,
+      fromChainId: fromChainId || 1,
+      isPaused: isWaitingForSignature || isExecuting,
+      userPortfolio,
+    });
 
   useEffect(() => {
     if (isCopied) {
@@ -107,10 +169,72 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       clearError();
     }
     // Reset transaction states when new data comes in
-    setIsTransactionRejected(false);
-    setIsWaitingForSignature(false);
+    if (!isExecuting && !isTransactionSuccess && !isTransactionRejected) {
+      setIsTransactionRejected(false);
+      setIsWaitingForSignature(false);
+      setIsTransactionSuccess(false);
+    }
     return undefined;
-  }, [usdAmount, buyToken, expressIntentResponse, clearError, error]);
+  }, [
+    usdAmount,
+    buyToken,
+    expressIntentResponse,
+    clearError,
+    error,
+    isExecuting,
+    isTransactionSuccess,
+    isTransactionRejected,
+  ]);
+
+  // Bridge pause state to HomeScreen to stop its quote refresh while confirming (Relay Buy only)
+  useEffect(() => {
+    if (USE_RELAY_BUY && setBuyFlowPaused) {
+      setBuyFlowPaused(isWaitingForSignature || isExecuting);
+    }
+  }, [isWaitingForSignature, isExecuting, setBuyFlowPaused, USE_RELAY_BUY]);
+
+  // Ensure pause resets on unmount (Relay Buy only)
+  useEffect(() => {
+    return () => {
+      if (USE_RELAY_BUY && setBuyFlowPaused) setBuyFlowPaused(false);
+    };
+  }, [setBuyFlowPaused, USE_RELAY_BUY]);
+
+  // Utility function to clean up batch (Relay Buy only)
+  const cleanupBatch = useCallback(
+    (chainId: number, context: string) => {
+      if (!kit || !buyToken) {
+        console.error(
+          `Cannot clean up batch (${context}): missing kit or buyToken`
+        );
+        return;
+      }
+
+      const batchName = `pulse-buy-batch-${chainId}`;
+      try {
+        kit.batch({ batchName }).remove();
+      } catch (cleanupErr) {
+        if (
+          !(
+            cleanupErr instanceof Error &&
+            cleanupErr.message.includes('does not exist')
+          )
+        ) {
+          console.error(`Failed to clean up batch (${context}):`, cleanupErr);
+        }
+      }
+    },
+    [kit, buyToken]
+  );
+
+  // Clean up pulse-buy batch when component unmounts or preview closes (Relay Buy only)
+  useEffect(() => {
+    return () => {
+      if (USE_RELAY_BUY && buyToken && fromChainId) {
+        cleanupBatch(fromChainId, 'unmount');
+      }
+    };
+  }, [buyToken, cleanupBatch, USE_RELAY_BUY, fromChainId]);
 
   const detailsEntry = (
     lhs: string,
@@ -161,8 +285,25 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     );
   };
 
+  // Intent SDK: shortlist bid
   const shortlistBid = async () => {
-    if (!buyToken || !expressIntentResponse) return;
+    const intentResponse = expressIntentResponse as ExpressIntentResponse;
+    if (!buyToken || !intentResponse) {
+      console.error('Missing required data to shortlist bid');
+
+      // Log validation failures to Sentry for diagnostics
+      logPulseError(
+        new Error('Missing required data to shortlist bid'),
+        {
+          operation: 'shortlist_bid_validation',
+          hasBuyToken: !!buyToken,
+          hasIntentResponse: !!intentResponse,
+        },
+        { operation_type: 'validation_error' }
+      );
+
+      return;
+    }
 
     // Clear any existing errors and states before attempting to execute
     if (error) {
@@ -174,10 +315,10 @@ export default function PreviewBuy(props: PreviewBuyProps) {
 
     try {
       await intentSdk?.shortlistBid(
-        expressIntentResponse?.intentHash!,
-        expressIntentResponse?.bids[0].bidHash!
+        intentResponse?.intentHash!,
+        intentResponse?.bids[0].bidHash!
       );
-      showTransactionStatus(expressIntentResponse?.bids[0].bidHash!);
+      showTransactionStatus(intentResponse?.bids[0].bidHash!);
     } catch (err) {
       console.error('shortlisting bid failed:', err);
 
@@ -189,7 +330,16 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         setIsTransactionRejected(true);
         setIsWaitingForSignature(false);
       } else {
-        // Other errors will be handled by the useIntentSdk hook
+        // Log error to Sentry - non-user-rejection errors only
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'shortlist_bid',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+          },
+          { operation_type: 'intent_sdk_buy' }
+        );
         setIsWaitingForSignature(false);
       }
     } finally {
@@ -197,63 +347,265 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     }
   };
 
+  // Relay Buy: execute buy directly
+  const executeBuyDirectly = async () => {
+    if (!buyToken || !buyOffer || !kit || !fromChainId) {
+      console.error('Missing required data to execute Relay Buy');
+
+      // Log validation failures to Sentry for diagnostics
+      logPulseError(
+        new Error('Missing required data to execute Relay Buy'),
+        {
+          operation: 'execute_relay_buy_validation',
+          hasBuyToken: !!buyToken,
+          hasBuyOffer: !!buyOffer,
+          hasKit: !!kit,
+          hasFromChainId: !!fromChainId,
+        },
+        { operation_type: 'validation_error' }
+      );
+
+      return;
+    }
+
+    // Clear any existing errors and states
+    if (error) {
+      clearError();
+    }
+    setIsTransactionRejected(false);
+    setIsTransactionSuccess(false);
+    setIsWaitingForSignature(true);
+    setIsExecuting(true);
+    setIsLoading(true);
+    if (setBuyFlowPaused) setBuyFlowPaused(true);
+
+    try {
+      // For Relay Buy EXACT_INPUT, we use the USD amount directly (not token amount)
+      // The executeBuy function will get a fresh quote with the USD amount
+
+      // First, prepare the batch using the existing executeBuy logic
+      const result = await executeBuy(
+        buyToken,
+        usdAmount, // Pass USD amount, not token amount
+        fromChainId,
+        userPortfolio
+      );
+
+      if (result === true) {
+        // If executeBuy succeeded, execute the batch directly
+        const batchName = `pulse-buy-batch-${fromChainId}`;
+
+        const authorization = await getEIP7702AuthorizationIfNeeded(
+          kit,
+          fromChainId
+        );
+        const batchSend = await kit.sendBatches({
+          onlyBatchNames: [batchName],
+          authorization: authorization || undefined,
+        });
+
+        const sentBatch = batchSend.batches[batchName];
+
+        if (batchSend.isSentSuccessfully && !sentBatch?.errorMessage) {
+          // In PillarX we only batch transactions per chainId, this is why sendBatch should only
+          // have one chainGroup per batch
+          // chainGroups is an object keyed by chainId, not an array
+          const userOpHash = sentBatch?.chainGroups?.[fromChainId]?.userOpHash;
+
+          if (userOpHash) {
+            setIsTransactionSuccess(true);
+            setIsWaitingForSignature(false);
+            setIsExecuting(false);
+            if (setBuyFlowPaused) setBuyFlowPaused(false);
+
+            // Clean up the batch from kit after successful execution
+            cleanupBatch(fromChainId, 'success');
+
+            // Ensure we have a valid gas fee string
+            const gasFeeString =
+              gasCostNative && nativeTokenSymbol
+                ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+                : '≈ 0.00';
+
+            showTransactionStatus(userOpHash, gasFeeString);
+            return;
+          }
+
+          console.error('No userOpHash in batch send result');
+          throw new Error('No userOpHash returned after batch send');
+        }
+
+        console.error('Batch send failed:', sentBatch?.errorMessage);
+        throw new Error(sentBatch?.errorMessage || 'Batch send failed');
+      }
+
+      throw new Error('Failed to prepare buy transaction');
+    } catch (err) {
+      console.error('Failed to execute buy:', err);
+
+      // Clean up the batch from kit on any error
+      cleanupBatch(fromChainId, 'error');
+
+      // Check if the error is a user rejection
+      if (
+        err instanceof Error &&
+        err.message.includes('User rejected the request')
+      ) {
+        setIsTransactionRejected(true);
+        setIsWaitingForSignature(false);
+        setIsExecuting(false);
+      } else {
+        // Log error to Sentry - non-user-rejection errors only
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'execute_relay_buy',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+            fromChainId,
+            toChainId: buyToken?.chainId,
+          },
+          { operation_type: 'relay_buy' }
+        );
+        setIsWaitingForSignature(false);
+        setIsExecuting(false);
+      }
+
+      if (setBuyFlowPaused) setBuyFlowPaused(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Unified confirm handler
+  const handleConfirmBuy = async () => {
+    if (!buyToken || !expressIntentResponse) {
+      console.error('Missing required data to confirm buy');
+      return;
+    }
+
+    if (USE_RELAY_BUY) {
+      await executeBuyDirectly();
+    } else {
+      await shortlistBid();
+    }
+  };
+
   // Refresh function for PreviewBuy component
   const refreshPreviewBuyData = useCallback(async () => {
-    // If we're in PreviewBuy, we know:
-    // 1. Modules are installed (checked before opening preview)
-    // 2. Express intent was created successfully (we have expressIntentResponse)
-    // 3. All data is valid (buyToken, usdAmount, dispensableAssets exist)
-
-    // Only check for critical missing data
-    if (
-      !buyToken ||
-      !usdAmount ||
-      !intentSdk ||
-      !accountAddress ||
-      dispensableAssets.length === 0
-    ) {
+    // Pause both quote refresh and gas estimation while awaiting signature or executing
+    if (isWaitingForSignature || isExecuting) {
+      console.error(
+        'Cannot refresh preview while waiting for signature or executing'
+      );
       return;
     }
 
     setIsRefreshingPreview(true);
-    clearError();
     // Reset transaction states to allow retry
     setIsTransactionRejected(false);
     setIsWaitingForSignature(false);
+    setIsTransactionSuccess(false);
 
-    try {
-      // Create a new intent with updated deadline - exactly matching original logic
-      const intent: UserIntent = {
-        constraints: {
-          deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
-          desiredAssets: [
-            {
-              asset: getAddress(buyToken.address) as Hex,
-              chainId: BigInt(buyToken.chainId),
-              value: getDesiredAssetValue(
-                usdAmount,
-                buyToken.decimals,
-                buyToken.usdValue
-              ),
-            },
-          ],
-          dispensableAssets,
-          slippagePercentage: 3,
-        },
-        intentHash:
-          '0x000000000000000000000000000000000000000000000000000000000000000',
-        account: accountAddress as Hex,
-      };
+    if (USE_RELAY_BUY) {
+      // Relay Buy flow
+      if (
+        !buyToken ||
+        !usdAmount ||
+        !isRelayInitialized ||
+        !onBuyOfferUpdate ||
+        !fromChainId
+      ) {
+        setIsRefreshingPreview(false);
+        console.error('Missing required data to refresh Relay Buy preview');
+        return;
+      }
 
-      const response = await intentSdk.expressIntent(intent);
+      // Clean up any existing pulse-buy batch before refreshing
+      if (buyToken) {
+        cleanupBatch(fromChainId, 'refresh');
+      }
 
-      // Update the parent component with new response directly
-      setExpressIntentResponse(response);
-    } catch (err) {
-      console.error('Failed to refresh buy offer:', err);
-      // Error will be handled by the useIntentSdk hook
-    } finally {
-      setIsRefreshingPreview(false);
+      try {
+        // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
+        // The quote will tell us how many tokens we'll receive
+        const newOffer = await getBestOffer({
+          fromAmount: usdAmount,
+          toTokenAddress: buyToken.address,
+          toChainId: buyToken.chainId,
+          fromChainId,
+        });
+
+        onBuyOfferUpdate(newOffer);
+
+        // Also estimate gas fees after refreshing the offer
+        await estimateGasFees();
+      } catch (e) {
+        console.error('Failed to refresh buy offer:', e);
+
+        onBuyOfferUpdate(null);
+      } finally {
+        setIsRefreshingPreview(false);
+      }
+    } else {
+      // Intent SDK flow
+      if (
+        !buyToken ||
+        !usdAmount ||
+        !intentSdk ||
+        !accountAddress ||
+        dispensableAssets.length === 0
+      ) {
+        setIsRefreshingPreview(false);
+        console.error('Missing required data to refresh Intent SDK preview');
+        return;
+      }
+
+      clearError();
+
+      try {
+        // Create a new intent with updated deadline
+        const intent: UserIntent = {
+          constraints: {
+            deadline: BigInt(Math.floor(Date.now() / 1000)) + BigInt(60),
+            desiredAssets: [
+              {
+                asset: getAddress(buyToken.address) as Hex,
+                chainId: BigInt(buyToken.chainId),
+                value: getDesiredAssetValue(
+                  usdAmount,
+                  buyToken.decimals,
+                  buyToken.usdValue
+                ),
+              },
+            ],
+            dispensableAssets,
+            slippagePercentage: 3,
+          },
+          intentHash:
+            '0x000000000000000000000000000000000000000000000000000000000000000',
+          account: accountAddress as Hex,
+        };
+
+        const response = await intentSdk.expressIntent(intent);
+
+        // Update the parent component with new response
+        setExpressIntentResponse(response);
+      } catch (err) {
+        console.error('Failed to refresh buy offer:', err);
+        // Log error to Sentry
+        logPulseError(
+          err instanceof Error ? err : new Error(String(err)),
+          {
+            operation: 'refresh_intent_offer',
+            buyToken: buyToken?.symbol,
+            amount: usdAmount,
+          },
+          { operation_type: 'intent_sdk_refresh' }
+        );
+      } finally {
+        setIsRefreshingPreview(false);
+      }
     }
   }, [
     buyToken,
@@ -263,11 +615,32 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     dispensableAssets,
     setExpressIntentResponse,
     clearError,
+    isRelayInitialized,
+    onBuyOfferUpdate,
+    getBestOffer,
+    fromChainId,
+    isWaitingForSignature,
+    isExecuting,
+    estimateGasFees,
+    cleanupBatch,
+    USE_RELAY_BUY,
   ]);
 
-  // Auto-refresh buy offer every 15 seconds (disabled when waiting for signature)
+  // Auto-refresh buy offer every 15 seconds (disabled when waiting for signature or executing)
   useEffect(() => {
-    if (
+    if (USE_RELAY_BUY) {
+      // Relay Buy: check required dependencies
+      if (
+        !buyToken ||
+        !usdAmount ||
+        !isRelayInitialized ||
+        !onBuyOfferUpdate ||
+        !fromChainId
+      ) {
+        return undefined;
+      }
+    } else if (
+      // Intent SDK: check required dependencies
       !buyToken ||
       !usdAmount ||
       !intentSdk ||
@@ -277,8 +650,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       return undefined;
     }
 
-    // Don't auto-refresh when waiting for signature
-    if (isWaitingForSignature) {
+    // Don't auto-refresh when waiting for signature or executing transaction
+    if (isWaitingForSignature || isExecuting) {
       return undefined;
     }
 
@@ -295,6 +668,11 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     dispensableAssets,
     refreshPreviewBuyData,
     isWaitingForSignature,
+    isExecuting,
+    isRelayInitialized,
+    onBuyOfferUpdate,
+    fromChainId,
+    USE_RELAY_BUY,
   ]);
 
   if (!buyToken || !expressIntentResponse) {
@@ -315,24 +693,34 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     );
   }
 
-  const buyTokenAmount = buyToken?.usdValue
-    ? (Number(totalPay) / Number(buyToken.usdValue)).toFixed(6)
-    : '0.000000';
+  // For Intent SDK Buy: calculate from totalPay and token USD value
+  // For Relay Buy: use tokenAmountToReceive from the offer
+  let buyTokenAmount: string;
+  if (USE_RELAY_BUY) {
+    buyTokenAmount = buyOffer?.tokenAmountToReceive.toFixed(6) || '0.000000';
+  } else if (buyToken?.usdValue) {
+    buyTokenAmount = (Number(totalPay) / Number(buyToken.usdValue)).toFixed(6);
+  } else {
+    buyTokenAmount = '0.000000';
+  }
 
-  // Calculate minimum receive using the formula: Est. to amount × (1 - max.slippage)
+  // For Intent SDK Buy: calculate minimum receive and price impact manually
+  // For Relay Buy: use values from the offer
   const estimatedTokenAmount = Number(buyTokenAmount);
-  const maxSlippagePercentage = 3; // 3% slippage
+  const maxSlippagePercentage = USE_RELAY_BUY
+    ? (buyOffer?.slippageTolerance || 0.03) * 100 // Convert to percentage
+    : 3; // 3% slippage for Intent SDK
   const maxSlippageDecimal = maxSlippagePercentage / 100; // Convert to decimal (0.03)
-  const minimumReceiveAmount = estimatedTokenAmount * (1 - maxSlippageDecimal);
+  const minimumReceiveAmount = USE_RELAY_BUY
+    ? buyOffer?.minimumReceive ||
+      estimatedTokenAmount * (1 - maxSlippageDecimal)
+    : estimatedTokenAmount * (1 - maxSlippageDecimal);
 
   // Example: If estimated to receive 100 tokens with 3% slippage:
   // Minimum receive = 100 × (1 - 0.03) = 100 × 0.97 = 97 tokens
 
-  // Calculate price impact using the formula: (Total Received Value - Total Paid Value) / Total Paid Value × 100
-  // For buy operations:
-  // - Total Paid Value = USD amount being spent
-  // - Total Received Value = USD value of tokens actually received (estimated based on current market price)
-
+  // For Intent SDK Buy: Calculate price impact manually
+  // For Relay Buy: Use price impact from the offer
   const totalPaidValue = Number(totalPay); // USD amount being spent
   const totalReceivedValue =
     estimatedTokenAmount * Number(buyToken?.usdValue || 0); // USD value of tokens received
@@ -340,10 +728,15 @@ export default function PreviewBuy(props: PreviewBuyProps) {
   // Price impact calculation: (Total Received Value - Total Paid Value) / Total Paid Value × 100
   // Negative % means you're paying more than market rate (common due to slippage)
   // Positive % means you're getting more value than you paid (rare, usually arbitrage)
-  const priceImpact =
-    totalPaidValue > 0
-      ? ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100
-      : 0;
+  let priceImpact: number;
+  if (USE_RELAY_BUY) {
+    priceImpact = buyOffer?.priceImpact || 0;
+  } else if (totalPaidValue > 0) {
+    priceImpact =
+      ((totalReceivedValue - totalPaidValue) / totalPaidValue) * 100;
+  } else {
+    priceImpact = 0;
+  }
 
   return (
     <div className="flex flex-col w-full max-w-[446px] bg-[#1E1D24] border border-white/5 rounded-[10px] p-6">
@@ -385,9 +778,30 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       </div>
 
       <div className="flex flex-col w-full border border-[#25232D] rounded-[10px] p-3 mb-6">
-        {payingTokens.map((item) => (
-          <PayingToken payingToken={item} key={item.name} />
-        ))}
+        {USE_RELAY_BUY ? (
+          // For Relay Buy: Show USDC with amount from the offer
+          <PayingToken
+            payingToken={{
+              name: 'USDC',
+              symbol: 'USDC',
+              address:
+                buyOffer?.offer.details?.currencyIn?.currency?.address || '',
+              logo: UsdcLogo,
+              chainId: fromChainId || 1,
+              actualBal:
+                buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
+              totalRaw:
+                buyOffer?.offer.details?.currencyIn?.amountFormatted || '0',
+              totalUsd: parseFloat(usdAmount || '0'),
+            }}
+            key="usdc-relay-buy"
+          />
+        ) : (
+          // For Intent SDK Buy: Show all paying tokens
+          payingTokens.map((item) => (
+            <PayingToken payingToken={item} key={item.name} />
+          ))
+        )}
       </div>
 
       <div className="flex justify-between mb-3 text-[13px] font-normal text-white/50">
@@ -510,10 +924,12 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         )}
         {detailsEntry(
           'Gas fee',
-          '≈ $0.00',
+          USE_RELAY_BUY && gasCostNative && nativeTokenSymbol
+            ? `≈ ${formatExponentialSmallNumber(limitDigitsNumber(parseFloat(gasCostNative)))} ${nativeTokenSymbol}`
+            : '≈ $0.00',
           false,
           '',
-          false,
+          USE_RELAY_BUY ? isEstimatingGas : false,
           'Fee that will be deducted from your universal gas tank.'
         )}
       </div>
@@ -529,7 +945,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
         <div className="w-full rounded-[10px] bg-[#121116] p-[2px_2px_6px_2px]">
           <button
             className="flex items-center justify-center w-full rounded-[8px] h-[42px] p-[1px_6px_1px_6px] bg-[#8A77FF]"
-            onClick={shortlistBid}
+            onClick={handleConfirmBuy}
             disabled={isLoading}
             type="submit"
             data-testid="pulse-preview-buy-confirm-button"

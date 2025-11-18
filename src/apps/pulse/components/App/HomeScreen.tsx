@@ -36,11 +36,14 @@ import SettingsMenu from '../Settings/SettingsMenu';
 
 // hooks
 import useTransactionKit from '../../../../hooks/useTransactionKit';
+import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
 import useIntentSdk from '../../hooks/useIntentSdk';
 import useRelaySell, { SellOffer } from '../../hooks/useRelaySell';
+import { BuyOffer } from '../../hooks/useRelayBuy';
 
 // utils
 import { getStableCurrencyBalanceOnEachChain } from '../../utils/utils';
+import { logPulseError } from '../../utils/sentry';
 
 // types
 type TransactionStatusState =
@@ -98,6 +101,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   } = props;
   const { walletAddress: accountAddress } = useTransactionKit();
   const { getBestSellOffer, isInitialized } = useRelaySell();
+  const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
   const [previewBuy, setPreviewBuy] = useState(false);
   const [previewSell, setPreviewSell] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState(false);
@@ -136,8 +140,9 @@ export default function HomeScreen(props: HomeScreenProps) {
   const { intentSdk } = useIntentSdk({
     payingTokens,
   });
-  const [expressIntentResponse, setExpressIntentResponse] =
-    useState<ExpressIntentResponse | null>(null);
+  const [expressIntentResponse, setExpressIntentResponse] = useState<
+    ExpressIntentResponse | BuyOffer | null
+  >(null);
   const [sellOffer, setSellOffer] = useState<SellOffer | null>(null);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [isRefreshingHome, setIsRefreshingHome] = useState(false);
@@ -149,6 +154,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     (() => Promise<void>) | null
   >(null);
   const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
+  const [isBuyFlowPaused, setIsBuyFlowPaused] = useState<boolean>(false);
 
   // Transaction status polling state
   const [currentTransactionStatus, setCurrentTransactionStatus] =
@@ -287,9 +293,14 @@ export default function HomeScreen(props: HomeScreenProps) {
       );
   }, [selectedChainIdForSettlement, maxStableCoinBalance]);
 
+  // Callback to handle buy offer updates from Buy component or PreviewBuy refresh
+  const handleBuyOfferUpdate = useCallback((offer: BuyOffer | null) => {
+    setExpressIntentResponse(offer);
+  }, []);
+
   const handleRefresh = useCallback(async () => {
     // Prevent multiple simultaneous refresh calls
-    if (isRefreshingHome || isSellFlowPaused) {
+    if (isRefreshingHome || isSellFlowPaused || isBuyFlowPaused) {
       return;
     }
 
@@ -318,17 +329,42 @@ export default function HomeScreen(props: HomeScreenProps) {
           setSellOffer(newOffer);
         } catch (error) {
           console.error('Failed to refresh sell offer:', error);
+
+          // Log refresh sell offer errors
+          logPulseError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              operation: 'refresh_sell_offer',
+              sellToken: sellToken?.symbol,
+              amount: tokenAmount,
+              fromChainId: sellToken?.chainId,
+              toChainId: selectedChainIdForSettlement,
+            },
+            { operation_type: 'auto_refresh' }
+          );
+
           setSellOffer(null);
         }
       }
 
       // If we have the required data, refresh the buy intent
       // Only refresh if PreviewBuy is not open (to avoid duplicate calls)
-      if (isBuy && buyRefreshCallback && !previewBuy) {
+      if (isBuy && buyRefreshCallback && !previewBuy && !isBuyFlowPaused) {
         await buyRefreshCallback();
       }
     } catch (error) {
       console.error('Refresh failed:', error);
+
+      // Log general refresh failures (portfolio fetch errors)
+      logPulseError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'refresh_home_data',
+          isBuy,
+          hasToken: isBuy ? !!buyToken : !!sellToken,
+        },
+        { operation_type: 'auto_refresh' }
+      );
     } finally {
       setIsRefreshingHome(false);
     }
@@ -336,6 +372,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     refetchWalletPortfolio,
     isBuy,
     sellToken,
+    buyToken,
     tokenAmount,
     isInitialized,
     getBestSellOffer,
@@ -343,6 +380,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     previewBuy,
     isRefreshingHome,
     isSellFlowPaused,
+    isBuyFlowPaused,
     selectedChainIdForSettlement,
   ]);
 
@@ -649,6 +687,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       ? transactionData?.buyToken?.chainId || 1
       : transactionData?.sellToken?.chainId || 1;
     const isBuyTransaction = transactionData?.isBuy || false;
+
     if (!userOpHash || !chainId || (!isPollingActive && !isBackgroundPolling)) {
       return undefined;
     }
@@ -660,7 +699,7 @@ export default function HomeScreen(props: HomeScreenProps) {
       }
 
       try {
-        if (isBuyTransaction) {
+        if (isBuyTransaction && !USE_RELAY_BUY) {
           if (!intentSdk) {
             return;
           }
@@ -741,7 +780,16 @@ export default function HomeScreen(props: HomeScreenProps) {
             }
           }
         } else {
-          const response = await getUserOperationStatus(chainId, userOpHash);
+          const fromChainId =
+            USE_RELAY_BUY && isBuy
+              ? maxStableCoinBalance?.chainId || 1
+              : chainId;
+
+          const response = await getUserOperationStatus(
+            fromChainId,
+            userOpHash
+          );
+
           if (response?.status) {
             const newUserOpStatus = response.status as UserOpStatus;
             const newTransactionStatus =
@@ -805,6 +853,21 @@ export default function HomeScreen(props: HomeScreenProps) {
         }
       } catch (error) {
         console.error('Failed to get transaction status:', error);
+
+        // Log transaction status polling errors
+        logPulseError(
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            operation: 'poll_transaction_status',
+            userOpHash,
+            chainId: transactionData?.isBuy
+              ? transactionData?.buyToken?.chainId
+              : transactionData?.sellToken?.chainId,
+            isBuy: transactionData?.isBuy,
+          },
+          { operation_type: 'transaction_tracking' }
+        );
+
         setCurrentTransactionStatus('Transaction Failed');
         setErrorDetails(
           error instanceof Error
@@ -895,6 +958,10 @@ export default function HomeScreen(props: HomeScreenProps) {
             usdAmount={usdAmount}
             dispensableAssets={dispensableAssets}
             showTransactionStatus={showTransactionStatus}
+            fromChainId={maxStableCoinBalance?.chainId}
+            onBuyOfferUpdate={handleBuyOfferUpdate}
+            setBuyFlowPaused={setIsBuyFlowPaused}
+            userPortfolio={portfolioTokens}
           />
         </div>
       );
@@ -937,6 +1004,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             sellOffer={transactionData?.sellOffer}
             payingTokens={transactionData?.payingTokens}
             usdAmount={transactionData?.usdAmount}
+            useRelayBuy={USE_RELAY_BUY}
             // Externalized polling state
             currentStatus={currentTransactionStatus}
             errorDetails={errorDetails}
@@ -949,6 +1017,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             resourceLockChainId={resourceLockChainId}
             resourceLockCompletedAt={resourceLockCompletedAt}
             isResourceLockFailed={isResourceLockFailed}
+            fromChainId={maxStableCoinBalance?.chainId}
           />
         </div>
       );

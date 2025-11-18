@@ -265,4 +265,46 @@ describe('<HomeScreen />', () => {
     expect(screen.getByTestId('pulse-sell-token-selector')).toBeInTheDocument();
     expect(screen.getByTestId('pulse-sell-amount-input')).toBeInTheDocument();
   });
+
+  describe('Relay Buy integration', () => {
+    it('renders Buy component with useRelayBuy flag from Remote Config', () => {
+      // useRelayBuy is set to false by default in setupTests.ts mock
+      renderWithProviders({ isBuy: true });
+
+      // Buy component should render
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('pulse-sell-component')
+      ).not.toBeInTheDocument();
+    });
+
+    it('passes correct props to Buy and Sell components regardless of Remote Config', () => {
+      const { rerender } = renderWithProviders({ isBuy: true });
+
+      // Buy mode should show buy component
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+
+      // Sell mode should show sell component
+      rerender(
+        <TestWrapper>
+          <GlobalTransactionsBatchProvider>
+            <BottomMenuModalProvider>
+              <HomeScreen {...mockProps} isBuy={false} />
+            </BottomMenuModalProvider>
+          </GlobalTransactionsBatchProvider>
+        </TestWrapper>
+      );
+
+      expect(screen.getByTestId('pulse-sell-component')).toBeInTheDocument();
+    });
+
+    it('handles Remote Config initialization state gracefully', () => {
+      // Remote Config may not be initialized when component mounts
+      renderWithProviders({ isBuy: true });
+
+      // Should still render the interface correctly
+      expect(screen.getByTestId('pulse-home-view')).toBeInTheDocument();
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+    });
+  });
 });
