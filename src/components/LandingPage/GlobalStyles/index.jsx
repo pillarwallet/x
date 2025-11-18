@@ -1205,7 +1205,7 @@ ul li:last-child {
   min-width: 12rem !important;
 }
 
-.emailoctopus-success-message, .emailoctopus-error-message {
+[data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-error-message, [data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-success-message {
   color: var(--white) !important;
 }
 
