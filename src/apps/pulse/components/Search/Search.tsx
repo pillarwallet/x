@@ -109,7 +109,9 @@ export default function Search({
     if (relayBuyParam) {
       const newSearch = new URLSearchParams();
       newSearch.set('relayBuy', relayBuyParam);
-      navigate(`${location.pathname}?${newSearch.toString()}`, { replace: true });
+      navigate(`${location.pathname}?${newSearch.toString()}`, {
+        replace: true,
+      });
     } else {
       navigate(location.pathname, { replace: true });
     }
