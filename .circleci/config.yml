@@ -14,17 +14,18 @@ jobs:
       - checkout
 
       - run:
-          name: Install required tools
+          name: Install jq
           command: |
             apt-get update && apt-get install -y curl jq
 
       - run:
-          name: Checkout x-e2e repo and run Playwright tests
+          name: Checkout x-e2e repo and run tests
           no_output_timeout: 90m
           command: |
             cd ~
             git clone -b pillarx-playwright --single-branch https://$GITHUB_TOKEN@github.com/pillarwallet/x-e2e.git
             cd x-e2e
+            git pull
 
             touch .env
             sed -i "s|test_mail_email_value|$TESTMAIL_EMAIL|g" .env
@@ -41,15 +42,17 @@ jobs:
             npm run test:all
 
       - run:
-          name: Move Playwright artifacts
+          name: Move Playwright report + JSON results
           when: always
           command: |
             if [ -d "/root/x-e2e/blob-report" ]; then
               mv /root/x-e2e/blob-report /tmp/blob-report
+              chmod 777 -R /tmp/blob-report
             fi
 
             if [ -d "/root/x-e2e/test-results" ]; then
               mv /root/x-e2e/test-results /tmp/test-results
+              chmod 777 -R /tmp/test-results
             fi
 
       - store_artifacts:
@@ -61,56 +64,46 @@ jobs:
           when: always
 
       - run:
-          name: Parse Playwright results + Fetch artifact URL + Send Slack
+          name: Parse Playwright results and send Slack
           when: always
           command: |
             RESULTS_FILE="/tmp/test-results/.last-run.json"
 
             if [ ! -f "$RESULTS_FILE" ]; then
-              STATUS="unknown"
-              FAILED_TESTS="N/A"
-            else
-              STATUS=$(jq -r '.status' $RESULTS_FILE)
-              FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
+              echo ".last-run.json not found — cannot generate Slack report"
+              exit 0
             fi
 
-            # -----------------------------
-            # Fetch REAL S3 URL dynamically
-            # -----------------------------
-            ARTIFACT_URL=$(
-              curl -s \
-                -H "Circle-Token: $CIRCLECI_API_TOKEN" \
-                "https://circleci.com/api/v2/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/artifacts" \
-              | jq -r '.items[] | select(.path|contains("blob-report/index.html")) | .url'
-            )
+            STATUS=$(jq -r '.status' $RESULTS_FILE)
+            FAILED_TESTS=$(jq -r '.failedTests | join(", ")' $RESULTS_FILE)
 
-            if [ -z "$ARTIFACT_URL" ]; then
-              ARTIFACT_URL="(artifact not found)"
-            fi
-
+            # Correct Job URL
             JOB_URL="https://app.circleci.com/pipelines/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/workflows/${CIRCLE_WORKFLOW_ID}"
 
-            if [ "$STATUS" = "passed" ]; then
+            # Correct Artifact URL (blob-report)
+            REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/blob-report/index.html"
+
+            if [ "$STATUS" == "passed" ]; then
               SLACK_MESSAGE=":white_check_mark: All Playwright UI tests passed
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
             *Job:* <${JOB_URL}|Open Job>
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}%7C${CIRCLE_SHA1}>
-            *Report:* <${ARTIFACT_URL}|View HTML Report>"
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Report:* <${REPORT_URL}|View HTML Report>"
             else
-              SLACK_MESSAGE=":x: *Playwright UI Tests Failed*
+              SLACK_MESSAGE=":x: *Playwright UI Tests Failed :x:*
             *Project:* ${CIRCLE_PROJECT_REPONAME}
             *Triggered by:* ${CIRCLE_USERNAME}
             *Branch:* ${CIRCLE_BRANCH}
-            *Failed Tests:* ${FAILED_TESTS}
             *Job:* <${JOB_URL}|Open Job>
-            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}%7C${CIRCLE_SHA1}>
-            *Report:* <${ARTIFACT_URL}|View HTML Report>"
+            *Failed Tests:* ${FAILED_TESTS}
+            *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>
+            *Report:* <${REPORT_URL}|View HTML Report>"
             fi
 
             curl -X POST -H 'Content-type: application/json' \
-              --data "{\"text\":\"${SLACK_MESSAGE}\"}" $E2E_SLACK_WEBHOOK_URL
+              --data "{\"text\":\"${SLACK_MESSAGE//$'\n'/\\n}\"}" $E2E_SLACK_WEBHOOK_URL
 
 
 workflows:
