@@ -22,7 +22,6 @@ import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAva
 import useTransactionKit from '../../../../hooks/useTransactionKit';
 import { useRemoteConfig } from '../../../../hooks/useRemoteConfig';
 import useIntentSdk from '../../hooks/useIntentSdk';
-import useModularSdk from '../../hooks/useModularSdk';
 import useRelayBuy, { BuyOffer } from '../../hooks/useRelayBuy';
 
 // services
@@ -101,7 +100,15 @@ export default function Buy(props: BuyProps) {
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
-  const { intentSdk } = useIntentSdk();
+  const {
+    intentSdk,
+    areModulesInstalled,
+    isInstalling,
+    installModules,
+    isFetching,
+  } = useIntentSdk({
+    payingTokens,
+  });
 
   // Get feature flag from Firebase Remote Config
   const { useRelayBuy: USE_RELAY_BUY } = useRemoteConfig();
@@ -139,11 +146,6 @@ export default function Buy(props: BuyProps) {
         skip: !fromTokenAtlas || !tokenToSearch || !!token,
       }
     );
-
-  const { areModulesInstalled, isInstalling, installModules, isFetching } =
-    useModularSdk({
-      payingTokens,
-    });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [expressIntentResponse, setExpressIntentResponse] =
     useState<ExpressIntentResponse | null>(null);

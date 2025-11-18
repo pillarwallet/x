@@ -98,7 +98,9 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     intentSdk,
     error: intentError,
     clearError: clearIntentError,
-  } = useIntentSdk();
+  } = useIntentSdk({
+    payingTokens,
+  });
   const { walletAddress: accountAddress, kit } = useTransactionKit();
 
   // Get feature flag from Firebase Remote Config
