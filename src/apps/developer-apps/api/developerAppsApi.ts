@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+// utils
 import { addMiddleware } from '../../../store';
 import { isTestnet } from '../../../utils/blockchain';
 export interface DeveloperApp {

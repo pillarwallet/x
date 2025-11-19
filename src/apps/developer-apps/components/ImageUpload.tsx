@@ -1,4 +1,6 @@
 import React, { useRef, useState } from 'react';
+
+// utils
 import { fileToBase64, validateImageFile } from '../utils/imageUtils';
 
 interface ImageUploadProps {

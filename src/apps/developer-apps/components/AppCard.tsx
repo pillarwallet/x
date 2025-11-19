@@ -1,4 +1,6 @@
 import React from 'react';
+
+// types
 import { DeveloperApp } from '../api/developerAppsApi';
 
 interface AppCardProps {

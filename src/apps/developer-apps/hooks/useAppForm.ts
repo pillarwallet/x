@@ -1,5 +1,9 @@
 import { useState, useCallback } from 'react';
+
+// types
 import { DeveloperApp, DeveloperAppCreateRequest } from '../api/developerAppsApi';
+
+// utils
 import { validateEmail, validateUrl, validateAppId } from '../utils/validation';
 
 export interface AppFormData {

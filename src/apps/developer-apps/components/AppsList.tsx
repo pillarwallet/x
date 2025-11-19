@@ -1,7 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallets } from '@privy-io/react-auth';
+
+// api
 import { useGetAllDeveloperAppsQuery, useDeleteDeveloperAppMutation, useUpdateDeveloperAppMutation } from '../api/developerAppsApi';
+
+// components
 import AppCard from './AppCard';
 
 const AppsList: React.FC = () => {

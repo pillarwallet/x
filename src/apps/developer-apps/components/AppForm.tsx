@@ -1,13 +1,21 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallets } from '@privy-io/react-auth';
+
+// api
 import {
   useCreateDeveloperAppMutation,
   useUpdateDeveloperAppMutation,
   DeveloperApp,
 } from '../api/developerAppsApi';
+
+// hooks
 import { useAppForm } from '../hooks/useAppForm';
+
+// utils
 import { sanitizeAppId } from '../utils/validation';
+
+// components
 import ImageUpload from './ImageUpload';
 
 interface AppFormProps {

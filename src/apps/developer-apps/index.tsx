@@ -1,8 +1,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+
+// api
 import { useGetDeveloperAppQuery } from './api/developerAppsApi';
+
+// components
 import AppsList from './components/AppsList';
 import AppForm from './components/AppForm';
+
+// styles
 import './styles/developers.css';
 
 const CreateAppPage: React.FC = () => {
