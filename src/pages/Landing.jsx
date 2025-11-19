@@ -7,6 +7,7 @@ import '../styles/landing/tailwind.css';
 // components
 import { Header } from '../components/LandingPage/Header';
 import { Footer } from '../components/LandingPage/Footer';
+import { EmailOctopus } from '../components/LandingPage/EmailOctopus';
 
 // utils
 
@@ -81,22 +82,6 @@ export default function LandingPage() {
     }
     return undefined;
   }, [navigate]);
-
-  // Email Octopus Subscriber Form
-  useEffect(() => {
-    const container = document.getElementById('octopusForm');
-    if (!container) return;
-    container.innerHTML = '';
-    const script = document.createElement('script');
-    script.src =
-      'https://eomail5.com/form/6b7992da-c46a-11f0-9bf4-5919083e820b.js';
-    script.async = true;
-    script.setAttribute('data-form', '6b7992da-c46a-11f0-9bf4-5919083e820b');
-    container.appendChild(script);
-    return () => {
-      container.innerHTML = '';
-    };
-  }, []);
 
   // Show loading state if authenticating via React Native
   if (isLoadingAuth) {
@@ -315,7 +300,9 @@ export default function LandingPage() {
                 and exclusive announcements!
               </p>
               {/* Form */}
-              <div id="octopusForm" class="home_app__subscribe__form"></div>
+              <div className="home_app__subscribe__form">
+                <EmailOctopus />
+              </div>
             </div>
             <div className="home_app__download gradient_border">
               <div className="home_app__download__copy">

@@ -358,9 +358,12 @@ exports[`<Main /> > renders correctly 1`] = `
             Be the first to know about new features, smart token insights, and exclusive announcements!
           </p>
           <div
-            class="home_app__subscribe__form"
-            id="octopusForm"
-          />
+            className="home_app__subscribe__form"
+          >
+            <div
+              id="octopusForm"
+            />
+          </div>
         </div>
         <div
           className="home_app__download gradient_border"

@@ -180,17 +180,5 @@ exports[`<CardsSwap /> > Rendering and Snapshot > renders correctly and matches 
       </div>
     </div>
   </div>
-  <button
-    className="absolute self-center w-[34px] h-[34px] p-2 bg-white rounded-[3px] desktop:p-4 desktop:w-14 desktop:h-14"
-    id="switch-cards-button-exchange"
-    onClick={[Function]}
-    type="button"
-  >
-    <img
-      alt="swap-icon"
-      className="w-[18px] h-[18px] desktop:w-6 desktop:h-6"
-      src="/src/apps/the-exchange/images/arrow-swap-horizontal.png"
-    />
-  </button>
 </div>
 `;

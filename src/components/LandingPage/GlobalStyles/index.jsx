@@ -1205,8 +1205,9 @@ ul li:last-child {
   min-width: 12rem !important;
 }
 
-[data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-error-message, [data-form="6b7992da-c46a-11f0-9bf4-5919083e820b"] .emailoctopus-success-message {
-  color: var(--white) !important
+.emailoctopus-error-message, .emailoctopus-success-message {
+  color: var(--white) !important;
+  opacity: 0.7;
 }
 
 .home_app__subscribe .mailchimp_form {
