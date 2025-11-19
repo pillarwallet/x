@@ -1162,6 +1162,54 @@ ul li:last-child {
   }
 }
 
+.home_app__subscribe__form {
+  min-width: 34rem;
+  margin-top: -2em;
+  padding-bottom: 3.5rem;
+}
+
+@media only screen and (max-width: 767px) {
+  .home_app__subscribe__form {
+    min-width: 100%;
+    padding-bottom: 0;
+  }
+}
+
+.home_app__subscribe__form input[type=email] {
+  width: 100% !important;
+  background: #2a244d !important;
+  border-radius: 1.2rem !important;
+  font-size: 1.6rem !important;
+  border: 0 !important;
+  padding: 3rem 13.5rem 3rem 1.8rem !important;
+  font-family: var(--font-neue) !important;
+  color: var(--white) !important;
+}
+
+.home_app__subscribe__form input::placeholder {
+  color: var(--white) !important;
+  opacity: 0.6 !important;
+}
+
+.home_app__subscribe__form input[type=submit] {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  bottom: 15px;
+  font-family: var(--font-neue) !important;
+  border-radius: 1rem !important;
+  background: var(--white) !important;
+  color: var(--black) !important;
+  font-weight: 700 !important;
+  font-size: 1.7rem !important;
+  min-width: 12rem !important;
+}
+
+.emailoctopus-error-message, .emailoctopus-success-message {
+  color: var(--white) !important;
+  opacity: 0.7;
+}
+
 .home_app__subscribe .mailchimp_form {
   display: flex;
   flex-direction: column;
