@@ -478,7 +478,7 @@ const SendAssetModal = ({
                   )
                 : !resolvedProvider && !isDelegatedEoa
                   ? 'Connecting...'
-                  : isWrongChain
+                  : isWrongChain && !isDelegatedEoa
                     ? `Switch & Send`
                     : 'Send'}
             </button>
