@@ -383,7 +383,7 @@ const SendAssetModal = ({
           </div>
 
           {/* Chain Warning */}
-          {isWrongChain && (
+          {isWrongChain && !isDelegatedEoa && (
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
               <div className="flex items-start gap-2">
                 <span className="text-yellow-400 text-lg">⚠️</span>
@@ -478,7 +478,7 @@ const SendAssetModal = ({
                   )
                 : !resolvedProvider && !isDelegatedEoa
                   ? 'Connecting...'
-                  : isWrongChain
+                  : isWrongChain && !isDelegatedEoa
                     ? `Switch & Send`
                     : 'Send'}
             </button>
