@@ -30,9 +30,8 @@
 /* Form inputs focus ring */
 .developers-app input:focus,
 .developers-app textarea:focus {
-  ring-width: 2px;
-  ring-color: rgb(168, 85, 247);
-  ring-opacity: 0.5;
+  outline: 2px solid rgba(168, 85, 247, 0.5);
+  outline-offset: 2px;
 }
 
 /* Animations */

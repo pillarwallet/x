@@ -11,7 +11,7 @@ import AppCard from './AppCard';
 const AppsList: React.FC = () => {
   const navigate = useNavigate();
   const { wallets } = useWallets();
-  const eoaAddress = wallets[0]?.address;
+  const eoaAddress = wallets?.[0]?.address;
 
   const { data, isLoading, error } = useGetAllDeveloperAppsQuery({ eoaAddress });
   const [deleteApp, { isLoading: isDeleting }] = useDeleteDeveloperAppMutation();
@@ -19,9 +19,10 @@ const AppsList: React.FC = () => {
 
   const myApps = React.useMemo(() => {
     if (!data?.data || !eoaAddress) return [];
-    return data.data.filter(
-      (app) => app.ownerEoaAddress.toLowerCase() === eoaAddress.toLowerCase()
-    );
+    return data.data.filter((app) => {
+      if (!app.ownerEoaAddress || !eoaAddress) return false;
+      return app.ownerEoaAddress.toLowerCase() === eoaAddress.toLowerCase();
+    });
   }, [data, eoaAddress]);
 
   const handleEdit = (appId: string) => {

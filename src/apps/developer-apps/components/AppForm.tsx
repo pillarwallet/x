@@ -66,14 +66,6 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
         // For updates, exclude appId from the data to be signed
         const { appId, ownerEoaAddress, ...updateData } = prepareSubmitData(eoaAddress);
         
-        console.log('📝 UPDATE - Data being sent for update:', {
-          appId: existingApp.appId,
-          data: {
-            ownerEoaAddress: eoaAddress,
-            ...updateData,
-          }
-        });
-        
         await updateApp({
           appId: existingApp.appId,
           data: {
