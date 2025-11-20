@@ -72,7 +72,7 @@ export interface ApiResponse<T> {
 }
 
 const baseUrl = isTestnet
-  ? 'http://localhost:5000/pillarx-staging/us-central1/developerApps'
+  ? 'https://developerapps-nubpgwxpiq-uc.a.run.app'
   : 'https://developerapps-7eu4izffpa-uc.a.run.app';
 
 export const developerAppsApi = createApi({
