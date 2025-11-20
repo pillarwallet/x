@@ -25,7 +25,7 @@ import { SelectedToken } from '../types/tokens';
 import { Token } from '../../../services/tokensData';
 import { getNetworkViem } from '../../deposit/utils/blockchain';
 import { toWei } from '../../the-exchange/utils/blockchain';
-import { getWrappedTokenAddressIfNative } from '../../the-exchange/utils/wrappedTokens';
+import { isNativeToken } from '../../the-exchange/utils/wrappedTokens';
 
 export interface BuyOffer {
   tokenAmountToReceive: number;
@@ -144,13 +144,14 @@ export default function useRelayBuy() {
 
       try {
         /**
-         * Step 1: Handle wrapped token conversion
-         * Replace native token addresses with their wrapped equivalents
+         * Step 1: Handle native token address normalization
+         * For buy operations, we want users to receive native tokens (ETH, BNB, etc.)
+         * Relay SDK uses zero address (0x0000...) to represent native tokens
+         * Convert any native token placeholder addresses to zero address
          */
-        const toTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
-          toTokenAddress,
-          toChainId
-        );
+        const normalizedToTokenAddress = isNativeToken(toTokenAddress)
+          ? '0x0000000000000000000000000000000000000000'
+          : toTokenAddress;
 
         /**
          * Step 2: Convert USD amount to USDC wei (6 decimals)
@@ -177,14 +178,6 @@ export default function useRelayBuy() {
           setIsLoading(false);
           return null;
         }
-
-        // Create quote request for Relay SDK
-        // Handle native ETH - use zero address instead of 0xeeee...
-        const normalizedToTokenAddress =
-          toTokenAddressWithWrappedCheck ===
-          '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-            ? '0x0000000000000000000000000000000000000000'
-            : toTokenAddressWithWrappedCheck;
 
         const quoteRequest = {
           user: accountAddress,
