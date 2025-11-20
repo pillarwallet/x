@@ -60,7 +60,8 @@ const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
       if (mode === 'create') {
         const data = prepareSubmitData(eoaAddress);
         await createApp(data).unwrap();
-        navigate('/developer-apps');
+        alert(`PillarX needs to be reloaded for ${formData.name} to be available in the Action Bar apps pane.`);
+        window.location.reload();
       } else if (existingApp) {
         // For updates, exclude appId from the data to be signed
         const { appId, ownerEoaAddress, ...updateData } = prepareSubmitData(eoaAddress);
