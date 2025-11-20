@@ -60,9 +60,9 @@ developers/
 
 The app uses the following route structure:
 
-- `/app/developers` - List of all user's apps
-- `/app/developers/create` - Create new app form
-- `/app/developers/edit/:appId` - Edit existing app form
+- `/developer-apps` - List of all user's apps
+- `/developer-apps/create` - Create new app form
+- `/developer-apps/edit/:appId` - Edit existing app form
 
 ## Components
 

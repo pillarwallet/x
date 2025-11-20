@@ -61,7 +61,7 @@ const EditAppPage: React.FC = () => {
         <h2 className="text-xl font-bold text-white mb-2">App Not Found</h2>
         <p className="text-gray-400 mb-6">The app you're looking for doesn't exist.</p>
         <a
-          href="/app/developers"
+          href="/app/developer-apps"
           className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white rounded-lg font-medium transition-all duration-300"
         >
           Back to My Apps
@@ -81,7 +81,7 @@ const DevelopersApp: React.FC = () => {
           <Route index element={<AppsList />} />
           <Route path="create" element={<CreateAppPage />} />
           <Route path="edit/:appId" element={<EditAppPage />} />
-          <Route path="*" element={<Navigate to="/app/developers" replace />} />
+          <Route path="*" element={<Navigate to="/app/developer-apps" replace />} />
         </Routes>
       </div>
     </div>

@@ -71,7 +71,7 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
 
         const { data } = await axios.get(
           isTestnet
-            ? 'http://localhost:5000/pillarx-staging/us-central1/apps'
+            ? 'https://apps-nubpgwxpiq-uc.a.run.app'
             : 'https://apps-7eu4izffpa-uc.a.run.app',
           {
             params: {
