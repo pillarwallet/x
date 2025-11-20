@@ -32,7 +32,7 @@ remoteConfig.settings = {
 
 // Set default values for remote config
 remoteConfig.defaultConfig = {
-  USE_RELAY_BUY: false,
+  USE_RELAY_BUY: true,
 };
 
 // Initialize and fetch remote config
@@ -59,6 +59,6 @@ export const getUseRelayBuyFlag = (): boolean => {
   } catch (error) {
     console.error('Failed to get USE_RELAY_BUY from Remote Config:', error);
     // Return default value
-    return false;
+    return true;
   }
 };

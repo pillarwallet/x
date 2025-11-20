@@ -78,6 +78,7 @@ interface BuyProps {
   >;
   setBuyToken?: Dispatch<SetStateAction<SelectedToken | null>>;
   setChains: Dispatch<SetStateAction<MobulaChainNames>>;
+  usdcPrice?: number; // For Relay Buy: USDC price from portfolio (passed from HomeScreen)
 }
 
 export default function Buy(props: BuyProps) {
@@ -97,6 +98,7 @@ export default function Buy(props: BuyProps) {
     setChains,
     maxStableCoinBalance,
     customBuyAmounts,
+    usdcPrice,
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
@@ -291,6 +293,7 @@ export default function Buy(props: BuyProps) {
           toTokenAddress: token.address,
           toChainId: token.chainId,
           fromChainId: maxStableCoinBalance.chainId,
+          usdcPrice,
         });
 
         setBuyOffer(offer);
@@ -329,6 +332,7 @@ export default function Buy(props: BuyProps) {
     isRelayInitialized,
     getBestOffer,
     maxStableCoinBalance.chainId,
+    usdcPrice,
   ]);
 
   // Intent SDK: Refresh buy intent
@@ -797,6 +801,7 @@ export default function Buy(props: BuyProps) {
           payingTokens={payingTokens}
           token={token}
           usdAmount={usdAmount}
+          useRelayBuy={USE_RELAY_BUY}
         />
       </div>
     </div>

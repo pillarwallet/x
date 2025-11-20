@@ -33,7 +33,7 @@ const getRelayBuyFromUrl = (): boolean | null => {
  */
 export const useRemoteConfig = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [useRelayBuy, setUseRelayBuy] = useState(false);
+  const [useRelayBuy, setUseRelayBuy] = useState(true);
 
   useEffect(() => {
     const initialize = async () => {

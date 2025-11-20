@@ -110,6 +110,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
     chainId: number;
     balance: number;
+    price?: number;
   }>();
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
@@ -155,6 +156,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   >(null);
   const [isSellFlowPaused, setIsSellFlowPaused] = useState<boolean>(false);
   const [isBuyFlowPaused, setIsBuyFlowPaused] = useState<boolean>(false);
+  const [usdcPrice, setUsdcPrice] = useState<number | undefined>();
 
   // Transaction status polling state
   const [currentTransactionStatus, setCurrentTransactionStatus] =
@@ -217,12 +219,22 @@ export default function HomeScreen(props: HomeScreenProps) {
     }
     const stableBalance =
       getStableCurrencyBalanceOnEachChain(walletPortfolioData);
-    const maxStableBalance = Math.max(...Object.values(stableBalance));
+    const maxStableBalance = Math.max(
+      ...Object.values(stableBalance).map((s) => s.balance)
+    );
     const chainIdOfMaxStableBalance = Number(
       Object.keys(stableBalance).find(
-        (key) => stableBalance[Number(key)] === maxStableBalance
+        (key) => stableBalance[Number(key)].balance === maxStableBalance
       ) || '1'
     );
+
+    // Set USDC price from the chain with max stable balance
+    const usdcPriceForMaxChain =
+      stableBalance[chainIdOfMaxStableBalance]?.price;
+    if (usdcPriceForMaxChain) {
+      setUsdcPrice(usdcPriceForMaxChain);
+    }
+
     setMaxStableCoinBalance({
       chainId: chainIdOfMaxStableBalance,
       balance: maxStableBalance,
@@ -962,6 +974,7 @@ export default function HomeScreen(props: HomeScreenProps) {
             onBuyOfferUpdate={handleBuyOfferUpdate}
             setBuyFlowPaused={setIsBuyFlowPaused}
             userPortfolio={portfolioTokens}
+            usdcPrice={usdcPrice}
           />
         </div>
       );
@@ -1126,6 +1139,7 @@ export default function HomeScreen(props: HomeScreenProps) {
                   setBuyRefreshCallback={setBuyRefreshCallback}
                   setBuyToken={setBuyToken}
                   setChains={setChains}
+                  usdcPrice={usdcPrice}
                 />
               ) : (
                 <Sell
