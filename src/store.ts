@@ -15,6 +15,8 @@ import leaderboardSlice from './apps/leaderboard/reducer/LeaderboardSlice';
 import walletPortfolioSlice from './apps/pillarx-app/reducer/WalletPortfolioSlice';
 import swapSlice from './apps/the-exchange/reducer/theExchangeSlice';
 import tokenAtlasSlice from './apps/token-atlas/reducer/tokenAtlasSlice';
+import emcdSwapSlice from './apps/emcd-swap/reducer/emcdSwapSlice';
+import emcdSwapToastSlice from './apps/emcd-swap/reducer/emcdSwapToastSlice';
 import { pillarXApiPresence } from './services/pillarXApiPresence';
 import { pillarXApiTransactionsHistory } from './services/pillarXApiTransactionsHistory';
 import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
@@ -87,6 +89,8 @@ addMiddleware(pillarXApiTransactionsHistory);
 addReducer(swapSlice);
 addReducer(tokenAtlasSlice);
 addReducer(depositSlice);
+addReducer(emcdSwapSlice);
+addReducer(emcdSwapToastSlice);
 addReducer(walletPortfolioSlice);
 addReducer(leaderboardSlice);
 
