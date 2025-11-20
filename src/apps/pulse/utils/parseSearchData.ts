@@ -14,6 +14,30 @@ import {
 import { parseNumberString } from './number';
 import { isWrappedNativeToken } from '../../../utils/blockchain';
 
+// Optimism uses this special address for native ETH in Mobula API
+const OP_NATIVE_MOBULA = '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000';
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+const OPTIMISM_CHAIN_ID = 10;
+
+/**
+ * Normalize contract address for native tokens
+ * Optimism native ETH uses a special address in Mobula, we need to convert it to zero address
+ */
+const normalizeContractAddress = (
+  contract: string,
+  symbol: string,
+  chainId: number
+): string => {
+  if (
+    contract.toLowerCase() === OP_NATIVE_MOBULA.toLowerCase() &&
+    symbol === 'ETH' &&
+    chainId === OPTIMISM_CHAIN_ID
+  ) {
+    return ZERO_ADDRESS;
+  }
+  return contract;
+};
+
 export type Asset = {
   name: string;
   symbol: string;
@@ -42,6 +66,11 @@ export function parseAssetData(
     ) {
       const chainId = chainNameToChainIdTokensData(blockchains[i]);
       const contractAddress = contracts[i];
+      const normalizedContract = normalizeContractAddress(
+        contractAddress,
+        asset.symbol,
+        chainId
+      );
 
       // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
       if (!isWrappedNativeToken(contractAddress, chainId)) {
@@ -55,7 +84,7 @@ export function parseAssetData(
           liquidity: asset.liquidity,
           chain: blockchains[i],
           decimals: decimals[i],
-          contract: contracts[i],
+          contract: normalizedContract,
           priceChange24h: asset.price_change_24h,
         });
       }
@@ -72,6 +101,11 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
     if (MOBULA_CHAIN_NAMES.includes(blockchains[i])) {
       const chainId = chainNameToChainIdTokensData(blockchains[i]);
       const contractAddress = contracts[i];
+      const normalizedContract = normalizeContractAddress(
+        contractAddress,
+        asset.symbol,
+        chainId
+      );
 
       // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
       if (!isWrappedNativeToken(contractAddress, chainId)) {
@@ -85,7 +119,7 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
           liquidity: asset.liquidity,
           chain: blockchains[i],
           decimals: decimals[i],
-          contract: contracts[i],
+          contract: normalizedContract,
           priceChange24h: asset.price_change_24h,
         });
       }
@@ -121,12 +155,18 @@ export function parseFreshAndTrendingTokens(
     if (rows) {
       for (const j of rows) {
         const contractAddress = j.leftColumn?.line1?.copyLink || '';
+        const symbol = j.leftColumn?.line1?.text2 || '';
+        const normalizedContract = normalizeContractAddress(
+          contractAddress,
+          symbol,
+          +chainId
+        );
 
         // Filter out wrapped native tokens (WETH, WBNB, WPOL, etc.) from search results
         if (!isWrappedNativeToken(contractAddress, +chainId)) {
           res.push({
             chain: getChainName(+chainId),
-            contract: contractAddress,
+            contract: normalizedContract,
             decimals: j.meta?.tokenData.decimals || 18,
             liquidity: parseNumberString(
               j.leftColumn?.line2?.liquidity || '0.00K'
@@ -137,7 +177,7 @@ export function parseFreshAndTrendingTokens(
             priceChange24h:
               Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
               (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
-            symbol: j.leftColumn?.line1?.text2 || '',
+            symbol,
             volume: parseNumberString(j.leftColumn?.line2?.volume || '0.00K'),
             mCap: j.meta?.tokenData.marketCap || 0,
             timestamp: j.leftColumn?.line2?.timestamp,

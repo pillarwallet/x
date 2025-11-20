@@ -67,6 +67,7 @@ interface PreviewBuyProps {
   onBuyOfferUpdate?: (offer: BuyOffer | null) => void; // For Relay Buy: callback to update offer
   setBuyFlowPaused?: (paused: boolean) => void; // For Relay Buy: pause background refresh
   userPortfolio?: Token[]; // For Relay Buy: user's token portfolio
+  usdcPrice?: number; // For Relay Buy: USDC price in USD (e.g., 0.9998)
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -83,6 +84,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     onBuyOfferUpdate,
     setBuyFlowPaused,
     userPortfolio,
+    usdcPrice,
   } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -534,6 +536,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
           toTokenAddress: buyToken.address,
           toChainId: buyToken.chainId,
           fromChainId,
+          usdcPrice,
         });
 
         onBuyOfferUpdate(newOffer);
@@ -624,6 +627,7 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     estimateGasFees,
     cleanupBatch,
     USE_RELAY_BUY,
+    usdcPrice,
   ]);
 
   // Auto-refresh buy offer every 15 seconds (disabled when waiting for signature or executing)

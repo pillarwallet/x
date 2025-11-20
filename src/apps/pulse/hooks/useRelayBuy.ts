@@ -25,7 +25,7 @@ import { SelectedToken } from '../types/tokens';
 import { Token } from '../../../services/tokensData';
 import { getNetworkViem } from '../../deposit/utils/blockchain';
 import { toWei } from '../../the-exchange/utils/blockchain';
-import { getWrappedTokenAddressIfNative } from '../../the-exchange/utils/wrappedTokens';
+import { isNativeToken } from '../../the-exchange/utils/wrappedTokens';
 
 export interface BuyOffer {
   tokenAmountToReceive: number;
@@ -41,6 +41,7 @@ interface BuyParams {
   toChainId: number;
   fromChainId: number;
   slippage?: number;
+  usdcPrice?: number; // USDC price in USD (e.g., 0.9998), defaults to 1.0 if not provided
 }
 
 export default function useRelayBuy() {
@@ -127,6 +128,7 @@ export default function useRelayBuy() {
       toChainId,
       fromChainId,
       slippage = 0.03,
+      usdcPrice = 1.0,
     }: BuyParams): Promise<BuyOffer | null> => {
       if (!isInitialized) {
         setError('Unable to get quote. Please try again.');
@@ -144,47 +146,40 @@ export default function useRelayBuy() {
 
       try {
         /**
-         * Step 1: Handle wrapped token conversion
-         * Replace native token addresses with their wrapped equivalents
+         * Step 1: Handle native token address normalization
+         * For buy operations, we want users to receive native tokens (ETH, BNB, etc.)
+         * Relay SDK uses zero address (0x0000...) to represent native tokens
+         * Convert any native token placeholder addresses to zero address
          */
-        const toTokenAddressWithWrappedCheck = getWrappedTokenAddressIfNative(
-          toTokenAddress,
-          toChainId
-        );
+        const normalizedToTokenAddress = isNativeToken(toTokenAddress)
+          ? '0x0000000000000000000000000000000000000000'
+          : toTokenAddress;
 
         /**
-         * Step 2: Convert USD amount to USDC wei (6 decimals)
-         * This is the exact amount of USDC the user wants to spend
-         * We need to handle cases where fromAmount has more than 6 decimals
+         * Step 2: Convert USD amount to USDC amount using actual USDC price
+         * fromAmount is in USD, we need to convert to USDC amount
+         * Then convert to USDC's smallest unit (6 decimals)
+         * Example: $10 USD / $0.9998 USDC price = 10.002 USDC = 10002000 in wei
          */
         let fromAmountInWei: bigint;
         try {
-          // Check if fromAmount has more than 6 decimal places
-          const decimalPlaces = fromAmount.includes('.')
-            ? fromAmount.split('.')[1].length
-            : 0;
-
-          if (decimalPlaces > 6) {
-            // Round to 6 decimal places to match USDC precision
-            const roundedAmount = parseFloat(fromAmount).toFixed(6);
-            fromAmountInWei = parseUnits(roundedAmount, 6);
-          } else {
-            fromAmountInWei = parseUnits(fromAmount, 6);
+          const usdAmount = parseFloat(fromAmount);
+          if (Number.isNaN(usdAmount) || usdAmount <= 0) {
+            throw new Error('Invalid amount');
           }
+
+          // Convert USD to USDC amount using actual USDC price
+          // If USDC price is $0.9998, then $10 USD = 10 / 0.9998 = 10.002 USDC
+          const usdcAmount = usdAmount / usdcPrice;
+
+          // Convert to wei using 6 decimals (USDC precision)
+          fromAmountInWei = parseUnits(usdcAmount.toFixed(6), 6);
         } catch (parseError) {
           console.error('Failed to parse fromAmount:', parseError);
           setError('Invalid amount. Please try again.');
           setIsLoading(false);
           return null;
         }
-
-        // Create quote request for Relay SDK
-        // Handle native ETH - use zero address instead of 0xeeee...
-        const normalizedToTokenAddress =
-          toTokenAddressWithWrappedCheck ===
-          '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-            ? '0x0000000000000000000000000000000000000000'
-            : toTokenAddressWithWrappedCheck;
 
         const quoteRequest = {
           user: accountAddress,
