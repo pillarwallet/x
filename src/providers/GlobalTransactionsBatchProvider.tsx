@@ -76,12 +76,14 @@ const GlobalTransactionsBatchProvider = ({
         );
       });
 
-      // Filter out pulse-sell and paymaster-batch from the count
-      // - pulse-sell batches are handled directly in the Pulse app
+      // Filter out pulse-sell, pulse-buy and paymaster-batch from the count
+      // - pulse-sell and pulse-buy batches are handled directly in the Pulse app
       // - paymaster-batch are internal and should not be displayed in batch counts
       const filteredBatches = Object.keys(batches).filter(
         (batchName) =>
-          !batchName.includes('pulse-sell') && batchName !== 'paymaster-batch'
+          !batchName.includes('pulse-sell') &&
+          !batchName.includes('pulse-buy') &&
+          batchName !== 'paymaster-batch'
       );
       setBatchCount(filteredBatches.length);
     }, 1000);

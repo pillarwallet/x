@@ -32,15 +32,14 @@
     ></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        HypeLab.initialize({
-          environment: 'production',
-          propertySlug: 'a65fb2bbbb',
-          /* Optionally disable wallet detection:
-          privacy: {
-            disable_wallet_detection: true
-          }
-          */
-        });
+        try {
+          HypeLab.initialize({
+            environment: 'production',
+            propertySlug: 'a65fb2bbbb',
+          });
+        } catch (error) {
+          console.warn('Error initializing HypeLab:', error);
+        }
       });
     </script>
     <meta charset="utf-8" />

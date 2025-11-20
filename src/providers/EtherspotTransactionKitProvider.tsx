@@ -10,12 +10,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import type { WalletProviderLike } from '../types/walletProvider';
 
 export interface EtherspotTransactionKitContextType {
   data: {
     kit: EtherspotTransactionKit;
     walletAddress: string | undefined;
     setWalletAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+    walletProvider: WalletProviderLike | undefined;
   };
 }
 
@@ -32,6 +34,13 @@ export const EtherspotTransactionKitProvider: React.FC<
 > = ({ config, children }) => {
   const [walletAddress, setWalletAddress] = useState<string>();
   const kitRef = useRef<EtherspotTransactionKit | null>(null);
+  const [externalProvider, setExternalProvider] = useState<
+    WalletProviderLike | undefined
+  >(() =>
+    'provider' in config
+      ? (config as { provider?: WalletProviderLike }).provider
+      : undefined
+  );
 
   // Create kit with config
   const kit = useMemo(() => {
@@ -56,13 +65,22 @@ export const EtherspotTransactionKitProvider: React.FC<
     getWalletAddress();
   }, [kit]);
 
+  useEffect(() => {
+    setExternalProvider(
+      'provider' in config
+        ? (config as { provider?: WalletProviderLike }).provider
+        : undefined
+    );
+  }, [config]);
+
   const contextData = useMemo(
     () => ({
       walletAddress,
       setWalletAddress,
       kit,
+      walletProvider: externalProvider,
     }),
-    [walletAddress, kit]
+    [walletAddress, kit, externalProvider]
   );
 
   return (

@@ -7,7 +7,7 @@ import '../styles/landing/tailwind.css';
 // components
 import { Header } from '../components/LandingPage/Header';
 import { Footer } from '../components/LandingPage/Footer';
-import { MailChimp } from '../components/LandingPage/MailChimp';
+import { EmailOctopus } from '../components/LandingPage/EmailOctopus';
 
 // utils
 
@@ -300,7 +300,9 @@ export default function LandingPage() {
                 and exclusive announcements!
               </p>
               {/* Form */}
-              <MailChimp />
+              <div className="home_app__subscribe__form">
+                <EmailOctopus />
+              </div>
             </div>
             <div className="home_app__download gradient_border">
               <div className="home_app__download__copy">

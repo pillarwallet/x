@@ -90,6 +90,51 @@ Object.defineProperty(window, 'scrollTo', {
 
 vi.mock('@firebase/app');
 vi.mock('@firebase/analytics');
+vi.mock('@firebase/remote-config', () => ({
+  getRemoteConfig: vi.fn(() => ({
+    settings: {},
+    defaultConfig: {},
+    lastFetchStatus: 'success',
+    fetchTimeMillis: Date.now(),
+  })),
+  fetchAndActivate: vi.fn().mockResolvedValue(true),
+  getBoolean: vi.fn(() => false),
+}));
+
+// Mock the firebase service module
+vi.mock('../services/firebase', () => ({
+  firebaseAnalytics: {},
+  remoteConfig: {
+    settings: {},
+    defaultConfig: { USE_RELAY_BUY: false },
+    lastFetchStatus: 'success',
+    fetchTimeMillis: Date.now(),
+  },
+  initializeRemoteConfig: vi.fn().mockResolvedValue(undefined),
+  getUseRelayBuyFlag: vi.fn(() => false),
+}));
+
+// Mock the useRemoteConfig hook
+vi.mock('../hooks/useRemoteConfig', () => ({
+  useRemoteConfig: vi.fn(() => ({
+    isInitialized: true,
+    useRelayBuy: false,
+  })),
+  getUseRelayBuy: vi.fn(() => false),
+}));
+
+// Mock the useGlobalTransactionsBatch hook
+vi.mock('../hooks/useGlobalTransactionsBatch', () => ({
+  default: vi.fn(() => ({
+    walletConnectTxHash: undefined,
+    setWalletConnectTxHash: vi.fn(),
+    transactionMeta: {},
+    setTransactionMetaForName: vi.fn(),
+    batchCount: 0,
+    setBatchCount: vi.fn(),
+  })),
+}));
+
 vi.mock('axios');
 vi.mock('@etherspot/data-utils');
 vi.mock('@etherspot/modular-sdk');

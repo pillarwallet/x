@@ -79,8 +79,9 @@ const SendModalBatchesTabView = () => {
     > = {};
     Object.entries(batches).forEach(([batchName, transactions]) => {
       if (!transactions.length) return;
-      // Skip pulse-sell batches - they are handled directly in the Pulse app
+      // Skip pulse-sell and pulse-buy batches - they are handled directly in the Pulse app
       if (batchName.includes('pulse-sell')) return;
+      if (batchName.includes('pulse-buy')) return;
       // Skip paymaster-batch - these are internal and should not be displayed in batches view
       if (batchName === 'paymaster-batch') return;
       const { chainId } = transactions[0];
@@ -742,7 +743,8 @@ const SendModalBatchesTabView = () => {
               ({ batchName }) =>
                 batchName &&
                 batchName !== 'batch-undefined' &&
-                !batchName.includes('pulse-sell')
+                !batchName.includes('pulse-sell') &&
+                !batchName.includes('pulse-buy')
             )
             .map(({ batchName, transactions }) => (
               <div key={batchName} id={`batch-${batchName}`}>

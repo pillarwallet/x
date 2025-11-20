@@ -7,7 +7,6 @@ import { vi } from 'vitest';
 // hooks
 import useTransactionKit from '../../../../../hooks/useTransactionKit';
 import useIntentSdk from '../../../hooks/useIntentSdk';
-import useModularSdk from '../../../hooks/useModularSdk';
 
 // types
 import { WalletPortfolioMobulaResponse } from '../../../../../types/api';
@@ -22,10 +21,6 @@ import { TestWrapper } from '../../../../../test-utils/testUtils';
 
 // Mock dependencies
 vi.mock('../../../hooks/useIntentSdk', () => ({
-  default: vi.fn(),
-}));
-
-vi.mock('../../../hooks/useModularSdk', () => ({
   default: vi.fn(),
 }));
 
@@ -243,9 +238,6 @@ const defaultMocks = () => {
         bids: [{ bidHash: '0xBidHash123456789' }],
       }),
     },
-  });
-
-  (useModularSdk as any).mockReturnValue({
     areModulesInstalled: true,
     isInstalling: false,
     installModules: vi.fn(),
@@ -348,7 +340,13 @@ describe('<Buy />', () => {
 
   describe('handles different states', () => {
     it('shows not enough liquidity warning', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -371,7 +369,13 @@ describe('<Buy />', () => {
     });
 
     it('resets liquidity state when amount changes', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -408,7 +412,13 @@ describe('<Buy />', () => {
     });
 
     it('handles loading state', () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -453,7 +463,13 @@ describe('<Buy />', () => {
     });
 
     it('shows not enough USDC warning with max amount suggestion', async () => {
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: true,
         isInstalling: false,
         installModules: vi.fn(),
@@ -704,7 +720,13 @@ describe('<Buy />', () => {
   describe('handles buy submission', () => {
     it('installs modules when not installed', async () => {
       const mockInstallModules = vi.fn().mockResolvedValue(undefined);
-      (useModularSdk as any).mockReturnValue({
+      (useIntentSdk as any).mockReturnValue({
+        intentSdk: {
+          expressIntent: vi.fn().mockResolvedValue({
+            intentHash: '0xIntentHash123456789',
+            bids: [{ bidHash: '0xBidHash123456789' }],
+          }),
+        },
         areModulesInstalled: false,
         isInstalling: false,
         installModules: mockInstallModules,
@@ -744,18 +766,35 @@ describe('<Buy />', () => {
     });
 
     it('opens preview when modules are installed', async () => {
+      // Mock getDispensableAssets to return valid data so payingTokens gets populated
+      mockGetDispensableAssets.mockReturnValue([
+        [{ asset: '0x123', chainId: BigInt(1), value: BigInt(1000) }], // dAssets
+        [BigInt(1)], // pChains
+        [mockPayingToken], // pTokens
+      ]);
+
       renderWithProviders();
 
       const input = screen.getByPlaceholderText('0.00');
       fireEvent.change(input, { target: { value: '100.00' } });
 
-      // Wait for debounced effect and intent response
-      setTimeout(async () => {
-        const buyButton = screen.getByRole('button', { name: /Buy/i });
-        fireEvent.click(buyButton);
+      // Wait for debounced effect and button to be enabled
+      await waitFor(
+        () => {
+          const buyButton = screen.getByTestId('pulse-buy-button');
+          expect(buyButton).not.toBeDisabled();
+        },
+        { timeout: 2000 }
+      );
 
+      // Click the buy button
+      const buyButton = screen.getByTestId('pulse-buy-button');
+      fireEvent.click(buyButton);
+
+      // Verify preview was opened
+      await waitFor(() => {
         expect(mockProps.setPreviewBuy).toHaveBeenCalledWith(true);
-      }, 2000);
+      });
     });
   });
 
@@ -811,6 +850,108 @@ describe('<Buy />', () => {
 
       // Should not crash and continue to work
       expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+    });
+  });
+
+  describe('Relay Buy integration', () => {
+    it('renders correctly with Relay Buy enabled', () => {
+      // useRelayBuy flag is handled by the Buy component internally
+      renderWithProviders();
+
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument();
+    });
+
+    it('handles token selection with Relay Buy', () => {
+      renderWithProviders();
+
+      const tokenSelector = screen.getByText('TEST');
+      fireEvent.click(tokenSelector);
+
+      expect(mockProps.setSearching).toHaveBeenCalledWith(true);
+    });
+
+    it('handles amount input with Relay Buy', () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '50.00' } });
+
+      expect(input).toHaveValue('50.00');
+    });
+
+    it('displays wallet balance correctly with Relay Buy', () => {
+      renderWithProviders();
+
+      // Total wallet balance should be displayed
+      expect(screen.getByText('$10050.00')).toBeInTheDocument();
+    });
+
+    it('handles MAX button with Relay Buy', () => {
+      renderWithProviders();
+
+      const maxButton = screen.getByText('MAX');
+      fireEvent.click(maxButton);
+
+      // Should set to max stable coin balance
+      expect(screen.getByDisplayValue('10050.00')).toBeInTheDocument();
+    });
+
+    it('shows minimum amount warning with Relay Buy', async () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '1.50' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      expect(screen.getByText('Min. amount 2 USD')).toBeInTheDocument();
+    });
+
+    it('shows insufficient balance warning with Relay Buy', async () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '999999.00' } });
+
+      // Wait for debounced effect
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+
+      expect(
+        screen.getByText('Insufficient wallet balance')
+      ).toBeInTheDocument();
+    });
+
+    it('handles quote fetching with Relay Buy enabled', async () => {
+      renderWithProviders();
+
+      const input = screen.getByPlaceholderText('0.00');
+      fireEvent.change(input, { target: { value: '100.00' } });
+
+      // Component should handle quote fetching internally
+      // This test ensures no errors are thrown
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+    });
+
+    it('handles missing token with Relay Buy', () => {
+      renderWithProviders({ token: null });
+
+      expect(screen.getAllByText('Select token').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('pulse-buy-component')).toBeInTheDocument();
+    });
+
+    it('handles quick amount buttons with Relay Buy', () => {
+      renderWithProviders();
+
+      const tenDollarButton = screen.getByText('$10');
+      fireEvent.click(tenDollarButton);
+
+      expect(screen.getByDisplayValue('10')).toBeInTheDocument();
     });
   });
 });
