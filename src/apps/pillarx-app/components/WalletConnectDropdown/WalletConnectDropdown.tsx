@@ -334,11 +334,11 @@ const WalletConnectDropdown = () => {
   return (
     <div
       id="walletConnect-dropdown"
-      className="relative inline-block w-[254px] h-12"
+      className="relative inline-block w-fit h-12"
       ref={dropdownRef}
     >
       <div
-        className="flex py-[9px] px-3 w-fit h-fit items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
+        className="flex py-[9px] px-3 w-fit h-[44px] items-center justify-center border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] cursor-pointer"
         onClick={handleDropdownToggle}
       >
         <div className="flex gap-2 items-center justify-center rounded-lg">
@@ -363,7 +363,7 @@ const WalletConnectDropdown = () => {
         </div>
       </div>
       {isDropdownOpen && (
-        <div className="flex flex-col py-[9px] px-3 w-fit h-fit border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] gap-4 absolute left-0 w-full p-4 bg-container_grey z-10">
+        <div className="flex flex-col py-[9px] px-3 w-[254px] h-fit border-x-2 border-t-2 border-b-4 rounded-[10px] border-[#121116] gap-4 absolute left-0 p-4 bg-container_grey z-10">
           <DisplayContentWalletConnect />
         </div>
       )}
