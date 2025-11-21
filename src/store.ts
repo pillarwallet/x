@@ -21,7 +21,16 @@ import { pillarXApiWaitlist } from './services/pillarXApiWaitlist';
 
 // Initialisation
 const dynamicMiddleware = createDynamicMiddleware();
-const middlewareReducers: { [key: string]: Reducer } = {};
+
+const initialReducers = {
+  [swapSlice.reducerPath]: swapSlice.reducer,
+  [tokenAtlasSlice.reducerPath]: tokenAtlasSlice.reducer,
+  [depositSlice.reducerPath]: depositSlice.reducer,
+  [walletPortfolioSlice.reducerPath]: walletPortfolioSlice.reducer,
+  [leaderboardSlice.reducerPath]: leaderboardSlice.reducer,
+};
+
+const middlewareReducers: { [key: string]: Reducer } = { ...initialReducers };
 
 /**
  * @name addReducer
@@ -66,7 +75,7 @@ export const store = configureStore({
   // Empty reducer for now - the addMiddleware function
   // below will dynamically regenerate the reducers required
   // from the middleware functions.
-  reducer: {},
+  reducer: initialReducers,
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   // Note: here we have added dynamicMiddleware.middleware
@@ -84,11 +93,6 @@ export const store = configureStore({
 addMiddleware(pillarXApiWaitlist);
 addMiddleware(pillarXApiPresence);
 addMiddleware(pillarXApiTransactionsHistory);
-addReducer(swapSlice);
-addReducer(tokenAtlasSlice);
-addReducer(depositSlice);
-addReducer(walletPortfolioSlice);
-addReducer(leaderboardSlice);
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
 // see `setupListeners` docs - takes an optional callback as the 2nd arg for customization

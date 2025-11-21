@@ -14,10 +14,11 @@ export interface TokenListProps {
   assets: Asset[];
   handleTokenSelect: (item: Asset) => void;
   searchType?: SearchType;
+  hideHeaders?: boolean;
 }
 
 export default function TokenList(props: TokenListProps) {
-  const { assets, handleTokenSelect, searchType } = props;
+  const { assets, handleTokenSelect, searchType, hideHeaders } = props;
 
   const [sort, setSort] = useState<{
     mCap?: SortType;
@@ -56,72 +57,72 @@ export default function TokenList(props: TokenListProps) {
   if (assets) {
     return (
       <>
-        {(searchType === SearchType.Trending ||
+        {!hideHeaders && (searchType === SearchType.Trending ||
           searchType === SearchType.Fresh) && (
-          <div
-            className="flex mt-2.5 mb-2.5"
-            style={{
-              fontSize: 13,
-              fontWeight: 400,
-              color: 'grey',
-            }}
-          >
-            <div className="flex ml-2.5">
-              <button
-                onClick={() => {
-                  handleSortChange('mCap');
-                }}
-                type="button"
-                data-testid="pulse-search-sort-mcap"
-              >
-                MCap
-              </button>
-              <div className="mt-0.5 ml-0.5 mr-0.5">
-                <Sort sortType={sort.mCap} />
+            <div
+              className="flex mt-2.5 mb-2.5"
+              style={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: 'grey',
+              }}
+            >
+              <div className="flex ml-2.5">
+                <button
+                  onClick={() => {
+                    handleSortChange('mCap');
+                  }}
+                  type="button"
+                  data-testid="pulse-search-sort-mcap"
+                >
+                  MCap
+                </button>
+                <div className="mt-0.5 ml-0.5 mr-0.5">
+                  <Sort sortType={sort.mCap} />
+                </div>
+                <div className="ml-0.5 mr-0.5">/</div>
+                <button
+                  onClick={() => {
+                    handleSortChange('volume');
+                  }}
+                  type="button"
+                  data-testid="pulse-search-sort-volume"
+                >
+                  24h Vol
+                </button>
+                <div className="mt-0.5 ml-0.5 mr-0.5">
+                  <Sort sortType={sort.volume} />
+                </div>
               </div>
-              <div className="ml-0.5 mr-0.5">/</div>
-              <button
-                onClick={() => {
-                  handleSortChange('volume');
-                }}
-                type="button"
-                data-testid="pulse-search-sort-volume"
-              >
-                24h Vol
-              </button>
-              <div className="mt-0.5 ml-0.5 mr-0.5">
-                <Sort sortType={sort.volume} />
+              <div className="flex ml-auto mr-2.5">
+                <button
+                  onClick={() => {
+                    handleSortChange('price');
+                  }}
+                  type="button"
+                  data-testid="pulse-search-sort-price"
+                >
+                  Price
+                </button>
+                <div className="mt-0.5 ml-0.5 mr-0.5">
+                  <Sort sortType={sort.price} />
+                </div>
+                <div className="ml-0.5 mr-0.5">/</div>
+                <button
+                  onClick={() => {
+                    handleSortChange('priceChange24h');
+                  }}
+                  type="button"
+                  data-testid="pulse-search-sort-price-change"
+                >
+                  24h %
+                </button>
+                <div className="mt-0.5 ml-0.5 mr-0.5">
+                  <Sort sortType={sort.priceChange24h} />
+                </div>
               </div>
             </div>
-            <div className="flex ml-auto mr-2.5">
-              <button
-                onClick={() => {
-                  handleSortChange('price');
-                }}
-                type="button"
-                data-testid="pulse-search-sort-price"
-              >
-                Price
-              </button>
-              <div className="mt-0.5 ml-0.5 mr-0.5">
-                <Sort sortType={sort.price} />
-              </div>
-              <div className="ml-0.5 mr-0.5">/</div>
-              <button
-                onClick={() => {
-                  handleSortChange('priceChange24h');
-                }}
-                type="button"
-                data-testid="pulse-search-sort-price-change"
-              >
-                24h %
-              </button>
-              <div className="mt-0.5 ml-0.5 mr-0.5">
-                <Sort sortType={sort.priceChange24h} />
-              </div>
-            </div>
-          </div>
-        )}
+          )}
         {assets.map((item) => {
           return (
             <button
@@ -169,84 +170,50 @@ export default function TokenList(props: TokenListProps) {
                     </span>
                   </div>
                 )}
-                <img
-                  src={getLogoForChainId(
-                    chainNameToChainIdTokensData(item.chain)
-                  )}
-                  style={{
-                    position: 'absolute',
-                    bottom: '-2px',
-                    right: '-2px',
-                    width: 15,
-                    height: 15,
-                    borderRadius: '50%',
-                  }}
-                  alt="chain logo"
-                />
+                {/* Only show chain badge for single-chain assets */}
+                {(!item.allChains || item.allChains.length === 1) && (
+                  <img
+                    src={getLogoForChainId(
+                      chainNameToChainIdTokensData(item.chain)
+                    )}
+                    style={{
+                      position: 'absolute',
+                      bottom: '-2px',
+                      right: '-2px',
+                      width: 15,
+                      height: 15,
+                      borderRadius: '50%',
+                    }}
+                    alt="chain logo"
+                  />
+                )}
               </div>
               <div
-                className="flex flex-col"
-                style={{ width: 250, height: 14, marginLeft: 10 }}
+                className="flex flex-col flex-1 min-w-0 ml-2.5 justify-center"
               >
-                <div className="flex">
-                  <p style={{ fontSize: 13, fontWeight: 400 }}>{item.symbol}</p>
+                <div className="flex items-center min-w-0">
+                  <p className="text-[13px] font-normal flex-shrink-0 text-white">{item.symbol}</p>
                   <p
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 400,
-                      marginLeft: 3,
-                      color: 'grey',
-                    }}
+                    className="text-xs font-normal ml-1 text-[#858585] truncate"
                   >
                     {item.name}
                   </p>
                 </div>
-                <div className="flex">
+                <div className="flex items-center text-[11px] whitespace-nowrap mt-0.5">
                   {searchType === SearchType.Fresh && (
-                    <p
-                      style={{ fontSize: 13, fontWeight: 400, marginRight: 3 }}
-                    >
+                    <p className="mr-1 text-[#858585]">
                       {formatElapsedTime(item.timestamp)}
                     </p>
                   )}
-                  <p style={{ fontSize: 13, fontWeight: 400, color: 'grey' }}>
-                    MCap:
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 400,
-                      marginLeft: 3,
-                    }}
-                  >
-                    {formatBigNumber(item.mCap || 0)}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 400,
-                      marginLeft: 3,
-                      color: 'grey',
-                    }}
-                  >
-                    Vol:
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 400,
-                      marginLeft: 3,
-                    }}
-                  >
-                    {formatBigNumber(item.volume || 0)}
-                  </p>
+                  <p className="text-[#858585]">MCap: <span className="text-white">${formatBigNumber(item.mCap || 0)}</span></p>
+                  <p className="ml-1 text-[#858585]">Vol: <span className="text-white">${formatBigNumber(item.volume || 0)}</span></p>
                 </div>
               </div>
-              <div className="flex flex-col ml-auto mr-2.5">
+              <div className="flex flex-col ml-auto mr-2.5" style={{ width: '100px', alignItems: 'flex-end' }}>
                 <div>
                   <TokenPrice value={item.price || 0} />
                 </div>
-                <div className="ml-auto">
+                <div>
                   <TokenPriceChange value={item.priceChange24h || 0} />
                 </div>
               </div>

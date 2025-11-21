@@ -163,6 +163,35 @@ export default function Buy(props: BuyProps) {
   const [permittedChains, setPermittedChains] = useState<bigint[]>([]);
   const [sumOfStableBalance, setSumOfStableBalance] = useState<number>(0);
 
+
+
+  // Get the user's balance for the selected token (to display in PnL)
+  const getTokenBalance = () => {
+    try {
+      if (!token || !walletPortfolioData?.result?.data?.assets) return 0;
+
+      // Find the asset in the portfolio
+      const assetData = walletPortfolioData.result.data.assets.find(
+        (asset) => asset.asset.symbol === token.symbol
+      );
+
+      if (!assetData) return 0;
+
+      // Find the contract balance for the specific token address and chain
+      const contractBalance = assetData.contracts_balances.find(
+        (contract) =>
+          contract.address.toLowerCase() === token.address.toLowerCase() &&
+          contract.chainId === `evm:${token.chainId}`
+      );
+      return contractBalance?.balance || 0;
+    } catch (error) {
+      console.error('Error getting token balance:', error);
+      return 0;
+    }
+  };
+
+  const tokenBalance = getTokenBalance();
+
   useEffect(() => {
     if (!portfolioTokens || portfolioTokens.length === 0) {
       console.warn('No wallet portfolio data');
@@ -179,7 +208,7 @@ export default function Buy(props: BuyProps) {
     const nativeToken = portfolioTokens.find(
       (t) =>
         Number(getChainId(t.blockchain as MobulaChainNames)) ===
-          maxStableCoinBalance.chainId && isNativeToken(t.contract)
+        maxStableCoinBalance.chainId && isNativeToken(t.contract)
     );
 
     if (!nativeToken) {
@@ -747,11 +776,10 @@ export default function Buy(props: BuyProps) {
               className="flex bg-black ml-2.5 mr-2.5 w-[75px] h-[30px] rounded-[10px] p-0.5 pb-1 pt-0.5"
             >
               <button
-                className={`flex-1 items-center justify-center rounded-[10px] ${
-                  isDisabled
-                    ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
-                    : 'bg-[#121116] text-white cursor-pointer'
-                }`}
+                className={`flex-1 items-center justify-center rounded-[10px] ${isDisabled
+                  ? 'bg-[#1E1D24] text-grey cursor-not-allowed'
+                  : 'bg-[#121116] text-white cursor-pointer'
+                  }`}
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
@@ -780,7 +808,7 @@ export default function Buy(props: BuyProps) {
           areModulesInstalled={areModulesInstalled}
           debouncedUsdAmount={debouncedUsdAmount}
           expressIntentResponse={
-            USE_RELAY_BUY ? buyOffer : expressIntentResponse
+            USE_RELAY_BUY ? (buyOffer as any) : expressIntentResponse
           }
           handleBuySubmit={handleBuySubmit}
           isFetching={isFetching}

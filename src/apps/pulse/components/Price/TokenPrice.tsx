@@ -27,7 +27,7 @@ export default function TokenPrice(props: TokenPriceProps): JSX.Element {
         style={{ fontSize: 13, fontWeight: 400 }}
         data-testid="pulse-token-price"
       >
-        ${value.toFixed(5)}
+        ${value.toFixed(2)}
       </p>
     );
   }
