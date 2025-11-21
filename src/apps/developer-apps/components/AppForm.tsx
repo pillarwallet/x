@@ -26,7 +26,7 @@ interface AppFormProps {
 const AppForm: React.FC<AppFormProps> = ({ existingApp, mode }) => {
   const navigate = useNavigate();
   const { wallets } = useWallets();
-  const eoaAddress = wallets[0]?.address;
+  const eoaAddress = wallets?.[0]?.address;
 
   const { formData, errors, updateField, validateForm, prepareSubmitData, setFormData } =
     useAppForm(existingApp);
