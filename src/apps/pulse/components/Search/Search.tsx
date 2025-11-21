@@ -529,7 +529,7 @@ export default function Search({
             )}
 
             {/* Search input */}
-            <div className="flex items-center flex-1 h-10 bg-[#121116] rounded-[10px] px-3 gap-2">
+            <div className={`flex items-center h-10 bg-[#121116] rounded-[10px] px-3 gap-2 ${isMobile ? 'flex-1 min-w-0' : 'flex-1'}`}>
               {/* Search icon */}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
                 <circle cx="11" cy="11" r="7" stroke="#858585" strokeWidth="2" fill="none" />
