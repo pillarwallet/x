@@ -4,20 +4,31 @@ import styled from 'styled-components';
 
 // theme
 import { animation } from '../theme';
+import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
+import { AppManifest } from '../types';
 
-const AppIcon = ({ appId }: { appId: string }) => {
+const AppIcon = ({
+  app,
+  appId,
+}: {
+  app: ApiAllowedApp | AppManifest;
+  appId: string;
+}) => {
   const [iconSrc, setIconSrc] = React.useState<string | undefined>(undefined);
   const [iconLoaded, setIconLoaded] = React.useState<boolean>(false);
   const imageRef = React.useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const loadIconSrc = async () => {
-      const icon = await import(`../apps/${appId}/icon.png`);
-      setIconSrc(icon.default);
+      if ((app as ApiAllowedApp).type === 'app-external') {
+        setIconSrc((app as ApiAllowedApp).logo);
+      } else {
+        const icon = await import(`../apps/${appId}/icon.png`);
+        setIconSrc(icon.default);
+      }
     };
-
     loadIconSrc();
-  }, [appId]);
+  }, [app, appId]);
 
   useEffect(() => {
     if (!imageRef.current || !iconSrc) return;

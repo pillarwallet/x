@@ -3,6 +3,7 @@ import {
   EtherspotTransactionKit,
   EtherspotTransactionKitConfig,
 } from '@etherspot/transaction-kit';
+
 import React, {
   createContext,
   useEffect,
@@ -10,6 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+
 import type { WalletProviderLike } from '../types/walletProvider';
 
 export interface EtherspotTransactionKitContextType {

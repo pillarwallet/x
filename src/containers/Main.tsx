@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import {
@@ -19,9 +20,8 @@ import type {
   TypedData,
 } from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
-import { createConfig, WagmiProvider, useAccount, useConnect } from 'wagmi';
+import { createConfig, useAccount, useConnect, WagmiProvider } from 'wagmi';
 import { walletConnect } from 'wagmi/connectors';
-import * as Sentry from '@sentry/react';
 
 // theme
 import { defaultTheme, GlobalStyle } from '../theme';
@@ -82,11 +82,11 @@ const AuthLayout = () => {
   const { isConnected: wagmiIsConnected } = useAccount();
   const [provider, setProvider] = useState<WalletClient | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
+  const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [eoaAddress, setEoaAddress] = useState<string | undefined>(undefined);
   const [customAccount, setCustomAccount] = useState<Account | undefined>(
     undefined
   );
-  const { isLoading: isLoadingAllowedApps } = useAllowedApps();
   const previouslyAuthenticated = !!localStorage.getItem('privy:token');
   const isAppReady = ready && !isLoadingAllowedApps;
   const isAuthenticated = authenticated || wagmiIsConnected || !!eoaAddress;
@@ -818,6 +818,18 @@ const AuthLayout = () => {
       authorizedRoutesDefinition[0].children.push({
         path: `/${appId}/*`,
         element: <App id={appId} />,
+      });
+    });
+
+    /**
+     * Add the external apps to the route definition.
+     * We need to load the allowed apps
+     */
+    const externalApps = allowed.filter((app) => app.type === 'app-external');
+    externalApps.forEach((app) => {
+      authorizedRoutesDefinition[0].children.push({
+        path: `/${app.appId}`,
+        element: <App id={app.appId} />,
       });
     });
 

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 // components
+import { useWallets } from '@privy-io/react-auth';
 import AppIcon from './AppIcon';
 import Label from './Form/Label';
 import SkeletonLoader from './SkeletonLoader';
@@ -20,18 +21,33 @@ import useTransactionKit from '../hooks/useTransactionKit';
 
 // services
 import { useRecordPresenceMutation } from '../services/pillarXApiPresence';
+import { useGetAllDeveloperAppsQuery } from '../apps/developer-apps/api/developerAppsApi';
 
 // utils
 import { loadApps } from '../apps';
+import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
 
 const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
-  const [apps, setApps] = React.useState<Record<string, AppManifest>>({});
+  const [apps, setApps] = React.useState<
+    Record<string, AppManifest | ApiAllowedApp>
+  >({});
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
   const { hide } = useBottomMenuModal();
   const { isLoading: isLoadingAllowedApps, allowed } = useAllowedApps();
   const [t] = useTranslation();
   const { walletAddress: accountAddress } = useTransactionKit();
+  const { wallets } = useWallets();
+  const ownerEoaAddress = wallets?.[0]?.address;
+
+  // Use RTK Query for developer apps
+  const { data: developerAppsData, isLoading: isLoadingDeveloperApps } =
+    useGetAllDeveloperAppsQuery(
+      { eoaAddress: ownerEoaAddress },
+      {
+        skip: !ownerEoaAddress,
+      }
+    );
   /**
    * Import the recordPresence mutation from the
    * pillarXApiPresence service. We use this to
@@ -47,6 +63,16 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
     fetchApps();
   }, [allowed]);
 
+  // Get developer apps from RTK Query data
+  const developerApps = React.useMemo(() => {
+    if (!developerAppsData?.data || !ownerEoaAddress) return [];
+    return developerAppsData.data.filter(
+      (a) =>
+        a?.ownerEoaAddress &&
+        a.ownerEoaAddress.toLowerCase() === ownerEoaAddress.toLowerCase()
+    );
+  }, [developerAppsData, ownerEoaAddress]);
+
   return (
     <Wrapper id="apps-modal">
       {!hideTitle && (
@@ -61,6 +87,51 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
           Discover new apps and services
         </ExploreAppsCardContent>
       </ExploreAppsCard>
+      {/* Developer apps (owned by user) */}
+      {ownerEoaAddress && (
+        <>
+          {isLoadingDeveloperApps && (
+            <AppsListWrapper>
+              <SkeletonLoader $height="94px" $width="94px" />
+              <SkeletonLoader $height="94px" $width="94px" />
+              <SkeletonLoader $height="94px" $width="94px" />
+            </AppsListWrapper>
+          )}
+          {!isLoadingDeveloperApps && developerApps.length > 0 && (
+            <>
+              <Label>My developer apps</Label>
+              <AppsListWrapper>
+                {developerApps.map((devApp) => (
+                  <AppListItem
+                    id="dev-app-list-item"
+                    key={devApp.appId}
+                    onClick={() => {
+                      hide();
+                      if (accountAddress) {
+                        recordPresence({
+                          address: accountAddress,
+                          action: 'developerAppOpened',
+                          value: devApp.appId,
+                        });
+                      }
+                      navigate(`/${devApp.appId}`);
+                      // window.open(devApp.launchUrl, '_blank', 'noopener,noreferrer');
+                    }}
+                  >
+                    {devApp.logo ? (
+                      <DevAppLogo src={devApp.logo} alt={devApp.name} />
+                    ) : (
+                      <PlaceholderLogo />
+                    )}
+                    <AppTitle>{devApp.name}</AppTitle>
+                  </AppListItem>
+                ))}
+              </AppsListWrapper>
+              <Separator />
+            </>
+          )}
+        </>
+      )}
       <Label>{t`label.latestApps`}</Label>
       <AppsListWrapper id="apps-list">
         {isLoadingAllowedApps && (
@@ -73,29 +144,38 @@ const AppsList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
           </>
         )}
         {!isLoadingAllowedApps &&
-          Object.keys(apps).map((appId) => (
-            <AppListItem
-              id="app-list-item"
-              key={appId}
-              onClick={() => {
-                hide();
-                // Fire (and forget) the recordPresence mutation
-                if (accountAddress) {
-                  recordPresence({
-                    address: accountAddress,
-                    action: 'appOpened',
-                    value: appId,
-                  });
-                }
-                setIsAnimated(true);
-                // eslint-disable-next-line prefer-template
-                navigate('/' + appId);
-              }}
-            >
-              <AppIcon appId={appId} />
-              <AppTitle>{apps[appId].title}</AppTitle>
-            </AppListItem>
-          ))}
+          Object.keys(apps)
+            .filter((appId) => {
+              // Filter out developer apps that are already shown in the developer apps section
+              const app = apps[appId];
+              return (
+                !(app as ApiAllowedApp).type ||
+                (app as ApiAllowedApp).type !== 'app-external'
+              );
+            })
+            .map((appId) => (
+              <AppListItem
+                id="app-list-item"
+                key={appId}
+                onClick={() => {
+                  hide();
+                  // Fire (and forget) the recordPresence mutation
+                  if (accountAddress) {
+                    recordPresence({
+                      address: accountAddress,
+                      action: 'appOpened',
+                      value: appId,
+                    });
+                  }
+                  setIsAnimated(true);
+                  // eslint-disable-next-line prefer-template
+                  navigate('/' + appId);
+                }}
+              >
+                <AppIcon app={apps[appId]} appId={appId} />
+                <AppTitle>{apps[appId].title}</AppTitle>
+              </AppListItem>
+            ))}
       </AppsListWrapper>
     </Wrapper>
   );
@@ -145,6 +225,32 @@ const AppTitle = styled.p`
   color: ${({ theme }) => theme.color.text.cardTitle};
   padding: 8px 6px 8px;
   word-break: break-word;
+`;
+
+const Separator = styled.div`
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 16px 0 10px;
+`;
+
+const DevAppLogo = styled.img`
+  width: 94px;
+  height: 94px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(147, 51, 234, 0.24);
+`;
+
+const PlaceholderLogo = styled.div`
+  width: 94px;
+  height: 94px;
+  border-radius: 6px;
+  background: linear-gradient(
+    135deg,
+    rgba(147, 51, 234, 0.15),
+    rgba(109, 40, 217, 0.08)
+  );
+  border: 1px dashed rgba(147, 51, 234, 0.24);
 `;
 
 const ExploreAppsCard = styled.div`
