@@ -2,166 +2,163 @@
 
 exports[`<Search /> > renders correctly and matches snapshot 1`] = `
 <div
-  className="flex items-center justify-center min-h-screen bg-black"
+  className="flex items-center justify-center min-h-screen bg-black md:p-4"
   data-testid="pulse-search-view"
 >
   <div
-    className="flex flex-col w-full max-w-[446px] max-h-[500px] overflow-y-auto bg-[#1E1D24] p-3 border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
+    className="flex flex-col bg-[#1E1D24] p-3 w-[446px] h-[512px] border border-white/[0.05] rounded-2xl shadow-[0px_2px_15px_0px_rgba(18,17,22,0.5)]"
     data-testid="pulse-search-modal"
   >
     <div
-      className="flex w-full items-center"
+      className="flex-shrink-0"
     >
       <div
-        className="flex items-center justify-center w-3/4 h-10 bg-[#121116] rounded-[10px] m-2.5 border-2 border-[#1E1D24]"
-      >
-        <span
-          className="ml-2.5"
-        >
-          <img
-            alt="search-icon"
-            src="data:image/svg+xml,%3csvg%20class='feather%20feather-search'%20fill='none'%20height='24'%20stroke='white'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='2'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='11'%20cy='11'%20r='8'/%3e%3cline%20x1='21'%20x2='16.65'%20y1='21'%20y2='16.65'/%3e%3c/svg%3e"
-          />
-        </span>
-        <input
-          className="flex-1 w-fit ml-4 font-normal text-xs text-gray-500"
-          data-testid="pulse-search-input"
-          onChange={[Function]}
-          type="text"
-          value=""
-        />
-        <button
-          aria-label="Close"
-          data-testid="pulse-close-button"
-          onClick={[Function]}
-          style={
-            {
-              "height": 20,
-              "marginRight": 10,
-              "width": 20,
-            }
-          }
-          type="button"
-        >
-          <img
-            alt="close-icon"
-            src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20view-box='0%200%2016%2016'%20fill='white'%20class-name='w-5%20h-5'%20%3e%3cpath%20fill-rule='evenodd'%20d='M10%2018a8%208%200%201%200%200-16%208%208%200%200%200%200%2016ZM8.28%207.22a.75.75%200%200%200-1.06%201.06L8.94%2010l-1.72%201.72a.75.75%200%201%200%201.06%201.06L10%2011.06l1.72%201.72a.75.75%200%201%200%201.06-1.06L11.06%2010l1.72-1.72a.75.75%200%200%200-1.06-1.06L10%208.94%208.28%207.22Z'%20clip-rule='evenodd'%20/%3e%3c/svg%3e"
-          />
-        </button>
-      </div>
-      <div
-        className="ml-3 bg-black rounded-[10px] w-10 h-10 justify-center items-center flex p-[2px_2px_4px_2px]"
+        className="flex items-center gap-2 px-1.5 pt-1.5 pb-2"
       >
         <div
-          className="w-9 h-[34px] bg-[#1E1D24] rounded-lg flex justify-center"
-          data-testid="pulse-search-refresh-button"
+          className="flex items-center h-10 bg-[#121116] rounded-[10px] px-3 gap-2 flex-1"
         >
-          <button
-            aria-label="Refresh"
-            className="flex w-[36px] h-[34px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-not-allowed opacity-50"
-            data-testid="pulse-refresh-button"
-            disabled={true}
-            type="button"
+          <svg
+            className="flex-shrink-0"
+            fill="none"
+            height="16"
+            viewBox="0 0 24 24"
+            width="16"
           >
-            <img
-              alt="refresh-icon"
-              height={18}
-              src="data:image/svg+xml,%3csvg%20width='22'%20height='24'%20viewBox='0%200%2022%2024'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.93785%2012.0354C2.94151%2010.2722%203.52828%208.55707%204.60713%207.156C5.68598%205.75494%207.19662%204.74624%208.90478%204.28635C10.6129%203.82646%2012.4231%203.94108%2014.0546%204.61243C15.6861%205.28379%2017.0477%206.47436%2017.9282%207.99949M17.9282%207.99949L14.7632%207.51744M17.9282%207.99949L17.7273%204.65142'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M19.0619%2011.9636C19.0582%2013.7268%2018.4714%2015.442%2017.3926%2016.843C16.3137%2018.2441%2014.8031%2019.2528%2013.0949%2019.7127C11.3868%2020.1726%209.5766%2020.0579%207.94512%2019.3866C6.31363%2018.7152%204.95204%2017.5247%204.0715%2015.9995M4.0715%2015.9995L7.23656%2016.4816M4.0715%2015.9995L4.27246%2019.3476'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
-              width={18}
+            <circle
+              cx="11"
+              cy="11"
+              fill="none"
+              r="7"
+              stroke="#858585"
+              strokeWidth="2"
             />
-          </button>
-        </div>
-      </div>
-      <div
-        className="ml-1.5 w-10 h-10 bg-black rounded-[10px] p-0.5 pb-1 pl-0.5 pr-0.5 relative cursor-pointer"
-        data-testid="pulse-search-chain-selector"
-        onClick={[Function]}
-      >
-        <button
-          aria-label="Save"
-          className="flex items-center justify-center w-full h-full bg-[#1E1D24] rounded-[10px]"
-          type="button"
-        >
-          <img
-            alt="globe-icon"
-            src="data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3ccircle%20opacity='0.3'%20cx='9.99976'%20cy='10'%20r='9'%20fill='white'/%3e%3cpath%20d='M9.99992%2019.0002C14.9706%2019.0002%2019.0001%2014.9706%2019.0001%2010C19.0001%205.02934%2014.9706%200.999832%209.99992%200.999832C5.02927%200.999832%200.999756%205.02934%200.999756%2010C0.999756%2014.9706%205.02927%2019.0002%209.99992%2019.0002Z'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M6.3999%201.89984H7.29992C5.54488%207.15594%205.54488%2012.844%207.29992%2018.1001H6.3999'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M12.7%201.89984C14.455%207.15594%2014.455%2012.844%2012.7%2018.1001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%2013.6001V12.7C7.15624%2014.4551%2012.8443%2014.4551%2018.1004%2012.7V13.6001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%207.29995C7.15624%205.54492%2012.8443%205.54492%2018.1004%207.29995'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
+            <path
+              d="M20 20L17 17"
+              stroke="#858585"
+              strokeLinecap="round"
+              strokeWidth="2"
+            />
+          </svg>
+          <input
+            className="flex-1 bg-transparent text-white text-xs outline-none border-none placeholder-transparent font-normal min-w-0 h-full"
+            data-testid="pulse-search-input"
+            onChange={[Function]}
+            placeholder=""
+            type="text"
+            value=""
           />
-        </button>
-      </div>
-    </div>
-    <div
-      className="flex gap-1.5"
-      data-testid="pulse-search-filter-buttons"
-    >
-      <div
-        className="flex bg-black w-[100px] h-10 rounded-[10px]"
-      >
+        </div>
         <button
-          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          className="flex items-center justify-center w-10 h-10 bg-[#121116] rounded-[10px] flex-shrink-0 group p-0.5"
+          data-testid="pulse-search-refresh-button"
+          disabled={false}
           onClick={[Function]}
           type="button"
         >
-          <p
-            className="text-xs font-normal text-center text-white opacity-50"
+          <div
+            className="flex items-center justify-center w-full h-full bg-[#1E1D24] rounded-[8px] group-hover:bg-[#2A2A2A] transition-colors"
+          >
+            <button
+              aria-label="Refresh"
+              className="flex w-[36px] h-[34px] items-center justify-center rounded-[8px] bg-[#1E1D24] cursor-pointer"
+              data-testid="pulse-refresh-button"
+              disabled={false}
+              onClick={[Function]}
+              type="button"
+            >
+              <img
+                alt="refresh-icon"
+                height={18}
+                src="data:image/svg+xml,%3csvg%20width='22'%20height='24'%20viewBox='0%200%2022%2024'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.93785%2012.0354C2.94151%2010.2722%203.52828%208.55707%204.60713%207.156C5.68598%205.75494%207.19662%204.74624%208.90478%204.28635C10.6129%203.82646%2012.4231%203.94108%2014.0546%204.61243C15.6861%205.28379%2017.0477%206.47436%2017.9282%207.99949M17.9282%207.99949L14.7632%207.51744M17.9282%207.99949L17.7273%204.65142'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20opacity='0.5'%20d='M19.0619%2011.9636C19.0582%2013.7268%2018.4714%2015.442%2017.3926%2016.843C16.3137%2018.2441%2014.8031%2019.2528%2013.0949%2019.7127C11.3868%2020.1726%209.5766%2020.0579%207.94512%2019.3866C6.31363%2018.7152%204.95204%2017.5247%204.0715%2015.9995M4.0715%2015.9995L7.23656%2016.4816M4.0715%2015.9995L4.27246%2019.3476'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e"
+                width={18}
+              />
+            </button>
+          </div>
+        </button>
+        <button
+          className="flex items-center justify-center w-10 h-10 bg-[#121116] rounded-[10px] flex-shrink-0 group p-0.5"
+          onClick={[Function]}
+          type="button"
+        >
+          <div
+            className="flex items-center justify-center w-full h-full bg-[#1E1D24] rounded-[8px] group-hover:bg-[#2A2A2A] transition-colors"
+          >
+            <button
+              aria-label="Save"
+              className="flex items-center justify-center w-full h-full bg-[#1E1D24] rounded-[10px]"
+              type="button"
+            >
+              <img
+                alt="globe-icon"
+                src="data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20opacity='0.5'%3e%3ccircle%20opacity='0.3'%20cx='9.99976'%20cy='10'%20r='9'%20fill='white'/%3e%3cpath%20d='M9.99992%2019.0002C14.9706%2019.0002%2019.0001%2014.9706%2019.0001%2010C19.0001%205.02934%2014.9706%200.999832%209.99992%200.999832C5.02927%200.999832%200.999756%205.02934%200.999756%2010C0.999756%2014.9706%205.02927%2019.0002%209.99992%2019.0002Z'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M6.3999%201.89984H7.29992C5.54488%207.15594%205.54488%2012.844%207.29992%2018.1001H6.3999'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M12.7%201.89984C14.455%207.15594%2014.455%2012.844%2012.7%2018.1001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%2013.6001V12.7C7.15624%2014.4551%2012.8443%2014.4551%2018.1004%2012.7V13.6001'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.90015%207.29995C7.15624%205.54492%2012.8443%205.54492%2018.1004%207.29995'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3c/svg%3e"
+              />
+            </button>
+          </div>
+        </button>
+      </div>
+      <div
+        className="flex flex-wrap gap-2.5 px-1.5 pb-0"
+        data-testid="pulse-search-filter-buttons"
+      >
+        <button
+          className="h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]"
+          onClick={[Function]}
+          type="button"
+        >
+          <div
+            className="w-full h-full rounded-md py-1.5 px-2 flex items-center justify-center bg-[#2E2A4A] text-white"
           >
             🔥 Trending
-          </p>
+          </div>
         </button>
-      </div>
-      <div
-        className="flex bg-black w-[100px] h-10 rounded-[10px]"
-      >
         <button
-          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          className="h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]"
           onClick={[Function]}
           type="button"
         >
-          <p
-            className="text-xs font-normal text-center text-white opacity-50"
+          <div
+            className="w-full h-full rounded-md py-1.5 px-2 flex items-center justify-center bg-[#1E1D24] text-white/60 group-hover:bg-[#2A2A2A]"
           >
             🌱 Fresh
-          </p>
+          </div>
         </button>
-      </div>
-      <div
-        className="flex bg-black w-[100px] h-10 rounded-[10px]"
-      >
         <button
-          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          className="h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]"
           onClick={[Function]}
           type="button"
         >
-          <p
-            className="text-xs font-normal text-center text-white opacity-50"
+          <div
+            className="w-full h-full rounded-md py-1.5 px-2 flex items-center justify-center bg-[#1E1D24] text-white/60 group-hover:bg-[#2A2A2A]"
           >
             🚀 Top Gainers
-          </p>
+          </div>
         </button>
-      </div>
-      <div
-        className="flex bg-black w-[100px] h-10 rounded-[10px]"
-      >
         <button
-          className="flex-1 items-center justify-center rounded-[6px] m-0.5 mb-1 bg-[#1E1D24]"
+          className="h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]"
           onClick={[Function]}
           type="button"
         >
-          <p
-            className="text-xs font-normal text-center text-white opacity-50"
+          <div
+            className="w-full h-full rounded-md py-1.5 px-2 flex items-center justify-center bg-[#1E1D24] text-white/60 group-hover:bg-[#2A2A2A]"
           >
-            💰My Holdings
-          </p>
+            💰 My Holdings
+          </div>
         </button>
       </div>
     </div>
     <div
-      className="flex items-center justify-center m-[50px]"
+      className="flex-1 overflow-y-auto mt-2"
     >
-      <p
-        className="text-gray-500"
+      <div
+        className="flex items-center justify-center m-[50px]"
       >
-        Search by token or paste address...
-      </p>
+        <p
+          className="text-gray-500"
+        >
+          Search by token or paste address...
+        </p>
+      </div>
     </div>
   </div>
 </div>

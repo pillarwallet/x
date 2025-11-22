@@ -540,6 +540,7 @@ export default function Search({
                 type="text"
                 className="flex-1 bg-transparent text-white text-xs outline-none border-none placeholder-transparent font-normal min-w-0 h-full"
                 placeholder=""
+                data-testid="pulse-search-input"
                 value={searchText}
                 onChange={(e) => {
                   setSearchText(e.target.value);
