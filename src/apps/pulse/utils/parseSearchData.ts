@@ -176,7 +176,7 @@ export function parseMarketPairs(
     // Filter by chain if specified
     if (
       chains === MobulaChainNames.All ||
-      MOBULA_CHAIN_NAMES.includes(pair.blockchain)
+      pair.blockchain === chains
     ) {
       // Determine which token matches the search term
       const token0MatchesSearch =
