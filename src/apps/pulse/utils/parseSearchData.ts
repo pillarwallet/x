@@ -173,54 +173,50 @@ export function parseMarketPairs(
   for (const pair of pairs) {
     // Filter by chain if specified
     if (
-      chains !== MobulaChainNames.All &&
-      !MOBULA_CHAIN_NAMES.includes(pair.blockchain)
+      chains === MobulaChainNames.All ||
+      MOBULA_CHAIN_NAMES.includes(pair.blockchain)
     ) {
-      continue;
+      // Determine which token matches the search term
+      const token0MatchesSearch =
+        pair.token0.symbol.toLowerCase().includes(normalizedSearchTerm) ||
+        pair.token0.name.toLowerCase().includes(normalizedSearchTerm);
+
+      const token1MatchesSearch =
+        pair.token1.symbol.toLowerCase().includes(normalizedSearchTerm) ||
+        pair.token1.name.toLowerCase().includes(normalizedSearchTerm);
+
+      // Only process if at least one token matches
+      if (token0MatchesSearch || token1MatchesSearch) {
+        // Arrange pair so searched token is first
+        let pairName: string;
+        let orderedToken0: MobulaToken;
+        let orderedToken1: MobulaToken;
+
+        if (token0MatchesSearch) {
+          pairName = `${pair.token0.symbol}/${pair.token1.symbol}`;
+          orderedToken0 = pair.token0;
+          orderedToken1 = pair.token1;
+        } else {
+          // token1 matches, so swap the order
+          pairName = `${pair.token1.symbol}/${pair.token0.symbol}`;
+          orderedToken0 = pair.token1;
+          orderedToken1 = pair.token0;
+        }
+
+        markets.push({
+          pairName,
+          token0: orderedToken0,
+          token1: orderedToken1,
+          liquidity: pair.liquidity,
+          volume24h: (pair as any).volume_24h || pair.volume24h || 0,
+          blockchain: pair.blockchain,
+          address: pair.address,
+          exchange: pair.exchange,
+          priceChange24h: null, // Pair type doesn't include price_change_24h
+          price: pair.price,
+        });
+      }
     }
-
-    // Determine which token matches the search term
-    const token0MatchesSearch =
-      pair.token0.symbol.toLowerCase().includes(normalizedSearchTerm) ||
-      pair.token0.name.toLowerCase().includes(normalizedSearchTerm);
-
-    const token1MatchesSearch =
-      pair.token1.symbol.toLowerCase().includes(normalizedSearchTerm) ||
-      pair.token1.name.toLowerCase().includes(normalizedSearchTerm);
-
-    // Skip if neither token matches (shouldn't happen in search results)
-    if (!token0MatchesSearch && !token1MatchesSearch) {
-      continue;
-    }
-
-    // Arrange pair so searched token is first
-    let pairName: string;
-    let orderedToken0: MobulaToken;
-    let orderedToken1: MobulaToken;
-
-    if (token0MatchesSearch) {
-      pairName = `${pair.token0.symbol}/${pair.token1.symbol}`;
-      orderedToken0 = pair.token0;
-      orderedToken1 = pair.token1;
-    } else {
-      // token1 matches, so swap the order
-      pairName = `${pair.token1.symbol}/${pair.token0.symbol}`;
-      orderedToken0 = pair.token1;
-      orderedToken1 = pair.token0;
-    }
-
-    markets.push({
-      pairName,
-      token0: orderedToken0,
-      token1: orderedToken1,
-      liquidity: pair.liquidity,
-      volume24h: (pair as any).volume_24h || pair.volume24h || 0,
-      blockchain: pair.blockchain,
-      address: pair.address,
-      exchange: pair.exchange,
-      priceChange24h: null, // Pair type doesn't include price_change_24h
-      price: pair.price,
-    });
   }
 
   return markets;
@@ -407,13 +403,11 @@ function deduplicateAssetsBySymbol(assets: Asset[]): Asset[] {
       const existing = assetMap.get(key);
       if (!existing) {
         assetMap.set(key, asset);
-      } else {
+      } else if (existing.allChains && asset.allChains) {
         // Merge chains if both have allChains
-        if (existing.allChains && asset.allChains) {
-          existing.allChains = Array.from(new Set([...existing.allChains, ...asset.allChains]));
-          existing.allContracts = Array.from(new Set([...(existing.allContracts || []), ...(asset.allContracts || [])]));
-          existing.allDecimals = Array.from(new Set([...(existing.allDecimals || []), ...(asset.allDecimals || [])]));
-        }
+        existing.allChains = Array.from(new Set([...existing.allChains, ...asset.allChains]));
+        existing.allContracts = Array.from(new Set([...(existing.allContracts || []), ...(asset.allContracts || [])]));
+        existing.allDecimals = Array.from(new Set([...(existing.allDecimals || []), ...(asset.allDecimals || [])]));
       }
     }
   });
@@ -436,13 +430,11 @@ function deduplicateAssetsBySymbol(assets: Asset[]): Asset[] {
 
       if (!existing) {
         assetMap.set(key, asset);
-      } else {
+      } else if (existing.allChains && asset.allChains) {
         // Merge chains
-        if (existing.allChains && asset.allChains) {
-          existing.allChains = Array.from(new Set([...existing.allChains, ...asset.allChains]));
-          existing.allContracts = Array.from(new Set([...(existing.allContracts || []), ...(asset.allContracts || [])]));
-          existing.allDecimals = Array.from(new Set([...(existing.allDecimals || []), ...(asset.allDecimals || [])]));
-        }
+        existing.allChains = Array.from(new Set([...existing.allChains, ...asset.allChains]));
+        existing.allContracts = Array.from(new Set([...(existing.allContracts || []), ...(asset.allContracts || [])]));
+        existing.allDecimals = Array.from(new Set([...(existing.allDecimals || []), ...(asset.allDecimals || [])]));
       }
     }
   });
@@ -469,60 +461,58 @@ export function parseFreshAndTrendingTokens(
           const volume = parseNumberString(j.leftColumn?.line2?.volume || '0.00K');
           const mCap = j.meta?.tokenData.marketCap || 0;
 
-          // Skip assets with 0 volume
-          if (volume === 0) {
-            continue;
-          }
+          // Only process assets with non-zero volume
+          if (volume !== 0) {
+            const chain = getChainName(+chainId);
+            const timestamp = j.leftColumn?.line2?.timestamp;
 
-          const chain = getChainName(+chainId);
-          const timestamp = j.leftColumn?.line2?.timestamp;
+            // Create a unique key by symbol (or name if symbol is empty)
+            const key = symbol || name;
 
-          // Create a unique key by symbol (or name if symbol is empty)
-          const key = symbol || name;
+            if (assetsBySymbol.has(key)) {
+              // Asset already exists, aggregate data
+              const existing = assetsBySymbol.get(key)!;
 
-          if (assetsBySymbol.has(key)) {
-            // Asset already exists, aggregate data
-            const existing = assetsBySymbol.get(key)!;
+              // Add volume and mCap across chains
+              existing.volume = (existing.volume || 0) + volume;
+              existing.mCap = (existing.mCap || 0) + mCap;
 
-            // Add volume and mCap across chains
-            existing.volume = (existing.volume || 0) + volume;
-            existing.mCap = (existing.mCap || 0) + mCap;
+              // Keep the newest timestamp for Fresh sorting
+              if (timestamp && (!existing.timestamp || timestamp > existing.timestamp)) {
+                existing.timestamp = timestamp;
+              }
 
-            // Keep the newest timestamp for Fresh sorting
-            if (timestamp && (!existing.timestamp || timestamp > existing.timestamp)) {
-              existing.timestamp = timestamp;
+              // Add this chain to allChains
+              if (existing.allChains) {
+                existing.allChains.push(chain);
+                existing.allContracts?.push(contractAddress);
+                existing.allDecimals?.push(j.meta?.tokenData.decimals || 18);
+              }
+            } else {
+              // New asset, create entry
+              assetsBySymbol.set(key, {
+                chain,
+                contract: contractAddress,
+                decimals: j.meta?.tokenData.decimals || 18,
+                liquidity: parseNumberString(
+                  j.leftColumn?.line2?.liquidity || '0.00K'
+                ),
+                logo: j.leftColumn?.token?.primaryImage || null,
+                name,
+                price: Number(j.rightColumn?.line1?.price || 0),
+                priceChange24h:
+                  Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
+                  (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
+                symbol,
+                volume,
+                mCap,
+                timestamp,
+                // Store all chains for multi-chain selection
+                allChains: [chain],
+                allContracts: [contractAddress],
+                allDecimals: [j.meta?.tokenData.decimals || 18],
+              });
             }
-
-            // Add this chain to allChains
-            if (existing.allChains) {
-              existing.allChains.push(chain);
-              existing.allContracts?.push(contractAddress);
-              existing.allDecimals?.push(j.meta?.tokenData.decimals || 18);
-            }
-          } else {
-            // New asset, create entry
-            assetsBySymbol.set(key, {
-              chain,
-              contract: contractAddress,
-              decimals: j.meta?.tokenData.decimals || 18,
-              liquidity: parseNumberString(
-                j.leftColumn?.line2?.liquidity || '0.00K'
-              ),
-              logo: j.leftColumn?.token?.primaryImage || null,
-              name,
-              price: Number(j.rightColumn?.line1?.price || 0),
-              priceChange24h:
-                Number((j.rightColumn?.line1?.percentage || '0%').slice(0, -1)) *
-                (j.rightColumn?.line1?.direction === 'DOWN' ? -1 : 1),
-              symbol,
-              volume,
-              mCap,
-              timestamp,
-              // Store all chains for multi-chain selection
-              allChains: [chain],
-              allContracts: [contractAddress],
-              allDecimals: [j.meta?.tokenData.decimals || 18],
-            });
           }
         }
       }
