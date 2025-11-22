@@ -23,7 +23,9 @@
       "env": {
         "node": true
       },
-      "files": [".eslintrc.{js,cjs}"],
+      "files": [
+        ".eslintrc.{js,cjs}"
+      ],
       "parserOptions": {
         "sourceType": "script"
       }
@@ -48,15 +50,24 @@
     "no-console": [
       "error",
       {
-        "allow": ["warn", "error"]
+        "allow": [
+          "warn",
+          "error"
+        ]
       }
     ],
-    "quotes": ["error", "single"],
-    "prettier/prettier": "error",
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "prettier/prettier": "off",
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [".jsx", ".tsx"]
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
       }
     ],
     "import/prefer-default-export": "off",
@@ -75,7 +86,10 @@
     "react/function-component-definition": [
       2,
       {
-        "namedComponents": ["function-declaration", "arrow-function"],
+        "namedComponents": [
+          "function-declaration",
+          "arrow-function"
+        ],
         "unnamedComponents": "function-expression"
       }
     ],

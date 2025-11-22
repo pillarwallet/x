@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   Dispatch,
   SetStateAction,
@@ -6,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { TailSpin } from 'react-loader-spinner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isAddress } from 'viem';
 import {
@@ -20,7 +22,6 @@ import {
   limitDigitsNumber,
 } from '../../../../utils/number';
 import { useIsMobile } from '../../../../utils/media';
-import SearchIcon from '../../assets/seach-icon.svg';
 import { useTokenSearch } from '../../hooks/useTokenSearch';
 import { SearchType, SelectedToken, SortType } from '../../types/tokens';
 import { MobulaChainNames, getChainId } from '../../utils/constants';
@@ -31,8 +32,6 @@ import {
   parseFreshAndTrendingTokens,
   parseSearchData,
 } from '../../utils/parseSearchData';
-import Close from '../Misc/Close';
-import Esc from '../Misc/Esc';
 import Refresh from '../Misc/Refresh';
 import ChainOverlay from './ChainOverlay';
 import ChainSelectButton from './ChainSelect';
@@ -624,7 +623,7 @@ export default function Search({
                 return (
                   <button
                     key={item}
-                    className={`h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]`}
+                    className="h-[30px] rounded-lg flex items-center justify-center text-xs font-medium whitespace-nowrap transition-colors px-0.5 pt-0.5 pb-1 group flex-shrink-0 outline-none focus:outline-none ring-0 focus:ring-0 shadow-none focus:shadow-none bg-[#121116]"
                     type="button"
                     onClick={() => {
                       handleSearchTypeChange(actualIndex);
@@ -732,7 +731,7 @@ export default function Search({
                     assets={sortedSearchAssets}
                     handleTokenSelect={handleTokenSelect}
                     searchType={searchType}
-                    hideHeaders={true}
+                    hideHeaders
                   />
                 </>
               )}

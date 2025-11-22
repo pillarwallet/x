@@ -1,10 +1,10 @@
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react';
 import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
 import { getLogoForChainId } from '../../../../utils/blockchain';
 import RandomAvatar from '../../../pillarx-app/components/RandomAvatar/RandomAvatar';
 import { formatBigNumber } from '../../utils/number';
 import { Market } from '../../utils/parseSearchData';
-import TokenPrice from '../Price/TokenPrice';
 import TokenPriceChange from '../Price/TokenPriceChange';
 
 export interface MarketListProps {

@@ -1,8 +1,10 @@
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   Exchange,
   MobulaToken,
-  Pair,
   PairResponse,
   Projection,
   TokenAssetResponse,

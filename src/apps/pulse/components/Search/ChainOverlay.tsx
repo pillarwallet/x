@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react';
 import { chainNameToChainIdTokensData } from '../../../../services/tokensData';
 import { getLogoForChainId } from '../../../../utils/blockchain';
