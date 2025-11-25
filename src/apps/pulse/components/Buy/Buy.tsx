@@ -81,6 +81,14 @@ interface BuyProps {
   usdcPrice?: number; // For Relay Buy: USDC price from portfolio (passed from HomeScreen)
 }
 
+/**
+ * Render the Buy UI and manage the token purchase flow using either Relay Buy or the Intent SDK.
+ *
+ * This component handles user input for USD amounts, debounces and validates the amount, computes dispensable assets and permitted chains, fetches Relay buy offers or generates Express Intent responses, and surfaces preview and error states. It also integrates token selection (including token-atlas search), manages module installation for the Intent SDK, and exposes refresh and preview callbacks to parent components.
+ *
+ * @param props - Component props that provide token and portfolio data, balance information, callbacks for preview/selection/refresh, and configuration such as custom amounts and optional USDC price.
+ * @returns A React element rendering the buy interface and its associated controls and status. 
+ */
 export default function Buy(props: BuyProps) {
   const {
     setExpressIntentResponse: setExInResp,

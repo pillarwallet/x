@@ -17,6 +17,19 @@ export interface TokenListProps {
   hideHeaders?: boolean;
 }
 
+/**
+ * Render a sortable, clickable list of tokens with visuals, metrics, and price information.
+ *
+ * Renders optional sort headers (when `hideHeaders` is false and `searchType` is Trending or Fresh),
+ * a list of token rows that call `handleTokenSelect` when clicked, and an empty fragment when `assets` is falsy.
+ *
+ * @param props - Component props
+ * @param props.assets - Array of token assets to display; if falsy, the component renders nothing
+ * @param props.handleTokenSelect - Callback invoked with the selected asset when a row is clicked
+ * @param props.searchType - Controls header visibility and whether fresh timestamps are shown
+ * @param props.hideHeaders - When true, suppresses the sort header row even for Trending/Fresh search types
+ * @returns A JSX element containing the token list or an empty fragment when no assets are provided
+ */
 export default function TokenList(props: TokenListProps) {
   const { assets, handleTokenSelect, searchType, hideHeaders } = props;
 

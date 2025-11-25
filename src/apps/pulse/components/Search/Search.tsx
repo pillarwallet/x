@@ -67,6 +67,24 @@ const overlayStyling = {
   position: 'fixed' as const,
 };
 
+/**
+ * Render a modal search interface for discovering tokens, markets, and wallet holdings with support for buy/sell modes, chain selection, sorting, and refresh.
+ *
+ * The component manages search state, fetches trending/fresh/top-gainers data when applicable, renders parsed token and market lists, applies liquidity filtering for markets, and handles token/market selection (including multi-chain token resolution using wallet USDC balances). It also supports keyboard and outside-click dismissal and preserves a relayBuy query parameter when closing.
+ *
+ * @param setSearching - Callback to toggle the parent search open/closed state
+ * @param isBuy - If true, the component operates in buy mode (shows Trending/Fresh/Top Gainers filters and chain selector); otherwise it operates in sell/holdings mode
+ * @param setBuyToken - Setter invoked with the selected buy token payload
+ * @param setSellToken - Setter invoked with the selected sell token payload
+ * @param chains - Array of selected chain identifiers used to scope search requests
+ * @param setChains - Setter to update the selected chains
+ * @param walletPortfolioData - Optional wallet portfolio data used for "My Holdings" and multi-chain heuristics
+ * @param walletPortfolioLoading - Boolean indicating initial wallet portfolio loading state
+ * @param walletPortfolioFetching - Boolean indicating ongoing wallet portfolio refetching
+ * @param walletPortfolioError - Optional error object for wallet portfolio fetch failures
+ * @param refetchWalletPortfolio - Optional function to trigger a wallet portfolio refetch
+ * @returns The rendered Search component JSX element
+ */
 export default function Search({
   setSearching,
   isBuy,

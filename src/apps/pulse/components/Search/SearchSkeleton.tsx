@@ -4,6 +4,15 @@ interface SearchSkeletonProps {
     showSections?: boolean;
 }
 
+/**
+ * Renders a pulsing loading skeleton for a search/results list.
+ *
+ * Shows optional section header placeholders and a fixed number of skeleton rows
+ * consisting of an avatar, two text lines, and two right-aligned value bars.
+ *
+ * @param showSections - When `true`, render the two header placeholder lines; when `false`, omit them.
+ * @returns A React element containing the loading skeleton UI.
+ */
 export default function SearchSkeleton({ showSections = true }: SearchSkeletonProps) {
     return (
         <div className="w-full px-2.5 animate-pulse">

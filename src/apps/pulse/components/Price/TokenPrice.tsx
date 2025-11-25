@@ -2,6 +2,13 @@ export interface TokenPriceProps {
   value: number;
 }
 
+/**
+ * Renders a token price in USD using different formats depending on its magnitude and where the first non-zero decimal appears.
+ *
+ * @param props - Component props.
+ * @param props.value - The token price in USD.
+ * @returns A JSX element displaying the formatted price: "$0.00" when all decimals are zero, "$X.XX" for values >= 0.01 or when the first non-zero decimal is within the first two places, and a compact "$0.0<sub>N</sub>dddd" form for very small values where `N` is the number of leading zeros before the first significant digits and `dddd` are up to four significant decimal digits.
+ */
 export default function TokenPrice(props: TokenPriceProps): JSX.Element {
   const { value } = props;
   const fixed = value.toFixed(10);

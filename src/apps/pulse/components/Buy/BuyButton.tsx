@@ -125,6 +125,21 @@ export interface BuyButtonProps {
   useRelayBuy: boolean;
 }
 
+/**
+ * Render the Buy button with state-aware label, styling, and enable/disable logic.
+ *
+ * The button text adapts to loading/installing/fetching states, missing modules (prompts to enable trading),
+ * selected token and USD amount (shows estimated token and USD values), and express intent/offer responses.
+ *
+ * @param props - Component props that control rendering and behavior. Key behaviors:
+ *   - isDisabled when installing, fetching, notEnoughLiquidity, loading, no token selected, USD amount ≤ 0,
+ *     or when the express intent/offer response is missing, contains an `error`, or contains an empty `bids` array.
+ *   - Exception: when not using Relay Buy and modules are not installed but a paying token exists, the button
+ *     is enabled to allow enabling trading.
+ *   - onClick is forwarded to `handleBuySubmit`.
+ *
+ * @returns The rendered button element for initiating a buy or enabling trading.
+ */
 export default function BuyButton(props: BuyButtonProps) {
   const {
     areModulesInstalled,

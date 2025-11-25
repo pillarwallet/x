@@ -13,6 +13,19 @@ export interface MarketListProps {
     minLiquidity?: number;
 }
 
+/**
+ * Render a vertical list of market rows as interactive buttons.
+ *
+ * Each row shows token0 artwork (or initials fallback), an overlaid chain logo,
+ * pair name, exchange, liquidity and 24h volume, USD liquidity on the right,
+ * and an optional 24h price change badge. Clicking a row invokes the provided
+ * selection handler with the corresponding market.
+ *
+ * @param props - Component props containing markets and selection handler.
+ *   - `markets`: array of market objects to render; when missing or empty nothing is rendered.
+ *   - `handleMarketSelect`: callback invoked with the selected `Market` when a row is clicked.
+ * @returns The rendered list of market rows, or `null` when `markets` is falsy or empty.
+ */
 export default function MarketList(props: MarketListProps) {
     const { markets, handleMarketSelect } = props;
 

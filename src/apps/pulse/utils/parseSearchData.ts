@@ -52,6 +52,15 @@ export type Market = {
   price: number | null;
 };
 
+/**
+ * Build a single Asset entry for a token using its first supported chain as the primary chain and attach multi-chain metadata.
+ *
+ * Filters out unsupported chains and wrapped native token deployments; when at least one valid chain remains, returns an array containing one Asset populated from the primary chain and including `allChains`, `allContracts`, and `allDecimals` for every valid chain. If no valid chains remain, returns an empty array.
+ *
+ * @param asset - The token response object to convert into an Asset
+ * @param chains - Which chain(s) to consider (specific chain name or `MobulaChainNames.All`)
+ * @returns An array containing one Asset with primary-chain fields and multi-chain metadata, or an empty array if no valid chains are found
+ */
 export function parseAssetData(
   asset: TokenAssetResponse,
   chains: MobulaChainNames
@@ -107,6 +116,12 @@ export function parseAssetData(
   return result;
 }
 
+/**
+ * Convert a TokenAssetResponse into a single Asset entry that consolidates multi-chain information when supported.
+ *
+ * @param asset - TokenAssetResponse from the API representing a token across chains; wrapped native-token contract entries are ignored.
+ * @returns An array containing one Asset built from the first valid chain as the primary chain and populated `allChains`, `allContracts`, and `allDecimals`; returns an empty array if no valid chains are available.
+ */
 export function parseTokenData(asset: TokenAssetResponse): Asset[] {
   const result: Asset[] = [];
   const { blockchains, decimals, contracts } = asset;
@@ -156,7 +171,12 @@ export function parseTokenData(asset: TokenAssetResponse): Asset[] {
 }
 
 /**
- * Parse market pairs from TokenAssetResponse, ensuring the searched token appears first
+ * Extracts market pairs from a token response where either token matches the search term, ordering each pair so the matched token is first.
+ *
+ * @param asset - Token asset response containing pair data
+ * @param searchTerm - Term used to match token symbol or name (case-insensitive)
+ * @param chains - Chain filter; use MobulaChainNames.All to include all chains
+ * @returns An array of Market entries matching the search term with the matched token positioned as `token0`; empty if none
  */
 export function parseMarketPairs(
   asset: TokenAssetResponse,
@@ -225,7 +245,16 @@ export function parseMarketPairs(
 }
 
 /**
- * Parse market pairs from PairResponse
+ * Construct the pair representation including tokens, liquidity, volume, and pricing information.
+ *
+ * @returns An object representing the market pair with these fields:
+ * - `pairName`: string in the form `"token0.symbol/token1.symbol"`
+ * - `token0`, `token1`: token objects from the pair
+ * - `liquidity`: pair liquidity
+ * - `volume24h`: 24-hour volume (prefers `pair.volume_24h` if present)
+ * - `blockchain`, `address`, `exchange`: source identifiers
+ * - `priceChange24h`: 24-hour price change if provided, `null` otherwise
+ * - `price`: current pair price
  */
 export function parsePairResponse(pair: PairResponse): Market {
   return {
@@ -243,7 +272,13 @@ export function parsePairResponse(pair: PairResponse): Market {
 }
 
 /**
- * Sort assets by relevance to search term, then by market cap
+ * Order assets by relevance to the provided search term, then by market capitalization.
+ *
+ * The search term is compared to asset symbols case-insensitively after trimming; assets whose symbol exactly matches the search term are placed before others. Assets with equal relevance are ordered by `mCap` descending (treating missing `mCap` as zero).
+ *
+ * @param assets - Array of assets to sort
+ * @param searchTerm - Term used to prioritize exact symbol matches
+ * @returns The same assets array sorted with exact symbol matches first, then by market cap (highest first)
  */
 export function sortAssets(assets: Asset[], searchTerm: string): Asset[] {
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
@@ -264,7 +299,11 @@ export function sortAssets(assets: Asset[], searchTerm: string): Asset[] {
 }
 
 /**
- * Sort markets by relevance to search term, then by liquidity
+ * Order markets by relevance to the search term, placing markets whose token0 symbol exactly matches the term first, then by descending liquidity.
+ *
+ * @param markets - Array of market entries to sort
+ * @param searchTerm - Search string used to determine relevance (matched against token0 symbol, case-insensitive)
+ * @returns Markets sorted so exact `token0` symbol matches to `searchTerm` come first, ties broken by higher `liquidity`
  */
 export function sortMarkets(markets: Market[], searchTerm: string): Market[] {
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
@@ -286,7 +325,11 @@ export function sortMarkets(markets: Market[], searchTerm: string): Market[] {
 }
 
 /**
- * Filter markets by minimum liquidity threshold
+ * Selects markets with liquidity greater than or equal to a minimum threshold.
+ *
+ * @param markets - Array of market entries to filter
+ * @param minLiquidity - Minimum liquidity threshold; markets with liquidity >= `minLiquidity` are kept
+ * @returns The filtered array of markets whose `liquidity` is greater than or equal to `minLiquidity`
  */
 export function filterMarketsByLiquidity(
   markets: Market[],
@@ -295,6 +338,13 @@ export function filterMarketsByLiquidity(
   return markets.filter((market) => (market.liquidity || 0) >= minLiquidity);
 }
 
+/**
+ * Parse mixed API search results into deduplicated, filtered, and optionally sorted asset and market lists.
+ *
+ * @param searchData - Array of API responses which may be token/asset entries or pair records.
+ * @param chains - Chain filter controlling which chains to consider (e.g., all chains or a specific Mobula chain).
+ * @param searchTerm - Optional search term used to prioritize and sort results; also enables debug logging for certain terms.
+ * @returns An object containing `assets` (deduplicated and filtered Asset[] with merged multi-chain metadata) and `markets` (deduplicated Market[]), optionally sorted by relevance to `searchTerm`.
 export function parseSearchData(
   searchData: TokenAssetResponse[] | PairResponse[],
   chains: MobulaChainNames,
@@ -389,8 +439,12 @@ export function parseSearchData(
 }
 
 /**
- * Deduplicate assets by Mobula ID and symbol
- * This handles cases where the API returns both 'asset' and 'token' types for the same asset
+ * Produce a deduplicated list of assets, preferring entries that include a Mobula `id`.
+ *
+ * Removes duplicate token entries by symbol when an asset with an `id` exists, and merges multi-chain metadata for entries that represent the same asset across chains.
+ *
+ * @param assets - Array of Asset entries (may include both asset-type entries with `id` and token-type entries without `id`)
+ * @returns An array of unique Asset objects where duplicates are removed and multi-chain fields (`allChains`, `allContracts`, `allDecimals`) are merged into the retained entry
  */
 function deduplicateAssetsBySymbol(assets: Asset[]): Asset[] {
   const assetMap = new Map<string, Asset>();
@@ -438,6 +492,13 @@ function deduplicateAssetsBySymbol(assets: Asset[]): Asset[] {
   return Array.from(assetMap.values());
 }
 
+/**
+ * Builds Asset entries from projection data representing fresh and trending tokens across chains.
+ *
+ * Parses each projection's market rows to produce assets keyed by symbol (or name if symbol is empty), merging entries that appear on multiple chains into a single Asset with aggregated `volume` and `mCap`, and populated `allChains`, `allContracts`, and `allDecimals`.
+ *
+ * @param projections - Array of projection objects containing tokens market data across chains.
+ * @returns An array of Assets with non-zero volume and market cap, where multi-chain occurrences are merged and per-asset fields (price, priceChange24h, liquidity, timestamp, decimals, logo) are populated.
 export function parseFreshAndTrendingTokens(
   projections: Projection[]
 ): Asset[] {
@@ -529,6 +590,14 @@ export function parseFreshAndTrendingTokens(
   return filteredAssets;
 }
 
+/**
+ * Merge multi-chain arrays (`allChains`, `allContracts`, `allDecimals`) from `source` into `target`, mutating `target`.
+ *
+ * If `source` lacks the multi-chain arrays the function does nothing. If `target` lacks those arrays they are copied from `source`. Otherwise, each chain present in `source` that is not already in `target.allChains` is appended along with its corresponding contract and decimals.
+ *
+ * @param target - Asset to receive merged multi-chain data (mutated).
+ * @param source - Asset providing multi-chain data to merge.
+ */
 function mergeMultiChainData(target: Asset, source: Asset) {
   if (!source.allChains || !source.allContracts || !source.allDecimals) return;
 
