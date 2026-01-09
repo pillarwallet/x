@@ -1,21 +1,13 @@
 import { EtherspotUtils } from '@etherspot/transaction-kit';
-import { sub } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // hooks
 import useAllowedApps from '../../../../hooks/useAllowedApps';
-import { useAppDispatch, useAppSelector } from '../../hooks/useReducerHooks';
-
-// reducer
-import {
-  setPeriodFilter,
-  setPriceGraphPeriod,
-} from '../../reducer/tokenAtlasSlice';
+import { useAppSelector } from '../../hooks/useReducerHooks';
 
 // utils
 import { chainIdToChainNameTokensData } from '../../../../services/tokensData';
-import { convertDateToUnixTimestamp } from '../../../../utils/common';
 import { limitDigits } from '../../utils/converters';
 
 // types
@@ -23,7 +15,7 @@ import {
   MarketHistoryPairData,
   TokenAtlasInfoData,
 } from '../../../../types/api';
-import { PeriodFilter, SelectedTokenType } from '../../types/types';
+import { SelectedTokenType } from '../../types/types';
 
 // images
 import ArrowGreenSmall from '../../images/arrow-circle-green-small.svg';
@@ -34,7 +26,7 @@ import ArrowRed from '../../images/arrow-circle-red.svg';
 // components
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 import RandomAvatar from '../RandomAvatar/RandomAvatar';
-import TokenGraph from '../TokenGraph/TokenGraph';
+import TradingViewChart from '../TradingViewChart/TradingViewChart';
 import Body from '../Typography/Body';
 
 type TokenGraphColumnProps = {
@@ -55,16 +47,12 @@ const TokenGraphColumn = ({
   const navigate = useNavigate();
   const { setIsAnimated } = useAllowedApps();
   const { isZeroAddress } = EtherspotUtils;
-  const dispatch = useAppDispatch();
   const tokenDataInfo = useAppSelector(
     (state) => state.tokenAtlas.tokenDataInfo as TokenAtlasInfoData | undefined
   );
   const tokenDataGraph = useAppSelector(
     (state) =>
       state.tokenAtlas.tokenDataGraph as MarketHistoryPairData | undefined
-  );
-  const periodFilter = useAppSelector(
-    (state) => state.tokenAtlas.periodFilter as PeriodFilter
   );
   const isTokenDataErroring = useAppSelector(
     (state) => state.tokenAtlas.isTokenDataErroring as boolean
@@ -76,12 +64,94 @@ const TokenGraphColumn = ({
   const [viewportWidth, setViewportWidth] = useState<number>(window.innerWidth);
   const [isBrokenImage, setIsBrokenImage] = useState<boolean>(false);
   const [latestPrice, setLatestPrice] = useState<number | undefined>();
+  const [realTimePrice, setRealTimePrice] = useState<number | undefined>();
+  const [initialPrice, setInitialPrice] = useState<number | undefined>();
 
-  // The resize handle and listener are to check the viewport size, and change the arrows SVG accordingly
+  // Helper functions
+  /**
+   * Calculate percentage change from initial price to current real-time price
+   */
+  const calculatePriceChange = (): number | undefined => {
+    if (!initialPrice || !realTimePrice) return undefined;
+    if (initialPrice === 0) return undefined;
+    return ((realTimePrice - initialPrice) / initialPrice) * 100;
+  };
+
+  const priceChange = calculatePriceChange();
+
+  /**
+   * Get the appropriate arrow icon based on price change direction and viewport width
+   * Uses real-time change if available, otherwise falls back to 24h change
+   */
+  const getArrow = () => {
+    const change = priceChange ?? tokenDataInfo?.price_change_24h;
+    if (change !== undefined) {
+      if (change > 0) {
+        return viewportWidth > 768 ? ArrowGreen : ArrowGreenSmall;
+      }
+      if (change < 0) {
+        return viewportWidth > 768 ? ArrowRed : ArrowRedSmall;
+      }
+    }
+    return '';
+  };
+
+  /**
+   * Get the current price to display, prioritizing real-time price
+   */
+  const getDisplayPrice = (): number => {
+    if (realTimePrice) {
+      return realTimePrice;
+    }
+    if (latestPrice) {
+      return latestPrice;
+    }
+    return tokenDataInfo?.price || 0;
+  };
+
+  // Callbacks
+  /**
+   * Handle real-time price updates from TradingView chart
+   * Use useCallback to prevent the function from changing on every render
+   */
+  const handlePriceUpdate = useCallback((price: number) => {
+    setRealTimePrice(price);
+    // Update initial price if not set yet
+    setInitialPrice((prev) => prev ?? price);
+  }, []);
+
+  /**
+   * Handle window resize to update viewport width for responsive arrow icons
+   */
   const handleResize = () => {
     setViewportWidth(window.innerWidth);
   };
 
+  useEffect(() => {
+    if (tokenDataInfo?.price && !initialPrice) {
+      setInitialPrice(tokenDataInfo.price);
+      setRealTimePrice(tokenDataInfo.price);
+    }
+  }, [tokenDataInfo?.price, initialPrice]);
+
+  // Initialize price from tokenDataGraph
+  useEffect(() => {
+    if (tokenDataGraph?.result?.data.length && !isGraphLoading) {
+      const tokenDataGraphPrices = tokenDataGraph.result.data;
+      const latestClosePrice =
+        tokenDataGraphPrices?.[tokenDataGraphPrices.length - 1].close;
+
+      setLatestPrice(latestClosePrice);
+
+      // Set initial price if not already set
+      if (latestClosePrice && !initialPrice) {
+        setInitialPrice(latestClosePrice);
+        setRealTimePrice(latestClosePrice);
+      }
+    }
+  }, [isGraphLoading, tokenDataGraph, initialPrice]);
+
+  // Listen to window resize events
   useEffect(() => {
     window.addEventListener('resize', handleResize);
 
@@ -89,79 +159,6 @@ const TokenGraphColumn = ({
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const timeFilter = [
-    PeriodFilter.HOUR,
-    PeriodFilter.DAY,
-    PeriodFilter.WEEK,
-    PeriodFilter.MONTH,
-    PeriodFilter.YEAR,
-  ];
-
-  // The percentage showing next to the token price is the price change in the last 24H
-  const getArrow = () => {
-    if (tokenDataInfo?.price_change_24h) {
-      if (tokenDataInfo.price_change_24h > 0) {
-        return viewportWidth > 768 ? ArrowGreen : ArrowGreenSmall;
-      }
-      if (tokenDataInfo.price_change_24h < 0) {
-        return viewportWidth > 768 ? ArrowRed : ArrowRedSmall;
-      }
-    }
-    return '';
-  };
-
-  // The handleClickTimePeriod makes sure we select the right "from" Unix timestamp to today's Unix timestamp for the price history graph
-  const handleClickTimePeriod = (filter: PeriodFilter) => {
-    dispatch(setPeriodFilter(filter));
-    const now = new Date();
-    let from;
-    switch (filter) {
-      case PeriodFilter.HOUR:
-        from = sub(now, { hours: 2 });
-        break;
-      case PeriodFilter.DAY:
-        from = sub(now, { hours: 24 });
-        break;
-      case PeriodFilter.WEEK:
-        from = sub(now, { weeks: 1 });
-        break;
-      case PeriodFilter.MONTH:
-        from = sub(now, { months: 1 });
-        break;
-      case PeriodFilter.YEAR:
-        from = sub(now, { years: 1 });
-        break;
-      default:
-        from = sub(now, { days: 1 });
-        break;
-    }
-    dispatch(
-      setPriceGraphPeriod({
-        from: convertDateToUnixTimestamp(from),
-        to: undefined,
-      })
-    );
-  };
-
-  useEffect(() => {
-    handleClickTimePeriod(PeriodFilter.DAY);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenDataInfo]);
-
-  useEffect(() => {
-    if (
-      periodFilter === PeriodFilter.DAY &&
-      tokenDataGraph?.result?.data.length &&
-      !isGraphLoading
-    ) {
-      const tokenDataGraphPrices = tokenDataGraph.result.data;
-      const latestClosePrice =
-        tokenDataGraphPrices?.[tokenDataGraphPrices.length - 1].close;
-
-      setLatestPrice(latestClosePrice);
-    }
-  }, [isGraphLoading, periodFilter, tokenDataGraph]);
 
   return (
     <div
@@ -251,7 +248,7 @@ const TokenGraphColumn = ({
             <SkeletonLoader $height="50px" $radius="6px" $marginBottom="10px" />
           ) : (
             <>
-              {isGraphLoading && periodFilter === PeriodFilter.DAY ? (
+              {isGraphLoading ? (
                 <SkeletonLoader
                   $height="50px"
                   $radius="6px"
@@ -264,27 +261,31 @@ const TokenGraphColumn = ({
                   className="text-[60px] mobile:text-[40px] mr-4"
                 >
                   <span className="text-white_light_grey">$</span>
-                  {latestPrice
-                    ? limitDigits(latestPrice)
-                    : limitDigits(tokenDataInfo?.price || 0)}
+                  {limitDigits(getDisplayPrice())}
                 </h1>
               )}
               <div
                 id="token-atlas-graph-column-price-change-percentage"
                 className="flex mobile:flex-col tablet:flex-col items-end desktop:mb-5 mb-0"
               >
-                {tokenDataInfo?.price_change_24h && (
+                {(priceChange !== undefined ||
+                  tokenDataInfo?.price_change_24h) && (
                   <>
                     <img
                       src={getArrow()}
                       alt="arrow"
                       className={`w-[30px] mr-1 mobile:w-3.5 mobile:mb-2 ${
-                        tokenDataInfo.price_change_24h < 0 && 'rotate-180'
+                        (priceChange ?? tokenDataInfo?.price_change_24h ?? 0) <
+                          0 && 'rotate-180'
                       }`}
                     />
                     <div className="flex">
                       <Body className="text-[15px] mobile:text-[13px]">
-                        {tokenDataInfo.price_change_24h.toFixed(3)}
+                        {(
+                          priceChange ??
+                          tokenDataInfo?.price_change_24h ??
+                          0
+                        ).toFixed(3)}
                       </Body>
                       <Body className="text-[11px] font-black mobile:text-[9px] self-start">
                         %
@@ -296,27 +297,8 @@ const TokenGraphColumn = ({
             </>
           )}
         </div>
-        <div
-          id="token-atlas-graph-column-time-filter"
-          className="flex rounded bg-medium_grey max-w-[460px] p-1 gap-1"
-        >
-          {timeFilter.map((filter, index) => (
-            <button
-              type="button"
-              key={index}
-              className={`flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded ${
-                tokenDataGraph?.result.data.length
-                  ? 'hover:bg-green hover:text-dark_grey'
-                  : ''
-              } ${periodFilter === filter && tokenDataGraph?.result.data.length ? 'bg-green text-dark_grey' : 'text-white_grey bg-medium_grey'}`}
-              onClick={() => handleClickTimePeriod(filter)}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
       </div>
-      <TokenGraph />
+      <TradingViewChart onPriceUpdate={handlePriceUpdate} />
     </div>
   );
 };

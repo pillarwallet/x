@@ -12,7 +12,8 @@
     "test:update": "vitest -u",
     "test:ci": "vitest run --coverage",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org pillar-project --project x ./build && sentry-cli sourcemaps upload --org pillar-project --project x ./build",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && npm run copy-files",
+    "copy-files": "cp -R node_modules/charting_library/charting_library public/ && cp -R node_modules/charting_library/charting_library src/ && cp -R node_modules/charting_library/datafeeds public/",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
@@ -128,7 +129,8 @@
     "viem": "2.37.1",
     "vite-plugin-svgr": "4.3.0",
     "wagmi": "2.14.16",
-    "webfontloader": "1.6.28"
+    "webfontloader": "1.6.28",
+    "charting_library": "https://github.com/tradingview/charting_library.git#semver:30.1.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",

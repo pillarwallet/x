@@ -3,10 +3,9 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import dynamicImport from 'vite-plugin-dynamic-import';
 import svgr from 'vite-plugin-svgr';
-import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
-  plugins: [react(), svgr(), dynamicImport(), basicSsl()],
+  plugins: [react(), svgr(), dynamicImport()],
   build: {
     outDir: 'build',
     commonjsOptions: { transformMixedEsModules: true },
@@ -30,15 +29,16 @@ export default defineConfig({
     pool: 'forks',
   },
   server: {
-    https: true,
-    host: '0.0.0.0',
-    proxy: {
-      '/api/coinbase': {
-        target: 'https://api.cdp.coinbase.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/coinbase/, ''),
-        secure: true,
-      },
-    },
+    port: 3000,
+    // https: true,
+    // host: '0.0.0.0',
+    // proxy: {
+    //   '/api/coinbase': {
+    //     target: 'https://api.cdp.coinbase.com',
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api\/coinbase/, ''),
+    //     secure: true,
+    //   },
+    // },
   },
 });

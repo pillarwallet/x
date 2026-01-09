@@ -547,6 +547,21 @@ export type MarketHistoryPairData = {
   };
 };
 
+export type OhlcvHistory = {
+  result: {
+    data: [
+      {
+        t: number;
+        o: number;
+        h: number;
+        l: number;
+        c: number;
+        v: number;
+      },
+    ];
+  };
+};
+
 export type MobulaToken = {
   address: string;
   price: number | null;

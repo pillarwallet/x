@@ -30,3 +30,8 @@ yarn-error.log*
 # Sentry Config File
 .sentryclirc
 /src/apps/insights/_lovable
+# TradingView Charting Library (large files, should not be committed)
+/public/charting_library
+/public/datafeeds
+/src/charting_library
+

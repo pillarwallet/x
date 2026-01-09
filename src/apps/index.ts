@@ -15,7 +15,6 @@ import { AppManifest } from '../types';
  * @returns AppManifest | null
  */
 export const loadApp = async (app: ApiAllowedApp) => {
-  console.log('ateempting to load app', app);
   let appManifest: AppManifest | null = null;
 
   try {

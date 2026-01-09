@@ -82,56 +82,22 @@ exports[`<TokenGraphColumn /> > renders correctly and matches snapshot 1`] = `
         </div>
       </div>
     </div>
-    <div
-      className="flex rounded bg-medium_grey max-w-[460px] p-1 gap-1"
-      id="token-atlas-graph-column-time-filter"
-    >
-      <button
-        className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
-        onClick={[Function]}
-        type="button"
-      >
-        HOUR
-      </button>
-      <button
-        className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey bg-green text-dark_grey"
-        onClick={[Function]}
-        type="button"
-      >
-        DAY
-      </button>
-      <button
-        className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
-        onClick={[Function]}
-        type="button"
-      >
-        WEEK
-      </button>
-      <button
-        className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
-        onClick={[Function]}
-        type="button"
-      >
-        MONTH
-      </button>
-      <button
-        className="flex-1 text-[11px] font-semibold capitalize truncate py-3 rounded hover:bg-green hover:text-dark_grey text-white_grey bg-medium_grey"
-        onClick={[Function]}
-        type="button"
-      >
-        YEAR
-      </button>
-    </div>
   </div>
   <div
-    className="flex w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0"
-    id="token-atlas-token-graph"
+    className="relative w-[99%] mb-20 h-full max-h-[400px] mobile:mb-0"
+    data-testid="tradingview-chart"
+    id="token-atlas-tradingview-chart"
   >
-    <canvas
-      data-testid="price-graph"
-      height={150}
-      role="img"
-      width={300}
+    <div
+      style={
+        {
+          "height": "400px",
+          "minHeight": "400px",
+          "opacity": 1,
+          "transition": "opacity 120ms ease",
+          "width": "100%",
+        }
+      }
     />
   </div>
 </div>

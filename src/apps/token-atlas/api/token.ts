@@ -7,6 +7,7 @@ import { addMiddleware } from '../../../store';
 import {
   BlockchainList,
   MarketHistoryPairData,
+  OhlcvHistory,
   TokenAtlasInfoApiResponse,
   TrendingTokens,
 } from '../../../types/api';
@@ -141,6 +142,80 @@ export const trendingTokens = createApi({
   }),
 });
 
+export const tokenOhlcvHistory = createApi({
+  reducerPath: 'tokenOhlcvHistory',
+  baseQuery: fetchBaseMobula,
+  endpoints: (builder) => ({
+    getTokenOhlcvHistory: builder.query<
+      OhlcvHistory,
+      {
+        address: string;
+        chainId: string;
+        period: string;
+        from: number;
+        to?: number;
+        amount?: number;
+      }
+    >({
+      query: ({ address, chainId, period, from, to, amount }) => {
+        return {
+          url: `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
+          method: 'POST',
+          body: {
+            version: '2',
+            path: 'token/ohlcv-history',
+            params: {
+              address,
+              chainId,
+              period,
+              from: from * 1000,
+              to: to ? to * 1000 : undefined,
+              amount: amount || undefined,
+            },
+          },
+        };
+      },
+    }),
+  }),
+});
+
+export const marketOhlcvHistory = createApi({
+  reducerPath: 'marketOhlcvHistory',
+  baseQuery: fetchBaseMobula,
+  endpoints: (builder) => ({
+    getMarketOhlcvHistory: builder.query<
+      OhlcvHistory,
+      {
+        address: string;
+        chainId: string;
+        period: string;
+        from: number;
+        to?: number;
+        amount?: number;
+      }
+    >({
+      query: ({ address, chainId, period, from, to, amount }) => {
+        return {
+          url: `?${chainIdsQuery}&testnets=${String(isTestnet)}`,
+          method: 'POST',
+          body: {
+            version: '2',
+            path: 'market/ohlcv-history',
+            params: {
+              address,
+              chainId,
+              period,
+              from: from * 1000,
+              to: to ? to * 1000 : undefined,
+              amount: amount || undefined,
+            },
+          },
+        };
+      },
+    }),
+  }),
+});
+
 /**
  * Add this to the store
  */
@@ -148,8 +223,12 @@ addMiddleware(trendingTokens);
 addMiddleware(tokenMarketHistoryPair);
 addMiddleware(tokenMarketData);
 addMiddleware(blockchainsList);
+addMiddleware(marketOhlcvHistory);
+addMiddleware(tokenOhlcvHistory);
 
 export const { useGetTrendingTokensQuery } = trendingTokens;
 export const { useGetTokenMarketHistoryPairQuery } = tokenMarketHistoryPair;
 export const { useGetTokenMarketDataQuery } = tokenMarketData;
 export const { useGetBlockchainsListQuery } = blockchainsList;
+export const { useGetMarketOhlcvHistoryQuery } = marketOhlcvHistory;
+export const { useGetTokenOhlcvHistoryQuery } = tokenOhlcvHistory;

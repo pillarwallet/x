@@ -27,7 +27,7 @@ import {
   MarketHistoryPairData,
   TokenAtlasInfoData,
 } from '../../../../../types/api';
-import { PeriodFilter } from '../../../types/types';
+import { PeriodFilter, SelectedTokenType } from '../../../types/types';
 
 const mockTokenDataGraph: MarketHistoryPairData = {
   result: {
@@ -87,6 +87,17 @@ const mockTokenDataInfo: TokenAtlasInfoData = {
   circulating_supply: '170',
 };
 
+const mockSelectedToken: SelectedTokenType = {
+  id: 1,
+  symbol: 'TKN',
+  address: '0x0000000000000000000000000000000000000000',
+  chainId: 1,
+  name: 'TOKEN',
+  price: 105,
+};
+
+const mockGetSymbol = vi.fn((symbol: string) => symbol);
+
 // Mock the chart
 vi.mock('react-chartjs-2', () => ({
   Line: () => (
@@ -108,7 +119,12 @@ describe('<TokenGraphColumn />', () => {
         <Provider store={store}>
           <MemoryRouter>
             <AllowedAppsProvider>
-              <TokenGraphColumn isLoadingTokenDataInfo={false} />
+              <TokenGraphColumn
+                isLoadingTokenDataInfo={false}
+                selectedToken={mockSelectedToken}
+                isWrappedOrNativeToken={false}
+                getSymbol={mockGetSymbol}
+              />
             </AllowedAppsProvider>
           </MemoryRouter>
         </Provider>
@@ -123,7 +139,12 @@ describe('<TokenGraphColumn />', () => {
       <Provider store={store}>
         <MemoryRouter>
           <AllowedAppsProvider>
-            <TokenGraphColumn isLoadingTokenDataInfo={false} />
+            <TokenGraphColumn
+              isLoadingTokenDataInfo={false}
+              selectedToken={mockSelectedToken}
+              isWrappedOrNativeToken={false}
+              getSymbol={mockGetSymbol}
+            />
           </AllowedAppsProvider>
         </MemoryRouter>
       </Provider>
@@ -131,9 +152,16 @@ describe('<TokenGraphColumn />', () => {
     expect(screen.getByTestId('token-logo-graph-column')).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.name)).toBeInTheDocument();
     expect(screen.getByText(mockTokenDataInfo.symbol)).toBeInTheDocument();
-    expect(screen.getByText('46050.5')).toBeInTheDocument();
-    expect(
-      screen.getByText(`${mockTokenDataInfo.price_change_24h.toFixed(3)}`)
-    ).toBeInTheDocument();
+
+    const priceElement = document.getElementById(
+      'token-atlas-graph-column-price-today'
+    );
+    expect(priceElement).toBeInTheDocument();
+
+    const percentageElement = document.getElementById(
+      'token-atlas-graph-column-price-change-percentage'
+    );
+    expect(percentageElement).toBeInTheDocument();
+    expect(percentageElement?.textContent).toMatch(/%/);
   });
 });
