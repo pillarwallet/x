@@ -61,6 +61,7 @@ interface TopUpScreenProps {
   setOnboardingScreen: Dispatch<SetStateAction<'welcome' | 'topup' | null>>;
   markOnboardingComplete: () => void;
   isPortfolioLoading?: boolean;
+  hasPortfolioData?: boolean; // True if portfolio has been loaded at least once
   showCloseButton?: boolean; // Show ESC button instead of back arrow
 }
 
@@ -74,6 +75,7 @@ export default function TopUpScreen(props: TopUpScreenProps) {
     setOnboardingScreen,
     markOnboardingComplete,
     isPortfolioLoading = false,
+    hasPortfolioData = false,
     showCloseButton = false,
   } = props;
   const [amount, setAmount] = useState<string>('');

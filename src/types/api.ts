@@ -8,6 +8,7 @@ export enum ApiLayout {
   PXPOINTS = 'PXPOINTS',
   TOKENS_WITH_MARKET_DATA = 'TOKENS_WITH_MARKET_DATA',
   ALGO_INSIGHTS = 'ALGO_INSIGHTS',
+  GAS_TANK = 'GAS_TANK',
 }
 
 export enum LeaderboardRankChange {

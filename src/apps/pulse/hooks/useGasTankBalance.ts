@@ -84,8 +84,23 @@ export function useGasTankBalance(
     }
   };
 
+  // Initial fetch when wallet address or paymaster URL changes
   useEffect(() => {
     fetchGasTankBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress, paymasterUrl]);
+
+  // Polling: Refetch balance every 30 seconds
+  useEffect(() => {
+    if (!walletAddress || !paymasterUrl) return;
+
+    const POLL_INTERVAL = 30000; // 30 seconds
+    const intervalId = setInterval(() => {
+      fetchGasTankBalance();
+    }, POLL_INTERVAL);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, paymasterUrl]);
 

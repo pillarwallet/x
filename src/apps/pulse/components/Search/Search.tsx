@@ -466,7 +466,10 @@ export default function Search({
             limitDigitsNumber(item.price || 0)
           ),
           dailyPriceChange:
-            'price_change_24h' in item ? item.price_change_24h || 0.0 : 0.0,
+            'price_change_24h' in item &&
+            typeof item.price_change_24h === 'number'
+              ? item.price_change_24h
+              : 0.0,
           chainId: selectedChainId,
           decimals: selectedDecimals,
           address: selectedContract,

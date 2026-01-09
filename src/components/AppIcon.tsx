@@ -7,6 +7,9 @@ import { animation } from '../theme';
 import { ApiAllowedApp } from '../providers/AllowedAppsProvider';
 import { AppManifest } from '../types';
 
+// assets
+import GasTankIcon from '../apps/pulse/assets/gas-tank-icon.svg';
+
 const AppIcon = ({
   app,
   appId,
@@ -20,6 +23,11 @@ const AppIcon = ({
 
   useEffect(() => {
     const loadIconSrc = async () => {
+      if (appId === 'gas-tank') {
+        setIconSrc(GasTankIcon);
+        return;
+      }
+
       if ((app as ApiAllowedApp).type === 'app-external') {
         setIconSrc((app as ApiAllowedApp).logo);
       } else {

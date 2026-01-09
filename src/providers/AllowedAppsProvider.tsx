@@ -81,13 +81,48 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
             paramsSerializer: () => finalQueryString,
           }
         );
-        if (expired || !data?.length) {
+        if (expired) {
           setIsLoading(false);
           return;
         }
-        setAllowed(data?.map((app: ApiAllowedApp) => app));
+
+        // Default apps that are always available
+        const defaultApps: ApiAllowedApp[] = [
+          {
+            id: 'gas-tank',
+            type: 'app',
+            appId: 'gas-tank',
+            title: 'Gas Tank',
+            name: 'Gas Tank',
+            shortDescription: 'Universal Gas Tank',
+            longDescription:
+              'Manage your gas balance across all networks with the PillarX Gas Tank',
+            logo: '../apps/gas-tank/assets/gas-tank-icon.svg',
+          },
+        ];
+
+        // Combine default apps with API-fetched apps
+        const allApps = data?.length ? [...defaultApps, ...data] : defaultApps;
+        setAllowed(allApps.map((app: ApiAllowedApp) => app));
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
+        // Still provide default apps even if API fails
+        if (!expired) {
+          const defaultApps: ApiAllowedApp[] = [
+            {
+              id: 'gas-tank',
+              type: 'app',
+              appId: 'gas-tank',
+              title: 'Gas Tank',
+              name: 'Gas Tank',
+              shortDescription: 'Universal Gas Tank',
+              longDescription:
+                'Manage your gas balance across all networks with the PillarX Gas Tank',
+              logo: '../apps/gas-tank/assets/gas-tank-icon.svg',
+            },
+          ];
+          setAllowed(defaultApps);
+        }
       }
       setIsLoading(false);
     })();

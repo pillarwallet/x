@@ -127,6 +127,16 @@ const App = () => {
           }
         });
 
+        // Inject Gas Tank Tile
+        const gasTankTile: Projection = {
+          id: 'gas-tank-tile',
+          layout: ApiLayout.GAS_TANK,
+          meta: {
+            display: { title: 'Gas Tank' },
+          },
+          data: {} as any,
+        };
+
         // Inject Algo Insights Tile (Mock Data)
         const algoTile: Projection = {
           id: 'algo-insights-mock',
@@ -220,6 +230,10 @@ const App = () => {
         };
 
         // Add to the beginning of the feed if not already present
+        // Add GasTank first, then Algo, so Algo ends up on top (index 0) and GasTank at index 1
+        if (!newApiData.some((item) => item.id === gasTankTile.id)) {
+          newApiData.unshift(gasTankTile);
+        }
         if (!newApiData.some((item) => item.id === algoTile.id)) {
           newApiData.unshift(algoTile);
         }

@@ -11,6 +11,7 @@ import TokensHorizontalTile from '../components/TokensHorizontalTile/TokensHoriz
 import TokensVerticalTile from '../components/TokensVerticalTile/TokensVerticalTile';
 import TokensWithMarketDataTile from '../components/TokensWithMarketDataTile/TokensWithMarketDataTile';
 import AlgoInsightsTile from '../components/AlgoInsightsTile/AlgoInsightsTile';
+import GasTankTile from '../components/GasTankTile/GasTankTile';
 
 type TileComponentType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,4 +27,5 @@ export const componentMap: TileComponentType = {
   [ApiLayout.PXPOINTS]: PointsTile,
   [ApiLayout.TOKENS_WITH_MARKET_DATA]: TokensWithMarketDataTile,
   [ApiLayout.ALGO_INSIGHTS]: AlgoInsightsTile,
+  [ApiLayout.GAS_TANK]: GasTankTile,
 };
