@@ -72,7 +72,7 @@ export const fetchLogoFromMobula = async (
       {
         method: 'GET',
         headers: {
-          Authorization: `${import.meta.env.MOBULA_API_KEY || 'your_api_key_here'}`,
+          Authorization: `${import.meta.env.VITE_MOBULA_API_KEY || 'your_api_key_here'}`,
         },
       }
     );
