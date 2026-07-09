@@ -1089,6 +1089,10 @@ ul li:last-child {
   justify-content: flex-end;
 }
 
+.home_feature__detail__content__icon__wrapper img {
+  max-height: 4rem;
+}
+
 @media only screen and (max-width: 767px) {
   .home_feature__detail__content__icon__wrapper img {
     max-height: 2.5rem;

@@ -274,7 +274,7 @@ export default function LandingPage() {
                   <h4>Coming Soon</h4>
                   <div className="home_feature__detail__content__icon__wrapper">
                     <img
-                      src="https://cdn.pillarx.app/home-superpowers-icon-2.svg"
+                      src="/public/landing-images/pillarx-ai.svg"
                       alt=""
                     />
                   </div>
