@@ -268,15 +268,14 @@ export default function LandingPage() {
                   </span>
                 </h2>
                 <p>
-                  Powered by Phone ID, AI agents can securely act on your behalf across PillarX. Define exactly what they can do, set spending limits and stay in control of every action.
+                  Powered by Phone ID, AI agents can securely act on your behalf
+                  across PillarX. Define exactly what they can do, set spending
+                  limits and stay in control of every action.
                 </p>
                 <div className="home_feature__detail__content__icon">
                   <h4>Coming Soon</h4>
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img
-                      src="/landing-images/pillarx-ai.svg"
-                      alt=""
-                    />
+                    <img src="/landing-images/pillarx-ai.svg" alt="" />
                   </div>
                 </div>
               </div>
