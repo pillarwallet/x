@@ -69,6 +69,8 @@ interface PreviewBuyProps {
   userPortfolio?: Token[]; // For Relay Buy: user's token portfolio
   gasTankBalance?: number; // For Relay Buy: gas tank balance to validate transaction
   usdcPrice?: number; // For Relay Buy: USDC price in USD (e.g., 0.9998)
+  isMaxSelected?: boolean; // For Relay Buy: whether MAX was selected
+  maxTokenAmount?: number; // For Relay Buy: actual balance amount when MAX is selected
 }
 
 export default function PreviewBuy(props: PreviewBuyProps) {
@@ -87,6 +89,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     userPortfolio,
     gasTankBalance = 0,
     usdcPrice,
+    isMaxSelected = false,
+    maxTokenAmount,
   } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -615,12 +619,17 @@ export default function PreviewBuy(props: PreviewBuyProps) {
       try {
         // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
         // The quote will tell us how many tokens we'll receive
+        // When MAX is selected, use maxTokenAmount to pass the balance directly
         const newOffer = await getBestOffer({
           fromAmount: usdAmount,
           toTokenAddress: buyToken.address,
           toChainId: buyToken.chainId,
           fromChainId,
           usdcPrice,
+          maxTokenAmount:
+            isMaxSelected && maxTokenAmount
+              ? maxTokenAmount.toString()
+              : undefined,
         });
 
         onBuyOfferUpdate(newOffer);
@@ -703,6 +712,8 @@ export default function PreviewBuy(props: PreviewBuyProps) {
     setExpressIntentResponse,
     clearError,
     isRelayInitialized,
+    isMaxSelected,
+    maxTokenAmount,
     onBuyOfferUpdate,
     getBestOffer,
     fromChainId,

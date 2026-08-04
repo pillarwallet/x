@@ -12,18 +12,13 @@ exports[`WalletPortfolioBalance > renders correctly and matches snapshot 1`] = `
           class="flex flex-col gap-4"
         >
           <div
-            class="flex gap-1.5"
+            class="flex items-center gap-2"
           >
-            <img
-              alt="wallet-portfolio-icon"
-              class="w-7 h-5"
-              src="wallet-portfolio-icon.png"
-            />
-            <p
-              class="text-base font-medium undefined"
+            <div
+              data-testid="account-selector"
             >
-              My portfolio
-            </p>
+              Account Selector
+            </div>
           </div>
           <div
             data-testid="skeleton-loader"
@@ -51,18 +46,13 @@ exports[`WalletPortfolioBalance > renders correctly and matches snapshot 1`] = `
         class="flex flex-col gap-4"
       >
         <div
-          class="flex gap-1.5"
+          class="flex items-center gap-2"
         >
-          <img
-            alt="wallet-portfolio-icon"
-            class="w-7 h-5"
-            src="wallet-portfolio-icon.png"
-          />
-          <p
-            class="text-base font-medium undefined"
+          <div
+            data-testid="account-selector"
           >
-            My portfolio
-          </p>
+            Account Selector
+          </div>
         </div>
         <div
           data-testid="skeleton-loader"

@@ -4,16 +4,18 @@
 
 import { forwardRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Clock, 
-  TrendingUp, 
-  Target, 
-  XCircle, 
-  RefreshCw, 
-  CheckCircle2, 
-  ChevronUp, 
+import {
+  Clock,
+  TrendingUp,
+  Target,
+  XCircle,
+  RefreshCw,
+  CheckCircle2,
+  ChevronUp,
   ChevronDown,
-  ArrowUpCircle
+  ArrowUpCircle,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -35,7 +37,29 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
   ({ signal, leverage, sparklineData, logoMap, animateOnMount = true }, ref) => {
     const applyLeverage = (pnl: number) => pnl * leverage;
     const [timelineOpen, setTimelineOpen] = useState(false);
-    
+    const [copied, setCopied] = useState(false);
+
+    const copyStrategy = async () => {
+      const strategy = {
+        orderSide: signal.order_side,
+        ticker: signal.ticker,
+        exchange: "BINANCE",
+        entryPrice: signal.entry_price,
+        stopLoss: signal.stop_loss,
+        tp1: signal.tp1,
+        tp2: signal.tp2,
+        tp3: signal.tp3
+      };
+
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(strategy));
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy strategy:', err);
+      }
+    };
+
     const getTimeSinceCreated = () => {
       const now = new Date();
       const created = new Date(signal.created_at);
@@ -43,7 +67,7 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
       const diffMinutes = Math.floor(diffMs / (1000 * 60));
       const diffHours = Math.floor(diffMinutes / 60);
       const diffDays = Math.floor(diffHours / 24);
-      
+
       if (diffDays > 0) {
         const remainingHours = diffHours % 24;
         return remainingHours > 0 ? `${diffDays}d ${remainingHours}h` : `${diffDays}d`;
@@ -75,10 +99,10 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
               {(() => {
                 const symbol = normalizeSymbol(signal.ticker);
                 const logoUrl = logoMap[symbol];
-                
+
                 return logoUrl ? (
                   <>
-                    <img 
+                    <img
                       src={logoUrl}
                       alt={signal.ticker.replace('.P', '')}
                       className="w-6 h-6 md:w-8 md:h-8 object-contain"
@@ -109,9 +133,29 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
               </Badge>
             </div>
           </div>
-          <div className="text-right text-muted-foreground text-sm flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            {getTimeSinceCreated()}
+          <div className="text-right flex items-center gap-3">
+            {isOpen && (
+              <button
+                onClick={copyStrategy}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/20 transition-all duration-200 text-xs font-medium text-white"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Copy Strategy</span>
+                  </>
+                )}
+              </button>
+            )}
+            <div className="text-muted-foreground text-sm flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              {getTimeSinceCreated()}
+            </div>
           </div>
         </div>
 
@@ -139,11 +183,11 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-1">Stop Loss</p>
                   {(() => {
                     const isTrailing = hasTrailingStop(signal) || (
-                      signal.order_side === 'buy' 
-                        ? signal.stop_loss > signal.entry_price 
+                      signal.order_side === 'buy'
+                        ? signal.stop_loss > signal.entry_price
                         : signal.stop_loss < signal.entry_price
                     );
-                    
+
                     return isTrailing ? (
                       <p className="text-sm md:text-lg font-semibold text-green-400 flex items-center gap-1">
                         <span className="text-xs">{signal.order_side === 'buy' ? '↑' : '↓'}</span>
@@ -182,19 +226,19 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
               ].filter(({ price }) => price != null).map(({ key, price, hit }) => {
                 const isClosed = ['completed', 'stopped', 'closed'].includes(signal.status || 'active');
                 const priceReachedTP = signal.current_price && (
-                  signal.order_side === 'buy' 
-                    ? signal.current_price >= price 
+                  signal.order_side === 'buy'
+                    ? signal.current_price >= price
                     : signal.current_price <= price
                 );
                 const isHit = hit || (isClosed && priceReachedTP);
-                
+
                 const tpPercent = signal.order_side?.toLowerCase() === 'sell'
                   ? ((signal.entry_price - price) / signal.entry_price) * 100
                   : ((price - signal.entry_price) / signal.entry_price) * 100;
                 const lockedInPercent = isHit ? (tpPercent * 0.3333) : null;
                 const displayedLockedIn = lockedInPercent !== null ? applyLeverage(lockedInPercent).toFixed(2) : null;
                 const displayedPotential = applyLeverage(tpPercent * 0.3333).toFixed(2);
-                
+
                 return (
                   <Tooltip key={key}>
                     <TooltipTrigger asChild>
@@ -245,7 +289,7 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
               <ChevronDown className="w-4 h-4 ml-auto" />
             )}
           </button>
-          
+
           {timelineOpen && (
             <div className="space-y-2">
               {timeline.map((event, idx) => {
@@ -256,10 +300,10 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
                   RefreshCw,
                   CheckCircle2,
                 }[event.icon];
-                
+
                 return (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="flex items-start gap-3 p-3 rounded-lg bg-slate-900/50 border border-slate-800/50"
                   >
                     {IconComponent && <IconComponent className={`w-5 h-5 ${event.iconColor} mt-0.5`} />}
@@ -299,9 +343,8 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
             <>
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Unrealized P/L</p>
-                <p className={`text-xl font-bold flex items-center gap-1 ${
-                  (signal.profit_loss_percent || 0) >= 0 ? 'text-[hsl(142,76%,58%)]' : 'text-[hsl(348,83%,58%)]'
-                }`}>
+                <p className={`text-xl font-bold flex items-center gap-1 ${(signal.profit_loss_percent || 0) >= 0 ? 'text-[hsl(142,76%,58%)]' : 'text-[hsl(348,83%,58%)]'
+                  }`}>
                   {applyLeverage(signal.profit_loss_percent || 0) >= 0 ? '+' : ''}{applyLeverage(signal.profit_loss_percent || 0).toFixed(2).replace('.', ',')}%
                   {(signal.profit_loss_percent || 0) >= 0 && <ArrowUpCircle className="w-4 h-4" />}
                 </p>
@@ -317,9 +360,8 @@ export const SignalCard = forwardRef<HTMLDivElement, SignalCardProps>(
             <>
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Realized P/L</p>
-                <p className={`text-xl font-bold flex items-center gap-1 ${
-                  (signal.realized_pnl_percent || 0) >= 0 ? 'text-[hsl(142,76%,58%)]' : 'text-[hsl(348,83%,58%)]'
-                }`}>
+                <p className={`text-xl font-bold flex items-center gap-1 ${(signal.realized_pnl_percent || 0) >= 0 ? 'text-[hsl(142,76%,58%)]' : 'text-[hsl(348,83%,58%)]'
+                  }`}>
                   {applyLeverage(signal.realized_pnl_percent || 0) >= 0 ? '+' : ''}{applyLeverage(signal.realized_pnl_percent || 0).toFixed(2).replace('.', ',')}%
                   {(signal.realized_pnl_percent || 0) >= 0 && <ArrowUpCircle className="w-4 h-4" />}
                 </p>

@@ -19,12 +19,12 @@ export const GasConsumptions = {
   nft: 630000,
   nft_arb: 1050000,
   // TopUp-specific gas costs
-  topup_install_modules: 500000,
-  topup_install_modules_arb: 700000, // 500000 + 200000
-  topup_deposit: 500000,
-  topup_deposit_arb: 700000,
-  topup_swap: 1500000,
-  topup_swap_arb: 1700000,
+  topup_install_modules: 610000,
+  topup_install_modules_arb: 810000, // 610000 + 200000
+  topup_deposit: 610000,
+  topup_deposit_arb: 810000,
+  topup_swap: 1610000,
+  topup_swap_arb: 1810000,
 };
 
 export const getAllGaslessPaymasters = async (

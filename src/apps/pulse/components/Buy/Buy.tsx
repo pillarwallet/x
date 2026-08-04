@@ -68,6 +68,7 @@ interface BuyProps {
   maxStableCoinBalance: {
     chainId: number;
     balance: number;
+    tokenAmount: number;
   };
   customBuyAmounts: string[];
   setPreviewBuy: Dispatch<SetStateAction<boolean>>;
@@ -84,6 +85,10 @@ interface BuyProps {
   setChains: Dispatch<SetStateAction<MobulaChainNames>>;
   usdcPrice?: number; // For Relay Buy: USDC price from portfolio (passed from HomeScreen)
   isRefreshing?: boolean;
+  isMaxSelected?: boolean; // Whether MAX was selected
+  maxTokenAmount?: number; // Balance amount when MAX is selected
+  setIsMaxSelected?: Dispatch<SetStateAction<boolean>>; // Update parent MAX selected state
+  setMaxTokenAmount?: Dispatch<SetStateAction<number | undefined>>; // Update parent max token amount state
 }
 
 export default function Buy(props: BuyProps) {
@@ -105,6 +110,10 @@ export default function Buy(props: BuyProps) {
     customBuyAmounts,
     usdcPrice,
     isRefreshing = false,
+    isMaxSelected = false,
+    maxTokenAmount,
+    setIsMaxSelected: setParentIsMaxSelected,
+    setMaxTokenAmount: setParentMaxTokenAmount,
   } = props;
   const [usdAmount, setUsdAmount] = useState<string>('');
   const [debouncedUsdAmount, setDebouncedUsdAmount] = useState<string>('');
@@ -268,6 +277,8 @@ export default function Buy(props: BuyProps) {
     if (!input || !Number.isNaN(parseFloat(input))) {
       setInputPlaceholder('0.00');
       setUsdAmount(input);
+      setParentIsMaxSelected?.(false); // Reset MAX flag when user manually types
+      setParentMaxTokenAmount?.(undefined);
       setBelowMinimumAmount(false);
       setNoEnoughLiquidity(false);
       setInsufficientWalletBalance(false);
@@ -293,7 +304,56 @@ export default function Buy(props: BuyProps) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (usdAmount && !Number.isNaN(parseFloat(usdAmount))) {
+      // Handle MAX case - use maxTokenAmount directly
+      if (isMaxSelected && maxTokenAmount && maxTokenAmount > 0) {
+        const amount = maxTokenAmount;
+
+        if (amount < 2) {
+          setBelowMinimumAmount(true);
+          setNoEnoughLiquidity(false);
+          setInsufficientWalletBalance(false);
+          return;
+        }
+
+        setBelowMinimumAmount(false);
+        setNoEnoughLiquidity(false);
+        setInsufficientWalletBalance(false);
+        // Pass the balance as a string for dispens able assets calculation
+        setDebouncedUsdAmount(maxTokenAmount.toString());
+        const [dAssets, pChains, pTokens] = getDispensableAssets(
+          maxTokenAmount.toString(),
+          walletPortfolioData?.result.data,
+          maxStableCoinBalance.chainId
+        );
+
+        // For MAX selection, skip validation errors and let getBestOffer handle the full amount
+        if (
+          pChains.length === 0 ||
+          dAssets.length === 0 ||
+          pTokens.length === 0
+        ) {
+          if (!isMaxSelected) {
+            // Only show error for non-MAX selections
+            setNoEnoughLiquidity(true);
+            return;
+          }
+          // For MAX: proceed without dispensable assets validation
+          // getBestOffer will handle the full balance
+          setParentUsdAmount(maxTokenAmount.toString());
+          return;
+        }
+
+        // Always update payingTokens to ensure correct USD amounts are passed to PreviewBuy
+        setDispensableAssets(dAssets);
+        setPermittedChains(pChains);
+        setPayingTokens(pTokens);
+        setParentDispensableAssets(dAssets);
+        setParentUsdAmount(maxTokenAmount.toString());
+      } else if (
+        usdAmount &&
+        usdAmount !== 'MAX' &&
+        !Number.isNaN(parseFloat(usdAmount))
+      ) {
         const amount = parseFloat(usdAmount);
 
         if (amount < 2) {
@@ -335,6 +395,8 @@ export default function Buy(props: BuyProps) {
   }, [
     sumOfStableBalance,
     usdAmount,
+    isMaxSelected,
+    maxTokenAmount,
     setPayingTokens,
     walletPortfolioData?.result.data,
     dispensableAssets.length,
@@ -350,14 +412,19 @@ export default function Buy(props: BuyProps) {
     ) {
       setIsLoading(true);
       try {
-        // For Relay Buy with EXACT_INPUT, we pass the USD amount directly
-        // The quote will tell us how many tokens we'll receive
+        // For Relay Buy with EXACT_INPUT, we pass the USDC amount directly
+        // When MAX is selected, use maxTokenAmount to pass the balance directly
+        // Otherwise use the debouncedUsdAmount as USD amount that will be converted to USDC
         const offer = await getBestOffer({
           fromAmount: debouncedUsdAmount,
           toTokenAddress: token.address,
           toChainId: token.chainId,
           fromChainId: maxStableCoinBalance.chainId,
           usdcPrice,
+          maxTokenAmount:
+            isMaxSelected && maxTokenAmount
+              ? maxTokenAmount.toString()
+              : undefined,
         });
 
         setBuyOffer(offer);
@@ -377,7 +444,10 @@ export default function Buy(props: BuyProps) {
             {
               operation: 'fetch_relay_buy_offer',
               buyToken: token.symbol,
-              amount: debouncedUsdAmount,
+              amount:
+                isMaxSelected && maxTokenAmount
+                  ? maxTokenAmount.toString()
+                  : debouncedUsdAmount,
               toChainId: token.chainId,
               fromChainId: maxStableCoinBalance.chainId,
             },
@@ -394,6 +464,8 @@ export default function Buy(props: BuyProps) {
     debouncedUsdAmount,
     token,
     isRelayInitialized,
+    isMaxSelected,
+    maxTokenAmount,
     getBestOffer,
     maxStableCoinBalance.chainId,
     usdcPrice,
@@ -744,16 +816,22 @@ export default function Buy(props: BuyProps) {
           </button>
           <div className="flex max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 items-right overflow-hidden">
             <div className="flex items-center max-w-60 desktop:w-60 tablet:w-60 mobile:w-56 xs:w-44 text-right justify-end bg-transparent outline-none pr-0 h-9">
-              <input
-                className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right"
-                placeholder={inputPlaceholder}
-                onChange={handleUsdAmountChange}
-                value={usdAmount}
-                type="text"
-                disabled={isLoading}
-                onFocus={() => setInputPlaceholder('')}
-                data-testid="pulse-buy-amount-input"
-              />
+              {isMaxSelected ? (
+                <div className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right text-white">
+                  {maxStableCoinBalance.balance.toFixed(2)}
+                </div>
+              ) : (
+                <input
+                  className="no-spinner flex mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-40 tablet:w-40 mobile:w-36 xs:w-24 font-medium text-right"
+                  placeholder={inputPlaceholder}
+                  onChange={handleUsdAmountChange}
+                  value={usdAmount}
+                  type="text"
+                  disabled={isLoading}
+                  onFocus={() => setInputPlaceholder('')}
+                  data-testid="pulse-buy-amount-input"
+                />
+              )}
               <span className="mobile:text-4xl xs:text-4xl desktop:text-4xl tablet:text-4xl desktop:w-20 tablet:w-20 mobile:w-20 xs:w-20 font-medium overflow-hidden text-[#FFFFFF4D]">
                 USD
               </span>
@@ -860,9 +938,24 @@ export default function Buy(props: BuyProps) {
                 onClick={() => {
                   if (!isDisabled) {
                     if (isMax) {
-                      setUsdAmount(sumOfStableBalance.toFixed(2));
+                      // Use full balance for MAX display
+                      const fullBalance = maxStableCoinBalance.tokenAmount;
+                      const balanceStr = fullBalance.toString();
+                      setUsdAmount(balanceStr); // Store full balance for display
+
+                      // For API calls, calculate amount after 1% platform fee
+                      const maxAmount = fullBalance * 0.99;
+                      // Proper rounding: round down to be conservative with fee calculation
+                      const roundedAmount = Math.floor(maxAmount * 100) / 100;
+
+                      // Update parent state for PreviewBuy
+                      setParentIsMaxSelected?.(true);
+                      setParentMaxTokenAmount?.(roundedAmount);
                     } else {
                       setUsdAmount(item);
+                      // Reset parent state
+                      setParentIsMaxSelected?.(false);
+                      setParentMaxTokenAmount?.(undefined);
                     }
                   }
                 }}

@@ -260,25 +260,22 @@ export default function LandingPage() {
               </div>
               <div className="home_feature__detail__content home_feature__detail__content--column gradient_border">
                 <h2>
-                  Web3 App Store
+                  AI Agents
                   <br />
                   <span>
-                    Access dApps Without
-                    <br /> Leaving PillarX
+                    Delegate Tasks.
+                    <br /> Stay in Control.
                   </span>
                 </h2>
                 <p>
-                  All your favorite dApps are built directly into PillarX,
-                  meaning you don’t have to leave the platform to connect to any
-                  of them! Safe, secure, and under your control.
+                  Powered by Phone ID, AI agents can securely act on your behalf
+                  across PillarX. Define exactly what they can do, set spending
+                  limits and stay in control of every action.
                 </p>
                 <div className="home_feature__detail__content__icon">
                   <h4>Coming Soon</h4>
                   <div className="home_feature__detail__content__icon__wrapper">
-                    <img
-                      src="https://cdn.pillarx.app/home-superpowers-icon-2.svg"
-                      alt=""
-                    />
+                    <img src="/landing-images/pillarx-ai.svg" alt="" />
                   </div>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import { vi } from 'vitest';
+import React from 'react';
 
 // hooks
 import useTransactionKit from '../../../../../hooks/useTransactionKit';
@@ -268,6 +269,7 @@ const mockProps = {
   maxStableCoinBalance: {
     chainId: 1,
     balance: 10050,
+    tokenAmount: 10050,
   },
   customBuyAmounts: ['10', '20', '50', '100', 'MAX'],
   setPreviewBuy: vi.fn(),
@@ -278,6 +280,10 @@ const mockProps = {
   setBuyToken: vi.fn(),
   chains: MobulaChainNames.All,
   setChains: vi.fn(),
+  isMaxSelected: false,
+  maxTokenAmount: undefined,
+  setIsMaxSelected: vi.fn(),
+  setMaxTokenAmount: vi.fn(),
 };
 
 const defaultMocks = () => {
@@ -322,10 +328,40 @@ const defaultMocks = () => {
   mockGetDispensableAssets.mockReturnValue([[], [], []]);
 };
 
-const renderWithProviders = (props = {}) => {
+// Wrapper component for tests that need to manage MAX state
+const BuyWithState = (props: any) => {
+  const [isMaxSelected, setIsMaxSelected] = React.useState(false);
+  const [maxTokenAmount, setMaxTokenAmount] = React.useState<
+    number | undefined
+  >();
+
+  return (
+    <Buy
+      {...mockProps}
+      {...props}
+      isMaxSelected={isMaxSelected}
+      maxTokenAmount={maxTokenAmount}
+      setIsMaxSelected={setIsMaxSelected}
+      setMaxTokenAmount={setMaxTokenAmount}
+    />
+  );
+};
+
+const renderWithProviders = (
+  additionalProps: Record<string, any> = {},
+  useStateWrapper = false
+) => {
+  if (useStateWrapper) {
+    return render(
+      <TestWrapper>
+        <BuyWithState {...additionalProps} />
+      </TestWrapper>
+    );
+  }
+
   return render(
     <TestWrapper>
-      <Buy {...mockProps} {...props} />
+      <Buy {...mockProps} {...additionalProps} />
     </TestWrapper>
   );
 };
@@ -395,12 +431,13 @@ describe('<Buy />', () => {
     });
 
     it('MAX button', () => {
-      renderWithProviders();
+      renderWithProviders({}, true); // Use state wrapper
 
       const maxButton = screen.getByText('MAX');
       fireEvent.click(maxButton);
 
-      expect(screen.getByDisplayValue('10050.00')).toBeInTheDocument();
+      // After clicking MAX, the balance should be displayed as text instead of input
+      expect(screen.getByText('10050.00')).toBeInTheDocument();
     });
 
     it('token selector click', () => {
@@ -672,6 +709,7 @@ describe('<Buy />', () => {
         maxStableCoinBalance: {
           chainId: 1,
           balance: 1, // Less than $2
+          tokenAmount: 1,
         },
       });
 
@@ -963,13 +1001,13 @@ describe('<Buy />', () => {
     });
 
     it('handles MAX button with Relay Buy', () => {
-      renderWithProviders();
+      renderWithProviders({}, true); // Use state wrapper
 
       const maxButton = screen.getByText('MAX');
       fireEvent.click(maxButton);
 
-      // Should set to max stable coin balance
-      expect(screen.getByDisplayValue('10050.00')).toBeInTheDocument();
+      // Should set to max stable coin balance - displayed as text, not input
+      expect(screen.getByText('10050.00')).toBeInTheDocument();
     });
 
     it('shows minimum amount warning with Relay Buy', async () => {

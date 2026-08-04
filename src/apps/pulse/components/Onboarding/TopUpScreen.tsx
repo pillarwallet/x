@@ -324,7 +324,7 @@ export default function TopUpScreen(props: TopUpScreenProps) {
             });
             setSelectedPaymasterAddress(matchingPaymaster.paymasterAddress);
 
-            // Fetch gas price for calculations
+            // Fetch actual gas price from chain for accurate fee estimation
             const price = await getGasPrice(selectedToken.chainId);
             if (price) setGasPrice(price);
           }
@@ -417,13 +417,38 @@ export default function TopUpScreen(props: TopUpScreenProps) {
 
         setEstimatedGasCostInToken(estimatedCostInTokenFixed);
 
-        // Check if user has enough balance
+        // Check if user has enough balance for both topup amount AND gas fee
         const userBalance = selectedFeeAsset.balance ?? 0;
-        if (userBalance < estimatedCostInToken) {
+        const tokenPrice = parseFloat(selectedFeeAsset.tokenPrice || '0') || 1; // Default to 1 if price unavailable
+
+        // When the fee token is the same as the topup token,
+        // calculate remaining balance after deducting the topup amount
+        // Convert topup amount from USD to token units using token price
+        const topUpAmountUSD = parseFloat(amount) || 0;
+        const topUpAmountInTokens =
+          tokenPrice > 0 ? topUpAmountUSD / tokenPrice : 0;
+
+        const isFeeSameAsToken =
+          selectedFeeAsset.asset.contract.toLowerCase() ===
+          selectedToken.address.toLowerCase();
+
+        let availableBalanceForFee = userBalance;
+        if (isFeeSameAsToken) {
+          availableBalanceForFee = userBalance - topUpAmountInTokens;
+        }
+
+        if (availableBalanceForFee < estimatedCostInToken) {
+          const totalNeededInTokens =
+            topUpAmountInTokens + estimatedCostInToken;
           setError(
-            `Insufficient ${selectedFeeAsset.asset.symbol} balance for gas fees. ` +
-              `Need ${estimatedCostInTokenFixed} ${selectedFeeAsset.asset.symbol}, ` +
-              `have ${userBalance.toFixed(selectedFeeAsset.decimals)} ${selectedFeeAsset.asset.symbol}`
+            isFeeSameAsToken
+              ? `Insufficient ${selectedFeeAsset.asset.symbol} balance. ` +
+                  `Need ${topUpAmountInTokens.toFixed(selectedFeeAsset.decimals)} to top up + ` +
+                  `${estimatedCostInTokenFixed} for gas = ${totalNeededInTokens.toFixed(selectedFeeAsset.decimals)} total, ` +
+                  `but only have ${userBalance.toFixed(selectedFeeAsset.decimals)} ${selectedFeeAsset.asset.symbol}`
+              : `Insufficient ${selectedFeeAsset.asset.symbol} balance for gas fees. ` +
+                  `Need ${estimatedCostInTokenFixed} ${selectedFeeAsset.asset.symbol}, ` +
+                  `have ${userBalance.toFixed(selectedFeeAsset.decimals)} ${selectedFeeAsset.asset.symbol}`
           );
           setApproveData(''); // Clear approval data
           return;
@@ -576,6 +601,56 @@ export default function TopUpScreen(props: TopUpScreenProps) {
     }
   };
 
+  /**
+   * Validates that the user has sufficient balance for gasless transactions.
+   * This checks that: user_balance >= topup_amount_in_tokens + gas_fee_in_tokens
+   * Returns true if validation passes, false otherwise (with error message set)
+   */
+  const validateGaslessFeeBalance = (): boolean => {
+    // Only validate if gasless is supported and we have the necessary data
+    if (!isGaslessSupported || !selectedFeeAsset || !estimatedGasCostInToken) {
+      return true; // Skip validation if not using gasless
+    }
+
+    const userBalance = selectedFeeAsset.balance ?? 0;
+    const tokenPrice = parseFloat(selectedFeeAsset.tokenPrice || '0') || 1;
+    const estimatedGasInToken = parseFloat(estimatedGasCostInToken);
+
+    // Convert topup amount (USD) to token units
+    const topUpAmountUSD = parseFloat(amount) || 0;
+    const topUpAmountInTokens =
+      tokenPrice > 0 ? topUpAmountUSD / tokenPrice : 0;
+
+    // Check if fee token is the same as topup token
+    const isFeeSameAsToken =
+      selectedFeeAsset.asset.contract.toLowerCase() ===
+      selectedToken?.address.toLowerCase();
+
+    // Calculate available balance for fee
+    let availableBalanceForFee = userBalance;
+    if (isFeeSameAsToken) {
+      availableBalanceForFee = userBalance - topUpAmountInTokens;
+    }
+
+    // Validate balance is sufficient
+    if (availableBalanceForFee < estimatedGasInToken) {
+      const totalNeededInTokens = topUpAmountInTokens + estimatedGasInToken;
+      setError(
+        isFeeSameAsToken
+          ? `Insufficient ${selectedFeeAsset.asset.symbol} balance. ` +
+              `Need ${topUpAmountInTokens.toFixed(selectedFeeAsset.decimals)} to top up + ` +
+              `${estimatedGasCostInToken} for gas = ${totalNeededInTokens.toFixed(selectedFeeAsset.decimals)} total, ` +
+              `but only have ${userBalance.toFixed(selectedFeeAsset.decimals)} ${selectedFeeAsset.asset.symbol}`
+          : `Insufficient ${selectedFeeAsset.asset.symbol} balance for gas fees. ` +
+              `Need ${estimatedGasCostInToken} ${selectedFeeAsset.asset.symbol}, ` +
+              `have ${userBalance.toFixed(selectedFeeAsset.decimals)} ${selectedFeeAsset.asset.symbol}`
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const handleTopUp = () => {
     // Validation
     const numAmount = parseFloat(amount);
@@ -611,10 +686,9 @@ export default function TopUpScreen(props: TopUpScreenProps) {
       return;
     }
 
-    // If using gasless, check if we have approval data (which means balance is sufficient)
-    if (isGaslessSupported && selectedFeeAsset && !approveData) {
-      // Error already set in generateApprovalData
-      return;
+    // Validate gasless fee balance before proceeding
+    if (!validateGaslessFeeBalance()) {
+      return; // Error message already set by validateGaslessFeeBalance
     }
 
     // Clear any previous errors
@@ -920,6 +994,59 @@ export default function TopUpScreen(props: TopUpScreenProps) {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Gasless Fee Estimate - Show when USDC is selected */}
+        {isGaslessSupported && selectedFeeAsset && estimatedGasCostInToken && (
+          <div className="m-2.5 p-3 bg-[#1E1D24] rounded-[10px] border border-[#29292F]">
+            <div className="flex flex-col gap-2">
+              {(() => {
+                // Convert USD amount to token units using token price
+                const tokenPrice =
+                  parseFloat(selectedFeeAsset.tokenPrice || '0') || 1;
+                const topUpAmountInTokens =
+                  (parseFloat(amount) || 0) / tokenPrice;
+                const gasInTokens = parseFloat(estimatedGasCostInToken) || 0;
+                const totalNeededInTokens = topUpAmountInTokens + gasInTokens;
+                const hasEnoughBalance =
+                  selectedFeeAsset.balance >= totalNeededInTokens;
+
+                return (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/70 text-xs">
+                        Estimated Gas Fee:
+                      </span>
+                      <span className="text-white font-medium text-sm">
+                        ≈ {estimatedGasCostInToken}{' '}
+                        {selectedFeeAsset.asset.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/50">Total needed:</span>
+                      <span className="text-white">
+                        {totalNeededInTokens.toFixed(selectedFeeAsset.decimals)}{' '}
+                        {selectedFeeAsset.asset.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/50">Your balance:</span>
+                      <span
+                        className={
+                          hasEnoughBalance ? 'text-[#10B981]' : 'text-[#EF4444]'
+                        }
+                      >
+                        {selectedFeeAsset.balance.toFixed(
+                          selectedFeeAsset.decimals
+                        )}{' '}
+                        {selectedFeeAsset.asset.symbol}
+                      </span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}

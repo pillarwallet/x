@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 240 8% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 240 8% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 263 70% 65%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 0 0% 100%;
+
+    --radius: 1rem;
+
+    --gradient-primary: linear-gradient(135deg,
+        hsl(263 70% 50%),
+        hsl(220 80% 55%));
+    --gradient-accent: linear-gradient(135deg,
+        hsl(263 70% 50%),
+        hsl(290 70% 50%));
+    --gradient-bg: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 10% 6%));
+
+    --shadow-glow: 0 0 40px hsl(263 70% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(240 10% 0% / 0.4);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+
+  /* Hide spin buttons for number inputs */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Desktop Zoom Factor */
+  @media (min-width: 1051px) {
+    html {
+      zoom: 1.1;
+    }
+  }
+
+  /* Remove blue/cyan highlight on touch/click and focus */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  div[role="button"],
+  [tabindex] {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow text selection in inputs */
+  input,
+  textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+  }
+
+  /* Remove focus outline globally (components handle their own focus states) */
+  *:focus {
+    outline: none !important;
+  }
+
+  *:active {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}

@@ -35,6 +35,7 @@ export type WalletPortfolioState = {
   isUpgradeWalletModalOpen: boolean;
   isEIP7702Eligible: boolean;
   hasCompletedEIP7702Upgrade: boolean;
+  activeAccountMode: 'eoa' | 'smart';
 };
 
 const initialState: WalletPortfolioState = {
@@ -62,6 +63,7 @@ const initialState: WalletPortfolioState = {
   isUpgradeWalletModalOpen: false,
   isEIP7702Eligible: false,
   hasCompletedEIP7702Upgrade: false,
+  activeAccountMode: 'smart',
 };
 
 const walletPortfolioSlice = createSlice({
@@ -143,6 +145,9 @@ const walletPortfolioSlice = createSlice({
     setHasCompletedEIP7702Upgrade(state, action: PayloadAction<boolean>) {
       state.hasCompletedEIP7702Upgrade = action.payload;
     },
+    setActiveAccountMode(state, action: PayloadAction<'eoa' | 'smart'>) {
+      state.activeAccountMode = action.payload;
+    },
   },
 });
 
@@ -168,6 +173,7 @@ export const {
   setIsUpgradeWalletModalOpen,
   setIsEIP7702Eligible,
   setHasCompletedEIP7702Upgrade,
+  setActiveAccountMode,
 } = walletPortfolioSlice.actions;
 
 export default walletPortfolioSlice;

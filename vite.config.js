@@ -4,6 +4,11 @@ import { defineConfig } from 'vite';
 import dynamicImport from 'vite-plugin-dynamic-import';
 import svgr from 'vite-plugin-svgr';
 import basicSsl from '@vitejs/plugin-basic-ssl';
+import { fileURLToPath } from 'url';
+
+// Emulate __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react(), svgr(), dynamicImport(), basicSsl()],

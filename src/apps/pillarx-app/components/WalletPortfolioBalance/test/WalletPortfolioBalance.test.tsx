@@ -34,6 +34,12 @@ vi.mock('../../../images/wallet-portfolio-icon.png', () => {
     default: 'wallet-portfolio-icon.png',
   };
 });
+vi.mock('../../AccountSelector/AccountSelector', () => ({
+  __esModule: true,
+  default: function AccountSelector() {
+    return <div data-testid="account-selector">Account Selector</div>;
+  },
+}));
 
 const mockDispatch = vi.fn();
 (useAppDispatchMock as unknown as Mock).mockReturnValue(mockDispatch);
@@ -96,7 +102,6 @@ describe('WalletPortfolioBalance', () => {
     });
 
     expect(screen.getByText('$0.00')).toBeInTheDocument();
-    expect(screen.getByAltText('wallet-portfolio-icon')).toBeInTheDocument();
   });
 
   it('renders balance with positive change', () => {

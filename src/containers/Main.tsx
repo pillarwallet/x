@@ -1011,12 +1011,27 @@ export const config = createConfig({
 const queryClient = new QueryClient();
 
 const Main = () => {
+  const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
+
+  if (!privyAppId) {
+    console.error(
+      'VITE_PRIVY_APP_ID is not defined. Please check your environment variables.'
+    );
+    return (
+      <div style={{ padding: '20px', color: 'red', fontFamily: 'monospace' }}>
+        <h1>Configuration Error</h1>
+        <p>VITE_PRIVY_APP_ID environment variable is not set.</p>
+        <p>Please configure this in your deployment settings.</p>
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
       <LanguageProvider>
         <PrivyProvider
-          appId={import.meta.env.VITE_PRIVY_APP_ID as string}
+          appId={privyAppId}
           config={{
             appearance: { theme: 'dark' },
             defaultChain: isTestnet ? sepolia : mainnet,

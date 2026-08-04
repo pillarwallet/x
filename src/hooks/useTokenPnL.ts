@@ -97,6 +97,19 @@ export const useTokenPnL = (props: UseTokenPnLProps | null): TokenPnLResult => {
       return undefined;
     }
 
+    // NEW: Skip PnL calculation for small balances (< $0.50)
+    // This avoids "Suspiciously high execution price" warnings for dust
+    const balanceUSD = (tokenPrice || 0) * (tokenBalance || 0);
+    if (balanceUSD < 0.5) {
+      setResult((prev) => ({
+        ...prev,
+        pnl: null,
+        isLoading: false,
+        debug: { ...prev.debug, status: 'Skipped - Small Balance' },
+      }));
+      return undefined;
+    }
+
     let isMounted = true;
 
     const calculatePnL = async (): Promise<void> => {

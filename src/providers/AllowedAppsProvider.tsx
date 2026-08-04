@@ -81,13 +81,39 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
             paramsSerializer: () => finalQueryString,
           }
         );
-        if (expired || !data?.length) {
+        if (expired) {
           setIsLoading(false);
           return;
         }
-        setAllowed(data?.map((app: ApiAllowedApp) => app));
+
+        const appsWithPerps = [
+          ...(data?.map((app: ApiAllowedApp) => app) || []),
+          // Add perps app locally
+          {
+            id: 'perps-local',
+            appId: 'perps',
+            type: 'app',
+            title: 'Perps',
+            name: 'Perps',
+            shortDescription: 'Perpetual futures trading on Hyperliquid',
+            tags: 'trading,derivatives',
+          } as ApiAllowedApp,
+        ];
+        setAllowed(appsWithPerps);
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
+        // Set perps app as fallback if API fails
+        setAllowed([
+          {
+            id: 'perps-local',
+            appId: 'perps',
+            type: 'app',
+            title: 'Perps',
+            name: 'Perps',
+            shortDescription: 'Perpetual futures trading on Hyperliquid',
+            tags: 'trading,derivatives',
+          } as ApiAllowedApp,
+        ]);
       }
       setIsLoading(false);
     })();
