@@ -17,6 +17,9 @@ jobs:
       - run:
           name: Install jq
           command: |
+            # Cypress image ships a Google Chrome apt source whose GPG key can expire
+            # and make `apt-get update` fail with NO_PUBKEY / exit 100 before jq installs.
+            rm -f /etc/apt/sources.list.d/google-chrome*.list /etc/apt/sources.list.d/*chrome*.list || true
             apt-get update && apt-get install -y curl jq
 
       # Clone secondary repo and run Playwright tests
