@@ -217,17 +217,20 @@ export const canCloseTransaction = (
 // Helper function to calculate stable currency balance
 export const getStableCurrencyBalanceOnEachChain = (
   walletPortfolioData: WalletPortfolioMobulaResponse
-): { [chainId: number]: { balance: number; price?: number } } => {
+): {
+  [chainId: number]: { balance: number; price?: number; tokenAmount?: number };
+} => {
   // get the list of chainIds from STABLE_CURRENCIES
   const chainIds = Array.from(
     new Set(STABLE_CURRENCIES.map((currency) => currency.chainId))
   );
 
   // create a map to hold the balance for each chainId
-  const balanceMap: { [chainId: number]: { balance: number; price?: number } } =
-    {};
+  const balanceMap: {
+    [chainId: number]: { balance: number; price?: number; tokenAmount: number };
+  } = {};
   chainIds.forEach((chainId) => {
-    balanceMap[chainId] = { balance: 0, price: undefined };
+    balanceMap[chainId] = { balance: 0, price: undefined, tokenAmount: 0 };
   });
   // calculate the balance for each chainId
   walletPortfolioData?.result.data.assets
@@ -255,6 +258,7 @@ export const getStableCurrencyBalanceOnEachChain = (
         balanceMap[chainId] = {
           balance: price * balance,
           price: asset.price ? asset.price : undefined,
+          tokenAmount: balance,
         };
       });
     });

@@ -27,17 +27,18 @@ export const useTradingSignals = (options: UseTradingSignalsOptions = {}) => {
       if (!isRefresh) {
         setLoading(true);
       }
+
       const result = await getTradingSignals();
       console.log('🔍 [useTradingSignals] API response:', result);
-      
+
       if (result.error) {
         throw result.error;
       }
-      
+
       // Firebase function returns { signals: [...] }
       const signalsArray = (result.signals || result.data || []) as TradingSignal[];
       console.log(`✅ [useTradingSignals] Loaded ${signalsArray.length} signals:`, signalsArray);
-      
+
       // Log first signal structure for debugging
       if (signalsArray.length > 0) {
         const firstSignal = signalsArray[0];
@@ -51,10 +52,10 @@ export const useTradingSignals = (options: UseTradingSignalsOptions = {}) => {
           entry_price: firstSignal.entry_price,
         });
       }
-      
+
       setSignals(signalsArray);
       setError(null);
-      
+
       // Mark initial load as complete
       if (isInitialLoad) {
         setIsInitialLoad(false);
@@ -66,7 +67,7 @@ export const useTradingSignals = (options: UseTradingSignalsOptions = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [enabled]);
+  }, [enabled, isInitialLoad]);
 
   useEffect(() => {
     if (!enabled) {

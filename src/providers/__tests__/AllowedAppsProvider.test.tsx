@@ -19,6 +19,16 @@ describe('AllowedAppsProvider', () => {
     { appId: 'allowed-app-3' },
   ];
 
+  const perpsAppMock = {
+    id: 'perps-local',
+    appId: 'perps',
+    type: 'app',
+    title: 'Perps',
+    name: 'Perps',
+    shortDescription: 'Perpetual futures trading on Hyperliquid',
+    tags: 'trading,derivatives',
+  };
+
   let wrapper: React.FC;
 
   beforeEach(() => {
@@ -46,7 +56,7 @@ describe('AllowedAppsProvider', () => {
       expect(result.current.isLoading).toEqual(false);
     });
 
-    expect(result.current.allowed).toEqual(allowedAppsMock);
+    expect(result.current.allowed).toEqual([...allowedAppsMock, perpsAppMock]);
   });
 
   afterEach(() => {

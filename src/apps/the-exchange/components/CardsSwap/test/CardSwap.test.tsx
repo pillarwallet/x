@@ -153,6 +153,10 @@ vi.mock('../../../../../hooks/useDeployWallet', () => ({
 describe('<CardsSwap />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock environment variable for swap button visibility
+    vi.stubEnv('VITE_SWAP_BUTTON_SWITCH', 'true');
+
     // Reset store state to initial values
     store.dispatch(setAmountSwap(0));
     store.dispatch(setAmountReceive(0));
@@ -359,5 +363,6 @@ describe('<CardsSwap />', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
   });
 });

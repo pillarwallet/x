@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 240 8% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 240 8% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 263 70% 65%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 263 70% 50%;
+
+    --radius: 1rem;
+
+    --gradient-primary: linear-gradient(135deg,
+        hsl(263 70% 50%),
+        hsl(220 80% 55%));
+    --gradient-accent: linear-gradient(135deg,
+        hsl(263 70% 50%),
+        hsl(290 70% 50%));
+    --gradient-bg: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 10% 6%));
+
+    --shadow-glow: 0 0 40px hsl(263 70% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(240 10% 0% / 0.4);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Prevent zoom on mobile inputs */
+  @media screen and (max-width: 768px) {
+
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Gradient utility class */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+}

@@ -42,6 +42,7 @@ interface BuyParams {
   fromChainId: number;
   slippage?: number;
   usdcPrice?: number; // USDC price in USD (e.g., 0.9998), defaults to 1.0 if not provided
+  maxTokenAmount?: string; // Optional: Use this amount directly instead of converting from USD (e.g., for MAX selections)
 }
 
 export default function useRelayBuy() {
@@ -131,6 +132,7 @@ export default function useRelayBuy() {
       fromChainId,
       slippage = 0.03,
       usdcPrice = 1.0,
+      maxTokenAmount,
     }: BuyParams): Promise<BuyOffer | null> => {
       if (!isInitialized) {
         setError('Unable to get quote. Please try again.');
@@ -162,26 +164,42 @@ export default function useRelayBuy() {
 
         /**
          * Step 2: Convert USD amount to USDC amount using actual USDC price
-         * fromAmount is in USD, we need to convert to USDC amount
+         * If maxTokenAmount is provided, use it directly (for MAX selections)
+         * Otherwise, fromAmount is in USD, we need to convert to USDC amount
          * Then convert to USDC's smallest unit (6 decimals)
          * Example: $10 USD / $0.9998 USDC price = 10.002 USDC = 10002000 in wei
          */
         let fromAmountInWei: bigint;
         try {
-          const usdAmount = parseFloat(fromAmount);
-          if (Number.isNaN(usdAmount) || usdAmount <= 0) {
-            throw new Error('Invalid amount');
+          if (maxTokenAmount) {
+            // Use maxTokenAmount directly (e.g., for MAX selections)
+            // Validate that maxTokenAmount is a valid number string
+            const numeric = Number(maxTokenAmount);
+            if (Number.isNaN(numeric) || numeric <= 0) {
+              throw new Error(
+                'Invalid maxTokenAmount: must be a positive number'
+              );
+            }
+
+            // Convert to wei using USDC decimals (e.g., 6 on Ethereum, 18 on BSC)
+            fromAmountInWei = parseUnits(maxTokenAmount, usdcDecimals);
+          } else {
+            // Convert USD to USDC amount using actual USDC price
+            const usdAmount = parseFloat(fromAmount);
+            if (Number.isNaN(usdAmount) || usdAmount <= 0) {
+              throw new Error('Invalid amount');
+            }
+
+            // Convert USD to USDC amount using actual USDC price
+            // If USDC price is $0.9998, then $10 USD = 10 / 0.9998 = 10.002 USDC
+            const usdcAmount = usdAmount / usdcPrice;
+
+            // Convert to wei using USDC decimals (e.g., 6 on Ethereum, 18 on BSC)
+            fromAmountInWei = parseUnits(
+              usdcAmount.toFixed(usdcDecimals),
+              usdcDecimals
+            );
           }
-
-          // Convert USD to USDC amount using actual USDC price
-          // If USDC price is $0.9998, then $10 USD = 10 / 0.9998 = 10.002 USDC
-          const usdcAmount = usdAmount / usdcPrice;
-
-          // Convert to wei using USDC decimals (e.g., 6 on Ethereum, 18 on BSC)
-          fromAmountInWei = parseUnits(
-            usdcAmount.toFixed(usdcDecimals),
-            usdcDecimals
-          );
         } catch (parseError) {
           console.error('Failed to parse fromAmount:', parseError);
           setError('Invalid amount. Please try again.');

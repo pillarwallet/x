@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { TbTriangleFilled } from 'react-icons/tb';
+import { usePrivy } from '@privy-io/react-auth';
+import { TbTriangleFilled, TbFingerprint, TbCheck } from 'react-icons/tb';
+import { toast } from 'sonner';
 
 // types
 import { PortfolioData, WalletHistory } from '../../../../types/api';
@@ -12,14 +14,15 @@ import { setIsRefreshAll } from '../../reducer/WalletPortfolioSlice';
 
 // images
 import RefreshIcon from '../../images/refresh-button.png';
-import WalletPortfolioIcon from '../../images/wallet-portfolio-icon.png';
 
 // components
+import AccountSelector from '../AccountSelector/AccountSelector';
 import SkeletonLoader from '../../../../components/SkeletonLoader';
 import Body from '../Typography/Body';
 import BodySmall from '../Typography/BodySmall';
 
 const WalletPortfolioBalance = () => {
+  const { user, linkPasskey } = usePrivy();
   const dispatch = useAppDispatch();
   const walletPortfolio = useAppSelector(
     (state) =>
@@ -79,13 +82,39 @@ const WalletPortfolioBalance = () => {
   return (
     <div className="flex w-full justify-between">
       <div className="flex flex-col gap-4">
-        <div className="flex gap-1.5">
-          <img
-            src={WalletPortfolioIcon}
-            alt="wallet-portfolio-icon"
-            className="w-7 h-5"
-          />
-          <Body>My portfolio</Body>
+        <div className="flex items-center gap-2">
+          <AccountSelector />
+          {user?.wallet?.connectorType === 'embedded' && (
+            <div className="flex items-center ml-2">
+              {user?.linkedAccounts?.find((a) => a.type === 'passkey') ? (
+                <div
+                  className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20"
+                  title="Account secured with Passkey"
+                >
+                  <TbCheck size={14} className="text-green-500" />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    linkPasskey().catch((err) => {
+                      console.error('Failed to link passkey:', err);
+                      toast.error('Failed to create passkey');
+                    });
+                  }}
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-purple_medium/20 hover:bg-purple_medium/30 transition-colors border border-purple_medium/30 group"
+                >
+                  <TbFingerprint
+                    size={14}
+                    className="text-purple_medium group-hover:text-purple_light"
+                  />
+                  <span className="text-xs text-purple_medium group-hover:text-purple_light font-medium">
+                    Secure
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
         {isWalletPortfolioLoading || !walletPortfolio ? (
           <SkeletonLoader $height="45px" $width="150px" $radius="10px" />

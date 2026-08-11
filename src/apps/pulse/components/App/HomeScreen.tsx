@@ -130,7 +130,7 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [maxStableCoinBalance, setMaxStableCoinBalance] = useState<{
     chainId: number;
     balance: number;
-    price?: number;
+    tokenAmount: number;
   }>();
   const [transactionData, setTransactionData] = useState<{
     sellToken: SelectedToken | null;
@@ -168,6 +168,8 @@ export default function HomeScreen(props: HomeScreenProps) {
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [isRefreshingHome, setIsRefreshingHome] = useState(false);
   const [usdAmount, setUsdAmount] = useState<string>('');
+  const [isMaxSelected, setIsMaxSelected] = useState<boolean>(false);
+  const [maxTokenAmount, setMaxTokenAmount] = useState<number | undefined>();
   const [dispensableAssets, setDispensableAssets] = useState<
     DispensableAsset[]
   >([]);
@@ -402,7 +404,6 @@ export default function HomeScreen(props: HomeScreenProps) {
         (key) => stableBalance[Number(key)].balance === maxStableBalance
       ) || '1'
     );
-
     // Set USDC price from the chain with max stable balance
     const usdcPriceForMaxChain =
       stableBalance[chainIdOfMaxStableBalance]?.price;
@@ -413,6 +414,7 @@ export default function HomeScreen(props: HomeScreenProps) {
     setMaxStableCoinBalance({
       chainId: chainIdOfMaxStableBalance,
       balance: maxStableBalance,
+      tokenAmount: stableBalance[chainIdOfMaxStableBalance]?.tokenAmount ?? 0,
     });
   }, [portfolioTokens, walletPortfolioData]);
 
@@ -1205,6 +1207,8 @@ export default function HomeScreen(props: HomeScreenProps) {
             userPortfolio={portfolioTokens}
             gasTankBalance={gasTankBalance}
             usdcPrice={usdcPrice}
+            isMaxSelected={isMaxSelected}
+            maxTokenAmount={maxTokenAmount}
           />
         </div>
       );
@@ -1361,7 +1365,11 @@ export default function HomeScreen(props: HomeScreenProps) {
                   payingTokens={payingTokens}
                   portfolioTokens={portfolioTokens}
                   maxStableCoinBalance={
-                    maxStableCoinBalance ?? { chainId: 1, balance: 2 }
+                    maxStableCoinBalance ?? {
+                      chainId: 1,
+                      balance: 2,
+                      tokenAmount: 0,
+                    }
                   }
                   customBuyAmounts={[...customBuyAmounts, 'MAX']}
                   setPreviewBuy={setPreviewBuy}
@@ -1374,6 +1382,8 @@ export default function HomeScreen(props: HomeScreenProps) {
                   setChains={setChains}
                   usdcPrice={usdcPrice}
                   isRefreshing={isRefreshingHome}
+                  setIsMaxSelected={setIsMaxSelected}
+                  setMaxTokenAmount={setMaxTokenAmount}
                 />
               ) : (
                 <Sell

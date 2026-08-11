@@ -124,6 +124,7 @@ const App = () => {
     enabled: Boolean(eoaAddress),
     pollIntervalMs: SUBSCRIPTION_POLL_INTERVAL,
   });
+
   const [isAwaitingSubscription, setIsAwaitingSubscription] = useState(false);
   const [showManageMenu, setShowManageMenu] = useState(false);
   const manageMenuRef = useRef<HTMLDivElement | null>(null);
@@ -161,7 +162,7 @@ const App = () => {
         const consentDate = new Date(consent.timestamp);
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        
+
         if (consentDate > oneYearAgo) {
           setConsentGiven(true);
         } else {
@@ -187,22 +188,22 @@ const App = () => {
 
     if (signals.length > 0 && !loading) {
       const openSignals = signals.filter(s => s.status === 'active');
-      
+
       // Only fetch sparklines for signals we haven't fetched yet
       const signalsNeedingSparklines = openSignals.filter(signal => {
         const alreadyFetched = fetchedSparklineIdsRef.current.has(signal.id);
         const hasData = sparklineDataMap[signal.id] && sparklineDataMap[signal.id].length > 0;
         const isLoading = sparklineLoading[signal.id];
-        
+
         if (alreadyFetched || hasData || isLoading) {
           return false;
         }
-        
+
         // Mark as fetched to prevent duplicate requests
         fetchedSparklineIdsRef.current.add(signal.id);
         return true;
       });
-      
+
       if (signalsNeedingSparklines.length > 0) {
         console.log(`📊 [Sparkline] Initial fetch for ${signalsNeedingSparklines.length} new signals`);
         fetchSparklines(signalsNeedingSparklines);
@@ -258,7 +259,7 @@ const App = () => {
     }
     return value;
   }, [openSignals]);
-  
+
   const closedTotalPnL = useMemo(() => {
     const closedPnL = calculateTotalPnL(closedSignals);
     const openRealizedPnL = calculateOpenRealizedPnL();
@@ -266,7 +267,7 @@ const App = () => {
     console.log(`💰 [PnL] closedTotalPnL: ${value}% (closed: ${closedPnL}%, open realized: ${openRealizedPnL}%)`);
     return value;
   }, [closedSignals, openSignals]);
-  
+
   const floatingPnL = useMemo(() => {
     const value = openTotalPnL + closedTotalPnL;
     console.log(`💰 [PnL] floatingPnL: ${value}% (open: ${openTotalPnL}%, closed: ${closedTotalPnL}%)`);
@@ -305,7 +306,7 @@ const App = () => {
   };
 
   const handleRefreshSubscription = useCallback(() => {
-    refetchSubscription().catch(() => {});
+    refetchSubscription().catch(() => { });
   }, [refetchSubscription]);
 
   const handleSubscribeClick = useCallback(() => {
@@ -324,7 +325,7 @@ const App = () => {
 
     setIsAwaitingSubscription(true);
     startPolling();
-    refetchSubscription().catch(() => {});
+    refetchSubscription().catch(() => { });
 
     if (!isNativeApp) {
       const confirmed = window.confirm(
@@ -642,9 +643,9 @@ const App = () => {
                   </div>
                 ) : (
                   feedEvents.map((event) => (
-                    <FeedEventCard 
-                      key={event.id} 
-                      event={event} 
+                    <FeedEventCard
+                      key={event.id}
+                      event={event}
                       leverage={leverage}
                       animateOnMount={isInitialLoad}
                     />

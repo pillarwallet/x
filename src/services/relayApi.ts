@@ -53,6 +53,8 @@ export interface RelayRequest {
         change?: {
           data?: {
             tokenAddress?: string;
+            symbol?: string;
+            decimals?: number;
           };
           balanceDiff?: string;
         };
@@ -67,6 +69,8 @@ export interface RelayRequest {
         change?: {
           data?: {
             tokenAddress?: string;
+            symbol?: string;
+            decimals?: number;
           };
           balanceDiff?: string;
         };
