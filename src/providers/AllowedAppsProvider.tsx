@@ -86,34 +86,10 @@ const AllowedAppsProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        const appsWithPerps = [
-          ...(data?.map((app: ApiAllowedApp) => app) || []),
-          // Add perps app locally
-          {
-            id: 'perps-local',
-            appId: 'perps',
-            type: 'app',
-            title: 'Perps',
-            name: 'Perps',
-            shortDescription: 'Perpetual futures trading on Hyperliquid',
-            tags: 'trading,derivatives',
-          } as ApiAllowedApp,
-        ];
-        setAllowed(appsWithPerps);
+        setAllowed(data?.map((app: ApiAllowedApp) => app) || []);
       } catch (e) {
         console.warn('Error calling PillarX apps API', e);
-        // Set perps app as fallback if API fails
-        setAllowed([
-          {
-            id: 'perps-local',
-            appId: 'perps',
-            type: 'app',
-            title: 'Perps',
-            name: 'Perps',
-            shortDescription: 'Perpetual futures trading on Hyperliquid',
-            tags: 'trading,derivatives',
-          } as ApiAllowedApp,
-        ]);
+        setAllowed([]);
       }
       setIsLoading(false);
     })();
