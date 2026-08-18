@@ -37,7 +37,6 @@ import AnimatedTile from './components/AnimatedTile/AnimatedTitle';
 import SkeletonTiles from './components/SkeletonTile/SkeletonTile';
 import Body from './components/Typography/Body';
 import WalletPortfolioTile from './components/WalletPortfolioTile/WalletPortfolioTile';
-import PerpsTile from './components/PerpsTile/PerpsTile';
 
 // images
 import PillarXLogo from './components/PillarXLogo/PillarXLogo';
@@ -383,7 +382,6 @@ const App = () => {
         className="flex flex-col gap-[40px] tablet:gap-[28px] mobile:gap-[32px]"
       >
         <WalletPortfolioTile />
-        <PerpsTile />
         {DisplayHomeFeedTiles}
         {(isHomeFeedFetching || isHomeFeedLoading) && page === 1 && (
           <>
