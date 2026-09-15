@@ -220,6 +220,27 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
    */
   const [recordPresence] = useRecordPresenceMutation();
 
+  const getMaxAmountInputValue = () => {
+    if (selectedAsset?.type !== 'token') return `${maxAmountAvailable}`;
+
+    if (
+      !isAmountInputAsFiat &&
+      !isNativeToken(selectedAsset.asset.contract) &&
+      selectedAsset.asset.balanceRaw
+    ) {
+      try {
+        return formatUnits(
+          BigInt(selectedAsset.asset.balanceRaw),
+          selectedAsset.asset.decimals
+        );
+      } catch {
+        return `${maxAmountAvailable}`;
+      }
+    }
+
+    return `${maxAmountAvailable}`;
+  };
+
   useEffect(() => {
     if (walletPortfolioData && isWalletPortfolioDataSuccess) {
       dispatch(setWalletPortfolio(walletPortfolioData?.result?.data));
@@ -2385,7 +2406,7 @@ const SendModalTokensTabView = ({ payload }: { payload?: SendModalData }) => {
                       </AmountInputSymbol>
                       {!isDeploymentCostLoading && maxAmountAvailable > 0 && (
                         <TextInputButton
-                          onClick={() => setAmount(`${maxAmountAvailable}`)}
+                          onClick={() => setAmount(getMaxAmountInputValue())}
                         >
                           {t`helper.max`}
                           <span>

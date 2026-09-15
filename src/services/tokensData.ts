@@ -25,6 +25,7 @@ export type Token = {
   contract: string;
   decimals: number;
   balance?: number;
+  balanceRaw?: string;
   price?: number;
 };
 
@@ -113,6 +114,7 @@ export const convertPortfolioAPIResponseToToken = (
         contract: contract.address,
         decimals: contract.decimals,
         balance: contract.balance,
+        balanceRaw: contract.balanceRaw,
         price: asset.price,
         price_change_24h: asset.price_change_24h,
         cross_chain_balance: asset.token_balance,
