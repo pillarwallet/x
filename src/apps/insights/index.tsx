@@ -138,6 +138,11 @@ const App = () => {
   const { sparklineDataMap, fetchSparkline, fetchSparklines, loading: sparklineLoading } = useSparklineData();
   const logoMap = useLogoMap(signals);
 
+  // Keep a ref to the latest signals so long-lived intervals don't close over
+  // a stale (initially empty) array
+  const signalsRef = useRef<typeof signals>(signals);
+  signalsRef.current = signals;
+
   // Track initial load - only animate on first load, not on data refreshes
   useEffect(() => {
     if (!loading && signals.length > 0 && isInitialLoad) {
@@ -370,8 +375,9 @@ const App = () => {
     handleUpdatePrices();
     const interval = setInterval(() => {
       handleUpdatePrices();
-      // Refresh sparklines for open signals
-      const currentOpenSignals = signals.filter(s => s.status === 'active');
+      // Refresh sparklines for open signals (read via ref: the interval
+      // outlives this render, so `signals` here would be stale)
+      const currentOpenSignals = signalsRef.current.filter(s => s.status === 'active');
       if (currentOpenSignals.length > 0) {
         fetchSparklines(currentOpenSignals);
       }
