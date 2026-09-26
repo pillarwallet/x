@@ -1,0 +1,9 @@
+export enum STATUS_ENUM {
+  WAIT_DEPOSIT = 1,
+  CONFIRM_DEPOSIT = 2,
+  EXCHANGE = 3,
+  WITHDRAW = 4,
+  DONE = 5,
+  DEPOSIT_ERROR = 6,
+  CANCELED = 7,
+}
